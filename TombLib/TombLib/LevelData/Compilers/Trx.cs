@@ -51,6 +51,10 @@ public partial class LevelCompilerClassicTR
                     {
                         yield return climbEdit;
                     }
+                    if (GetTriangulation(teRoom, x, z) is TrxSectorEdit triangulationEdit)
+                    {
+                        yield return triangulationEdit;
+                    }
                 }
             }
         }
@@ -105,5 +109,48 @@ public partial class LevelCompilerClassicTR
             Z = z,
             Flags = teSector.Flags,
         };
+    }
+
+    private TrxTriangulationEntry GetTriangulation(Room teRoom, ushort x, ushort z)
+    {
+        var teSector = teRoom.Sectors[x, z];
+        if (teSector.IsAnyWall)
+        {
+            return null;
+        }
+
+        var pos = new VectorInt2(x, z);
+        var floorPortalType = teRoom.GetFloorRoomConnectionInfo(pos, true).TraversableType;
+        var ceilingPortalType = teRoom.GetCeilingRoomConnectionInfo(pos, true).TraversableType;
+        var floorShape = new RoomSectorShape(teSector, true, floorPortalType, false);
+        var ceilingShape = new RoomSectorShape(teSector, false, ceilingPortalType, false);
+
+        if (!floorShape.IsSplit && !ceilingShape.IsSplit)
+        {
+            return null;
+        }
+
+        var result = new TrxTriangulationEntry
+        {
+            RoomIndex = (short)_roomRemapping[teRoom],
+            X = x,
+            Z = z,
+        };
+        
+        var lastFunction = 0;
+        if (floorShape.IsSplit)
+        {
+            result.Floor = new();
+            BuildFloorDataCollision(floorShape, ceilingShape.Max, false, result.Floor, ref lastFunction,
+                teRoom, pos, _level.Settings.GameVersion);
+        }
+        if (ceilingShape.IsSplit)
+        {
+            result.Ceiling = new();
+            BuildFloorDataCollision(ceilingShape, floorShape.Min, true, result.Ceiling, ref lastFunction,
+                teRoom, pos, _level.Settings.GameVersion);
+        }
+
+        return result;
     }
 }

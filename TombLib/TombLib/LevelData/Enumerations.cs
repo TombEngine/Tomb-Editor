@@ -66,6 +66,9 @@ namespace TombLib.LevelData
 
         public static bool SupportsLockedCameras(this Game ver)
             => ver >= Game.TR4;
+
+        public static bool SupportsSplits(this Game ver)
+            => ver >= Game.TR3;
     }
 
     // Only for TR5+
