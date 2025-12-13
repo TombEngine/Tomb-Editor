@@ -15,6 +15,10 @@ namespace TombLib.Graphics
         public Vector3 Normal;
         [VertexElement("COLOR", 0, SharpDX.DXGI.Format.R32G32B32_Float, -1)]
         public Vector3 Color;
+        [VertexElement("BLENDINDICES", 0, SharpDX.DXGI.Format.R32G32B32A32_Float, -1)]
+        public Vector4 Indices; 
+        [VertexElement("BLENDWEIGHTS", 0, SharpDX.DXGI.Format.R32G32B32A32_Float, -1)]
+        public Vector4 Weights;
 
         Vector3 IVertex.Position => Position;
     }

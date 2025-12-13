@@ -1,0 +1,523 @@
+﻿<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="clr-namespace:DarkUI.WPF">
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="/DarkUI.WPF;component/Styles/Icon.xaml" />
+	</ResourceDictionary.MergedDictionaries>
+
+	<MenuScrollingVisibilityConverter x:Key="MenuScrollingVisibilityConverter" />
+
+	<Style TargetType="{x:Type Menu}">
+		<!--  Layout  -->
+		<Setter Property="SnapsToDevicePixels" Value="{x:Static local:Defaults.SnapsToDevicePixels}" />
+		<Setter Property="UseLayoutRounding" Value="{x:Static local:Defaults.UseLayoutRounding}" />
+
+		<!--  Brushes  -->
+		<Setter Property="Background" Value="{DynamicResource Brush_Background}" />
+		<Setter Property="BorderBrush" Value="{DynamicResource Brush_Border_Low}" />
+
+		<!--  Thicknesses  -->
+		<Setter Property="BorderThickness">
+			<Setter.Value>
+				<Thickness Bottom="{x:Static local:Defaults.BorderThicknessWidth}" />
+			</Setter.Value>
+		</Setter>
+
+		<!--  Template  -->
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Menu}">
+					<Border
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+						UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+						<StackPanel
+							ClipToBounds="True"
+							IsItemsHost="True"
+							Orientation="Horizontal" />
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
+		<!--  Layout  -->
+		<Setter Property="Height" Value="{x:Static local:Defaults.BorderThicknessWidth}" />
+		<Setter Property="SnapsToDevicePixels" Value="{x:Static local:Defaults.SnapsToDevicePixels}" />
+		<Setter Property="UseLayoutRounding" Value="{x:Static local:Defaults.UseLayoutRounding}" />
+
+		<!--  Brushes  -->
+		<Setter Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+
+		<!--  Thicknesses  -->
+		<Setter Property="BorderThickness" Value="{x:Static local:Defaults.BorderThickness}" />
+		<Setter Property="Margin" Value="{x:Static local:Defaults.TinyThickness}" />
+
+		<!--  Template  -->
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Separator}">
+					<Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" />
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="MenuScrollButton" TargetType="{x:Type RepeatButton}">
+		<!--  Control properties  -->
+		<Setter Property="ClickMode" Value="Hover" />
+
+		<!--  Layout  -->
+		<Setter Property="MinWidth" Value="{x:Static local:Defaults.SubMenuPopup_ScrollButton_MinWidth}" />
+		<Setter Property="MinHeight" Value="{x:Static local:Defaults.SubMenuPopup_ScrollButton_MinHeight}" />
+		<Setter Property="HorizontalContentAlignment" Value="Center" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="SnapsToDevicePixels" Value="{x:Static local:Defaults.SnapsToDevicePixels}" />
+		<Setter Property="UseLayoutRounding" Value="{x:Static local:Defaults.UseLayoutRounding}" />
+
+		<!--  Brushes  -->
+		<Setter Property="Background" Value="{DynamicResource Brush_Background_ClickableControl}" />
+		<Setter Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+
+		<!--  Thicknesses  -->
+		<Setter Property="BorderThickness" Value="{x:Static local:Defaults.BorderThickness}" />
+		<Setter Property="Padding" Value="{x:Static local:Defaults.TinyThickness}" />
+
+		<!--  Template  -->
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type RepeatButton}">
+					<Border
+						x:Name="border"
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+						UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+						<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+					</Border>
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsPressed" Value="True">
+							<Setter TargetName="border" Property="Background" Value="{DynamicResource Brush_Background_Pressed}" />
+							<Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Brush_Border_Focused}" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="MenuScrollViewer" TargetType="{x:Type ScrollViewer}">
+		<!--  Control properties  -->
+		<Setter Property="HorizontalScrollBarVisibility" Value="Hidden" />
+		<Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+
+		<!--  Layout  -->
+		<Setter Property="SnapsToDevicePixels" Value="{x:Static local:Defaults.SnapsToDevicePixels}" />
+		<Setter Property="UseLayoutRounding" Value="{x:Static local:Defaults.UseLayoutRounding}" />
+
+		<!--  Brushes  -->
+		<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+
+		<!--  Thicknesses  -->
+		<Setter Property="Padding" Value="{x:Static local:Defaults.TinyThickness}" />
+
+		<!--  Template  -->
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ScrollViewer}">
+					<Grid SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition />
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+
+						<Border Grid.Row="1">
+							<ScrollContentPresenter Margin="{TemplateBinding Padding}" />
+						</Border>
+						<RepeatButton
+							Command="{x:Static ScrollBar.LineUpCommand}"
+							CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+							Style="{StaticResource MenuScrollButton}">
+							<RepeatButton.Visibility>
+								<MultiBinding
+									Converter="{StaticResource MenuScrollingVisibilityConverter}"
+									ConverterParameter="0"
+									FallbackValue="Visibility.Collapsed">
+									<Binding Path="ComputedVerticalScrollBarVisibility" RelativeSource="{RelativeSource TemplatedParent}" />
+									<Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}" />
+									<Binding Path="ExtentHeight" RelativeSource="{RelativeSource TemplatedParent}" />
+									<Binding Path="ViewportHeight" RelativeSource="{RelativeSource TemplatedParent}" />
+								</MultiBinding>
+							</RepeatButton.Visibility>
+
+							<Path Data="{DynamicResource WideArrowUp}" Fill="{TemplateBinding Foreground}" />
+						</RepeatButton>
+						<RepeatButton
+							Grid.Row="2"
+							Command="{x:Static ScrollBar.LineDownCommand}"
+							CommandTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+							Style="{StaticResource MenuScrollButton}">
+							<RepeatButton.Visibility>
+								<MultiBinding
+									Converter="{StaticResource MenuScrollingVisibilityConverter}"
+									ConverterParameter="100"
+									FallbackValue="Visibility.Collapsed">
+									<Binding Path="ComputedVerticalScrollBarVisibility" RelativeSource="{RelativeSource TemplatedParent}" />
+									<Binding Path="VerticalOffset" RelativeSource="{RelativeSource TemplatedParent}" />
+									<Binding Path="ExtentHeight" RelativeSource="{RelativeSource TemplatedParent}" />
+									<Binding Path="ViewportHeight" RelativeSource="{RelativeSource TemplatedParent}" />
+								</MultiBinding>
+							</RepeatButton.Visibility>
+
+							<Path Data="{DynamicResource WideArrowDown}" Fill="{TemplateBinding Foreground}" />
+						</RepeatButton>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!--  TopLevelHeader  -->
+	<ControlTemplate x:Key="{x:Static MenuItem.TopLevelHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
+		<Border
+			x:Name="border"
+			Height="{TemplateBinding Height}"
+			Background="{TemplateBinding Background}">
+			<Grid>
+				<Border
+					x:Name="hoverIndicatingBorder"
+					Margin="{TemplateBinding BorderBrush}"
+					Background="{DynamicResource Brush_HoverHighlight}"
+					Opacity="{DynamicResource Opacity_HoveredHighlight}"
+					Visibility="Hidden" />
+				<Border
+					x:Name="pressIndicatingBorder"
+					Margin="{TemplateBinding BorderBrush}"
+					Background="{DynamicResource Brush_PressHighlight}"
+					Opacity="{DynamicResource Opacity_PressedHighlight}"
+					Visibility="Hidden" />
+				<ContentPresenter ContentSource="Header" RecognizesAccessKey="True">
+					<ContentPresenter.Margin>
+						<Thickness
+							Bottom="{x:Static local:Defaults.SmallThicknessWidth}"
+							Left="{x:Static local:Defaults.MediumThicknessWidth}"
+							Right="{x:Static local:Defaults.MediumThicknessWidth}"
+							Top="{x:Static local:Defaults.SmallThicknessWidth}" />
+					</ContentPresenter.Margin>
+				</ContentPresenter>
+				<Popup
+					x:Name="popup"
+					AllowsTransparency="True"
+					IsOpen="{TemplateBinding IsSubmenuOpen}"
+					Placement="Bottom">
+					<Border
+						Margin="{x:Static local:Defaults.Thickness_ShadowMargin}"
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{x:Static local:Defaults.BorderThickness}"
+						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+						UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+						<Border.Effect>
+							<DropShadowEffect Opacity="{x:Static local:Defaults.DropShadow_Opacity}" ShadowDepth="{x:Static local:Defaults.DropShadow_Depth}" />
+						</Border.Effect>
+
+						<ScrollViewer CanContentScroll="True" Style="{StaticResource MenuScrollViewer}">
+							<StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+						</ScrollViewer>
+					</Border>
+				</Popup>
+			</Grid>
+		</Border>
+
+		<ControlTemplate.Triggers>
+			<Trigger Property="IsEnabled" Value="False">
+				<Setter TargetName="border" Property="Opacity" Value="{DynamicResource Opacity_DisabledContent}" />
+			</Trigger>
+
+			<Trigger Property="IsHighlighted" Value="True">
+				<Setter TargetName="hoverIndicatingBorder" Property="Visibility" Value="Visible" />
+			</Trigger>
+
+			<Trigger Property="IsSubmenuOpen" Value="True">
+				<Setter TargetName="pressIndicatingBorder" Property="Visibility" Value="Visible" />
+			</Trigger>
+
+			<Trigger Property="IsSuspendingPopupAnimation" Value="True">
+				<Setter TargetName="popup" Property="PopupAnimation" Value="None" />
+			</Trigger>
+		</ControlTemplate.Triggers>
+	</ControlTemplate>
+
+	<!--  TopLevelItem  -->
+	<ControlTemplate x:Key="{x:Static MenuItem.TopLevelItemTemplateKey}" TargetType="{x:Type MenuItem}">
+		<Border
+			x:Name="border"
+			Height="{TemplateBinding Height}"
+			Background="{TemplateBinding Background}">
+			<Grid>
+				<Border
+					x:Name="hoverIndicatingBorder"
+					Margin="{TemplateBinding BorderBrush}"
+					Background="{DynamicResource Brush_HoverHighlight}"
+					Opacity="{DynamicResource Opacity_HoveredHighlight}"
+					Visibility="Hidden" />
+				<Border
+					x:Name="pressIndicatingBorder"
+					Margin="{TemplateBinding BorderBrush}"
+					Background="{DynamicResource Brush_PressHighlight}"
+					Opacity="{DynamicResource Opacity_PressedHighlight}"
+					Visibility="Hidden" />
+				<ContentPresenter ContentSource="Header" RecognizesAccessKey="True">
+					<ContentPresenter.Margin>
+						<Thickness
+							Bottom="{x:Static local:Defaults.SmallThicknessWidth}"
+							Left="{x:Static local:Defaults.MediumThicknessWidth}"
+							Right="{x:Static local:Defaults.MediumThicknessWidth}"
+							Top="{x:Static local:Defaults.SmallThicknessWidth}" />
+					</ContentPresenter.Margin>
+				</ContentPresenter>
+			</Grid>
+		</Border>
+
+		<ControlTemplate.Triggers>
+			<Trigger Property="IsEnabled" Value="False">
+				<Setter TargetName="border" Property="Opacity" Value="{DynamicResource Opacity_DisabledContent}" />
+			</Trigger>
+
+			<Trigger Property="IsFocused" Value="True">
+				<Setter TargetName="hoverIndicatingBorder" Property="Visibility" Value="Visible" />
+			</Trigger>
+
+			<Trigger Property="IsPressed" Value="True">
+				<Setter TargetName="pressIndicatingBorder" Property="Visibility" Value="Visible" />
+			</Trigger>
+		</ControlTemplate.Triggers>
+	</ControlTemplate>
+
+	<!--  SubmenuItem  -->
+	<ControlTemplate x:Key="{x:Static MenuItem.SubmenuItemTemplateKey}" TargetType="{x:Type MenuItem}">
+		<Border
+			x:Name="border"
+			Height="{TemplateBinding Height}"
+			Background="{TemplateBinding Background}">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="{x:Static local:Defaults.SubMenuItem_IconArea_Width}" />
+					<ColumnDefinition />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="{x:Static local:Defaults.SubMenuItem_ArrowArea_Width}" />
+				</Grid.ColumnDefinitions>
+
+				<Border
+					x:Name="hoverIndicatingBorder"
+					Grid.ColumnSpan="4"
+					Margin="{TemplateBinding BorderBrush}"
+					Background="{DynamicResource Brush_HoverHighlight}"
+					Opacity="{DynamicResource Opacity_HoveredHighlight}"
+					Visibility="Hidden" />
+				<Border
+					x:Name="checkBorder"
+					Width="{x:Static local:Defaults.MenuItem_CheckBoxWidth}"
+					Height="{x:Static local:Defaults.MenuItem_CheckBoxHeight}"
+					Margin="{x:Static local:Defaults.TinyThickness}"
+					BorderThickness="{x:Static local:Defaults.BorderThickness}"
+					Visibility="Collapsed">
+					<Grid>
+						<Rectangle
+							x:Name="checkFill"
+							Fill="{DynamicResource Brush_CheckedHighlight}"
+							Opacity="{DynamicResource Opacity_CheckedHighlight}"
+							Visibility="Hidden" />
+						<Path
+							x:Name="checkMark"
+							Width="{x:Static local:Defaults.Path_MaxIconWidth}"
+							Height="{x:Static local:Defaults.Path_MaxIconHeight}"
+							FlowDirection="LeftToRight"
+							Stretch="Uniform"
+							Stroke="{TemplateBinding Foreground}"
+							StrokeThickness="{x:Static local:Defaults.CheckBox_CheckMarkStrokeWidth}"
+							Visibility="Hidden" />
+					</Grid>
+				</Border>
+				<ContentPresenter
+					x:Name="icon"
+					ContentSource="Icon"
+					FlowDirection="LeftToRight" />
+				<ContentPresenter
+					Grid.Column="1"
+					HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+					VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+					ContentSource="Header"
+					RecognizesAccessKey="True">
+					<ContentPresenter.Margin>
+						<Thickness Left="{x:Static local:Defaults.MediumThicknessWidth}" />
+					</ContentPresenter.Margin>
+				</ContentPresenter>
+				<TextBlock
+					Grid.Column="2"
+					HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+					VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+					Text="{TemplateBinding InputGestureText}">
+					<TextBlock.Margin>
+						<Thickness Left="{x:Static local:Defaults.LargeThicknessWidth}" Right="{x:Static local:Defaults.LargeThicknessWidth}" />
+					</TextBlock.Margin>
+				</TextBlock>
+			</Grid>
+		</Border>
+
+		<ControlTemplate.Triggers>
+			<Trigger Property="IsEnabled" Value="False">
+				<Setter TargetName="border" Property="Opacity" Value="{DynamicResource Opacity_DisabledContent}" />
+			</Trigger>
+
+			<Trigger Property="Icon" Value="{x:Null}">
+				<Setter TargetName="icon" Property="Visibility" Value="Hidden" />
+				<Setter TargetName="checkMark" Property="Data" Value="{DynamicResource CheckMark}" />
+			</Trigger>
+
+			<Trigger Property="IsCheckable" Value="True">
+				<Setter TargetName="checkBorder" Property="Visibility" Value="Visible" />
+			</Trigger>
+
+			<Trigger Property="IsChecked" Value="True">
+				<Setter TargetName="checkBorder" Property="BorderBrush" Value="{DynamicResource Brush_CheckedHighlight}" />
+				<Setter TargetName="checkFill" Property="Visibility" Value="Visible" />
+				<Setter TargetName="checkMark" Property="Visibility" Value="Visible" />
+			</Trigger>
+
+			<Trigger Property="IsHighlighted" Value="True">
+				<Setter TargetName="hoverIndicatingBorder" Property="Visibility" Value="Visible" />
+			</Trigger>
+		</ControlTemplate.Triggers>
+	</ControlTemplate>
+
+	<ControlTemplate x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}" TargetType="{x:Type MenuItem}">
+		<Border
+			x:Name="border"
+			Height="{TemplateBinding Height}"
+			Background="{TemplateBinding Background}">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="{x:Static local:Defaults.SubMenuItem_IconArea_Width}" />
+					<ColumnDefinition />
+					<ColumnDefinition Width="{x:Static local:Defaults.SubMenuItem_ArrowArea_Width}" />
+				</Grid.ColumnDefinitions>
+
+				<Border
+					x:Name="hoverIndicatingBorder"
+					Grid.ColumnSpan="3"
+					Margin="{TemplateBinding BorderBrush}"
+					Background="{DynamicResource Brush_HoverHighlight}"
+					Opacity="{DynamicResource Opacity_HoveredHighlight}"
+					Visibility="Hidden" />
+				<ContentPresenter
+					x:Name="icon"
+					ContentSource="Icon"
+					FlowDirection="LeftToRight" />
+				<ContentPresenter
+					Grid.Column="1"
+					HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+					VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+					ContentSource="Header"
+					RecognizesAccessKey="True">
+					<ContentPresenter.Margin>
+						<Thickness Left="{x:Static local:Defaults.MediumThicknessWidth}" />
+					</ContentPresenter.Margin>
+				</ContentPresenter>
+				<Path
+					Grid.Column="2"
+					Margin="{x:Static local:Defaults.SubMenuItem_Arrow_Margin}"
+					HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+					VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+					Data="{DynamicResource NarrowArrowRight}"
+					Fill="{TemplateBinding Foreground}"
+					Stretch="Uniform" />
+				<Popup
+					x:Name="popup"
+					AllowsTransparency="True"
+					HorizontalOffset="{x:Static local:Defaults.SubMenuPopup_HorizontalOffset}"
+					IsOpen="{TemplateBinding IsSubmenuOpen}"
+					Placement="Right">
+					<Border
+						x:Name="submenuBorder"
+						Margin="{x:Static local:Defaults.Thickness_ShadowMargin}"
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{x:Static local:Defaults.BorderThickness}"
+						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+						UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+						<Border.Effect>
+							<DropShadowEffect Opacity="{x:Static local:Defaults.DropShadow_Opacity}" ShadowDepth="{x:Static local:Defaults.DropShadow_Depth}" />
+						</Border.Effect>
+
+						<ScrollViewer CanContentScroll="True" Style="{StaticResource MenuScrollViewer}">
+							<StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+						</ScrollViewer>
+					</Border>
+				</Popup>
+			</Grid>
+		</Border>
+
+		<ControlTemplate.Triggers>
+			<Trigger Property="IsEnabled" Value="False">
+				<Setter TargetName="border" Property="Opacity" Value="{DynamicResource Opacity_DisabledContent}" />
+			</Trigger>
+
+			<Trigger Property="Icon" Value="{x:Null}">
+				<Setter TargetName="icon" Property="Visibility" Value="Collapsed" />
+			</Trigger>
+
+			<Trigger Property="IsHighlighted" Value="True">
+				<Setter TargetName="hoverIndicatingBorder" Property="Visibility" Value="Visible" />
+			</Trigger>
+		</ControlTemplate.Triggers>
+	</ControlTemplate>
+
+	<Style TargetType="{x:Type MenuItem}">
+		<!--  Layout  -->
+		<Setter Property="Height" Value="{x:Static local:Defaults.MenuItem_Height}" />
+		<Setter Property="HorizontalContentAlignment" Value="Left" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="SnapsToDevicePixels" Value="{x:Static local:Defaults.SnapsToDevicePixels}" />
+		<Setter Property="UseLayoutRounding" Value="{x:Static local:Defaults.UseLayoutRounding}" />
+
+		<!--  Brushes  -->
+		<Setter Property="Background" Value="{DynamicResource Brush_Background}" />
+		<Setter Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+		<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+
+		<!--  Resources  -->
+		<Style.Resources>
+			<Style BasedOn="{StaticResource SmallImageIcon}" TargetType="{x:Type Image}" />
+		</Style.Resources>
+
+		<!--  Triggers  -->
+		<Style.Triggers>
+			<Trigger Property="Role" Value="TopLevelHeader">
+				<Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelHeaderTemplateKey}}" />
+			</Trigger>
+
+			<Trigger Property="Role" Value="TopLevelItem">
+				<Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelItemTemplateKey}}" />
+			</Trigger>
+
+			<Trigger Property="Role" Value="SubmenuHeader">
+				<Setter Property="Template" Value="{StaticResource {x:Static MenuItem.SubmenuHeaderTemplateKey}}" />
+			</Trigger>
+
+			<Trigger Property="Role" Value="SubmenuItem">
+				<Setter Property="Template" Value="{StaticResource {x:Static MenuItem.SubmenuItemTemplateKey}}" />
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+</ResourceDictionary>

@@ -535,35 +535,60 @@ namespace TombLib.LevelData
             }
         }
 
-        public void FixHeights(SectorVerticalPart? vertical = null)
+        public void FixHeights(SectorVerticalPart? vertical = null, int snapHeight = 0)
         {
             for (SectorEdge i = 0; i < SectorEdge.Count; i++)
+                FixHeight(i, vertical, snapHeight);
+        }
+
+        public void FixHeight(SectorEdge edge, SectorVerticalPart? vertical = null, int snapHeight = 0)
+        {
+            if (vertical is null || vertical.Value.IsOnFloor())
             {
-                for (int j = 0; j < ExtraFloorSplits.Count; j++)
+                for (int i = 0; i < ExtraFloorSplits.Count; i++)
                 {
-                    SectorVerticalPart splitVertical = SectorVerticalPartExtensions.GetExtraFloorSplit(j);
-                    SectorVerticalPart lastSectorVertical = j == 0 ? SectorVerticalPart.QA : SectorVerticalPartExtensions.GetExtraFloorSplit(j - 1);
-                    SetHeight(splitVertical, i, Math.Min(GetHeight(splitVertical, i), GetHeight(lastSectorVertical, i)));
+                    SectorVerticalPart splitVertical = SectorVerticalPartExtensions.GetExtraFloorSplit(i);
+                    SectorVerticalPart lastSectorVertical = i == 0 ? SectorVerticalPart.QA : SectorVerticalPartExtensions.GetExtraFloorSplit(i - 1);
+                    int newHeight = Math.Min(GetHeight(splitVertical, edge), GetHeight(lastSectorVertical, edge));
+
+                    if (snapHeight > 0)
+                        newHeight = (int)Math.Round((double)newHeight / snapHeight) * snapHeight;
+
+                    SetHeight(splitVertical, edge, newHeight);
                 }
 
-                for (int j = 0; j < ExtraCeilingSplits.Count; j++)
+                int floorHeight = Floor.DiagonalSplit != DiagonalSplit.None
+                    ? Math.Min(Floor.GetHeight(edge), Ceiling.Min)
+                    : Math.Min(Floor.GetHeight(edge), Ceiling.GetHeight(edge));
+
+                if (snapHeight > 0)
+                    floorHeight = (int)Math.Round((double)floorHeight / snapHeight) * snapHeight;
+
+                Floor.SetHeight(edge, floorHeight);
+            }
+
+            if (vertical is null || vertical.Value.IsOnCeiling())
+            {
+                for (int i = 0; i < ExtraCeilingSplits.Count; i++)
                 {
-                    SectorVerticalPart splitVertical = SectorVerticalPartExtensions.GetExtraCeilingSplit(j);
-                    SectorVerticalPart lastSectorVertical = j == 0 ? SectorVerticalPart.WS : SectorVerticalPartExtensions.GetExtraCeilingSplit(j - 1);
-                    SetHeight(splitVertical, i, Math.Max(GetHeight(splitVertical, i), GetHeight(lastSectorVertical, i)));
+                    SectorVerticalPart splitVertical = SectorVerticalPartExtensions.GetExtraCeilingSplit(i);
+                    SectorVerticalPart lastSectorVertical = i == 0 ? SectorVerticalPart.WS : SectorVerticalPartExtensions.GetExtraCeilingSplit(i - 1);
+                    int newHeight = Math.Max(GetHeight(splitVertical, edge), GetHeight(lastSectorVertical, edge));
+
+                    if (snapHeight > 0)
+                        newHeight = (int)Math.Round((double)newHeight / snapHeight) * snapHeight;
+
+                    SetHeight(splitVertical, edge, newHeight);
                 }
 
-                if (vertical == null || vertical.Value.IsOnFloor())
-                    if (Floor.DiagonalSplit != DiagonalSplit.None)
-                        Floor.SetHeight(i, Math.Min(Floor.GetHeight(i), Ceiling.Min));
-                    else
-                        Floor.SetHeight(i, Math.Min(Floor.GetHeight(i), Ceiling.GetHeight(i)));
+                int ceilingHeight = Ceiling.DiagonalSplit != DiagonalSplit.None
+                    ? Math.Max(Ceiling.GetHeight(edge), Floor.Max)
+                    : Math.Max(Ceiling.GetHeight(edge), Floor.GetHeight(edge));
 
-                if (vertical == null || vertical.Value.IsOnCeiling())
-                    if (Ceiling.DiagonalSplit != DiagonalSplit.None)
-                        Ceiling.SetHeight(i, Math.Max(Ceiling.GetHeight(i), Floor.Max));
-                    else
-                        Ceiling.SetHeight(i, Math.Max(Ceiling.GetHeight(i), Floor.GetHeight(i)));
+                if (snapHeight > 0)
+                    ceilingHeight = (int)Math.Round((double)ceilingHeight / snapHeight) * snapHeight;
+
+                Ceiling.SetHeight(edge, ceilingHeight);
             }
         }
 

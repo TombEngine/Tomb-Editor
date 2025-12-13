@@ -178,7 +178,7 @@
 			this.tabPage_Tomb1Main.Name = "tabPage_Tomb1Main";
 			this.tabPage_Tomb1Main.Size = new System.Drawing.Size(712, 386);
 			this.tabPage_Tomb1Main.TabIndex = 3;
-			this.tabPage_Tomb1Main.Text = "T1M / TR1X";
+			this.tabPage_Tomb1Main.Text = "TR1X / TR2X";
 			// 
 			// settingsTomb1Main
 			// 

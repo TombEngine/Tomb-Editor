@@ -47,6 +47,9 @@ namespace TombIDE.Shared
 		public DockPanelState T1M_DockPanelState { get; set; } = DefaultLayouts.Tomb1MainLayout;
 		public DockPanelState Lua_DockPanelState { get; set; } = DefaultLayouts.LuaLayout;
 
+		public string VSCodePath { get; set; } = string.Empty;
+		public bool DoNotAskToInstallLuaExtension { get; set; }
+
 		public static string DefaultPath => Path.Combine(DefaultPaths.ConfigsDirectory, "TombIDEConfiguration.xml");
 
 		public void Save(Stream stream)

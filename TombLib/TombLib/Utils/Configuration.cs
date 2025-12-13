@@ -1,5 +1,4 @@
-﻿using DarkUI.Forms;
-using NLog;
+﻿using NLog;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -38,7 +37,7 @@ namespace TombLib
         public bool Log_WriteToFile { get; set; } = true;
         public int Log_ArchiveN { get; set; } = 0;
 
-        public static void SaveWindowProperties(DarkForm form, ConfigurationBase config)
+        public static void SaveWindowProperties(Form form, ConfigurationBase config)
         {
             var name = "Window_" + form.Name;
 
@@ -57,7 +56,7 @@ namespace TombLib
 
         }
 
-        public static void LoadWindowProperties(DarkForm form, ConfigurationBase config)
+        public static void LoadWindowProperties(Form form, ConfigurationBase config)
         {
             var name = "Window_" + form.Name;
 
@@ -93,7 +92,7 @@ namespace TombLib
             }
         }
 
-        public static void ConfigureWindow(DarkForm form, ConfigurationBase config)
+        public static void ConfigureWindow(Form form, ConfigurationBase config)
         {
             if (form == null || config == null)
                 return;

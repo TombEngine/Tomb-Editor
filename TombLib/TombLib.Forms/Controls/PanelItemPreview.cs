@@ -300,10 +300,16 @@ namespace TombLib.Controls
                         matrices.Add(bone.GlobalTransform);
                 }
 
+                if (model.Skin != null)
+                    model.RenderSkin(_legacyDevice, effect, viewProjection.ToSharpDX());
+
                 for (int i = 0; i < model.Meshes.Count; i++)
                 {
                     var mesh = model.Meshes[i];
                     if (mesh.Vertices.Count == 0)
+                        continue;
+
+                    if (model.Skin != null && mesh.Hidden)
                         continue;
 
                     mesh.UpdateBuffers(Camera.GetPosition());

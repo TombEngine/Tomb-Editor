@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -134,7 +135,9 @@ namespace TombLib.LevelData
         // Internal data structures
         public RoomGeometry RoomGeometry { get; } = new RoomGeometry();
 
-        public Room(Level level, int numXSectors, int numZSectors, Vector3 ambientLight, string name = "Unnamed", int ceiling = DefaultHeight)
+        private IEnumerable<PortalInstance> _portalsCache;
+
+		public Room(Level level, int numXSectors, int numZSectors, Vector3 ambientLight, string name = "Unnamed", int ceiling = DefaultHeight)
         {
             Name = name;
             Level = level;
@@ -421,13 +424,24 @@ namespace TombLib.LevelData
         public IEnumerable<PortalInstance> Portals
         {
             get
-            { // No LINQ because it is really slow.
+            {   // No LINQ because it is really slow.
                 var portals = new HashSet<PortalInstance>();
                 foreach (var sector in Sectors)
                     foreach (var portal in sector.Portals)
                         portals.Add(portal);
                 return portals;
             }
+        }
+
+        public IEnumerable<PortalInstance> RebuildPortalsCache()
+        {
+            _portalsCache = Portals;
+            return _portalsCache;
+        }
+
+        public IEnumerable<PortalInstance> PortalsCache
+        {
+            get => _portalsCache;
         }
 
         public IEnumerable<TriggerInstance> Triggers
@@ -502,6 +516,22 @@ namespace TombLib.LevelData
             if (x >= 0 && z >= 0 && x < NumXSectors && z < NumZSectors)
                 return Sectors[x, z];
             return null;
+        }
+
+        public bool GetSectorTry(int x, int z, [NotNullWhen(true)] out Sector sector)
+        {
+            sector = null;
+
+            if (Sectors is null)
+                return false;
+
+            if (x >= 0 && z >= 0 && x < NumXSectors && z < NumZSectors)
+            {
+                sector = Sectors[x, z];
+                return true;
+            }
+
+            return false;
         }
 
         public Sector GetSectorTry(VectorInt2 pos)
@@ -931,7 +961,8 @@ namespace TombLib.LevelData
 
         public Matrix4x4 Transform => Matrix4x4.CreateTranslation(WorldPos);
 
-        public int GetHighestCorner(RectangleInt2 area)
+		[MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+		public int GetHighestCorner(RectangleInt2 area)
         {
             area = area.Intersect(LocalArea);
 
@@ -944,7 +975,8 @@ namespace TombLib.LevelData
             return max == int.MinValue ? DefaultHeight : max;
         }
 
-        public int GetHighestNeighborCeiling(int x, int z)
+		[MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+		public int GetHighestNeighborCeiling(int x, int z)
         {
             RoomSectorPair p1 = GetSectorTryThroughPortal(x - 1, z),
                 p2 = GetSectorTryThroughPortal(x + 1, z),
@@ -968,12 +1000,14 @@ namespace TombLib.LevelData
             return max;
         }
 
-        public int GetHighestCorner()
+		[MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+		public int GetHighestCorner()
         {
             return GetHighestCorner(new RectangleInt2(1, 1, NumXSectors - 2, NumZSectors - 2));
         }
 
-        public int GetLowestCorner(RectangleInt2 area)
+		[MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+		public int GetLowestCorner(RectangleInt2 area)
         {
             area = area.Intersect(LocalArea);
 
@@ -986,7 +1020,8 @@ namespace TombLib.LevelData
             return min == int.MaxValue ? 0 : min;
         }
 
-        public int GetLowestNeighborFloor(int x, int z)
+		[MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+		public int GetLowestNeighborFloor(int x, int z)
         {
             RoomSectorPair p1 = GetSectorTryThroughPortal(x - 1, z),
                 p2 = GetSectorTryThroughPortal(x + 1, z),
@@ -1010,7 +1045,8 @@ namespace TombLib.LevelData
             return min;
         }
 
-        public int GetLowestCorner()
+		[MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+		public int GetLowestCorner()
         {
             return GetLowestCorner(new RectangleInt2(1, 1, NumXSectors - 2, NumZSectors - 2));
         }
@@ -1649,7 +1685,7 @@ namespace TombLib.LevelData
                                     {
                                         AnimatedTextureSet newSet = setToCopy.Clone();
                                         foreach (AnimatedTextureFrame frame in newSet.Frames)
-                                            frame.Texture = TextureRemap[frame.Texture]; // Remap source textures to destination textures.
+                                            frame.Texture = TextureRemap[(LevelTexture)frame.Texture]; // Remap source textures to destination textures.
                                         args.DestinationLevelSettings.AnimatedTextureSets.Add(newSet);
                                     }
                                     LookForAnimatedSets = false;
@@ -1708,8 +1744,8 @@ namespace TombLib.LevelData
                                 (shape == FaceShape.Triangle && texture.TriangleCoordsOutOfBounds) || (shape == FaceShape.Quad && texture.QuadCoordsOutOfBounds))
                                 continue;
 
-                            var doubleSided = Level.Settings.GameVersion > TRVersion.Game.TR2 && texture.DoubleSided;
-                            var copyFace = Level.Settings.GameVersion <= TRVersion.Game.TR2 && texture.DoubleSided;
+                            var doubleSided = Level.Settings.GameVersion.Native() > TRVersion.Game.TR2 && texture.DoubleSided;
+                            var copyFace = Level.Settings.GameVersion.Native() <= TRVersion.Game.TR2 && texture.DoubleSided;
 
                             int rangeEnd = range.Start + range.Count;
                             for (int i = range.Start; i < rangeEnd; i += 3)
@@ -1859,8 +1895,8 @@ namespace TombLib.LevelData
                             ushort index1 = (ushort)(indexList[j + baseIndex + 1]);
                             ushort index2 = (ushort)(indexList[j + baseIndex + 2]);
 
-                            var doubleSided = Level.Settings.GameVersion > TRVersion.Game.TR2 && submesh.Key.DoubleSided;
-                            var copyFace = Level.Settings.GameVersion <= TRVersion.Game.TR2 && submesh.Key.DoubleSided;
+                            var doubleSided = Level.Settings.GameVersion.Native() > TRVersion.Game.TR2 && submesh.Key.DoubleSided;
+                            var copyFace = Level.Settings.GameVersion.Native() <= TRVersion.Game.TR2 && submesh.Key.DoubleSided;
 
                             faces++;
 

@@ -13,13 +13,24 @@ namespace TombIDE.Shared.SharedClasses
 		/// <exception cref="FileNotFoundException" />
 		public static string GetScriptFilePath(string scriptRootDirectoryPath, TRVersion.Game version)
 		{
+			string FindFile(string fileName, string searchPattern)
+			{
+				foreach (string file in Directory.GetFiles(scriptRootDirectoryPath, searchPattern, SearchOption.AllDirectories))
+				{
+					if (Path.GetFileName(file).Equals(fileName, StringComparison.OrdinalIgnoreCase))
+						return file;
+				}
+
+				return null;
+			}
+
 			string targetFile;
 			string targetExtension;
 
 			switch (version)
 			{
-				case TRVersion.Game.TR1:
-					targetFile = "TR1X_gameflow.json5";
+				case TRVersion.Game.TR1 or TRVersion.Game.TR1X or TRVersion.Game.TR2X:
+					targetFile = "gameflow.json5";
 					targetExtension = "*.json5";
 					break;
 
@@ -34,20 +45,34 @@ namespace TombIDE.Shared.SharedClasses
 					break;
 			}
 
-			foreach (string file in Directory.GetFiles(scriptRootDirectoryPath, targetExtension, SearchOption.TopDirectoryOnly))
-				if (Path.GetFileName(file).Equals(targetFile, StringComparison.OrdinalIgnoreCase))
-					return file;
+			string foundFile = FindFile(targetFile, targetExtension);
+
+			if (!string.IsNullOrEmpty(foundFile))
+				return foundFile;
 
 			// File not found...
 
-			if (version == TRVersion.Game.TR1)
+			if (version is TRVersion.Game.TR1 or TRVersion.Game.TR1X)
 			{
-				// Try fall-back to Tomb1Main_gameflow.json5
-				targetFile = "Tomb1Main_gameflow.json5";
+				// Try fall-back to TR1X_gameflow.json5
+				foundFile = FindFile("TR1X_gameflow.json5", targetExtension);
 
-				foreach (string file in Directory.GetFiles(scriptRootDirectoryPath, targetExtension, SearchOption.TopDirectoryOnly))
-					if (Path.GetFileName(file).Equals(targetFile, StringComparison.OrdinalIgnoreCase))
-						return file;
+				if (!string.IsNullOrEmpty(foundFile))
+					return foundFile;
+
+				// Try fall-back to Tomb1Main_gameflow.json5
+				foundFile = FindFile("Tomb1Main_gameflow.json5", targetExtension);
+
+				if (!string.IsNullOrEmpty(foundFile))
+					return foundFile;
+			}
+			else if (version == TRVersion.Game.TR2X)
+			{
+				// Try fall-back to TR2X_gameflow.json5
+				foundFile = FindFile("TR2X_gameflow.json5", targetExtension);
+
+				if (!string.IsNullOrEmpty(foundFile))
+					return foundFile;
 			}
 
 			throw new FileNotFoundException("Script file is missing.");

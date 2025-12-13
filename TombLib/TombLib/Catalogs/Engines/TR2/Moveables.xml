@@ -99,7 +99,7 @@
     <moveable id="102" name="Zipline handle" essential="false" ten="ZIPLINE_HANDLE" />
     <moveable id="103" name="Above-water switch" essential="false" ten="SWITCH_TYPE3" />
     <moveable id="104" name="Above-water/underwater switch" essential="false" ten="SWITCH_TYPE4" />
-    <moveable id="105" name="Underwater switch" essential="false" ten="UNDERWATER_WALL_SWITCH1" />
+    <moveable id="105" name="Underwater switch" essential="false" ten="WALL_SWITCH1" />
     <moveable id="106" name="Door" essential="false" ten="DOOR_TYPE1" />
     <moveable id="107" name="Door" essential="false" ten="DOOR_TYPE2" />
     <moveable id="108" name="Door" essential="false" ten="DOOR_TYPE3" />

@@ -293,7 +293,7 @@ namespace TombLib.LevelData.Compilers.Util
             // NOTE: This function is only used to check if bumpmap is possible, DO NOT use it to check ACTUAL bumpmap level!
             public BumpMappingLevel BumpLevel(TRVersion.Game version)
             {
-                if (Texture is LevelTexture && version > TRVersion.Game.TR3)
+                if (Texture is LevelTexture && version.Native() > TRVersion.Game.TR3)
                 {
                     var tex = Texture as LevelTexture;
                     if (!String.IsNullOrEmpty(tex.BumpPath))
@@ -506,7 +506,7 @@ namespace TombLib.LevelData.Compilers.Util
                                             child.RelCoord[i].Y + (float)(parent.PositionInPage.Y + parent.Padding[1]));
                     
                     // If padding exists, apply half-pixel blow-up as countermeasure for hardcoded TR4-5 AdjustUV mapping correction.
-                    if (version >= TRVersion.Game.TR4)
+                    if (version.Native() >= TRVersion.Game.TR4)
                         coords[i] -= IsForTriangle ? TextureExtensions.CompensationTris[UVAdjustmentFlag, i] :
                                                      TextureExtensions.CompensationQuads[UVAdjustmentFlag, i];
                 }
@@ -792,7 +792,7 @@ namespace TombLib.LevelData.Compilers.Util
 
             // UVRotate hack is needed for TR4-5, because we couldn't figure real Core's UVRotate approach. 
             // For TombEngine, hopefully no such hack will be needed.
-            var uvRotateHack = _level.Settings.GameVersion > TRVersion.Game.TR3;
+            var uvRotateHack = _level.Settings.GameVersion.Native() > TRVersion.Game.TR3;
 
             // If UVRotate hack is needed and texture is triangle, prepare a quad substitute reference for animation lookup.
             var refQuad = uvRotateHack && isForTriangle ? texture.RestoreQuadWithRotation() : texture;
@@ -1464,13 +1464,13 @@ namespace TombLib.LevelData.Compilers.Util
 
                 // Tile and flags
                 ushort tile = (ushort)texture.Tile;
-                if (texture.IsForTriangle && level.Settings.GameVersion > TRVersion.Game.TR3) tile |= 0x8000;
+                if (texture.IsForTriangle && level.Settings.GameVersion.Native() > TRVersion.Game.TR3) tile |= 0x8000;
 
                 // Blend mode
                 ushort attribute = (ushort)texture.BlendMode;
 
                 // Clamp blend modes according to game version
-                if (level.Settings.GameVersion <= TRVersion.Game.TR2 && attribute > 1)
+                if (level.Settings.GameVersion.Native() <= TRVersion.Game.TR2 && attribute > 1)
                     attribute = 1;
                 if ((level.Settings.GameVersion == TRVersion.Game.TR3 || level.Settings.GameVersion == TRVersion.Game.TR5) && attribute > 2)
                     attribute = 2;
@@ -1480,7 +1480,7 @@ namespace TombLib.LevelData.Compilers.Util
                 writer.Write(tile);
 
                 // New flags from >= TR4
-                if (level.Settings.GameVersion >= TRVersion.Game.TR4)
+                if (level.Settings.GameVersion.Native() >= TRVersion.Game.TR4)
                 {
                     // Built-in TR4-5 mapping correction is not used. Dummy mapping type is used
                     // together with compensation coordinate distortion.
@@ -1509,7 +1509,7 @@ namespace TombLib.LevelData.Compilers.Util
                     }
                 }
 
-                if (level.Settings.GameVersion >= TRVersion.Game.TR4)
+                if (level.Settings.GameVersion.Native() >= TRVersion.Game.TR4)
                 {
                     var rect = texture.GetRect();
                     writer.Write((int)0);

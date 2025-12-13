@@ -1,62 +1,63 @@
 <moveables>
     <moveable id="0" name="LARA" use_body_from="12" />
-    <moveable id="1" name="LARA_EXTRA_ANIMS" use_body_from="12" />
-    <moveable id="2" name="PISTOLS_ANIM" use_body_from="12" />
-    <moveable id="3" name="UZI_ANIM" use_body_from="12" />
-    <moveable id="4" name="SHOTGUN_ANIM" use_body_from="12" />
-    <moveable id="5" name="REVOLVER_ANIM" use_body_from="12" />
-    <moveable id="6" name="CROSSBOW_ANIM" use_body_from="12" />
-    <moveable id="7" name="HK_ANIM" use_body_from="12" />
-    <moveable id="8" name="GRENADE_ANIM" use_body_from="12" />
-    <moveable id="9" name="ROCKET_ANIM" use_body_from="12" />
-    <moveable id="10" name="HARPOON_ANIM" use_body_from="12" />
-    <moveable id="11" name="FLARE_ANIM" use_body_from="12" />
-    <moveable id="12" name="LARA_SKIN" />
-    <moveable id="13" name="LARA_SKIN_JOINTS" />
-    <moveable id="14" name="LARA_SCREAM" use_body_from="12" />
-    <moveable id="15" name="LARA_CROSSBOW_LASER" use_body_from="12" />
-    <moveable id="16" name="LARA_REVOLVER_LASER" use_body_from="12" />
-    <moveable id="17" name="LARA_HOLSTERS" />
-    <moveable id="18" name="LARA_HOLSTERS_PISTOLS" />
-    <moveable id="19" name="LARA_HOLSTERS_UZIS" />
-    <moveable id="20" name="LARA_HOLSTERS_REVOLVER" />
-    <moveable id="21" name="LARA_SPEECH_HEAD1" use_body_from="12" />
-    <moveable id="22" name="LARA_SPEECH_HEAD2" use_body_from="12" />
-    <moveable id="23" name="LARA_SPEECH_HEAD3" use_body_from="12" />
-    <moveable id="24" name="LARA_SPEECH_HEAD4" use_body_from="12" />
-    <moveable id="25" name="ACTOR1_SPEECH_HEAD1" />
-    <moveable id="26" name="ACTOR1_SPEECH_HEAD2" />
-    <moveable id="27" name="ACTOR2_SPEECH_HEAD1" />
-    <moveable id="28" name="ACTOR2_SPEECH_HEAD2" />
-    <moveable id="29" name="LARA_BINOCULARS_MESH" />
-    <moveable id="30" name="LARA_EXTRA_MESH1" />
-    <moveable id="31" name="LARA_EXTRA_MESH2" />
-    <moveable id="32" name="LARA_WATER_MESH" use_body_from="12" />
-    <moveable id="33" name="LARA_PETROL_MESH" use_body_from="12" />
-    <moveable id="34" name="LARA_DIRT_MESH" use_body_from="12" />
-    <moveable id="35" name="LARA_CROWBAR_ANIM" use_body_from="12" />
-    <moveable id="36" name="LARA_TORCH_ANIM" use_body_from="12" />
-    <moveable id="37" name="HAIR_PRIMARY" />
-	<moveable id="38" name="HAIR_SECONDARY" />
-    <moveable id="50" name="SNOWMOBILE_LARA_ANIMS" use_body_from="12" />
+    <moveable id="1" name="LARA_EXTRA_ANIMS" use_body_from="12" hidden="true" />
+    <moveable id="2" name="PISTOLS_ANIM" use_body_from="12" hidden="true" />
+    <moveable id="3" name="UZI_ANIM" use_body_from="12" hidden="true" />
+    <moveable id="4" name="SHOTGUN_ANIM" use_body_from="12" hidden="true" />
+    <moveable id="5" name="REVOLVER_ANIM" use_body_from="12" hidden="true" />
+    <moveable id="6" name="CROSSBOW_ANIM" use_body_from="12" hidden="true" />
+    <moveable id="7" name="HK_ANIM" use_body_from="12" hidden="true" />
+    <moveable id="8" name="GRENADE_ANIM" use_body_from="12" hidden="true" />
+    <moveable id="9" name="ROCKET_ANIM" use_body_from="12" hidden="true" />
+    <moveable id="10" name="HARPOON_ANIM" use_body_from="12" hidden="true" />
+    <moveable id="11" name="FLARE_ANIM" use_body_from="12" hidden="true" />
+    <moveable id="12" name="LARA_SKIN" hidden="true" />
+    <moveable id="13" name="LARA_SKIN_JOINTS" hidden="true" />
+    <moveable id="14" name="LARA_SCREAM" use_body_from="12" hidden="true" />
+    <moveable id="15" name="LARA_CROSSBOW_LASER" use_body_from="12" hidden="true" />
+    <moveable id="16" name="LARA_REVOLVER_LASER" use_body_from="12" hidden="true" />
+    <moveable id="17" name="LARA_HOLSTERS" hidden="true" />
+    <moveable id="18" name="LARA_HOLSTERS_PISTOLS" hidden="true" />
+    <moveable id="19" name="LARA_HOLSTERS_UZIS" hidden="true" />
+    <moveable id="20" name="LARA_HOLSTERS_REVOLVER" hidden="true" />
+    <moveable id="21" name="LARA_SPEECH_HEAD1" use_body_from="12" hidden="true" />
+    <moveable id="22" name="LARA_SPEECH_HEAD2" use_body_from="12" hidden="true" />
+    <moveable id="23" name="LARA_SPEECH_HEAD3" use_body_from="12" hidden="true" />
+    <moveable id="24" name="LARA_SPEECH_HEAD4" use_body_from="12" hidden="true" />
+    <moveable id="25" name="ACTOR1_SPEECH_HEAD1" hidden="true" />
+    <moveable id="26" name="ACTOR1_SPEECH_HEAD2" hidden="true" />
+    <moveable id="27" name="ACTOR2_SPEECH_HEAD1" hidden="true" />
+    <moveable id="28" name="ACTOR2_SPEECH_HEAD2" hidden="true" />
+    <moveable id="29" name="LARA_BINOCULARS_MESH" hidden="true" />
+    <moveable id="30" name="LARA_EXTRA_MESH1" hidden="true" />
+    <moveable id="31" name="LARA_EXTRA_MESH2" hidden="true" />
+    <moveable id="32" name="LARA_WATER_MESH" use_body_from="12" hidden="true" />
+    <moveable id="33" name="LARA_PETROL_MESH" use_body_from="12" hidden="true" />
+    <moveable id="34" name="LARA_DIRT_MESH" use_body_from="12" hidden="true" />
+    <moveable id="35" name="LARA_CROWBAR_ANIM" use_body_from="12" hidden="true" />
+    <moveable id="36" name="LARA_TORCH_ANIM" use_body_from="12" hidden="true" />
+    <moveable id="37" name="HAIR_PRIMARY" hidden="true" />
+    <moveable id="38" name="HAIR_SECONDARY" hidden="true" />
+    <moveable id="49" name="SNOWMOBILE_TRACKS" hidden="true" />
+    <moveable id="50" name="SNOWMOBILE_LARA_ANIMS" use_body_from="12" hidden="true" />
     <moveable id="51" name="SNOWMOBILE" />
-    <moveable id="52" name="QUAD_LARA_ANIMS" use_body_from="12" />
+    <moveable id="52" name="QUAD_LARA_ANIMS" use_body_from="12" hidden="true" />
     <moveable id="53" name="QUAD" />
-    <moveable id="54" name="SPEEDBOAT_LARA_ANIMS" use_body_from="12" />
+    <moveable id="54" name="SPEEDBOAT_LARA_ANIMS" use_body_from="12" hidden="true" />
     <moveable id="55" name="SPEEDBOAT" />
-    <moveable id="56" name="KAYAK_LARA_ANIMS" use_body_from="12" />
+    <moveable id="56" name="KAYAK_LARA_ANIMS" use_body_from="12" hidden="true" />
     <moveable id="57" name="KAYAK" />
-    <moveable id="58" name="UPV_LARA_ANIMS" use_body_from="12" />
+    <moveable id="58" name="UPV_LARA_ANIMS" use_body_from="12" hidden="true" />
     <moveable id="59" name="UPV" />
-    <moveable id="60" name="MINECART_LARA_ANIMS" use_body_from="12" />
+    <moveable id="60" name="MINECART_LARA_ANIMS" use_body_from="12" hidden="true" />
     <moveable id="61" name="MINECART" />
-    <moveable id="62" name="JEEP_LARA_ANIMS" use_body_from="12" />
+    <moveable id="62" name="JEEP_LARA_ANIMS" use_body_from="12" hidden="true" />
     <moveable id="63" name="JEEP" />
-    <moveable id="64" name="MOTORBIKE_LARA_ANIMS" use_body_from="12" />
+    <moveable id="64" name="MOTORBIKE_LARA_ANIMS" use_body_from="12" hidden="true" />
     <moveable id="65" name="MOTORBIKE" />
-    <moveable id="66" name="RUBBER_BOAT_LARA_ANIMS" use_body_from="12" />
+    <moveable id="66" name="RUBBER_BOAT_LARA_ANIMS" use_body_from="12" hidden="true" />
     <moveable id="67" name="RUBBER_BOAT" />
-    <moveable id="68" name="LARA_BIGGUN_ANIM" use_body_from="12" />
+    <moveable id="68" name="LARA_BIGGUN_ANIM" use_body_from="12" hidden="true" />
     <moveable id="69" name="BIGGUN" />
     <moveable id="90" name="VEHICLE_SMASHABLE_FLOOR" />
     <moveable id="91" name="VEHICLE_SMASHABLE_WALL" />
@@ -362,6 +363,9 @@
 	<moveable id="453" name="THOR_HAMMER_HANDLE" />
 	<moveable id="454" name="THOR_HAMMER_HEAD" />
 	<moveable id="455" name="MOVING_LASER" freeRot="true" />
+    <moveable id="456" name="TURNING_WALL_BLADE" />
+    <moveable id="457" name="TURNING_CEILING_BLADE" />
+    <moveable id="458" name="FIRE_PENDULUM" />
     <moveable id="500" name="PUZZLE_ITEM1" />
     <moveable id="501" name="PUZZLE_ITEM2" />
     <moveable id="502" name="PUZZLE_ITEM3" />
@@ -615,10 +619,10 @@
     <moveable id="818" name="SHOOT_SWITCH3" />
     <moveable id="819" name="SHOOT_SWITCH4" />
     <moveable id="820" name="AIRLOCK_SWITCH" />
-    <moveable id="821" name="UNDERWATER_WALL_SWITCH1" />
-    <moveable id="822" name="UNDERWATER_WALL_SWITCH2" />
-    <moveable id="823" name="UNDERWATER_CEILING_SWITCH1" />
-    <moveable id="824" name="UNDERWATER_CEILING_SWITCH2" />
+    <moveable id="821" name="WALL_SWITCH1" />
+    <moveable id="822" name="WALL_SWITCH2" />
+    <moveable id="823" name="CEILING_SWITCH1" />
+    <moveable id="824" name="CEILING_SWITCH2" />
     <moveable id="825" name="TURN_SWITCH" />
     <moveable id="826" name="COG_SWITCH" />
     <moveable id="827" name="LEVER_SWITCH" />
@@ -681,6 +685,7 @@
     <moveable id="901" name="SEQUENCE_SWITCH3" />
     <moveable id="902" name="STEEL_DOOR" />
     <moveable id="903" name="GOD_HEAD" />
+	<moveable id="904" name="BREAKABLE_WALL" />
     <moveable id="950" name="PISTOLS_ITEM" />
     <moveable id="951" name="PISTOLS_AMMO_ITEM" />
     <moveable id="952" name="UZI_ITEM" />
@@ -719,33 +724,33 @@
     <moveable id="985" name="COMPASS_ITEM" />
     <moveable id="986" name="DIARY_ITEM" />
     <moveable id="987" name="STOPWATCH_ITEM" />
-    <moveable id="988" name="MEMCARD_LOAD_INV_ITEM" />
-    <moveable id="989" name="MEMCARD_SAVE_INV_ITEM" />
+    <moveable id="988" name="MEMCARD_LOAD_INV_ITEM" hidden="true" />
+    <moveable id="989" name="MEMCARD_SAVE_INV_ITEM" hidden="true" />
     <moveable id="990" name="PC_LOAD_INV_ITEM" />
     <moveable id="991" name="PC_SAVE_INV_ITEM" />
-    <moveable id="992" name="DIARY_OPEN" />
-    <moveable id="1000" name="INVENTORY_PASSPORT" />
-    <moveable id="1001" name="INVENTORY_SUNGLASSES" />
-    <moveable id="1002" name="INVENTORY_KEYS" />
-    <moveable id="1003" name="INVENTORY_HEADPHONES" />
-    <moveable id="1004" name="INVENTORY_POLAROID" />
+    <moveable id="992" name="DIARY_OPEN" hidden="true" />
+    <moveable id="1000" name="INVENTORY_PASSPORT" hidden="true" />
+    <moveable id="1001" name="INVENTORY_SUNGLASSES" hidden="true" />
+    <moveable id="1002" name="INVENTORY_KEYS" hidden="true" />
+    <moveable id="1003" name="INVENTORY_HEADPHONES" hidden="true" />
+    <moveable id="1004" name="INVENTORY_POLAROID" hidden="true" />
     <moveable id="1020" name="SMOKE_EMITTER_WHITE" freeRot="true" />
     <moveable id="1021" name="SMOKE_EMITTER_BLACK" freeRot="true" />
     <moveable id="1022" name="SMOKE_EMITTER" freeRot="true" />
     <moveable id="1024" name="EARTHQUAKE" />
     <moveable id="1025" name="BUBBLES" />
     <moveable id="1026" name="WATERFALLMIST" />
-    <moveable id="1027" name="GUNSHELL" />
-    <moveable id="1028" name="SHOTGUNSHELL" />
-    <moveable id="1029" name="GUN_FLASH" />
-    <moveable id="1030" name="GUN_FLASH2" />
+    <moveable id="1027" name="GUNSHELL" hidden="true" />
+    <moveable id="1028" name="SHOTGUNSHELL" hidden="true" />
+    <moveable id="1029" name="GUN_FLASH" hidden="true" />
+    <moveable id="1030" name="GUN_FLASH2" hidden="true" />
     <moveable id="1031" name="COLOR_LIGHT" />
     <moveable id="1032" name="BLINKING_LIGHT" />
     <moveable id="1033" name="PULSE_LIGHT" />
     <moveable id="1034" name="STROBE_LIGHT" />
     <moveable id="1035" name="ELECTRICAL_LIGHT" />
     <moveable id="1036" name="LENS_FLARE" />
-    <moveable id="1037" name="ENERGY_BUBBLES" />
+    <moveable id="1037" name="ENERGY_BUBBLES" hidden="true" />
     <moveable id="1038" name="PLANET_EFFECT" />
     <moveable id="1039" name="BUTTERFLY" />
     <moveable id="1040" ai="true" name="AI_GUARD" />
@@ -782,7 +787,7 @@
     <moveable id="1071" name="SMASH_OBJECT14" />
     <moveable id="1072" name="SMASH_OBJECT15" />
     <moveable id="1073" name="SMASH_OBJECT16" />
-    <moveable id="1074" name="BODY_PART" />
+    <moveable id="1074" name="BODY_PART" hidden="true" />
     <moveable id="1075" name="CAMERA_TARGET" />
     <moveable id="1076" name="WATERFALL1" />
     <moveable id="1077" name="WATERFALL2" />
@@ -793,31 +798,31 @@
     <moveable id="1082" name="WATERFALLSS1" />
     <moveable id="1083" name="WATERFALLSS2" />
     <moveable id="1084" name="FISHTANK" />
-    <moveable id="1085" name="DOPPLEGANGER_ORIGIN" hidden="true" use_body_from="0" />
+    <moveable id="1085" name="DOPPLEGANGER_ORIGIN" />
     <moveable id="1086" name="CORPSE" />
     <moveable id="1087" name="WRAITH_TRAP" />
 	<moveable id="1088" name="WATERFALL_EMITTER" />
 	<moveable id="1089" name="FIREFLY_EMITTER" />
-    <moveable id="1100" name="MESHSWAP1" />
-    <moveable id="1101" name="MESHSWAP2" />
-    <moveable id="1102" name="MESHSWAP3" />
-    <moveable id="1103" name="MESHSWAP4" />
-    <moveable id="1104" name="MESHSWAP5" />
-    <moveable id="1105" name="MESHSWAP6" />
-    <moveable id="1106" name="MESHSWAP7" />
-    <moveable id="1107" name="MESHSWAP8" />
-    <moveable id="1108" name="MESHSWAP9" />
-    <moveable id="1109" name="MESHSWAP10" />
-    <moveable id="1110" name="MESHSWAP_BADDY1" />
-    <moveable id="1111" name="MESHSWAP_BADDY2" />
-    <moveable id="1113" name="MESHSWAP_MAFIA2" />
-    <moveable id="1114" name="MESHSWAP_IMP" />
-    <moveable id="1115" name="MESHSWAP_HITMAN" />
-    <moveable id="1116" name="MESHSWAP_ROMAN_GOD1" />
-    <moveable id="1117" name="MESHSWAP_ROMAN_GOD2" />
-    <moveable id="1118" name="MESHSWAP_MONKEY_MEDIPACK" />
-    <moveable id="1119" name="MESHSWAP_MONKEY_KEY" />
-    <moveable id="1120" name="MESHSWAP_WINSTON_ARMY_OUTFIT" />
+    <moveable id="1100" name="MESHSWAP1" hidden="true" />
+    <moveable id="1101" name="MESHSWAP2" hidden="true" />
+    <moveable id="1102" name="MESHSWAP3" hidden="true" />
+    <moveable id="1103" name="MESHSWAP4" hidden="true" />
+    <moveable id="1104" name="MESHSWAP5" hidden="true" />
+    <moveable id="1105" name="MESHSWAP6" hidden="true" />
+    <moveable id="1106" name="MESHSWAP7" hidden="true" />
+    <moveable id="1107" name="MESHSWAP8" hidden="true" />
+    <moveable id="1108" name="MESHSWAP9" hidden="true" />
+    <moveable id="1109" name="MESHSWAP10" hidden="true" />
+    <moveable id="1110" name="MESHSWAP_BADDY1" hidden="true" />
+    <moveable id="1111" name="MESHSWAP_BADDY2" hidden="true" />
+    <moveable id="1113" name="MESHSWAP_MAFIA2" hidden="true" />
+    <moveable id="1114" name="MESHSWAP_IMP" hidden="true" />
+    <moveable id="1115" name="MESHSWAP_CYBORG" hidden="true" />
+    <moveable id="1116" name="MESHSWAP_ROMAN_GOD1" hidden="true" />
+    <moveable id="1117" name="MESHSWAP_ROMAN_GOD2" hidden="true" />
+    <moveable id="1118" name="MESHSWAP_MONKEY_MEDIPACK" hidden="true" />
+    <moveable id="1119" name="MESHSWAP_MONKEY_KEY" hidden="true" />
+    <moveable id="1120" name="MESHSWAP_WINSTON_ARMY_OUTFIT" hidden="true" />
     
     <moveable id="1200" name="ANIMATING1" />
     <moveable id="1201" name="ANIMATING2" />
@@ -955,5 +960,5 @@
     <moveable id="1343" name="BRIDGE_TILT3" />
     <moveable id="1344" name="BRIDGE_TILT4" />
     <moveable id="1345" name="BRIDGE_CUSTOM" />
-    <moveable id="1350" name="HORIZON" />
+    <moveable id="1350" name="HORIZON" hidden="true" />
 </moveables>

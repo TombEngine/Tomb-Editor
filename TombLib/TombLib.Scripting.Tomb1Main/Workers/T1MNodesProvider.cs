@@ -46,7 +46,7 @@ namespace TombLib.Scripting.Tomb1Main.Workers
 
 			if (regexMatch.Success)
 			{
-				string levelName = regexMatch.Groups[1].Value.Trim(); // Extracts the level name from the comment
+				string levelName = regexMatch.Groups[3].Value.Trim(); // Extracts the level name from the comment
 
 				if (!string.IsNullOrWhiteSpace(levelName) && levelName.Contains(Filter, StringComparison.OrdinalIgnoreCase))
 					return new DarkTreeNode(levelName);

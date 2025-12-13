@@ -683,7 +683,7 @@ namespace TombEditor.Forms
             }
 
             // TR4 platform
-            currentVersionToCheck = (_levelSettings.GameVersion.Legacy() == Game.TR4);
+            currentVersionToCheck = (_levelSettings.GameVersion.Native() == Game.TR4);
             GameEnableQuickStartFeatureCheckBox.Visible = currentVersionToCheck;
             GameEnableExtraReverbPresetsCheckBox.Visible = currentVersionToCheck;
 
@@ -696,26 +696,28 @@ namespace TombEditor.Forms
             // TombEngine
             currentVersionToCheck = (_levelSettings.GameVersion == Game.TombEngine);
             cbRearrangeRooms.Enabled = !currentVersionToCheck;
-            cbRemapAnimTextures.Enabled = !currentVersionToCheck; // TODO: This must be re-enabled on TEN side -- Lwmte, 29.01.23
             cbAgressiveTexturePacking.Enabled = !currentVersionToCheck;
             cbAgressiveFloordataPacking.Enabled = !currentVersionToCheck;
             cbCompressTextures.Enabled = currentVersionToCheck;
-            panelLuaPath.Height = currentVersionToCheck ? _scriptPathPanelSize : 0;
+            cbRemapAnimTextures.Checked = !currentVersionToCheck;
+            cbRemapAnimTextures.Enabled = !currentVersionToCheck;
+
+			panelLuaPath.Height = currentVersionToCheck ? _scriptPathPanelSize : 0;
             if (currentVersionToCheck)
             {
                 tbLuaPath.BackColor = File.Exists(_levelSettings.MakeAbsolute(_levelSettings.TenLuaScriptFile)) ? _correctColor : _wrongColor;
             }
 
             // TR4 and TombEngine platforms
-            currentVersionToCheck = (_levelSettings.GameVersion.Legacy() == Game.TR4);
+            currentVersionToCheck = (_levelSettings.GameVersion.Native() == Game.TR4);
             cbEnableExtraBlendingModes.Visible = currentVersionToCheck;
 
             // TR2-5 platforms
-            currentVersionToCheck = (_levelSettings.GameVersion > Game.TR1 && _levelSettings.GameVersion < Game.TombEngine);
+            currentVersionToCheck = (_levelSettings.GameVersion.Supports16BitDithering());
             cbDither16BitTextures.Enabled = currentVersionToCheck;
 
             // TR4 and above
-            currentVersionToCheck = (_levelSettings.GameVersion >= Game.TR4);
+            currentVersionToCheck = (_levelSettings.GameVersion.SupportsFontAndSkySettings());
             panelFont.Enabled = currentVersionToCheck;
             panelSky.Enabled = currentVersionToCheck;
 

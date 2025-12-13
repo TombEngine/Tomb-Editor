@@ -263,6 +263,8 @@ namespace WadTool
             drawGizmoToolStripMenuItem.Checked = _editor.Tool.Configuration.AnimationEditor_ShowGizmo;
             drawGridToolStripMenuItem.Checked = _editor.Tool.Configuration.AnimationEditor_ShowGrid;
             drawCollisionBoxToolStripMenuItem.Checked = _editor.Tool.Configuration.AnimationEditor_ShowCollisionBox;
+            drawSkinToolStripMenuItem.Checked = _editor.Tool.Configuration.AnimationEditor_ShowSkin;
+            drawSkinToolStripMenuItem.Visible = _editor.Tool.DestinationWad.GameVersion == TRVersion.Game.TombEngine;
 
             if (_editor.Tool.Configuration.AnimationEditor_ChainPlayback)
                 butTransportChained.Image = Properties.Resources.transport_chain_enabled_24;
@@ -2057,7 +2059,7 @@ namespace WadTool
                 }
                 else if (ac.Type == WadAnimCommandType.FlipEffect &&
                          previewSoundType == SoundPreviewType.LandWithMaterial &&
-                         _editor.Wad.GameVersion >= TRVersion.Game.TR3)
+                         _editor.Wad.GameVersion.Native() >= TRVersion.Game.TR3)
                 {
                     var flipID = ac.Parameter2;
                     if (flipID == 32 || flipID == 33)
@@ -2112,6 +2114,12 @@ namespace WadTool
         private void drawGizmoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _editor.Tool.Configuration.AnimationEditor_ShowGizmo = !_editor.Tool.Configuration.AnimationEditor_ShowGizmo;
+            panelRendering.Invalidate();
+        }
+
+        private void drawSkinToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _editor.Tool.Configuration.AnimationEditor_ShowSkin = !_editor.Tool.Configuration.AnimationEditor_ShowSkin;
             panelRendering.Invalidate();
         }
 

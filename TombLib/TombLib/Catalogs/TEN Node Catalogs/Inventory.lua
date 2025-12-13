@@ -4,9 +4,10 @@
 -- !Description "A count of 0 will add the default pickup amount of that item."
 -- !Arguments "NewLine, 80, WadSlots, [ _ITEM ], Object to add to Lara's inventory."
 -- !Arguments "20, Numerical, [ 0 | 1000 ], Amount of items to add (0 to give default amount)."
+-- !Arguments "NewLine, Boolean , 100, Display the item in the pickup summary"
 
-LevelFuncs.Engine.Node.AddInventoryItem = function(item, count)
-    TEN.Inventory.GiveItem(item, count)
+LevelFuncs.Engine.Node.AddInventoryItem = function(item, count, addToPickupSummary)
+    TEN.Inventory.GiveItem(item, count, addToPickupSummary)
 end
 
 -- !Name "Remove item from inventory"

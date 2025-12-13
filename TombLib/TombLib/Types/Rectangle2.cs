@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace TombLib
 {
@@ -109,17 +110,23 @@ namespace TombLib
                 return FromCoordinates(coordinates[0], coordinates[1], coordinates[2]);
         }
 
-        public static Rectangle2 FromCoordinates(Vector2 coord0, Vector2 coord1, Vector2 coord2, Vector2? coord3 = null)
+		[MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+		public static Rectangle2 FromCoordinates(in Vector2 a, in Vector2 b, in Vector2 c)
         {
-            if (!coord3.HasValue)
-                return new Rectangle2(new Vector2(Math.Min(Math.Min(coord0.X, coord1.X), coord2.X), Math.Min(Math.Min(coord0.Y, coord1.Y), coord2.Y)),
-                                      new Vector2(Math.Max(Math.Max(coord0.X, coord1.X), coord2.X), Math.Max(Math.Max(coord0.Y, coord1.Y), coord2.Y)));
-            else
-                return new Rectangle2(new Vector2(Math.Min(Math.Min(Math.Min(coord0.X, coord1.X), coord2.X), coord3.Value.X), Math.Min(Math.Min(Math.Min(coord0.Y, coord1.Y), coord2.Y), coord3.Value.Y)),
-                                      new Vector2(Math.Max(Math.Max(Math.Max(coord0.X, coord1.X), coord2.X), coord3.Value.X), Math.Max(Math.Max(Math.Max(coord0.Y, coord1.Y), coord2.Y), coord3.Value.Y)));
+			var min = Vector2.Min(Vector2.Min(a, b), c);
+			var max = Vector2.Max(Vector2.Max(a, b), c);
+			return new Rectangle2(min, max);
         }
 
-        public bool Equals(Rectangle2 other) => this == other;
+		[MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+		public static Rectangle2 FromCoordinates(in Vector2 a, in Vector2 b, in Vector2 c, in Vector2 d)
+		{
+			var min = Vector2.Min(Vector2.Min(a, b), Vector2.Min(c, d));
+			var max = Vector2.Max(Vector2.Max(a, b), Vector2.Max(c, d));
+			return new Rectangle2(min, max);
+		}
+
+		public bool Equals(Rectangle2 other) => this == other;
         public override string ToString() => Start + " to " + End;
         public override bool Equals(object obj)
         {

@@ -58,7 +58,7 @@ namespace TombLib.GeometryIO
         {
             ImageC newImage = ImageC.CreateNew(RoomGeometryExporter.SplitPageSize, RoomGeometryExporter.SplitPageSize);
             newImage.CopyFrom(0, 0, _texture.Image, _startX, _startY, _width, _height);
-            newImage.Save(Path);
+            newImage.SaveToFile(Path);
         }
     }
 

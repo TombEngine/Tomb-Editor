@@ -20,12 +20,13 @@ namespace TombEditor.Forms
 
             if (_instance.Room.Level.Settings.GameVersion != TRVersion.Game.TR5)
                 comboCameraMode.Items.RemoveAt((int)CameraInstanceMode.Sniper);
-            if (_instance.Room.Level.Settings.GameVersion <= TRVersion.Game.TR3)
+            if (_instance.Room.Level.Settings.GameVersion.Native() <= TRVersion.Game.TR3)
                 comboCameraMode.Items.RemoveAt((int)CameraInstanceMode.Locked);
             if (_instance.Room.Level.Settings.GameVersion != TRVersion.Game.TRNG)
                 ckGlideOut.Enabled = false;
-            if (_instance.Room.Level.Settings.GameVersion >= TRVersion.Game.TR3 &&
-                _instance.Room.Level.Settings.GameVersion != TRVersion.Game.TRNG)
+            if (_instance.Room.Level.Settings.GameVersion.Native() >= TRVersion.Game.TR3 &&
+                _instance.Room.Level.Settings.GameVersion != TRVersion.Game.TRNG &&
+                _instance.Room.Level.Settings.GameVersion != TRVersion.Game.TombEngine)
                 nudMoveTimer.Enabled = false;
         }
 

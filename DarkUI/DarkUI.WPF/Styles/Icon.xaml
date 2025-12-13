@@ -1,0 +1,62 @@
+﻿<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="clr-namespace:DarkUI.WPF">
+
+	<local:InvertEffect x:Key="InvertEffect" />
+
+	<Style x:Key="ImageIcon" TargetType="{x:Type Image}">
+		<Setter Property="FlowDirection" Value="LeftToRight" />
+
+		<Style.Triggers>
+			<DataTrigger Binding="{Binding Path=(local:Defaults.ShouldIconsInvert)}" Value="True">
+				<Setter Property="Effect" Value="{StaticResource InvertEffect}" />
+			</DataTrigger>
+		</Style.Triggers>
+	</Style>
+
+	<Style x:Key="SmallImageIcon" TargetType="{x:Type Image}">
+		<Setter Property="MaxWidth" Value="{x:Static local:Defaults.Image_MaxIconWidth}" />
+		<Setter Property="MaxHeight" Value="{x:Static local:Defaults.Image_MaxIconHeight}" />
+
+		<Setter Property="FlowDirection" Value="LeftToRight" />
+
+		<Style.Triggers>
+			<DataTrigger Binding="{Binding Path=(local:Defaults.ShouldIconsInvert)}" Value="True">
+				<Setter Property="Effect" Value="{StaticResource InvertEffect}" />
+			</DataTrigger>
+		</Style.Triggers>
+	</Style>
+
+	<Style x:Key="SmallPathIcon" TargetType="{x:Type Path}">
+		<Setter Property="MaxWidth" Value="{x:Static local:Defaults.Path_MaxIconWidth}" />
+		<Setter Property="MaxHeight" Value="{x:Static local:Defaults.Path_MaxIconHeight}" />
+
+		<Setter Property="Fill" Value="{DynamicResource Brush_Text}" />
+
+		<Setter Property="FlowDirection" Value="LeftToRight" />
+		<Setter Property="Stretch" Value="Uniform" />
+	</Style>
+
+	<Style
+		x:Key="SmallPathIconForButtonsWithText"
+		BasedOn="{StaticResource SmallPathIcon}"
+		TargetType="{x:Type Path}">
+		<Setter Property="Margin">
+			<Setter.Value>
+				<Thickness Right="{x:Static local:Defaults.SmallThicknessWidth}" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style
+		x:Key="SmallImageIconForButtonsWithText"
+		BasedOn="{StaticResource SmallImageIcon}"
+		TargetType="{x:Type Image}">
+		<Setter Property="Margin">
+			<Setter.Value>
+				<Thickness Right="{x:Static local:Defaults.SmallThicknessWidth}" />
+			</Setter.Value>
+		</Setter>
+	</Style>
+</ResourceDictionary>

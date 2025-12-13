@@ -168,7 +168,7 @@ namespace WadTool
                         if (dataGridView.SelectedRows.Count > 1)
                             fileName = Path.Combine(Path.GetDirectoryName(fileName),
                                 Path.GetFileNameWithoutExtension(fileName) + row.Index.ToString("0000") + Path.GetExtension(fileName));
-                        ((WadSprite)row.DataBoundItem).Texture.Image.Save(fileName);
+                        ((WadSprite)row.DataBoundItem).Texture.Image.SaveToFile(fileName);
                     }
                 }
                 catch (Exception exc)

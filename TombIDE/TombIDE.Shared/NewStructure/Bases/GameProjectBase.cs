@@ -287,7 +287,8 @@ namespace TombIDE.Shared.NewStructure
 
 			return trproj.TargetGameVersion switch
 			{
-				TRVersion.Game.TR1 => new Tomb1MainGameProject(trproj, targetTrprojVersion),
+				TRVersion.Game.TR1 => new TR1XGameProject(trproj, targetTrprojVersion),
+				TRVersion.Game.TR2X => new TR2XGameProject(trproj, targetTrprojVersion),
 				TRVersion.Game.TR2 => new TR2GameProject(trproj, targetTrprojVersion),
 				TRVersion.Game.TR3 => new TR3GameProject(trproj, targetTrprojVersion),
 				TRVersion.Game.TR4 => new TR4GameProject(trproj, targetTrprojVersion),

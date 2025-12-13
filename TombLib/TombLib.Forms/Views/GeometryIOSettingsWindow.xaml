@@ -1,0 +1,204 @@
+﻿<Window
+	x:Class="TombLib.Forms.Views.GeometryIOSettingsWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+	xmlns:sg="clr-namespace:SpacedGridControl;assembly=SpacedGridControl"
+	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+	xmlns:viewModels="clr-namespace:TombLib.Forms.ViewModels;assembly=TombLib.Forms"
+	Title="{Binding WindowTitle}"
+	Width="400"
+	d:DataContext="{d:DesignInstance Type=viewModels:GeometryIOSettingsWindowViewModel}"
+	md:DialogServiceViews.IsRegistered="True"
+	Background="{DynamicResource Brush_Background}"
+	ResizeMode="CanMinimize"
+	SizeToContent="Height"
+	Style="{DynamicResource CustomWindowStyle}"
+	WindowStartupLocation="CenterScreen"
+	mc:Ignorable="d">
+
+	<Window.Resources>
+		<BooleanToVisibilityConverter x:Key="BoolToVisConverter" />
+	</Window.Resources>
+
+	<sg:SpacedGrid Margin="{x:Static darkUI:Defaults.MediumThickness}" RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<Border BorderBrush="{DynamicResource Brush_Border_Low}" BorderThickness="{x:Static darkUI:Defaults.BorderThickness}">
+			<sg:SpacedGrid
+				Margin="{x:Static darkUI:Defaults.MediumThickness}"
+				ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}"
+				RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+
+				<sg:SpacedGrid RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="*" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+
+					<GroupBox Header="{tombLib:Localize Axis}">
+						<controls:SpacedStack Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+							<CheckBox Content="{tombLib:Localize SwapXYAxes}" IsChecked="{Binding SwapXYAxes}" />
+							<CheckBox Content="{tombLib:Localize SwapXZAxes}" IsChecked="{Binding SwapXZAxes}" />
+							<CheckBox Content="{tombLib:Localize SwapYZAxes}" IsChecked="{Binding SwapYZAxes}" />
+							<CheckBox Content="{tombLib:Localize InvertXAxis}" IsChecked="{Binding InvertXAxis}" />
+							<CheckBox Content="{tombLib:Localize InvertYAxis}" IsChecked="{Binding InvertYAxis}" />
+							<CheckBox Content="{tombLib:Localize InvertZAxis}" IsChecked="{Binding InvertZAxis}" />
+							<CheckBox
+								Content="{tombLib:Localize InvertFaces}"
+								IsChecked="{Binding InvertFaces}"
+								IsEnabled="{Binding CanInvertFaces}" />
+						</controls:SpacedStack>
+					</GroupBox>
+
+					<GroupBox Grid.Row="1" Header="{tombLib:Localize Size}">
+						<sg:SpacedGrid ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+
+							<Label
+								VerticalAlignment="Center"
+								Content="{tombLib:Localize Scale}"
+								Target="{Binding ElementName=scaleNumericUpDown}" />
+							<controls:NumericUpDown
+								x:Name="scaleNumericUpDown"
+								Grid.Column="1"
+								FormatString="F4"
+								Increment="0.25"
+								IsEnabled="{Binding CanProcessGeometry}"
+								Maximum="2048"
+								Minimum="0.0001"
+								TextAlignment="Left"
+								Value="{Binding Scale}" />
+						</sg:SpacedGrid>
+					</GroupBox>
+				</sg:SpacedGrid>
+
+				<sg:SpacedGrid Grid.Column="1" RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+					</Grid.RowDefinitions>
+
+					<GroupBox Header="{tombLib:Localize TextureMapping}" IsEnabled="{Binding CanProcessTextures}">
+						<controls:SpacedStack Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+							<CheckBox Content="{tombLib:Localize InvertVCoordinate}" IsChecked="{Binding InvertVCoordinate}" />
+							<CheckBox Content="{tombLib:Localize UVMapped}" IsChecked="{Binding UvMapped}" />
+							<CheckBox Content="{tombLib:Localize WrapUV}" IsChecked="{Binding WrapUV}" />
+							<CheckBox Content="{tombLib:Localize PremultiplyUV}" IsChecked="{Binding PremultiplyUV}" />
+						</controls:SpacedStack>
+					</GroupBox>
+
+					<GroupBox Grid.Row="1" Header="{tombLib:Localize Misc}">
+						<controls:SpacedStack Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+							<CheckBox
+								Content="{tombLib:Localize VertexColorLight}"
+								IsChecked="{Binding VertexColorLight}"
+								IsEnabled="{Binding CanProcessGeometry}" />
+							<CheckBox
+								Content="{tombLib:Localize PackTextures}"
+								IsChecked="{Binding PackTextures}"
+								IsEnabled="{Binding CanPackTextures}" />
+							<CheckBox
+								Content="{tombLib:Localize PadPackedTextures}"
+								IsChecked="{Binding PadPackedTextures}"
+								IsEnabled="{Binding CanPadPackedTextures}" />
+							<CheckBox
+								Content="{tombLib:Localize SortByName}"
+								IsChecked="{Binding SortByName}"
+								IsEnabled="{Binding CanSortByName}" />
+							<CheckBox
+								Content="{tombLib:Localize KeepTexturesExternal}"
+								IsChecked="{Binding KeepTexturesExternal}"
+								IsEnabled="{Binding CanKeepTexturesExternal}" />
+						</controls:SpacedStack>
+					</GroupBox>
+				</sg:SpacedGrid>
+
+				<Grid Grid.Row="1" Grid.ColumnSpan="2">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+
+					<Label
+						VerticalAlignment="Center"
+						Content="{tombLib:Localize Preset}"
+						Target="{Binding ElementName=presetComboBox}">
+						<Label.Margin>
+							<Thickness Right="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+						</Label.Margin>
+					</Label>
+
+					<ComboBox
+						x:Name="presetComboBox"
+						Grid.Column="1"
+						ItemsSource="{Binding AvailablePresets}"
+						SelectedItem="{Binding SelectedPreset}" />
+
+					<Button
+						Grid.Column="2"
+						Command="{Binding SavePresetCommand}"
+						Style="{DynamicResource ButtonWithIconOnly}"
+						ToolTip="{tombLib:Localize SavePresetTooltip}"
+						Visibility="{Binding IsSelectedPresetUnsaved, Converter={StaticResource BoolToVisConverter}}">
+						<Button.Margin>
+							<Thickness Left="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+						</Button.Margin>
+
+						<Image Source="/TombLib.Forms;component/Resources/general_Save-16.png" />
+					</Button>
+
+					<Button
+						Grid.Column="3"
+						Command="{Binding DeletePresetCommand}"
+						Style="{DynamicResource ButtonWithIconOnly}"
+						ToolTip="{tombLib:Localize DeletePresetTooltip}"
+						Visibility="{Binding IsSelectedPresetCustom, Converter={StaticResource BoolToVisConverter}}">
+						<Button.Margin>
+							<Thickness Left="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+						</Button.Margin>
+
+						<Image Source="/TombLib.Forms;component/Resources/general_trash-16.png" />
+					</Button>
+				</Grid>
+			</sg:SpacedGrid>
+		</Border>
+
+		<controls:SpacedStack
+			Grid.Row="2"
+			HorizontalAlignment="Right"
+			Orientation="Horizontal"
+			Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+			<Button
+				Width="80"
+				Command="{Binding ConfirmCommand}"
+				Content="{tombLib:Localize ~Common.OK}" />
+			<Button
+				Width="80"
+				Command="{Binding CancelCommand}"
+				Content="{tombLib:Localize ~Common.Cancel}"
+				IsCancel="True"
+				IsDefault="True" />
+		</controls:SpacedStack>
+	</sg:SpacedGrid>
+</Window>

@@ -38,7 +38,7 @@ namespace TombEditor.Controls.ContextMenus
                 EditorActions.PlaceObject(targetRoom, targetSector, new CameraInstance());
             }));
 
-            if (editor.Level.Settings.GameVersion <= TRVersion.Game.TR2)
+            if (editor.Level.Settings.GameVersion.Native() <= TRVersion.Game.TR2)
             Items.Add(new ToolStripMenuItem("Add room sprite", Properties.Resources.objects_Sprite_16, (o, e) =>
             {
                 EditorActions.PlaceObject(targetRoom, targetSector, new SpriteInstance());

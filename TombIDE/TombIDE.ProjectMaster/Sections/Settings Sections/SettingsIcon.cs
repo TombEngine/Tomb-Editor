@@ -2,9 +2,11 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TombIDE.Shared;
 using TombIDE.Shared.SharedClasses;
+using TombLib.Utils;
 
 namespace TombIDE.ProjectMaster
 {
@@ -19,7 +21,7 @@ namespace TombIDE.ProjectMaster
 			InitializeComponent();
 		}
 
-		public void Initialize(IDE ide)
+		public async void Initialize(IDE ide)
 		{
 			_ide = ide;
 
@@ -34,7 +36,7 @@ namespace TombIDE.ProjectMaster
 				button_Reset.Enabled = false;
 			}
 			else
-				UpdateIcons();
+				await UpdateIcons();
 		}
 
 		#endregion Initialization
@@ -63,7 +65,7 @@ namespace TombIDE.ProjectMaster
 			}
 		}
 
-		private void button_Change_Click(object sender, EventArgs e)
+		private async void button_Change_Click(object sender, EventArgs e)
 		{
 			using (OpenFileDialog dialog = new OpenFileDialog())
 			{
@@ -71,11 +73,11 @@ namespace TombIDE.ProjectMaster
 				dialog.Filter = "Icon Files|*.ico";
 
 				if (dialog.ShowDialog(this) == DialogResult.OK)
-					ApplyIconToExe(dialog.FileName);
+					await ApplyIconToExe(dialog.FileName);
 			}
 		}
 
-		private void button_Reset_Click(object sender, EventArgs e)
+		private async void button_Reset_Click(object sender, EventArgs e)
 		{
 			DialogResult result = DarkMessageBox.Show(this, "Are you sure you want to restore the default icon?", "Are you sure?",
 				MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -83,7 +85,7 @@ namespace TombIDE.ProjectMaster
 			if (result == DialogResult.Yes)
 			{
 				string icoFilePath = Path.Combine(DefaultPaths.ProgramDirectory, "TIDE", "Templates", "Defaults", "Game Icons", _ide.Project.GameVersion + ".ico");
-				ApplyIconToExe(icoFilePath);
+				await ApplyIconToExe(icoFilePath);
 			}
 		}
 
@@ -91,12 +93,12 @@ namespace TombIDE.ProjectMaster
 
 		#region Methods
 
-		private void ApplyIconToExe(string iconPath)
+		private async Task ApplyIconToExe(string iconPath)
 		{
 			try
 			{
 				IconUtilities.InjectIcon(_ide.Project.GetLauncherFilePath(), iconPath);
-				UpdateIcons();
+				await UpdateIcons();
 			}
 			catch (Exception ex)
 			{
@@ -104,7 +106,7 @@ namespace TombIDE.ProjectMaster
 			}
 		}
 
-		private void UpdateIcons()
+		private async Task UpdateIcons()
 		{
 			string launcherFilePath = _ide.Project.GetLauncherFilePath();
 			string launcherDirectoryPath = Path.GetDirectoryName(launcherFilePath);
@@ -114,7 +116,11 @@ namespace TombIDE.ProjectMaster
 
 			try
 			{
-				File.Copy(launcherFilePath, tempFilePath);
+				// Try copying the file with retry logic
+				bool fileCopied = await FileUtils.TryCopyFileWithRetryAsync(launcherFilePath, tempFilePath);
+
+				if (!fileCopied)
+					return; // File copy failed, exit early
 
 				var ico_256 = IconUtilities.ExtractIcon(tempFilePath, IconSize.Jumbo).ToBitmap();
 
@@ -147,9 +153,8 @@ namespace TombIDE.ProjectMaster
 			}
 			finally
 			{
-				// Now delete the temporary .exe file
-				if (File.Exists(tempFilePath))
-					File.Delete(tempFilePath);
+				// Now delete the temporary .exe file with retry logic
+				await FileUtils.TryDeleteFileWithRetryAsync(tempFilePath);
 			}
 		}
 

@@ -65,7 +65,7 @@ namespace TombLib.LevelData.Compilers
                         {
                             for (int x = 0; x < room.NumXSectors; x++)
                             {
-                                int boxIndex = _level.Settings.GameVersion >= TRVersion.Game.TR3 ? 0x7ff : 0xffff;
+                                int boxIndex = _level.Settings.GameVersion.Native() >= TRVersion.Game.TR3 ? 0x7ff : 0xffff;
                                 if (!room.Properties.FlagExcludeFromPathFinding)
                                 {
                                     dec_tr_box_aux box = new dec_tr_box_aux();
@@ -84,7 +84,7 @@ namespace TombLib.LevelData.Compilers
                                 }
 
                                 ushort sectorBoxIndex = tempRoom.Sectors[tempRoom.NumZSectors * x + z].BoxIndex;
-                                if (_level.Settings.GameVersion >= TRVersion.Game.TR3)
+                                if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR3)
                                     sectorBoxIndex = (ushort)((sectorBoxIndex & 0x0f) | (boxIndex << 4));
                                 else
                                     sectorBoxIndex = (ushort)boxIndex;
@@ -173,9 +173,9 @@ namespace TombLib.LevelData.Compilers
 
                                     dec_overlaps[dec_numOverlaps] = (ushort)j;
 
-                                    if (_level.Settings.GameVersion >= TRVersion.Game.TR4 && dec_jump)
+                                    if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR4 && dec_jump)
                                         dec_overlaps[dec_numOverlaps] |= 0x800;
-                                    if (_level.Settings.GameVersion >= TRVersion.Game.TR3 && dec_monkey)
+                                    if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR3 && dec_monkey)
                                         dec_overlaps[dec_numOverlaps] |= 0x2000;
 
                                     dec_numOverlaps++;
@@ -214,9 +214,9 @@ namespace TombLib.LevelData.Compilers
 
                                         dec_overlaps[dec_numOverlaps] = (ushort)j;
 
-                                        if (_level.Settings.GameVersion >= TRVersion.Game.TR4 && dec_jump)
+                                        if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR4 && dec_jump)
                                             dec_overlaps[dec_numOverlaps] |= 0x800;
-                                        if (_level.Settings.GameVersion >= TRVersion.Game.TR3 && dec_monkey)
+                                        if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR3 && dec_monkey)
                                             dec_overlaps[dec_numOverlaps] |= 0x2000;
 
                                         dec_numOverlaps++;
@@ -330,7 +330,7 @@ namespace TombLib.LevelData.Compilers
                 box.Flag0x04 = true;
             }
 
-            if (_level.Settings.GameVersion >= TRVersion.Game.TR3 && dec_monkey)
+            if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR3 && dec_monkey)
             {
                 box.Monkey = true;
                 monkey = true;
@@ -906,7 +906,7 @@ namespace TombLib.LevelData.Compilers
 
             if (slope1 + slope2 + slope4 + slope3 >= 3 || slope1 + slope3 == 2 || slope2 + slope4 == 2)
             {
-                if (_level.Settings.GameVersion < TRVersion.Game.TR3)
+                if (_level.Settings.GameVersion.Native() < TRVersion.Game.TR3)
                     slope = true;
                 else if (dec_water && room.Properties.Type != RoomType.Water)
                     return 0x7fff;
@@ -921,7 +921,7 @@ namespace TombLib.LevelData.Compilers
                     }
                     else
                     {
-                        if (_level.Settings.GameVersion < TRVersion.Game.TR3)
+                        if (_level.Settings.GameVersion.Native() < TRVersion.Game.TR3)
                             slope = true;
                         else if (dec_water && room.Properties.Type != RoomType.Water)
                             return 0x7fff;
@@ -931,7 +931,7 @@ namespace TombLib.LevelData.Compilers
                 {
                     if (slope1 + slope4 == 2 || slope2 + slope3 == 2)
                     {
-                        if (_level.Settings.GameVersion < TRVersion.Game.TR3)
+                        if (_level.Settings.GameVersion.Native() < TRVersion.Game.TR3)
                             slope = true;
                         else if (dec_water && room.Properties.Type != RoomType.Water)
                             return 0x7fff;
@@ -941,7 +941,7 @@ namespace TombLib.LevelData.Compilers
 
             if ((sector.Flags & SectorFlags.Box) == 0)
             {
-                dec_monkey = _level.Settings.GameVersion >= TRVersion.Game.TR3 && (sector.Flags & SectorFlags.Monkey) != 0;
+                dec_monkey = _level.Settings.GameVersion.Native() >= TRVersion.Game.TR3 && (sector.Flags & SectorFlags.Monkey) != 0;
                 return floorHeight;
             }
             else
@@ -949,7 +949,7 @@ namespace TombLib.LevelData.Compilers
                 if (!dec_graybox)
                 {
                     dec_graybox = true;
-                    dec_monkey = _level.Settings.GameVersion >= TRVersion.Game.TR3 && (sector.Flags & SectorFlags.Monkey) != 0;
+                    dec_monkey = _level.Settings.GameVersion.Native() >= TRVersion.Game.TR3 && (sector.Flags & SectorFlags.Monkey) != 0;
                     return floorHeight;
                 }
                 else
@@ -962,7 +962,7 @@ namespace TombLib.LevelData.Compilers
         private bool Dec_CheckIfCanJumpX(ref dec_tr_box_aux a, ref dec_tr_box_aux b)
         {
             // Jump is from TR4
-            if (_level.Settings.GameVersion < TRVersion.Game.TR4) return false;
+            if (_level.Settings.GameVersion.Native() < TRVersion.Game.TR4) return false;
 
             // Boxes must have the same height for jump
             if (a.TrueFloor != b.TrueFloor) return false;
@@ -1065,7 +1065,7 @@ namespace TombLib.LevelData.Compilers
         private bool Dec_CheckIfCanJumpZ(ref dec_tr_box_aux a, ref dec_tr_box_aux b)
         {
             // Jump is from TR4
-            if (_level.Settings.GameVersion < TRVersion.Game.TR4) return false;
+            if (_level.Settings.GameVersion.Native() < TRVersion.Game.TR4) return false;
 
             // Boxes must have the same height for jump
             if (a.TrueFloor != b.TrueFloor) return false;
@@ -1341,7 +1341,7 @@ namespace TombLib.LevelData.Compilers
                     return false;
                 }
 
-                if (_level.Settings.GameVersion >= TRVersion.Game.TR3 && box1.Monkey && box2.Monkey) dec_monkey = true;
+                if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR3 && box1.Monkey && box2.Monkey) dec_monkey = true;
                 return true;
             }
 
@@ -1349,7 +1349,7 @@ namespace TombLib.LevelData.Compilers
             {
                 if (box1.TrueFloor != box2.TrueFloor) return false;
 
-                if (_level.Settings.GameVersion >= TRVersion.Game.TR3 && box1.Monkey && box2.Monkey) dec_monkey = true;
+                if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR3 && box1.Monkey && box2.Monkey) dec_monkey = true;
                 return true;
             }
 
@@ -1368,13 +1368,13 @@ namespace TombLib.LevelData.Compilers
 
             if (box1.Zmin != box2.Zmax)
             {
-                if (_level.Settings.GameVersion >= TRVersion.Game.TR3 && box1.Monkey && box2.Monkey) dec_monkey = true;
+                if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR3 && box1.Monkey && box2.Monkey) dec_monkey = true;
                 return true;
             }
 
             if (Dec_OverlapZmin(ref box1, ref box2))
             {
-                if (_level.Settings.GameVersion >= TRVersion.Game.TR3 && box1.Monkey && box2.Monkey) dec_monkey = true;
+                if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR3 && box1.Monkey && box2.Monkey) dec_monkey = true;
                 return true;
             }
 

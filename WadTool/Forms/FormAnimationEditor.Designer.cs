@@ -50,6 +50,7 @@ namespace WadTool
             this.drawGizmoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.drawGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.drawCollisionBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.drawSkinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.smoothAnimationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.scrollGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -527,6 +528,7 @@ namespace WadTool
             this.drawGizmoToolStripMenuItem,
             this.drawGridToolStripMenuItem,
             this.drawCollisionBoxToolStripMenuItem,
+            this.drawSkinToolStripMenuItem,
             this.toolStripSeparator9,
             this.smoothAnimationsToolStripMenuItem,
             this.scrollGridToolStripMenuItem,
@@ -571,6 +573,18 @@ namespace WadTool
             this.drawCollisionBoxToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.drawCollisionBoxToolStripMenuItem.Text = "Draw collision box";
             this.drawCollisionBoxToolStripMenuItem.Click += new System.EventHandler(this.drawCollisionBoxToolStripMenuItem_Click);
+            // 
+            // drawSkinToolStripMenuItem
+            // 
+            this.drawSkinToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            this.drawSkinToolStripMenuItem.Checked = true;
+            this.drawSkinToolStripMenuItem.CheckOnClick = true;
+            this.drawSkinToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.drawSkinToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            this.drawSkinToolStripMenuItem.Name = "drawSkinToolStripMenuItem";
+            this.drawSkinToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.drawSkinToolStripMenuItem.Text = "Draw skinned mesh";
+            this.drawSkinToolStripMenuItem.Click += drawSkinToolStripMenuItem_Click;
             // 
             // toolStripSeparator9
             // 
@@ -2875,5 +2889,6 @@ namespace WadTool
         private System.Windows.Forms.ToolStripMenuItem currentAnimationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectedAnimationsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem allAnimationsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem drawSkinToolStripMenuItem;
     }
 }

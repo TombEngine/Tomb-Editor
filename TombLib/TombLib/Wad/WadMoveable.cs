@@ -38,18 +38,18 @@ namespace TombLib.Wad
         public bool IsWaterfall(TRVersion.Game gameVersion)
         {
             return (gameVersion.Native() == TRVersion.Game.TR4 && TypeId >= 423 && TypeId <= 425) ||
-                   (gameVersion.Native() >= TRVersion.Game.TR5 && TypeId >= 410 && TypeId <= 415);
+                   (gameVersion.Native() == TRVersion.Game.TR5 && TypeId >= 410 && TypeId <= 415);
         }
         public bool IsOptics(TRVersion.Game gameVersion)
         {
             return (gameVersion.Native() == TRVersion.Game.TR4 && TypeId >= 461 && TypeId <= 462) ||
-                   (gameVersion.Native() >= TRVersion.Game.TR5 && TypeId >= 456 && TypeId <= 457);
+                   (gameVersion.Native() == TRVersion.Game.TR5 && TypeId >= 456 && TypeId <= 457);
         }
 
         public static WadMoveableId Lara = new WadMoveableId(0);
 
         public static WadMoveableId? GetHorizon(TRVersion.Game gameVersion) {
-            switch (gameVersion) {
+            switch (gameVersion.Native()) {
                 case TRVersion.Game.TR2:
                     return new WadMoveableId(254);
                 case TRVersion.Game.TR3:
@@ -70,7 +70,8 @@ namespace TombLib.Wad
     {
         public WadMoveableId Id { get; private set; }
         public DataVersion Version { get; set; } = DataVersion.GetNext();
-        public List<WadMesh> Meshes => /*Skeleton.LinearizedBones*/ Bones.Select(bone => bone.Mesh).ToList();
+        public WadMesh Skin { get; set; }
+        public List<WadMesh> Meshes => Bones.Select(bone => bone.Mesh).ToList();
         public List<WadAnimation> Animations { get; } = new List<WadAnimation>();
         //public WadBone Skeleton { get; set; } = new WadBone();
         public List<WadBone> Bones { get; } = new List<WadBone>();
@@ -87,6 +88,7 @@ namespace TombLib.Wad
         public WadMoveable Clone()
         {
             var mov = new WadMoveable(Id);
+            mov.Skin = Skin?.Clone() ?? null;
             foreach (var mesh in Meshes)
                 mov.Meshes.Add(mesh.Clone());
             foreach (var bone in Bones)
@@ -117,11 +119,14 @@ namespace TombLib.Wad
             // If skin is the same as in previous call, immediately return same skinned model.
             // Otherwise construct skinned model again.
 
-            if (_skin != null && _skin == skin)
+            if (_skin != null && _skinnedModel != null && _skinnedModel.Version == skin.Version)
                 return _skinnedModel;
 
             _skin = skin;
             _skinnedModel = new WadMoveable(Id);
+
+            if (skin.Skin != null)
+                _skinnedModel.Skin = skin.Skin;
 
             for (int i = 0; i < Meshes.Count; i++)
             {
@@ -146,6 +151,7 @@ namespace TombLib.Wad
             else
                 _skinnedModel.Animations.Add(new WadAnimation());
 
+            _skinnedModel.Version = skin.Version;
             return _skinnedModel;
         }
     }

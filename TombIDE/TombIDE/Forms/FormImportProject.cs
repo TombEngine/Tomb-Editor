@@ -46,7 +46,7 @@ namespace TombIDE
 
 			button_Import.Text = "Import " + projectDTO.GameVersion + " Project";
 
-			if (projectDTO.GameVersion is TRVersion.Game.TR1 or TRVersion.Game.TombEngine) // Hardcoded script paths
+			if (projectDTO.GameVersion is TRVersion.Game.TR1 or TRVersion.Game.TR2X or TRVersion.Game.TombEngine) // Hardcoded script paths
 			{
 				textBox_ScriptPath.ReadOnly = true;
 				button_BrowseScript.Enabled = false;
@@ -138,7 +138,8 @@ namespace TombIDE
 
 				IGameProject importedProject = ProjectDTO.GameVersion switch
 				{
-					TRVersion.Game.TR1 => new Tomb1MainGameProject(projectName, projectDirectory, levelsDirectoryPath),
+					TRVersion.Game.TR1 => new TR1XGameProject(projectName, projectDirectory, levelsDirectoryPath),
+					TRVersion.Game.TR2X => new TR2XGameProject(projectName, projectDirectory, levelsDirectoryPath),
 					TRVersion.Game.TR2 => new TR2GameProject(projectName, projectDirectory, levelsDirectoryPath, scriptDirectoryPath),
 					TRVersion.Game.TR3 => new TR3GameProject(projectName, projectDirectory, levelsDirectoryPath, scriptDirectoryPath),
 					TRVersion.Game.TR4 => new TR4GameProject(projectName, projectDirectory, levelsDirectoryPath, scriptDirectoryPath),

@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <Configurations>Debug;Release</Configurations>
+    <Platforms>x64;x86</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <OutputPath>..\..\Build ($(Platform))\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <OutputPath>..\..\BuildRelease ($(Platform))\</OutputPath>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x86'">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\down-right-16.png" />
+    <None Remove="Resources\Invert.ps" />
+    <None Remove="Resources\search-16.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CustomMessageBox.WPF" Version="1.2.1" />
+    <PackageReference Include="SpacedGrid-WPF" Version="1.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\down-right-16.png" />
+    <Resource Include="Resources\Invert.ps" />
+    <Resource Include="Resources\search-16.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Dictionaries\BlackColors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Dictionaries\DarkColors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Dictionaries\LightColors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Dictionaries\MarginsPaddingsAndSizes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Dictionaries\PathDefinitions.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+
+</Project>

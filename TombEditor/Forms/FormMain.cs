@@ -133,7 +133,7 @@ namespace TombEditor.Forms
                 obj is Editor.LevelChangedEvent ||
                 obj is Editor.ConfigurationChangedEvent)
             {
-                addSpriteToolStripMenuItem.Visible = _editor.Level.Settings.GameVersion <= TRVersion.Game.TR2;
+                addSpriteToolStripMenuItem.Visible = _editor.Level.Settings.GameVersion.Native() <= TRVersion.Game.TR2;
 
                 makeQuickItemGroupToolStripMenuItem.Visible = _editor.Level.IsNG;
 
@@ -145,7 +145,7 @@ namespace TombEditor.Forms
 
                 increaseStepHeightToolStripMenuItem.Visible =
                 decreaseStepHeightToolStripMenuItem.Visible =
-				toolStripSeparator10.Visible = _editor.Level.IsTombEngine || _editor.Configuration.Editor_EnableStepHeightControlsForUnsupportedEngines;
+                toolStripSeparator10.Visible = _editor.Level.IsTombEngine || _editor.Configuration.Editor_EnableStepHeightControlsForUnsupportedEngines;
             }
 
             // Clear autosave information
@@ -167,10 +167,16 @@ namespace TombEditor.Forms
                 smoothRandomCeilingUpToolStripMenuItem.Enabled = validSectorSelection;
                 smoothRandomFloorDownToolStripMenuItem.Enabled = validSectorSelection;
                 smoothRandomFloorUpToolStripMenuItem.Enabled = validSectorSelection;
+                smoothFloorToolStripMenuItem.Enabled = validSectorSelection;
+                smoothCeilingToolStripMenuItem.Enabled = validSectorSelection;
                 sharpRandomCeilingDownToolStripMenuItem.Enabled = validSectorSelection;
                 sharpRandomCeilingUpToolStripMenuItem.Enabled = validSectorSelection;
                 sharpRandomFloorDownToolStripMenuItem.Enabled = validSectorSelection;
                 sharpRandomFloorUpToolStripMenuItem.Enabled = validSectorSelection;
+                realignFloorToStepHeightToolStripMenuItem.Enabled = validSectorSelection;
+                realignCeilingToStepHeightToolStripMenuItem.Enabled = validSectorSelection;
+                convertFloorToQuadsToolStripMenuItem.Enabled = validSectorSelection;
+                convertCeilingToQuadsToolStripMenuItem.Enabled = validSectorSelection;
                 averageCeilingToolStripMenuItem.Enabled = validSectorSelection;
                 averageFloorToolStripMenuItem.Enabled = validSectorSelection;
                 gridWallsIn3ToolStripMenuItem.Enabled = validSectorSelection;
@@ -189,7 +195,7 @@ namespace TombEditor.Forms
                 statusAutosave.ForeColor = success ? Colors.LightText : Colors.BlueHighlight;
 
                 if (!success)
-                    _editor.SendMessage("Autosave failed. Error: " + evt.Exception.Message + 
+                    _editor.SendMessage("Autosave failed. Error: " + evt.Exception.Message +
                                         "\nRestart Tomb Editor and continue from last valid version.", PopupType.Warning);
             }
 
@@ -246,7 +252,7 @@ namespace TombEditor.Forms
                         "(" + (room.Position.X + _editor.SelectedSectors.Area.X1) + ", " + (room.Position.Z + _editor.SelectedSectors.Area.Y1) + ")" +
                         " | y = [" + (minHeight == int.MaxValue || maxHeight == int.MinValue ? "N/A" : posY + minHeight + ", " + (posY + maxHeight)) + "]";
 
-                    statusStripLocalSelectionArea.Text = "Size = " + (1 + Math.Abs(_editor.SelectedSectors.Size.X)) + 
+                    statusStripLocalSelectionArea.Text = "Size = " + (1 + Math.Abs(_editor.SelectedSectors.Size.X)) +
                         " x " + (1 + Math.Abs(_editor.SelectedSectors.Size.Y));
                 }
             }
@@ -350,7 +356,7 @@ namespace TombEditor.Forms
             openRecentToolStripMenuItem.DropDownItems.Clear();
 
             if (Properties.Settings.Default.RecentProjects != null && Properties.Settings.Default.RecentProjects.Count > 0)
-                foreach(var fileName in Properties.Settings.Default.RecentProjects)
+                foreach (var fileName in Properties.Settings.Default.RecentProjects)
                 {
                     if (fileName == _editor.Level.Settings.LevelFilePath) // Skip currently loaded level
                         continue;
@@ -466,7 +472,7 @@ namespace TombEditor.Forms
                     break;
             }
 
-            if(!e.Cancel)
+            if (!e.Cancel)
             {
                 // Always save window properties on exit and resave config!
                 SaveWindowLayout(_editor.Configuration);
@@ -592,7 +598,7 @@ namespace TombEditor.Forms
         protected override void OnActivated(EventArgs e)
         {
             base.OnActivated(e);
-                _editor.Focus();
+            _editor.Focus();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -708,7 +714,7 @@ namespace TombEditor.Forms
         private void debugScriptToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ////var script = Script.LoadFromTxt("E:\\trle\\script\\script.txt");
-          // script.CompileScript("E:\\trle\\script\\");
+            // script.CompileScript("E:\\trle\\script\\");
             //Script.Test();
         }
 

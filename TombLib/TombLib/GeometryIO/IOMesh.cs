@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Numerics;
 using TombLib.Utils;
 
@@ -9,6 +8,7 @@ namespace TombLib.GeometryIO
     {
         public string Name { get; private set; }
         public List<Vector3> Positions { get; private set; } = new List<Vector3>();
+        public List<List<KeyValuePair<int, float>>> Weights { get; private set; } = new List<List<KeyValuePair<int, float>>>();
         public List<Vector3> Normals { get; private set; } = new List<Vector3>();
         public List<Vector2> UV { get; private set; } = new List<Vector2>();
         public List<Vector4> Colors { get; private set; } = new List<Vector4>();

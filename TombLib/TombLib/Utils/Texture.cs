@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Linq;
 using System.Collections.Generic;
 using TombLib.LevelData;
+using System.Runtime.CompilerServices;
 
 namespace TombLib.Utils
 {
@@ -10,10 +11,13 @@ namespace TombLib.Utils
     {
         public static ImageC UnloadedPlaceholder { get; } = ImageC.Black;
 
-        // Do not change the image with this methode
+        // Do not change the image with this method
         public ImageC Image { get; protected set; } = UnloadedPlaceholder;
 
-        public abstract Texture Clone();
+		// This helps the texture packer of TombEngine compiler to have ready paths for doing sidecar loading
+		public string AbsolutePath { get; set; }
+
+		public abstract Texture Clone();
 
         object ICloneable.Clone()
         {
@@ -144,14 +148,14 @@ namespace TombLib.Utils
             {
                 blendCount = 7;
             }
-            else if (((settings.GameEnableExtraBlendingModes ?? false) && settings.GameVersion.Legacy() == TRVersion.Game.TR4))
+            else if (((settings.GameEnableExtraBlendingModes ?? false) && settings.GameVersion.Native() == TRVersion.Game.TR4))
             {
                 blendCount = 6;
             }
             else
             {
                 // Additive blending is for TR3-5 only
-                if (settings.GameVersion >= TRVersion.Game.TR3)
+                if (settings.GameVersion.Native() >= TRVersion.Game.TR3)
                     blendCount = 2;
                 else
                     blendCount = 1; // Type 0 exists everywhere
@@ -296,7 +300,20 @@ namespace TombLib.Utils
         public static bool operator !=(TextureArea first, TextureArea second) => !(first == second);
         public bool Equals(TextureArea other) => this == other;
         public override bool Equals(object other) => other is TextureArea && this == (TextureArea)other;
-        public override int GetHashCode() => base.GetHashCode();
+
+        public override int GetHashCode()
+        {
+            var hash = new HashCode();
+            hash.Add(Texture);
+            hash.Add(TexCoord0);
+            hash.Add(TexCoord1);
+            hash.Add(TexCoord2);
+            hash.Add(TexCoord3);
+            hash.Add(ParentArea);
+            hash.Add(BlendMode);
+            hash.Add(DoubleSided);
+            return hash.ToHashCode();
+        }
 
         public bool TextureIsUnavailable => Texture == null || Texture.IsUnavailable;
         public bool TextureIsInvisible => Texture == TextureInvisible.Instance || Texture == null;
@@ -333,15 +350,13 @@ namespace TombLib.Utils
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public Rectangle2 GetRect(bool? isTriangle = null)
         {
-            if (!isTriangle.HasValue)
-                isTriangle = TextureIsTriangle;
-
-            if (isTriangle.Value)
-                return Rectangle2.FromCoordinates(TexCoord0, TexCoord1, TexCoord2);
-            else
-                return Rectangle2.FromCoordinates(TexCoord0, TexCoord1, TexCoord2, TexCoord3);
+            bool tri = isTriangle ?? TextureIsTriangle;
+            return tri
+                ? Rectangle2.FromCoordinates(TexCoord0, TexCoord1, TexCoord2)
+                : Rectangle2.FromCoordinates(TexCoord0, TexCoord1, TexCoord2, TexCoord3);
         }
 
         public Vector2[] TexCoords
@@ -360,6 +375,7 @@ namespace TombLib.Utils
 
         // Gets canonical texture area which is compatible with UVRotate routine
         // and also puts rotational difference into Rotation out parameter
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public TextureArea GetCanonicalTexture(bool isTriangle)
         {
             var minY = GetRect(isTriangle).Start.Y;
@@ -526,7 +542,8 @@ namespace TombLib.Utils
             }
         }
 
-        public void Rotate(int iter = 1, bool isTriangle = false)
+		[MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+		public void Rotate(int iter = 1, bool isTriangle = false)
         {
             for (int i = 0; i < iter; i++)
             {

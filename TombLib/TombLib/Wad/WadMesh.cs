@@ -18,6 +18,64 @@ namespace TombLib.Wad
         public int Move;
     }
 
+    public struct VertexWeight
+    {
+        public int[] Index;
+        public float[] Weight;
+
+        public VertexWeight()
+        {
+            Index = new int[4];
+            Weight = new float[4];
+        }
+
+        public bool Valid()
+        {
+            return Weight[0] > 0.0f || Weight[1] > 0.0f ||
+                   Weight[2] > 0.0f || Weight[3] > 0.0f;
+        }
+
+        public static bool operator ==(VertexWeight a, VertexWeight b)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (a.Index[i] != b.Index[i] || a.Weight[i] != b.Weight[i])
+                    return false;
+            }
+            return true;
+        }
+
+        public static bool operator !=(VertexWeight a, VertexWeight b)
+        {
+            return !(a == b);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is VertexWeight other && this == other;
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            for (int i = 0; i < 4; i++)
+            {
+                hash = hash * 23 + Index[i];
+                hash = hash * 23 + Weight[i].GetHashCode();
+            }
+            return hash;
+        }
+
+        public override string ToString()
+        {
+            var epsilon = 0.001f;
+            return (Weight[0] > epsilon ? (Index[0].ToString() + ": " + Weight[0].ToString() + "\n") : string.Empty) +
+                   (Weight[1] > epsilon ? (Index[1].ToString() + ": " + Weight[1].ToString() + "\n") : string.Empty) +
+                   (Weight[2] > epsilon ? (Index[2].ToString() + ": " + Weight[2].ToString() + "\n") : string.Empty) +
+                   (Weight[3] > epsilon ? (Index[3].ToString() + ": " + Weight[3].ToString() + "\n") : string.Empty);
+        }
+    }
+
     public class WadMesh : ICloneable
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
@@ -26,20 +84,22 @@ namespace TombLib.Wad
         public List<Vector3> VertexPositions { get; set; } = new List<Vector3>();
         public List<Vector3> VertexNormals { get; set; } = new List<Vector3>();
         public List<Vector3> VertexColors { get; set; } = new List<Vector3>();
+        public List<VertexWeight> VertexWeights { get; set; } = new List<VertexWeight>();
         public List<VertexAttributes> VertexAttributes { get; set; } = new List<VertexAttributes>();
         public List<WadPolygon> Polys { get; set; } = new List<WadPolygon>();
         public BoundingSphere BoundingSphere { get; set; }
         public BoundingBox BoundingBox { get; set; }
         public WadMeshLightingType LightingType { get; set; }
+        public bool Hidden { get; set; }
 
         public Hash Hash => Hash.FromByteArray(ToByteArray());
 
         public bool HasColors  => VertexColors.Count == VertexPositions.Count;
         public bool HasNormals => VertexNormals.Count == VertexPositions.Count;
         public bool HasAttributes => VertexAttributes.Count == VertexPositions.Count;
+        public bool HasWeights => VertexWeights.Count == VertexPositions.Count;
 
-        public List<TextureArea> TextureAreas => Polys.GroupBy(p => p.Texture.GetCanonicalTexture(p.IsTriangle))
-                                                       .Select(g => g.Key).Distinct().ToList();
+        public List<TextureArea> TextureAreas => Polys.AsParallel().Select(p => p.Texture.GetCanonicalTexture(p.IsTriangle)).Distinct().ToList();
 
         public static readonly TextureArea EmptyTextureArea = new TextureArea()
         {
@@ -57,6 +117,7 @@ namespace TombLib.Wad
             mesh.VertexNormals = new List<Vector3>(VertexNormals);
             mesh.VertexColors = new List<Vector3>(VertexColors);
             mesh.VertexAttributes = new List<VertexAttributes>(VertexAttributes);
+            mesh.VertexWeights = new List<VertexWeight>(VertexWeights);
             mesh.Polys = new List<WadPolygon>(Polys);
             return mesh;
         }
@@ -93,6 +154,14 @@ namespace TombLib.Wad
                         writer.Write(VertexAttributes[i].Glow);
                         writer.Write(VertexAttributes[i].Move);
                     }
+
+                if (VertexWeights.Count > 0)
+                    for (int i = 0; i < VertexWeights.Count; i++)
+                        for (int j = 0; j < VertexWeights[i].Index.Length; j++)
+                        {
+                            writer.Write(VertexWeights[i].Index[j]);
+                            writer.Write(VertexWeights[i].Weight[j]);
+                        }
 
                 int numPolygons = Polys.Count;
                 writer.Write(numPolygons);
@@ -195,6 +264,12 @@ namespace TombLib.Wad
                 VertexAttributes = Enumerable.Repeat(new VertexAttributes(), VertexPositions.Count).ToList();
             }
 
+            if (!HasWeights)
+            {
+                result = true;
+                VertexWeights = Enumerable.Repeat(new VertexWeight(), VertexPositions.Count).ToList();
+            }
+
             return result;
         }
 
@@ -282,6 +357,9 @@ namespace TombLib.Wad
                 pages = Wad2.PackTexturesForExport(texturePieces, settings.PadPackedTextures ? 4 : 0);
             else
                 pages = tempTextures.Values.ToList();
+
+            // Clean up incorrect textures
+            pages = pages.Where(p => p.Image.Width > 0 && p.Image.Height > 0).ToList();
 
             var name = string.IsNullOrEmpty(mesh.Name) ? "UntitledMesh" : mesh.Name;
 
@@ -395,7 +473,7 @@ namespace TombLib.Wad
             {
                 var textureFileName = name + "_" + i + ".png";
                 var path = Path.Combine(Path.GetDirectoryName(filePath), textureFileName);
-                pages[i].Image.Save(path);
+                pages[i].Image.SaveToFile(path);
             }
 
             return model;
@@ -416,8 +494,14 @@ namespace TombLib.Wad
             {
                 var importer = BaseGeometryImporter.CreateForFile(fileName, settings, absoluteTexturePath =>
                 {
-                    return new WadTexture(ImageC.FromFile(absoluteTexturePath));
-                });
+					var image = ImageC.FromFile(absoluteTexturePath);
+					if (!settings.KeepTexturesExternal)
+						image.FileName = string.Empty;
+                    
+                    var texture = new WadTexture(image);
+                    texture.AbsolutePath = image.FileName;
+                    return texture;
+				});
                 tmpModel = importer.ImportFromFile(fileName);
 
                 calculateNormals = importer is MetasequoiaImporter;
@@ -436,6 +520,7 @@ namespace TombLib.Wad
                 var tmpPos  = new List<Vector3>();
                 var tmpCol  = new List<Vector3>();
                 var tmpNor  = new List<Vector3>();
+                var tmpWgt  = new List<VertexWeight>();
 
                 if (mesh == null || !mergeIntoOne)
                 {
@@ -456,6 +541,48 @@ namespace TombLib.Wad
                 // Copy vertex colors, if they are consistent and omit alpha if exists
                 if (tmpMesh.Colors.Count == tmpMesh.Positions.Count)
                     tmpCol.AddRange(tmpMesh.Colors.Select(v => v.To3()));
+
+                if (tmpMesh.Weights.Count == tmpMesh.Positions.Count)
+                    tmpWgt.AddRange(tmpMesh.Weights.Select(v =>
+                    {
+                        var weight = new VertexWeight();
+
+                        int addedCount = 0;
+
+                        for (int w = 0; w < v.Count; w++)
+                        {
+                            // Maximum bone weight count reached, exit conversion process.
+                            if (addedCount >= weight.Index.Length)
+                                break;
+
+                            var value = v.ElementAt(w).Value;
+
+                            // Discard weights below threshold, which may have been added by smooth pass.
+                            // Threshold is approximately equal to lowest possible 8-bit value (1 / 255).
+                            if (value < 0.004f)
+                                continue;
+
+                            weight.Index[addedCount] = v.ElementAt(w).Key;
+                            weight.Weight[addedCount] = value;
+
+                            addedCount++;
+                        }
+
+                        // Normalize weights.
+
+                        float total = weight.Weight[0] + weight.Weight[1] + weight.Weight[2] + weight.Weight[3];
+                        if (total == 0.0f)
+                        {
+                            for (int w = 0; w < 4; w++)
+                                weight.Weight[w] = 0.0f;
+                            return weight;
+                        }
+
+                        for (int w = 0; w < 4; w++)
+                            weight.Weight[w] /= total;
+
+                        return weight;
+                    }));
 
                 foreach (var tmpSubmesh in tmpMesh.Submeshes)
                     foreach (var tmpPoly in tmpSubmesh.Value.Polygons)
@@ -483,7 +610,8 @@ namespace TombLib.Wad
                             {
                                 if (tmpPos[tmpIndex] == mesh.VertexPositions[k] &&
                                     (mesh.VertexColors.Count  == 0 || tmpCol[tmpIndex] == mesh.VertexColors[k]) &&
-                                    (mesh.VertexNormals.Count == 0 || tmpNor[tmpIndex] == mesh.VertexNormals[k]))
+                                    (mesh.VertexNormals.Count == 0 || tmpNor[tmpIndex] == mesh.VertexNormals[k]) &&
+                                    (mesh.VertexWeights.Count == 0 || tmpWgt[tmpIndex] == mesh.VertexWeights[k]))
                                 {
                                     candidate = k;
                                     break;
@@ -500,6 +628,7 @@ namespace TombLib.Wad
                                 mesh.VertexPositions.Add(tmpPos[tmpIndex]);
                                 if (tmpCol.Count > 0) mesh.VertexColors.Add(tmpCol[tmpIndex]);
                                 if (tmpNor.Count > 0) mesh.VertexNormals.Add(tmpNor[tmpIndex]);
+                                if (tmpWgt.Count > 0) mesh.VertexWeights.Add(tmpWgt[tmpIndex]);
                             }
 
                             switch (j)

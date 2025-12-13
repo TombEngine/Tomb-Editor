@@ -60,7 +60,7 @@
 			this.comboBox_FileFormat.FormattingEnabled = true;
 			this.comboBox_FileFormat.Items.AddRange(new object[] {
             ".TXT (Text file)",
-            ".JSON5 (T1M / TR1X File)",
+            ".JSON5 (TR1X / TR2X File)",
             ".LUA (Lua file)"});
 			this.comboBox_FileFormat.Location = new System.Drawing.Point(71, 370);
 			this.comboBox_FileFormat.Margin = new System.Windows.Forms.Padding(0, 3, 3, 6);

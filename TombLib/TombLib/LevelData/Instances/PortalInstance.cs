@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NAudio.Gui;
+using System;
+using System.Runtime.CompilerServices;
 using TombLib.LevelData.SectorEnums;
 using TombLib.Utils;
 
@@ -239,10 +241,30 @@ namespace TombLib.LevelData
             return true;
         }
 
+        // For compatibility with legacy compiler
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public bool PositionOnPortal(VectorInt3 pos, bool detectInside, bool nonPlaneResult)
         {
-            int compX0, compX1, compY0, compY1;
+            return PositionOnPortalFast(pos, detectInside, nonPlaneResult, Room.GetLowestCorner(), Room.GetHighestCorner());
+        }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        public bool PositionOnPortalFast(VectorInt3 pos, bool detectInside, bool nonPlaneResult, int lowestCorner, int highestCorner)
+        {
+            // Fast exit if we are on horizontal portals, check immediately the Y
+            if (Direction <= PortalDirection.Ceiling)
+            {
+                int planeY = Direction == PortalDirection.Floor
+                    ? -(lowestCorner + Room.WorldPos.Y)
+                    : -(highestCorner + Room.WorldPos.Y);
+
+                if (pos.Y != planeY)
+                    return nonPlaneResult;
+            }
+
+            // Otherwise let's continue
+
+            int compX0, compX1, compY0, compY1;
             switch (Direction)
             {
                 case (PortalDirection.WallPositiveZ):
@@ -277,35 +299,29 @@ namespace TombLib.LevelData
                     break;
             }
 
-            compX0 *= (int)Level.SectorSizeUnit;
-            compX1 *= (int)Level.SectorSizeUnit;
-            compY0 *= (int)Level.SectorSizeUnit;
-            compY1 *= (int)Level.SectorSizeUnit;
+            // Shift is faster than multiplication, assuming that sector size is power of two
+            int shift = System.Numerics.BitOperations.TrailingZeroCount((uint)Level.SectorSizeUnit);
+            compX0 <<= shift;
+            compX1 <<= shift;
+			compY0 <<= shift;
+			compY1 <<= shift;
 
-            if (((Direction == PortalDirection.Floor   && pos.Y == -(Room.GetLowestCorner()  + Room.WorldPos.Y))  ||
-                 (Direction == PortalDirection.Ceiling && pos.Y == -(Room.GetHighestCorner() + Room.WorldPos.Y))) ||
-                  Direction  > PortalDirection.Ceiling)
-            {
-                if (detectInside)
-                    return (((pos.X >  compX0 && pos.X <  compX1) ||  pos.X == compX0 && compX0 == compX1) && 
-                            ((pos.Z >  compY0 && pos.Z <  compY1) ||  pos.Z == compY0 && compY0 == compY1) &&
-                           !((pos.X == compX0 || pos.X == compX1) && (pos.Z == compY0 || pos.Z  == compY1)));
-                else
-                    return (((pos.X == compX0 || pos.X == compX1) && (pos.Z >= compY0 && pos.Z <= compY1)) ||
-                            ((pos.X >= compX0 && pos.X <= compX1) && (pos.Z == compY0 || pos.Z == compY1)));
-            }
+			if (detectInside)
+                return (((pos.X > compX0 && pos.X < compX1) || pos.X == compX0 && compX0 == compX1) &&
+                ((pos.Z > compY0 && pos.Z < compY1) || pos.Z == compY0 && compY0 == compY1) &&
+                !((pos.X == compX0 || pos.X == compX1) && (pos.Z == compY0 || pos.Z == compY1)));
             else
-                return nonPlaneResult;
+                return (((pos.X == compX0 || pos.X == compX1) && (pos.Z >= compY0 && pos.Z <= compY1)) ||
+                ((pos.X >= compX0 && pos.X <= compX1) && (pos.Z == compY0 || pos.Z == compY1)));
         }
 
-        public override void AddToRoom(Level level, Room room)
-        {
-            base.AddToRoom(level, room);
+		public override void AddToRoom(Level level, Room room)
+		{
+			base.AddToRoom(level, room);
+			if (!IsValid(room))
+				throw new ApplicationException("Portal overlaps another");
 
-            if (!IsValid(room))
-                throw new ApplicationException("Portal overlaps another");
-
-            // Set sector information to this portal ...
+			// Set sector information to this portal ...
             switch (Direction)
             {
                 case PortalDirection.Floor:

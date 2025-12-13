@@ -1,0 +1,64 @@
+﻿<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+	<!--  Base Colors  -->
+	<Color x:Key="Color_Text">Black</Color>
+
+	<Color x:Key="Color_Background">White</Color>
+	<Color x:Key="Color_Background_Alternative">#F8F8F8</Color>
+	<Color x:Key="Color_Background_Control">#DDDDDD</Color>
+	<Color x:Key="Color_Background_Defaulted">#bcd4e6</Color>
+	<Color x:Key="Color_Background_Disabled">#F1EDED</Color>
+	<Color x:Key="Color_Background_High">#A0A0A0</Color>
+	<Color x:Key="Color_Background_Low">#DEDEDE</Color>
+
+	<Color x:Key="Color_Border">#A0A0A0</Color>
+	<Color x:Key="Color_Border_High">#333333</Color>
+	<Color x:Key="Color_Border_Low">#B2B2B2</Color>
+
+	<Color x:Key="Color_Highlight">#3355AA</Color>
+	<Color x:Key="Color_Selection">#B0C9E4</Color>
+	<Color x:Key="Color_Selection_LostFocus">#CCCCCC</Color>
+
+	<Color x:Key="Color_HoveredHighlight">Black</Color>
+	<Color x:Key="Color_PressedHighlight">Black</Color>
+
+	<Color x:Key="Color_WindowBorder">#bcd4e6</Color>
+
+	<!--  Opacities  -->
+	<sys:Double x:Key="Opacity_HoveredHighlight">0.15</sys:Double>
+	<sys:Double x:Key="Opacity_PressedHighlight">0.25</sys:Double>
+	<sys:Double x:Key="Opacity_CheckedHighlight">0.2</sys:Double>
+	<sys:Double x:Key="Opacity_DisabledContent">0.5</sys:Double>
+
+	<sys:Double x:Key="DropShadow_Opacity">0.3</sys:Double>
+	<sys:Double x:Key="DropShadow_Depth">3</sys:Double>
+
+	<!--  Brushes  -->
+	<SolidColorBrush x:Key="Brush_Text" Color="{DynamicResource Color_Text}" />
+
+	<SolidColorBrush x:Key="Brush_Background" Color="{DynamicResource Color_Background}" />
+	<SolidColorBrush x:Key="Brush_Background_Alternative" Color="{DynamicResource Color_Background_Alternative}" />
+	<SolidColorBrush x:Key="Brush_Background_TextControl" Color="{DynamicResource Color_Background}" />
+	<SolidColorBrush x:Key="Brush_Background_ClickableControl" Color="{DynamicResource Color_Background_Control}" />
+	<SolidColorBrush x:Key="Brush_Background_Defaulted" Color="{DynamicResource Color_Background_Defaulted}" />
+	<SolidColorBrush x:Key="Brush_Background_Disabled" Color="{DynamicResource Color_Background_Disabled}" />
+	<SolidColorBrush x:Key="Brush_Background_High" Color="{DynamicResource Color_Background_High}" />
+	<SolidColorBrush x:Key="Brush_Background_Low" Color="{DynamicResource Color_Background_Low}" />
+
+	<SolidColorBrush x:Key="Brush_Border" Color="{DynamicResource Color_Border}" />
+	<SolidColorBrush x:Key="Brush_Border_High" Color="{DynamicResource Color_Border_High}" />
+	<SolidColorBrush x:Key="Brush_Border_Low" Color="{DynamicResource Color_Background_Low}" />
+
+	<SolidColorBrush x:Key="Brush_Selection" Color="{DynamicResource Color_Selection}" />
+	<SolidColorBrush x:Key="Brush_Selection_LostFocus" Color="{DynamicResource Color_Selection_LostFocus}" />
+
+	<SolidColorBrush x:Key="Brush_FocusHighlight" Color="{DynamicResource Color_Highlight}" />
+	<SolidColorBrush x:Key="Brush_HoverHighlight" Color="{DynamicResource Color_HoveredHighlight}" />
+	<SolidColorBrush x:Key="Brush_PressHighlight" Color="{DynamicResource Color_PressedHighlight}" />
+	<SolidColorBrush x:Key="Brush_CheckedHighlight" Color="{DynamicResource Color_Highlight}" />
+
+	<SolidColorBrush x:Key="Brush_WindowBorder" Color="{DynamicResource Color_WindowBorder}" />
+</ResourceDictionary>

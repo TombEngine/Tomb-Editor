@@ -1,7 +1,9 @@
-﻿using System;
+﻿using DarkUI.Forms;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 using TombLib.IO;
 using TombLib.LevelData;
 using TombLib.LevelData.IO;
@@ -78,8 +80,10 @@ namespace TombEditor
                 {
                     editor.SelectedRoom.AddObject(editor.Level, obj);
                     var luaObj = obj as IHasLuaName;
-                    if (!luaObj.TrySetLuaName(luaObj.LuaName, null))
+
+                    if (!luaObj.CanSetLuaName(luaObj.LuaName))
                         luaObj.LuaName = string.Empty;
+
                     editor.SelectedRoom.RemoveObject(editor.Level, obj);
                 }
 

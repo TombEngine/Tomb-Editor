@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using TombLib.LevelData;
 using TombLib.NG;
 using NLog;
+using TombLib.Utils;
 
 namespace TombLib.Controls
 {
@@ -180,7 +181,17 @@ namespace TombLib.Controls
                             if (ParameterRange.Kind is NgParameterKind.FixedEnumeration or NgParameterKind.PluginEnumeration)
                             {
                                 string[] cachedNames = listOfThings.Select(obj => obj?.ToString()).ToArray();
-                                Array.Sort(cachedNames, listOfThings);
+                                bool shouldSort = true;
+
+                                if (ParameterRange.Kind is NgParameterKind.PluginEnumeration)
+                                {
+                                    // Check if all entries in the sample end with a number, if so, do not sort them
+                                    bool allInSampleEndWithDigit = cachedNames.SampleSatisfies(32, name => !string.IsNullOrEmpty(name) && char.IsDigit(name[^1]));
+                                    shouldSort = !allInSampleEndWithDigit;
+                                }
+
+                                if (shouldSort)
+                                    Array.Sort(cachedNames, listOfThings);
                             }
                             combo.DataSource = listOfThings;
                         }

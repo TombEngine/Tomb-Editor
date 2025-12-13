@@ -190,6 +190,9 @@
   <data name="skeleton-16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\skeleton-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="skinned-16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\skinned-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="rectangle_filled-16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\rectangle_filled-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

@@ -299,4 +299,13 @@
     <state item="95" id="15" name="HOLD_PREPARE_GRENADE" />
     <state item="95" id="16" name="HOLD_SHOOT_GRENADE" />
     <state item="95" id="17" name="BLIND" />
+
+    <!-- AHMET -->
+    <state item="102" id="1" name="IDLE" />
+    <state item="102" id="2" name="WALK_FORWARD" />
+    <state item="102" id="3" name="RUN_FORWARD" />
+    <state item="102" id="4" name="SWIPE_ATTACK" />
+    <state item="102" id="5" name="JUMP_BITE_ATTACK" />
+    <state item="102" id="6" name="JUMP_SWIPE_ATTACK" />
+    <state item="102" id="7" name="DEATH" />
 </states>

@@ -205,6 +205,12 @@ namespace TombEditor
         public EditorTool UI_LastGeometryTool { get; set; } = new EditorTool();
         public EditorTool UI_LastTexturingTool { get; set; } = new EditorTool() { Tool = EditorToolType.Brush };
 
+        // Geometry IO Window
+
+        public string GeometryIO_LastUsedGeometryImportPresetName { get; set; }
+        public string GeometryIO_LastUsedGeometryExportPresetName { get; set; }
+        public string GeometryIO_LastUsedAnimationPresetName { get; set; }
+
         // Window options
 
         public Point ColorDialog_Position { get; set; } = new Point(-1); // Center by default
@@ -221,7 +227,7 @@ namespace TombEditor
         public Size  Window_FormFootStepSounds_Size { get; set; } = new Size(440, 600);
         public bool  Window_FormFootStepSounds_Maximized { get; set; } = false;
         public Point Window_FormImportedGeometry_Position { get; set; } = new Point(-1); // Center by default
-        public Size  Window_FormImportedGeometry_Size { get; set; } = new Size(756, 488);
+        public Size  Window_FormImportedGeometry_Size { get; set; } = new Size(830, 488);
         public bool  Window_FormImportedGeometry_Maximized { get; set; } = false;
         public Point Window_FormLevelSettings_Position { get; set; } = new Point(-1); // Center by default
         public Size  Window_FormLevelSettings_Size { get; set; } = new Size(800, 540);
@@ -263,6 +269,9 @@ namespace TombEditor
         public Point Window_FormTransform_Position { get; set; } = new Point(-1); // Center by default
         public Size Window_FormTransform_Size { get; set; } = new Size(345, 171);
         public bool Window_FormTransform_Maximized { get; set; } = false;
+        public Point Window_FormMaterialEditor_Position { get; set; } = new Point(-1);
+        public Size Window_FormMaterialEditor_Size { get; set; } = new Size(537, 560);
+        public bool Window_FormMaterialEditor_Maximized { get; set; } = false;
 
         public DockPanelState Window_Layout { get; set; } = Window_LayoutDefault;
 

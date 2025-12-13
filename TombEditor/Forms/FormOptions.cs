@@ -36,11 +36,19 @@ namespace TombEditor.Forms
 
         protected override void InitializeDialog()
         {
-            // Filter out non-TrueType fonts by catching an exception on font creation
+            // Filter out non-TrueType fonts by catching an exception on font creation.
             foreach (var font in FontFamily.Families)
-                try { var ff = new FontFamily(font.Name);
-                      cmbRendering3DFont.Items.Add(font.Name); }
-                catch { throw; }
+            {
+                try
+                {
+                    var testFont = new FontFamily(font.Name);
+                    cmbRendering3DFont.Items.Add(font.Name);
+                }
+                catch
+                {
+                    // Absorb exception for non-TrueType fonts.
+                }
+            }
 
             // Populate versions
             cmbGameVersion.Items.AddRange(AllVersions.Cast<object>().ToArray());

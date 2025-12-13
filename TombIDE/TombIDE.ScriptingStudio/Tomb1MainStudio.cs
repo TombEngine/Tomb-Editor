@@ -6,6 +6,7 @@ using TombIDE.ScriptingStudio.ToolWindows;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.Shared;
 using TombIDE.Shared.SharedClasses;
+using TombLib.LevelData;
 using TombLib.Scripting.Bases;
 using TombLib.Scripting.Interfaces;
 using TombLib.Scripting.Tomb1Main.Parsers;
@@ -17,10 +18,14 @@ namespace TombIDE.ScriptingStudio
 	{
 		public override StudioMode StudioMode => StudioMode.Tomb1Main;
 
+		private TRVersion.Game _engine;
+
 		#region Construction
 
-		public Tomb1MainStudio() : base(IDE.Instance.Project.GetScriptRootDirectory(), IDE.Instance.Project.GetEngineRootDirectoryPath())
+		public Tomb1MainStudio(TRVersion.Game engine) : base(IDE.Instance.Project.GetScriptRootDirectory(), IDE.Instance.Project.GetEngineRootDirectoryPath())
 		{
+			_engine = engine;
+
 			DockPanelState = IDE.Instance.IDEConfiguration.T1M_DockPanelState;
 
 			FileExplorer.Filter = "*.json5";
@@ -28,7 +33,7 @@ namespace TombIDE.ScriptingStudio
 
 			EditorTabControl.CheckPreviousSession();
 
-			string initialFilePath = PathHelper.GetScriptFilePath(IDE.Instance.Project.GetScriptRootDirectory(), TombLib.LevelData.TRVersion.Game.TR1);
+			string initialFilePath = PathHelper.GetScriptFilePath(IDE.Instance.Project.GetScriptRootDirectory(), _engine);
 
 			if (!string.IsNullOrWhiteSpace(initialFilePath))
 				EditorTabControl.OpenFile(initialFilePath);
@@ -45,9 +50,9 @@ namespace TombIDE.ScriptingStudio
 			IDEEvent_HandleSilentActions(obj);
 		}
 
-		private bool IsSilentAction(IIDEEvent obj)
-			=> obj is IDE.ScriptEditor_ScriptPresenceCheckEvent
-			|| obj is IDE.ScriptEditor_RenameLevelEvent;
+		private bool IsSilentAction(IIDEEvent obj) => obj
+			is IDE.ScriptEditor_ScriptPresenceCheckEvent
+			or IDE.ScriptEditor_RenameLevelEvent;
 
 		private void IDEEvent_HandleSilentActions(IIDEEvent obj)
 		{
@@ -55,7 +60,7 @@ namespace TombIDE.ScriptingStudio
 			{
 				TabPage cachedTab = EditorTabControl.SelectedTab;
 
-				TabPage scriptFileTab = EditorTabControl.FindTabPage(PathHelper.GetScriptFilePath(ScriptRootDirectoryPath, TombLib.LevelData.TRVersion.Game.TR1));
+				TabPage scriptFileTab = EditorTabControl.FindTabPage(PathHelper.GetScriptFilePath(ScriptRootDirectoryPath, _engine));
 				bool wasScriptFileAlreadyOpened = scriptFileTab != null;
 				bool wasScriptFileFileChanged = wasScriptFileAlreadyOpened && EditorTabControl.GetEditorOfTab(scriptFileTab).IsContentChanged;
 
@@ -82,7 +87,7 @@ namespace TombIDE.ScriptingStudio
 
 		private void RenameRequestedLevelScript(string oldName, string newName)
 		{
-			EditorTabControl.OpenFile(PathHelper.GetScriptFilePath(ScriptRootDirectoryPath, TombLib.LevelData.TRVersion.Game.TR1));
+			EditorTabControl.OpenFile(PathHelper.GetScriptFilePath(ScriptRootDirectoryPath, _engine));
 
 			if (CurrentEditor is TextEditorBase editor)
 				ScriptReplacer.RenameLevelScript(editor, oldName, newName);
@@ -90,7 +95,7 @@ namespace TombIDE.ScriptingStudio
 
 		private bool IsLevelScriptDefined(string levelName)
 		{
-			EditorTabControl.OpenFile(PathHelper.GetScriptFilePath(ScriptRootDirectoryPath, TombLib.LevelData.TRVersion.Game.TR1));
+			EditorTabControl.OpenFile(PathHelper.GetScriptFilePath(ScriptRootDirectoryPath, _engine));
 
 			if (CurrentEditor is TextEditorBase editor)
 				return DocumentParser.IsLevelScriptDefined(editor.Document, levelName);

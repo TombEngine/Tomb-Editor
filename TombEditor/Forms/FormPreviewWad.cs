@@ -1,6 +1,8 @@
 ﻿using DarkUI.Forms;
+using System;
 using System.Linq;
 using System.Numerics;
+using System.Windows.Forms;
 using TombLib.Controls;
 using TombLib.Rendering;
 using TombLib.Wad;
@@ -47,9 +49,12 @@ namespace TombEditor.Forms
             panelItem.ResetCamera();
         }
 
-        private void FormWadPreview_Deactivate(object sender, System.EventArgs e)
+        protected override void OnDeactivate(EventArgs e)
         {
-            Close();
+            base.OnDeactivate(e);
+
+            if (!Bounds.Contains(Cursor.Position))
+                Close();
         }
 
         public class PanelRenderingItemPreview : PanelItemPreview

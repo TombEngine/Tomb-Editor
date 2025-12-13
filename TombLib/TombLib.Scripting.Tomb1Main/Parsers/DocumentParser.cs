@@ -39,7 +39,7 @@ namespace TombLib.Scripting.Tomb1Main.Parsers
 
 				if (regexMatch.Success)
 				{
-					string matchedLevelName = regexMatch.Groups[1].Value.Trim(); // Extracts the level name from the comment
+					string matchedLevelName = regexMatch.Groups[3].Value.Trim(); // Extracts the level name from the comment
 
 					if (matchedLevelName.Equals(levelName))
 						return line;

@@ -19,7 +19,6 @@ namespace TombLib.LevelData
     public class ImportedGeometryTexture : Texture
     {
         public Texture2D DirectXTexture { get; private set; }
-        public string AbsolutePath { get; private set; }
 
         public ImportedGeometryTexture(string absolutePath)
         {

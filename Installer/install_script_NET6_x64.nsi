@@ -38,7 +38,7 @@ Tomb Editor dev team."
 SetCompressor lzma
 Unicode true
 Name "Tomb Editor"
-OutFile "TombEditorInstall.exe"
+OutFile "TombEditor${Version_1}${Version_2}${Version_3}_Install.exe"
 InstallDir "C:\Tomb Editor"
   
 ;--------------------------------
@@ -164,16 +164,21 @@ Section "Uninstall"
   ; https://nsis.sourceforge.io/mediawiki/images/9/9f/Unlist.zip
   ; PLEASE UPDATE THIS BLOCK IF BUILD FILE SET IS CHANGED!
     
+  Delete "$INSTDIR\TIDE\TEN\API.xml"
+  Delete "$INSTDIR\TIDE\TEN\.luarc.json"
   Delete "$INSTDIR\TIDE\Templates\Sounds\TR4-TRNG.zip"
   Delete "$INSTDIR\TIDE\Templates\Sounds\TR1.zip"
   Delete "$INSTDIR\TIDE\Templates\Sounds\TEN.zip"
   Delete "$INSTDIR\TIDE\Templates\Shared\TR4-TRNG Shared Files.zip"
   Delete "$INSTDIR\TIDE\Templates\Shared\TR4-TEN Shared Audio.zip"
+  Delete "$INSTDIR\TIDE\Templates\Shared\TEN Resources.zip"
+  Delete "$INSTDIR\TIDE\Templates\Shared\TEN External DLLs.zip"
   Delete "$INSTDIR\TIDE\Templates\Shared\splash.xml"
   Delete "$INSTDIR\TIDE\Templates\Shared\PLAY.exe"
   Delete "$INSTDIR\TIDE\Templates\Presets\TRNG.zip"
   Delete "$INSTDIR\TIDE\Templates\Presets\TR4.zip"
   Delete "$INSTDIR\TIDE\Templates\Presets\TR3.zip"
+  Delete "$INSTDIR\TIDE\Templates\Presets\TR2X.zip"
   Delete "$INSTDIR\TIDE\Templates\Presets\TR2.zip"
   Delete "$INSTDIR\TIDE\Templates\Presets\TR1.zip"
   Delete "$INSTDIR\TIDE\Templates\Presets\TEN.zip"
@@ -183,6 +188,7 @@ Section "Uninstall"
   Delete "$INSTDIR\TIDE\Templates\Defaults\Game Icons\TRNG.ico"
   Delete "$INSTDIR\TIDE\Templates\Defaults\Game Icons\TR4.ico"
   Delete "$INSTDIR\TIDE\Templates\Defaults\Game Icons\TR3.ico"
+  Delete "$INSTDIR\TIDE\Templates\Defaults\Game Icons\TR2X.ico"
   Delete "$INSTDIR\TIDE\Templates\Defaults\Game Icons\TR2.ico"
   Delete "$INSTDIR\TIDE\Templates\Defaults\Game Icons\TR1.ico"
   Delete "$INSTDIR\TIDE\Templates\Defaults\Game Icons\TombEngine.ico"
@@ -222,11 +228,20 @@ Section "Uninstall"
   Delete "$INSTDIR\TIDE\DOS\SDL.dll"
   Delete "$INSTDIR\TIDE\DOS\DOSBox.exe"
   Delete "$INSTDIR\Runtimes\win-x86\native\FreeImage.dll"
+  Delete "$INSTDIR\Runtimes\win-x86\native\blake3_dotnet.dll"
   Delete "$INSTDIR\Runtimes\win-x86\native\assimp.dll"
   Delete "$INSTDIR\Runtimes\win-x64\native\FreeImage.dll"
+  Delete "$INSTDIR\Runtimes\win-x64\native\blake3_dotnet.dll"
   Delete "$INSTDIR\Runtimes\win-x64\native\assimp.dll"
+  Delete "$INSTDIR\Resources\TRX\tr2.gameflow.schema.json"
+  Delete "$INSTDIR\Resources\TRX\tr1.gameflow.schema.json"
   Delete "$INSTDIR\Resources\Localization\PL\TombIDE.xml"
+  Delete "$INSTDIR\Resources\Localization\EN\WadTool.json"
+  Delete "$INSTDIR\Resources\Localization\EN\TombLib.json"
   Delete "$INSTDIR\Resources\Localization\EN\TombIDE.xml"
+  Delete "$INSTDIR\Resources\Localization\EN\TombIDE.json"
+  Delete "$INSTDIR\Resources\Localization\EN\TombEditor.json"
+  Delete "$INSTDIR\Resources\Localization\EN\Common.json"
   Delete "$INSTDIR\Resources\GameFlow\TRGameflow.pdf"
   Delete "$INSTDIR\Resources\GameFlow\TRGameflow extra commands.pdf"
   Delete "$INSTDIR\Resources\ClassicScript\Descriptions\OLD Commands.rdda"
@@ -280,6 +295,7 @@ Section "Uninstall"
   Delete "$INSTDIR\Catalogs\TEN Sound Catalogs\TEN_ALL_SOUNDS.xml"
   Delete "$INSTDIR\Catalogs\TEN Node Catalogs\Volumes.lua"
   Delete "$INSTDIR\Catalogs\TEN Node Catalogs\View.lua"
+  Delete "$INSTDIR\Catalogs\TEN Node Catalogs\Video.lua"
   Delete "$INSTDIR\Catalogs\TEN Node Catalogs\Variables.lua"
   Delete "$INSTDIR\Catalogs\TEN Node Catalogs\UI.lua"
   Delete "$INSTDIR\Catalogs\TEN Node Catalogs\Timespan Actions.lua"
@@ -296,6 +312,7 @@ Section "Uninstall"
   Delete "$INSTDIR\Catalogs\TEN Node Catalogs\Keypad.lua"
   Delete "$INSTDIR\Catalogs\TEN Node Catalogs\Inventory.lua"
   Delete "$INSTDIR\Catalogs\TEN Node Catalogs\Input.lua"
+  Delete "$INSTDIR\Catalogs\TEN Node Catalogs\Flyby Paths.lua"
   Delete "$INSTDIR\Catalogs\TEN Node Catalogs\Flow.lua"
   Delete "$INSTDIR\Catalogs\TEN Node Catalogs\Environment.lua"
   Delete "$INSTDIR\Catalogs\TEN Node Catalogs\Dynamic Lights.lua"
@@ -406,11 +423,13 @@ Section "Uninstall"
   Delete "$INSTDIR\Catalogs\Sounds.tr1.xml"
   Delete "$INSTDIR\Catalogs\NgCatalog.xml"
   Delete "$INSTDIR\Assets\Wads\TombEngine.wad2"
+  Delete "$INSTDIR\Assets\Textures\default.png"
   Delete "$INSTDIR\WadTool.runtimeconfig.json"
   Delete "$INSTDIR\WadTool.exe"
   Delete "$INSTDIR\WadTool.dll.config"
   Delete "$INSTDIR\WadTool.dll"
   Delete "$INSTDIR\WadTool.deps.json"
+  Delete "$INSTDIR\TombLib.WPF.dll"
   Delete "$INSTDIR\TombLib.Scripting.Tomb1Main.dll"
   Delete "$INSTDIR\TombLib.Scripting.Tomb1Main.deps.json"
   Delete "$INSTDIR\TombLib.Scripting.Lua.dll"
@@ -446,6 +465,10 @@ Section "Uninstall"
   Delete "$INSTDIR\TombEditor.dll.config"
   Delete "$INSTDIR\TombEditor.dll"
   Delete "$INSTDIR\TombEditor.deps.json"
+  Delete "$INSTDIR\System.Runtime.CompilerServices.Unsafe.dll"
+  Delete "$INSTDIR\System.IO.Pipelines.dll"
+  Delete "$INSTDIR\System.IO.Hashing.dll"
+  Delete "$INSTDIR\SpacedGridControl.dll"
   Delete "$INSTDIR\SoundTool.runtimeconfig.json"
   Delete "$INSTDIR\SoundTool.exe"
   Delete "$INSTDIR\SoundTool.dll"
@@ -461,6 +484,8 @@ Section "Uninstall"
   Delete "$INSTDIR\Pfim.dll"
   Delete "$INSTDIR\NVorbis.dll"
   Delete "$INSTDIR\NLog.dll"
+  Delete "$INSTDIR\Newtonsoft.Json.Schema.dll"
+  Delete "$INSTDIR\Newtonsoft.Json.dll"
   Delete "$INSTDIR\NCalc.dll"
   Delete "$INSTDIR\NAudio.WinMM.dll"
   Delete "$INSTDIR\NAudio.WinForms.dll"
@@ -471,12 +496,19 @@ Section "Uninstall"
   Delete "$INSTDIR\NAudio.dll"
   Delete "$INSTDIR\NAudio.Core.dll"
   Delete "$INSTDIR\NAudio.Asio.dll"
+  Delete "$INSTDIR\MvvmDialogs.dll"
   Delete "$INSTDIR\MiniFileAssociation.dll"
   Delete "$INSTDIR\Microsoft.Toolkit.HighPerformance.dll"
   Delete "$INSTDIR\Microsoft.NET.StringTools.dll"
+  Delete "$INSTDIR\Microsoft.Extensions.DependencyInjection.dll"
+  Delete "$INSTDIR\Microsoft.Extensions.DependencyInjection.Abstractions.dll"
   Delete "$INSTDIR\Microsoft.Build.Utilities.Core.dll"
   Delete "$INSTDIR\Microsoft.Build.Tasks.Core.dll"
   Delete "$INSTDIR\Microsoft.Build.Framework.dll"
+  Delete "$INSTDIR\LuaApiBuilder.dll"
+  Delete "$INSTDIR\K4os.Hash.xxHash.dll"
+  Delete "$INSTDIR\K4os.Compression.LZ4.Streams.dll"
+  Delete "$INSTDIR\K4os.Compression.LZ4.dll"
   Delete "$INSTDIR\ICSharpCode.AvalonEdit.dll"
   Delete "$INSTDIR\IconUtilities.dll"
   Delete "$INSTDIR\FreeImage.Standard.dll"
@@ -484,13 +516,17 @@ Section "Uninstall"
   Delete "$INSTDIR\File Association.exe"
   Delete "$INSTDIR\File Association.dll"
   Delete "$INSTDIR\File Association.deps.json"
+  Delete "$INSTDIR\DarkUI.WPF.dll"
+  Delete "$INSTDIR\DarkUI.WPF.deps.json"
   Delete "$INSTDIR\DarkUI.dll"
   Delete "$INSTDIR\DarkUI.deps.json"
   Delete "$INSTDIR\d3dcompiler_43.dll"
   Delete "$INSTDIR\CustomTabControl.dll"
+  Delete "$INSTDIR\CustomMessageBox.WPF.dll"
+  Delete "$INSTDIR\CommunityToolkit.Mvvm.dll"
   Delete "$INSTDIR\ColorThief.Netstandard.v20.dll"
-  Delete "$INSTDIR\CH.SipHash.dll"
   Delete "$INSTDIR\bzPSD.dll"
+  Delete "$INSTDIR\Blake3.dll"
   Delete "$INSTDIR\BCnEncoder.dll"
   Delete "$INSTDIR\AssimpNet.dll"
   RMDir "$INSTDIR\TIDE\Templates\Defaults\TR4 Resources"
@@ -513,6 +549,7 @@ Section "Uninstall"
   RMDir "$INSTDIR\TIDE\NGC\VGE"
   RMDir "$INSTDIR\TIDE\NGC\TRNG"
   RMDir "$INSTDIR\TIDE\DOS\TR4"
+  RMDir "$INSTDIR\TIDE\TEN"
   RMDir "$INSTDIR\TIDE\Templates"
   RMDir "$INSTDIR\TIDE\NGC"
   RMDir "$INSTDIR\TIDE\GFL"
@@ -525,6 +562,7 @@ Section "Uninstall"
   RMDir "$INSTDIR\Resources\Localization\PL"
   RMDir "$INSTDIR\Resources\Localization\EN"
   RMDir "$INSTDIR\Resources\ClassicScript\Descriptions"
+  RMDir "$INSTDIR\Resources\TRX"
   RMDir "$INSTDIR\Resources\Localization"
   RMDir "$INSTDIR\Resources\GameFlow"
   RMDir "$INSTDIR\Resources\ClassicScript"
@@ -547,6 +585,7 @@ Section "Uninstall"
   RMDir "$INSTDIR\Catalogs\TEN Node Catalogs"
   RMDir "$INSTDIR\Catalogs\Engines"
   RMDir "$INSTDIR\Assets\Wads"
+  RMDir "$INSTDIR\Assets\Textures"
   RMDir "$INSTDIR\TIDE"
   RMDir "$INSTDIR\Runtimes"
   RMDir "$INSTDIR\Resources"
@@ -638,10 +677,6 @@ Function .onInit
   ${EndIf}
 FunctionEnd
 
-Function .onInstSuccess
-  Call isDotNetInstalled
-FunctionEnd
-
 Function un.isEmptyDir
   Exch $0
   Push $1
@@ -676,111 +711,3 @@ Function un.registerExtensions
   Sleep 1000
     
 FunctionEnd
-
-Function openLinkNewWindow
-  Push $3
-  Exch
-  Push $2
-  Exch
-  Push $1
-  Exch
-  Push $0
-  Exch
- 
-  ReadRegStr $0 HKCR "http\shell\open\command" ""
-# Get browser path
-    DetailPrint $0
-  StrCpy $2 '"'
-  StrCpy $1 $0 1
-  StrCmp $1 $2 +2 # if path is not enclosed in " look for space as final char
-    StrCpy $2 ' '
-  StrCpy $3 1
-  loop:
-    StrCpy $1 $0 1 $3
-    DetailPrint $1
-    StrCmp $1 $2 found
-    StrCmp $1 "" found
-    IntOp $3 $3 + 1
-    Goto loop
- 
-  found:
-    StrCpy $1 $0 $3
-    StrCmp $2 " " +2
-      StrCpy $1 '$1"'
- 
-  Pop $0
-  Exec '$1 $0'
-  Pop $0
-  Pop $1
-  Pop $2
-  Pop $3
-FunctionEnd
-
-; Usage
-; Define in your script two constants:
-;   DOT_MAJOR "(Major framework version)"
-;   DOT_MINOR "{Minor framework version)"
-; 
-; Call isDotNetInstalled
-; This function will abort the installation if the required version 
-; or higher version of the .NET Framework is not installed.  Place it in
-; either your .onInit function or your first install section before 
-; other code.
-Function isDotNetInstalled
- 
-  StrCpy $0 "0"
-  StrCpy $1 "SOFTWARE\Microsoft\ASP.NET Core" ;registry entry to look in.
-  StrCpy $2 0
- 
-  StartEnum:
-    ;Enumerate the versions installed.
-    EnumRegKey $3 HKLM "$1\Shared Framework" $2
- 
-    ;If we don't find any versions installed, it's not here.
-    StrCmp $3 "" noDotNet notEmpty
- 
-    ;We found something.
-    notEmpty:
-      ;Find out if the RegKey starts with 'v'.  
-      ;If it doesn't, goto the next key.
-      StrCpy $4 $3 1 0
-      StrCmp $4 "v" +1 goNext
-      StrCpy $4 $3 1 1
- 
-      ;It starts with 'v'.  Now check to see how the installed major version
-      ;relates to our required major version.
-      ;If it's equal check the minor version, if it's greater, 
-      ;we found a good RegKey.
-      IntCmp $4 ${DOT_MAJOR} +1 goNext yesDotNet
-      ;Check the minor version.  If it's equal or greater to our requested 
-      ;version then we're good.
-      StrCpy $4 $3 1 3
-      IntCmp $4 ${DOT_MINOR} yesDotNet goNext yesDotNet
- 
-    goNext:
-      ;Go to the next RegKey.
-      IntOp $2 $2 + 1
-      goto StartEnum
-	  
-  noDotNet:
-	StrCpy $0 "You need .NET "
-	StrCpy $0 "$0${DOT_MAJOR}.${DOT_MINOR}"
-	StrCpy $0 "$0 installed. Do you want to download it now? $\r$\n\
-	If you do, select $\"Run Desktop Apps > Download x64$\" version."
-	
-    ;Nope, something went wrong along the way.  Looks like the 
-    ;proper .NET Framework isn't installed. Ask user to install it.
-    MessageBox MB_YESNO $0 IDYES doInstall IDNO doNotInstall
-	doInstall:
-	  StrCpy $0 "https://dotnet.microsoft.com/en-us/download/dotnet/"
-	  StrCpy $0 "$0${DOT_MAJOR}.${DOT_MINOR}"
-	  StrCpy $0 "$0/runtime"
-	  Push $0
-	  Call openLinkNewWindow
-	doNotInstall:
- 
-  yesDotNet:
-    ;Everything checks out.  Go on with the rest of the installation.
- 
-FunctionEnd
-

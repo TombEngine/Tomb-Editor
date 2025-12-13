@@ -165,6 +165,7 @@ namespace TombLib.LevelData
         public void SetPath(LevelSettings settings, string path)
         {
             Path = path;
+            AbsolutePath = settings.MakeAbsolute(path);
             Reload(settings);
         }
 

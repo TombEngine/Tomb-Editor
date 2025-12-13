@@ -77,7 +77,7 @@
     <moveable id="81" ai="true" name="AI Check" essential="false" ten="AI_X2"/>
     <moveable id="82" name="Unknown Id #82" essential="false" />
     <moveable id="83" name="Collapsible floor" essential="false" ten="CRUMBLING_FLOOR" />
-    <moveable id="86" name="Heavy swinging thing / Drill bit / Swinging brazier" essential="false" ten="WALL_MOUNTED_BLADE" />  
+    <moveable id="86" name="Heavy swinging thing / Drill bit / Swinging brazier" essential="false" ten="FIRE_PENDULUM" />  
     <moveable id="87" name="Spikes / Barbed wire" essential="false" ten="TEETH_SPIKES" />
     <moveable id="88" name="Boulder / Barrel" essential="false" ten="CLASSIC_ROLLINGBALL" />
     <moveable id="89" name="Giant boulder (Temple of Puna)" essential="false" ten="BIG_ROLLINGBALL" /> 
@@ -100,16 +100,16 @@
     <moveable id="116" name="Spiky moveable vertical wall / Tunnel borer" essential="false" ten="SPIKY_CEILING" />
     <moveable id="117" name="Valve wheel / Pulley" essential="false" ten="SWITCH_TYPE1"/>
     <moveable id="118" name="Switch / Pullable book" essential="false" ten="SWITCH_TYPE2"/>
-    <moveable id="119" name="Underwater propeller / Diver sitting on block / Underwater rotating knives / Meteorite" essential="false" /> 
+    <moveable id="119" name="Underwater propeller / Diver sitting on block / Underwater rotating knives / Meteorite" essential="false" ten="TURNING_CEILING_BLADE" /> 
     <moveable id="120" name="Fan" essential="false" />
-    <moveable id="121" name="Heavy stamper / Grinding drum / Underwater rotating knives" essential="false" />
+    <moveable id="121" name="Heavy stamper / Grinding drum / Underwater rotating knives" essential="false" ten="TURNING_WALL_BLADE" />
     <moveable id="122" name="Temple statue (original petrified state)" essential="false" ten="SHIVA_STATUE"/>
     <moveable id="123" name="Monkey with medipack" use_body_from="71" ten="MESHSWAP_MONKEY_MEDIPACK"/> 
     <moveable id="124" name="Monkey with key" use_body_from="71" ten="MESHSWAP_MONKEY_KEY"/> 
     <moveable id="127" name="Zipline handle" essential="false" ten="ZIPLINE_HANDLE" />
     <moveable id="128" name="Above-water switch" essential="false" 	ten="SWITCH_TYPE3" />
     <moveable id="129" name="Above-water switch" essential="false" ten="SWITCH_TYPE4" />
-    <moveable id="130" name="Underwater switch" essential="false" ten="UNDERWATER_WALL_SWITCH1"/>
+    <moveable id="130" name="Underwater switch" essential="false" ten="WALL_SWITCH1"/>
     <moveable id="131" name="Door" essential="false" ten="DOOR_TYPE1" />
     <moveable id="132" name="Door" essential="false" ten="DOOR_TYPE2" />
     <moveable id="133" name="Door" essential="false" ten="DOOR_TYPE3" />
@@ -240,7 +240,7 @@
     <moveable id="301" name="Spiky gunflare for MP5" hidden="true" ten="GUN_FLASH2" />
     <moveable id="304" name="Camera target" essential="false" ten="CAMERA_TARGET" />
     <moveable id="305" name="Waterfall mist" essential="false" ten="WATERFALLMIST" />
-    <moveable id="306" name="Harpoon (single)" hidden="true" ten="HARPOON"/>
+    <moveable id="306" name="Harpoon (single)" hidden="true" ten="SCUBA_HARPOON"/>
     <moveable id="309" name="Rocket (single)" hidden="true"  ten="ROCKET"/>
     <moveable id="310" name="Harpoon (single)" hidden="true" ten="HARPOON"/>
     <moveable id="311" name="Grenade (single)" hidden="true"  ten="GRENADE"/>

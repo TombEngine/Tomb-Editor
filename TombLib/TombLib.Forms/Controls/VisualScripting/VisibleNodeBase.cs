@@ -60,6 +60,8 @@ namespace TombLib.Controls.VisualScripting
             Size = new Size(Editor?.DefaultNodeWidth ?? TriggerNode.DefaultSize, Size.Height);
             GripSize = 0;
 
+            cbFunction.Control.DisableMouseScrolling = true;
+
             SpawnGrips();
         }
 
@@ -111,14 +113,13 @@ namespace TombLib.Controls.VisualScripting
             }
         }
 
-        public void TrimArguments()
+        public void ResetArguments()
         {
+            Node.Arguments.Clear();
+
             var funcSetup = cbFunction.SelectedItem as NodeFunction;
-            if (funcSetup.Arguments.Count < Node.Arguments.Count)
-                Node.Arguments.RemoveRange(funcSetup.Arguments.Count, Node.Arguments.Count - funcSetup.Arguments.Count);
-            else if (funcSetup.Arguments.Count > Node.Arguments.Count)
-                for (int i = Node.Arguments.Count; i < funcSetup.Arguments.Count; i++)
-                    Node.Arguments.Add(new TriggerNodeArgument() { Name = funcSetup.Arguments[i].Name, Value = funcSetup.Arguments[i].DefaultValue });
+            for (int i = 0; i < funcSetup.Arguments.Count; i++)
+                Node.Arguments.Add(new TriggerNodeArgument() { Name = funcSetup.Arguments[i].Name, Value = funcSetup.Arguments[i].DefaultValue });
         }
 
         public void SpawnFunctionList(List<NodeFunction> functions)
@@ -207,8 +208,9 @@ namespace TombLib.Controls.VisualScripting
                 {
                     Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
                     Name = "argEditor" + i.ToString(),
-                    Visible = false
                 };
+
+                ctrl.SuspendLayout();
 
                 _argControls.Add(ctrl);
                 Controls.Add(ctrl);
@@ -247,6 +249,8 @@ namespace TombLib.Controls.VisualScripting
                 ctrl.LocatedItemFound += Ctrl_LocatedItemFound;
                 ctrl.SoundEffectPlayed += Ctrl_SoundEffectPlayed;
                 ctrl.SoundtrackPlayed += Ctrl_SoundtrackPlayed;
+
+                ctrl.ResumeLayout();
             }
 
             var newHeight = scaledSpacing +
@@ -268,9 +272,6 @@ namespace TombLib.Controls.VisualScripting
 
             for (int i = 0; i < Node.Arguments.Count; i++)
                 RefreshArgument(i);
-
-            foreach (var control in _argControls)
-                control.Visible = true;
 
             foreach (var sub in WinFormsUtils.AllSubControls(this))
                 sub.MouseDown += Ctrl_RightClick;
@@ -544,7 +545,7 @@ namespace TombLib.Controls.VisualScripting
 
             base.OnMouseLeave(e);
 
-            _currentGrip = _lastSnappedGrip = - 1;
+            _currentGrip = _lastSnappedGrip = -1;
             _mouseDown = false;
 
             Invalidate();
@@ -679,8 +680,12 @@ namespace TombLib.Controls.VisualScripting
             if (_lastSelectedIndex == cbFunction.SelectedIndex)
                 return;
 
-            Node.Function = (cbFunction.SelectedItem as NodeFunction).Signature;
-            Node.FixArguments(cbFunction.SelectedItem as NodeFunction);
+            var funcSetup = cbFunction.SelectedItem as NodeFunction;
+            Node.Function = funcSetup.Signature;
+
+            if ((_lastSelectedIndex != -1 && cbFunction.SelectedIndex != -1) || (funcSetup.Arguments.Count != Node.Arguments.Count))
+                ResetArguments();
+
             SpawnUIElements();
 
             toolTip.SetToolTip(sender as Control, TextExtensions.SingleLineToMultiLine((cbFunction.SelectedItem as NodeFunction)?.Description ?? string.Empty));

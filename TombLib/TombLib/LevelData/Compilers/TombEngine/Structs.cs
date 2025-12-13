@@ -32,11 +32,11 @@ namespace TombLib.LevelData.Compilers.TombEngine
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class TombEngineAtlas
     {
-        public ImageC ColorMap;
-        public ImageC NormalMap;
-        public bool HasNormalMap;
-        public bool CustomNormalMap;
-    }
+		public ImageC ColorMap;
+		public ImageC? NormalMap;
+		public ImageC? ORSHMap;
+		public ImageC? EmissiveMap;
+	}
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class TombEngineCollisionInfo
@@ -73,7 +73,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public TombEngineSectorFlags Flags;
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+	[StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class TombEnginePolygon
     {
         public TombEnginePolygonShape Shape;
@@ -92,7 +92,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public int AnimatedSequence;
         public int AnimatedFrame;
         public float ShineStrength;
-    }
+		public int MaterialIndex;
+	}
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TombEngineRoomStaticMesh
@@ -131,7 +132,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public Vector3 Color;
         public Vector3 Tangent;
         public Vector3 Bitangent;
-        public int Bone;
+        public int[] BoneIndex;
+        public float[] BoneWeight;
         public int IndexInPoly;
         public int OriginalIndex;
         public bool DoubleSided;
@@ -204,39 +206,53 @@ namespace TombLib.LevelData.Compilers.TombEngine
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public class TombEngineMaterial
-    {
-        public class TombEngineMaterialComparer : IEqualityComparer<TombEngineMaterial>
-        {
-            public bool Equals(TombEngineMaterial x, TombEngineMaterial y)
-            {
-                return (x.Texture == y.Texture && x.BlendMode == y.BlendMode && x.Animated == y.Animated && x.NormalMapping == y.NormalMapping && 
-                    x.AnimatedSequence == y.AnimatedSequence);
-            }
+	public class TombEngineMaterial
+	{
+		public class TombEngineMaterialComparer : IEqualityComparer<TombEngineMaterial>
+		{
+			public bool Equals(TombEngineMaterial x, TombEngineMaterial y)
+			{
+                return (x.Texture == y.Texture &&
+                    x.BlendMode == y.BlendMode &&
+                    x.Animated == y.Animated &&
+                    x.NormalMapping == y.NormalMapping &&
+                    x.AnimatedSequence == y.AnimatedSequence &&
+					x.MaterialIndex == y.MaterialIndex &&
+					x.WaterPlaneIndex == y.WaterPlaneIndex);
+			}
 
-            public int GetHashCode(TombEngineMaterial obj)
-            {
-                unchecked
-                {
-                    int hash = 17;
-                    hash = hash * 23 + obj.Texture.GetHashCode();
-                    hash = hash * 23 + obj.BlendMode.GetHashCode();
-                    hash = hash * 23 + obj.Animated.GetHashCode();
-                    hash = hash * 23 + obj.NormalMapping.GetHashCode();
-                    hash = hash * 23 + obj.AnimatedSequence.GetHashCode();
-                    return hash;
-                }
-            }
-        }
+			public int GetHashCode(TombEngineMaterial obj)
+			{
+				unchecked
+				{
+					int hash = 17;
+					hash = hash * 23 + obj.Texture.GetHashCode();
+					hash = hash * 23 + obj.BlendMode.GetHashCode();
+					hash = hash * 23 + obj.Animated.GetHashCode();
+					hash = hash * 23 + obj.NormalMapping.GetHashCode();
+					hash = hash * 23 + obj.AnimatedSequence.GetHashCode();
+					hash = hash * 23 + obj.WaterPlaneIndex.GetHashCode();
+					hash = hash * 23 + obj.MaterialIndex.GetHashCode();
 
-        public int Texture;
-        public byte BlendMode;
-        public bool Animated;
-        public bool NormalMapping;
-        public int AnimatedSequence;
-    }
+					return hash;
+				}
+			}
+		}
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+		public int Texture;
+		public byte BlendMode;
+		public bool Animated;
+		public bool NormalMapping;
+		public int AnimatedSequence;
+		public int WaterPlaneIndex;
+        public int MaterialIndex;
+
+		public TombEngineMaterial()
+		{
+		}
+	}
+
+	[StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class TombEngineBucket
     {
         public TombEngineMaterial Material;
@@ -263,7 +279,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
     {
         public tr_room_info Info;
         public List<TombEngineVertex> Vertices = new List<TombEngineVertex>();
-        public Dictionary<TombEngineMaterial, TombEngineBucket> Buckets;
+        public List<TombEngineBucket> Buckets;
         public List<TombEnginePortal> Portals;
         public int NumZSectors;
         public int NumXSectors;
@@ -338,7 +354,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     var bv = volume as BoxVolumeInstance;
 
                     writer.Write(bvPos);
-                    writer.Write(Quaternion.CreateFromYawPitchRoll(MathC.DegToRad(bv.RotationY), MathC.DegToRad(bv.RotationX), MathC.DegToRad(bv.Roll)));
+                    writer.Write(Quaternion.CreateFromYawPitchRoll(MathC.DegToRad(bv.RotationY), MathC.DegToRad(bv.RotationX), MathC.DegToRad(-bv.Roll)));
                     writer.Write(bv.Size / 2.0f);
                 }
                 else if (volume is SphereVolumeInstance)
@@ -372,17 +388,23 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 writer.Write(new Vector3(v.Glow, v.Move, v.Locked ? 0 : 1));
 
             writer.Write(Buckets.Count);
-            foreach (var bucket in Buckets.Values)
+            foreach (var bucket in Buckets)
             {
                 writer.Write(bucket.Material.Texture);
                 writer.Write(bucket.Material.BlendMode);
+                writer.Write(bucket.Material.MaterialIndex);
                 writer.Write(bucket.Material.Animated);
+
                 writer.Write(bucket.Polygons.Count);
                 foreach (var poly in bucket.Polygons)
                 {
                     writer.Write((int)poly.Shape);
+
                     writer.Write((int)poly.AnimatedSequence);
                     writer.Write((int)poly.AnimatedFrame);
+
+                    writer.Write(poly.Normal);
+
                     foreach (int index in poly.Indices)
                         writer.Write(index);
                     foreach (var uv in poly.TextureCoordinates)
@@ -489,11 +511,12 @@ namespace TombLib.LevelData.Compilers.TombEngine
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class TombEngineMesh
     {
+        public bool Hidden;
         public WadMeshLightingType LightingType;
         public BoundingSphere Sphere;
         public List<TombEngineVertex> Vertices = new List<TombEngineVertex>();
         public List<TombEnginePolygon> Polygons = new List<TombEnginePolygon>();
-        public Dictionary<TombEngineMaterial, TombEngineBucket> Buckets = new Dictionary<TombEngineMaterial, TombEngineBucket>();
+        public List<TombEngineBucket> Buckets;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -580,6 +603,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
     public struct TombEngineMoveable
     {
         public int ObjectID;
+        public int Skin;
         public int NumMeshes;
         public int StartingMesh;
         public int MeshTree;

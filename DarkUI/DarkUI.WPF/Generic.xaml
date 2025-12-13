@@ -1,0 +1,34 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="Dictionaries/MarginsPaddingsAndSizes.xaml" />
+		<ResourceDictionary Source="Dictionaries/PathDefinitions.xaml" />
+
+		<ResourceDictionary Source="Styles/Button.xaml" />
+		<ResourceDictionary Source="Styles/CheckBox.xaml" />
+		<ResourceDictionary Source="Styles/ColorPickerButton.xaml" />
+		<ResourceDictionary Source="Styles/ComboBox.xaml" />
+		<ResourceDictionary Source="Styles/ContextMenu.xaml" />
+		<ResourceDictionary Source="Styles/DataGrid.xaml" />
+		<ResourceDictionary Source="Styles/FocusVisualStyle.xaml" />
+		<ResourceDictionary Source="Styles/GroupBox.xaml" />
+		<ResourceDictionary Source="Styles/Label.xaml" />
+		<ResourceDictionary Source="Styles/ListBox.xaml" />
+		<ResourceDictionary Source="Styles/Menu.xaml" />
+		<ResourceDictionary Source="Styles/NumericUpDown.xaml" />
+		<ResourceDictionary Source="Styles/ProgressBar.xaml" />
+		<ResourceDictionary Source="Styles/RadioButton.xaml" />
+		<ResourceDictionary Source="Styles/ScrollViewer.xaml" />
+		<ResourceDictionary Source="Styles/SearchableComboBox.xaml" />
+		<ResourceDictionary Source="Styles/StatusBar.xaml" />
+		<ResourceDictionary Source="Styles/TabControl.xaml" />
+		<ResourceDictionary Source="Styles/TextBlock.xaml" />
+		<ResourceDictionary Source="Styles/TextBox.xaml" />
+		<ResourceDictionary Source="Styles/ToggleButton.xaml" />
+		<ResourceDictionary Source="Styles/ToolBar.xaml" />
+		<ResourceDictionary Source="Styles/ToolTip.xaml" />
+		<ResourceDictionary Source="Styles/TreeView.xaml" />
+		<ResourceDictionary Source="Styles/Window.xaml" />
+
+		<ResourceDictionary Source="Styles/AutoCompleteBox.xaml" />
+	</ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

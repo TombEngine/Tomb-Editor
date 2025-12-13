@@ -99,7 +99,7 @@ LevelFuncs.Engine.Node.TransformRevolveData = function(dataName)
                 center2:SetRotation(Rotation(0, center2rot.y, newValue1))
             end
             
-        elseif (center2rot.y == -180) then
+        elseif (center2rot.y == 180) then
             local ptx, pty = x + radius2 * math.sin(-angle), y - radius2 * math.cos(-angle)
             object2:SetPosition(Vec3(ptx, pty, object2pos.z))
             
@@ -111,7 +111,7 @@ LevelFuncs.Engine.Node.TransformRevolveData = function(dataName)
                 center2:SetRotation(Rotation(0, center2rot.y, newValue1))
             end    
             
-        elseif (center2rot.y == -90) then
+        elseif (center2rot.y == 270) then
             local ptz, pty = z + radius2 * math.sin(angle), y - radius2 * math.cos(angle)
             object2:SetPosition(Vec3(object2pos.x, pty, ptz))
             

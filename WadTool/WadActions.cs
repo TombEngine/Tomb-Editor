@@ -11,6 +11,8 @@ using System.Xml;
 using System.Xml.Serialization;
 using TombLib;
 using TombLib.Forms;
+using TombLib.Forms.ViewModels;
+using TombLib.Forms.Views;
 using TombLib.GeometryIO;
 using TombLib.GeometryIO.Importers;
 using TombLib.Graphics;
@@ -20,6 +22,7 @@ using TombLib.LevelData.IO;
 using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
+using TombLib.WPF;
 
 namespace WadTool
 {
@@ -191,7 +194,7 @@ namespace WadTool
         {
             using (var form = new FormNewWad2())
             {
-                if (form.ShowDialog(owner) == DialogResult.Cancel) 
+                if (form.ShowDialog(owner) == DialogResult.Cancel)
                     return;
 
                 tool.DestinationWad = new Wad2 { GameVersion = form.Version };
@@ -421,10 +424,10 @@ namespace WadTool
                 int lastIndex = 0;
 
                 var mesh = new IOMesh(
-                    "TeMov_" + 
-                    i + 
-                    "_" + 
-                    m.Bones[i].AbsoluteTranslation.X.ToString() + 
+                    "TeMov_" +
+                    i +
+                    "_" +
+                    m.Bones[i].AbsoluteTranslation.X.ToString() +
                     "_" +
                     m.Bones[i].AbsoluteTranslation.Y.ToString() +
                     "_" +
@@ -471,7 +474,7 @@ namespace WadTool
                         mesh.UV.Add(p.Texture.TexCoord3 / scale + offset);
                     }
 
-                    
+
                     if (m.VerticesColors.Count >= m.VerticesPositions.Count)
                     {
                         mesh.Colors.Add(new Vector4(m.VerticesColors[p.Index0], 1.0f));
@@ -554,29 +557,33 @@ namespace WadTool
                     return;
                 }
 
-                using (var form = new GeometryIOSettingsDialog(new IOGeometrySettings()))
+                var viewModel = new GeometryIOSettingsWindowViewModel(IOSettingsPresets.GeometryImportSettingsPresets, new() { ImportWadMesh = true });
+                viewModel.SelectPreset(tool.Configuration.GeometryIO_LastUsedGeometryImportPresetName);
+
+                var settingsDialog = new GeometryIOSettingsWindow { DataContext = viewModel };
+                settingsDialog.SetOwner(owner);
+                settingsDialog.ShowDialog();
+
+                if (viewModel.DialogResult != true)
+                    return;
+
+                tool.Configuration.GeometryIO_LastUsedGeometryImportPresetName = viewModel.SelectedPreset?.Name;
+
+                var settings = viewModel.GetCurrentSettings();
+                var @static = new WadStatic(tool.DestinationWad.GetFirstFreeStaticMesh());
+                var mesh = WadMesh.ImportFromExternalModel(dialog.FileName, settings, tool.DestinationWad.MeshTexInfosUnique.FirstOrDefault());
+                if (mesh == null)
                 {
-                    form.AddPreset(IOSettingsPresets.GeometryImportSettingsPresets);
-                    if (form.ShowDialog(owner) != DialogResult.OK)
-                    {
-                        return;
-                    }
 
-                    var @static = new WadStatic(tool.DestinationWad.GetFirstFreeStaticMesh());
-                    var mesh = WadMesh.ImportFromExternalModel(dialog.FileName, form.Settings, tool.DestinationWad.MeshTexInfosUnique.FirstOrDefault());
-                    if (mesh == null)
-                    {
-
-                        tool.SendMessage("Error while loading the 3D model. Please check that the file " +
-                                            "is one of the supported formats and that the meshes are textured", PopupType.Error);
-                        return;
-                    }
-                    @static.Mesh = mesh;
-                    @static.VisibilityBox = @static.Mesh.BoundingBox;
-                    @static.CollisionBox = @static.Mesh.BoundingBox;
-                    tool.DestinationWad.Statics.Add(@static.Id, @static);
-                    tool.WadChanged(WadArea.Destination);
+                    tool.SendMessage("Error while loading the 3D model. Please check that the file " +
+                                        "is one of the supported formats and that the meshes are textured", PopupType.Error);
+                    return;
                 }
+                @static.Mesh = mesh;
+                @static.VisibilityBox = @static.Mesh.BoundingBox;
+                @static.CollisionBox = @static.Mesh.BoundingBox;
+                tool.DestinationWad.Statics.Add(@static.Id, @static);
+                tool.WadChanged(WadArea.Destination);
             }
         }
 
@@ -588,7 +595,7 @@ namespace WadTool
             foreach (var moveable in src.Moveables)
             {
                 string compatibleSlot = TrCatalog.GetMoveableTombEngineSlot(src.GameVersion, moveable.Key.TypeId);
-                if (compatibleSlot == String.Empty)
+                if (compatibleSlot == string.Empty)
                     continue;
 
                 uint? destId = TrCatalog.GetItemIndex(TRVersion.Game.TombEngine, compatibleSlot, out bool isMoveable);
@@ -859,26 +866,41 @@ namespace WadTool
 
                 // TEN moveables sometimes need conversion procedures.
                 if (destinationWad.GameVersion == TRVersion.Game.TombEngine && sourceWad.GameVersion != TRVersion.Game.TombEngine && obj is WadMoveable)
-				{
-					var mov = (obj as WadMoveable).Clone();
+                {
+                    var mov = (obj as WadMoveable).Clone();
 
-					if (referenceWad == null)
-                        referenceWad = Wad2Loader.LoadFromFile(TombEngineConverter.ReferenceWadPath, true);
+                    if (referenceWad == null)
+                    {
+                        if (File.Exists((TombEngineConverter.ReferenceWadPath)))
+                            referenceWad = Wad2Loader.LoadFromFile(TombEngineConverter.ReferenceWadPath, true);
+                        else
+                            referenceWad = new Wad2();
+                    }
 
-					if (mov.Id.TypeId == 0)
-					{
-						var dialogResult = DarkMessageBox.Show(owner, 
-							"You are trying to copy incompatible Lara object from legacy wad to TEN wad. \n" +
-							"Replace it with compatible Lara object from reference wad?",
-							"Incompatible Lara object", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (mov.Id.TypeId == 0)
+                    {
+                        if (referenceWad.Moveables.ContainsKey(mov.Id))
+                        {
+                            var dialogResult = DarkMessageBox.Show(owner,
+                                "You are trying to copy incompatible Lara object from legacy wad to TEN wad. \n" +
+                                "Replace it with compatible Lara object from reference wad?",
+                                "Incompatible Lara object", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-						if (dialogResult == DialogResult.Yes)
-							mov = referenceWad.Moveables[new WadMoveableId(0)].Clone();
-					}
-					else
-					{
-						mov.ConvertMoveable(sourceWad.GameVersion, referenceWad);
-					}
+                            if (dialogResult == DialogResult.Yes)
+                                mov = referenceWad.Moveables[new WadMoveableId(0)].Clone();
+                        }
+                        else
+                        {
+                            DarkMessageBox.Show(owner,
+                                "Reference wad can't be loaded.\n" + 
+                                "Copying original Lara object which is incompatible with TEN.",
+                                "Incompatible Lara object", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
+                    else
+                    {
+                        mov.ConvertMoveable(sourceWad.GameVersion, referenceWad);
+                    }
 
                     obj = mov;
                 }
@@ -1360,40 +1382,40 @@ namespace WadTool
             // Import the model
             try
             {
-                var settings = new IOGeometrySettings() { ProcessAnimations = true, ProcessGeometry = false };
-                using (var form = new GeometryIOSettingsDialog(settings))
+                var viewModel = new GeometryIOSettingsWindowViewModel(
+                    IOSettingsPresets.AnimationSettingsPresets,
+                    new() { ProcessAnimations = true, ProcessGeometry = false }
+                );
+
+                viewModel.SelectPreset(tool.Configuration.GeometryIO_LastUsedAnimationPresetName);
+
+                string resultingExtension = Path.GetExtension(fileName).ToLowerInvariant();
+
+                var settingsDialog = new GeometryIOSettingsWindow { DataContext = viewModel };
+                settingsDialog.SetOwner(owner);
+                settingsDialog.ShowDialog();
+
+                if (viewModel.DialogResult != true)
+                    return null;
+
+                tool.Configuration.GeometryIO_LastUsedAnimationPresetName = viewModel.SelectedPreset?.Name;
+
+                var settings = viewModel.GetCurrentSettings();
+                var importer = BaseGeometryImporter.CreateForFile(fileName, settings, null);
+                tmpModel = importer.ImportFromFile(fileName);
+
+                // We don't support animation importing from custom-written mqo importer yet...
+                if (importer is MetasequoiaImporter)
                 {
-                    form.AddPreset(IOSettingsPresets.AnimationSettingsPresets);
-                    string resultingExtension = Path.GetExtension(fileName).ToLowerInvariant();
+                    tool.SendMessage("Metasequoia importer isn't currently supported.", PopupType.Error);
+                    return null;
+                }
 
-                    if (resultingExtension.Equals(".fbx"))
-                    {
-                        form.SelectPreset("3dsmax Filmbox (FBX)");
-                    }
-                    else if (resultingExtension.Equals(".dae"))
-                    {
-                        form.SelectPreset("3dsmax COLLADA");
-                    }
-
-                    if (form.ShowDialog(owner) != DialogResult.OK)
-                        return null;
-
-                    var importer = BaseGeometryImporter.CreateForFile(fileName, settings, null);
-                    tmpModel = importer.ImportFromFile(fileName);
-
-                    // We don't support animation importing from custom-written mqo importer yet...
-                    if (importer is MetasequoiaImporter)
-                    {
-                        tool.SendMessage("Metasequoia importer isn't currently supported.", PopupType.Error);
-                        return null;
-                    }
-
-                    // If no animations, return null
-                    if (tmpModel.Animations.Count == 0)
-                    {
-                        tool.SendMessage("Selected file has no supported animations!", PopupType.Error);
-                        return null;
-                    }
+                // If no animations, return null
+                if (tmpModel.Animations.Count == 0)
+                {
+                    tool.SendMessage("Selected file has no supported animations!", PopupType.Error);
+                    return null;
                 }
             }
             catch (Exception ex)
@@ -1516,39 +1538,48 @@ namespace WadTool
                 if (saveFileDialog.ShowDialog(owner) != DialogResult.OK)
                     return;
 
-                if (!saveFileDialog.FileName.CheckAndWarnIfNotANSI(owner))
+                if (!saveFileDialog.FileName.IsANSI())
                 {
+                    MessageBoxes.NonANSIFilePathError(owner);
                     ExportMesh(mesh, tool, owner);
                     return;
                 }
 
                 try
                 {
+                    var viewModel = new GeometryIOSettingsWindowViewModel(
+                        IOSettingsPresets.GeometryExportSettingsPresets,
+                        new() { Export = true }
+                    );
 
-                    using (var settingsDialog = new GeometryIOSettingsDialog(new IOGeometrySettings() { Export = true }))
+                    viewModel.SelectPreset(tool.Configuration.GeometryIO_LastUsedGeometryExportPresetName);
+
+                    var settingsDialog = new GeometryIOSettingsWindow { DataContext = viewModel };
+                    settingsDialog.SetOwner(owner);
+                    settingsDialog.ShowDialog();
+
+                    if (viewModel.DialogResult != true)
+                        return;
+
+                    tool.Configuration.GeometryIO_LastUsedGeometryExportPresetName = viewModel.SelectedPreset?.Name;
+
+                    var settings = viewModel.GetCurrentSettings();
+
+                    BaseGeometryExporter.GetTextureDelegate getTextureCallback = txt => "";
+                    BaseGeometryExporter exporter = BaseGeometryExporter.CreateForFile(saveFileDialog.FileName, settings, getTextureCallback);
+                    new Thread(() =>
                     {
-                        settingsDialog.AddPreset(IOSettingsPresets.GeometryExportSettingsPresets);
-                        settingsDialog.SelectPreset("Normal scale");
-
-                        if (settingsDialog.ShowDialog(owner) != DialogResult.OK)
-                            return;
-
-                        BaseGeometryExporter.GetTextureDelegate getTextureCallback = txt => "";
-                        BaseGeometryExporter exporter = BaseGeometryExporter.CreateForFile(saveFileDialog.FileName, settingsDialog.Settings, getTextureCallback);
-                        new Thread(() =>
+                        IOModel resultModel = WadMesh.PrepareForExport(saveFileDialog.FileName, settings, mesh);
+                        if (resultModel != null)
                         {
-                            IOModel resultModel = WadMesh.PrepareForExport(saveFileDialog.FileName, settingsDialog.Settings, mesh);
-                            if (resultModel != null)
-                            {
-                                if (exporter.ExportToFile(resultModel, saveFileDialog.FileName))
-                                    return;
-                            }
+                            if (exporter.ExportToFile(resultModel, saveFileDialog.FileName))
+                                return;
+                        }
 
-                            tool.SendMessage("Selected mesh is broken and can't be exported.\nPlease replace this mesh with another.");
-                            return;
+                        tool.SendMessage("Selected mesh is broken and can't be exported.\nPlease replace this mesh with another.");
+                        return;
 
-                        }).Start();
-                    }
+                    }).Start();
                 }
                 catch (Exception ex)
                 {
@@ -1574,30 +1605,40 @@ namespace WadTool
                 if (dialog.ShowDialog(owner) != DialogResult.OK)
                     return null;
 
-                if (!dialog.FileName.CheckAndWarnIfNotANSI(owner))
+                if (!dialog.FileName.IsANSI())
+                {
+                    MessageBoxes.NonANSIFilePathError(owner);
                     return ImportMesh(tool, owner);
+                }
 
                 try
                 {
-                    using (var form = new GeometryIOSettingsDialog(new IOGeometrySettings()))
+                    var viewModel = new GeometryIOSettingsWindowViewModel(IOSettingsPresets.GeometryImportSettingsPresets, new() { ImportWadMesh = true });
+                    viewModel.SelectPreset(tool.Configuration.GeometryIO_LastUsedGeometryImportPresetName);
+
+                    var settingsDialog = new GeometryIOSettingsWindow { DataContext = viewModel };
+                    settingsDialog.SetOwner(owner);
+                    settingsDialog.ShowDialog();
+
+                    if (viewModel.DialogResult != true)
+                        return null;
+
+                    tool.Configuration.GeometryIO_LastUsedGeometryImportPresetName = viewModel.SelectedPreset?.Name;
+
+                    var settings = viewModel.GetCurrentSettings();
+
+                    // A flag which allows to import untextured meshes.
+                    settings.ProcessUntexturedGeometry = true;
+
+                    WadMesh mesh = WadMesh.ImportFromExternalModel(dialog.FileName, settings, tool.DestinationWad.MeshTexInfosUnique.FirstOrDefault());
+                    if (mesh == null)
                     {
-                        form.AddPreset(IOSettingsPresets.GeometryImportSettingsPresets);
-                        if (form.ShowDialog(owner) != DialogResult.OK)
-                            return null;
-
-                        // A flag which allows to import untextured meshes
-                        form.Settings.ProcessUntexturedGeometry = true;
-
-                        WadMesh mesh = WadMesh.ImportFromExternalModel(dialog.FileName, form.Settings, tool.DestinationWad.MeshTexInfosUnique.FirstOrDefault());
-                        if (mesh == null)
-                        {
-                            tool.SendMessage("Error loading 3D model. Check that the file format \n" +
-                                             "is supported, meshes are textured and texture file is present.", PopupType.Error);
-                            return null;
-                        }
-
-                        return mesh;
+                        tool.SendMessage("Error loading 3D model. Check that the file format \n" +
+                                            "is supported, meshes are textured and texture file is present.", PopupType.Error);
+                        return null;
                     }
+
+                    return mesh;
                 }
                 catch (Exception ex)
                 {

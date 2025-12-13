@@ -22,6 +22,7 @@ namespace TombLib.Wad
         /****/public static readonly ChunkId TextureIndex = ChunkId.FromString("W2Index");
         /****/public static readonly ChunkId TextureData = ChunkId.FromString("W2TxtData");
         /****/public static readonly ChunkId TextureName = ChunkId.FromString("W2TxtName");
+        /****/public static readonly ChunkId TextureRelativePath = ChunkId.FromString("W2TxtRelPath");
         public static readonly ChunkId Samples = ChunkId.FromString("W2WaveSamples");
         /**/public static readonly ChunkId Sample = ChunkId.FromString("W2Wav");
         /****/public static readonly ChunkId SampleIndex = ChunkId.FromString("W2Index");
@@ -72,7 +73,10 @@ namespace TombLib.Wad
         /******/public static readonly ChunkId MeshVertexColor = ChunkId.FromString("W2VxCol");
         /****/public static readonly ChunkId MeshVertexAttributes = ChunkId.FromString("W2VrtAttr");
         /******/public static readonly ChunkId MeshVertexAttribute = ChunkId.FromString("W2VxAttr");
+        /****/public static readonly ChunkId MeshVertexWeights = ChunkId.FromString("W2VrtWghts");
+        /****/public static readonly ChunkId MeshVertexWeight = ChunkId.FromString("W2VrtWght");
         /****/public static readonly ChunkId MeshLightingType = ChunkId.FromString("W2MeshLightType");
+        /****/public static readonly ChunkId MeshVisibility = ChunkId.FromString("W2MeshVisible");
         /****/public static readonly ChunkId MeshPolygons = ChunkId.FromString("W2Polys");
         /******/public static readonly ChunkId MeshTriangle = ChunkId.FromString("W2Tr");
         /******/public static readonly ChunkId MeshQuad = ChunkId.FromString("W2Uq");
@@ -99,6 +103,7 @@ namespace TombLib.Wad
         ///******/public static readonly ChunkId MoveableName = ChunkId.FromString("W2MovName");
         /******/public static readonly ChunkId MoveableMeshes = ChunkId.FromString("W2MovMeshes");
         /********/public static readonly ChunkId MoveableMesh = ChunkId.FromString("W2MovMeshPtr");
+        /********/public static readonly ChunkId MoveableSkin = ChunkId.FromString("W2MovSkin");
         /******/public static readonly ChunkId MoveableLinks = ChunkId.FromString("W2Links");
         /********/public static readonly ChunkId MoveableLink = ChunkId.FromString("W2Lnk");
         /********/public static readonly ChunkId MoveableBone = ChunkId.FromString("W2Bone");
@@ -140,5 +145,16 @@ namespace TombLib.Wad
         /******/public static readonly ChunkId StaticLightIntensity = ChunkId.FromString("W2StaticLightI");
         /******/public static readonly ChunkId StaticShatter = ChunkId.FromString("W2StaticShatter");
         /******/public static readonly ChunkId StaticShatterSound = ChunkId.FromString("W2StaticShatterSound");
+        /**/public static readonly ChunkId AnimatedTextureSets = ChunkId.FromString("W2AnimatedTextureSets");
+        /******/public static readonly ChunkId AnimatedTextureSet = ChunkId.FromString("W2AnimatedTextureSet");
+        /**********/public static readonly ChunkId AnimatedTextureSetName = ChunkId.FromString("W2AnimatedTextureSetName");
+        /**********/public static readonly ChunkId AnimatedTextureSetType = ChunkId.FromString("W2AnimatedTextureSetType");
+        /**********/public static readonly ChunkId AnimatedTextureSetFps = ChunkId.FromString("W2AnimatedTextureSetFps");
+        /**********/public static readonly ChunkId AnimatedTextureSetUvRotate = ChunkId.FromString("W2AnimatedTextureSetUvRotate");
+        /**********/public static readonly ChunkId AnimatedTextureSetTenUvRotateDirection = ChunkId.FromString("W2AnimatedTextureSetTenUvRotateDirection");
+        /**********/public static readonly ChunkId AnimatedTextureSetTenUvRotateSpeed = ChunkId.FromString("W2AnimatedTextureSetTenUvRotateSpeed");
+        /**********/public static readonly ChunkId AnimatedTextureSetExtraInfo = ChunkId.FromString("W2AnimatedTextureSetExtra");
+        /**************/public static readonly ChunkId AnimatedTextureFrames = ChunkId.FromString("W2Frames");
+        /******************/public static readonly ChunkId AnimatedTextureFrame = ChunkId.FromString("W2Frame");
     }
 }

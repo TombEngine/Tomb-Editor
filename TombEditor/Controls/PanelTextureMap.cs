@@ -37,7 +37,9 @@ namespace TombEditor.Controls
             if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
             {
                 _editor = Editor.Instance;
-                _editor.EditorEventRaised += EditorEventRaised;
+
+                if (_editor != null)
+                    _editor.EditorEventRaised += EditorEventRaised;
             }
         }
 

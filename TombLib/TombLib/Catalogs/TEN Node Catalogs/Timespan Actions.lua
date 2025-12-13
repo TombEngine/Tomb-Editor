@@ -16,7 +16,7 @@ LevelFuncs.Engine.Node.ConstructTimedData = function(objectName, isStatic, dataT
 		value = object:GetRotation()
 	elseif (dataType == 2) then
 		prefix = "_scale"
-		value = object:GetScale()
+		value = object:GetScale().x
 	elseif (dataType == 3) then
 		prefix = "_color"
 		value = object:GetColor()
@@ -253,7 +253,7 @@ end
 LevelFuncs.Engine.Node.ChangeStaticScaleOverTimespan = function(staticName, newScale, relative, time, smooth)
 
 	if (relative) then
-		newScale = TEN.Objects.GetStaticByName(staticName):GetScale() + newScale
+		newScale = TEN.Objects.GetStaticByName(staticName):GetScale().x + newScale
 	end
 
 	-- Wrap another node function call into do/end to prevent wrong parsing

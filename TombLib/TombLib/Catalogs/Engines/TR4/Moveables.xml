@@ -31,150 +31,150 @@
     <moveable id="28" name="CROWBAR_ANIM" description="Crowbar Anim" use_body_from="8" ten="LARA_CROWBAR_ANIM" hidden="true" />
     <moveable id="29" name="TORCH_ANIM" description="Torch Anim" use_body_from="8" ten="LARA_TORCH_ANIM" hidden="true" />
     <moveable id="30" name="HAIR" description="Hair" ten="HAIR_PRIMARY" hidden="true" />
-    <moveable id="31" name="MOTORBIKE" description="Motorbike" ten="MOTORBIKE" essential="false" />
-    <moveable id="32" name="JEEP" description="Jeep" ten="JEEP" essential="false" />
+    <moveable id="31" name="MOTORBIKE" description="Motorbike" ten="MOTORBIKE" />
+    <moveable id="32" name="JEEP" description="Jeep" ten="JEEP" />
     <moveable id="33" name="VEHICLE_EXTRA" description="Vehicle Extra" use_body_from="8" />
-    <moveable id="34" name="ENEMY_JEEP" description="Enemy Jeep" ten="ENEMY_JEEP" essential="false" />
-    <moveable id="35" name="SKELETON" description="Skeleton" ten="SKELETON" essential="false" />
+    <moveable id="34" name="ENEMY_JEEP" description="Enemy Jeep" ten="ENEMY_JEEP" />
+    <moveable id="35" name="SKELETON" description="Skeleton" ten="SKELETON" />
     <moveable id="36" name="SKELETON_MIP" description="Skeleton Mip" hidden="true" />
-    <moveable id="37" name="GUIDE" description="Guide" ten="GUIDE" essential="false" />
+    <moveable id="37" name="GUIDE" description="Guide" ten="GUIDE" />
     <moveable id="38" name="GUIDE_MIP" description="Guide Mip" hidden="true" />
-    <moveable id="39" name="VON_CROY" description="Von Croy" ten="VON_CROY" essential="false" />
+    <moveable id="39" name="VON_CROY" description="Von Croy" ten="VON_CROY" />
     <moveable id="40" name="VON_CROY_MIP" description="Von Croy Mip" hidden="true" />
-    <moveable id="41" name="BADDY_1" description="Baddy 1" ten="BADDY1" essential="false" />
+    <moveable id="41" name="BADDY_1" description="Baddy 1" ten="BADDY1" />
     <moveable id="42" name="BADDY_1_MIP" description="Baddy 1 Mip" hidden="true" />
-    <moveable id="43" name="BADDY_2" description="Baddy 2" ten="BADDY2" essential="false" />
+    <moveable id="43" name="BADDY_2" description="Baddy 2" ten="BADDY2" />
     <moveable id="44" name="BADDY_2_MIP" description="Baddy 2 Mip" hidden="true" />
-    <moveable id="45" name="SETHA" description="Setha" ten="SETHA" essential="false" />
+    <moveable id="45" name="SETHA" description="Setha" ten="SETHA" />
     <moveable id="46" name="SETHA_MIP" description="Setha Mip" hidden="true" />
-    <moveable id="47" name="MUMMY" description="Mummy" ten="MUMMY" essential="false" />
+    <moveable id="47" name="MUMMY" description="Mummy" ten="MUMMY" />
     <moveable id="48" name="MUMMY_MIP" description="Mummy Mip" hidden="true" />
-    <moveable id="49" name="SPHINX" description="Sphinx" ten="SPHINX" essential="false" />
+    <moveable id="49" name="SPHINX" description="Sphinx" ten="SPHINX" />
     <moveable id="50" name="SPHINX_MIP" description="Sphinx Mip" hidden="true" />
-    <moveable id="51" name="CROCODILE" description="Crocodile" ten="CROCODILE" essential="false" />
+    <moveable id="51" name="CROCODILE" description="Crocodile" ten="CROCODILE" />
     <moveable id="52" name="CROCODILE_MIP" description="Crocodile Mip" hidden="true" />
-    <moveable id="53" name="HORSEMAN" description="Horseman" ten="HORSEMAN" essential="false" />
+    <moveable id="53" name="HORSEMAN" description="Horseman" ten="HORSEMAN" />
     <moveable id="54" name="HORSEMAN_MIP" description="Horseman Mip" hidden="true" />
-    <moveable id="55" name="SCORPION" description="Scorpion" ten="BIG_SCORPION" essential="false" />
+    <moveable id="55" name="SCORPION" description="Scorpion" ten="BIG_SCORPION" />
     <moveable id="56" name="SCORPION_MIP" description="Scorpion Mip" hidden="true" />
-    <moveable id="57" name="JEAN_YVES" description="Jean Yves" ten="JEAN_YVES" essential="false" />
+    <moveable id="57" name="JEAN_YVES" description="Jean Yves" ten="JEAN_YVES" />
     <moveable id="58" name="JEAN_YVES_MIP" description="Jean Yves Mip" hidden="true" />
-    <moveable id="59" name="TROOPS" description="Troops" ten="TROOPS" essential="false" />
+    <moveable id="59" name="TROOPS" description="Troops" ten="TROOPS" />
     <moveable id="60" name="TROOPS_MIP" description="Troops Mip" hidden="true" />
-    <moveable id="61" name="KNIGHTS_TEMPLAR" description="Knights Templar" ten="KNIGHT_TEMPLAR" essential="false" />
+    <moveable id="61" name="KNIGHTS_TEMPLAR" description="Knights Templar" ten="KNIGHT_TEMPLAR" />
     <moveable id="62" name="KNIGHTS_TEMPLAR_MIP" description="Knights Templar Mip" hidden="true" />
-    <moveable id="63" name="MUTANT" description="Mutant" essential="false" ten="CROCODILE_GOD" />
+    <moveable id="63" name="MUTANT" description="Mutant" ten="CROCODILE_GOD" />
     <moveable id="64" name="MUTANT_MIP" description="Mutant Mip" hidden="true" />
-    <moveable id="65" name="HORSE" description="Horse" ten="HORSE" essential="false" />
+    <moveable id="65" name="HORSE" description="Horse" ten="HORSE" />
     <moveable id="66" name="HORSE_MIP" description="Horse Mip" hidden="true" />
-    <moveable id="67" name="BABOON_NORMAL" description="Baboon Normal" ten="BABOON_NORMAL" essential="false" />
+    <moveable id="67" name="BABOON_NORMAL" description="Baboon Normal" ten="BABOON_NORMAL" />
     <moveable id="68" name="BABOON_NORMAL_MIP" description="Baboon Normal Mip" hidden="true" />
-    <moveable id="69" name="BABOON_INV" description="Baboon Inv" ten="BABOON_INV" essential="false" />
+    <moveable id="69" name="BABOON_INV" description="Baboon Inv" ten="BABOON_INV" />
     <moveable id="70" name="BABOON_INV_MIP" description="Baboon Inv Mip" hidden="true" />
-    <moveable id="71" name="BABOON_SILENT" description="Baboon Silent" ten="BABOON_SILENT" essential="false" />
+    <moveable id="71" name="BABOON_SILENT" description="Baboon Silent" ten="BABOON_SILENT" />
     <moveable id="72" name="BABOON_SILENT_MIP" description="Baboon Silent Mip" hidden="true" />
-    <moveable id="73" name="WILD_BOAR" description="Wild Boar" ten="WILD_BOAR" essential="false" />
+    <moveable id="73" name="WILD_BOAR" description="Wild Boar" ten="WILD_BOAR" />
     <moveable id="74" name="WILD_BOAR_MIP" description="Wild Boar Mip" hidden="true" />
-    <moveable id="75" name="HARPY" description="Harpy" ten="HARPY" essential="false" />
+    <moveable id="75" name="HARPY" description="Harpy" ten="HARPY" />
     <moveable id="76" name="HARPY_MIP" description="Harpy Mip" hidden="true" />
-    <moveable id="77" name="DEMIGOD1" description="Demigod1" ten="DEMIGOD1" essential="false" />
+    <moveable id="77" name="DEMIGOD1" description="Demigod1" ten="DEMIGOD1" />
     <moveable id="78" name="DEMIGOD1_MIP" description="Demigod1 Mip" hidden="true" />
-    <moveable id="79" name="DEMIGOD2" description="Demigod2" ten="DEMIGOD2" essential="false" />
+    <moveable id="79" name="DEMIGOD2" description="Demigod2" ten="DEMIGOD2" />
     <moveable id="80" name="DEMIGOD2_MIP" description="Demigod2 Mip" hidden="true" />
-    <moveable id="81" name="DEMIGOD3" description="Demigod3" ten="DEMIGOD3" essential="false" />
+    <moveable id="81" name="DEMIGOD3" description="Demigod3" ten="DEMIGOD3" />
     <moveable id="82" name="DEMIGOD3_MIP" description="Demigod3 Mip" hidden="true" />
-    <moveable id="83" name="LITTLE_BEETLE" description="Little Beetle" ten="LITTLE_BEETLE" essential="false" />
-    <moveable id="84" name="BIG_BEETLE" description="Big Beetle" ten="BIG_BEETLE" essential="false" />
+    <moveable id="83" name="LITTLE_BEETLE" description="Little Beetle" ten="LITTLE_BEETLE" />
+    <moveable id="84" name="BIG_BEETLE" description="Big Beetle" ten="BIG_BEETLE" />
     <moveable id="85" name="BIG_BEETLE_MIP" description="Big Beetle Mip" hidden="true" />
-    <moveable id="86" name="WRAITH1" description="Wraith1" ten="WRAITH1" essential="false" />
-    <moveable id="87" name="WRAITH2" description="Wraith2" ten="WRAITH2" essential="false" />
-    <moveable id="88" name="WRAITH3" description="Wraith3" ten="WRAITH3" essential="false" />
-    <moveable id="89" name="WRAITH4" description="Wraith4" ten="WRAITH4" essential="false" />
-    <moveable id="90" name="BAT" description="Bat" ten="BAT" essential="false" />
-    <moveable id="91" name="DOG" description="Dog" ten="DOG" essential="false" />
+    <moveable id="86" name="WRAITH1" description="Wraith1" ten="WRAITH1" />
+    <moveable id="87" name="WRAITH2" description="Wraith2" ten="WRAITH2" />
+    <moveable id="88" name="WRAITH3" description="Wraith3" ten="WRAITH3" />
+    <moveable id="89" name="WRAITH4" description="Wraith4" ten="WRAITH4" />
+    <moveable id="90" name="BAT" description="Bat" ten="BAT" />
+    <moveable id="91" name="DOG" description="Dog" ten="DOG" />
     <moveable id="92" name="DOG_MIP" description="Dog Mip" hidden="true" />
-    <moveable id="93" name="HAMMERHEAD" description="Hammerhead" ten="SHARK" essential="false" />
+    <moveable id="93" name="HAMMERHEAD" description="Hammerhead" ten="SHARK" />
     <moveable id="94" name="HAMMERHEAD_MIP" description="Hammerhead Mip" hidden="true" />
-    <moveable id="95" name="SAS" description="Sas" ten="SAS_CAIRO" essential="false" />
+    <moveable id="95" name="SAS" description="Sas" ten="SAS_CAIRO" />
     <moveable id="96" name="SAS_MIP" description="Sas Mip" hidden="true" />
-    <moveable id="97" name="SAS_DYING" description="Sas Dying" ten="SAS_DYING" essential="false" />
+    <moveable id="97" name="SAS_DYING" description="Sas Dying" ten="SAS_DYING" />
     <moveable id="98" name="SAS_DYING_MIP" description="Sas Dying Mip" hidden="true" />
-    <moveable id="99" name="SAS_CAPTAIN" description="Sas Captain" ten="SAS_CAPTAIN" essential="false" />
+    <moveable id="99" name="SAS_CAPTAIN" description="Sas Captain" ten="SAS_CAPTAIN" />
     <moveable id="100" name="SAS_CAPTAIN_MIP" description="Sas Captain Mip" hidden="true" />
-    <moveable id="101" name="SAS_DRAG_BLOKE" description="Sas Drag Bloke" ten="SAS_DRAG_BLOKE" essential="false" />
-    <moveable id="102" name="AHMET" description="Ahmet" ten="AHMET" essential="false" />
+    <moveable id="101" name="SAS_DRAG_BLOKE" description="Sas Drag Bloke" ten="SAS_DRAG_BLOKE" />
+    <moveable id="102" name="AHMET" description="Ahmet" ten="AHMET" />
     <moveable id="103" name="AHMET_MIP" description="Ahmet Mip" hidden="true" ten="LOCUSTS" />
-    <moveable id="104" name="LARA_DOUBLE" description="Lara Double" ten="LARA_DOUBLE" essential="false" />
+    <moveable id="104" name="LARA_DOUBLE" description="Lara Double" ten="LARA_DOUBLE" />
     <moveable id="105" name="LARA_DOUBLE_MIP" description="Lara Double Mip" hidden="true" />
-    <moveable id="106" name="SMALL_SCORPION" description="Small Scorpion" ten="SMALL_SCORPION" essential="false" />
-    <moveable id="107" name="FISH|LOCUST_EMITTER" description="Locust Emitter" ten="LOCUSTS_EMITTER" essential="false" />
-    <moveable id="108" name="GAME_PIECE1" description="Game Piece1" ten="GAME_PIECE1" essential="false" />
-    <moveable id="109" name="GAME_PIECE2" description="Game Piece2" ten="GAME_PIECE2" essential="false" />
-    <moveable id="110" name="GAME_PIECE3" description="Game Piece3" ten="GAME_PIECE3" essential="false" />
-    <moveable id="111" name="ENEMY_PIECE" description="Enemy Piece" ten="ENEMY_PIECE" essential="false" />
-    <moveable id="112" name="WHEEL_OF_FORTUNE" description="Wheel Of Fortune" ten="WHEEL_OF_FORTUNE" essential="false" />
-    <moveable id="113" name="SCALES" description="Scales" ten="SCALES" essential="false" />
+    <moveable id="106" name="SMALL_SCORPION" description="Small Scorpion" ten="SMALL_SCORPION" />
+    <moveable id="107" name="FISH|LOCUST_EMITTER" description="Locust Emitter" ten="LOCUSTS_EMITTER" />
+    <moveable id="108" name="GAME_PIECE1" description="Game Piece1" ten="GAME_PIECE1" />
+    <moveable id="109" name="GAME_PIECE2" description="Game Piece2" ten="GAME_PIECE2" />
+    <moveable id="110" name="GAME_PIECE3" description="Game Piece3" ten="GAME_PIECE3" />
+    <moveable id="111" name="ENEMY_PIECE" description="Enemy Piece" ten="ENEMY_PIECE" />
+    <moveable id="112" name="WHEEL_OF_FORTUNE" description="Wheel Of Fortune" ten="WHEEL_OF_FORTUNE" />
+    <moveable id="113" name="SCALES" description="Scales" ten="SCALES" />
     <moveable id="114" name="DARTS" description="Darts" ten="DARTS" />
-    <moveable id="115" name="DART_EMITTER" description="Dart Emitter" ten="DARTS_EMITTER" essential="false" />
-    <moveable id="116" name="HOMING_DART_EMITTER" description="Homing Dart Emitter" ten="HOMING_DART_EMITTER" essential="false" />
-    <moveable id="117" name="FALLING_CEILING" description="Falling Ceiling" ten="FALLING_CEILING" essential="false" />
-    <moveable id="118" name="FALLING_BLOCK" description="Falling Block" ten="FALLING_BLOCK" essential="false" />
-    <moveable id="119" name="FALLING_BLOCK2" description="Falling Block2" ten="FALLING_BLOCK2" essential="false" />
-    <moveable id="120" name="SMASHABLE_BIKE_WALL" description="Smashable Bike Wall" ten="VEHICLE_SMASHABLE_WALL" essential="false" />
-    <moveable id="121" name="SMASHABLE_BIKE_FLOOR" description="Smashable Bike Floor" ten="VEHICLE_SMASHABLE_FLOOR" essential="false" />
-    <moveable id="122" name="TRAPDOOR1" description="Trapdoor1" ten="TRAPDOOR1" essential="false" />
-    <moveable id="123" name="TRAPDOOR2" description="Trapdoor2" ten="TRAPDOOR2" essential="false" />
-    <moveable id="124" name="TRAPDOOR3" description="Trapdoor3" ten="TRAPDOOR3" essential="false" />
-    <moveable id="125" name="FLOOR_TRAPDOOR1" description="Floor Trapdoor1" ten="FLOOR_TRAPDOOR1" essential="false" />
-    <moveable id="126" name="FLOOR_TRAPDOOR2" description="Floor Trapdoor2" ten="FLOOR_TRAPDOOR2" essential="false" />
-    <moveable id="127" name="CEILING_TRAPDOOR1" description="Ceiling Trapdoor1" ten="CEILING_TRAPDOOR1" essential="false" />
-    <moveable id="128" name="CEILING_TRAPDOOR2" description="Ceiling Trapdoor2" ten="CEILING_TRAPDOOR2" essential="false" />
-    <moveable id="129" name="SCALING_TRAPDOOR" description="Scaling Trapdoor" essential="false" />
-    <moveable id="130" name="ROLLINGBALL" description="Rollingball" ten="ROLLINGBALL" essential="false" />
-    <moveable id="131" name="SPIKEY_FLOOR" description="Spikey Floor" ten="SPIKY_FLOOR" essential="false" />
-    <moveable id="132" name="TEETH_SPIKES" description="Teeth Spikes" ten="TEETH_SPIKES" essential="false" />
-    <moveable id="133" name="JOBY_SPIKES" description="Joby Spikes" ten="JOBY_SPIKES" essential="false" />
-    <moveable id="134" name="SLICER_DICER" description="Slicer Dicer" ten="SLICER_DICER" essential="false" />
-    <moveable id="135" name="CHAIN" description="Chain" ten="CHAIN" essential="false" />
-    <moveable id="136" name="PLOUGH" description="Plough" ten="PLOUGH" essential="false" />
-    <moveable id="137" name="STARGATE" description="Stargate" ten="STARGATE" essential="false" />
-    <moveable id="138" name="HAMMER" description="Hammer" ten="HAMMER" essential="false" />
-    <moveable id="139" name="BURNING_FLOOR" description="Burning Floor" ten="BURNING_FLOOR" essential="false" />
-    <moveable id="140" name="COG" description="Cog" ten="COG" essential="false" />
-    <moveable id="141" name="SPIKEBALL" description="Spikeball" ten="SPIKEBALL" essential="false" />
-    <moveable id="142" name="FLAME" description="Flame" ten="FLAME" essential="false" />
-    <moveable id="143" name="FLAME_EMITTER" description="Flame Emitter" ten="FLAME_EMITTER" essential="false" />
-    <moveable id="144" name="FLAME_EMITTER2" description="Flame Emitter2" ten="FLAME_EMITTER2" essential="false" />
-    <moveable id="145" name="FLAME_EMITTER3" description="Flame Emitter3" ten="FLAME_EMITTER3" essential="false" />
-    <moveable id="146" name="ROPE" description="Rope" ten="ROPE" essential="false" />
-    <moveable id="147" name="FIREROPE" description="Firerope" ten="FIREROPE" essential="false" />
-    <moveable id="148" name="POLEROPE" description="Polerope" ten="POLEROPE" essential="false" />
-    <moveable id="149" name="ONEBLOCK_PLATFORM" description="Oneblock Platform" ten="ONEBLOCK_PLATFORM" essential="false" />
-    <moveable id="150" name="TWOBLOCK_PLATFORM" description="Twoblock Platform" ten="TWOBLOCK_PLATFORM" essential="false" />
-    <moveable id="151" name="RAISING_BLOCK1" description="Raising Block1" ten="RAISING_BLOCK1" essential="false" />
-    <moveable id="152" name="RAISING_BLOCK2" description="Raising Block2" ten="RAISING_BLOCK2" essential="false" />
-    <moveable id="153" name="EXPANDING_PLATFORM" description="Expanding Platform" ten="EXPANDING_PLATFORM" essential="false" />
-    <moveable id="154" name="SQUISHY_BLOCK1" description="Squishy Block1" ten="SQUISHY_BLOCK_HORIZONTAL" essential="false" />
-    <moveable id="155" name="SQUISHY_BLOCK2" description="Squishy Block2" ten="SQUISHY_BLOCK_VERTICAL" essential="false" />
-    <moveable id="156" name="PUSHABLE_OBJECT1" description="Pushable Object1" ten="PUSHABLE_OBJECT1" essential="false" />
-    <moveable id="157" name="PUSHABLE_OBJECT2" description="Pushable Object2" ten="PUSHABLE_OBJECT2" essential="false" />
-    <moveable id="158" name="PUSHABLE_OBJECT3" description="Pushable Object3" ten="PUSHABLE_OBJECT3" essential="false" />
-    <moveable id="159" name="PUSHABLE_OBJECT4" description="Pushable Object4" ten="PUSHABLE_OBJECT4" essential="false" />
-    <moveable id="160" name="PUSHABLE_OBJECT5" description="Pushable Object5" ten="PUSHABLE_OBJECT5" essential="false" />
-    <moveable id="161" name="TRIPWIRE" description="Tripwire" ten="TRIPWIRE" essential="false" />
-    <moveable id="162" name="SENTRY_GUN" description="Sentry Gun" ten="SENTRY_GUN" essential="false" />
-    <moveable id="163" name="MINE" description="Mine" ten="MINE" essential="false" />
-    <moveable id="164" name="MAPPER" description="Mapper" ten="MAPPER" essential="false" />
-    <moveable id="165" name="OBELISK" description="Obelisk" ten="OBELISK" essential="false" />
-    <moveable id="166" name="FLOOR_4BLADE" description="Floor 4blade" ten="FLOOR_4BLADES" essential="false" />
-    <moveable id="167" name="ROOF_4BLADE" description="Roof 4blade" ten="CEILING_4BLADES" essential="false" />
-    <moveable id="168" name="BIRD_BLADE" description="Bird Blade" ten="BIRD_BLADE" essential="false" />
-    <moveable id="169" name="CATWALK_BLADE" description="Catwalk Blade" ten="CATWALK_BLADE" essential="false" />
-    <moveable id="170" name="MOVING_BLADE" description="Moving Blade" ten="MOVING_BLADE" essential="false" />
-    <moveable id="171" name="PLINTH_BLADE" description="Plinth Blade" ten="PLINTH_BLADE" essential="false" />
-    <moveable id="172" name="SETH_BLADE" description="Seth Blade" ten="SETH_BLADE" essential="false" />
-    <moveable id="173" name="LIGHTNING_CONDUCTOR" description="Lightning Conductor" ten="LIGHTING_CONDUCTOR" essential="false" />
-    <moveable id="174" name="ELEMENT_PUZZLE" description="Element Puzzle" ten="ELEMENT_PUZZLE" essential="false" />
+    <moveable id="115" name="DART_EMITTER" description="Dart Emitter" ten="DARTS_EMITTER" />
+    <moveable id="116" name="HOMING_DART_EMITTER" description="Homing Dart Emitter" ten="HOMING_DART_EMITTER" />
+    <moveable id="117" name="FALLING_CEILING" description="Falling Ceiling" ten="FALLING_CEILING" />
+    <moveable id="118" name="FALLING_BLOCK" description="Falling Block" ten="FALLING_BLOCK" />
+    <moveable id="119" name="FALLING_BLOCK2" description="Falling Block2" ten="FALLING_BLOCK2" />
+    <moveable id="120" name="SMASHABLE_BIKE_WALL" description="Smashable Bike Wall" ten="VEHICLE_SMASHABLE_WALL" />
+    <moveable id="121" name="SMASHABLE_BIKE_FLOOR" description="Smashable Bike Floor" ten="VEHICLE_SMASHABLE_FLOOR" />
+    <moveable id="122" name="TRAPDOOR1" description="Trapdoor1" ten="TRAPDOOR1" />
+    <moveable id="123" name="TRAPDOOR2" description="Trapdoor2" ten="TRAPDOOR2" />
+    <moveable id="124" name="TRAPDOOR3" description="Trapdoor3" ten="TRAPDOOR3" />
+    <moveable id="125" name="FLOOR_TRAPDOOR1" description="Floor Trapdoor1" ten="FLOOR_TRAPDOOR1" />
+    <moveable id="126" name="FLOOR_TRAPDOOR2" description="Floor Trapdoor2" ten="FLOOR_TRAPDOOR2" />
+    <moveable id="127" name="CEILING_TRAPDOOR1" description="Ceiling Trapdoor1" ten="CEILING_TRAPDOOR1" />
+    <moveable id="128" name="CEILING_TRAPDOOR2" description="Ceiling Trapdoor2" ten="CEILING_TRAPDOOR2" />
+    <moveable id="129" name="SCALING_TRAPDOOR" description="Scaling Trapdoor" />
+    <moveable id="130" name="ROLLINGBALL" description="Rollingball" ten="ROLLINGBALL" />
+    <moveable id="131" name="SPIKEY_FLOOR" description="Spikey Floor" ten="SPIKY_FLOOR" />
+    <moveable id="132" name="TEETH_SPIKES" description="Teeth Spikes" ten="TEETH_SPIKES" />
+    <moveable id="133" name="JOBY_SPIKES" description="Joby Spikes" ten="JOBY_SPIKES" />
+    <moveable id="134" name="SLICER_DICER" description="Slicer Dicer" ten="SLICER_DICER" />
+    <moveable id="135" name="CHAIN" description="Chain" ten="CHAIN" />
+    <moveable id="136" name="PLOUGH" description="Plough" ten="PLOUGH" />
+    <moveable id="137" name="STARGATE" description="Stargate" ten="STARGATE" />
+    <moveable id="138" name="HAMMER" description="Hammer" ten="HAMMER" />
+    <moveable id="139" name="BURNING_FLOOR" description="Burning Floor" ten="BURNING_FLOOR" />
+    <moveable id="140" name="COG" description="Cog" ten="COG" />
+    <moveable id="141" name="SPIKEBALL" description="Spikeball" ten="SPIKEBALL" />
+    <moveable id="142" name="FLAME" description="Flame" ten="FLAME" />
+    <moveable id="143" name="FLAME_EMITTER" description="Flame Emitter" ten="FLAME_EMITTER" />
+    <moveable id="144" name="FLAME_EMITTER2" description="Flame Emitter2" ten="FLAME_EMITTER2" />
+    <moveable id="145" name="FLAME_EMITTER3" description="Flame Emitter3" ten="FLAME_EMITTER3" />
+    <moveable id="146" name="ROPE" description="Rope" ten="ROPE" />
+    <moveable id="147" name="FIREROPE" description="Firerope" ten="FIREROPE" />
+    <moveable id="148" name="POLEROPE" description="Polerope" ten="POLEROPE" />
+    <moveable id="149" name="ONEBLOCK_PLATFORM" description="Oneblock Platform" ten="ONEBLOCK_PLATFORM" />
+    <moveable id="150" name="TWOBLOCK_PLATFORM" description="Twoblock Platform" ten="TWOBLOCK_PLATFORM" />
+    <moveable id="151" name="RAISING_BLOCK1" description="Raising Block1" ten="RAISING_BLOCK1" />
+    <moveable id="152" name="RAISING_BLOCK2" description="Raising Block2" ten="RAISING_BLOCK2" />
+    <moveable id="153" name="EXPANDING_PLATFORM" description="Expanding Platform" ten="EXPANDING_PLATFORM" />
+    <moveable id="154" name="SQUISHY_BLOCK1" description="Squishy Block1" ten="SQUISHY_BLOCK_HORIZONTAL" />
+    <moveable id="155" name="SQUISHY_BLOCK2" description="Squishy Block2" ten="SQUISHY_BLOCK_VERTICAL" />
+    <moveable id="156" name="PUSHABLE_OBJECT1" description="Pushable Object1" ten="PUSHABLE_OBJECT1" />
+    <moveable id="157" name="PUSHABLE_OBJECT2" description="Pushable Object2" ten="PUSHABLE_OBJECT2" />
+    <moveable id="158" name="PUSHABLE_OBJECT3" description="Pushable Object3" ten="PUSHABLE_OBJECT3" />
+    <moveable id="159" name="PUSHABLE_OBJECT4" description="Pushable Object4" ten="PUSHABLE_OBJECT4" />
+    <moveable id="160" name="PUSHABLE_OBJECT5" description="Pushable Object5" ten="PUSHABLE_OBJECT5" />
+    <moveable id="161" name="TRIPWIRE" description="Tripwire" ten="TRIPWIRE" />
+    <moveable id="162" name="SENTRY_GUN" description="Sentry Gun" ten="SENTRY_GUN" />
+    <moveable id="163" name="MINE" description="Mine" ten="MINE" />
+    <moveable id="164" name="MAPPER" description="Mapper" ten="MAPPER" />
+    <moveable id="165" name="OBELISK" description="Obelisk" ten="OBELISK" />
+    <moveable id="166" name="FLOOR_4BLADE" description="Floor 4blade" ten="FLOOR_4BLADES" />
+    <moveable id="167" name="ROOF_4BLADE" description="Roof 4blade" ten="CEILING_4BLADES" />
+    <moveable id="168" name="BIRD_BLADE" description="Bird Blade" ten="BIRD_BLADE" />
+    <moveable id="169" name="CATWALK_BLADE" description="Catwalk Blade" ten="CATWALK_BLADE" />
+    <moveable id="170" name="MOVING_BLADE" description="Moving Blade" ten="MOVING_BLADE" />
+    <moveable id="171" name="PLINTH_BLADE" description="Plinth Blade" ten="PLINTH_BLADE" />
+    <moveable id="172" name="SETH_BLADE" description="Seth Blade" ten="SETH_BLADE" />
+    <moveable id="173" name="LIGHTNING_CONDUCTOR" description="Lightning Conductor" ten="LIGHTING_CONDUCTOR" />
+    <moveable id="174" name="ELEMENT_PUZZLE" description="Element Puzzle" ten="ELEMENT_PUZZLE" />
     <moveable id="175" name="PUZZLE_ITEM1" description="Puzzle Item1" ten="PUZZLE_ITEM1" />
     <moveable id="176" name="PUZZLE_ITEM2" description="Puzzle Item2" ten="PUZZLE_ITEM2" />
     <moveable id="177" name="PUZZLE_ITEM3" description="Puzzle Item3" ten="PUZZLE_ITEM3" />
@@ -260,18 +260,18 @@
     <moveable id="257" name="QUEST_ITEM6" description="Quest Item6" ten="PICKUP_ITEM10" />
     <moveable id="258" name="MAP" description="Map" ten="MAP" />
     <moveable id="259" name="SECRET_MAP" description="Secret Map" ten="SECRET_MAP" />
-    <moveable id="260" name="PUZZLE_HOLE1" description="Puzzle Hole1" ten="PUZZLE_HOLE1" essential="false" />
-    <moveable id="261" name="PUZZLE_HOLE2" description="Puzzle Hole2" ten="PUZZLE_HOLE2" essential="false" />
-    <moveable id="262" name="PUZZLE_HOLE3" description="Puzzle Hole3" ten="PUZZLE_HOLE3" essential="false" />
-    <moveable id="263" name="PUZZLE_HOLE4" description="Puzzle Hole4" ten="PUZZLE_HOLE4" essential="false" />
-    <moveable id="264" name="PUZZLE_HOLE5" description="Puzzle Hole5" ten="PUZZLE_HOLE5" essential="false" />
-    <moveable id="265" name="PUZZLE_HOLE6" description="Puzzle Hole6" ten="PUZZLE_HOLE6" essential="false" />
-    <moveable id="266" name="PUZZLE_HOLE7" description="Puzzle Hole7" ten="PUZZLE_HOLE7" essential="false" />
-    <moveable id="267" name="PUZZLE_HOLE8" description="Puzzle Hole8" ten="PUZZLE_HOLE8" essential="false" />
-    <moveable id="268" name="PUZZLE_HOLE9" description="Puzzle Hole9" ten="PUZZLE_HOLE9" essential="false" />
-    <moveable id="269" name="PUZZLE_HOLE10" description="Puzzle Hole10" ten="PUZZLE_HOLE10" essential="false" />
-    <moveable id="270" name="PUZZLE_HOLE11" description="Puzzle Hole11" ten="PUZZLE_HOLE11" essential="false" />
-    <moveable id="271" name="PUZZLE_HOLE12" description="Puzzle Hole12" ten="PUZZLE_HOLE12" essential="false" />
+    <moveable id="260" name="PUZZLE_HOLE1" description="Puzzle Hole1" ten="PUZZLE_HOLE1" />
+    <moveable id="261" name="PUZZLE_HOLE2" description="Puzzle Hole2" ten="PUZZLE_HOLE2" />
+    <moveable id="262" name="PUZZLE_HOLE3" description="Puzzle Hole3" ten="PUZZLE_HOLE3" />
+    <moveable id="263" name="PUZZLE_HOLE4" description="Puzzle Hole4" ten="PUZZLE_HOLE4" />
+    <moveable id="264" name="PUZZLE_HOLE5" description="Puzzle Hole5" ten="PUZZLE_HOLE5" />
+    <moveable id="265" name="PUZZLE_HOLE6" description="Puzzle Hole6" ten="PUZZLE_HOLE6" />
+    <moveable id="266" name="PUZZLE_HOLE7" description="Puzzle Hole7" ten="PUZZLE_HOLE7" />
+    <moveable id="267" name="PUZZLE_HOLE8" description="Puzzle Hole8" ten="PUZZLE_HOLE8" />
+    <moveable id="268" name="PUZZLE_HOLE9" description="Puzzle Hole9" ten="PUZZLE_HOLE9" />
+    <moveable id="269" name="PUZZLE_HOLE10" description="Puzzle Hole10" ten="PUZZLE_HOLE10" />
+    <moveable id="270" name="PUZZLE_HOLE11" description="Puzzle Hole11" ten="PUZZLE_HOLE11" />
+    <moveable id="271" name="PUZZLE_HOLE12" description="Puzzle Hole12" ten="PUZZLE_HOLE12" />
     <moveable id="272" name="PUZZLE_DONE1" description="Puzzle Done1" ten="PUZZLE_DONE1" />
     <moveable id="273" name="PUZZLE_DONE2" description="Puzzle Done2" ten="PUZZLE_DONE2" />
     <moveable id="274" name="PUZZLE_DONE3" description="Puzzle Done3" ten="PUZZLE_DONE3" />
@@ -284,18 +284,18 @@
     <moveable id="281" name="PUZZLE_DONE10" description="Puzzle Done10" ten="PUZZLE_DONE10" />
     <moveable id="282" name="PUZZLE_DONE11" description="Puzzle Done11" ten="PUZZLE_DONE11" />
     <moveable id="283" name="PUZZLE_DONE12" description="Puzzle Done12" ten="PUZZLE_DONE12" />
-    <moveable id="284" name="KEY_HOLE1" description="Key Hole1" ten="KEY_HOLE1" essential="false" />
-    <moveable id="285" name="KEY_HOLE2" description="Key Hole2" ten="KEY_HOLE2" essential="false" />
-    <moveable id="286" name="KEY_HOLE3" description="Key Hole3" ten="KEY_HOLE3" essential="false" />
-    <moveable id="287" name="KEY_HOLE4" description="Key Hole4" ten="KEY_HOLE4" essential="false" />
-    <moveable id="288" name="KEY_HOLE5" description="Key Hole5" ten="KEY_HOLE5" essential="false" />
-    <moveable id="289" name="KEY_HOLE6" description="Key Hole6" ten="KEY_HOLE6" essential="false" />
-    <moveable id="290" name="KEY_HOLE7" description="Key Hole7" ten="KEY_HOLE7" essential="false" />
-    <moveable id="291" name="KEY_HOLE8" description="Key Hole8" ten="KEY_HOLE8" essential="false" />
-    <moveable id="292" name="KEY_HOLE9" description="Key Hole9" ten="KEY_HOLE9" essential="false" />
-    <moveable id="293" name="KEY_HOLE10" description="Key Hole10" ten="KEY_HOLE10" essential="false" />
-    <moveable id="294" name="KEY_HOLE11" description="Key Hole11" ten="KEY_HOLE11" essential="false" />
-    <moveable id="295" name="KEY_HOLE12" description="Key Hole12" ten="KEY_HOLE12" essential="false" />
+    <moveable id="284" name="KEY_HOLE1" description="Key Hole1" ten="KEY_HOLE1" />
+    <moveable id="285" name="KEY_HOLE2" description="Key Hole2" ten="KEY_HOLE2" />
+    <moveable id="286" name="KEY_HOLE3" description="Key Hole3" ten="KEY_HOLE3" />
+    <moveable id="287" name="KEY_HOLE4" description="Key Hole4" ten="KEY_HOLE4" />
+    <moveable id="288" name="KEY_HOLE5" description="Key Hole5" ten="KEY_HOLE5" />
+    <moveable id="289" name="KEY_HOLE6" description="Key Hole6" ten="KEY_HOLE6" />
+    <moveable id="290" name="KEY_HOLE7" description="Key Hole7" ten="KEY_HOLE7" />
+    <moveable id="291" name="KEY_HOLE8" description="Key Hole8" ten="KEY_HOLE8" />
+    <moveable id="292" name="KEY_HOLE9" description="Key Hole9" ten="KEY_HOLE9" />
+    <moveable id="293" name="KEY_HOLE10" description="Key Hole10" ten="KEY_HOLE10" />
+    <moveable id="294" name="KEY_HOLE11" description="Key Hole11" ten="KEY_HOLE11" />
+    <moveable id="295" name="KEY_HOLE12" description="Key Hole12" ten="KEY_HOLE12" />
     <moveable id="296" name="WATERSKIN1_EMPTY" description="Waterskin1 Empty" ten="WATERSKIN1_EMPTY" />
     <moveable id="297" name="WATERSKIN1_1" description="Waterskin1_1" ten="WATERSKIN1_1" />
     <moveable id="298" name="WATERSKIN1_2" description="Waterskin1_2" ten="WATERSKIN1_2" />
@@ -306,49 +306,49 @@
     <moveable id="303" name="WATERSKIN2_3" description="Waterskin2_3" ten="WATERSKIN2_3" />
     <moveable id="304" name="WATERSKIN2_4" description="Waterskin2_4" ten="WATERSKIN2_4" />
     <moveable id="305" name="WATERSKIN2_5" description="Waterskin2_5" ten="WATERSKIN2_5" />
-    <moveable id="306" name="SWITCH_TYPE1" description="Switch Type1" ten="SWITCH_TYPE1" essential="false" />
-    <moveable id="307" name="SWITCH_TYPE2" description="Switch Type2" ten="SWITCH_TYPE2" essential="false" />
-    <moveable id="308" name="SWITCH_TYPE3" description="Switch Type3" ten="SWITCH_TYPE3" essential="false" />
-    <moveable id="309" name="SWITCH_TYPE4" description="Switch Type4" ten="SWITCH_TYPE4" essential="false" />
-    <moveable id="310" name="SWITCH_TYPE5" description="Switch Type5" ten="SWITCH_TYPE5" essential="false" />
-    <moveable id="311" name="SWITCH_TYPE6" description="Switch Type6" ten="SWITCH_TYPE6" essential="false" />
-    <moveable id="312" name="SWITCH_TYPE7" description="Switch Type7" ten="SHOOT_SWITCH1" essential="false" />
-    <moveable id="313" name="SWITCH_TYPE8" description="Switch Type8" ten="SHOOT_SWITCH2" essential="false" />
-    <moveable id="314" name="UNDERWATER_SWITCH1" description="Underwater Switch1" ten="UNDERWATER_WALL_SWITCH1" essential="false" />
-    <moveable id="315" name="UNDERWATER_SWITCH2" description="Underwater Switch2" ten="UNDERWATER_CEILING_SWITCH1" essential="false" />
-    <moveable id="316" name="TURN_SWITCH" description="Turn Switch" ten="TURN_SWITCH" essential="false" />
-    <moveable id="317" name="COG_SWITCH" description="Cog Switch" ten="COG_SWITCH" essential="false" />
-    <moveable id="318" name="LEVER_SWITCH" description="Lever Switch" ten="LEVER_SWITCH" essential="false" />
-    <moveable id="319" name="JUMP_SWITCH" description="Jump Switch" ten="JUMP_SWITCH" essential="false" />
-    <moveable id="320" name="CROWBAR_SWITCH" description="Crowbar Switch" ten="CROWBAR_SWITCH" essential="false" />
-    <moveable id="321" name="PULLEY" description="Pulley" ten="PULLEY" essential="false" />
-    <moveable id="322" name="DOOR_TYPE1" description="Door Type1" ten="DOOR_TYPE1" essential="false" />
-    <moveable id="323" name="DOOR_TYPE2" description="Door Type2" ten="DOOR_TYPE2" essential="false" />
-    <moveable id="324" name="DOOR_TYPE3" description="Door Type3" ten="DOOR_TYPE3" essential="false" />
-    <moveable id="325" name="DOOR_TYPE4" description="Door Type4" ten="DOOR_TYPE4" essential="false" />
-    <moveable id="326" name="DOOR_TYPE5" description="Door Type5" ten="DOOR_TYPE5" essential="false" />
-    <moveable id="327" name="DOOR_TYPE6" description="Door Type6" ten="DOOR_TYPE6" essential="false" />
-    <moveable id="328" name="DOOR_TYPE7" description="Door Type7" ten="DOOR_TYPE7" essential="false" />
-    <moveable id="329" name="DOOR_TYPE8" description="Door Type8" ten="DOOR_TYPE8" essential="false" />
-    <moveable id="330" name="PUSHPULL_DOOR1" description="Pushpull Door1" ten="PUSHPULL_DOOR1" essential="false" />
-    <moveable id="331" name="PUSHPULL_DOOR2" description="Pushpull Door2" ten="PUSHPULL_DOOR2" essential="false" />
-    <moveable id="332" name="KICK_DOOR1" description="Kick Door1" ten="KICK_DOOR1" essential="false" />
-    <moveable id="333" name="KICK_DOOR2" description="Kick Door2" ten="KICK_DOOR2" essential="false" />
-    <moveable id="334" name="UNDERWATER_DOOR" description="Underwater Door" ten="UNDERWATER_DOOR1" essential="false" />
-    <moveable id="335" name="DOUBLE_DOORS" description="Double Doors" ten="DOUBLE_DOORS1" essential="false" />
-    <moveable id="336" name="BRIDGE_FLAT" description="Bridge Flat" ten="BRIDGE_FLAT" essential="false" />
-    <moveable id="337" name="BRIDGE_TILT1" description="Bridge Tilt1" ten="BRIDGE_TILT1" essential="false" />
-    <moveable id="338" name="BRIDGE_TILT2" description="Bridge Tilt2" ten="BRIDGE_TILT2" essential="false" />
-    <moveable id="339" name="SARCOPHAGUS" description="Sarcophagus" ten="SARCOPHAGUS" essential="false" />
-    <moveable id="340" name="SEQUENCE_DOOR1" description="Sequence Door1" ten="SEQUENCE_DOOR1" essential="false" />
-    <moveable id="341" name="SEQUENCE_SWITCH1" description="Sequence Switch1" ten="SEQUENCE_SWITCH1" essential="false" />
-    <moveable id="342" name="SEQUENCE_SWITCH2" description="Sequence Switch2" ten="SEQUENCE_SWITCH2" essential="false" />
-    <moveable id="343" name="SEQUENCE_SWITCH3" description="Sequence Switch3" ten="SEQUENCE_SWITCH3" essential="false" />
-    <moveable id="344" name="SARCOPHAGUS_CUT" description="Sarcophagus Cut" essential="false" />
-    <moveable id="345" name="HORUS_STATUE" description="Horus Statue" ten="HORUS_STATUE" essential="false" />
-    <moveable id="346" name="GOD_HEAD" description="God Head" ten="GOD_HEAD" essential="false" />
-    <moveable id="347" name="SETH_DOOR" description="Seth Door" ten="SETH_DOOR" essential="false" />
-    <moveable id="348" name="STATUE_PLINTH" description="Statue Plinth" ten="STATUE_PLINTH" essential="false" />
+    <moveable id="306" name="SWITCH_TYPE1" description="Switch Type1" ten="SWITCH_TYPE1" />
+    <moveable id="307" name="SWITCH_TYPE2" description="Switch Type2" ten="SWITCH_TYPE2" />
+    <moveable id="308" name="SWITCH_TYPE3" description="Switch Type3" ten="SWITCH_TYPE3" />
+    <moveable id="309" name="SWITCH_TYPE4" description="Switch Type4" ten="SWITCH_TYPE4" />
+    <moveable id="310" name="SWITCH_TYPE5" description="Switch Type5" ten="SWITCH_TYPE5" />
+    <moveable id="311" name="SWITCH_TYPE6" description="Switch Type6" ten="SWITCH_TYPE6" />
+    <moveable id="312" name="SWITCH_TYPE7" description="Switch Type7" ten="SHOOT_SWITCH1" />
+    <moveable id="313" name="SWITCH_TYPE8" description="Switch Type8" ten="SHOOT_SWITCH2" />
+    <moveable id="314" name="UNDERWATER_SWITCH1" description="Underwater Switch1" ten="WALL_SWITCH1" />
+    <moveable id="315" name="UNDERWATER_SWITCH2" description="Underwater Switch2" ten="CEILING_SWITCH1" />
+    <moveable id="316" name="TURN_SWITCH" description="Turn Switch" ten="TURN_SWITCH" />
+    <moveable id="317" name="COG_SWITCH" description="Cog Switch" ten="COG_SWITCH" />
+    <moveable id="318" name="LEVER_SWITCH" description="Lever Switch" ten="LEVER_SWITCH" />
+    <moveable id="319" name="JUMP_SWITCH" description="Jump Switch" ten="JUMP_SWITCH" />
+    <moveable id="320" name="CROWBAR_SWITCH" description="Crowbar Switch" ten="CROWBAR_SWITCH" />
+    <moveable id="321" name="PULLEY" description="Pulley" ten="PULLEY" />
+    <moveable id="322" name="DOOR_TYPE1" description="Door Type1" ten="DOOR_TYPE1" />
+    <moveable id="323" name="DOOR_TYPE2" description="Door Type2" ten="DOOR_TYPE2" />
+    <moveable id="324" name="DOOR_TYPE3" description="Door Type3" ten="DOOR_TYPE3" />
+    <moveable id="325" name="DOOR_TYPE4" description="Door Type4" ten="DOOR_TYPE4" />
+    <moveable id="326" name="DOOR_TYPE5" description="Door Type5" ten="DOOR_TYPE5" />
+    <moveable id="327" name="DOOR_TYPE6" description="Door Type6" ten="DOOR_TYPE6" />
+    <moveable id="328" name="DOOR_TYPE7" description="Door Type7" ten="DOOR_TYPE7" />
+    <moveable id="329" name="DOOR_TYPE8" description="Door Type8" ten="DOOR_TYPE8" />
+    <moveable id="330" name="PUSHPULL_DOOR1" description="Pushpull Door1" ten="PUSHPULL_DOOR1" />
+    <moveable id="331" name="PUSHPULL_DOOR2" description="Pushpull Door2" ten="PUSHPULL_DOOR2" />
+    <moveable id="332" name="KICK_DOOR1" description="Kick Door1" ten="KICK_DOOR1" />
+    <moveable id="333" name="KICK_DOOR2" description="Kick Door2" ten="KICK_DOOR2" />
+    <moveable id="334" name="UNDERWATER_DOOR" description="Underwater Door" ten="UNDERWATER_DOOR1" />
+    <moveable id="335" name="DOUBLE_DOORS" description="Double Doors" ten="DOUBLE_DOORS1" />
+    <moveable id="336" name="BRIDGE_FLAT" description="Bridge Flat" ten="BRIDGE_FLAT" />
+    <moveable id="337" name="BRIDGE_TILT1" description="Bridge Tilt1" ten="BRIDGE_TILT1" />
+    <moveable id="338" name="BRIDGE_TILT2" description="Bridge Tilt2" ten="BRIDGE_TILT2" />
+    <moveable id="339" name="SARCOPHAGUS" description="Sarcophagus" ten="SARCOPHAGUS" />
+    <moveable id="340" name="SEQUENCE_DOOR1" description="Sequence Door1" ten="SEQUENCE_DOOR1" />
+    <moveable id="341" name="SEQUENCE_SWITCH1" description="Sequence Switch1" ten="SEQUENCE_SWITCH1" />
+    <moveable id="342" name="SEQUENCE_SWITCH2" description="Sequence Switch2" ten="SEQUENCE_SWITCH2" />
+    <moveable id="343" name="SEQUENCE_SWITCH3" description="Sequence Switch3" ten="SEQUENCE_SWITCH3" />
+    <moveable id="344" name="SARCOPHAGUS_CUT" description="Sarcophagus Cut" />
+    <moveable id="345" name="HORUS_STATUE" description="Horus Statue" ten="HORUS_STATUE" />
+    <moveable id="346" name="GOD_HEAD" description="God Head" ten="GOD_HEAD" />
+    <moveable id="347" name="SETH_DOOR" description="Seth Door" ten="SETH_DOOR" />
+    <moveable id="348" name="STATUE_PLINTH" description="Statue Plinth" ten="STATUE_PLINTH" />
     <moveable id="349" name="PISTOLS_ITEM" description="Pistols Item" ten="PISTOLS_ITEM" />
     <moveable id="350" name="PISTOLS_AMMO_ITEM" description="Pistols Ammo Item" ten="PISTOLS_AMMO_ITEM" />
     <moveable id="351" name="UZI_ITEM" description="Uzi Item" ten="UZI_ITEM" />
@@ -380,124 +380,120 @@
     <moveable id="377" name="MEMCARD_SAVE_INV_ITEM" description="Memcard Save Inv Item" ten="PC_SAVE_INV_ITEM" hidden="true" />
     <moveable id="378" name="PC_LOAD_INV_ITEM" description="Pc Load Inv Item" hidden="true" />
     <moveable id="379" name="PC_SAVE_INV_ITEM" description="Pc Save Inv Item" hidden="true" />
-    <moveable id="380" name="SMOKE_EMITTER_WHITE" description="Smoke Emitter White" ten="SMOKE_EMITTER_WHITE" essential="false" />
-    <moveable id="381" name="SMOKE_EMITTER_BLACK" description="Smoke Emitter Black" ten="SMOKE_EMITTER_BLACK" essential="false" />
-    <moveable id="382" name="STEAM_EMITTER" description="Steam Emitter" ten="STEAM_EMITTER" essential="false" />
-    <moveable id="383" name="EARTHQUAKE" description="Earthquake" ten="EARTHQUAKE" essential="false" />
+    <moveable id="380" name="SMOKE_EMITTER_WHITE" description="Smoke Emitter White" ten="SMOKE_EMITTER_WHITE" />
+    <moveable id="381" name="SMOKE_EMITTER_BLACK" description="Smoke Emitter Black" ten="SMOKE_EMITTER_BLACK" />
+    <moveable id="382" name="STEAM_EMITTER" description="Steam Emitter" ten="STEAM_EMITTER" />
+    <moveable id="383" name="EARTHQUAKE" description="Earthquake" ten="EARTHQUAKE" />
     <moveable id="384" name="BUBBLES" description="Bubbles" ten="ENERGY_BUBBLES" />
-    <moveable id="385" name="WATERFALLMIST" description="Waterfallmist" ten="WATERFALLMIST" essential="false" />
+    <moveable id="385" name="WATERFALLMIST" description="Waterfallmist" ten="WATERFALLMIST" />
     <moveable id="386" name="GUNSHELL" description="Gunshell" ten="GUNSHELL" />
     <moveable id="387" name="SHOTGUNSHELL" description="Shotgunshell" ten="SHOTGUNSHELL" />
     <moveable id="388" name="GUN_FLASH" description="Gun Flash" ten="GUN_FLASH" />
-    <moveable id="389" name="BUTTERFLY" description="Butterfly" ten="BUTTERFLY" essential="false" />
-    <moveable id="390" name="SPRINKLER" description="Sprinkler" essential="false" />
-    <moveable id="391" name="RED_LIGHT" description="Red Light" essential="false" />
-    <moveable id="392" name="GREEN_LIGHT" description="Green Light" essential="false" />
-    <moveable id="393" name="BLUE_LIGHT" description="Blue Light" essential="false" />
-    <moveable id="394" name="AMBER_LIGHT" description="Amber Light" ten="AMBER_LIGHT" essential="false" />
-    <moveable id="395" name="WHITE_LIGHT" description="White Light" essential="false" />
-    <moveable id="396" name="BLINKING_LIGHT" description="Blinking Light" ten="BLINKING_LIGHT" essential="false" />
-    <moveable id="397" name="LENS_FLARE" description="Lens Flare" ten="LENS_FLARE" essential="false" />
-    <moveable id="398" ai="true" name="AI_GUARD" description="Ai Guard" ten="AI_GUARD" essential="false" />
-    <moveable id="399" ai="true" name="AI_AMBUSH" description="Ai Ambush" ten="AI_AMBUSH" essential="false" />
-    <moveable id="400" ai="true" name="AI_PATROL1" description="Ai Patrol1" ten="AI_PATROL1" essential="false" />
-    <moveable id="401" ai="true" name="AI_MODIFY" description="Ai Modify" ten="AI_MODIFY" essential="false" />
-    <moveable id="402" ai="true" name="AI_FOLLOW" description="Ai Follow" ten="AI_FOLLOW" essential="false" />
-    <moveable id="403" ai="true" name="AI_PATROL2" description="Ai Patrol2" ten="AI_PATROL2" essential="false" />
-    <moveable id="404" ai="true" name="AI_X1" description="Ai X1" ten="AI_X1" essential="false" />
-    <moveable id="405" ai="true" name="AI_X2" description="Ai X2" ten="AI_X2" essential="false" />
-    <moveable id="406" ai="true" name="LARA_START_POS" description="Lara Start Pos" ten="LARA_START_POS" essential="false" />
-    <moveable id="407" name="KILL_ALL_TRIGGERS" description="Kill All Triggers" ten="KILL_ALL_TRIGGERS" essential="false" />
-    <moveable id="408" name="TRIGGER_TRIGGERER" description="Trigger Triggerer" ten="TRIGGER_TRIGGERER" essential="false" />
-    <moveable id="409" name="SMASH_OBJECT1" description="Smash Object1" ten="SMASH_OBJECT1" essential="false" />
-    <moveable id="410" name="SMASH_OBJECT2" description="Smash Object2" ten="SMASH_OBJECT2" essential="false" />
-    <moveable id="411" name="SMASH_OBJECT3" description="Smash Object3" ten="SMASH_OBJECT3" essential="false" />
-    <moveable id="412" name="SMASH_OBJECT4" description="Smash Object4" ten="SMASH_OBJECT4" essential="false" />
-    <moveable id="413" name="SMASH_OBJECT5" description="Smash Object5" ten="SMASH_OBJECT5" essential="false" />
-    <moveable id="414" name="SMASH_OBJECT6" description="Smash Object6" ten="SMASH_OBJECT6" essential="false" />
-    <moveable id="415" name="SMASH_OBJECT7" description="Smash Object7" ten="SMASH_OBJECT7" essential="false" />
-    <moveable id="416" name="SMASH_OBJECT8" description="Smash Object8" ten="SMASH_OBJECT8" essential="false" />
+    <moveable id="389" name="BUTTERFLY" description="Butterfly" ten="BUTTERFLY" />
+    <moveable id="390" name="SPRINKLER" description="Sprinkler" />
+    <moveable id="391" name="RED_LIGHT" description="Red Light" />
+    <moveable id="392" name="GREEN_LIGHT" description="Green Light" />
+    <moveable id="393" name="BLUE_LIGHT" description="Blue Light" />
+    <moveable id="394" name="AMBER_LIGHT" description="Amber Light" ten="AMBER_LIGHT" />
+    <moveable id="395" name="WHITE_LIGHT" description="White Light" />
+    <moveable id="396" name="BLINKING_LIGHT" description="Blinking Light" ten="BLINKING_LIGHT" />
+    <moveable id="397" name="LENS_FLARE" description="Lens Flare" ten="LENS_FLARE" />
+    <moveable id="398" ai="true" name="AI_GUARD" description="Ai Guard" ten="AI_GUARD" />
+    <moveable id="399" ai="true" name="AI_AMBUSH" description="Ai Ambush" ten="AI_AMBUSH" />
+    <moveable id="400" ai="true" name="AI_PATROL1" description="Ai Patrol1" ten="AI_PATROL1" />
+    <moveable id="401" ai="true" name="AI_MODIFY" description="Ai Modify" ten="AI_MODIFY" />
+    <moveable id="402" ai="true" name="AI_FOLLOW" description="Ai Follow" ten="AI_FOLLOW" />
+    <moveable id="403" ai="true" name="AI_PATROL2" description="Ai Patrol2" ten="AI_PATROL2" />
+    <moveable id="404" ai="true" name="AI_X1" description="Ai X1" ten="AI_X1" />
+    <moveable id="405" ai="true" name="AI_X2" description="Ai X2" ten="AI_X2" />
+    <moveable id="406" ai="true" name="LARA_START_POS" description="Lara Start Pos" ten="LARA_START_POS" />
+    <moveable id="407" name="KILL_ALL_TRIGGERS" description="Kill All Triggers" ten="KILL_ALL_TRIGGERS" />
+    <moveable id="408" name="TRIGGER_TRIGGERER" description="Trigger Triggerer" ten="TRIGGER_TRIGGERER" />
+    <moveable id="409" name="SMASH_OBJECT1" description="Smash Object1" ten="SMASH_OBJECT1" />
+    <moveable id="410" name="SMASH_OBJECT2" description="Smash Object2" ten="SMASH_OBJECT2" />
+    <moveable id="411" name="SMASH_OBJECT3" description="Smash Object3" ten="SMASH_OBJECT3" />
+    <moveable id="412" name="SMASH_OBJECT4" description="Smash Object4" ten="SMASH_OBJECT4" />
+    <moveable id="413" name="SMASH_OBJECT5" description="Smash Object5" ten="SMASH_OBJECT5" />
+    <moveable id="414" name="SMASH_OBJECT6" description="Smash Object6" ten="SMASH_OBJECT6" />
+    <moveable id="415" name="SMASH_OBJECT7" description="Smash Object7" ten="SMASH_OBJECT7" />
+    <moveable id="416" name="SMASH_OBJECT8" description="Smash Object8" ten="SMASH_OBJECT8" />
     <moveable id="417" name="MESHSWAP1" description="Meshswap1" hidden="true" ten="MESHSWAP1" />
     <moveable id="418" name="MESHSWAP2" description="Meshswap2" hidden="true" ten="MESHSWAP2" />
     <moveable id="419" name="MESHSWAP3" description="Meshswap3" hidden="true" ten="MESHSWAP3" />
-    <moveable id="420" name="DEATH_SLIDE" description="Death Slide" ten="ZIPLINE_HANDLE" essential="false" />
-    <moveable id="421" name="BODY_PART" description="Body Part" ten="BODY_PART" essential="false" />
-    <moveable id="422" name="CAMERA_TARGET" description="Camera Target" ten="CAMERA_TARGET" essential="false" />
-    <moveable id="423" name="WATERFALL1" description="Waterfall1" ten="WATERFALL1" essential="false" />
-    <moveable id="424" name="WATERFALL2" description="Waterfall2" ten="WATERFALL2" essential="false" />
-    <moveable id="425" name="WATERFALL3" description="Waterfall3" ten="WATERFALL3" essential="false" />
-    <moveable id="426" name="PLANET_EFFECT" description="Planet Effect" ten="PLANET_EFFECT" essential="false" />
-    <moveable id="427" name="ANIMATING1" description="Animating1" ten="ANIMATING1" essential="false" />
+    <moveable id="420" name="DEATH_SLIDE" description="Death Slide" ten="ZIPLINE_HANDLE" />
+    <moveable id="421" name="BODY_PART" description="Body Part" ten="BODY_PART" />
+    <moveable id="422" name="CAMERA_TARGET" description="Camera Target" ten="CAMERA_TARGET" />
+    <moveable id="423" name="WATERFALL1" description="Waterfall1" ten="WATERFALL1" />
+    <moveable id="424" name="WATERFALL2" description="Waterfall2" ten="WATERFALL2" />
+    <moveable id="425" name="WATERFALL3" description="Waterfall3" ten="WATERFALL3" />
+    <moveable id="426" name="PLANET_EFFECT" description="Planet Effect" ten="PLANET_EFFECT" />
+    <moveable id="427" name="ANIMATING1" description="Animating1" ten="ANIMATING1" />
     <moveable id="428" name="ANIMATING1_MIP" description="Animating1 Mip" ten="ANIMATING17" />
-    <moveable id="429" name="ANIMATING2" description="Animating2" ten="ANIMATING2" essential="false" />
+    <moveable id="429" name="ANIMATING2" description="Animating2" ten="ANIMATING2" />
     <moveable id="430" name="ANIMATING2_MIP" description="Animating2 Mip" ten="ANIMATING18" />
-    <moveable id="431" name="ANIMATING3" description="Animating3" ten="ANIMATING3" essential="false" />
+    <moveable id="431" name="ANIMATING3" description="Animating3" ten="ANIMATING3" />
     <moveable id="432" name="ANIMATING3_MIP" description="Animating3 Mip" ten="ANIMATING19" />
-    <moveable id="433" name="ANIMATING4" description="Animating4" ten="ANIMATING4" essential="false" />
+    <moveable id="433" name="ANIMATING4" description="Animating4" ten="ANIMATING4" />
     <moveable id="434" name="ANIMATING4_MIP" description="Animating4 Mip" ten="ANIMATING20" />
-    <moveable id="435" name="ANIMATING5" description="Animating5" ten="ANIMATING5" essential="false" />
+    <moveable id="435" name="ANIMATING5" description="Animating5" ten="ANIMATING5" />
     <moveable id="436" name="ANIMATING5_MIP" description="Animating5 Mip" ten="ANIMATING21" />
-    <moveable id="437" name="ANIMATING6" description="Animating6" ten="ANIMATING6" essential="false" />
+    <moveable id="437" name="ANIMATING6" description="Animating6" ten="ANIMATING6" />
     <moveable id="438" name="ANIMATING6_MIP" description="Animating6 Mip" ten="ANIMATING22" />
-    <moveable id="439" name="ANIMATING7" description="Animating7" ten="ANIMATING7" essential="false" />
+    <moveable id="439" name="ANIMATING7" description="Animating7" ten="ANIMATING7" />
     <moveable id="440" name="ANIMATING7_MIP" description="Animating7 Mip" ten="ANIMATING23" />
-    <moveable id="441" name="ANIMATING8" description="Animating8" ten="ANIMATING8" essential="false" />
+    <moveable id="441" name="ANIMATING8" description="Animating8" ten="ANIMATING8" />
     <moveable id="442" name="ANIMATING8_MIP" description="Animating8 Mip" ten="ANIMATING24" />
-    <moveable id="443" name="ANIMATING9" description="Animating9" ten="ANIMATING9" essential="false" />
+    <moveable id="443" name="ANIMATING9" description="Animating9" ten="ANIMATING9" />
     <moveable id="444" name="ANIMATING9_MIP" description="Animating9 Mip" ten="ANIMATING25" />
-    <moveable id="445" name="ANIMATING10" description="Animating10" ten="ANIMATING10" essential="false" />
+    <moveable id="445" name="ANIMATING10" description="Animating10" ten="ANIMATING10" />
     <moveable id="446" name="ANIMATING10_MIP" description="Animating10 Mip" ten="ANIMATING26" />
-    <moveable id="447" name="ANIMATING11" description="Animating11" ten="ANIMATING11" essential="false" />
+    <moveable id="447" name="ANIMATING11" description="Animating11" ten="ANIMATING11" />
     <moveable id="448" name="ANIMATING11_MIP" description="Animating11 Mip" ten="ANIMATING27" />
-    <moveable id="449" name="ANIMATING12" description="Animating12" ten="ANIMATING12" essential="false" />
+    <moveable id="449" name="ANIMATING12" description="Animating12" ten="ANIMATING12" />
     <moveable id="450" name="ANIMATING12_MIP" description="Animating12 Mip" ten="ANIMATING28" />
-    <moveable id="451" name="ANIMATING13" description="Animating13" ten="ANIMATING13" essential="false" />
+    <moveable id="451" name="ANIMATING13" description="Animating13" ten="ANIMATING13" />
     <moveable id="452" name="ANIMATING13_MIP" description="Animating13 Mip" ten="ANIMATING29" />
-    <moveable id="453" name="ANIMATING14" description="Animating14" ten="ANIMATING14" essential="false" />
+    <moveable id="453" name="ANIMATING14" description="Animating14" ten="ANIMATING14" />
     <moveable id="454" name="ANIMATING14_MIP" description="Animating14 Mip" ten="ANIMATING30" />
-    <moveable id="455" name="ANIMATING15" description="Animating15" ten="ANIMATING15" essential="false" />
+    <moveable id="455" name="ANIMATING15" description="Animating15" ten="ANIMATING15" />
     <moveable id="456" name="ANIMATING15_MIP" description="Animating15 Mip" ten="ANIMATING31" />
-    <moveable id="457" name="ANIMATING16" description="Animating16" ten="ANIMATING16" essential="false" />
+    <moveable id="457" name="ANIMATING16" description="Animating16" ten="ANIMATING16" />
     <moveable id="458" name="ANIMATING16_MIP" description="Animating16 Mip" ten="ANIMATING32" />
     <moveable id="459" name="HORIZON" description="Horizon" ten="HORIZON" hidden="true" />
-    <moveable id="460" name="SKY_GRAPHICS" description="Sky Graphics" ten="SKY_GRAPHICS" hidden="true" />
     <moveable id="461" name="BINOCULAR_GRAPHICS" description="Binocular Graphics" hidden="true" />
     <moveable id="462" name="TARGET_GRAPHICS" description="Target Graphics" hidden="true" />
-    <moveable id="463" name="DEFAULT_SPRITE_SEQUENCES" description="Default sprites" ten="DEFAULT_SPRITES" hidden="true" />
-    <moveable id="464" name="MISC_SPRITE_SEQUENCES" description="Misc sprites" ten="MISC_SPRITES" hidden="true" />
-    <moveable id="465" name="MOTOR_BOAT" description="NG Motor Boat" ten="SPEEDBOAT" essential="false" />
+    <moveable id="465" name="MOTOR_BOAT" description="NG Motor Boat" ten="SPEEDBOAT" />
     <moveable id="466" name="MOTOR_BOAT_LARA" description="NG Motor Boat Lara" ten="SPEEDBOAT_LARA_ANIMS" />
-    <moveable id="467" name="RUBBER_BOAT" description="NG Rubber Boat" ten="RUBBER_BOAT" essential="false" />
+    <moveable id="467" name="RUBBER_BOAT" description="NG Rubber Boat" ten="RUBBER_BOAT" />
     <moveable id="468" name="RUBBER_BOAT_LARA" description="NG Rubber Boat Lara" ten="RUBBER_BOAT_LARA_ANIMS" />
     <moveable id="469" name="MOTORBIKE_LARA" description="NG Motorbike Lara" ten="MOTORBIKE_LARA_ANIMS" />
-    <moveable id="470" name="FONT_GRAPHICS" description="NG Font Graphics" />
-    <moveable id="471" name="PARALLEL_BARS" description="NG Parallel Bars" ten="PARALLEL_BARS" essential="false" />
-    <moveable id="472" name="PANEL_BORDER" description="NG Panel Border" essential="false" />
-    <moveable id="473" name="PANEL_MIDDLE" description="NG Panel Middle" essential="false" />
-    <moveable id="474" name="PANEL_CORNER" description="NG Panel Corner" essential="false" />
-    <moveable id="475" name="PANEL_DIAGONAL" description="NG Panel Diagonal" essential="false" />
-    <moveable id="476" name="PANEL_STRIP" description="NG Panel Strip" essential="false" />
-    <moveable id="477" name="PANEL_HALF_BORDER1" description="NG Panel Half Border1" essential="false" />
-    <moveable id="478" name="PANEL_HALF_BORDER2" description="NG Panel Half Border2" essential="false" />
-    <moveable id="479" name="PANEL_MIDDLE_CORNER" description="NG Panel Middle Corner" essential="false" />
-    <moveable id="480" name="TIGHT_ROPE" description="NG Tight Rope" ten="TIGHT_ROPE" essential="false" />
-    <moveable id="481" name="LASER_HEAD" description="NG Laser Head" ten="LASERHEAD" essential="false" />
-    <moveable id="482" name="LASER_HEAD_BASE" description="NG Laser Head Base" ten="LASERHEAD_BASE" essential="false" />
-    <moveable id="483" name="LASER_HEAD_TENTACLE" description="NG Laser Head Tentacle" ten="LASERHEAD_TENTACLE" essential="false" />
-    <moveable id="484" name="HYDRA" description="NG Hydra" ten="HYDRA" essential="false" />
+    <moveable id="471" name="PARALLEL_BARS" description="NG Parallel Bars" ten="PARALLEL_BARS" />
+    <moveable id="472" name="PANEL_BORDER" description="NG Panel Border" />
+    <moveable id="473" name="PANEL_MIDDLE" description="NG Panel Middle" />
+    <moveable id="474" name="PANEL_CORNER" description="NG Panel Corner" />
+    <moveable id="475" name="PANEL_DIAGONAL" description="NG Panel Diagonal" />
+    <moveable id="476" name="PANEL_STRIP" description="NG Panel Strip" />
+    <moveable id="477" name="PANEL_HALF_BORDER1" description="NG Panel Half Border1" />
+    <moveable id="478" name="PANEL_HALF_BORDER2" description="NG Panel Half Border2" />
+    <moveable id="479" name="PANEL_MIDDLE_CORNER" description="NG Panel Middle Corner" />
+    <moveable id="480" name="TIGHT_ROPE" description="NG Tight Rope" ten="TIGHT_ROPE" />
+    <moveable id="481" name="LASER_HEAD" description="NG Laser Head" ten="LASERHEAD" />
+    <moveable id="482" name="LASER_HEAD_BASE" description="NG Laser Head Base" ten="LASERHEAD_BASE" />
+    <moveable id="483" name="LASER_HEAD_TENTACLE" description="NG Laser Head Tentacle" ten="LASERHEAD_TENTACLE" />
+    <moveable id="484" name="HYDRA" description="NG Hydra" ten="HYDRA" />
     <moveable id="485" name="HYDRA_MISSILE" description="NG Hydra Missile" />
-    <moveable id="486" name="ENEMY_SUB_MARINE" description="NG Enemy Sub Marine" ten="ID_ATTACK_SUB" essential="false" />
+    <moveable id="486" name="ENEMY_SUB_MARINE" description="NG Enemy Sub Marine" ten="ID_ATTACK_SUB" />
     <moveable id="487" name="ENEMY_SUB_MARINE_MIP" description="NG Enemy Sub Marine Mip" />
     <moveable id="488" name="SUB_MARINE_MISSILE" description="NG Sub Marine Missile" ten="TORPEDO" />
-    <moveable id="489" name="FROG_MAN" description="NG Frog Man" ten="SCUBA_DIVER" essential="false" />
+    <moveable id="489" name="FROG_MAN" description="NG Frog Man" ten="SCUBA_DIVER" />
     <moveable id="490" name="FROG_MAN_HARPOON" description="NG Frog Man Harpoon" ten="SCUBA_HARPOON" />
-    <moveable id="491" name="FISH_EMITTER" description="NG Fish Emitter" ten="FISH_EMITTER" essential="false" />
-    <moveable id="492" name="KAYAK" description="NG Kayak" ten="KAYAK" essential="false" />
+    <moveable id="491" name="FISH_EMITTER" description="NG Fish Emitter" ten="FISH_EMITTER" />
+    <moveable id="492" name="KAYAK" description="NG Kayak" ten="KAYAK" />
     <moveable id="493" name="KAYAK_LARA" description="NG Kayak Lara" ten="KAYAK_LARA_ANIMS" />
     <moveable id="494" name="CUSTOM_sprite_sequences" description="NG Custom sprites" ten="CUSTOM_SPRITES" />
-    <moveable id="495" name="BRIDGE_TILT3" description="NG Bridge Tilt3" ten="BRIDGE_TILT3" essential="false" />
-    <moveable id="496" name="BRIDGE_TILT4" description="NG Bridge Tilt4" ten="BRIDGE_TILT4" essential="false" />
-    <moveable id="497" name="BRIDGE_CUSTOM" description="NG Bridge Custom" ten="BRIDGE_CUSTOM" essential="false" />
+    <moveable id="495" name="BRIDGE_TILT3" description="NG Bridge Tilt3" ten="BRIDGE_TILT3" />
+    <moveable id="496" name="BRIDGE_TILT4" description="NG Bridge Tilt4" ten="BRIDGE_TILT4" />
+    <moveable id="497" name="BRIDGE_CUSTOM" description="NG Bridge Custom" ten="BRIDGE_CUSTOM" />
     <moveable id="498" name="ROBOT_CLEANER" description="NG Robot Cleaner" />
     <moveable id="499" name="ROBOT_STAR_WARS" description="NG Robot Star Wars" />
     <moveable id="500" name="MECH_WARRIOR" description="NG Mech Warrior" />

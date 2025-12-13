@@ -1,18 +1,23 @@
 ﻿using DarkUI.Config;
 using DarkUI.Win32;
+using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using TombEditor.Forms;
-using TombLib.NG;
 using TombLib.LevelData;
+using TombLib.NG;
+using TombLib.Services;
+using TombLib.Services.Abstract;
 using TombLib.Utils;
 using TombLib.Wad.Catalog;
-using System.Text;
+using TombLib.WPF;
+using TombLib.WPF.Services;
 
 namespace TombEditor
 {
@@ -23,6 +28,10 @@ namespace TombEditor
         [STAThread]
         public static void Main(string[] args)
         {
+            var services = WPFInitializer.InitializeWPF();
+            services.AddSingleton<ICustomGeometrySettingsPresetIOService, CustomGeometrySettingsPresetIOService>();
+            ServiceLocator.Configure(services.BuildServiceProvider());
+
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             string startFile = null;

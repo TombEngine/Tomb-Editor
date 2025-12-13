@@ -5,14 +5,16 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
-using System.Threading;
 using System.Windows.Forms;
 using TombLib.Forms;
+using TombLib.Forms.ViewModels;
+using TombLib.Forms.Views;
 using TombLib.GeometryIO;
 using TombLib.Graphics;
 using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
+using TombLib.WPF;
 
 namespace WadTool
 {
@@ -143,7 +145,7 @@ namespace WadTool
                 int linkY = (int)_bones[j].Bone.Translation.Y;
                 int linkZ = (int)_bones[j].Bone.Translation.Z;
 
-                var boneNode = _bones[j]; 
+                var boneNode = _bones[j];
                 string op = "";
                 if (boneNode.Bone.OpCode == WadLinkOpcode.Pop) op = "POP ";
                 if (boneNode.Bone.OpCode == WadLinkOpcode.Push) op = "PUSH ";
@@ -226,6 +228,9 @@ namespace WadTool
 
         public void UpdateUI()
         {
+            panelSkinned.Visible = _wad.GameVersion == TombLib.LevelData.TRVersion.Game.TombEngine;
+            lblSkin.Text = "Skin: " + (_moveable.Skin?.Name ?? "None");
+
             if (panelRendering.SelectedNode == null)
                 return;
 
@@ -440,37 +445,66 @@ namespace WadTool
                 if (dialog.ShowDialog(this) != DialogResult.OK)
                     return;
 
-                using (var form = new GeometryIOSettingsDialog(new IOGeometrySettings()))
+                var viewModel = new GeometryIOSettingsWindowViewModel(IOSettingsPresets.GeometryImportSettingsPresets);
+                viewModel.SelectPreset(_tool.Configuration.GeometryIO_LastUsedGeometryImportPresetName);
+
+                var settingsDialog = new GeometryIOSettingsWindow { DataContext = viewModel };
+                settingsDialog.SetOwner(this);
+                settingsDialog.ShowDialog();
+
+                if (viewModel.DialogResult != true)
+                    return;
+
+                _tool.Configuration.GeometryIO_LastUsedGeometryImportPresetName = viewModel.SelectedPreset?.Name;
+
+                var settings = viewModel.GetCurrentSettings();
+                var meshes = WadMesh.ImportFromExternalModel(dialog.FileName, settings, false, _tool.DestinationWad.MeshTexInfosUnique.FirstOrDefault());
+                if (meshes == null || meshes.Count == 0)
                 {
-                    form.AddPreset(IOSettingsPresets.GeometryImportSettingsPresets);
-                    if (form.ShowDialog(this) != DialogResult.OK)
-                        return;
+                    popup.ShowWarning(panelRendering, "No meshes were imported. Selected 3D file is broken or has no valid data.");
+                    return;
+                }
 
-                    var meshes = WadMesh.ImportFromExternalModel(dialog.FileName, form.Settings, false, _tool.DestinationWad.MeshTexInfosUnique.FirstOrDefault());
-                    if (meshes == null || meshes.Count == 0)
-                    {
-                        popup.ShowWarning(panelRendering, "No meshes were imported. Selected 3D file is broken or has no valid data.");
-                        return;
-                    }
+                int meshCount;
+                if (meshes.Count > _bones.Count)
+                {
+                    meshCount = _bones.Count;
+                    popup.ShowError(panelRendering, "Mesh count is higher in imported model. Only first " + _bones.Count + " will be imported.");
+                }
+                else if (meshes.Count < _bones.Count)
+                {
+                    meshCount = meshes.Count;
+                    popup.ShowError(panelRendering, "Mesh count is lower in imported model. Only meshes up to " + meshes.Count + " will be replaced.");
+                }
+                else
+                    meshCount = _bones.Count;
 
-                    int meshCount;
-                    if (meshes.Count > _bones.Count)
-                    {
-                        meshCount = _bones.Count;
-                        popup.ShowError(panelRendering, "Mesh count is higher in imported model. Only first " + _bones.Count + " will be imported.");
-                    }
-                    else if (meshes.Count < _bones.Count)
-                    {
-                        meshCount = meshes.Count;
-                        popup.ShowError(panelRendering, "Mesh count is lower in imported model. Only meshes up to " + meshes.Count + " will be replaced.");
-                    }
-                    else
-                        meshCount = _bones.Count;
+                for (int i = 0; i < meshCount; i++)
+                    ReplaceExistingBone(meshes[i], _bones[i]);
+            }
+        }
 
-                    for (int i = 0; i < meshCount; i++)
-                        ReplaceExistingBone(meshes[i], _bones[i]);
+        private void AssignSkinnedMesh()
+        {
+            var mesh = WadActions.ImportMesh(_tool, this);
+
+            if (mesh == null)
+                return;
+
+            if (_moveable.Meshes.All(m => !m.Hidden))
+            {
+                if (DarkMessageBox.Show(this, "Do you want to hide all unskinned meshes for this model?" + "\n" +
+                                              "You can unhide them later in the mesh editor.",
+                                        "Hide unskinned meshes",
+                                        MessageBoxButtons.YesNo,
+                                        MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    _moveable.Meshes.ForEach(m => m.Hidden = true);
                 }
             }
+
+            _moveable.Skin = mesh;
+            UpdateUI();
         }
 
         private void ReplaceBoneFromWad2()
@@ -603,7 +637,7 @@ namespace WadTool
                 if (bone.Bone.OpCode == WadLinkOpcode.Push) numPush++;
             }
 
-            // We can have more PUSH than POP, but the opposite case (POP more than PUSH) will result in a leak 
+            // We can have more PUSH than POP, but the opposite case (POP more than PUSH) will result in a leak
             // inside the previous moveables in the list
             if (numPop > numPush)
             {
@@ -670,10 +704,10 @@ namespace WadTool
 
         private void formSkeletonEditor_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Control && e.KeyCode == Keys.Up)   MoveBoneUp();
+            if (e.Control && e.KeyCode == Keys.Up) MoveBoneUp();
             if (e.Control && e.KeyCode == Keys.Down) MoveBoneDown();
-            if (e.Control && e.KeyCode == Keys.O)    ToggleBonePop();
-            if (e.Control && e.KeyCode == Keys.P)    ToggleBonePush();
+            if (e.Control && e.KeyCode == Keys.O) ToggleBonePop();
+            if (e.Control && e.KeyCode == Keys.P) ToggleBonePush();
             e.Handled = true;
         }
 
@@ -691,7 +725,7 @@ namespace WadTool
 
             _startPoint = new Point(0, 0);
             UpdateUI();
-        } 
+        }
 
         private void panelRendering_MouseDown(object sender, MouseEventArgs e)
         {
@@ -780,6 +814,17 @@ namespace WadTool
         {
             if (e.Button == MouseButtons.Left && panelRendering.SelectedNode != null)
                 EditMesh();
+        }
+
+        private void butSetSkin_Click(object sender, EventArgs e)
+        {
+            AssignSkinnedMesh();
+        }
+
+        private void butClearSkin_Click(object sender, EventArgs e)
+        {
+            _moveable.Skin = null;
+            UpdateUI();
         }
     }
 }

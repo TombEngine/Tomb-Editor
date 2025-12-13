@@ -22544,7 +22544,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22559,7 +22559,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22574,7 +22574,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22589,7 +22589,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22604,7 +22604,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22619,7 +22619,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22634,7 +22634,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22649,7 +22649,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22664,7 +22664,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22679,7 +22679,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22694,7 +22694,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22709,7 +22709,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22724,7 +22724,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22739,7 +22739,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22754,7 +22754,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22769,7 +22769,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22784,7 +22784,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22799,7 +22799,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22814,7 +22814,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22829,7 +22829,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22844,7 +22844,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22859,7 +22859,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22874,7 +22874,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22889,7 +22889,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22904,7 +22904,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22919,7 +22919,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22934,7 +22934,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22949,7 +22949,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22964,7 +22964,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22979,7 +22979,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -22994,7 +22994,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -23009,7 +23009,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -23024,7 +23024,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -23039,7 +23039,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -23054,7 +23054,7 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -23069,12 +23069,12 @@
 			<RandomizeVolume>false</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples />
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
 			<Id>1194</Id>
-			<Name>TR4_Steam_Emitter_Loop</Name>
+			<Name>TEN_Steam_Emitter_Loop</Name>
 			<Volume>100</Volume>
 			<RangeInSectors>10</RangeInSectors>
 			<Chance>100</Chance>
@@ -23093,7 +23093,7 @@
 		</WadSoundInfo>
 		<WadSoundInfo>
 			<Id>1195</Id>
-			<Name>TR5_Moving_Laser_Loop</Name>
+			<Name>TEN_Moving_Laser_Loop</Name>
 			<Volume>60</Volume>
 			<RangeInSectors>10</RangeInSectors>
 			<Chance>100</Chance>

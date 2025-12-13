@@ -1,0 +1,48 @@
+{
+	"GeometryIOSettingsWindow": {
+		"Title": "Geometry I/O Settings",
+		"TitleImport": "Import Settings",
+		"TitleExport": "Export Settings",
+
+		"Axis": "Axis",
+		"Size": "Size",
+		"TextureMapping": "Texture mapping",
+		"Misc": "Misc",
+
+		"SwapXYAxes": "Swap X / Y axes",
+		"SwapXZAxes": "Swap X / Z axes",
+		"SwapYZAxes": "Swap Y / Z axes",
+		"InvertXAxis": "Invert X axis",
+		"InvertYAxis": "Invert Y axis",
+		"InvertZAxis": "Invert Z axis",
+		"InvertFaces": "Invert faces",
+		"InvertVCoordinate": "Invert V coordinate",
+		"UVMapped": "UV mapped",
+		"WrapUV": "Wrap UV",
+		"PremultiplyUV": "Premultiply UV",
+		"VertexColorLight": "Vertex color light",
+		"PackTextures": "Pack textures",
+		"PadPackedTextures": "Pad packed textures",
+		"SortByName": "Sort by name",
+		"KeepTexturesExternal": "Keep textures external",
+
+		"Scale": "Scale:",
+		"Preset": "Preset:",
+
+		"CustomPresetName": "-- Custom Preset --",
+
+		"SavePresetTitle": "Save Preset",
+		"SavePresetTooltip": "Save preset",
+		"EnterPresetName": "Enter a name for the preset:",
+		"PresetNameAlreadyExists": "A preset with this name already exists.",
+
+		"DeletePresetTitle": "Delete Preset?",
+		"DeletePresetTooltip": "Delete preset",
+		"DeletePresetMessage": "Are you sure you want to delete the \"{0}\" preset?"
+	},
+
+	"InputBoxWindow": {
+		"EnterValue": "Please enter a value:",
+		"InvalidNameMessage": "Invalid name, please choose another one."
+	}
+}

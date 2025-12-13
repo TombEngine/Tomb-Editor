@@ -68,12 +68,14 @@ namespace TombLib.Utils
 
         public static void SetState(IntPtr windowHandle, TaskbarStates taskbarState)
         {
-            if (taskbarSupported) taskbarInstance.SetProgressState(windowHandle, taskbarState);
+            if (taskbarSupported && windowHandle != IntPtr.Zero)
+                taskbarInstance.SetProgressState(windowHandle, taskbarState);
         }
 
         public static void SetValue(IntPtr windowHandle, double progressValue, double progressMax)
         {
-            if (taskbarSupported) taskbarInstance.SetProgressValue(windowHandle, (ulong)progressValue, (ulong)progressMax);
+            if (taskbarSupported && windowHandle != IntPtr.Zero)
+                taskbarInstance.SetProgressValue(windowHandle, (ulong)progressValue, (ulong)progressMax);
         }
 
         public static void FlashWindow()

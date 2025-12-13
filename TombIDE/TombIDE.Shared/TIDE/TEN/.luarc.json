@@ -1,0 +1,7 @@
+{
+	"diagnostics": {
+		"disable": [
+			"duplicate-set-field"
+		]
+	}
+}

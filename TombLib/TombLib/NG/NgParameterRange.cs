@@ -302,7 +302,7 @@ namespace TombLib.NG
                     return Enumerable.Range(0, 256).Select(formatSounds1);
 
                 case NgParameterKind.SoundEffectsB:
-                    return Enumerable.Range(0, 114).Select(formatSounds2);
+                    return Enumerable.Range(0, 256).Select(formatSounds2);
 
                 case NgParameterKind.Sfx1024:
                     return Enumerable.Range(0, 1024).Select(formatSounds1);
@@ -370,6 +370,7 @@ namespace TombLib.NG
 
         private static IEnumerable<TriggerParameterUshort> LoadStringsFromTxt(Level level, string block, int max = 1024, int offset = 0)
         {
+            var isExtraNGBlock = block == "ExtraNG";
             var path = Path.Combine(level.Settings.MakeAbsolute(level.Settings.ScriptDirectory), "english.txt");
             try
             {
@@ -398,6 +399,8 @@ namespace TombLib.NG
                     while (!reader.EndOfStream && result.Count <= max)
                     {
                         var line = reader.ReadLine().Trim();
+                        if (isExtraNGBlock && string.IsNullOrWhiteSpace(line))
+                            continue;
                         if (line.StartsWith("["))
                             break;
                         result.Add(result.Count, new TriggerParameterUshort(checked((ushort)(result.Count + offset)), line));

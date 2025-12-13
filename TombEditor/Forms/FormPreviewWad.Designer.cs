@@ -89,7 +89,6 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "FormReferencedWadPreview";
-            this.Deactivate += new System.EventHandler(this.FormWadPreview_Deactivate);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);

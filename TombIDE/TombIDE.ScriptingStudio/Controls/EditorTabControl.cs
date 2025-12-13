@@ -183,7 +183,14 @@ namespace TombIDE.ScriptingStudio.Controls
 
 		private IEditorControl InitializeEditor(Type editorClassType, string filePath, bool silentSession)
 		{
-			var newEditor = Activator.CreateInstance(editorClassType, _currentEngineVersion) as IEditorControl;
+			object[] args;
+
+			if (IDE.Instance.Project.GameVersion == TombLib.LevelData.TRVersion.Game.TR2X)
+				args = new object[] { _currentEngineVersion, true }; // TR2X editor requires a second argument
+			else
+				args = new object[] { _currentEngineVersion };
+
+			var newEditor = Activator.CreateInstance(editorClassType, args) as IEditorControl;
 			newEditor.ContentChangedWorkerRunCompleted += Editor_ContentChangedWorkerRunCompleted;
 
 			if (File.Exists(filePath))

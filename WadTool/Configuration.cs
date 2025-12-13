@@ -28,6 +28,7 @@ namespace WadTool
         public bool AnimationEditor_ChainPlayback { get; set; } = false;
         public bool AnimationEditor_SoundPreview { get; set; } = false;
         public bool AnimationEditor_ClampStateChangeValues { get; set; } = true;
+        public bool AnimationEditor_ShowSkin { get; set; } = true;
         public SoundPreviewType AnimationEditor_SoundPreviewType { get; set; } = SoundPreviewType.Land;
 
         public bool MeshEditor_MouseWheelMovesTheTextureInsteadOfZooming { get; set; } = false;
@@ -69,9 +70,16 @@ namespace WadTool
         public float GizmoAnimationEditor_ScaleCubeSize { get; set; } = 24.0f;
         public float GizmoAnimationEditor_LineThickness { get; set; } = 6.0f;
 
+        public string GeometryIO_LastUsedGeometryImportPresetName { get; set; }
+        public string GeometryIO_LastUsedGeometryExportPresetName { get; set; }
+        public string GeometryIO_LastUsedAnimationPresetName { get; set; }
+
         public Point Window_FormMain_Position { get; set; } = new Point(-1);
         public Size Window_FormMain_Size { get; set; } = new Size(1200, 700);
         public bool Window_FormMain_Maximized { get; set; } = false;
+        public Point Window_FormAnimatedTextures_Position { get; set; } = new Point(-1);
+        public Size Window_FormAnimatedTextures_Size { get; set; } = new Size(885, 694);
+        public bool Window_FormAnimatedTextures_Maximized { get; set; } = false;
         public Point Window_FormAnimationEditor_Position { get; set; } = new Point(-1);
         public Size Window_FormAnimationEditor_Size { get; set; } = new Size(1055, 707);
         public bool Window_FormAnimationEditor_Maximized { get; set; } = false;
@@ -82,7 +90,7 @@ namespace WadTool
         public Size Window_FormStateChangesEditor_Size { get; set; } = new Size(596, 299);
         public bool Window_FormStateChangesEditor_Maximized { get; set; } = false;
         public Point Window_FormAnimCommandsEditor_Position { get; set; } = new Point(-1);
-        public Size Window_FormAnimCommandsEditor_Size { get; set; } = new Size(397, 420); 
+        public Size Window_FormAnimCommandsEditor_Size { get; set; } = new Size(397, 420);
         public bool Window_FormAnimCommandsEditor_Maximized { get; set; } = false;
         public Point Window_FormReplaceAnimCommands_Position { get; set; } = new Point(-1);
         public Size Window_FormReplaceAnimCommands_Size { get; set; } = new Size(811, 460);
@@ -90,5 +98,8 @@ namespace WadTool
         public Point Window_FormMeshEditor_Position { get; set; } = new Point(-1);
         public Size Window_FormMeshEditor_Size { get; set; } = new Size(1055, 707);
         public bool Window_FormMeshEditor_Maximized { get; set; } = false;
+        public Point Window_FormMaterialEditor_Position { get; set; } = new Point(-1);
+        public Size Window_FormMaterialEditor_Size { get; set; } = new Size(537, 560);
+        public bool Window_FormMaterialEditor_Maximized { get; set; } = false;
     }
 }

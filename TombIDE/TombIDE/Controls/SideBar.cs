@@ -32,7 +32,17 @@ namespace TombIDE.Controls
 			_ide = ide;
 			_ide.IDEEventRaised += OnIDEEventRaised;
 
-			if (_ide.Project.GameVersion != TRVersion.Game.TRNG)
+			if (_ide.Project.GameVersion == TRVersion.Game.TombEngine)
+			{
+				panel_Icon_Plugins.BackgroundImage = Properties.Resources.ide_vscode_30;
+				label_Plugins.Text = "VS Code";
+
+				const string tip = "Open project in Visual Studio Code...";
+
+				toolTip.SetToolTip(panel_Icon_Plugins, tip);
+				toolTip.SetToolTip(label_Plugins, tip);
+			}
+			else if (_ide.Project.GameVersion != TRVersion.Game.TRNG)
 			{
 				panel_Icon_Plugins.BackgroundImage = Properties.Resources.ide_plugin_30_disabled;
 				label_Plugins.ForeColor = Color.FromArgb(128, 128, 128);
@@ -48,7 +58,7 @@ namespace TombIDE.Controls
 			InitializeFLEP();
 			AddPinnedPrograms();
 
-			if (_ide.Project.GameVersion is not TRVersion.Game.TR1 and not TRVersion.Game.TombEngine)
+			if (_ide.Project.GameVersion is not TRVersion.Game.TR1 and not TRVersion.Game.TR2X and not TRVersion.Game.TombEngine)
 				button_Update.Enabled = false;
 		}
 
@@ -378,7 +388,7 @@ namespace TombIDE.Controls
 		{
 			string engineRootDirectory = _ide.Project.GetEngineRootDirectoryPath();
 
-			if (_ide.Project.GameVersion is not TRVersion.Game.TR1 and not TRVersion.Game.TombEngine)
+			if (_ide.Project.GameVersion is not TRVersion.Game.TR1 and not TRVersion.Game.TR2X and not TRVersion.Game.TombEngine)
 			{
 				string scriptDatFilePath = string.Empty;
 
@@ -443,13 +453,19 @@ namespace TombIDE.Controls
 					break;
 
 				case IDETab.PluginManager:
-					if (_ide.Project.GameVersion != TRVersion.Game.TRNG)
-						break;
+					if (_ide.Project.GameVersion == TRVersion.Game.TRNG)
+					{
+						panelButton_LevelManager.BackColor = neutralColor;
+						panelButton_ScriptingStudio.BackColor = neutralColor;
+						panelButton_PluginManager.BackColor = selectionColor;
+						panelButton_Miscellaneous.BackColor = neutralColor;
+					}
+					else if (_ide.Project.GameVersion == TRVersion.Game.TombEngine)
+					{
+						VSCodeUtils.OpenDirectoryInVSCode(FindForm(), _ide.IDEConfiguration, _ide.Project.GetScriptRootDirectory());
+						return;
+					}
 
-					panelButton_LevelManager.BackColor = neutralColor;
-					panelButton_ScriptingStudio.BackColor = neutralColor;
-					panelButton_PluginManager.BackColor = selectionColor;
-					panelButton_Miscellaneous.BackColor = neutralColor;
 					break;
 
 				case IDETab.Miscellaneous:

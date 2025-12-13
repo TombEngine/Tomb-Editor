@@ -6,7 +6,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <Configurations>Debug;Release</Configurations>
-    <Platforms>AnyCPU;x64;x86</Platforms>
+    <Platforms>x64;x86</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <OutputPath>..\Build ($(Platform))\</OutputPath>
@@ -67,6 +67,9 @@
     <Compile Update="Controls\PanelRenderingSkeleton.cs" />
     <Compile Update="Controls\PanelRenderingStaticEditor.cs" />
     <Compile Update="Controls\PanelTextureMap.cs" />
+    <Compile Update="Controls\PanelTextureMapForAnimations.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

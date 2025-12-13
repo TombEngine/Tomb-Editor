@@ -10,8 +10,6 @@ using TombLib;
 using DarkUI.Extensions;
 using DarkUI.Config;
 using System.Threading.Tasks;
-using System.Windows.Threading;
-using Microsoft.Build.Tasks;
 
 namespace TombEditor.Forms
 {
@@ -23,6 +21,7 @@ namespace TombEditor.Forms
 		private readonly bool _autoCloseWhenDone;
 		private readonly CancellationTokenSource _cancellationTokenSource;
 		private Task _task;
+
 		public FormOperationDialog(string operationName, bool autoCloseWhenDone, bool noProgressBar, Action<IProgressReporter, CancellationToken> operation)
 		{
 			_autoCloseWhenDone = autoCloseWhenDone;
@@ -36,7 +35,7 @@ namespace TombEditor.Forms
 
 			panelProgressBar.Visible = !noProgressBar;
 			if (!noProgressBar && Application.OpenForms.Count > 0)
-				TaskbarProgress.SetState(Application.OpenForms[0].Handle, TaskbarProgress.TaskbarStates.Normal);
+				TaskbarProgress.SetState(WinFormsUtils.TryGetMainWindowHandle(), TaskbarProgress.TaskbarStates.Normal);
 
 			lstLog.BackColor = lstLog.BackColor.Multiply(Colors.Brightness);
 			_cancellationTokenSource = new CancellationTokenSource();
@@ -50,10 +49,10 @@ namespace TombEditor.Forms
 
 		private void OnOperationFailure(Exception ex)
 		{
-			if( ex is not OperationCanceledException)
-				TaskbarProgress.SetState(Application.OpenForms[0].Handle, TaskbarProgress.TaskbarStates.Error);
+			if (ex is not OperationCanceledException)
+				TaskbarProgress.SetState(WinFormsUtils.TryGetMainWindowHandle(), TaskbarProgress.TaskbarStates.Error);
 			else
-				TaskbarProgress.SetState(Application.OpenForms[0].Handle, TaskbarProgress.TaskbarStates.NoProgress);
+				TaskbarProgress.SetState(WinFormsUtils.TryGetMainWindowHandle(), TaskbarProgress.TaskbarStates.NoProgress);
 
 			TaskbarProgress.FlashWindow();
 			pbStato.Value = 0;
@@ -65,7 +64,7 @@ namespace TombEditor.Forms
 
 		private void OnOperationSuccess()
 		{
-			TaskbarProgress.SetState(Application.OpenForms[0].Handle, TaskbarProgress.TaskbarStates.NoProgress);
+			TaskbarProgress.SetState(WinFormsUtils.TryGetMainWindowHandle(), TaskbarProgress.TaskbarStates.NoProgress);
 			TaskbarProgress.FlashWindow();
 
 			pbStato.Value = 100;
@@ -79,29 +78,32 @@ namespace TombEditor.Forms
 				DialogResult = DialogResult.OK;
 				Close();
 			}
+
 			lstLog.BackColor = Color.LightGreen.Multiply(Colors.Brightness);
 		}
 
 		private void FormOperationDialog_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			// Paranoid checks in case of system-specific null reference exceptions
+			if (_task == null)
+				return;
+
 			// We shouldn't close the window when the task is still running
-			if(_task.Status <= TaskStatus.Running)
+			if (_task.Status <= TaskStatus.Running)
 			{
 				// So we cancel the closing
 				e.Cancel = true;
-				// If the task isn't canceled yet
-				if(!_cancellationTokenSource.IsCancellationRequested)
-					//cancel it
+
+				// If the task isn't canceled yet, cancel it.
+				if (_cancellationTokenSource != null && !_cancellationTokenSource.IsCancellationRequested)
 					EndThread();
 			}
 
-			TaskbarProgress.SetState(Application.OpenForms[0].Handle, TaskbarProgress.TaskbarStates.NoProgress);
-
+			TaskbarProgress.SetState(WinFormsUtils.TryGetMainWindowHandle(), TaskbarProgress.TaskbarStates.NoProgress);
 		}
 
 		private async void Run()
 		{
-
 			try
 			{
 				butCancel.Enabled = true;
@@ -111,12 +113,12 @@ namespace TombEditor.Forms
 					_operation(this, _cancellationTokenSource.Token);
 					_cancellationTokenSource.Token.ThrowIfCancellationRequested();
 				});
+
 				// Syntax with await is much easier to handle because it propagates Exceptions nicely.
 				await _task;
-				//Done
-				OnOperationSuccess();
 
-				
+				// Done
+				OnOperationSuccess();
 			}
 			catch (Exception ex)
 			{
@@ -131,7 +133,8 @@ namespace TombEditor.Forms
 				lstLog.SelectionBackColor = Color.Tomato;
 				lstLog.AppendText(message + "\n");
 				lstLog.ScrollToCaret();
-#if DEBUG		// keep Debug and Release the same, but in Debug we rethrow to get the proper exception and it's stacktrace
+
+#if DEBUG		// Keep Debug and Release the same, but in Debug we rethrow to get the proper exception and it's stacktrace.
 				throw;
 #endif
 			}
@@ -141,12 +144,13 @@ namespace TombEditor.Forms
 		{
 			if (_cancellationTokenSource.IsCancellationRequested)
 				return;
+
 			BeginInvoke(() =>
 			{
 				if (progress.HasValue)
 				{
 					pbStato.Value = (int)Math.Round(MathC.Clamp(progress.Value, 0, 100), 0);
-					TaskbarProgress.SetValue(Application.OpenForms[0].Handle, progress.Value, 100);
+					TaskbarProgress.SetValue(WinFormsUtils.TryGetMainWindowHandle(), progress.Value, 100);
 				}
 
 				if (!string.IsNullOrEmpty(message))
@@ -185,6 +189,7 @@ namespace TombEditor.Forms
 		private void butCancel_Click(object sender, EventArgs e)
 		{
 			DialogResult = DialogResult.Cancel;
+
 			if(_task.Status >= TaskStatus.RanToCompletion)
 				Close();
 			else 

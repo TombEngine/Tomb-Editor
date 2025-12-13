@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 using System.Reflection;
@@ -9,7 +10,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
 {
     public sealed partial class LevelCompilerTombEngine
     {
-        private void WriteLevelTombEngine()
+		private void WriteLevelTombEngine()
         {
             byte[] dynamicDataBuffer;
             using (var dynamicDataStream = new MemoryStream())
@@ -133,6 +134,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 writer.Write(_meshes.Count);
                 foreach (var mesh in _meshes)
                 {
+                    writer.Write(mesh.Hidden);
                     writer.Write((byte)mesh.LightingType);
 
                     writer.Write( mesh.Sphere.Center.X);
@@ -148,21 +150,32 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     foreach (var e in mesh.Vertices)
                         writer.Write(new Vector3(e.Glow, e.Move, e.Locked ? 0 : 1));
                     foreach (var b in mesh.Vertices)
-                        writer.Write(b.Bone);
+                        for (int w = 0; w < b.BoneIndex.Length; w++)
+                            writer.Write((byte)b.BoneIndex[w]);
+                    foreach (var b in mesh.Vertices)
+                        for (int w = 0; w < b.BoneWeight.Length; w++)
+                            writer.Write((byte)(b.BoneWeight[w] * byte.MaxValue));
 
                     writer.Write(mesh.Buckets.Count);
-                    foreach (var bucket in mesh.Buckets.Values)
+                    foreach (var bucket in mesh.Buckets)
                     {
-                        writer.Write(bucket.Material.Texture);
-                        writer.Write(bucket.Material.BlendMode);
-                        writer.Write(bucket.Material.Animated);
+						writer.Write(bucket.Material.Texture);
+						writer.Write(bucket.Material.BlendMode);
+						writer.Write(bucket.Material.MaterialIndex);
+						writer.Write(bucket.Material.Animated);
+
                         writer.Write(bucket.Polygons.Count);
                         foreach (var poly in bucket.Polygons)
                         {
                             writer.Write((int)poly.Shape);
+
                             writer.Write((int)poly.AnimatedSequence);
                             writer.Write((int)poly.AnimatedFrame);
+
                             writer.Write((float)poly.ShineStrength);
+
+                            writer.Write(poly.Normal); 
+
                             foreach (int index in poly.Indices)
                                 writer.Write(index);
                             foreach (var uv in poly.TextureCoordinates)
@@ -257,7 +270,25 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 // Write animated textures
                 _textureInfoManager.WriteAnimatedTextures(writer);
 
-                geometryDataBuffer = geometryDataStream.ToArray();
+                // Write materials
+                writer.Write((uint)_materialDictionary.Count);
+                foreach (var material in _materialDictionary)
+                {
+                    writer.Write(material.Key);
+                    writer.Write((int)material.Value.Type);
+                    writer.Write(material.Value.Parameters0);
+					writer.Write(material.Value.Parameters1);
+					writer.Write(material.Value.Parameters2);
+					writer.Write(material.Value.Parameters3);
+					writer.Write(material.Value.IsNormalMapFound);
+					writer.Write(material.Value.IsHeightMapFound);
+					writer.Write(material.Value.IsAmbientOcclusionMapFound);
+					writer.Write(material.Value.IsRoughnessMapFound);
+					writer.Write(material.Value.IsSpecularMapFound);
+					writer.Write(material.Value.IsEmissiveMapFound);
+				}
+
+				geometryDataBuffer = geometryDataStream.ToArray();
             }
 
             using (var mediaStream = new MemoryStream())
@@ -276,9 +307,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                 mediaStream.Seek(0, SeekOrigin.Begin);
 
-                var mediaBlock    = ZLib.CompressData(mediaStream, System.IO.Compression.CompressionLevel.SmallestSize);
-                var geometryBlock = ZLib.CompressData(geometryDataBuffer, System.IO.Compression.CompressionLevel.SmallestSize);
-                var dynamicBlock  = ZLib.CompressData(dynamicDataBuffer, System.IO.Compression.CompressionLevel.Optimal);
+                var mediaBlock    = LZ4.CompressData(mediaStream, System.IO.Compression.CompressionLevel.Fastest);
+                var geometryBlock = LZ4.CompressData(geometryDataBuffer, System.IO.Compression.CompressionLevel.Fastest);
+                var dynamicBlock  = LZ4.CompressData(dynamicDataBuffer, System.IO.Compression.CompressionLevel.Fastest);
 
                 using (var fs = new FileStream(_dest, FileMode.Create, FileAccess.Write, FileShare.None))
                 {

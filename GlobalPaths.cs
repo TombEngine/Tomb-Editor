@@ -14,6 +14,7 @@ internal static class DefaultPaths
 	public static string CatalogsDirectory => Path.Combine(ProgramDirectory, "Catalogs");
 	public static string EngineCatalogsDirectory => Path.Combine(CatalogsDirectory, "Engines");
 	public static string ConfigsDirectory => Path.Combine(ProgramDirectory, "Configs");
+	public static string GeometryIOConfigsDirectory => Path.Combine(ConfigsDirectory, "GeometryIO");
 	public static string TextEditorConfigsDirectory => Path.Combine(ConfigsDirectory, "TextEditors");
 	public static string ColorSchemesDirectory => Path.Combine(TextEditorConfigsDirectory, "ColorSchemes");
 
@@ -56,6 +57,8 @@ internal static class DefaultPaths
 	public static string PresetsDirectory => Path.Combine(TemplatesDirectory, "Presets");
 
 	public static string TRNGPluginsDirectory => Path.Combine(TIDEDirectory, "TRNG Plugins");
+
+	public static string TENApiDirectory => Path.Combine(TIDEDirectory, "TEN");
 
 	#endregion TIDE
 

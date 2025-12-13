@@ -1,0 +1,164 @@
+﻿<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls"
+	xmlns:converters="clr-namespace:DarkUI.WPF.Converters"
+	xmlns:local="clr-namespace:DarkUI.WPF">
+
+	<converters:AddValueConverter x:Key="AddValueConverter" />
+
+	<Style TargetType="{x:Type controls:SearchableComboBox}">
+		<!--  Control properties  -->
+		<Setter Property="Focusable" Value="False" />
+
+		<!--  Layout  -->
+		<Setter Property="Height" Value="{x:Static local:Defaults.InputControl_Height}" />
+		<Setter Property="SnapsToDevicePixels" Value="{x:Static local:Defaults.SnapsToDevicePixels}" />
+		<Setter Property="UseLayoutRounding" Value="{x:Static local:Defaults.UseLayoutRounding}" />
+
+		<!--  Brushes  -->
+		<Setter Property="Background" Value="{DynamicResource Brush_Background_ClickableControl}" />
+		<Setter Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+		<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+
+		<!--  Thicknesses  -->
+		<Setter Property="BorderThickness" Value="{x:Static local:Defaults.BorderThickness}" />
+		<Setter Property="Padding" Value="{x:Static local:Defaults.SmallThickness}" />
+
+		<!--  ScrollViewer  -->
+		<Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+		<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+		<Setter Property="ScrollViewer.PanningMode" Value="Both" />
+		<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+
+		<!--  Template  -->
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type controls:SearchableComboBox}">
+					<Grid SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition />
+							<ColumnDefinition Width="0" MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" />
+						</Grid.ColumnDefinitions>
+
+						<Popup
+							Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Converter={StaticResource AddValueConverter}, ConverterParameter={x:Static local:Defaults.ShadowMarginThicknessWidth}}"
+							MaxHeight="{x:Static local:Defaults.ComboBox_Popup_MaxHeight}"
+							AllowsTransparency="True"
+							IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+							Placement="Bottom">
+							<Border
+								Margin="{x:Static local:Defaults.Thickness_ShadowMargin}"
+								Padding="{x:Static local:Defaults.SmallThickness}"
+								Background="{DynamicResource Brush_Background_Low}"
+								BorderBrush="{TemplateBinding BorderBrush}"
+								BorderThickness="{TemplateBinding BorderThickness}">
+								<Border.Effect>
+									<DropShadowEffect Opacity="{x:Static local:Defaults.DropShadow_Opacity}" ShadowDepth="{x:Static local:Defaults.DropShadow_Depth}" />
+								</Border.Effect>
+
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition />
+										<ColumnDefinition Width="Auto" />
+									</Grid.ColumnDefinitions>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="Auto" />
+										<RowDefinition />
+									</Grid.RowDefinitions>
+
+									<AdornerDecorator>
+										<TextBox x:Name="PART_SearchTextBox" Text="{Binding SearchText, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}">
+											<TextBox.BorderThickness>
+												<Thickness
+													Bottom="{x:Static local:Defaults.BorderThicknessWidth}"
+													Left="{x:Static local:Defaults.BorderThicknessWidth}"
+													Top="{x:Static local:Defaults.BorderThicknessWidth}" />
+											</TextBox.BorderThickness>
+
+											<local:WatermarkService.Watermark>
+												<TextBlock Foreground="{DynamicResource Brush_Text}" Text="Search..." />
+											</local:WatermarkService.Watermark>
+										</TextBox>
+									</AdornerDecorator>
+
+									<Button
+										x:Name="PART_SearchButton"
+										Grid.Column="1"
+										Style="{DynamicResource ButtonWithIconOnly}">
+										<Image Source="/DarkUI.WPF;component/Resources/search-16.png" />
+									</Button>
+
+									<Border
+										x:Name="itemsPresenterBorder"
+										Grid.Row="1"
+										Grid.ColumnSpan="2"
+										Background="{DynamicResource Brush_Background}"
+										BorderBrush="{DynamicResource Brush_Border}"
+										BorderThickness="{x:Static local:Defaults.BorderThickness}">
+										<Border.Margin>
+											<Thickness Top="{x:Static local:Defaults.SmallThicknessWidth}" />
+										</Border.Margin>
+
+										<Grid>
+											<ScrollViewer>
+												<ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+											</ScrollViewer>
+											<TextBlock
+												HorizontalAlignment="Center"
+												VerticalAlignment="Center"
+												IsHitTestVisible="False"
+												Opacity="{DynamicResource Opacity_DisabledContent}"
+												Text="No items found.">
+												<TextBlock.Style>
+													<Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="{x:Type TextBlock}">
+														<Setter Property="FontSize" Value="{x:Static local:Defaults.DefaultFontSize}" />
+														<Setter Property="Visibility" Value="Collapsed" />
+
+														<Style.Triggers>
+															<DataTrigger Binding="{Binding HasItems, RelativeSource={RelativeSource TemplatedParent}}" Value="False">
+																<Setter Property="Visibility" Value="Visible" />
+															</DataTrigger>
+														</Style.Triggers>
+													</Style>
+												</TextBlock.Style>
+											</TextBlock>
+										</Grid>
+									</Border>
+								</Grid>
+							</Border>
+						</Popup>
+
+						<ToggleButton
+							Grid.ColumnSpan="2"
+							Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}"
+							IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+							Style="{DynamicResource ComboBoxToggleButton}" />
+						<ContentPresenter
+							x:Name="contentPresenter"
+							Margin="{TemplateBinding Padding}"
+							HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+							VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+							Content="{TemplateBinding SelectionBoxItem}"
+							ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+							ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+							ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+							IsHitTestVisible="False" />
+					</Grid>
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter TargetName="contentPresenter" Property="Opacity" Value="{DynamicResource Opacity_DisabledContent}" />
+						</Trigger>
+
+						<Trigger Property="HasItems" Value="False">
+							<Setter TargetName="itemsPresenterBorder" Property="Height" Value="{x:Static local:Defaults.ComboBox_Popup_NoItemsHeight}" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+</ResourceDictionary>

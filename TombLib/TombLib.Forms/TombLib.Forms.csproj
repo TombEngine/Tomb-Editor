@@ -1,13 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
+    <LangVersion>12</LangVersion>
     <OutputType>Library</OutputType>
     <RootNamespace>TombLib</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <Configurations>Debug;Release</Configurations>
-    <Platforms>AnyCPU;x64;x86</Platforms>
+    <Platforms>x64;x86</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <OutputPath>..\..\Build ($(Platform))\</OutputPath>
@@ -47,6 +49,7 @@
     <Compile Include="..\..\GlobalAssemblyInfo.cs">
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="..\..\GlobalPaths.cs" Link="GlobalPaths.cs" />
     <Compile Update="Controls\AnimationTrackBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -89,20 +92,27 @@
     <Compile Update="Controls\WadTreeControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Forms\FormAnimatedTextures.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="Views\InputBoxWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\DarkUI\DarkUI.WPF\DarkUI.WPF.csproj" />
     <ProjectReference Include="..\..\DarkUI\DarkUI\DarkUI.csproj" />
     <ProjectReference Include="..\TombLib.Rendering\TombLib.Rendering.csproj" />
+    <ProjectReference Include="..\TombLib.WPF\TombLib.WPF.csproj" />
     <ProjectReference Include="..\TombLib\TombLib.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NLog" Version="5.0.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Forms\DarkDataGridViewControls.cs" />
@@ -111,6 +121,16 @@
     <Compile Remove="Forms\FormPopUpSearch.Designer.cs" />
     <EmbeddedResource Remove="Forms\DarkDataGridViewControls.resx" />
     <EmbeddedResource Remove="Forms\FormPopUpSearch.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Resources\general_edit-16.png" />
+    <None Remove="Resources\general_Save-16.png" />
+    <None Remove="Resources\general_trash-16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\general_edit-16.png" />
+    <Resource Include="Resources\general_Save-16.png" />
+    <Resource Include="Resources\general_trash-16.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">

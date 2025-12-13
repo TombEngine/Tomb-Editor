@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using TombLib.LevelData;
 
 namespace TombIDE
 {
@@ -10,15 +11,24 @@ namespace TombIDE
 	{
 		public string MusicArchiveFilePath { get; set; }
 
-		public FormFindMusic()
+		private string _downloadURL;
+
+		public FormFindMusic(TRVersion.Game gameVersion)
 		{
 			InitializeComponent();
+
+			_downloadURL = gameVersion switch  // Hardcoded links, yay!
+			{
+				TRVersion.Game.TR1 => "https://lostartefacts.dev/aux/tr1x/music.zip",
+				TRVersion.Game.TR2X => "https://lostartefacts.dev/aux/tr2x/music.zip",
+				_ => throw new NotSupportedException("Unsupported game version for music archive.")
+			};
 		}
 
 		private void button_Download_Click(object sender, EventArgs e)
 			=> Process.Start(new ProcessStartInfo()
 			{
-				FileName = "https://mega.nz/file/f9llhQAY#y0RqaMhR4ghtQ-1IFAGbHep_FCmkV8Q66bzdMWVqtuY", // Hardcoded links, yay!
+				FileName = _downloadURL,
 				UseShellExecute = true
 			});
 

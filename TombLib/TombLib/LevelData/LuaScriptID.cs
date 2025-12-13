@@ -6,6 +6,6 @@ namespace TombLib.LevelData
     {
         string LuaName { get; set; }
         void AllocateNewLuaName();
-        bool TrySetLuaName(string newScriptId, IWin32Window owner = null);
+        bool CanSetLuaName(string newScriptId);
     }
 }

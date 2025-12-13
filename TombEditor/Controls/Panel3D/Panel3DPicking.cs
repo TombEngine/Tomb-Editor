@@ -260,7 +260,7 @@ namespace TombEditor.Controls.Panel3D
             {
                 RectangleInt2 bounds;
 
-                if (instance is SpriteInstance && _editor.Level.Settings.GameVersion < TRVersion.Game.TR3)
+                if (instance is SpriteInstance && _editor.Level.Settings.GameVersion.Native() < TRVersion.Game.TR3)
                 {
                     var sprite = instance as SpriteInstance;
                     var sequence = _editor.Level.Settings.WadGetAllSpriteSequences()

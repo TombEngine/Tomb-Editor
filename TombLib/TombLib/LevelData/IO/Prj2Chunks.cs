@@ -82,6 +82,8 @@ namespace TombLib.LevelData.IO
         /**********/public static readonly ChunkId AnimatedTextureSetType = ChunkId.FromString("TeAnimatedTextureSetType");
         /**********/public static readonly ChunkId AnimatedTextureSetFps = ChunkId.FromString("TeAnimatedTextureSetFps");
         /**********/public static readonly ChunkId AnimatedTextureSetUvRotate = ChunkId.FromString("TeAnimatedTextureSetUvRotate");
+        /**********/public static readonly ChunkId AnimatedTextureSetTenUvRotateDirection = ChunkId.FromString("TeAnimatedTextureSetTenUvRotateDirection");
+        /**********/public static readonly ChunkId AnimatedTextureSetTenUvRotateSpeed = ChunkId.FromString("TeAnimatedTextureSetTenUvRotateSpeed");
         /**********/public static readonly ChunkId AnimatedTextureSetExtraInfo = ChunkId.FromString("TeAnimatedTextureSetExtra");
         /**************/public static readonly ChunkId AnimatedTextureFrames = ChunkId.FromString("TeFrames");
         /******************/public static readonly ChunkId AnimatedTextureFrame = ChunkId.FromString("TeFrame");

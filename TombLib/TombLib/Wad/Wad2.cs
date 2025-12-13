@@ -26,6 +26,7 @@ namespace TombLib.Wad
         public SortedList<WadMoveableId, WadMoveable> Moveables { get; set; } = new SortedList<WadMoveableId, WadMoveable>();
         public SortedList<WadStaticId, WadStatic> Statics { get; set; } = new SortedList<WadStaticId, WadStatic>();
         public SortedList<WadSpriteSequenceId, WadSpriteSequence> SpriteSequences { get; set; } = new SortedList<WadSpriteSequenceId, WadSpriteSequence>();
+        public List<AnimatedTextureSet> AnimatedTextureSets { get; set; } = new List<AnimatedTextureSet>();
 
         public string FileName { get; set; }
         public DateTime Timestamp { get; set; } = DateTime.Now;
@@ -47,15 +48,26 @@ namespace TombLib.Wad
             {
                 var textures = new HashSet<WadTexture>();
                 foreach (var moveable in Moveables)
+                {
                     foreach (var mesh in moveable.Value.Meshes)
                         if (mesh != null)
                             foreach (WadPolygon polygon in mesh.Polys)
                                 textures.Add((WadTexture)polygon.Texture.Texture);
+
+                    if (moveable.Value.Skin != null)
+                        foreach (WadPolygon polygon in moveable.Value.Skin.Polys)
+                            textures.Add((WadTexture)polygon.Texture.Texture);
+                }
                 foreach (var stat in Statics)
                     if (stat.Value.Mesh != null)
                         foreach (WadPolygon polygon in stat.Value.Mesh.Polys)
                             textures.Add((WadTexture)polygon.Texture.Texture);
-                return textures;
+				foreach (var set in AnimatedTextureSets)
+                    foreach (var frame in set.AnimationType == AnimatedTextureAnimationType.Video ? new List<AnimatedTextureFrame>() : set.Frames)
+                        if (frame.Texture is WadTexture wadTexture)
+                            textures.Add(wadTexture);
+				
+				return textures;
             }
         }
 
@@ -65,8 +77,13 @@ namespace TombLib.Wad
             {
                 var meshes = new List<WadMesh>();
                 foreach (WadMoveable moveable in Moveables.Values)
+                {
                     foreach (WadMesh mesh in moveable.Meshes)
                         meshes.Add(mesh);
+
+                    if (moveable.Skin != null)
+                        meshes.Add(moveable.Skin);
+                }
                 foreach (WadStatic @static in Statics.Values)
                     meshes.Add(@static.Mesh);
                 return meshes;
@@ -80,8 +97,13 @@ namespace TombLib.Wad
                 var texinfos = new List<TextureArea>();
 
                 foreach (var moveable in Moveables.Values)
+                {
                     foreach (var mesh in moveable.Meshes)
                         texinfos.AddRange(mesh.TextureAreas);
+
+                    if (moveable.Skin != null)
+                        texinfos.AddRange(moveable.Skin.TextureAreas);
+                }
                 foreach (var stat in Statics.Values)
                     texinfos.AddRange(stat.Mesh.TextureAreas);
 

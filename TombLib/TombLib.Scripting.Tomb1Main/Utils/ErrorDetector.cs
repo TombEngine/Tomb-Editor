@@ -15,10 +15,10 @@ public class ErrorDetector : IErrorDetector
 		if (engineVersion < new Version(4, 8))
 			return null;
 
-		return DetectErrorLines(new TextDocument(editorContent));
+		return DetectErrorLines(new TextDocument(editorContent), engineVersion);
 	}
 
-	private static List<ErrorLine> DetectErrorLines(TextDocument document)
+	private static List<ErrorLine> DetectErrorLines(TextDocument document, Version engineVersion)
 	{
 		var errorLines = new List<ErrorLine>();
 
@@ -30,7 +30,7 @@ public class ErrorDetector : IErrorDetector
 				continue;
 
 			processedLineText = LineParser.EscapeComments(processedLineText);
-			ErrorLine error = FindErrorsInLine(processedLine, processedLineText);
+			ErrorLine error = FindErrorsInLine(processedLine, processedLineText, engineVersion);
 
 			if (error != null)
 				errorLines.Add(error);
@@ -39,16 +39,19 @@ public class ErrorDetector : IErrorDetector
 		return errorLines;
 	}
 
-	private static ErrorLine FindErrorsInLine(DocumentLine line, string lineText)
+	private static ErrorLine FindErrorsInLine(DocumentLine line, string lineText, Version engineVersion)
 	{
 		// Check whether there are JSON keys which are marked as "Removed"
 		foreach (RemovedKeyword keyword in Keywords.RemovedProperties)
 		{
+			if (engineVersion < keyword.RemovedVersion)
+				continue;
+
 			string keyPattern = $"\"{keyword.Keyword}\"";
 
 			if (lineText.Contains(keyPattern))
 			{
-				return new ErrorLine("This property has been removed from the script syntax and cannot be used in TR1X 4.8 or newer."
+				return new ErrorLine($"This property has been removed from the script syntax and cannot be used in TR1X {keyword.RemovedVersion} or newer."
 					+ (string.IsNullOrEmpty(keyword.Message) ? "" : "\n" + keyword.Message),
 					line.LineNumber, keyPattern);
 			}
@@ -56,11 +59,14 @@ public class ErrorDetector : IErrorDetector
 
 		foreach (RemovedKeyword keyword in Keywords.RemovedConstants)
 		{
+			if (engineVersion < keyword.RemovedVersion)
+				continue;
+
 			string keyPattern = $"\"{keyword.Keyword}\"";
 
 			if (lineText.Contains(keyPattern))
 			{
-				return new ErrorLine("This constant has been removed from the script syntax and cannot be used in TR1X 4.8 or newer."
+				return new ErrorLine($"This constant has been removed from the script syntax and cannot be used in TR1X {keyword.RemovedVersion} or newer."
 					+ (string.IsNullOrEmpty(keyword.Message) ? "" : "\n" + keyword.Message),
 					line.LineNumber, keyPattern);
 			}

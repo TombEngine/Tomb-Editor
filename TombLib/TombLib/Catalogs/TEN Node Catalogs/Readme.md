@@ -101,10 +101,13 @@ ENUMDESC parameters should NOT be quoted, or else parsing will fail miserably.
      as a label.
    - **Numerical** - numerical floating-point value. Range, limits and decimals can be specified by **ENUMDESC**
      descriptors (see above).
+   - **Vector2** - Two floating-point values, can be used for 2D on-screen position. Range, limits and
+     decimals can be specified by **ENUMDESC** descriptors (see above).
    - **Vector3** - Three floating-point values, can be used either for position or rotation. Range, limits and
      decimals can be specified by **ENUMDESC** descriptors (see above).
    - **String** - Raw text string, length is unlimited. If parsed to functions which draw on-screen strings, `\n` 
      combination may be used to start a new line.
+   - **Time** - Time value, consists of 4 fields - hours, minutes, seconds and centiseconds.
    - **Color** - RGB color value, appears as color picker in UI.
    - **LuaScript** - Existing lua function list from level script file.
    - **EventSets** - Existing event sets currently present in level.

@@ -610,7 +610,7 @@ namespace TombLib.LevelData
             {
                 IReadOnlyList<SectorFaceData> verticalFloorPartFaces = useLegacyCode
                     ? LegacyWallGeometry.GetVerticalFloorPartFaces(wallData, sector.IsAnyWall)
-                    : wallData.GetVerticalFloorPartFaces(sector.Floor.DiagonalSplit, sector.IsAnyWall);
+                    : wallData.GetVerticalFloorPartFaces(sector.Floor.DiagonalSplit);
 
                 for (int i = 0; i < verticalFloorPartFaces.Count; i++)
                     AddFace(room, x, z, verticalFloorPartFaces[i]);
@@ -620,7 +620,7 @@ namespace TombLib.LevelData
             {
                 IReadOnlyList<SectorFaceData> verticalCeilingPartFaces = useLegacyCode
                     ? LegacyWallGeometry.GetVerticalCeilingPartFaces(wallData, sector.IsAnyWall)
-                    : wallData.GetVerticalCeilingPartFaces(sector.Ceiling.DiagonalSplit, sector.IsAnyWall);
+                    : wallData.GetVerticalCeilingPartFaces(sector.Ceiling.DiagonalSplit);
 
                 for (int i = 0; i < verticalCeilingPartFaces.Count; i++)
                     AddFace(room, x, z, verticalCeilingPartFaces[i]);

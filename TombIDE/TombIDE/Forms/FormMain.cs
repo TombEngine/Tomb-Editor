@@ -56,8 +56,8 @@ namespace TombIDE
 				scriptingStudio = new ScriptingStudio.ClassicScriptStudio { Parent = this };
 			else if (_ide.Project.GameVersion is TRVersion.Game.TR2 or TRVersion.Game.TR3)
 				scriptingStudio = new ScriptingStudio.GameFlowScriptStudio { Parent = this };
-			else if (_ide.Project.GameVersion is TRVersion.Game.TR1)
-				scriptingStudio = new ScriptingStudio.Tomb1MainStudio { Parent = this };
+			else if (_ide.Project.GameVersion is TRVersion.Game.TR1 or TRVersion.Game.TR2X)
+				scriptingStudio = new ScriptingStudio.Tomb1MainStudio(_ide.Project.GameVersion) { Parent = this };
 			else if (_ide.Project.GameVersion is TRVersion.Game.TombEngine)
 				scriptingStudio = new ScriptingStudio.LuaStudio { Parent = this };
 
@@ -242,10 +242,11 @@ namespace TombIDE
 					break;
 
 				case IDETab.PluginManager:
-					if (_ide.Project.GameVersion != TRVersion.Game.TRNG)
-						break;
+					if (_ide.Project.GameVersion == TRVersion.Game.TRNG)
+						tablessTabControl.SelectTab(2);
+					else if (_ide.Project.GameVersion == TRVersion.Game.TombEngine)
+						VSCodeUtils.OpenDirectoryInVSCode(this, _ide.IDEConfiguration, _ide.Project.GetScriptRootDirectory());
 
-					tablessTabControl.SelectTab(2);
 					break;
 
 				case IDETab.Miscellaneous:

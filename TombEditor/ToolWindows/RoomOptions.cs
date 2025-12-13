@@ -47,18 +47,18 @@ namespace TombEditor.ToolWindows
                 obj is Editor.GameVersionChangedEvent ||
                 obj is Editor.LevelChangedEvent)
             {
-                bool isTR4orNG = _editor.Level.Settings.GameVersion.Legacy() == TRVersion.Game.TR4;
-                bool isNGorTEN = _editor.Level.Settings.GameVersion >= TRVersion.Game.TRNG;
-                bool isTR4or5 = _editor.Level.Settings.GameVersion >= TRVersion.Game.TR4;
-                bool isTR345 = _editor.Level.Settings.GameVersion >= TRVersion.Game.TR3;
-                bool isTR1 = _editor.Level.Settings.GameVersion == TRVersion.Game.TR1;
+                bool isTR4orNG = _editor.Level.Settings.GameVersion.Native() == TRVersion.Game.TR4;
+                bool isNGorTEN = _editor.Level.Settings.GameVersion is TRVersion.Game.TRNG or TRVersion.Game.TombEngine;
+                bool supportsLensflare = _editor.Level.Settings.GameVersion.SupportsLensflare();
+                bool supportsReverb = _editor.Level.Settings.GameVersion.SupportsReverberation();
+                bool isTR1 = _editor.Level.Settings.GameVersion.Native() == TRVersion.Game.TR1;
 
                 cbHorizon.Enabled = !isTR1;
                 cbFlagOutside.Enabled = !isTR1;
                 cbFlagCold.Enabled = isNGorTEN;
                 cbFlagDamage.Enabled = isNGorTEN;
-                cbNoLensflare.Enabled = isTR4or5;
-                comboReverberation.Enabled = isTR345;
+                cbNoLensflare.Enabled = supportsLensflare;
+                comboReverberation.Enabled = supportsReverb;
                 comboReverberation.SelectedIndexChanged -= comboReverberation_SelectedIndexChanged; // Prevent SelectedIndexChanged event from DataSource assignment in next line
                 comboReverberation.DataSource = isTR4orNG && _editor.Level.Settings.GameEnableExtraReverbPresets ? StringEnums.ExtraReverberationTypes : StringEnums.ReverberationTypes;
                 comboReverberation.SelectedIndexChanged += comboReverberation_SelectedIndexChanged;
@@ -195,7 +195,7 @@ namespace TombEditor.ToolWindows
             ReadRoomType();
 
             // Repopulate room effect type
-            bool isTR2 = _editor.Level.Settings.GameVersion == TRVersion.Game.TR2;
+            bool isTR2 = _editor.Level.Settings.GameVersion.Native() == TRVersion.Game.TR2;
             var list = new List<string>()
             {
                 "None",

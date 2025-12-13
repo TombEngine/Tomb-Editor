@@ -1,5 +1,6 @@
 ﻿using DarkUI.Config;
 using DarkUI.Win32;
+using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -7,8 +8,12 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using TombLib.Services;
+using TombLib.Services.Abstract;
 using TombLib.Utils;
 using TombLib.Wad.Catalog;
+using TombLib.WPF;
+using TombLib.WPF.Services;
 
 namespace WadTool
 {
@@ -20,6 +25,10 @@ namespace WadTool
         [STAThread]
         public static void Main(string[] args)
         {
+            var services = WPFInitializer.InitializeWPF();
+            services.AddSingleton<ICustomGeometrySettingsPresetIOService, CustomGeometrySettingsPresetIOService>();
+            ServiceLocator.Configure(services.BuildServiceProvider());
+
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             // Load configuration

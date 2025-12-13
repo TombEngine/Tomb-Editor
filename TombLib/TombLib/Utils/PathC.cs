@@ -149,5 +149,20 @@ namespace TombLib.Utils
                 return new List<string>();
             }
         }
-    }
+
+		public static bool IsTrulyAbsolutePath(string path)
+		{
+			if (string.IsNullOrWhiteSpace(path))
+				return false;
+
+			try
+			{
+				return Path.IsPathRooted(path) && !string.IsNullOrWhiteSpace(Path.GetPathRoot(path));
+			}
+			catch
+			{
+				return false;
+			}
+		}
+	}
 }

@@ -18,7 +18,7 @@ namespace TombIDE.ProjectMaster
 			settings_Icon.Initialize(ide);
 			settings_SplashScreen.Initialize(ide);
 
-			if (ide.Project.GameVersion == TRVersion.Game.TR4 || ide.Project.GameVersion == TRVersion.Game.TRNG)
+			if (ide.Project.GameVersion is TRVersion.Game.TR4 or TRVersion.Game.TRNG)
 			{
 				settings_StartupImage.Initialize(ide);
 				settings_Logo.Initialize(ide);

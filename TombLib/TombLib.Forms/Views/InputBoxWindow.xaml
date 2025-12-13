@@ -1,0 +1,62 @@
+﻿<Window
+	x:Class="TombLib.Forms.Views.InputBoxWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+	xmlns:viewModels="clr-namespace:TombLib.Forms.ViewModels;assembly=TombLib.Forms"
+	Title="{Binding Title}"
+	Width="420"
+	d:DataContext="{d:DesignInstance Type=viewModels:InputBoxWindowViewModel}"
+	md:DialogServiceViews.IsRegistered="True"
+	Background="{DynamicResource Brush_Background}"
+	ResizeMode="CanMinimize"
+	SizeToContent="Height"
+	Style="{DynamicResource CustomWindowStyle}"
+	WindowStartupLocation="CenterScreen"
+	mc:Ignorable="d">
+
+	<Grid Margin="{x:Static darkUI:Defaults.MediumThickness}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<Label Content="{Binding Label}">
+			<Label.Margin>
+				<Thickness Bottom="{x:Static darkUI:Defaults.TinyThicknessWidth}" />
+			</Label.Margin>
+		</Label>
+
+		<TextBox
+			x:Name="textBox_Value"
+			Grid.Row="1"
+			Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+
+		<controls:SpacedStack
+			Grid.Row="2"
+			HorizontalAlignment="Right"
+			Orientation="Horizontal"
+			Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+			<StackPanel.Margin>
+				<Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+			</StackPanel.Margin>
+
+			<Button
+				Width="80"
+				Command="{Binding ConfirmCommand}"
+				Content="{tombLib:Localize ~Common.OK}"
+				IsDefault="True" />
+			<Button
+				Width="80"
+				Command="{Binding CancelCommand}"
+				Content="{tombLib:Localize ~Common.Cancel}"
+				IsCancel="True" />
+		</controls:SpacedStack>
+	</Grid>
+</Window>

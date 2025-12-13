@@ -44,7 +44,7 @@ namespace TombEditor.Controls.Panel3D
 
         private Vector4 ConvertColor(Vector3 originalColor)
         {
-            switch (_editor.Level.Settings.GameVersion)
+            switch (_editor.Level.Settings.GameVersion.Native())
             {
                 case TRVersion.Game.TR1:
                 case TRVersion.Game.TR2:
@@ -109,8 +109,9 @@ namespace TombEditor.Controls.Panel3D
 
             // Initialize variables for vertex buffer preparation
             var vertices = new List<SolidVertex>();
-            var startColor = new Vector4(0.8f, 1.0f, 0.8f, 1.0f);
-            var endColor = new Vector4(1.0f, 0.8f, 0.8f, 1.0f);
+            var startColor = MathC.GetRandomColorByIndex(sequence, 32, 0.7f);
+            var endColor = MathC.GetRandomColorByIndex(sequence, 32, 0.3f);
+
             float th = _flybyPathThickness;
 
             // Process flyby cameras to calculate paths

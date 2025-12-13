@@ -1,5 +1,4 @@
 ﻿using SharpDX.Toolkit.Graphics;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -15,6 +14,7 @@ namespace TombLib.Graphics
         public List<T> Vertices { get; protected set; } = new List<T>();
         public List<int> Indices { get; protected set; } = new List<int>();
         public Dictionary<Material, Submesh> Submeshes { get; private set; } = new Dictionary<Material, Submesh>();
+        public bool Hidden { get; set; } = false;
 
         public BoundingSphere BoundingSphere { get; set; }
         public BoundingBox BoundingBox { get; set; }

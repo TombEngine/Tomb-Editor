@@ -118,17 +118,14 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="actions_TEN_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_actions\actions_TEN-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="actions_NewRoomDown_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_actions\actions_NewRoomDown-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="general_Import_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_general\general_Import-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="toolbox_GroupRamp_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_toolbox\toolbox_GroupRamp-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="sectortype_Portal__16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_sectortype\sectortype_Portal -16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="general_redo_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_general\general_redo-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="actions_AlphaTest_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_actions\actions_AlphaTest-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -159,12 +156,6 @@
   </data>
   <data name="general_undo_irreversible_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_general\general_undo_irreversible-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="general_redo_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_general\general_redo-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="sectortype_StepFloor_1_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_sectortype\sectortype_StepFloor_1-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="sectortype_ClimbEast_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_sectortype\sectortype_ClimbEast-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -208,11 +199,8 @@
   <data name="general_settings_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_general\general_settings-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="texture_anim_ranges" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_texture\texture_anim_ranges-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="sectortype_DiagonalWall2_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_sectortype\sectortype_DiagonalWall2-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="general_blur_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_general\general_blur-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="actions_DrawObjects_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_actions\actions_DrawObjects-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -238,14 +226,11 @@
   <data name="general_options_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_general\general_options-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="general_blur_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_general\general_blur-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="sectortype_NotWalkable_neg_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_sectortype\sectortype_NotWalkable_neg-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="sectortype_Monkey_neg_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_sectortype\sectortype_Monkey_neg-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="sectortype_DiagonalWall2_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_sectortype\sectortype_DiagonalWall2-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="toolbox_GridPaint2x2_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_toolbox\toolbox_GridPaint2x2-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -267,6 +252,9 @@
   </data>
   <data name="general_crop_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_general\general_crop-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="general_ArrowDown_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_general\general_ArrowDown-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="sectortype_Box_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_sectortype\sectortype_Box-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -304,8 +292,8 @@
   <data name="general_copy_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_general\general_copy-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="toolbox_Vertex_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_toolbox\toolbox_Vertex-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="sectortype_StepFloor_1_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_sectortype\sectortype_StepFloor_1-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="sectortype_Roof_neg_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_sectortype\sectortype_Roof_neg-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -340,8 +328,11 @@
   <data name="actions_HideCustomGeometry_1_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_actions\actions_HideCustomGeometry_1-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="general_ArrowDown_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_general\general_ArrowDown-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="texture_anim_ranges" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_texture\texture_anim_ranges-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="sectortype_Monkey_neg_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_sectortype\sectortype_Monkey_neg-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="objects_volume_box_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_objects\objects_volume-box-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -357,6 +348,9 @@
   </data>
   <data name="general_trash_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_general\general_trash-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="texture_Solid_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_texture\texture_Solid-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="actions_generic_text_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_actions\actions_generic_text-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -375,9 +369,6 @@
   </data>
   <data name="toolbox_Paint_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_toolbox\toolbox_Paint-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="objects_Sprite_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_objects\objects_Sprite-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="actions_light_on_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_actions\actions_light_on-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -451,8 +442,8 @@
   <data name="actions_2DView_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_actions\actions_2DView-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="toolbox_GroupRamp_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_toolbox\toolbox_GroupRamp-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="general_copy_link_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_general\general_copy_link-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="texture_DoubleSided_1_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_texture\texture_DoubleSided_1-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -466,6 +457,9 @@
   <data name="general_Lock_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_general\general_Lock-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="toolbox_Vertex_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_toolbox\toolbox_Vertex-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="toolbox_Eraser_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_toolbox\toolbox_Eraser-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -478,11 +472,11 @@
   <data name="general_airplane_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_general\general_airplane-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="actions_TEN_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_actions\actions_TEN-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="actions_back_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_actions\actions_back-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="general_copy_link_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_general\general_copy_link-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="actions_DrawCardinalDirections_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_actions\actions_DrawCardinalDirections-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -492,6 +486,9 @@
   </data>
   <data name="toolbox_Selection_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_toolbox\toolbox_Selection-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="sectortype_Portal__16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_sectortype\sectortype_Portal -16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="sectortype_Portal_neg__16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_sectortype\sectortype_Portal_neg -16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -517,8 +514,14 @@
   <data name="toolbox_GroupTerrain_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_toolbox\toolbox_GroupTerrain-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="texture_MirrorPortal-16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_texture\texture_MirrorPortal-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="general_edit_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_general\general_edit-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="general_Import_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_general\general_Import-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="objects_Spotlight_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_objects\objects_Spotlight-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -550,16 +553,13 @@
   <data name="toolbox_Normal_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_toolbox\toolbox_Normal-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="texture_Solid_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_texture\texture_Solid-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="objects_Sprite_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_objects\objects_Sprite-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="actions_compile_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_actions\actions_compile-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="actions_play_fast_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_actions\actions_play_fast-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="texture_MirrorPortal-16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\icons_texture\texture_MirrorPortal-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

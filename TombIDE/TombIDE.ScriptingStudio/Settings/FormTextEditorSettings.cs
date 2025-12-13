@@ -23,7 +23,7 @@ namespace TombIDE.ScriptingStudio.Settings
 
 			var classicScriptNode = new DarkTreeNode("TR4 / TRNG Script");
 			var gameFlowNode = new DarkTreeNode("TR2 / TR3 Script");
-			var tomb1MainNode = new DarkTreeNode("T1M / TR1X Script");
+			var tomb1MainNode = new DarkTreeNode("TR1X / TR2X Script");
 			var luaNode = new DarkTreeNode("Lua");
 
 			treeView.Nodes.Add(classicScriptNode);

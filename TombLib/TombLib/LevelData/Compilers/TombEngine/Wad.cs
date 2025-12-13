@@ -19,13 +19,13 @@ namespace TombLib.LevelData.Compilers.TombEngine
         private int _soundMapSize = 0;
         private short[] _finalSoundMap;
 
-        private TombEngineMesh ConvertWadMesh(WadMesh oldMesh, bool isStatic, string objectName, int meshIndex,
-                                            bool isWaterfall = false, bool isOptics = false)
+        private TombEngineMesh ConvertWadMesh(WadMesh oldMesh, bool isStatic, string objectName, int meshIndex = 0)
         {
             var newMesh = new TombEngineMesh
             {
                 Sphere = oldMesh.BoundingSphere,
-                LightingType = oldMesh.LightingType
+                LightingType = oldMesh.LightingType,
+                Hidden = oldMesh.Hidden
             };
 
             var objectString = isStatic ? "Static" : "Moveable";
@@ -44,12 +44,13 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                 var v = new TombEngineVertex() 
                 { 
-                    Position = new Vector3(pos.X, -pos.Y, pos.Z),
-                    Normal   = Vector3.Normalize(new Vector3(normal.X, -normal.Y, normal.Z)),
-                    Color    = color,
-                    Bone     = meshIndex,
-                    Glow     = (oldMesh.HasAttributes) ? (float)oldMesh.VertexAttributes[i].Glow / 64.0f : 0.0f,
-                    Move     = (oldMesh.HasAttributes) ? (float)oldMesh.VertexAttributes[i].Move / 64.0f : 0.0f
+                    Position   = new Vector3(pos.X, -pos.Y, pos.Z),
+                    Normal     = Vector3.Normalize(new Vector3(normal.X, -normal.Y, normal.Z)),
+                    Color      = color,
+                    BoneIndex  = oldMesh.HasWeights && oldMesh.VertexWeights[i].Valid() ? oldMesh.VertexWeights[i].Index : new int[4] { meshIndex, 0, 0, 0 },
+                    BoneWeight = oldMesh.HasWeights && oldMesh.VertexWeights[i].Valid() ? oldMesh.VertexWeights[i].Weight : new float[4] { 1, 0, 0, 0 },
+                    Glow       = oldMesh.HasAttributes ? (float)oldMesh.VertexAttributes[i].Glow / 64.0f : 0.0f,
+                    Move       = oldMesh.HasAttributes ? (float)oldMesh.VertexAttributes[i].Move / 64.0f : 0.0f
             };
 
                 newMesh.Vertices.Add(v);
@@ -70,10 +71,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     if (doubleSided && !texture.DoubleSided)
                         break;
 
-                    if (doubleSided)
+					if (doubleSided)
                         texture.Mirror(poly.IsTriangle);
                     var result = _textureInfoManager.AddTexture(texture, destination, poly.IsTriangle, texture.BlendMode);
-                    if (isOptics) result.Rotation = 0; // Very ugly hack for TR4-5 binocular/target optics!
 
                     int[] indices = poly.IsTriangle ? new int[] { poly.Index0, poly.Index1, poly.Index2 } : 
                                                       new int[] { poly.Index0, poly.Index1, poly.Index2, poly.Index3 };
@@ -84,12 +84,19 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     var realBlendMode = texture.BlendMode;
                     if (texture.BlendMode == BlendMode.Normal)
                         realBlendMode = texture.Texture.Image.HasAlpha(TRVersion.Game.TombEngine, texture.GetRect());
+					
+					var textureAbsolutePath = ((WadTexture)texture.Texture).AbsolutePath;
+                    int materialIndex = -1;
+                    if (!string.IsNullOrEmpty(textureAbsolutePath))
+                        materialIndex = _materialNames.IndexOf(textureAbsolutePath);
+                    if (materialIndex == -1)
+                        materialIndex = 0;
 
                     TombEnginePolygon newPoly;
                     if (poly.IsTriangle)
-                        newPoly = result.CreateTombEnginePolygon3(indices, (byte)realBlendMode, null);
+                        newPoly = result.CreateTombEnginePolygon3(indices, realBlendMode, materialIndex, newMesh.Vertices);
                     else
-                        newPoly = result.CreateTombEnginePolygon4(indices, (byte)realBlendMode, null);
+                        newPoly = result.CreateTombEnginePolygon4(indices, realBlendMode, materialIndex, newMesh.Vertices);
 
                     newPoly.ShineStrength = (float)poly.ShineStrength / 63.0f;
 
@@ -123,15 +130,26 @@ namespace TombLib.LevelData.Compilers.TombEngine
         private void PrepareMeshBuckets(TombEngineMesh mesh)
         {
             var textures = _textureInfoManager.GetObjectTextures();
-            mesh.Buckets = new Dictionary<TombEngineMaterial, TombEngineBucket>(new TombEngineMaterial.TombEngineMaterialComparer());
+            var buckets = new Dictionary<TombEngineMaterial, TombEngineBucket>(new TombEngineMaterial.TombEngineMaterialComparer());
+            
             foreach (var poly in mesh.Polygons)
             {
-                var bucket = GetOrAddBucket(textures[poly.TextureId].AtlasIndex, poly.BlendMode, poly.Animated, 0, mesh.Buckets);
-
-                var texture = textures[poly.TextureId];
-
                 poly.AnimatedSequence = -1;
                 poly.AnimatedFrame = -1;
+
+                if (poly.Animated)
+                {
+                    var animInfo = _textureInfoManager.GetAnimatedTexture(poly.TextureId);
+                    if (animInfo != null)
+                    {
+                        poly.AnimatedSequence = animInfo.Item1;
+                        poly.AnimatedFrame = animInfo.Item2;
+                    }
+                }
+
+                var bucket = GetOrAddBucket(textures[poly.TextureId].AtlasIndex, poly.BlendMode, poly.MaterialIndex, poly.AnimatedSequence, buckets);
+
+                var texture = textures[poly.TextureId];
 
                 // We output only triangles, no quads anymore
                 if (poly.Shape == TombEnginePolygonShape.Quad)
@@ -157,6 +175,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     bucket.Polygons.Add(poly);
                 }
             }
+
+            mesh.Buckets = buckets.Values.ToList();
+            mesh.Buckets.Sort(TombEngineBucketComparer.Instance);
 
             // Calculate tangents and bitangents
             for (int i = 0; i < mesh.Vertices.Count; i++)
@@ -249,6 +270,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     }
                 }
 
+			ReportProgress(3, "Building moveables");
+			
             int lastAnimation = 0;
             int lastAnimDispatch = 0;
             foreach (WadMoveable oldMoveable in moveables.Values)
@@ -392,14 +415,21 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         wadMesh, 
                         false, 
                         oldMoveable.Id.ShortName(_level.Settings.GameVersion), 
-                        i, 
-                        oldMoveable.Id.IsWaterfall(_level.Settings.GameVersion), 
-                        oldMoveable.Id.IsOptics(_level.Settings.GameVersion));
+                        i);
+                }
+
+                newMoveable.Skin = -1;
+                if (oldMoveable.Skin != null)
+                {
+                    newMoveable.Skin = _meshes.Count;
+                    var wadSkin = oldMoveable.Skin;
+                    ConvertWadMesh(
+                        wadSkin,
+                        false,
+                        oldMoveable.Id.ShortName(_level.Settings.GameVersion));
                 }
 
                 var meshTrees = new List<tr_meshtree>();
-                var usedMeshes = new List<WadMesh>();
-                usedMeshes.Add(oldMoveable.Bones[0].Mesh);
 
                 for (int b = 1; b < oldMoveable.Bones.Count; b++)
                 {
@@ -414,7 +444,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     tree.Y = (int)-bone.Translation.Y;
                     tree.Z = (int) bone.Translation.Z;
 
-                    usedMeshes.Add(oldMoveable.Bones[b].Mesh);
                     meshTrees.Add(tree);
                 }
 
@@ -445,8 +474,11 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 _animDispatches[i] = dispatch;
             }
 
-            // Convert static meshes
-            int convertedStaticsCount = 0;
+			// Convert static meshes
+
+			ReportProgress(4, "Building statics");
+
+			int convertedStaticsCount = 0;
             ReportProgress(10, "Converting static meshes");
             foreach (WadStatic oldStaticMesh in statics.Values)
             {
@@ -486,10 +518,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     ConvertWadMesh(
                         oldStaticMesh.Mesh, 
                         true,
-                        oldStaticMesh.Id.ShortName(_level.Settings.GameVersion), 
-                        0,
-                        false, 
-                        false);
+                        oldStaticMesh.Id.ShortName(_level.Settings.GameVersion));
                 }
                 else
                 {

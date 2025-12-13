@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Configurations>Debug;Release</Configurations>
-    <Platforms>AnyCPU;x64;x86</Platforms>
+    <Platforms>x64;x86</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <OutputPath>..\BuildNgXmlBuilder ($(Platform))\</OutputPath>
@@ -28,9 +28,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TombLib\TombLib\TombLib.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="NG\ANIMATION_RANGE.txt">

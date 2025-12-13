@@ -191,7 +191,7 @@ namespace TombEditor.ToolWindows
                 butAddBoxVolume.Enabled    = _editor.Level.IsTombEngine;
                 butAddSphereVolume.Enabled = _editor.Level.IsTombEngine;
                 butDrawVolumes.Enabled     = _editor.Level.IsTombEngine; // We may safely hide it because it's not customizable
-                butAddSprite.Enabled       = _editor.Level.Settings.GameVersion <= TRVersion.Game.TR2;
+                butAddSprite.Enabled       = _editor.Level.Settings.GameVersion.Native() <= TRVersion.Game.TR2;
 
                 panelStepHeightOptions.Visible = _editor.IsPreciseGeometryAllowed;
                 UpdateStepHeightCombo();

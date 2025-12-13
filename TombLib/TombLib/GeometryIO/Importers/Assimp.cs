@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using TombLib.Graphics;
 using TombLib.Utils;
+using TombLib.Wad;
 
 namespace TombLib.GeometryIO.Importers
 {
@@ -21,7 +21,7 @@ namespace TombLib.GeometryIO.Importers
 
         }
 
-        private List<string> CollectMeshNodeNames(Node node, List<string> list = null)
+        private static List<string> CollectMeshNodeNames(Node node, List<string> list = null)
         {
             if (list == null)
                 list = new List<string>();
@@ -34,6 +34,42 @@ namespace TombLib.GeometryIO.Importers
                     CollectMeshNodeNames(child, list);
 
             return list;
+        }
+
+        private static void TraverseBoneNodes(Node node, HashSet<string> boneNames, List<string> output)
+        {
+            if (boneNames.Contains(node.Name))
+            {
+                output.Add(node.Name);
+            }
+
+            foreach (var child in node.Children)
+            {
+                TraverseBoneNodes(child, boneNames, output);
+            }
+        }
+
+        public static List<string> GetLinearizedBoneList(Scene scene)
+        {
+            var boneNames = new HashSet<string>();
+
+            // Collect all unique bone names from all meshes
+            foreach (var mesh in scene.Meshes)
+            {
+                foreach (var bone in mesh.Bones)
+                {
+                    boneNames.Add(bone.Name);
+                }
+            }
+
+            var orderedBones = new List<string>();
+
+            // Traverse hierarchy and add only nodes that are bones
+            TraverseBoneNodes(scene.RootNode, boneNames, orderedBones);
+
+            // Sort bones by name
+            orderedBones = orderedBones.OrderBy(m => m, new CustomComparer<string>(NaturalComparer.Do)).ToList();
+            return orderedBones;
         }
 
         public override IOModel ImportFromFile(string filename)
@@ -69,6 +105,37 @@ namespace TombLib.GeometryIO.Importers
 
                     // Don't add materials with missing textures
                     var texture = GetTexture(path, diffusePath);
+
+                    // Try to get embedded texture, if it exists
+                    if (texture == null && scene.TextureCount > 0 && mat.HasTextureDiffuse)
+                    {
+                        var matchingTextures = scene.Textures.Where(t => t.Filename == diffusePath).ToList();
+                        if (matchingTextures.Count > 0)
+                        {
+                            var matchingTexture = matchingTextures.First();
+                            if (matchingTexture.CompressedData != null)
+                            {
+                                using (var stream = new MemoryStream(matchingTexture.CompressedData))
+                                    texture = new WadTexture(ImageC.FromStream(stream));
+                            }
+                            else if (matchingTexture.NonCompressedData != null)
+                            {
+                                var buffer = new byte[matchingTexture.NonCompressedData.Length * 4];
+                                for (int t = 0; t < matchingTexture.NonCompressedData.Length; t++)
+                                {
+                                    int offset = t * 4;
+                                    buffer[offset + 0] = matchingTexture.NonCompressedData[i].B;
+                                    buffer[offset + 1] = matchingTexture.NonCompressedData[i].G;
+                                    buffer[offset + 2] = matchingTexture.NonCompressedData[i].R;
+                                    buffer[offset + 3] = matchingTexture.NonCompressedData[i].A;
+                                }
+
+                                using (var stream = new MemoryStream(buffer))
+                                    texture = new WadTexture(ImageC.FromStreamRaw(stream, matchingTexture.Width, matchingTexture.Height));
+                            }
+                        }
+                    }
+
                     if (texture == null)
                     {
                         logger.Warn("Texture for material " + mat.Name + " is missing. Meshes referencing this material won't be imported.");
@@ -103,6 +170,7 @@ namespace TombLib.GeometryIO.Importers
                     newModel.Materials.Add(material);
                 }
 
+                var boneList = GetLinearizedBoneList(scene);
                 var lastBaseVertex = 0;
 
                 // Loop for each mesh loaded in scene
@@ -153,6 +221,7 @@ namespace TombLib.GeometryIO.Importers
 
                     bool hasColors   = _settings.UseVertexColor && mesh.VertexColorChannelCount > 0 && mesh.HasVertexColors(0);
                     bool hasNormals  = mesh.HasNormals;
+                    bool hasWeights  = mesh.HasBones && mesh.Bones.Any(b => b.HasVertexWeights);
                     bool hasTextures = mesh.HasTextureCoords(0) && (mesh.VertexCount == mesh.TextureCoordinateChannels[0].Count);
 
                     // Additional integrity checks
@@ -173,6 +242,7 @@ namespace TombLib.GeometryIO.Importers
                     {
                         // Create position
                         var position = new Vector3(positions[i].X, positions[i].Y, positions[i].Z);
+
                         position = ApplyAxesTransforms(position);
                         newMesh.Positions.Add(position);
 
@@ -198,6 +268,38 @@ namespace TombLib.GeometryIO.Importers
                             var color = ApplyColorTransform(new Vector4(colors[i].R, colors[i].G, colors[i].B, colors[i].A));
                             newMesh.Colors.Add(color);
                         }
+
+                        // Create weights
+                        if (hasWeights)
+                        {
+                            newMesh.Weights.Add(new List<KeyValuePair<int, float>>());
+                        }
+                    }
+
+                    // Add vertex weights
+                    if (hasWeights)
+                    {
+                        foreach (var bone in mesh.Bones)
+                        {
+                            if (!bone.HasVertexWeights)
+                                continue;
+
+                            var boneIndex = boneList.IndexOf(bone.Name);
+                            
+                            foreach (var weight in bone.VertexWeights)
+                            {
+                                if (weight.VertexID >= newMesh.Weights.Count)
+                                {
+                                    logger.Warn("Bone \"" + (bone.Name ?? "") + "\" has incorrect vertex ID " + weight.VertexID.ToString() + " for mesh \"" + (mesh.Name ?? "") + ".");
+                                    continue;
+                                }
+
+                                newMesh.Weights[weight.VertexID].Add(new KeyValuePair<int, float>(boneIndex, weight.Weight));
+                            }
+                        }
+
+                        for (int i = 0; i < newMesh.Weights.Count; i++)
+                            newMesh.Weights[i] = newMesh.Weights[i].OrderByDescending(kvp => kvp.Key).ToList();
                     }
 
                     // Add polygons

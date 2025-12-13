@@ -102,7 +102,7 @@ namespace TombLib.Script
                 return builder.ToString();
             }
 
-            return String.Empty;
+            return string.Empty;
         }
 
         public bool CompileScripts(string srcPath, string dstPath)

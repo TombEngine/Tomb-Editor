@@ -1,5 +1,6 @@
 <states>
     <!-- Lara -->
+    <state item="0" id="62" name="AUTO_JUMP" />
     <state item="0" id="139" name="SHIMMY_45_OUTER_LEFT" />
     <state item="0" id="140" name="SHIMMY_45_OUTER_RIGHT" />
     <state item="0" id="141" name="SHIMMY_45_INNER_LEFT" />
@@ -38,8 +39,9 @@
     <state item="0" id="189" name="REMOVE_PUZZLE" />
     <state item="0" id="190" name="PUSHABLE_EDGE_SLIP" />
     <state item="0" id="191" name="SPRINT_SLIDE" />
-    
-    <!-- APE -->
+	<state item="0" id="198" name="PULLEY_UNGRAB" />
+
+	<!-- APE -->
     <state item="102" id="1" name="IDLE" />
     <state item="102" id="2" name="WALK_FORWARD" />
     <state item="102" id="3" name="RUN_FORWARD" />
@@ -57,6 +59,18 @@
     <state item="113" id="1" name="RUN" />
     <state item="113" id="2" name="JUMP_ATTACK" />
     <state item="113" id="3" name="ATTACK" />
+
+    <!-- SCUBA_DIVER -->
+    <state item="151" id="0" name="EMPTY" />
+    <state item="151" id="1" name="SDIVER_STATE_SWIM" />
+    <state item="151" id="2" name="SDIVER_STATE_TREAD_WATER_IDLE" />
+    <state item="151" id="3" name="SDIVER_STATE_SWIM_SHOOT" />
+    <state item="151" id="4" name="SDIVER_STATE_SWIM_AIM" />
+    <!-- <state item="151" id="5" name="" /> -->
+    <state item="151" id="6" name="SDIVER_STATE_TREAD_WATER_AIM" />
+    <state item="151" id="7" name="SDIVER_STATE_TREAD_WATER_SHOOT" />
+    <!-- <state item="151" id="8" name="" /> -->
+    <state item="151" id="9" name="SDIVER_STATE_DEATH" />
     
     <!-- KNIFE THROWER -->
     <state item="162" id="1" name= "IDLE" />
@@ -208,4 +222,11 @@
     <state item="298" id="11" name="DEFEAT_RECOVER" />
     <state item="298" id="12" name="BRUSH_OFF" />
     <state item="298" id="13" name="DEFEAT_END" />
+
+	<!-- PULLEY-->
+	<state item="830" id="0" name="OFF" />
+	<state item="830" id="1" name="ON" />
+	<state item="830" id="2" name="WAIT" />
+	<state item="830" id="3" name="ANIMATE" />
+	<state item="830" id="4" name="ANIMATE_UNDERWATER" />
 </states>

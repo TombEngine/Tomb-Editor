@@ -18,6 +18,7 @@ namespace TombLib.Graphics
     {
         public BoundingBox BoundingBox { get; set; }
         public List<T> Meshes { get; set; }
+        public T Skin { get; set; }
         public GraphicsDevice GraphicsDevice { get; set; }
         public ModelType Type { get; set; }
         public string Name { get; set; }

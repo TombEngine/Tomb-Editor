@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using TombLib.Utils;
 
 namespace TombLib.LevelData
 {
@@ -11,12 +12,13 @@ namespace TombLib.LevelData
         PFrames,
         UVRotate,
         RiverRotate,
-        HalfRotate
+        HalfRotate,
+        Video
     }
 
     public class AnimatedTextureFrame : ICloneable, IEquatable<AnimatedTextureFrame>
     {
-        public LevelTexture Texture { get; set; }
+        public Texture Texture { get; set; }
         public Vector2 TexCoord0 { get; set; }
         public Vector2 TexCoord1 { get; set; }
         public Vector2 TexCoord2 { get; set; }
@@ -64,6 +66,8 @@ namespace TombLib.LevelData
         public string Name { get; set; } = null;
         public float Fps { get; set; } = 16.0f;  // float is for FPS (frames per second) values. 0 is not a valid default for this!
         public int UvRotate { get; set; } = 0;
+        public float TenUvRotateDirection { get; set; } = 0.0f;
+        public float TenUvRotateSpeed { get; set; } = 1.0f;
 
         public List<AnimatedTextureFrame> Frames { get; set; } = new List<AnimatedTextureFrame>();
 
@@ -83,7 +87,9 @@ namespace TombLib.LevelData
                                             AnimationType = AnimationType,
                                             Fps = Fps,
                                             UvRotate = UvRotate,
-                                            Name = Name
+                                            Name = Name,
+                                            TenUvRotateDirection = TenUvRotateDirection,
+                                            TenUvRotateSpeed = TenUvRotateSpeed
                                           };
         }
         object ICloneable.Clone() => Clone();

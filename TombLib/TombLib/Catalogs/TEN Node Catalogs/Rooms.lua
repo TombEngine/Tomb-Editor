@@ -2,7 +2,7 @@
 -- !Section "Rooms"
 -- !Description "Checks if specified flipmap is active or not. If flipmap is set to -1, checks if any flipmap is active."
 -- !Conditional "True"
--- !Arguments "Numerical, 15, [ -1 | 16 | 0 ]"
+-- !Arguments "Numerical, 15, [ -1 | 254 | 0 ]"
 
 LevelFuncs.Engine.Node.GetFlipMapStatus = function(flipmapNumber)
 	return TEN.Flow.GetFlipMapStatus(flipmapNumber)
@@ -107,7 +107,7 @@ end
 -- !Name "Toggle flipmap"
 -- !Section "Rooms"
 -- !Description "Sets specified flipmap number, if it's not set, or unsets it if it is."
--- !Arguments "Numerical, 15, [ 0 | 16 | 0 ]"
+-- !Arguments "Numerical, 15, [ 0 | 254 | 0 ]"
 
 LevelFuncs.Engine.Node.ToggleFlipMap = function(flipmapNumber)
 	TEN.Flow.FlipMap(flipmapNumber)

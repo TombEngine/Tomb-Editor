@@ -19,6 +19,8 @@ namespace TombLib.Utils
         public const string Is = "=";
         public const string BracketOpen = "(";
         public const string BracketClose = ")";
+        public const string TableOpen = "{";
+        public const string TableClose = "}";
         public const string Splitter = ".";
         public const string Separator = ",";
         public const string Space = " ";
@@ -27,6 +29,8 @@ namespace TombLib.Utils
         public const string Activator = "activator";
         public const string ActivatorNamePrefix = Activator + ":GetName()";
         public const string ColorTypePrefix = "TEN.Color";
+        public const string TimeTypePrefix = "TEN.Time";
+        public const string Vec2TypePrefix = "TEN.Vec2";
         public const string Vec3TypePrefix = "TEN.Vec3";
         public const string ObjectIDPrefix = "TEN.Objects.ObjID";
         public const string ReservedFunctionPrefix = "__";
@@ -250,7 +254,7 @@ namespace TombLib.Utils
 #endif
             }
 
-            return result;
+            return result.OrderBy(n => n.Section).ToList();
         }
 
         public static List<string> GetAllFunctionNames(string path, List<string> list = null, int depth = 0)
@@ -310,6 +314,7 @@ namespace TombLib.Utils
                         pos1 = subfile.IndexOf(LuaSyntax.BracketOpen) + 1;
                         pos2 = subfile.IndexOf(LuaSyntax.BracketClose);
                         subfile = subfile.Substring(pos1, pos2 - pos1).Replace('"', ' ').Trim();
+                        subfile = subfile.Replace('.', '/').Trim();
                         subfile = Path.Combine(Path.GetDirectoryName(path), subfile + ".lua");
 
                         depth++;

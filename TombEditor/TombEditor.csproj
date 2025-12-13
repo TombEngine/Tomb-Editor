@@ -7,7 +7,7 @@
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <Configurations>Debug;Release</Configurations>
-    <Platforms>AnyCPU;x64;x86</Platforms>
+    <Platforms>x64;x86</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <OutputPath>..\Build ($(Platform))\</OutputPath>
@@ -140,7 +140,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NLog" Version="5.0.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="EditorCommands.cs" />
@@ -172,7 +171,7 @@
         rmdir /s /q "$(MSBuildProjectDirectory)\$(OutputPath)$(TargetFramework)\runtimes\win-arm64\"
         ren "$(MSBuildProjectDirectory)\$(OutputPath)$(TargetFramework)\runtimes\" "runtimes_TEMP"
         ren "$(MSBuildProjectDirectory)\$(OutputPath)$(TargetFramework)\runtimes_TEMP\" "Runtimes"
-    </PostBuildEvent>
+    exit /b 0</PostBuildEvent>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <Target Name="AfterPublishActions" AfterTargets="Publish">

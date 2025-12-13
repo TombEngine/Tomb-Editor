@@ -1,0 +1,252 @@
+﻿<ResourceDictionary
+	x:Class="DarkUI.WPF.Styles.CustomWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="clr-namespace:DarkUI.WPF">
+
+	<Style x:Key="CustomWindowStyle" TargetType="{x:Type Window}">
+		<!--  Window properties  -->
+		<Setter Property="ResizeMode" Value="CanResizeWithGrip" />
+		<Setter Property="WindowStyle" Value="SingleBorderWindow" />
+		<Setter Property="RenderOptions.ClearTypeHint" Value="Enabled" />
+		<Setter Property="WindowChrome.WindowChrome">
+			<Setter.Value>
+				<WindowChrome
+					CaptionHeight="{x:Static local:Defaults.TitleBar_ChromeHeight}"
+					GlassFrameThickness="{x:Static local:Defaults.MediumThickness}"
+					ResizeBorderThickness="{x:Static local:Defaults.SmallThickness}"
+					UseAeroCaptionButtons="False" />
+			</Setter.Value>
+		</Setter>
+
+		<!--  Layout  -->
+		<Setter Property="SnapsToDevicePixels" Value="{x:Static local:Defaults.SnapsToDevicePixels}" />
+		<Setter Property="UseLayoutRounding" Value="{x:Static local:Defaults.UseLayoutRounding}" />
+
+		<!--  Brushes  -->
+		<Setter Property="Background" Value="{DynamicResource Brush_Background}" />
+		<Setter Property="BorderBrush" Value="{DynamicResource Brush_Background_Low}" />
+		<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+
+		<!--  Thicknesses  -->
+		<Setter Property="BorderThickness" Value="{x:Static local:Defaults.BorderThickness}" />
+
+		<!--  Template  -->
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Window}">
+					<Grid SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+						<Border
+							Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}">
+							<Grid>
+								<AdornerDecorator>
+									<AdornerDecorator.Margin>
+										<Thickness Top="{x:Static local:Defaults.TitleBar_Height}" />
+									</AdornerDecorator.Margin>
+
+									<ContentPresenter />
+								</AdornerDecorator>
+								<Grid
+									x:Name="titleBar"
+									Height="{x:Static local:Defaults.TitleBar_Height}"
+									VerticalAlignment="Top"
+									Background="{TemplateBinding BorderBrush}">
+									<Grid>
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="Auto" />
+											<ColumnDefinition />
+										</Grid.ColumnDefinitions>
+
+										<Image
+											Height="{x:Static local:Defaults.TitleBar_IconWidth}"
+											Opacity="{DynamicResource Opacity_DisabledContent}"
+											Source="{Binding Icon, RelativeSource={RelativeSource TemplatedParent}}">
+											<Image.Margin>
+												<Thickness Top="{x:Static local:Defaults.TitleBar_IconVerticalOffset}" />
+											</Image.Margin>
+										</Image>
+										<TextBlock
+											Grid.Column="1"
+											HorizontalAlignment="Stretch"
+											VerticalAlignment="Center"
+											FontSize="{x:Static local:Defaults.TitleBar_FontSize}"
+											Foreground="{TemplateBinding Foreground}"
+											Text="{Binding Title, RelativeSource={RelativeSource TemplatedParent}}">
+											<TextBlock.Margin>
+												<Thickness Left="{x:Static local:Defaults.MediumThicknessWidth}" />
+											</TextBlock.Margin>
+										</TextBlock>
+									</Grid>
+									<StackPanel
+										Grid.Column="0"
+										HorizontalAlignment="Right"
+										Orientation="Horizontal">
+										<Button
+											x:Name="btnMinimize"
+											Width="{x:Static local:Defaults.TitleBar_ButtonWidth}"
+											Height="Auto"
+											Background="Transparent"
+											BorderBrush="Transparent"
+											Click="Minimize_Event"
+											WindowChrome.IsHitTestVisibleInChrome="True">
+											<Rectangle
+												Width="{x:Static local:Defaults.Path_MaxIconWidth}"
+												Stroke="{DynamicResource Brush_Text}"
+												StrokeThickness="{x:Static local:Defaults.TitleBar_PathIconStrokeWidth}" />
+										</Button>
+										<Button
+											x:Name="btnRestore"
+											Width="{x:Static local:Defaults.TitleBar_ButtonWidth}"
+											Height="Auto"
+											Background="Transparent"
+											BorderBrush="Transparent"
+											Click="AutoMinimize_Event"
+											WindowChrome.IsHitTestVisibleInChrome="True">
+											<Grid MaxWidth="{x:Static local:Defaults.Path_MaxIconWidth}" MaxHeight="{x:Static local:Defaults.Path_MaxIconHeight}">
+												<Rectangle Stroke="{DynamicResource Brush_Text}" StrokeThickness="{x:Static local:Defaults.TitleBar_PathIconStrokeWidth}" />
+											</Grid>
+										</Button>
+										<Button
+											x:Name="btnClose"
+											Width="{x:Static local:Defaults.TitleBar_ButtonWidth}"
+											Height="Auto"
+											Background="Transparent"
+											BorderBrush="Transparent"
+											Click="CloseWindow_Event"
+											Template="{DynamicResource CloseWindowButton}"
+											WindowChrome.IsHitTestVisibleInChrome="True">
+											<Grid>
+												<Grid.Margin>
+													<Thickness Top="{x:Static local:Defaults.BorderThicknessWidth}" />
+												</Grid.Margin>
+
+												<Line
+													Stroke="{DynamicResource Brush_Text}"
+													StrokeThickness="{x:Static local:Defaults.TitleBar_PathIconStrokeWidth}"
+													X1="0"
+													X2="{x:Static local:Defaults.Path_MaxIconWidth}"
+													Y1="0"
+													Y2="{x:Static local:Defaults.Path_MaxIconHeight}" />
+												<Line
+													Stroke="{DynamicResource Brush_Text}"
+													StrokeThickness="{x:Static local:Defaults.TitleBar_PathIconStrokeWidth}"
+													X1="0"
+													X2="{x:Static local:Defaults.Path_MaxIconWidth}"
+													Y1="{x:Static local:Defaults.Path_MaxIconHeight}"
+													Y2="0" />
+											</Grid>
+										</Button>
+									</StackPanel>
+								</Grid>
+							</Grid>
+						</Border>
+					</Grid>
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="ResizeMode" Value="CanMinimize">
+							<Setter TargetName="btnRestore" Property="Visibility" Value="Collapsed" />
+						</Trigger>
+
+						<Trigger Property="ResizeMode" Value="NoResize">
+							<Setter TargetName="btnMinimize" Property="Visibility" Value="Collapsed" />
+							<Setter TargetName="btnRestore" Property="Visibility" Value="Collapsed" />
+						</Trigger>
+
+						<Trigger Property="WindowState" Value="Normal">
+							<Setter TargetName="btnRestore" Property="Content">
+								<Setter.Value>
+									<Grid Width="{x:Static local:Defaults.Path_MaxIconWidth}" Height="{x:Static local:Defaults.Path_MaxIconHeight}">
+										<Rectangle Stroke="{DynamicResource Brush_Text}" StrokeThickness="{x:Static local:Defaults.TitleBar_PathIconStrokeWidth}" />
+									</Grid>
+								</Setter.Value>
+							</Setter>
+						</Trigger>
+
+						<Trigger Property="WindowState" Value="Maximized">
+							<Setter TargetName="btnRestore" Property="Content">
+								<Setter.Value>
+									<Grid Width="{x:Static local:Defaults.Path_MaxIconWidth}" Height="{x:Static local:Defaults.Path_MaxIconHeight}">
+										<Rectangle Stroke="{DynamicResource Brush_Text}" StrokeThickness="{x:Static local:Defaults.TitleBar_PathIconStrokeWidth}">
+											<Rectangle.Margin>
+												<Thickness Bottom="{x:Static local:Defaults.TinyThicknessWidth}" Left="{x:Static local:Defaults.TinyThicknessWidth}" />
+											</Rectangle.Margin>
+										</Rectangle>
+
+										<Rectangle
+											Fill="{DynamicResource Brush_WindowBorder}"
+											Stroke="{DynamicResource Brush_Text}"
+											StrokeThickness="{x:Static local:Defaults.TitleBar_PathIconStrokeWidth}">
+											<Rectangle.Margin>
+												<Thickness Right="{x:Static local:Defaults.TinyThicknessWidth}" Top="{x:Static local:Defaults.TinyThicknessWidth}" />
+											</Rectangle.Margin>
+										</Rectangle>
+									</Grid>
+								</Setter.Value>
+							</Setter>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+
+		<Style.Triggers>
+			<!--  These shouldn't scale, they are system constants.  -->
+
+			<Trigger Property="WindowState" Value="Normal">
+				<Setter Property="BorderThickness" Value="1" />
+			</Trigger>
+
+			<Trigger Property="WindowState" Value="Maximized">
+				<Setter Property="BorderThickness" Value="8" />
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+
+	<ControlTemplate x:Key="CloseWindowButton" TargetType="{x:Type Button}">
+		<Border
+			x:Name="border"
+			HorizontalAlignment="Stretch"
+			VerticalAlignment="Stretch"
+			Background="{TemplateBinding Background}"
+			BorderBrush="{TemplateBinding BorderBrush}"
+			BorderThickness="{TemplateBinding BorderThickness}"
+			SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+			UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+			<ContentPresenter
+				x:Name="contentPresenter"
+				Margin="{TemplateBinding Padding}"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				RecognizesAccessKey="True" />
+		</Border>
+
+		<ControlTemplate.Triggers>
+			<Trigger Property="IsEnabled" Value="False">
+				<Setter TargetName="border" Property="Background" Value="{DynamicResource Brush_Background}" />
+				<Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+				<Setter TargetName="contentPresenter" Property="Opacity" Value="{DynamicResource Opacity_DisabledContent}" />
+			</Trigger>
+
+			<Trigger Property="IsDefaulted" Value="True">
+				<Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource Brush_Background_High}" />
+			</Trigger>
+
+			<Trigger Property="IsKeyboardFocused" Value="True">
+				<Setter TargetName="border" Property="Background" Value="#F01428" />
+				<Setter TargetName="border" Property="BorderBrush" Value="#F01428" />
+			</Trigger>
+
+			<Trigger Property="IsMouseOver" Value="True">
+				<Setter TargetName="border" Property="Background" Value="#F01428" />
+				<Setter TargetName="border" Property="BorderBrush" Value="#F01428" />
+			</Trigger>
+
+			<Trigger Property="IsPressed" Value="True">
+				<Setter TargetName="border" Property="Background" Value="#940A14" />
+				<Setter TargetName="border" Property="BorderBrush" Value="#940A14" />
+			</Trigger>
+		</ControlTemplate.Triggers>
+	</ControlTemplate>
+</ResourceDictionary>

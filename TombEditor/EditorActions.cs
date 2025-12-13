@@ -15,6 +15,8 @@ using TombEditor.Forms;
 using TombLib;
 using TombLib.Controls;
 using TombLib.Forms;
+using TombLib.Forms.ViewModels;
+using TombLib.Forms.Views;
 using TombLib.GeometryIO;
 using TombLib.LevelData;
 using TombLib.LevelData.Compilers;
@@ -22,12 +24,14 @@ using TombLib.LevelData.Compilers.TombEngine;
 using TombLib.LevelData.IO;
 using TombLib.LevelData.SectorEnums;
 using TombLib.LevelData.SectorEnums.Extensions;
+using TombLib.LevelData.SectorServices;
 using TombLib.LevelData.SectorStructs;
 using TombLib.LevelData.VisualScripting;
 using TombLib.Rendering;
 using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
+using TombLib.WPF;
 
 namespace TombEditor
 {
@@ -407,62 +411,117 @@ namespace TombEditor
             }
         }
 
-        public static void SmoothSector(Room room, int x, int z, SectorVerticalPart vertical, int increment, bool disableUndo = false)
+        public static void SmoothSector(Room room, int x, int z, SectorVerticalPart vertical, int stepHeight, bool disableUndo = false)
         {
-            var currSector = room.GetSectorTryThroughPortal(x, z);
+            RoomSectorPair currentSectorPair = room.GetSectorTryThroughPortal(x, z);
 
-            if (currSector.Room != room ||
-                vertical.IsOnFloor() && currSector.Sector.Floor.DiagonalSplit != DiagonalSplit.None ||
-                vertical.IsOnCeiling() && currSector.Sector.Ceiling.DiagonalSplit != DiagonalSplit.None)
+            if (currentSectorPair.Room != room)
                 return;
 
             if (!disableUndo)
-                _editor.UndoManager.PushGeometryChanged(_editor.SelectedRoom);
+                _editor.UndoManager.PushGeometryChanged(room.AndAdjoiningRooms);
 
-            var lookupSectors = new RoomSectorPair[8]
-            {
-                room.GetSectorTryThroughPortal(x - 1, z + 1),
-                room.GetSectorTryThroughPortal(x, z + 1),
-                room.GetSectorTryThroughPortal(x + 1, z + 1),
-                room.GetSectorTryThroughPortal(x + 1, z),
-                room.GetSectorTryThroughPortal(x + 1, z - 1),
-                room.GetSectorTryThroughPortal(x, z - 1),
-                room.GetSectorTryThroughPortal(x - 1, z - 1),
-                room.GetSectorTryThroughPortal(x - 1, z)
-            };
-
-            int[] adj = new int[8];
-            for (int i = 0; i < 8; i++)
-                adj[i] = (currSector.Room != null ? currSector.Room.Position.Y : 0) - (lookupSectors[i].Room != null ? lookupSectors[i].Room.Position.Y : 0);
-
-            int validSectorCntXnZp = (lookupSectors[7].Room != null ? 1 : 0) + (lookupSectors[0].Room != null ? 1 : 0) + (lookupSectors[1].Room != null ? 1 : 0);
-            int newXnZp = ((lookupSectors[7].Sector?.GetHeight(vertical, SectorEdge.XpZp) ?? 0) + adj[7] +
-                                   (lookupSectors[0].Sector?.GetHeight(vertical, SectorEdge.XpZn) ?? 0) + adj[0] +
-                                   (lookupSectors[1].Sector?.GetHeight(vertical, SectorEdge.XnZn) ?? 0) + adj[1]) / validSectorCntXnZp;
-
-            int validSectorCntXpZp = (lookupSectors[1].Room != null ? 1 : 0) + (lookupSectors[2].Room != null ? 1 : 0) + (lookupSectors[3].Room != null ? 1 : 0);
-            int newXpZp = ((lookupSectors[1].Sector?.GetHeight(vertical, SectorEdge.XpZn) ?? 0) + adj[2] +
-                                   (lookupSectors[2].Sector?.GetHeight(vertical, SectorEdge.XnZn) ?? 0) + adj[3] +
-                                   (lookupSectors[3].Sector?.GetHeight(vertical, SectorEdge.XnZp) ?? 0) + adj[0]) / validSectorCntXpZp;
-
-            int validSectorCntXpZn = (lookupSectors[3].Room != null ? 1 : 0) + (lookupSectors[4].Room != null ? 1 : 0) + (lookupSectors[5].Room != null ? 1 : 0);
-            int newXpZn = ((lookupSectors[3].Sector?.GetHeight(vertical, SectorEdge.XnZn) ?? 0) + adj[3] +
-                                   (lookupSectors[4].Sector?.GetHeight(vertical, SectorEdge.XnZp) ?? 0) + adj[0] +
-                                   (lookupSectors[5].Sector?.GetHeight(vertical, SectorEdge.XpZp) ?? 0) + adj[1]) / validSectorCntXpZn;
-
-            int validSectorCntXnZn = (lookupSectors[5].Room != null ? 1 : 0) + (lookupSectors[6].Room != null ? 1 : 0) + (lookupSectors[7].Room != null ? 1 : 0);
-            int newXnZn = ((lookupSectors[5].Sector?.GetHeight(vertical, SectorEdge.XnZp) ?? 0) + adj[0] +
-                                   (lookupSectors[6].Sector?.GetHeight(vertical, SectorEdge.XpZp) ?? 0) + adj[1] +
-                                   (lookupSectors[7].Sector?.GetHeight(vertical, SectorEdge.XpZn) ?? 0) + adj[2]) / validSectorCntXnZn;
-
-            room.ChangeSectorHeight(x, z, vertical, SectorEdge.XnZp, Math.Sign(newXnZp - currSector.Sector.GetHeight(vertical, SectorEdge.XnZp)) * increment);
-            room.ChangeSectorHeight(x, z, vertical, SectorEdge.XpZp, Math.Sign(newXpZp - currSector.Sector.GetHeight(vertical, SectorEdge.XpZp)) * increment);
-            room.ChangeSectorHeight(x, z, vertical, SectorEdge.XpZn, Math.Sign(newXpZn - currSector.Sector.GetHeight(vertical, SectorEdge.XpZn)) * increment);
-            room.ChangeSectorHeight(x, z, vertical, SectorEdge.XnZn, Math.Sign(newXnZn - currSector.Sector.GetHeight(vertical, SectorEdge.XnZn)) * increment);
-
-            currSector.Sector.FixHeights(vertical);
+            // Apply smoothing to each corner of the sector
+            for (SectorEdge edge = 0; edge < SectorEdge.Count; edge++)
+                SmoothSectorCorner(room, x, z, edge, vertical, stepHeight);
 
             SmartBuildGeometry(room, new RectangleInt2(x, z, x, z));
+        }
+
+        public static void SmoothArea(Room room, RectangleInt2 area, SectorVerticalPart vertical, int stepHeight, bool disableUndo = false)
+        {
+            if (!disableUndo)
+            {
+                HashSet<Room> affectedRooms = room.GetAdjoiningRoomsFromArea(area.Inflate(1));
+                affectedRooms.Add(room);
+
+                _editor.UndoManager.PushGeometryChanged(affectedRooms);
+            }
+
+            bool isBorder;
+
+            // Iterate through the selected region (excluding border sectors)
+            for (int z = area.Y0; z <= area.Y1; z++)
+            {
+                isBorder = z <= 0 || z >= room.NumZSectors - 1;
+
+                if (isBorder)
+                    continue;
+
+                for (int x = area.X0; x <= area.X1; x++)
+                {
+                    isBorder = x <= 0 || x >= room.NumXSectors - 1;
+
+                    if (isBorder)
+                        continue;
+
+                    // Smooth all four corners of current sector
+                    for (SectorEdge edge = 0; edge < SectorEdge.Count; edge++)
+                        SmoothSectorCorner(room, x, z, edge, vertical, stepHeight);
+                }
+            }
+
+            SmartBuildGeometry(room, area);
+        }
+
+        private static void SmoothSectorCorner(Room room, int x, int z, SectorEdge edge, SectorVerticalPart vertical, int stepHeight)
+        {
+            RoomSectorPair currentSectorPair = room.GetSectorTryThroughPortal(x, z);
+
+            if (currentSectorPair.Sector is null || currentSectorPair.Sector.IsFullWall)
+                return;
+
+            // Define the neighboring sectors and their corresponding edges based on the corner we're processing
+            ReadOnlySpan<SectorEdgeOffset> neighbors = edge switch
+            {
+                SectorEdge.XnZp => stackalloc SectorEdgeOffset[] { new(-1,  0, SectorEdge.XpZp), new(-1,  1, SectorEdge.XpZn), new(0,  1, SectorEdge.XnZn) }, // North-west corner
+                SectorEdge.XpZp => stackalloc SectorEdgeOffset[] { new( 1,  0, SectorEdge.XnZp), new( 1,  1, SectorEdge.XnZn), new(0,  1, SectorEdge.XpZn) }, // North-east corner
+                SectorEdge.XpZn => stackalloc SectorEdgeOffset[] { new( 0, -1, SectorEdge.XpZp), new( 1, -1, SectorEdge.XnZp), new(1,  0, SectorEdge.XnZn) }, // South-east corner
+                SectorEdge.XnZn => stackalloc SectorEdgeOffset[] { new(-1,  0, SectorEdge.XpZn), new(-1, -1, SectorEdge.XpZp), new(0, -1, SectorEdge.XnZp) }, // South-west corner
+                _ => throw new ArgumentException("Invalid edge") // Handle invalid edge
+            };
+
+            // Calculate average height from current corner and surrounding neighbors
+            int heightSum = currentSectorPair.Sector.GetHeight(vertical, edge);
+            int validCorners = 1;
+
+            // Add heights from valid neighboring corners
+            foreach ((int neighborX, int neighborZ, SectorEdge neighborEdge) in neighbors)
+            {
+                RoomSectorPair sectorPair = currentSectorPair.Room.GetSectorTryThroughPortal(x + neighborX, z + neighborZ);
+
+                if (sectorPair.Sector is null || sectorPair.Sector.IsFullWall)
+                    continue;
+
+                heightSum += sectorPair.Sector.GetHeight(vertical, neighborEdge);
+                validCorners++;
+            }
+
+            // If there are not enough valid corners, return without making changes
+            if (validCorners < 2)
+                return;
+
+            int averageHeight = heightSum / validCorners;
+
+            // Round to the nearest step height
+            if (stepHeight > 0)
+                averageHeight = (int)Math.Round((float)averageHeight / stepHeight) * stepHeight;
+
+            // Apply the average height to the current corner
+            currentSectorPair.Sector.SetHeight(vertical, edge, averageHeight);
+            currentSectorPair.Sector.FixHeight(edge, vertical);
+
+            // Apply the same height to neighboring corners
+            foreach ((int neighborX, int neighborZ, SectorEdge neighborEdge) in neighbors)
+            {
+                RoomSectorPair sectorPair = currentSectorPair.Room.GetSectorTryThroughPortal(x + neighborX, z + neighborZ);
+
+                if (sectorPair.Sector is null || sectorPair.Sector.IsFullWall)
+                    continue;
+
+                sectorPair.Sector.SetHeight(vertical, neighborEdge, averageHeight);
+                sectorPair.Sector.FixHeight(neighborEdge, vertical);
+            }
         }
 
         public static void ShapeGroup(Room room, RectangleInt2 area, ArrowType arrow, EditorToolType type, SectorVerticalPart vertical, double heightScale, bool precise, bool stepped)
@@ -669,10 +728,10 @@ namespace TombEditor
                 trigger.TargetType = TriggerTargetType.Sink;
                 trigger.Target = firstObject;
             }
-            else if (firstObject is VolumeInstance && _editor.Level.IsTombEngine)
+            else if (firstObject is VolumeInstance volume && volume.EventSet != null && _editor.Level.IsTombEngine)
             {
                 trigger.TargetType = TriggerTargetType.VolumeEvent;
-                trigger.Target = new TriggerParameterString((firstObject as VolumeInstance).EventSet.Name);
+                trigger.Target = new TriggerParameterString(volume.EventSet.Name);
             }
             else if (firstObject is StaticInstance && _editor.Level.IsNG)
             {
@@ -1017,10 +1076,16 @@ namespace TombEditor
                 if (form.ShowDialog(owner) == DialogResult.Cancel)
                     return;
 
-                if (!luaInstance.TrySetLuaName(form.Result, owner))
+                if (!luaInstance.CanSetLuaName(form.Result))
+                {
+                    MessageBoxes.LuaNameAlreadyTakenError(owner);
                     RenameObject(luaInstance, owner);
+                }
                 else
+                {
+                    luaInstance.LuaName = form.Result;
                     _editor.ObjectChange(luaInstance, ObjectChangeType.Change);
+                }
             }
         }
 
@@ -1073,7 +1138,7 @@ namespace TombEditor
             }
             else if (instance is SpriteInstance)
             {
-                if (!VersionCheck(_editor.Level.Settings.GameVersion <= TRVersion.Game.TR2, "Room sprite"))
+                if (!VersionCheck(_editor.Level.Settings.GameVersion.Native() <= TRVersion.Game.TR2, "Room sprite"))
                     return;
 
                 using (var formSprite = GetObjectSetupWindow((SpriteInstance)instance))
@@ -2272,7 +2337,7 @@ namespace TombEditor
 
         public static void PlaceLight(LightType type)
         {
-            var color = (type == LightType.FogBulb && _editor.Level.Settings.GameVersion.Legacy() <= TRVersion.Game.TR4) ?
+            var color = (type == LightType.FogBulb && _editor.Level.Settings.GameVersion.Native() <= TRVersion.Game.TR4) ?
                 Vector3.One : (Vector3)_editor.LastUsedPaletteColour * 2.0f;
 
             _editor.Action = new EditorActionPlace(false, (l, r) => new LightInstance(type) { Color = color });
@@ -3400,7 +3465,7 @@ namespace TombEditor
                 return null;
             }
 
-            if(room.IsAnyPortal(direction, clampedSelection.Value.Area))
+            if (room.IsAnyPortal(direction, clampedSelection.Value.Area))
             {
                 _editor.SendMessage("Can't create adjoining room. \nSelection contains existing portals.", PopupType.Error);
                 return null;
@@ -3518,6 +3583,15 @@ namespace TombEditor
             newRoom.AddObject(_editor.Level, new PortalInstance(portalArea, PortalInstance.GetOppositeDirection(direction), room));
             newRoom.Name = "Room " + roomNumber;
 
+            // Copy main parent room properties
+            newRoom.Properties.AmbientLight = room.Properties.AmbientLight;
+            newRoom.Properties.Type = room.Properties.Type;
+            newRoom.Properties.TypeStrength = room.Properties.TypeStrength;
+            newRoom.Properties.FlagCold = room.Properties.FlagCold;
+            newRoom.Properties.FlagDamage = room.Properties.FlagDamage;
+            newRoom.Properties.FlagOutside = room.Properties.FlagOutside;
+            newRoom.Properties.FlagHorizon = room.Properties.FlagHorizon;
+
             if (_editor.Configuration.UI_GenerateRoomDescriptions)
                 newRoom.Name += " (dug " + dirString + ")";
 
@@ -3536,7 +3610,7 @@ namespace TombEditor
             });
 
             if (switchRoom && (_editor.SelectedRoom == room || _editor.SelectedRoom == room.AlternateOpposite))
-                _editor.SelectedRoom = newRoom; //Don't center
+                _editor.SelectedRoom = newRoom; // Don't center
             else
             {
                 _editor.RoomSectorPropertiesChange(room);
@@ -4033,7 +4107,7 @@ namespace TombEditor
                 light =>
                 {
                     // Prompt user that real intensity is now used to define fog bulb intensity
-                    if (_editor.Level.Settings.GameVersion.Legacy() <= TRVersion.Game.TR4 && light.Type == LightType.FogBulb)
+                    if (_editor.Level.Settings.GameVersion.Native() <= TRVersion.Game.TR4 && light.Type == LightType.FogBulb)
                     {
                         _editor.SendMessage("To edit fog bulb intensity, use 'Intensity' field.", PopupType.Info);
                         return light.Color;
@@ -4136,7 +4210,8 @@ namespace TombEditor
                         watch.Start();
                         var statistics = compiler.CompileLevel(cancelToken);
                         watch.Stop();
-                        progressReporter.ReportProgress(100, "\nElapsed time: " + watch.Elapsed.TotalMilliseconds + "ms");
+
+                        progressReporter.ReportProgress(100, $"\nElapsed time: {FormatElapsedSmart(watch.Elapsed.TotalMilliseconds)}");
 
                         // Raise an event for statistics update
                         _editor.RaiseEvent(new Editor.LevelCompilationCompletedEvent
@@ -4162,6 +4237,37 @@ namespace TombEditor
                 form.ShowDialog(owner);
                 return form.DialogResult != DialogResult.Cancel;
             }
+        }
+
+        private static string FormatElapsedSmart(double elapsedMs) =>
+            FormatElapsedSmart(TimeSpan.FromMilliseconds(elapsedMs));
+
+        private static string FormatElapsedSmart(TimeSpan t)
+        {
+            long totalMs = (long)Math.Round(t.TotalMilliseconds);
+
+            if (totalMs < 1_000)
+                return $"{totalMs} ms";
+
+            if (totalMs < 60_000)
+            {
+                long s = totalMs / 1_000;
+                long ms = totalMs % 1_000;
+                return $"{s} s {ms} ms";
+            }
+
+            if (totalMs < 3_600_000)
+            {
+                long m = totalMs / 60_000;
+                long s = (totalMs % 60_000) / 1_000;
+                return $"{m} min {s} s";
+            }
+
+            // >= 1 hour
+            long h = totalMs / 3_600_000;
+            long m2 = (totalMs % 3_600_000) / 60_000;
+            long s2 = (totalMs % 60_000) / 1_000;
+            return $"{h} h {m2} min {s2} s";
         }
 
         public static void BuildLevelAndPlay(IWin32Window owner, bool fastMode = false)
@@ -4259,20 +4365,26 @@ namespace TombEditor
                 return null;
 
             var geometry = new ImportedGeometry();
+            var config = Editor.Instance?.Configuration;
 
-            using (var settingsDialog = new GeometryIOSettingsDialog(new IOGeometrySettings()))
-            {
-                settingsDialog.AddPreset(IOSettingsPresets.GeometryImportSettingsPresets);
-                settingsDialog.SelectPreset("Normal scale to TR scale");
+            var viewModel = new GeometryIOSettingsWindowViewModel(IOSettingsPresets.GeometryImportSettingsPresets);
+            viewModel.SelectPreset(config?.GeometryIO_LastUsedGeometryImportPresetName);
 
-                if (settingsDialog.ShowDialog(owner) == DialogResult.Cancel)
-                    return null;
+            var settingsDialog = new GeometryIOSettingsWindow { DataContext = viewModel };
+            settingsDialog.SetOwner(owner);
+            settingsDialog.ShowDialog();
 
-                var info = new ImportedGeometryInfo(path, settingsDialog.Settings);
-                _editor.Level.Settings.ImportedGeometryUpdate(geometry, info);
-                _editor.Level.Settings.ImportedGeometries.Add(geometry);
-                _editor.LoadedImportedGeometriesChange();
-            }
+            if (viewModel.DialogResult != true)
+                return null;
+
+            if (config is not null)
+                config.GeometryIO_LastUsedGeometryImportPresetName = viewModel.SelectedPreset?.Name;
+
+            var settings = viewModel.GetCurrentSettings();
+            var info = new ImportedGeometryInfo(path, settings);
+            _editor.Level.Settings.ImportedGeometryUpdate(geometry, info);
+            _editor.Level.Settings.ImportedGeometries.Add(geometry);
+            _editor.LoadedImportedGeometriesChange();
 
             return geometry;
         }
@@ -4531,7 +4643,10 @@ namespace TombEditor
             var list = new Dictionary<IReloadableResource, string>() { { toReplace, path } };
 
             if (searchForOthers)
-                foreach (var item in toReplace.GetResourceList(settings).Where(i => i != toReplace && i != null && i.LoadException != null))
+            {
+                var resourceListToReplace = toReplace.GetResourceList(settings).Where(i => !string.Equals(i.GetPath(), toReplace.GetPath()) && i != null && i.LoadException != null);
+
+                foreach (var item in resourceListToReplace)
                 {
                     // Now recursively search down the folder structure
                     var newPath = PathC.TryFindFile(Path.GetDirectoryName(settings.MakeAbsolute(path)), settings.MakeAbsolute(item.GetPath()), 4, 4);
@@ -4548,6 +4663,7 @@ namespace TombEditor
                         list.TryAdd(item, settings.MakeRelative(newPath, VariableType.LevelDirectory));
                     }
                 }
+            }
 
             if (toReplace.ResourceType == ReloadableResourceType.ImportedGeometry)
             {
@@ -4966,62 +5082,75 @@ namespace TombEditor
                 if (saveFileDialog.ShowDialog(owner) != DialogResult.OK)
                     return;
 
-                if (!saveFileDialog.FileName.CheckAndWarnIfNotANSI(owner))
+                if (!saveFileDialog.FileName.IsANSI())
                 {
+                    MessageBoxes.NonANSIFilePathError(owner);
                     ExportRooms(rooms, owner);
                     return;
                 }
 
-                using (var settingsDialog = new GeometryIOSettingsDialog(new IOGeometrySettings() { Export = true, ExportRoom = true }))
+                var config = Editor.Instance?.Configuration;
+
+                var viewModel = new GeometryIOSettingsWindowViewModel(
+                    IOSettingsPresets.GeometryExportSettingsPresets,
+                    new() { Export = true, ExportRoom = true }
+                );
+
+                viewModel.SelectPreset(config?.GeometryIO_LastUsedGeometryExportPresetName);
+
+                var settingsDialog = new GeometryIOSettingsWindow { DataContext = viewModel };
+                settingsDialog.SetOwner(owner);
+                settingsDialog.ShowDialog();
+
+                if (viewModel.DialogResult != true)
+                    return;
+
+                if (config is not null)
+                    config.GeometryIO_LastUsedGeometryExportPresetName = viewModel.SelectedPreset?.Name;
+
+                var settings = viewModel.GetCurrentSettings();
+
+                BaseGeometryExporter.GetTextureDelegate getTextureCallback = txt =>
                 {
-                    settingsDialog.AddPreset(IOSettingsPresets.GeometryExportSettingsPresets);
-                    settingsDialog.SelectPreset("Normal scale");
+                    if (txt is LevelTexture)
+                        return _editor.Level.Settings.MakeAbsolute(((LevelTexture)txt).Path);
+                    else
+                        return "";
+                };
 
-                    if (settingsDialog.ShowDialog(owner) == DialogResult.OK)
+                BaseGeometryExporter exporter = BaseGeometryExporter.CreateForFile(saveFileDialog.FileName, settings, getTextureCallback);
+                new Thread(() =>
+                {
+                    bool exportInWorldCoordinates = rooms.Count() > 1;
+                    var result = RoomGeometryExporter.ExportRooms(rooms, saveFileDialog.FileName, _editor.Level, exportInWorldCoordinates);
+
+                    if (result.Errors.Count < 1)
                     {
-                        BaseGeometryExporter.GetTextureDelegate getTextureCallback = txt =>
+                        IOModel resultModel = result.Model;
+                        if (exporter.ExportToFile(resultModel, saveFileDialog.FileName))
                         {
-                            if (txt is LevelTexture)
-                                return _editor.Level.Settings.MakeAbsolute(((LevelTexture)txt).Path);
-                            else
-                                return "";
-                        };
-
-                        BaseGeometryExporter exporter = BaseGeometryExporter.CreateForFile(saveFileDialog.FileName, settingsDialog.Settings, getTextureCallback);
-                        new Thread(() =>
-                        {
-                            bool exportInWorldCoordinates = rooms.Count() > 1;
-                            var result = RoomGeometryExporter.ExportRooms(rooms, saveFileDialog.FileName, _editor.Level, exportInWorldCoordinates);
-
-                            if (result.Errors.Count < 1)
+                            if (result.Warnings.Count > 0)
                             {
-                                IOModel resultModel = result.Model;
-                                if (exporter.ExportToFile(resultModel, saveFileDialog.FileName))
+                                if (result.Warnings.Count < 5)
                                 {
-                                    if (result.Warnings.Count > 0)
-                                    {
-                                        if (result.Warnings.Count < 5)
-                                        {
-                                            string warningmessage = "";
-                                            result.Warnings.ForEach(warning => warningmessage += warning + "\n");
-                                            _editor.SendMessage("Room export successful with warnings: \n" + warningmessage, PopupType.Warning);
-                                        }
-                                        else
-                                            _editor.SendMessage("Room export successful with multiple warnings.", PopupType.Warning);
-                                    }
-                                    else
-                                        _editor.SendMessage("Room export successful.", PopupType.Info);
+                                    string warningmessage = "";
+                                    result.Warnings.ForEach(warning => warningmessage += warning + "\n");
+                                    _editor.SendMessage("Room export successful with warnings: \n" + warningmessage, PopupType.Warning);
                                 }
+                                else
+                                    _editor.SendMessage("Room export successful with multiple warnings.", PopupType.Warning);
                             }
                             else
-                            {
-                                string errorMessage = "";
-                                result.Errors.ForEach((error) => { errorMessage += error + "\n"; });
-                                _editor.SendMessage("There was an error exporting room(s): \n" + errorMessage, PopupType.Error);
-                            }
-                        }).Start();
+                                _editor.SendMessage("Room export successful.", PopupType.Info);
+                        }
                     }
-                }
+                    else
+                    {
+                        string errorMessage = "";
+                        result.Errors.ForEach((error) => { errorMessage += error + "\n"; });
+                        _editor.SendMessage("There was an error exporting room(s): \n" + errorMessage, PopupType.Error);
+                    }
+                }).Start();
             }
         }
 
@@ -5072,31 +5201,6 @@ namespace TombEditor
                 // Rebuild DirectX buffer
                 newObject.DirectXModel.UpdateBuffers();
 
-                // Load the XML db
-                /*string dbName = Path.GetDirectoryName(importedGeometryPath) + "\\" + Path.GetFileNameWithoutExtension(importedGeometryPath) + ".xml";
-                var db = RoomsImportExportXmlDatabase.LoadFromFile(dbName);
-                if (db == null)
-                    throw new FileNotFoundException("There must be also an XML file with the same name of the 3D file");
-        */
-
-                // Create a dictionary of the rooms by name
-                /* var roomDictionary = new Dictionary<string, IOMesh>();
-                 foreach (var msh in newObject.DirectXModel)
-
-                 // Translate rooms
-                 for (int i=0;i<db.Rooms.Count;i++)
-                 {
-                     string roomMeshName = db.Rooms.ElementAt(i).Key;
-                     foreach (var mesh in model.Meshes)
-                         for (int i = 0; i < mesh.Positions.Count; i++)
-                         {
-                             var pos = mesh.Positions[i];
-                             pos -= mesh.Origin;
-                             mesh.Positions[i] = pos;
-                         }
-                 }
-                 */
-
                 // Figure out the relevant rooms
                 Dictionary<int, int> roomIndices = new Dictionary<int, int>();
                 int meshIndex = 0;
@@ -5124,7 +5228,6 @@ namespace TombEditor
                         currentIndex = roomIndexEnd;
                     } while (currentIndex < mesh.Name.Length);
                 }
-                //roomIndices = roomIndices.Distinct().ToList();
 
                 // Add rooms
                 foreach (var pair in roomIndices)
@@ -5647,7 +5750,7 @@ namespace TombEditor
 
             var samplePath = Application.StartupPath + "\\Assets\\Samples\\";
 
-            switch (settings.GameVersion)
+            switch (settings.GameVersion.Native())
             {
                 case TRVersion.Game.TR1:
                     samplePath = samplePath + "TR1";
@@ -5742,7 +5845,7 @@ namespace TombEditor
 
         public static void AssignTriggerSounds(LevelSettings settings)
         {
-            bool isTR4 = _editor.Level.Settings.GameVersion.Legacy() == TRVersion.Game.TR4;
+            bool isTR4 = _editor.Level.Settings.GameVersion.Native() == TRVersion.Game.TR4;
 
             foreach (var room in _editor.Level.Rooms)
                 if (room != null)
@@ -5810,5 +5913,34 @@ namespace TombEditor
 
 			}
 		}
+
+        public static void RealignToStepHeight(Room room, RectangleInt2 area, SectorVerticalPart vertical, int stepHeight, bool disableUndo = false)
+        {
+            if (!disableUndo)
+                _editor.UndoManager.PushGeometryChanged(room);
+
+            bool success = AreaUtils.PerformActionOnArea(area, (x, z) =>
+            {
+                if (!room.GetSectorTry(x, z, out Sector sector))
+                    return false;
+
+                sector.FixHeights(vertical, stepHeight);
+                return true;
+            });
+
+            if (success)
+                SmartBuildGeometry(room, area);
+        }
+
+        public static void ConvertAreaToQuads(Room room, RectangleInt2 area, SectorVerticalPart vertical, int stepHeight, bool disableUndo = false)
+        {
+            if (!disableUndo)
+                _editor.UndoManager.PushGeometryChanged(room);
+
+            bool success = SurfaceToQuadConverter.ConvertAreaToQuads(room, area, vertical, stepHeight);
+
+            if (success)
+                SmartBuildGeometry(room, area);
+        }
     }
 }

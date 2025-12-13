@@ -24,60 +24,71 @@ public enum ListPrefix
 
 public sealed class TRGFile
 {
-	private static readonly Regex KeyValueRegex = new(@"^\s*(\d+)\s*:\s*(.*)"); // Matches "123:Some text"
+    private static readonly Regex KeyValueRegex = new(@"^\s*(\d+)\s*:\s*(.*)"); // Matches "123:Some text"
 
-	public string[] Lines { get; }
+    public string[] Lines { get; }
 
-	public TRGFile(string trgFilePath)
-		=> Lines = File.ReadAllLines(trgFilePath);
+    public TRGFile(string trgFilePath)
+        => Lines = File.ReadAllLines(trgFilePath);
 
-	public NgParameterRange GetTriggerFieldSection(TriggerField field)
-	{
-		var results = new SortedDictionary<ushort, TriggerParameterUshort>();
+    public NgParameterRange GetTriggerFieldSection(TriggerField field)
+    {
+        string internalNumberPrefix = field switch
+        {
+            TriggerField.FlipEffect => "F",
+            TriggerField.ActionNG => "A",
+            TriggerField.ConditionNg => "C",
+            _ => string.Empty
+        };
 
-		// Get start line index of TRG section
-		int sectionStartLineIndex = field switch
-		{
-			TriggerField.ActionNG => Array.FindIndex(Lines, line => line.StartsWith("<START_TRIGGERWHAT_11", StringComparison.OrdinalIgnoreCase)),
-			TriggerField.ConditionNg => Array.FindIndex(Lines, line => line.StartsWith("<START_TRIGGERTYPE_12", StringComparison.OrdinalIgnoreCase)),
-			_ => Array.FindIndex(Lines, line => line.StartsWith("<START_TRIGGERWHAT_9", StringComparison.OrdinalIgnoreCase)), // Flip Effect
-		};
+        var results = new SortedDictionary<ushort, TriggerParameterUshort>();
 
-		if (sectionStartLineIndex == -1)
-			return new NgParameterRange(results);
+        // Get start line index of TRG section
+        int sectionStartLineIndex = field switch
+        {
+            TriggerField.ActionNG => Array.FindIndex(Lines, line => line.StartsWith("<START_TRIGGERWHAT_11", StringComparison.OrdinalIgnoreCase)),
+            TriggerField.ConditionNg => Array.FindIndex(Lines, line => line.StartsWith("<START_TRIGGERTYPE_12", StringComparison.OrdinalIgnoreCase)),
+            _ => Array.FindIndex(Lines, line => line.StartsWith("<START_TRIGGERWHAT_9", StringComparison.OrdinalIgnoreCase)), // Flip Effect
+        };
 
-		// Get end line index of TRG section
-		int sectionEndLineIndex = Array.FindIndex(Lines, sectionStartLineIndex, line => line.StartsWith("<END", StringComparison.OrdinalIgnoreCase));
+        if (sectionStartLineIndex == -1)
+            return new NgParameterRange(results);
 
-		if (sectionEndLineIndex == -1) // If not found, set to end of file
-			sectionEndLineIndex = Lines.Length;
+        // Get end line index of TRG section
+        int sectionEndLineIndex = Array.FindIndex(Lines, sectionStartLineIndex, line => line.StartsWith("<END", StringComparison.OrdinalIgnoreCase));
 
-		for (int i = sectionStartLineIndex + 1; i < sectionEndLineIndex; i++)
-		{
-			string line = Lines[i];
-			Match match = KeyValueRegex.Match(line);
+        if (sectionEndLineIndex == -1) // If not found, set to end of file
+            sectionEndLineIndex = Lines.Length;
 
-			if (!match.Success)
-				continue; // Not a key-value pair
+        for (int i = sectionStartLineIndex + 1; i < sectionEndLineIndex; i++)
+        {
+            string line = Lines[i];
+            Match match = KeyValueRegex.Match(line);
 
-			if (!ushort.TryParse(match.Groups[1].Value, out ushort internalNumber))
-				continue; // Invalid internal number
+            if (!match.Success)
+                continue; // Not a key-value pair
 
-			// Remove comments and extra spaces
-			string name = match.Groups[2].Value
-				.Split("#END_DOC#")[0]
-				.Split("#START_DOC#")[0]
-				.Split("#REMARK#")[0]
-				.Trim();
+            if (!ushort.TryParse(match.Groups[1].Value, out ushort internalNumber))
+                continue; // Invalid internal number
 
-			if (string.IsNullOrEmpty(name))
-				continue; // Empty name
+            // Remove comments and extra spaces
+            string name = match.Groups[2].Value
+                .Split("#END_DOC#")[0]
+                .Split("#START_DOC#")[0]
+                .Split("#REMARK#")[0]
+                .Trim();
 
-			results[internalNumber] = new TriggerParameterUshort(internalNumber, name);
-		}
+            if (string.IsNullOrEmpty(name))
+                continue; // Empty name
 
-		return new NgParameterRange(results, NgParameterKind.PluginEnumeration);
-	}
+            if (!string.IsNullOrEmpty(internalNumberPrefix))
+                name = $"{name} ({internalNumberPrefix}{internalNumber})";
+
+            results[internalNumber] = new TriggerParameterUshort(internalNumber, name);
+        }
+
+        return new NgParameterRange(results, NgParameterKind.PluginEnumeration);
+    }
 
 	public NgParameterRange GetParameterRange(TriggerField field, int internalNumber, ListPrefix prefix)
 		=> GetParameterRange(field, internalNumber, prefix, out _);

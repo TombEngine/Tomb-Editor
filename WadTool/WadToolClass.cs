@@ -33,6 +33,7 @@ namespace WadTool
         VertexRemap,
         VertexColorsAndNormals,
         VertexEffects,
+        VertexWeights,
         Sphere
     }
 
@@ -161,7 +162,14 @@ namespace WadTool
             }
         }
 
-        public class ReferenceLevelChangedEvent : IEditorEvent
+        public class AnimatedTexturesChangedEvent : IEditorEvent
+        { }
+        public void AnimatedTexturesChanged()
+        {
+            RaiseEvent(new AnimatedTexturesChangedEvent());
+        }
+
+		public class ReferenceLevelChangedEvent : IEditorEvent
         { }
         public void ReferenceLevelChanged()
         {

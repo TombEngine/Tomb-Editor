@@ -1,0 +1,466 @@
+﻿<ResourceDictionary
+	x:Class="DarkUI.WPF.Styles.DataGrid"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="clr-namespace:DarkUI.WPF">
+
+	<BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+	<Style TargetType="{x:Type DataGrid}">
+		<!--  Control properties  -->
+		<Setter Property="AlternationCount" Value="2" />
+		<Setter Property="CanUserReorderColumns" Value="False" />
+		<Setter Property="FontSize" Value="{x:Static local:Defaults.DefaultFontSize}" />
+		<Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected" />
+
+		<!--  Layout  -->
+		<Setter Property="SnapsToDevicePixels" Value="{x:Static local:Defaults.SnapsToDevicePixels}" />
+		<Setter Property="UseLayoutRounding" Value="{x:Static local:Defaults.UseLayoutRounding}" />
+
+		<!--  Brushes  -->
+		<Setter Property="Background" Value="{DynamicResource Brush_Background}" />
+		<Setter Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+		<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+		<Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource Brush_Border_Low}" />
+		<Setter Property="VerticalGridLinesBrush" Value="{DynamicResource Brush_Border_Low}" />
+
+		<!--  Thicknesses  -->
+		<Setter Property="BorderThickness" Value="{x:Static local:Defaults.BorderThickness}" />
+
+		<!--  ScrollViewer  -->
+		<Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+		<Setter Property="ScrollViewer.PanningMode" Value="Both" />
+
+		<!--  Template  -->
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type DataGrid}">
+					<Border
+						x:Name="border"
+						Padding="{TemplateBinding Padding}"
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+						UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+						<ScrollViewer>
+							<ScrollViewer.Template>
+								<ControlTemplate TargetType="{x:Type ScrollViewer}">
+									<Grid>
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition />
+											<ColumnDefinition Width="Auto" />
+										</Grid.ColumnDefinitions>
+										<Grid.RowDefinitions>
+											<RowDefinition Height="Auto" />
+											<RowDefinition />
+											<RowDefinition Height="Auto" />
+										</Grid.RowDefinitions>
+
+										<DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter" Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+										<ScrollContentPresenter
+											x:Name="PART_ScrollContentPresenter"
+											Grid.Row="1"
+											CanContentScroll="{TemplateBinding CanContentScroll}" />
+										<ScrollBar
+											x:Name="PART_VerticalScrollBar"
+											Grid.Row="0"
+											Grid.RowSpan="2"
+											Grid.Column="1"
+											Maximum="{TemplateBinding ScrollableHeight}"
+											Orientation="Vertical"
+											ViewportSize="{TemplateBinding ViewportHeight}"
+											Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+											Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
+										<Grid Grid.Row="2">
+											<Grid.ColumnDefinitions>
+												<ColumnDefinition Width="{Binding NonFrozenColumnsViewportHorizontalOffset, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" />
+												<ColumnDefinition />
+											</Grid.ColumnDefinitions>
+
+											<ScrollBar
+												x:Name="PART_HorizontalScrollBar"
+												Grid.Column="1"
+												Maximum="{TemplateBinding ScrollableWidth}"
+												Orientation="Horizontal"
+												ViewportSize="{TemplateBinding ViewportWidth}"
+												Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+												Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
+										</Grid>
+										<Rectangle
+											x:Name="Corner"
+											Grid.Row="2"
+											Grid.Column="1"
+											Fill="{DynamicResource Brush_Background_Low}" />
+									</Grid>
+								</ControlTemplate>
+							</ScrollViewer.Template>
+
+							<ItemsPresenter />
+						</ScrollViewer>
+
+						<VisualStateManager.VisualStateGroups>
+							<VisualStateGroup x:Name="CommonStates">
+								<VisualState x:Name="Disabled">
+									<Storyboard>
+										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Background_Disabled}" />
+										</ColorAnimationUsingKeyFrames>
+									</Storyboard>
+								</VisualState>
+
+								<VisualState x:Name="Normal" />
+							</VisualStateGroup>
+						</VisualStateManager.VisualStateGroups>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+
+		<Style.Triggers>
+			<Trigger Property="IsGrouping" Value="True">
+				<Setter Property="ScrollViewer.CanContentScroll" Value="False" />
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+
+	<Style x:Key="EditableDataGridCell" TargetType="{x:Type TextBox}">
+		<!--  Layout  -->
+		<Setter Property="SnapsToDevicePixels" Value="{x:Static local:Defaults.SnapsToDevicePixels}" />
+		<Setter Property="UseLayoutRounding" Value="{x:Static local:Defaults.UseLayoutRounding}" />
+
+		<!--  Brushes  -->
+		<Setter Property="Background" Value="{DynamicResource Brush_Background_Low}" />
+		<Setter Property="CaretBrush" Value="{DynamicResource Brush_Text}" />
+		<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+
+		<!--  Thicknesses  -->
+		<Setter Property="BorderThickness" Value="0" />
+		<Setter Property="Padding">
+			<Setter.Value>
+				<Thickness Bottom="{x:Static local:Defaults.TinyThicknessWidth}" Top="{x:Static local:Defaults.TinyThicknessWidth}" />
+			</Setter.Value>
+		</Setter>
+
+		<!--  Events  -->
+		<EventSetter Event="Loaded" Handler="EditingTextBox_Loaded" />
+
+		<!--  Template  -->
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type TextBox}">
+					<Border
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+						UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+						<ScrollViewer x:Name="PART_ContentHost">
+							<ScrollViewer.ContentTemplate>
+								<DataTemplate>
+									<Grid Background="{Binding Background, ElementName=PART_ContentHost}" RenderOptions.ClearTypeHint="Enabled">
+										<ContentPresenter Content="{Binding Path=Content, ElementName=PART_ContentHost}" />
+									</Grid>
+								</DataTemplate>
+							</ScrollViewer.ContentTemplate>
+						</ScrollViewer>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style TargetType="{x:Type DataGridCell}">
+		<!--  Layout  -->
+		<Setter Property="SnapsToDevicePixels" Value="{x:Static local:Defaults.SnapsToDevicePixels}" />
+		<Setter Property="UseLayoutRounding" Value="{x:Static local:Defaults.UseLayoutRounding}" />
+
+		<!--  Brushes  -->
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="BorderBrush" Value="Transparent" />
+		<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+
+		<!--  Thicknesses  -->
+		<Setter Property="Padding">
+			<Setter.Value>
+				<Thickness
+					Bottom="{x:Static local:Defaults.SmallThicknessWidth}"
+					Left="{x:Static local:Defaults.TinyThicknessWidth}"
+					Right="{x:Static local:Defaults.TinyThicknessWidth}"
+					Top="{x:Static local:Defaults.SmallThicknessWidth}" />
+			</Setter.Value>
+		</Setter>
+
+		<!--  Template  -->
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type DataGridCell}">
+					<Border
+						x:Name="border"
+						Padding="{TemplateBinding Padding}"
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+						UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+						<ContentPresenter RenderOptions.ClearTypeHint="Enabled" />
+
+						<VisualStateManager.VisualStateGroups>
+							<VisualStateGroup x:Name="FocusStates">
+								<VisualState x:Name="Unfocused" />
+								<VisualState x:Name="Focused" />
+							</VisualStateGroup>
+
+							<VisualStateGroup x:Name="CurrentStates">
+								<VisualState x:Name="Regular" />
+
+								<VisualState x:Name="Current">
+									<Storyboard>
+										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)">
+											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Selection}" />
+										</ColorAnimationUsingKeyFrames>
+									</Storyboard>
+								</VisualState>
+							</VisualStateGroup>
+						</VisualStateManager.VisualStateGroups>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+
+		<Style.Triggers>
+			<Trigger Property="IsEditing" Value="True">
+				<Setter Property="Template">
+					<Setter.Value>
+						<ControlTemplate TargetType="{x:Type DataGridCell}">
+							<Border Padding="{x:Static local:Defaults.TinyThickness}">
+								<TextBox
+									FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"
+									Style="{StaticResource EditableDataGridCell}"
+									Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content.Text, Mode=TwoWay, UpdateSourceTrigger=Default}" />
+							</Border>
+						</ControlTemplate>
+					</Setter.Value>
+				</Setter>
+			</Trigger>
+		</Style.Triggers>
+	</Style>
+
+	<Style TargetType="{x:Type DataGridRow}">
+		<!--  Layout  -->
+		<Setter Property="SnapsToDevicePixels" Value="{x:Static local:Defaults.SnapsToDevicePixels}" />
+		<Setter Property="UseLayoutRounding" Value="{x:Static local:Defaults.UseLayoutRounding}" />
+
+		<!--  Brushes  -->
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="BorderBrush" Value="Transparent" />
+
+		<!--  Template  -->
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type DataGridRow}">
+					<Border
+						x:Name="border"
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+						UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+						<SelectiveScrollingGrid>
+							<SelectiveScrollingGrid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition Height="Auto" />
+							</SelectiveScrollingGrid.RowDefinitions>
+
+							<DataGridCellsPresenter Grid.Column="1" ItemsPanel="{TemplateBinding ItemsPanel}" />
+							<DataGridDetailsPresenter
+								Grid.Row="1"
+								Grid.Column="1"
+								SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding AreRowDetailsFrozen, ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}, Converter={x:Static DataGrid.RowDetailsScrollingConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"
+								Visibility="{TemplateBinding DetailsVisibility}" />
+						</SelectiveScrollingGrid>
+
+						<VisualStateManager.VisualStateGroups>
+							<VisualStateGroup x:Name="CommonStates">
+								<VisualState x:Name="Normal" />
+
+								<VisualState x:Name="Normal_AlternatingRow">
+									<Storyboard>
+										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Background_Alternative}" />
+										</ColorAnimationUsingKeyFrames>
+									</Storyboard>
+								</VisualState>
+
+								<VisualState x:Name="Normal_Selected">
+									<Storyboard>
+										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Selection}" />
+										</ColorAnimationUsingKeyFrames>
+									</Storyboard>
+								</VisualState>
+
+								<VisualState x:Name="Normal_Editing">
+									<Storyboard>
+										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Selection_LostFocus}" />
+										</ColorAnimationUsingKeyFrames>
+									</Storyboard>
+								</VisualState>
+
+								<VisualState x:Name="Unfocused_Selected">
+									<Storyboard>
+										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Selection_LostFocus}" />
+										</ColorAnimationUsingKeyFrames>
+									</Storyboard>
+								</VisualState>
+
+								<VisualState x:Name="MouseOver_Selected">
+									<Storyboard>
+										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Selection}" />
+										</ColorAnimationUsingKeyFrames>
+									</Storyboard>
+								</VisualState>
+
+								<VisualState x:Name="MouseOver_Unfocused_Selected">
+									<Storyboard>
+										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Selection_LostFocus}" />
+										</ColorAnimationUsingKeyFrames>
+									</Storyboard>
+								</VisualState>
+							</VisualStateGroup>
+						</VisualStateManager.VisualStateGroups>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="ColumnHeaderGripperStyle" TargetType="{x:Type Thumb}">
+		<!--  Control properties  -->
+		<Setter Property="Cursor" Value="SizeWE" />
+
+		<!--  Layout  -->
+		<Setter Property="Width" Value="{x:Static local:Defaults.DataGrid_ColumnHeader_GripperWidth}" />
+		<Setter Property="SnapsToDevicePixels" Value="{x:Static local:Defaults.SnapsToDevicePixels}" />
+		<Setter Property="UseLayoutRounding" Value="{x:Static local:Defaults.UseLayoutRounding}" />
+
+		<!--  Brushes  -->
+		<Setter Property="Background" Value="Transparent" />
+
+		<!--  Template  -->
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Thumb}">
+					<Border
+						Padding="{TemplateBinding Padding}"
+						Background="{TemplateBinding Background}"
+						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+						UseLayoutRounding="{TemplateBinding UseLayoutRounding}" />
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style TargetType="{x:Type DataGridColumnHeader}">
+		<!--  Layout  -->
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="SnapsToDevicePixels" Value="{x:Static local:Defaults.SnapsToDevicePixels}" />
+		<Setter Property="UseLayoutRounding" Value="{x:Static local:Defaults.UseLayoutRounding}" />
+
+		<!--  Brushes  -->
+		<Setter Property="Background">
+			<Setter.Value>
+				<SolidColorBrush Color="{DynamicResource Color_Background_Low}" />
+			</Setter.Value>
+		</Setter>
+
+		<!--  Thicknesses  -->
+		<Setter Property="BorderThickness" Value="0" />
+		<Setter Property="Padding">
+			<Setter.Value>
+				<Thickness
+					Bottom="{x:Static local:Defaults.TinyThicknessWidth}"
+					Left="{x:Static local:Defaults.SmallThicknessWidth}"
+					Right="{x:Static local:Defaults.SmallThicknessWidth}"
+					Top="{x:Static local:Defaults.TinyThicknessWidth}" />
+			</Setter.Value>
+		</Setter>
+
+		<!--  Template  -->
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
+					<Grid SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+						<Border
+							Padding="{TemplateBinding Padding}"
+							Background="{TemplateBinding Background}"
+							BorderThickness="{TemplateBinding BorderThickness}">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition />
+									<ColumnDefinition Width="Auto" />
+								</Grid.ColumnDefinitions>
+
+								<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+								<Path
+									x:Name="sortingArrow"
+									Grid.Column="1"
+									Width="{x:Static local:Defaults.DataGrid_ColumnHeader_SortingArrowWidth}"
+									HorizontalAlignment="Center"
+									VerticalAlignment="Center"
+									Fill="{DynamicResource Brush_Text}">
+									<Path.Margin>
+										<Thickness Left="{x:Static local:Defaults.InputControl_DefaultPaddingWidth}" />
+									</Path.Margin>
+								</Path>
+							</Grid>
+						</Border>
+						<Thumb
+							x:Name="PART_LeftHeaderGripper"
+							HorizontalAlignment="Left"
+							Style="{StaticResource ColumnHeaderGripperStyle}" />
+						<Thumb
+							x:Name="PART_RightHeaderGripper"
+							HorizontalAlignment="Right"
+							Style="{StaticResource ColumnHeaderGripperStyle}" />
+					</Grid>
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="CanUserSort" Value="False">
+							<Setter TargetName="sortingArrow" Property="Visibility" Value="Collapsed" />
+						</Trigger>
+
+						<Trigger Property="SortDirection" Value="Ascending">
+							<Setter TargetName="sortingArrow" Property="Data" Value="{DynamicResource WideArrowUp}" />
+						</Trigger>
+
+						<Trigger Property="SortDirection" Value="Descending">
+							<Setter TargetName="sortingArrow" Property="Data" Value="{DynamicResource WideArrowDown}" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style TargetType="{x:Type DataGridColumnHeadersPresenter}">
+		<!--  Layout  -->
+		<Setter Property="SnapsToDevicePixels" Value="{x:Static local:Defaults.SnapsToDevicePixels}" />
+		<Setter Property="UseLayoutRounding" Value="{x:Static local:Defaults.UseLayoutRounding}" />
+
+		<!--  Template  -->
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type DataGridColumnHeadersPresenter}">
+					<Grid SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+						<DataGridColumnHeader x:Name="PART_FillerColumnHeader" IsHitTestVisible="False" />
+						<ItemsPresenter />
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+</ResourceDictionary>

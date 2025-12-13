@@ -1,5 +1,4 @@
-﻿using DarkUI.Forms;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -476,19 +475,12 @@ namespace TombLib.LevelData
             }
         }
 
-        public bool TrySetLuaName(string newName, IWin32Window owner = null)
+        public bool CanSetLuaName(string newName)
         {
-            var result = (string.IsNullOrEmpty(newName) ||
+            return (string.IsNullOrEmpty(newName) ||
                           Room.Level.GetAllObjects().Where(o => o is IHasLuaName &&
                                                           (o as IHasLuaName).LuaName == newName &&
                                                            o != this).Count() == 0);
-            if (!result && owner != null)
-                DarkMessageBox.Show(owner, "The value of Lua Name is already taken by another object", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            if (result)
-                LuaName = newName;
-
-            return result;
         }
 
         public string GetScriptIDOrName(bool shortened = true)
@@ -529,7 +521,7 @@ namespace TombLib.LevelData
                     // HACK: TR1-2 pickups can be colored because they are sprites.
                     // Guess them by getting substitute ID.
 
-                    if (obj.Room.Level.Settings.GameVersion <= TRVersion.Game.TR2)
+                    if (obj.Room.Level.Settings.GameVersion.Native() <= TRVersion.Game.TR2)
                     {
                         var id = (obj as MoveableInstance).WadObjectId.TypeId;
                         var subId = TrCatalog.GetSubstituteID(obj.Room.Level.Settings.GameVersion, id);
@@ -547,7 +539,7 @@ namespace TombLib.LevelData
                     if (mesh == null || mesh.Mesh.LightingType == Wad.WadMeshLightingType.Normals)
                         changeColor = false;
                 }
-                else if (obj is LightInstance && (obj as LightInstance).Type == LightType.FogBulb && obj.Room.Level.Settings.GameVersion.Legacy() <= TRVersion.Game.TR4)
+                else if (obj is LightInstance && (obj as LightInstance).Type == LightType.FogBulb && obj.Room.Level.Settings.GameVersion.Native() <= TRVersion.Game.TR4)
                 {
                     changeColor = false;
                 }

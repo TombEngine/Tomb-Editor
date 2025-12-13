@@ -5,7 +5,7 @@
     <AssemblyName>TombIDE Library Registration</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Configurations>Debug;Release</Configurations>
-    <Platforms>AnyCPU;x64;x86</Platforms>
+    <Platforms>x64;x86</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <OutputPath>..\..\Build ($(Platform))\</OutputPath>
@@ -34,9 +34,6 @@
     <EmbeddedResource Include="COM\Mscomctl.ocx" />
     <EmbeddedResource Include="COM\PicFormat32.ocx" />
     <EmbeddedResource Include="COM\Richtx32.ocx" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TombIDE.Shared\TombIDE.Shared.csproj" />

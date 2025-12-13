@@ -1624,6 +1624,12 @@ namespace TombLib.LevelData.IO
                                             var data = reader.ReadUInt16();
                                             var animationType = data & 0xE000;
 
+                                            if (i >= level.Settings.AnimatedTextureSets.Count)
+                                            {
+                                                progressReporter?.ReportWarn("Animated texture set " + i + " is out of range, unknown version or corrupted project. Review your animated texture sets.");
+                                                continue;
+                                            }
+
                                             switch (animationType)
                                             {
                                                 case 0x0000:

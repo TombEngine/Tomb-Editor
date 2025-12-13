@@ -691,4 +691,21 @@
     <anim item="95" id="27" name="KNEEL_AIM_TO_STAND" />
     <anim item="95" id="28" name="BLIND" />
     <anim item="95" id="29" name="BLIND_TO_STAND" />
+
+    <!-- AHMET -->
+    <anim item="102" id="0" name="IDLE" />
+    <anim item="102" id="1" name="RUN_FORWARD" />
+    <anim item="102" id="2" name="SWIPE_ATTACK" />
+    <anim item="102" id="3" name="JUMP_BITE_ATTACK_START" />
+    <anim item="102" id="4" name="JUMP_BITE_ATTACK_CONTINUE" />
+    <anim item="102" id="5" name="JUMP_BITE_ATTACK_END" />
+    <anim item="102" id="6" name="WALK_FORWARD" />
+    <anim item="102" id="7" name="JUMP_SWIPE_ATTACK_START" />
+    <anim item="102" id="8" name="JUMP_SWIPE_ATTACK_CONTINUE" />
+    <anim item="102" id="9" name="JUMP_SWIPE_ATTACK_END" />
+    <anim item="102" id="10" name="DEATH" />
+    <anim item="102" id="11" name="IDLE_TO_WALK_FORWARD" />
+    <anim item="102" id="12" name="WALK_FORWARD_TO_IDLE" />
+    <anim item="102" id="13" name="IDLE_TO_RUN_FORWARD" />
+    <anim item="102" id="14" name="RUN_FORWARD_TO_IDLE" />
 </animations>

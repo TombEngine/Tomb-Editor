@@ -1,6 +1,6 @@
 ﻿using DarkUI.Config;
+using DarkUI.Controls;
 using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using TombLib.LevelData;
 using TombLib.LevelData.VisualScripting;
 using TombLib.Utils;
+using TombLib.Wad;
 using TombLib.Wad.Catalog;
 
 namespace TombLib.Controls.VisualScripting
@@ -52,8 +53,8 @@ namespace TombLib.Controls.VisualScripting
         private void OnSoundEffectPlayed(string sound)
             => SoundEffectPlayed?.Invoke(sound, EventArgs.Empty);
 
-        public new string Text 
-        { 
+        public new string Text
+        {
             get { return _text; }
             set { UnboxValue(value); }
         }
@@ -62,7 +63,6 @@ namespace TombLib.Controls.VisualScripting
         public ArgumentEditor()
         {
             InitializeComponent();
-            container.Visible = (LicenseManager.UsageMode == LicenseUsageMode.Runtime);
 
             // HACK: Fix textbox UI height.
             tbString.AutoSize = false;
@@ -71,13 +71,46 @@ namespace TombLib.Controls.VisualScripting
             nudNumerical.Font = tableVector3.Font = new Font(Font.Name, Font.Size + 1.0f);
         }
 
+        public void ShowGroup()
+        {
+            var groups = Controls.OfType<DarkPanel>().Where(c => c.Name.StartsWith("group")).ToList();
+            groups.ForEach(g => g.Visible = false);
+
+            DarkPanel targetPanel;
+
+            switch (_argumentType)
+            {
+                case ArgumentType.Boolean: targetPanel = groupBool; break;
+                case ArgumentType.Numerical: targetPanel = groupNumerical; break;
+                case ArgumentType.String: targetPanel = groupString; break;
+                case ArgumentType.Color: targetPanel = groupColor; break;
+                case ArgumentType.Vector2: targetPanel = groupVector2; break;
+                case ArgumentType.Vector3: targetPanel = groupVector3; break;
+                case ArgumentType.Time: targetPanel = groupTime; break;
+                default: targetPanel = groupList; break;
+            }
+
+            targetPanel.Visible = true;
+            targetPanel.BringToFront();
+
+            foreach (Control control in targetPanel.Controls)
+                control.Height = targetPanel.Height;
+
+            tbString.AutoSize = false;
+            tbString.Height = nudNumerical.Height;
+        }
+
         public void SetArgumentType(ArgumentLayout layout, NodeEditor editor)
         {
             _argumentType = layout.Type;
 
+            Visible = false;
+            SuspendLayout();
+
+            ShowGroup();
+
             if (_argumentType >= ArgumentType.LuaScript)
             {
-                container.SelectedTab = tabList;
 
                 switch (_argumentType)
                 {
@@ -111,8 +144,6 @@ namespace TombLib.Controls.VisualScripting
 
                 cbList.Items.Clear();
             }
-            else
-                container.SelectedIndex = (int)_argumentType;
 
             if (_argumentType == ArgumentType.String)
                 panelMultiline.Visible = !layout.CustomEnumeration.Contains("NoMultiline");
@@ -141,7 +172,7 @@ namespace TombLib.Controls.VisualScripting
                     break;
                 case ArgumentType.Moveables:
                     cbList.Items.Add(new ComboBoxItem("[ Activator ]", LuaSyntax.ActivatorNamePrefix));
-                    foreach (var item in editor.CachedMoveables.Where(s => layout.CustomEnumeration.Count == 0 || 
+                    foreach (var item in editor.CachedMoveables.Where(s => layout.CustomEnumeration.Count == 0 ||
                                                                            layout.CustomEnumeration.Any(e => s
                                                                             .WadObjectId.ShortName(TRVersion.Game.TombEngine)
                                                                             .IndexOf(e, StringComparison.InvariantCultureIgnoreCase) != -1)))
@@ -172,6 +203,10 @@ namespace TombLib.Controls.VisualScripting
                     foreach (var item in editor.CachedSoundTracks)
                         cbList.Items.Add(new ComboBoxItem(Path.GetFileNameWithoutExtension(item), TextExtensions.Quote(item)));
                     break;
+                case ArgumentType.Videos:
+                    foreach (var item in editor.CachedVideos)
+                        cbList.Items.Add(new ComboBoxItem(Path.GetFileNameWithoutExtension(item), TextExtensions.Quote(item)));
+                    break;
                 case ArgumentType.CompareOperator:
                     foreach (var item in Enum.GetValues(typeof(ConditionType)))
                         cbList.Items.Add(new ComboBoxItem(item.ToString().SplitCamelcase(), cbList.Items.Count.ToString()));
@@ -191,7 +226,7 @@ namespace TombLib.Controls.VisualScripting
                         cbList.Items.Add(new ComboBoxItem(item, LuaSyntax.ObjectIDPrefix + LuaSyntax.Splitter + item));
                     break;
                 case ArgumentType.WadSlots:
-                    foreach (var item in editor.CachedWadSlots.Where(s => layout.CustomEnumeration.Count == 0 || 
+                    foreach (var item in editor.CachedWadSlots.Where(s => layout.CustomEnumeration.Count == 0 ||
                                                                           layout.CustomEnumeration.Any(e => s
                                                                            .IndexOf(e, StringComparison.InvariantCultureIgnoreCase) != -1)))
                         cbList.Items.Add(new ComboBoxItem(item, LuaSyntax.ObjectIDPrefix + LuaSyntax.Splitter + item));
@@ -204,13 +239,14 @@ namespace TombLib.Controls.VisualScripting
                     cbBool.Text = layout.Description;
                     break;
                 case ArgumentType.Numerical:
+                case ArgumentType.Vector2:
                 case ArgumentType.Vector3:
                     if (layout.CustomEnumeration.Count >= 2)
                     {
-                        float min   = -1000000.0f;
-                        float max   =  1000000.0f;
-                        float step1 =  1.0f;
-                        float step2 =  5.0f;
+                        float min = -1000000.0f;
+                        float max = 1000000.0f;
+                        float step1 = 1.0f;
+                        float step2 = 5.0f;
                         int decimals = 0;
 
                         float.TryParse(layout.CustomEnumeration[0], out min);
@@ -223,41 +259,47 @@ namespace TombLib.Controls.VisualScripting
                         if (layout.CustomEnumeration.Count >= 5)
                             float.TryParse(layout.CustomEnumeration[4], out step2);
 
-                        nudVector3X.Minimum  =
-                        nudVector3Y.Minimum  =
-                        nudVector3Z.Minimum  =
+                        nudVector3X.Minimum =
+                        nudVector3Y.Minimum =
+                        nudVector3Z.Minimum =
                         nudNumerical.Minimum = (decimal)min;
 
-                        nudVector3X.Maximum  =
-                        nudVector3Y.Maximum  =
-                        nudVector3Z.Maximum  =
+                        nudVector3X.Maximum =
+                        nudVector3Y.Maximum =
+                        nudVector3Z.Maximum =
                         nudNumerical.Maximum = (decimal)max;
 
-                        nudVector3X.Increment  =
-                        nudVector3Y.Increment  =
-                        nudVector3Z.Increment  =
+                        nudVector3X.Increment =
+                        nudVector3Y.Increment =
+                        nudVector3Z.Increment =
                         nudNumerical.Increment = (decimal)step1;
 
-                        nudVector3X.IncrementAlternate  =
-                        nudVector3Y.IncrementAlternate  =
-                        nudVector3Z.IncrementAlternate  =
+                        nudVector3X.IncrementAlternate =
+                        nudVector3Y.IncrementAlternate =
+                        nudVector3Z.IncrementAlternate =
                         nudNumerical.IncrementAlternate = (decimal)step2;
 
-                        nudVector3X.DecimalPlaces  =
-                        nudVector3Y.DecimalPlaces  =
-                        nudVector3Z.DecimalPlaces  =
+                        nudVector3X.DecimalPlaces =
+                        nudVector3Y.DecimalPlaces =
+                        nudVector3Z.DecimalPlaces =
                         nudNumerical.DecimalPlaces = decimals;
                     }
                     break;
                 default:
                     break;
             }
+
+            ResumeLayout();
+            Visible = true;
+
         }
 
         public void SetToolTip(ToolTip toolTip, string caption)
         {
-            foreach (TabPage tab in container.TabPages)
-                foreach (Control control in WinFormsUtils.AllSubControls(tab))
+            var groups = Controls.OfType<DarkPanel>().Where(c => c.Name.StartsWith("group")).ToList();
+
+            foreach (var group in groups)
+                foreach (Control control in WinFormsUtils.AllSubControls(group))
                 {
                     toolTip.SetToolTip(control, caption);
 
@@ -307,7 +349,7 @@ namespace TombLib.Controls.VisualScripting
             // HACK: Force background color for reluctant controls.
 
             base.OnBackColorChanged(e);
-            tabBoolean.BackColor = tableVector3.BackColor = BackColor;
+            //tabBoolean.BackColor = tableVector3.BackColor = BackColor;
         }
 
         protected override void OnLocationChanged(EventArgs e)
@@ -322,7 +364,7 @@ namespace TombLib.Controls.VisualScripting
 
         private void UnboxValue(string source)
         {
-            switch((ArgumentType)container.SelectedIndex)
+            switch (_argumentType)
             {
                 case ArgumentType.Boolean:
                     {
@@ -345,18 +387,52 @@ namespace TombLib.Controls.VisualScripting
                         else if (!(float.TryParse(source, out result)))
                             result = 0.0f;
 
-                        try   { nudNumerical.Value = (decimal)Math.Round(result, nudNumerical.DecimalPlaces); }
+                        try { nudNumerical.Value = (decimal)Math.Round(result, nudNumerical.DecimalPlaces); }
                         catch { nudNumerical.Value = (decimal)result < nudNumerical.Minimum ? nudNumerical.Minimum : nudNumerical.Maximum; }
 
                         BoxNumericalValue();
                         break;
                     }
+                case ArgumentType.Vector2:
+                    {
+                        if (source.StartsWith(LuaSyntax.Vec2TypePrefix + LuaSyntax.BracketOpen) && source.EndsWith(LuaSyntax.BracketClose))
+                            source = source.Substring(LuaSyntax.Vec2TypePrefix.Length + 1, source.Length - LuaSyntax.Vec2TypePrefix.Length - 2);
+
+                        var floats = UnboxVectorValue(source);
+
+                        for (int i = 0; i < 2; i++)
+                        {
+                            var currentFloat = 0.0f;
+                            if (floats.Length > i)
+                                currentFloat = floats[i];
+
+                            try
+                            {
+                                switch (i)
+                                {
+                                    case 0: nudVector2X.Value = (decimal)currentFloat; break;
+                                    case 1: nudVector2Y.Value = (decimal)currentFloat; break;
+                                }
+                            }
+                            catch
+                            {
+                                switch (i)
+                                {
+                                    case 0: nudVector2X.Value = (decimal)currentFloat < nudVector2X.Minimum ? nudVector2X.Minimum : nudVector2X.Maximum; break;
+                                    case 1: nudVector2Y.Value = (decimal)currentFloat < nudVector2Y.Minimum ? nudVector2Y.Minimum : nudVector2Y.Maximum; break;
+                                }
+                            }
+                        }
+
+                        BoxVector2Value();
+                        break;
+                    }
                 case ArgumentType.Vector3:
                     {
-                        if (source.StartsWith(LuaSyntax.Vec3TypePrefix + "(") && source.EndsWith(")"))
+                        if (source.StartsWith(LuaSyntax.Vec3TypePrefix + LuaSyntax.BracketOpen) && source.EndsWith(LuaSyntax.BracketClose))
                             source = source.Substring(LuaSyntax.Vec3TypePrefix.Length + 1, source.Length - LuaSyntax.Vec3TypePrefix.Length - 2);
 
-                        var floats = UnboxVector3Value(source);
+                        var floats = UnboxVectorValue(source);
 
                         for (int i = 0; i < 3; i++)
                         {
@@ -389,10 +465,10 @@ namespace TombLib.Controls.VisualScripting
                     }
                 case ArgumentType.Color:
                     {
-                        if (source.StartsWith(LuaSyntax.ColorTypePrefix + "(") && source.EndsWith(")"))
+                        if (source.StartsWith(LuaSyntax.ColorTypePrefix + LuaSyntax.BracketOpen) && source.EndsWith(LuaSyntax.BracketClose))
                             source = source.Substring(LuaSyntax.ColorTypePrefix.Length + 1, source.Length - LuaSyntax.ColorTypePrefix.Length - 2);
 
-                        var floats = UnboxVector3Value(source);
+                        var floats = UnboxVectorValue(source);
                         var bytes = new byte[3] { 0, 0, 0 };
 
                         for (int i = 0; i < 3; i++)
@@ -404,9 +480,47 @@ namespace TombLib.Controls.VisualScripting
                         BoxColorValue();
                         break;
                     }
+                case ArgumentType.Time:
+                    {
+                        if (source.StartsWith(LuaSyntax.TimeTypePrefix + LuaSyntax.BracketOpen + LuaSyntax.TableOpen) && source.EndsWith(LuaSyntax.TableClose + LuaSyntax.BracketClose))
+                            source = source.Substring(LuaSyntax.TimeTypePrefix.Length + 2, source.Length - LuaSyntax.Vec3TypePrefix.Length - 4);
+
+                        var floats = UnboxVectorValue(source);
+
+                        for (int i = 0; i < 5; i++)
+                        {
+                            var currentFloat = 0.0f;
+                            if (floats.Length > i)
+                                currentFloat = floats[i];
+
+                            try
+                            {
+                                switch (i)
+                                {
+                                    case 0: nudTimeHours.Value = (decimal)currentFloat; break;
+                                    case 1: nudTimeMinutes.Value = (decimal)currentFloat; break;
+                                    case 2: nudTimeSeconds.Value = (decimal)currentFloat; break;
+                                    case 3: nudTimeCents.Value = (decimal)currentFloat; break;
+                                }
+                            }
+                            catch
+                            {
+                                switch (i)
+                                {
+                                    case 0: nudTimeHours.Value = (decimal)currentFloat < nudTimeHours.Minimum ? nudTimeHours.Minimum : nudTimeHours.Maximum; break;
+                                    case 1: nudTimeMinutes.Value = (decimal)currentFloat < nudTimeMinutes.Minimum ? nudTimeMinutes.Minimum : nudTimeMinutes.Maximum; break;
+                                    case 2: nudTimeSeconds.Value = (decimal)currentFloat < nudTimeSeconds.Minimum ? nudTimeSeconds.Minimum : nudTimeSeconds.Maximum; break;
+                                    case 3: nudTimeCents.Value = (decimal)currentFloat < nudTimeCents.Minimum ? nudTimeCents.Minimum : nudTimeCents.Maximum; break;
+                                }
+                            }
+                        }
+
+                        BoxTimeValue();
+                        break;
+                    }
                 case ArgumentType.String:
                     {
-                        tbString.Text = TextExtensions.Unquote(source);
+                        tbString.Text = TextExtensions.UnescapeQuotes(TextExtensions.Unquote(source));
                         BoxStringValue();
                         break;
                     }
@@ -432,7 +546,7 @@ namespace TombLib.Controls.VisualScripting
             }
         }
 
-        private float[] UnboxVector3Value(string source)
+        private float[] UnboxVectorValue(string source)
         {
             return source.Split(new string[] { LuaSyntax.Separator }, StringSplitOptions.None).Select(x =>
             {
@@ -450,23 +564,47 @@ namespace TombLib.Controls.VisualScripting
             OnValueChanged();
         }
 
+        private void BoxVector2Value()
+        {
+            var x = ((float)nudVector2X.Value).ToString();
+            var y = ((float)nudVector2Y.Value).ToString();
+            _text = LuaSyntax.Vec2TypePrefix + LuaSyntax.BracketOpen +
+                    x + LuaSyntax.Separator +
+                    y + LuaSyntax.BracketClose;
+            OnValueChanged();
+        }
+
         private void BoxVector3Value()
         {
             var x = ((float)nudVector3X.Value).ToString();
             var y = ((float)nudVector3Y.Value).ToString();
             var z = ((float)nudVector3Z.Value).ToString();
-            _text = LuaSyntax.Vec3TypePrefix + LuaSyntax.BracketOpen + 
-                    x + LuaSyntax.Separator + 
-                    y + LuaSyntax.Separator + 
+            _text = LuaSyntax.Vec3TypePrefix + LuaSyntax.BracketOpen +
+                    x + LuaSyntax.Separator +
+                    y + LuaSyntax.Separator +
                     z + LuaSyntax.BracketClose;
+            OnValueChanged();
+        }
+
+        private void BoxTimeValue()
+        {
+            var h = ((int)nudTimeHours.Value).ToString();
+            var m = ((int)nudTimeMinutes.Value).ToString();
+            var s = ((int)nudTimeSeconds.Value).ToString();
+            var c = ((int)nudTimeCents.Value).ToString();
+            _text = LuaSyntax.TimeTypePrefix + LuaSyntax.BracketOpen + LuaSyntax.TableOpen +
+                    h + LuaSyntax.Separator +
+                    m + LuaSyntax.Separator +
+                    s + LuaSyntax.Separator +
+                    c + LuaSyntax.TableClose + LuaSyntax.BracketClose;
             OnValueChanged();
         }
 
         private void BoxColorValue()
         {
             _text = LuaSyntax.ColorTypePrefix + LuaSyntax.BracketOpen +
-                    panelColor.BackColor.R.ToString() + LuaSyntax.Separator + 
-                    panelColor.BackColor.G.ToString() + LuaSyntax.Separator + 
+                    panelColor.BackColor.R.ToString() + LuaSyntax.Separator +
+                    panelColor.BackColor.G.ToString() + LuaSyntax.Separator +
                     panelColor.BackColor.B.ToString() + LuaSyntax.BracketClose;
             OnValueChanged();
         }
@@ -479,7 +617,7 @@ namespace TombLib.Controls.VisualScripting
 
         private void BoxStringValue()
         {
-            _text = TextExtensions.Quote(tbString.Text);
+            _text = TextExtensions.Quote(TextExtensions.EscapeQuotes(tbString.Text));
             OnValueChanged();
         }
 
@@ -489,8 +627,42 @@ namespace TombLib.Controls.VisualScripting
             OnValueChanged();
         }
 
+        private bool IsLuaNameBased()
+        {
+            switch (_argumentType)
+            {
+                case ArgumentType.Moveables:
+                case ArgumentType.Cameras:
+                case ArgumentType.FlybyCameras:
+                case ArgumentType.Sinks:
+                case ArgumentType.Statics:
+                case ArgumentType.Volumes:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        private bool IsWadSlotBased()
+        {
+            return (_argumentType == ArgumentType.WadSlots);
+        }
+
+        private bool IsPositionBased()
+        {
+            return (_argumentType == ArgumentType.Vector3);
+        }
+
+        private bool IsColorBased()
+        {
+            return (_argumentType == ArgumentType.Color);
+        }
+
         private void rb_CheckedChanged(object sender, EventArgs e) => BoxBoolValue();
         private void nudNumerical_ValueChanged(object sender, EventArgs e) => BoxNumericalValue();
+        private void nudTime_ValueChanged(object sender, EventArgs e) => BoxTimeValue();
+        private void nudVector2_ValueChanged(object sender, EventArgs e) => BoxVector2Value();
         private void nudVector3_ValueChanged(object sender, EventArgs e) => BoxVector3Value();
         private void tbString_TextChanged(object sender, EventArgs e) => BoxStringValue();
         private void panelColor_BackColorChanged(object sender, EventArgs e) => BoxColorValue();
@@ -501,7 +673,7 @@ namespace TombLib.Controls.VisualScripting
             if (e.Button != MouseButtons.Left)
                 return;
 
-            using (var colorDialog = new RealtimeColorDialog(Control.MousePosition.X, 
+            using (var colorDialog = new RealtimeColorDialog(Control.MousePosition.X,
                        Control.MousePosition.Y, c => { panelColor.BackColor = c; }))
             {
                 var oldColor = panelColor.BackColor;
@@ -545,58 +717,73 @@ namespace TombLib.Controls.VisualScripting
             }
         }
 
-        private void luaNameControl_DragEnter(object sender, DragEventArgs e)
+        private void draggableControl_DragEnter(object sender, DragEventArgs e)
         {
-            if ((e.Data.GetData(e.Data.GetFormats()[0]) as IHasLuaName) != null)
+            if (IsLuaNameBased() && (e.Data.GetData(e.Data.GetFormats()[0]) as IHasLuaName) != null)
+                e.Effect = DragDropEffects.Copy;
+
+            if (IsWadSlotBased() && (e.Data.GetData(e.Data.GetFormats()[0]) as WadMoveable) != null)
+                e.Effect = DragDropEffects.Copy;
+
+            if (IsPositionBased() && (e.Data.GetData(e.Data.GetFormats()[0]) as PositionBasedObjectInstance) != null)
+                e.Effect = DragDropEffects.Copy;
+
+            if (IsColorBased() && (e.Data.GetData(e.Data.GetFormats()[0]) as IColorable) != null)
                 e.Effect = DragDropEffects.Copy;
         }
 
         private void cbList_DragDrop(object sender, DragEventArgs e)
         {
-            if ((e.Data.GetData(e.Data.GetFormats()[0]) as IHasLuaName) == null)
+            if (!IsLuaNameBased() && !IsWadSlotBased())
                 return;
 
-            var item = e.Data.GetData(e.Data.GetFormats()[0]) as PositionAndScriptBasedObjectInstance;
-
-            if (string.IsNullOrEmpty(item.LuaName))
-                return;
-
-            var list = cbList.Items.OfType<ComboBoxItem>();
-
-            var index = list.IndexOf(i => i.Value == TextExtensions.Quote(item.LuaName));
-
-            if (index == -1 && item is MoveableInstance)
+            if (IsLuaNameBased() && (e.Data.GetData(e.Data.GetFormats()[0]) as IHasLuaName) != null)
             {
-                var name = TrCatalog.GetMoveableName(item.Room.Level.Settings.GameVersion, (item as MoveableInstance).WadObjectId.TypeId);
-                index = list.IndexOf(i => i.DisplayText == name);
+                var item = e.Data.GetData(e.Data.GetFormats()[0]) as PositionAndScriptBasedObjectInstance;
+
+                if (string.IsNullOrEmpty(item.LuaName))
+                    return;
+
+                var list = cbList.Items.OfType<ComboBoxItem>();
+                var index = list.IndexOf(i => i.Value == TextExtensions.Quote(item.LuaName));
+
+                if (index == -1 && item is MoveableInstance)
+                {
+                    var name = TrCatalog.GetMoveableName(item.Room.Level.Settings.GameVersion, (item as MoveableInstance).WadObjectId.TypeId);
+                    index = list.IndexOf(i => i.DisplayText == name);
+                }
+
+                if (index != -1)
+                    cbList.SelectedIndex = index;
+
+                return;
             }
 
-            if (index != -1)
+            if (IsWadSlotBased() && (e.Data.GetData(e.Data.GetFormats()[0]) as WadMoveable) != null)
             {
-                cbList.SelectedIndex = index;
+                var item = e.Data.GetData(e.Data.GetFormats()[0]) as WadMoveable;
+
+                var list = cbList.Items.OfType<ComboBoxItem>();
+                var name = LuaSyntax.ObjectIDPrefix + LuaSyntax.Splitter + TrCatalog.GetMoveableName(TRVersion.Game.TombEngine, item.Id.TypeId);
+                var index = list.IndexOf(i => i.Value == name);
+
+                if (index != -1)
+                    cbList.SelectedIndex = index;
+
                 return;
             }
         }
 
         private void vector3Control_DragDrop(object sender, DragEventArgs e)
         {
-            if ((e.Data.GetData(e.Data.GetFormats()[0]) as IHasLuaName) == null)
+            if ((e.Data.GetData(e.Data.GetFormats()[0]) as PositionBasedObjectInstance) == null)
                 return;
 
-            var item = e.Data.GetData(e.Data.GetFormats()[0]) as PositionAndScriptBasedObjectInstance;
-
-            if (string.IsNullOrEmpty(item.LuaName))
-                return;
+            var item = e.Data.GetData(e.Data.GetFormats()[0]) as PositionBasedObjectInstance;
 
             nudVector3X.Value = (decimal)item.WorldPosition.X;
             nudVector3Y.Value = (decimal)-item.WorldPosition.Y;
             nudVector3Z.Value = (decimal)item.WorldPosition.Z;
-        }
-
-        private void panelColor_DragEnter(object sender, DragEventArgs e)
-        {
-            if ((e.Data.GetData(e.Data.GetFormats()[0]) as IColorable) != null)
-                e.Effect = DragDropEffects.Copy;
         }
 
         private void panelColor_DragDrop(object sender, DragEventArgs e)

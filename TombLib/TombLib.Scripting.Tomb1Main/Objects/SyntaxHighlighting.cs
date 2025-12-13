@@ -5,17 +5,22 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 using TombLib.Scripting.Tomb1Main.Resources;
+using TombLib.Scripting.Tomb1Main.Services;
 
 namespace TombLib.Scripting.Tomb1Main.Objects
 {
 	public sealed class SyntaxHighlighting : IHighlightingDefinition
 	{
 		private readonly ColorScheme _scheme;
+		private readonly IGameflowSchemaService _schemaService;
 
 		#region Construction
 
-		public SyntaxHighlighting(ColorScheme scheme)
-			=> _scheme = scheme;
+		public SyntaxHighlighting(ColorScheme scheme, IGameflowSchemaService schemaService)
+		{
+			_scheme = scheme;
+			_schemaService = schemaService;
+		}
 
 		#endregion Construction
 
@@ -25,11 +30,12 @@ namespace TombLib.Scripting.Tomb1Main.Objects
 		{
 			get
 			{
+				var patterns = new Patterns(_schemaService);
 				var ruleSet = new HighlightingRuleSet();
 
 				ruleSet.Rules.Add(new HighlightingRule
 				{
-					Regex = new Regex(Patterns.Comments),
+					Regex = new Regex(patterns.Comments),
 					Color = new HighlightingColor
 					{
 						Foreground = new SimpleHighlightingBrush((Color)ColorConverter.ConvertFromString(_scheme.Comments.HtmlColor)),
@@ -40,7 +46,7 @@ namespace TombLib.Scripting.Tomb1Main.Objects
 
 				ruleSet.Rules.Add(new HighlightingRule
 				{
-					Regex = new Regex(Patterns.Collections, RegexOptions.IgnoreCase),
+					Regex = new Regex(patterns.Collections, RegexOptions.IgnoreCase),
 					Color = new HighlightingColor
 					{
 						Foreground = new SimpleHighlightingBrush((Color)ColorConverter.ConvertFromString(_scheme.Collections.HtmlColor)),
@@ -51,7 +57,7 @@ namespace TombLib.Scripting.Tomb1Main.Objects
 
 				ruleSet.Rules.Add(new HighlightingRule
 				{
-					Regex = new Regex(Patterns.Properties, RegexOptions.IgnoreCase),
+					Regex = new Regex(patterns.Properties, RegexOptions.IgnoreCase),
 					Color = new HighlightingColor
 					{
 						Foreground = new SimpleHighlightingBrush((Color)ColorConverter.ConvertFromString(_scheme.Properties.HtmlColor)),
@@ -62,7 +68,7 @@ namespace TombLib.Scripting.Tomb1Main.Objects
 
 				ruleSet.Rules.Add(new HighlightingRule
 				{
-					Regex = new Regex(Patterns.Constants, RegexOptions.IgnoreCase),
+					Regex = new Regex(patterns.Constants, RegexOptions.IgnoreCase),
 					Color = new HighlightingColor
 					{
 						Foreground = new SimpleHighlightingBrush((Color)ColorConverter.ConvertFromString(_scheme.Constants.HtmlColor)),
@@ -73,7 +79,7 @@ namespace TombLib.Scripting.Tomb1Main.Objects
 
 				ruleSet.Rules.Add(new HighlightingRule
 				{
-					Regex = new Regex(Patterns.Values, RegexOptions.IgnoreCase),
+					Regex = new Regex(patterns.Values, RegexOptions.IgnoreCase),
 					Color = new HighlightingColor
 					{
 						Foreground = new SimpleHighlightingBrush((Color)ColorConverter.ConvertFromString(_scheme.Values.HtmlColor)),
@@ -84,7 +90,7 @@ namespace TombLib.Scripting.Tomb1Main.Objects
 
 				ruleSet.Rules.Add(new HighlightingRule
 				{
-					Regex = new Regex(Patterns.Strings),
+					Regex = new Regex(patterns.Strings),
 					Color = new HighlightingColor
 					{
 						Foreground = new SimpleHighlightingBrush((Color)ColorConverter.ConvertFromString(_scheme.Strings.HtmlColor)),
@@ -93,7 +99,7 @@ namespace TombLib.Scripting.Tomb1Main.Objects
 					}
 				});
 
-				ruleSet.Name = "T1M / TR1X Rules";
+				ruleSet.Name = "TRX Rules";
 				return ruleSet;
 			}
 		}
@@ -102,7 +108,7 @@ namespace TombLib.Scripting.Tomb1Main.Objects
 
 		#region Other
 
-		public string Name => "T1M / TR1X Rules";
+		public string Name => "TRX Rules";
 
 		public IEnumerable<HighlightingColor> NamedHighlightingColors => throw new NotImplementedException();
 		public IDictionary<string, string> Properties => throw new NotImplementedException();

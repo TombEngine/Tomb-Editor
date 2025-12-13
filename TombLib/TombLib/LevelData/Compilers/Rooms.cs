@@ -85,7 +85,7 @@ namespace TombLib.LevelData.Compilers
                 var rooms = _tempRooms.Values.ToList();
                 for (int flipped = 0; flipped <= 1; flipped++)
                     foreach (var room in rooms)
-                        MatchDoorShades(rooms, room, (_level.Settings.GameVersion < TRVersion.Game.TR3), flipped == 1);
+                        MatchDoorShades(rooms, room, (_level.Settings.GameVersion.Native() < TRVersion.Game.TR3), flipped == 1);
             }
 
             Parallel.ForEach(_tempRooms.Values, (tr_room trRoom) =>
@@ -199,7 +199,7 @@ namespace TombLib.LevelData.Compilers
                 newRoom.AlternateKind = AlternateKind.BaseRoom;
 
             // Store ambient intensity
-            if (_level.Settings.GameVersion <= TRVersion.Game.TR3)
+            if (_level.Settings.GameVersion.Native() <= TRVersion.Game.TR3)
                 newRoom.AmbientIntensity = PackColorTo13BitGreyscale(room.Properties.AmbientLight);
             else
                 newRoom.AmbientIntensity = ((uint)roomAmbientColor.Red << 16) |
@@ -207,9 +207,9 @@ namespace TombLib.LevelData.Compilers
                                                   roomAmbientColor.Blue;
 
             // Properly identify game version to swap light mode, quicksand and no lensflare flags
-            bool isTR2  = room.Level.Settings.GameVersion == TRVersion.Game.TR2;
+            bool isTR2  = room.Level.Settings.GameVersion.Native() == TRVersion.Game.TR2;
             bool isTR23 = isTR2 || room.Level.Settings.GameVersion == TRVersion.Game.TR3;
-            bool isNL   = room.Level.Settings.GameVersion.Legacy() >= TRVersion.Game.TR4;
+            bool isNL   = room.Level.Settings.GameVersion.Native() >= TRVersion.Game.TR4;
             bool isNG   = room.Level.IsNG;
 
             // Room flags
@@ -247,7 +247,8 @@ namespace TombLib.LevelData.Compilers
             }
 
             var lightEffect = room.Properties.LightEffect;
-            var waterPortals = room.Portals.Where(p => p.Direction == PortalDirection.Floor && p.AdjoiningRoom.Properties.Type >= RoomType.Water).ToList();
+            var waterPortals = room.Portals.Where(p => (room.Properties.Type == RoomType.Normal && p.Direction == PortalDirection.Floor   && p.AdjoiningRoom.Properties.Type >= RoomType.Water) ||
+                                                       (room.Properties.Type >= RoomType.Water  && p.Direction == PortalDirection.Ceiling && p.AdjoiningRoom.Properties.Type == RoomType.Normal)).ToList();
 
             bool waterSchemeSet = false;
 
@@ -371,8 +372,8 @@ namespace TombLib.LevelData.Compilers
                                     continue;
                                 }
 
-                                var doubleSided = _level.Settings.GameVersion >  TRVersion.Game.TR2 && texture.DoubleSided;
-                                var copyFace    = _level.Settings.GameVersion <= TRVersion.Game.TR2 && texture.DoubleSided;
+                                var doubleSided = _level.Settings.GameVersion.Native() > TRVersion.Game.TR2 && texture.DoubleSided;
+                                var copyFace    = _level.Settings.GameVersion.Native() <= TRVersion.Game.TR2 && texture.DoubleSided;
 
                                 int rangeEnd = range.Start + range.Count;
                                 for (int i = range.Start; i < rangeEnd; i += 3)
@@ -510,7 +511,7 @@ namespace TombLib.LevelData.Compilers
                             int lightingEffect = 0;
                             float shade = 1.0f;
                             if (interpretShadesAsEffect &&
-                                _level.Settings.GameVersion >= TRVersion.Game.TR3)
+                                _level.Settings.GameVersion.Native() >= TRVersion.Game.TR3)
                             {
                                 if (j < wadStatic.Mesh.VertexColors.Count)
                                 {
@@ -528,7 +529,7 @@ namespace TombLib.LevelData.Compilers
                                 // Use native wad2 vertex effect values to assign vertex flags.
                                 // Since legacy engines doesn't support individual values, we convert any value to a flag.
 
-                                if (_level.Settings.GameVersion >= TRVersion.Game.TR3 && wadStatic.Mesh.HasAttributes)
+                                if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR3 && wadStatic.Mesh.HasAttributes)
                                 {
                                     if (wadStatic.Mesh.VertexAttributes[j].Move > 0)
                                         lightingEffect |= 0x2000; // Movement
@@ -585,8 +586,8 @@ namespace TombLib.LevelData.Compilers
                             var texture = poly.Texture;
                             texture.ClampToBounds();
 
-                            var doubleSided = _level.Settings.GameVersion > TRVersion.Game.TR2 && texture.DoubleSided;
-                            var copyFace = _level.Settings.GameVersion <= TRVersion.Game.TR2 && texture.DoubleSided;
+                            var doubleSided = _level.Settings.GameVersion.Native() > TRVersion.Game.TR2 && texture.DoubleSided;
+                            var copyFace = _level.Settings.GameVersion.Native() <= TRVersion.Game.TR2 && texture.DoubleSided;
 
                             if (poly.IsTriangle)
                             {
@@ -751,8 +752,8 @@ namespace TombLib.LevelData.Compilers
 
                                 texture.ClampToBounds();
 
-                                var doubleSided = _level.Settings.GameVersion >  TRVersion.Game.TR2 && texture.DoubleSided;
-                                var copyFace    = _level.Settings.GameVersion <= TRVersion.Game.TR2 && texture.DoubleSided;
+                                var doubleSided = _level.Settings.GameVersion.Native() > TRVersion.Game.TR2 && texture.DoubleSided;
+                                var copyFace    = _level.Settings.GameVersion.Native() <= TRVersion.Game.TR2 && texture.DoubleSided;
 
                                 var result = _textureInfoManager.AddTexture(texture, true, true);
                                 roomTriangles.Add(result.CreateFace3(new ushort[] { index0, index1, index2 }, doubleSided, 0));
@@ -816,10 +817,10 @@ namespace TombLib.LevelData.Compilers
                         // Check for imported geometry out of room bounds
                         if (xv > 0 && zv > 0 && xv < room.NumXSectors && zv < room.NumZSectors)
                         {
-                            var connectionInfo1 = room.GetFloorRoomConnectionInfo(new VectorInt2(xv, zv));
-                            var connectionInfo2 = room.GetFloorRoomConnectionInfo(new VectorInt2(xv - 1, zv));
-                            var connectionInfo3 = room.GetFloorRoomConnectionInfo(new VectorInt2(xv, zv - 1));
-                            var connectionInfo4 = room.GetFloorRoomConnectionInfo(new VectorInt2(xv - 1, zv - 1));
+                            var connectionInfo1 = portal.Direction == PortalDirection.Floor ? room.GetFloorRoomConnectionInfo(new VectorInt2(xv, zv)) : room.GetCeilingRoomConnectionInfo(new VectorInt2(xv, zv));
+                            var connectionInfo2 = portal.Direction == PortalDirection.Floor ? room.GetFloorRoomConnectionInfo(new VectorInt2(xv - 1, zv)) : room.GetCeilingRoomConnectionInfo(new VectorInt2(xv - 1, zv));
+                            var connectionInfo3 = portal.Direction == PortalDirection.Floor ? room.GetFloorRoomConnectionInfo(new VectorInt2(xv, zv - 1)) : room.GetCeilingRoomConnectionInfo(new VectorInt2(xv, zv - 1));
+                            var connectionInfo4 = portal.Direction == PortalDirection.Floor ? room.GetFloorRoomConnectionInfo(new VectorInt2(xv - 1, zv - 1)) : room.GetCeilingRoomConnectionInfo(new VectorInt2(xv - 1, zv - 1));
 
                             bool isTraversablePortal = connectionInfo1.TraversableType == Room.RoomConnectionType.FullPortal &&
                                                        connectionInfo2.TraversableType == Room.RoomConnectionType.FullPortal &&
@@ -978,7 +979,7 @@ namespace TombLib.LevelData.Compilers
                 // Add sprites and dummy vertices for them (only for TR1-2 targets, unsupported since TR3)
 
                 newRoom.Sprites = new List<tr_room_sprite>();
-                if (_level.Settings.GameVersion <= TRVersion.Game.TR2)
+                if (_level.Settings.GameVersion.Native() <= TRVersion.Game.TR2)
                     foreach (var sprite in room.Objects.OfType<SpriteInstance>())
                     {
                         if (!sprite.SpriteIsValid)
@@ -1045,7 +1046,7 @@ namespace TombLib.LevelData.Compilers
                 ushort intensity2;
                 switch (_level.Settings.GameVersion)
                 {
-                    case TRVersion.Game.TR2:
+                    case TRVersion.Game.TR2 or TRVersion.Game.TR2X:
                         intensity2 = intensity1;
                         break;
 
@@ -1078,7 +1079,7 @@ namespace TombLib.LevelData.Compilers
             ConvertLights(room, newRoom);
 
             // Clear double-sided flag for versions prior to TR3, so at least surfaces remain visible
-            if (_level.Settings.GameVersion < TRVersion.Game.TR3)
+            if (_level.Settings.GameVersion.Native() < TRVersion.Game.TR3)
             {
                 for (int i = 0; i < newRoom.Triangles.Count; i++)
                 {
@@ -1149,12 +1150,12 @@ namespace TombLib.LevelData.Compilers
             foreach (var light in room.Objects.OfType<LightInstance>())
             {
                 // If target game is <= TR3 then ignore all special lights (except sun for TR3) and fog bulbs
-                if (_level.Settings.GameVersion < TRVersion.Game.TR4 &&
+                if (_level.Settings.GameVersion.Native() < TRVersion.Game.TR4 &&
                     (light.Type == LightType.Spot || light.Type == LightType.Shadow || light.Type == LightType.FogBulb))
                     continue;
 
                 // Sun type is present in TR3
-                if (_level.Settings.GameVersion < TRVersion.Game.TR3 && light.Type == LightType.Sun)
+                if (_level.Settings.GameVersion.Native() < TRVersion.Game.TR3 && light.Type == LightType.Sun)
                     continue;
 
                 if (!light.Enabled || !light.IsDynamicallyUsed)
@@ -1165,7 +1166,7 @@ namespace TombLib.LevelData.Compilers
 
                 if (light.Type == LightType.FogBulb)
                 {
-                    if (_level.Settings.GameVersion.Legacy() == TRVersion.Game.TR4)
+                    if (_level.Settings.GameVersion.Native() == TRVersion.Game.TR4)
                     {
                         // HACK: remap TR4 fog bulb intensity to color (native TR4 hack)
                         var remappedColor = new Vector3(MathC.Clamp(light.Intensity, 0.0f, 2.0f));
@@ -1265,7 +1266,7 @@ namespace TombLib.LevelData.Compilers
                     var compiledSector = new tr_room_sector();
                     var aux = new TrSectorAux();
 
-                    if (_level.Settings.GameVersion >= TRVersion.Game.TR3)
+                    if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR3)
                         compiledSector.BoxIndex = (ushort)(0x7ff0 | (0xf & (short)GetTextureSound(room, x, z)));
                     else
                         compiledSector.BoxIndex = 0xffff;
@@ -1961,7 +1962,7 @@ namespace TombLib.LevelData.Compilers
                 packed1 = PackColorTo24BitLow(color);
                 packed2 = PackColorTo24BitHigh(color);
             }
-            else if (settings.GameVersion >= TRVersion.Game.TR3)
+            else if (settings.GameVersion.Native() >= TRVersion.Game.TR3)
             {
                 packed1 = PackColorTo16Bit(color);
                 packed2 = packed1;

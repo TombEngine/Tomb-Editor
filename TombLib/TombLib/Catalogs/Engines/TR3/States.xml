@@ -66,6 +66,18 @@
     <state item="22" id="11" name="DEATH" />
     <state item="22" id="12" name="CROUCH_ATTACK" />
 
+    <!-- Scuba diver -->
+    <state item="22" id="0" name="EMPTY" />
+    <state item="22" id="1" name="SDIVER_STATE_SWIM" />
+    <state item="22" id="2" name="SDIVER_STATE_TREAD_WATER_IDLE" />
+    <state item="22" id="3" name="SDIVER_STATE_SWIM_SHOOT" />
+    <state item="22" id="4" name="SDIVER_STATE_SWIM_AIM" />
+    <!-- <state item="22" id="5" name="" /> -->
+    <state item="22" id="6" name="SDIVER_STATE_TREAD_WATER_AIM" />
+    <state item="22" id="7" name="SDIVER_STATE_TREAD_WATER_SHOOT" />
+    <!-- <state item="22" id="8" name="" /> -->
+    <state item="22" id="9" name="SDIVER_STATE_DEATH" />
+
     <!-- Crocodile (in water) -->
     <state item="32" id="0" name="EMPTY" />
     <state item="32" id="1" name="SWIM" />

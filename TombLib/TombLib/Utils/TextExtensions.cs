@@ -1,5 +1,4 @@
-﻿using DarkUI.Forms;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,17 +22,6 @@ namespace TombLib.Utils
         {
             var regex = new Regex("^[a-zA-Z0-9. -_?]*$");
             return regex.IsMatch(source);
-        }
-
-        public static bool CheckAndWarnIfNotANSI(this string source, IWin32Window owner)
-        {
-            if (!source.IsANSI())
-            {
-                DarkMessageBox.Show(owner, "Filename or path is invalid. Please use standard characters.", "Wrong filename", MessageBoxIcon.Error);
-                return false;
-            }
-            else
-                return true;
         }
 
         public static string[] SplitParenthesis(this string source)
@@ -91,6 +79,22 @@ namespace TombLib.Utils
             return QuoteChar + source + QuoteChar;
         }
 
+        public static string EscapeQuotes(string source)
+        {
+            if (string.IsNullOrEmpty(source))
+                return string.Empty;
+
+            return source.Replace("\"", "\\\"").Replace("'", "\\'");
+        }
+
+        public static string UnescapeQuotes(string source)
+        {
+            if (string.IsNullOrEmpty(source))
+                return string.Empty;
+
+            return source.Replace("\\'", "'").Replace("\\\"", "\"");
+        }
+
         public static string ToLinuxPath(string source)
         {
             return source.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
@@ -109,7 +113,7 @@ namespace TombLib.Utils
             if (string.IsNullOrEmpty(source))
                 return string.Empty;
 
-            return source.Replace(Environment.NewLine, "\\n");
+            return source.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\\n");
         }
 
         public static string SingleLineToMultiLine(string source)

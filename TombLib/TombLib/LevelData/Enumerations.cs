@@ -14,30 +14,58 @@ namespace TombLib.LevelData
             TR3 = 3,
             TR4 = 4,
             TR5 = 5,
+            TR1X = 11,
+            TR2X = 12,
             TRNG = 16,
-            TombEngine = 18
+            TombEngine = 18,
         }
 
-        /// <summary> Wrapper for getting native game version, excluding TombEngine. Equal to deprecated WadGameVersion enum.</summary>
-        public static Game Native(this Game ver) => ver == Game.TRNG ? Game.TR4 : ver;
+        /// <summary>
+        /// Returns the native (non-TRX, non-TRNG) variant of the game version, if applicable.
+        /// </summary>
+        public static Game Native(this Game ver) => ver switch
+        {
+            Game.TR1X => Game.TR1,
+            Game.TR2X => Game.TR2,
+            Game.TRNG => Game.TR4,
+            _ => ver
+        };
 
-        /// <summary> Wrapper for getting legacy game version, omitting both TRNG and TombEngine. Equal to deprecated TRVersion enum. </summary>
-        public static Game Legacy(this Game ver) => ver == Game.TRNG ? Game.TR4 : (ver == Game.TombEngine ? Game.TR5 : ver);
+        /// <summary>
+        /// Returns all game versions, including TRX variants and TRNG.
+        /// </summary>
+        public static List<Game> AllVersions => Enum.GetValues<Game>().ToList();
 
-        /// <summary> Wrapper for getting legacy game version, omitting both TRNG and TombEngine. Equal to deprecated TRVersion enum. </summary>
-        public static bool UsesMainSfx(this Game ver) => ver == Game.TR2  || ver == Game.TR3;
+        /// <summary>
+        /// Returns only the original game versions, excluding TRX variants and TRNG.
+        /// </summary>
+        public static List<Game> NativeVersions => new()
+        {
+            Game.TR1, Game.TR2, Game.TR3, Game.TR4, Game.TR5, Game.TombEngine
+        };
 
-        /// <summary> Base enumeration. Contains all possible game versions.
-        public static List<Game> AllVersions => Enum.GetValues(typeof(Game)).OfType<Game>().ToList();
+        // Checks for features supported by the game version
 
-        /// <summary> Helper native (aka WadGameVersion) enumeration list. Can be used to populate various controls, like listbox. </summary>
-        public static List<Game> NativeVersions => AllVersions.Where(item => item != Game.TRNG).ToList();
+        public static bool UsesMainSfx(this Game ver)
+            => ver.Native() is Game.TR2 or Game.TR3;
 
-        /// <summary> Helper legacy (aka TRVersion) enumeration list. Can be used to populate various controls, like listbox. </summary>
-        public static List<Game> LegacyVersions => NativeVersions.Where(item => item != Game.TombEngine).ToList();
+        public static bool Supports16BitDithering(this Game ver)
+            => ver.Native() is > Game.TR1 and < Game.TombEngine;
+
+        public static bool SupportsFontAndSkySettings(this Game ver)
+            => ver.Native() >= Game.TR4;
+
+        public static bool SupportsReverberation(this Game ver)
+            => ver.Native() >= Game.TR3;
+
+        public static bool SupportsLensflare(this Game ver)
+            => ver.Native() >= Game.TR4;
+
+        public static bool SupportsClimbing(this Game ver)
+            => ver != Game.TR1;
     }
 
-    /// Only for TR5+
+    // Only for TR5+
     public enum Tr5LaraType : byte
     {
         Normal = 0,
@@ -46,7 +74,7 @@ namespace TombLib.LevelData
         Invisible = 6
     }
 
-    /// Only for TR5+
+    // Only for TR5+
     public enum Tr5WeatherType : byte
     {
         Normal = 0,

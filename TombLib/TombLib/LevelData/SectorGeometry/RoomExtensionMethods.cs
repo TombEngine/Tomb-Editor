@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TombLib.LevelData.SectorEnums;
 using TombLib.LevelData.SectorEnums.Extensions;
 
@@ -11,6 +10,7 @@ public static class RoomExtensionMethods
 	{
 		Sector sector = room.Sectors[x, z];
 		Sector neighborSector = room.Sectors[x, z + 1];
+		Sector adjoiningSector = null;
 
 		int startMinY = neighborSector.Floor.XpZn,
 			startMaxY = neighborSector.Ceiling.XpZn,
@@ -77,37 +77,33 @@ public static class RoomExtensionMethods
 			// Now get the facing sector on the adjoining room and calculate the correct heights
 			int facingX = x + (room.Position.X - adjoiningRoom.Position.X);
 
-			Sector adjoiningSector = adjoiningRoom.GetSectorTry(facingX, adjoiningRoom.NumZSectors - 2) ?? Sector.Empty;
+			adjoiningSector = adjoiningRoom.GetSectorTry(facingX, adjoiningRoom.NumZSectors - 2);
 
-			int qAportal = adjoiningRoom.Position.Y + adjoiningSector.Floor.XpZp;
-			int qBportal = adjoiningRoom.Position.Y + adjoiningSector.Floor.XnZp;
+			int qAportal = adjoiningRoom.Position.Y + (adjoiningSector?.Floor.XpZp ?? 0);
+			int qBportal = adjoiningRoom.Position.Y + (adjoiningSector?.Floor.XnZp ?? 0);
 
-			if (adjoiningSector.Floor.DiagonalSplit is DiagonalSplit.XpZn)
+			if (adjoiningSector?.Floor.DiagonalSplit is DiagonalSplit.XpZn)
 				qAportal = qBportal;
-			else if (adjoiningSector.Floor.DiagonalSplit is DiagonalSplit.XnZn)
+			else if (adjoiningSector?.Floor.DiagonalSplit is DiagonalSplit.XnZn)
 				qBportal = qAportal;
 
-			qaStartY = room.Position.Y + qaNearStart;
-			qaEndY = room.Position.Y + qaNearEnd;
-			qaStartY = Math.Max(qaStartY, qAportal) - room.Position.Y;
-			qaEndY = Math.Max(qaEndY, qBportal) - room.Position.Y;
+			qaStartY = qAportal - room.Position.Y;
+			qaEndY = qBportal - room.Position.Y;
 
-			int wAportal = adjoiningRoom.Position.Y + adjoiningSector.Ceiling.XpZp;
-			int wBportal = adjoiningRoom.Position.Y + adjoiningSector.Ceiling.XnZp;
+			int wAportal = adjoiningRoom.Position.Y + (adjoiningSector?.Ceiling.XpZp ?? 0);
+			int wBportal = adjoiningRoom.Position.Y + (adjoiningSector?.Ceiling.XnZp ?? 0);
 
-			if (adjoiningSector.Ceiling.DiagonalSplit is DiagonalSplit.XpZn)
+			if (adjoiningSector?.Ceiling.DiagonalSplit is DiagonalSplit.XpZn)
 				wAportal = wBportal;
-			else if (adjoiningSector.Ceiling.DiagonalSplit is DiagonalSplit.XnZn)
+			else if (adjoiningSector?.Ceiling.DiagonalSplit is DiagonalSplit.XnZn)
 				wBportal = wAportal;
 
-			wsStartY = room.Position.Y + wsNearStart;
-			wsEndY = room.Position.Y + wsNearEnd;
-			wsStartY = Math.Min(wsStartY, wAportal) - room.Position.Y;
-			wsEndY = Math.Min(wsEndY, wBportal) - room.Position.Y;
+			wsStartY = wAportal - room.Position.Y;
+			wsEndY = wBportal - room.Position.Y;
 
 			WallSplitData newSplit;
 
-			for (int i = 0; i < adjoiningSector.ExtraFloorSplits.Count; i++)
+			for (int i = 0; i < adjoiningSector?.ExtraFloorSplits.Count; i++)
 			{
 				newSplit = new WallSplitData(adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraFloorSplit(i), SectorEdge.XpZp),
 					adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraFloorSplit(i), SectorEdge.XnZp));
@@ -118,7 +114,7 @@ public static class RoomExtensionMethods
 					extraFloorSplits[i] = newSplit;
 			}
 
-			for (int i = 0; i < adjoiningSector.ExtraCeilingSplits.Count; i++)
+			for (int i = 0; i < adjoiningSector?.ExtraCeilingSplits.Count; i++)
 			{
 				newSplit = new WallSplitData(adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraCeilingSplit(i), SectorEdge.XpZp),
 					adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraCeilingSplit(i), SectorEdge.XnZp));
@@ -207,11 +203,13 @@ public static class RoomExtensionMethods
 			),
 
 			extraFloorSplits: extraFloorSplits,
-			extraCeilingSplits: extraCeilingSplits
+			extraCeilingSplits: extraCeilingSplits,
+
+			canOverdraw: CanOverdraw(sector, Direction.PositiveZ, adjoiningSector)
 		);
 
 		return normalize
-			? wall.Normalize(sector.Floor.DiagonalSplit, sector.Ceiling.DiagonalSplit, sector.IsAnyWall)
+			? wall.Normalize(sector.Floor.DiagonalSplit, sector.Ceiling.DiagonalSplit)
 			: wall;
 	}
 
@@ -219,6 +217,7 @@ public static class RoomExtensionMethods
 	{
 		Sector sector = room.Sectors[x, z];
 		Sector neighborSector = room.Sectors[x, z - 1];
+		Sector adjoiningSector = null;
 
 		int startMinY = neighborSector.Floor.XnZp,
 			startMaxY = neighborSector.Ceiling.XnZp,
@@ -285,37 +284,33 @@ public static class RoomExtensionMethods
 			// Now get the facing sector on the adjoining room and calculate the correct heights
 			int facingX = x + (room.Position.X - adjoiningRoom.Position.X);
 
-			Sector adjoiningSector = adjoiningRoom.GetSectorTry(facingX, 1) ?? Sector.Empty;
+			adjoiningSector = adjoiningRoom.GetSectorTry(facingX, 1);
 
-			int qAportal = adjoiningRoom.Position.Y + adjoiningSector.Floor.XnZn;
-			int qBportal = adjoiningRoom.Position.Y + adjoiningSector.Floor.XpZn;
+			int qAportal = adjoiningRoom.Position.Y + (adjoiningSector?.Floor.XnZn ?? 0);
+			int qBportal = adjoiningRoom.Position.Y + (adjoiningSector?.Floor.XpZn ?? 0);
 
-			if (adjoiningSector.Floor.DiagonalSplit is DiagonalSplit.XnZp)
+			if (adjoiningSector?.Floor.DiagonalSplit is DiagonalSplit.XnZp)
 				qAportal = qBportal;
-			else if (adjoiningSector.Floor.DiagonalSplit is DiagonalSplit.XpZp)
+			else if (adjoiningSector?.Floor.DiagonalSplit is DiagonalSplit.XpZp)
 				qBportal = qAportal;
 
-			qaStartY = room.Position.Y + qaNearStart;
-			qaEndY = room.Position.Y + qaNearEnd;
-			qaStartY = Math.Max(qaStartY, qAportal) - room.Position.Y;
-			qaEndY = Math.Max(qaEndY, qBportal) - room.Position.Y;
+			qaStartY = qAportal - room.Position.Y;
+			qaEndY = qBportal - room.Position.Y;
 
-			int wAportal = adjoiningRoom.Position.Y + adjoiningSector.Ceiling.XnZn;
-			int wBportal = adjoiningRoom.Position.Y + adjoiningSector.Ceiling.XpZn;
+			int wAportal = adjoiningRoom.Position.Y + (adjoiningSector?.Ceiling.XnZn ?? 0);
+			int wBportal = adjoiningRoom.Position.Y + (adjoiningSector?.Ceiling.XpZn ?? 0);
 
-			if (adjoiningSector.Ceiling.DiagonalSplit is DiagonalSplit.XnZp)
+			if (adjoiningSector?.Ceiling.DiagonalSplit is DiagonalSplit.XnZp)
 				wAportal = wBportal;
-			else if (adjoiningSector.Ceiling.DiagonalSplit is DiagonalSplit.XpZp)
+			else if (adjoiningSector?.Ceiling.DiagonalSplit is DiagonalSplit.XpZp)
 				wBportal = wAportal;
 
-			wsStartY = room.Position.Y + wsNearStart;
-			wsEndY = room.Position.Y + wsNearEnd;
-			wsStartY = Math.Min(wsStartY, wAportal) - room.Position.Y;
-			wsEndY = Math.Min(wsEndY, wBportal) - room.Position.Y;
+			wsStartY = wAportal - room.Position.Y;
+			wsEndY = wBportal - room.Position.Y;
 
 			WallSplitData newSplit;
 
-			for (int i = 0; i < adjoiningSector.ExtraFloorSplits.Count; i++)
+			for (int i = 0; i < adjoiningSector?.ExtraFloorSplits.Count; i++)
 			{
 				newSplit = new WallSplitData(adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraFloorSplit(i), SectorEdge.XnZn),
 					adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraFloorSplit(i), SectorEdge.XpZn));
@@ -326,7 +321,7 @@ public static class RoomExtensionMethods
 					extraFloorSplits[i] = newSplit;
 			}
 
-			for (int i = 0; i < adjoiningSector.ExtraCeilingSplits.Count; i++)
+			for (int i = 0; i < adjoiningSector?.ExtraCeilingSplits.Count; i++)
 			{
 				newSplit = new WallSplitData(adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraCeilingSplit(i), SectorEdge.XnZn),
 					adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraCeilingSplit(i), SectorEdge.XpZn));
@@ -415,11 +410,13 @@ public static class RoomExtensionMethods
 			),
 
 			extraFloorSplits: extraFloorSplits,
-			extraCeilingSplits: extraCeilingSplits
+			extraCeilingSplits: extraCeilingSplits,
+
+			canOverdraw: CanOverdraw(sector, Direction.NegativeZ, adjoiningSector)
 		);
 
 		return normalize
-			? wall.Normalize(sector.Floor.DiagonalSplit, sector.Ceiling.DiagonalSplit, sector.IsAnyWall)
+			? wall.Normalize(sector.Floor.DiagonalSplit, sector.Ceiling.DiagonalSplit)
 			: wall;
 	}
 
@@ -427,6 +424,7 @@ public static class RoomExtensionMethods
 	{
 		Sector sector = room.Sectors[x, z];
 		Sector neighborSector = room.Sectors[x + 1, z];
+		Sector adjoiningSector = null;
 
 		int startMinY = neighborSector.Floor.XnZn,
 			startMaxY = neighborSector.Ceiling.XnZn,
@@ -493,37 +491,33 @@ public static class RoomExtensionMethods
 			// Now get the facing sector on the adjoining room and calculate the correct heights
 			int facingZ = z + (room.Position.Z - adjoiningRoom.Position.Z);
 
-			Sector adjoiningSector = adjoiningRoom.GetSectorTry(adjoiningRoom.NumXSectors - 2, facingZ) ?? Sector.Empty;
+			adjoiningSector = adjoiningRoom.GetSectorTry(adjoiningRoom.NumXSectors - 2, facingZ);
 
-			int qAportal = adjoiningRoom.Position.Y + adjoiningSector.Floor.XpZn;
-			int qBportal = adjoiningRoom.Position.Y + adjoiningSector.Floor.XpZp;
+			int qAportal = adjoiningRoom.Position.Y + (adjoiningSector?.Floor.XpZn ?? 0);
+			int qBportal = adjoiningRoom.Position.Y + (adjoiningSector?.Floor.XpZp ?? 0);
 
-			if (adjoiningSector.Floor.DiagonalSplit is DiagonalSplit.XnZn)
+			if (adjoiningSector?.Floor.DiagonalSplit is DiagonalSplit.XnZn)
 				qAportal = qBportal;
-			else if (adjoiningSector.Floor.DiagonalSplit is DiagonalSplit.XnZp)
+			else if (adjoiningSector?.Floor.DiagonalSplit is DiagonalSplit.XnZp)
 				qBportal = qAportal;
 
-			qaStartY = room.Position.Y + qaNearStart;
-			qaEndY = room.Position.Y + qaNearEnd;
-			qaStartY = Math.Max(qaStartY, qAportal) - room.Position.Y;
-			qaEndY = Math.Max(qaEndY, qBportal) - room.Position.Y;
+			qaStartY = qAportal - room.Position.Y;
+			qaEndY = qBportal - room.Position.Y;
 
-			int wAportal = adjoiningRoom.Position.Y + adjoiningSector.Ceiling.XpZn;
-			int wBportal = adjoiningRoom.Position.Y + adjoiningSector.Ceiling.XpZp;
+			int wAportal = adjoiningRoom.Position.Y + (adjoiningSector?.Ceiling.XpZn ?? 0);
+			int wBportal = adjoiningRoom.Position.Y + (adjoiningSector?.Ceiling.XpZp ?? 0);
 
-			if (adjoiningSector.Ceiling.DiagonalSplit is DiagonalSplit.XnZn)
+			if (adjoiningSector?.Ceiling.DiagonalSplit is DiagonalSplit.XnZn)
 				wAportal = wBportal;
-			else if (adjoiningSector.Ceiling.DiagonalSplit is DiagonalSplit.XnZp)
+			else if (adjoiningSector?.Ceiling.DiagonalSplit is DiagonalSplit.XnZp)
 				wBportal = wAportal;
 
-			wsStartY = room.Position.Y + wsNearStart;
-			wsEndY = room.Position.Y + wsNearEnd;
-			wsStartY = Math.Min(wsStartY, wAportal) - room.Position.Y;
-			wsEndY = Math.Min(wsEndY, wBportal) - room.Position.Y;
+			wsStartY = wAportal - room.Position.Y;
+			wsEndY = wBportal - room.Position.Y;
 
 			WallSplitData newSplit;
 
-			for (int i = 0; i < adjoiningSector.ExtraFloorSplits.Count; i++)
+			for (int i = 0; i < adjoiningSector?.ExtraFloorSplits.Count; i++)
 			{
 				newSplit = new WallSplitData(adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraFloorSplit(i), SectorEdge.XpZn),
 					adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraFloorSplit(i), SectorEdge.XpZp));
@@ -534,7 +528,7 @@ public static class RoomExtensionMethods
 					extraFloorSplits[i] = newSplit;
 			}
 
-			for (int i = 0; i < adjoiningSector.ExtraCeilingSplits.Count; i++)
+			for (int i = 0; i < adjoiningSector?.ExtraCeilingSplits.Count; i++)
 			{
 				newSplit = new WallSplitData(adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraCeilingSplit(i), SectorEdge.XpZn),
 					adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraCeilingSplit(i), SectorEdge.XpZp));
@@ -623,11 +617,13 @@ public static class RoomExtensionMethods
 			),
 
 			extraFloorSplits: extraFloorSplits,
-			extraCeilingSplits: extraCeilingSplits
+			extraCeilingSplits: extraCeilingSplits,
+
+			canOverdraw: CanOverdraw(sector, Direction.PositiveX, adjoiningSector)
 		);
 
 		return normalize
-			? wall.Normalize(sector.Floor.DiagonalSplit, sector.Ceiling.DiagonalSplit, sector.IsAnyWall)
+			? wall.Normalize(sector.Floor.DiagonalSplit, sector.Ceiling.DiagonalSplit)
 			: wall;
 	}
 
@@ -635,6 +631,7 @@ public static class RoomExtensionMethods
 	{
 		Sector sector = room.Sectors[x, z];
 		Sector neighborSector = room.Sectors[x - 1, z];
+		Sector adjoiningSector = null;
 
 		int startMinY = neighborSector.Floor.XpZp,
 			startMaxY = neighborSector.Ceiling.XpZp,
@@ -701,37 +698,33 @@ public static class RoomExtensionMethods
 			// Now get the facing sector on the adjoining room and calculate the correct heights
 			int facingZ = z + (room.Position.Z - adjoiningRoom.Position.Z);
 
-			Sector adjoiningSector = adjoiningRoom.GetSectorTry(1, facingZ) ?? Sector.Empty;
+			adjoiningSector = adjoiningRoom.GetSectorTry(1, facingZ);
 
-			int qAportal = adjoiningRoom.Position.Y + adjoiningSector.Floor.XnZp;
-			int qBportal = adjoiningRoom.Position.Y + adjoiningSector.Floor.XnZn;
+			int qAportal = adjoiningRoom.Position.Y + (adjoiningSector?.Floor.XnZp ?? 0);
+			int qBportal = adjoiningRoom.Position.Y + (adjoiningSector?.Floor.XnZn ?? 0);
 
-			if (adjoiningSector.Floor.DiagonalSplit is DiagonalSplit.XpZp)
+			if (adjoiningSector?.Floor.DiagonalSplit is DiagonalSplit.XpZp)
 				qAportal = qBportal;
-			else if (adjoiningSector.Floor.DiagonalSplit is DiagonalSplit.XpZn)
+			else if (adjoiningSector?.Floor.DiagonalSplit is DiagonalSplit.XpZn)
 				qBportal = qAportal;
 
-			qaStartY = room.Position.Y + qaNearStart;
-			qaEndY = room.Position.Y + qaNearEnd;
-			qaStartY = Math.Max(qaStartY, qAportal) - room.Position.Y;
-			qaEndY = Math.Max(qaEndY, qBportal) - room.Position.Y;
+			qaStartY = qAportal - room.Position.Y;
+			qaEndY = qBportal - room.Position.Y;
 
-			int wAportal = adjoiningRoom.Position.Y + adjoiningSector.Ceiling.XnZp;
-			int wBportal = adjoiningRoom.Position.Y + adjoiningSector.Ceiling.XnZn;
+			int wAportal = adjoiningRoom.Position.Y + (adjoiningSector?.Ceiling.XnZp ?? 0);
+			int wBportal = adjoiningRoom.Position.Y + (adjoiningSector?.Ceiling.XnZn ?? 0);
 
-			if (adjoiningSector.Ceiling.DiagonalSplit is DiagonalSplit.XpZp)
+			if (adjoiningSector?.Ceiling.DiagonalSplit is DiagonalSplit.XpZp)
 				wAportal = wBportal;
-			else if (adjoiningSector.Ceiling.DiagonalSplit is DiagonalSplit.XpZn)
+			else if (adjoiningSector?.Ceiling.DiagonalSplit is DiagonalSplit.XpZn)
 				wBportal = wAportal;
 
-			wsStartY = room.Position.Y + wsNearStart;
-			wsEndY = room.Position.Y + wsNearEnd;
-			wsStartY = Math.Min(wsStartY, wAportal) - room.Position.Y;
-			wsEndY = Math.Min(wsEndY, wBportal) - room.Position.Y;
+			wsStartY = wAportal - room.Position.Y;
+			wsEndY = wBportal - room.Position.Y;
 
 			WallSplitData newSplit;
 
-			for (int i = 0; i < adjoiningSector.ExtraFloorSplits.Count; i++)
+			for (int i = 0; i < adjoiningSector?.ExtraFloorSplits.Count; i++)
 			{
 				newSplit = new WallSplitData(adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraFloorSplit(i), SectorEdge.XnZp),
 					adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraFloorSplit(i), SectorEdge.XnZn));
@@ -742,7 +735,7 @@ public static class RoomExtensionMethods
 					extraFloorSplits[i] = newSplit;
 			}
 
-			for (int i = 0; i < adjoiningSector.ExtraCeilingSplits.Count; i++)
+			for (int i = 0; i < adjoiningSector?.ExtraCeilingSplits.Count; i++)
 			{
 				newSplit = new WallSplitData(adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraCeilingSplit(i), SectorEdge.XnZp),
 					adjoiningRoom.Position.Y - room.Position.Y + adjoiningSector.GetHeight(SectorVerticalPartExtensions.GetExtraCeilingSplit(i), SectorEdge.XnZn));
@@ -831,11 +824,13 @@ public static class RoomExtensionMethods
 			),
 
 			extraFloorSplits: extraFloorSplits,
-			extraCeilingSplits: extraCeilingSplits
+			extraCeilingSplits: extraCeilingSplits,
+
+			canOverdraw: CanOverdraw(sector, Direction.NegativeX, adjoiningSector)
 		);
 
 		return normalize
-			? wall.Normalize(sector.Floor.DiagonalSplit, sector.Ceiling.DiagonalSplit, sector.IsAnyWall)
+			? wall.Normalize(sector.Floor.DiagonalSplit, sector.Ceiling.DiagonalSplit)
 			: wall;
 	}
 
@@ -1063,11 +1058,45 @@ public static class RoomExtensionMethods
 			),
 
 			extraFloorSplits: extraFloorSplits,
-			extraCeilingSplits: extraCeilingSplits
+			extraCeilingSplits: extraCeilingSplits,
+
+			canOverdraw: false // Dismissed for diagonal walls, the logic is different
 		);
 
 		return normalize
-			? wall.Normalize(sector.Floor.DiagonalSplit, sector.Ceiling.DiagonalSplit, sector.IsAnyWall)
+			? wall.Normalize(sector.Floor.DiagonalSplit, sector.Ceiling.DiagonalSplit)
 			: wall;
+	}
+
+	private static bool CanOverdraw(Sector sector, Direction direction, Sector adjoiningSector)
+	{
+		if (sector.WallPortal is not null)
+		{
+			if (sector.WallPortal.Opacity is not PortalOpacity.None)
+				return false; // Do not allow overdraw on textured portals
+
+			if (adjoiningSector is not null)
+			{
+				DiagonalSplit adjoiningDiagonalSplit = adjoiningSector.Floor.DiagonalSplit;
+				bool isAdjoiningSectorADiagonalWall = adjoiningSector.IsAnyWall && adjoiningDiagonalSplit is not DiagonalSplit.None;
+
+				if (isAdjoiningSectorADiagonalWall)
+				{
+					// Depending on the direction, we need to check the diagonal split of the adjoining sector, as 2 sides of a diagonal wall can be solid
+					return direction switch
+					{
+						Direction.PositiveZ => adjoiningDiagonalSplit is DiagonalSplit.XnZn or DiagonalSplit.XpZn,
+						Direction.PositiveX => adjoiningDiagonalSplit is DiagonalSplit.XnZn or DiagonalSplit.XnZp,
+						Direction.NegativeZ => adjoiningDiagonalSplit is DiagonalSplit.XpZp or DiagonalSplit.XnZp,
+						Direction.NegativeX => adjoiningDiagonalSplit is DiagonalSplit.XpZp or DiagonalSplit.XpZn,
+						_ => false
+					};
+				}
+
+				return !adjoiningSector.IsAnyWall;
+			}
+		}
+
+		return !sector.IsAnyWall;
 	}
 }

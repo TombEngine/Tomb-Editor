@@ -275,8 +275,8 @@
     <moveable id="272" name="Shoot switch 1" ten="SHOOT_SWITCH3" />
     <moveable id="273" name="Shoot switch 2" ten="SHOOT_SWITCH4" />
     <moveable id="274" name="Airlock switch" ten="AIRLOCK_SWITCH" />
-    <moveable id="275" name="Underwater switch 1" ten="UNDERWATER_WALL_SWITCH1" />
-    <moveable id="276" name="Underwater switch 2" ten="UNDERWATER_WALL_SWITCH2" />
+    <moveable id="275" name="Underwater switch 1" ten="WALL_SWITCH1" />
+    <moveable id="276" name="Underwater switch 2" ten="WALL_SWITCH2" />
     <moveable id="277" name="Turn switch" ten="TURN_SWITCH" />
     <moveable id="278" name="Cog switch" x_adjust="-90" y_adjust="0.26" ten="COG_SWITCH" />
     <moveable id="279" name="Lever switch" ten="LEVER_SWITCH" />

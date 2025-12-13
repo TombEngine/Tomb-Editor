@@ -73,7 +73,7 @@ namespace TombLib.Wad.TrLevels
                 int textureTileIndex = oldTexture.TileAndFlags & 0x7fff;
                 bool isTriangle = (oldTexture.TileAndFlags & 0x8000) != 0; // Exists only in TR4+
 
-                if (oldLevel.Version == TRVersion.Game.TR1 || oldLevel.Version == TRVersion.Game.TR2 || oldLevel.Version == TRVersion.Game.TR3)
+                if (oldLevel.Version is TRVersion.Game.TR1 or TRVersion.Game.TR2 or TRVersion.Game.TR3)
                     isTriangle = (oldTexture.Vertices[3].X == 0) && (oldTexture.Vertices[3].Y == 0);
 
                 // Calculate UV coordinates...
@@ -114,7 +114,7 @@ namespace TombLib.Wad.TrLevels
             }
 
             // Create the bounding areas
-            mesh.BoundingSphere = new BoundingSphere(new Vector3(oldMesh.Center.X, -oldMesh.Center.Y, oldMesh.Center.Z), oldMesh.Radius);
+            mesh.BoundingSphere = new BoundingSphere(new Vector3(oldMesh.Center.X, -oldMesh.Center.Y, oldMesh.Center.Z), Math.Abs(oldMesh.Radius));
             mesh.BoundingBox = mesh.CalculateBoundingBox();
 
             // Add normals
@@ -267,9 +267,7 @@ namespace TombLib.Wad.TrLevels
                     int y1 = oldSpriteTexture.TopSide;
                     int y2 = oldSpriteTexture.BottomSide;
 
-                    if (oldLevel.Version == TRVersion.Game.TR1 ||
-                        oldLevel.Version == TRVersion.Game.TR2 ||
-                        oldLevel.Version == TRVersion.Game.TR3)
+                    if (oldLevel.Version is TRVersion.Game.TR1 or TRVersion.Game.TR2 or TRVersion.Game.TR3)
                     {
                         spriteX = oldSpriteTexture.X;
                         spriteY = oldSpriteTexture.Y;
@@ -395,6 +393,16 @@ namespace TombLib.Wad.TrLevels
                     newAnimation.StateChanges.Add(sc);
                 }
 
+                Func<int, bool> IsAnimCommandSizeValid = (requiredCount) =>
+                {
+                    if (requiredCount >= oldLevel.AnimCommands.Count)
+                    {
+                        logger.Warn($"Inconsistent animcommand data encountered for moveable with ID {oldMoveable.ObjectID}. Corrupted dxtre3d level?");
+                        return false;
+                    }
+                    return true;
+                };
+
                 if (oldAnimation.NumAnimCommands < oldLevel.AnimCommands.Count)
                 {
                     int lastCommand = oldAnimation.AnimCommand;
@@ -403,8 +411,8 @@ namespace TombLib.Wad.TrLevels
                     {
                         // HACK: FexMerger corrupts some animcommand sequences, refering to the anim command uint16 outside
                         // of animcommand block. We still try to load animations, ignoring corrupted animcommands.
-                        if (lastCommand >= oldLevel.AnimCommands.Count)
-                            continue;
+                        if (!(IsAnimCommandSizeValid(lastCommand)))
+                            break;
 
                         var commandType = (WadAnimCommandType)oldLevel.AnimCommands[lastCommand + 0];
 
@@ -412,6 +420,9 @@ namespace TombLib.Wad.TrLevels
                         switch (commandType)
                         {
                             case WadAnimCommandType.SetPosition:
+                                if (!(IsAnimCommandSizeValid(lastCommand + 3)))
+                                    goto ExitForLoop;
+
                                 command.Parameter1 = (short)oldLevel.AnimCommands[lastCommand + 1];
                                 command.Parameter2 = (short)oldLevel.AnimCommands[lastCommand + 2];
                                 command.Parameter3 = (short)oldLevel.AnimCommands[lastCommand + 3];
@@ -420,6 +431,9 @@ namespace TombLib.Wad.TrLevels
                                 break;
 
                             case WadAnimCommandType.SetJumpDistance:
+                                if (!(IsAnimCommandSizeValid(lastCommand + 2)))
+                                    goto ExitForLoop;
+
                                 command.Parameter1 = (short)oldLevel.AnimCommands[lastCommand + 1];
                                 command.Parameter2 = (short)oldLevel.AnimCommands[lastCommand + 2];
 
@@ -436,6 +450,9 @@ namespace TombLib.Wad.TrLevels
 
                             case WadAnimCommandType.PlaySound:
                             case WadAnimCommandType.FlipEffect:
+                                if (!(IsAnimCommandSizeValid(lastCommand + 2)))
+                                    goto ExitForLoop;
+
                                 command.Parameter1 = (short)(oldLevel.AnimCommands[lastCommand + 1] - oldAnimation.FrameStart);
                                 command.Parameter2 = (short)oldLevel.AnimCommands[lastCommand + 2];
                                 command.ConvertLegacyConditions();
@@ -499,7 +516,7 @@ namespace TombLib.Wad.TrLevels
                         frame.Angles.Add(
                             WadKeyFrameRotation.FromTrAngle(ref frames, oldLevel.Frames,
                                 oldLevel.Version == TRVersion.Game.TR1,
-                                oldLevel.Version == TRVersion.Game.TR4 || oldLevel.Version == TRVersion.Game.TR5));
+                                oldLevel.Version is TRVersion.Game.TR4 or TRVersion.Game.TR5));
 
                     if ((frames - startOfFrame) < oldAnimation.FrameSize)
                         frames += ((int)oldAnimation.FrameSize - (frames - startOfFrame));

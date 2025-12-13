@@ -40,6 +40,7 @@ namespace TombIDE.ProjectMaster
 			}
 			else if (_ide.Project.GameVersion
 				is TombLib.LevelData.TRVersion.Game.TR1
+				or TombLib.LevelData.TRVersion.Game.TR2X
 				or TombLib.LevelData.TRVersion.Game.TR2
 				or TombLib.LevelData.TRVersion.Game.TR3)
 			{

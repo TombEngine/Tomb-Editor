@@ -152,6 +152,9 @@ namespace TombLib.LevelData.Compilers
                 case TRVersion.Game.TR5:
                     WriteLevelTr5();
                     break;
+                case TRVersion.Game.TR1X or TRVersion.Game.TR2X:
+                    WriteLevelTrx();
+                    break;
                 default:
                     throw new NotImplementedException("The selected game engine is not supported yet");
             }
@@ -297,7 +300,7 @@ namespace TombLib.LevelData.Compilers
                 Vector3 position = instance.Room.WorldPos + instance.Position;
 
                 ushort boxIndex;
-                if (_level.Settings.GameVersion >= TRVersion.Game.TR3)
+                if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR3)
                     boxIndex = (ushort)((tempRoom.Sectors[tempRoom.NumZSectors * xSector + zSector].BoxIndex & 0x7FF0) >> 4);
                 else
                     boxIndex = tempRoom.Sectors[tempRoom.NumZSectors * xSector + zSector].BoxIndex;
@@ -455,7 +458,7 @@ namespace TombLib.LevelData.Compilers
 
         private void PrepareItems()
         {
-            bool isNewTR = _level.Settings.GameVersion > TRVersion.Game.TR3;
+            bool isNewTR = _level.Settings.GameVersion.Native() > TRVersion.Game.TR3;
 
             ReportProgress(42, "Building items table");
 
@@ -513,7 +516,7 @@ namespace TombLib.LevelData.Compilers
                         var instanceColor = instance.Color;
 
                         // HACK: in TR3+, moveables have RGB components swapped to BGR
-                        if (_level.Settings.GameVersion > TRVersion.Game.TR2)
+                        if (_level.Settings.GameVersion.Native() > TRVersion.Game.TR2)
                             instanceColor = new Vector3(instance.Color.Z, instance.Color.Y, instance.Color.X);
 
                         // HACK: original tom2pc/winroomedit compiler forced tint to be reset to 1.0f in case
@@ -544,7 +547,7 @@ namespace TombLib.LevelData.Compilers
                 }
 
             // Sort AI objects and put all LARA_START_POS objects (last AI object by ID) in front
-            if (_level.Settings.GameVersion > TRVersion.Game.TR3)
+            if (_level.Settings.GameVersion.Native() > TRVersion.Game.TR3)
             {
                 _aiItems = _aiItems.OrderByDescending(item => item.ObjectID).ThenBy(item => item.OCB).ToList();
                 ReportProgress(45, "    Number of AI objects: " + _aiItems.Count);

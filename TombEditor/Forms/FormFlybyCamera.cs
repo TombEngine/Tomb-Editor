@@ -54,14 +54,14 @@ namespace TombEditor.Forms
             numRotationX.Value = (decimal)_flyByCamera.RotationX;
             numRotationY.Value = (decimal)_flyByCamera.RotationY;
 
-            if (_editor.Level.Settings.GameVersion.Legacy() == TRVersion.Game.TR5)
+            if (_editor.Level.Settings.GameVersion is TRVersion.Game.TR5 or TRVersion.Game.TombEngine)
             {
                 cbBit1.Text = "Vignette";
                 cbBit4.Text = "Hide Lara";
                 cbBit12.Text = "Make fade-in";
                 cbBit13.Text = "Make fade-out";
             }
-            else if (_editor.Level.Settings.GameVersion <= TRVersion.Game.TR3)
+            else if (_editor.Level.Settings.GameVersion.Native() <= TRVersion.Game.TR3)
             {
                 Size = new System.Drawing.Size(205, 319);
             }

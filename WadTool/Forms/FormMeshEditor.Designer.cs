@@ -15,1296 +15,1501 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.lstMeshes = new DarkUI.Controls.DarkTreeView();
-            this.panelMesh = new WadTool.Controls.PanelRenderingMesh();
-            this.btCancel = new DarkUI.Controls.DarkButton();
-            this.btOk = new DarkUI.Controls.DarkButton();
-            this.panelEditingTools = new DarkUI.Controls.DarkSectionPanel();
-            this.tabsModes = new TombLib.Controls.DarkTabbedContainer();
-            this.tabFaceAttributes = new System.Windows.Forms.TabPage();
-            this.cbTexture = new DarkUI.Controls.DarkCheckBox();
-            this.cbBlendMode = new DarkUI.Controls.DarkComboBox();
-            this.butApplyToAllFaces = new DarkUI.Controls.DarkButton();
-            this.cbBlend = new DarkUI.Controls.DarkCheckBox();
-            this.nudShineStrength = new DarkUI.Controls.DarkNumericUpDown();
-            this.cbSheen = new DarkUI.Controls.DarkCheckBox();
-            this.butDoubleSide = new DarkUI.Controls.DarkButton();
-            this.tabVertexRemap = new System.Windows.Forms.TabPage();
-            this.butAutoFit = new DarkUI.Controls.DarkButton();
-            this.nudVertexNum = new DarkUI.Controls.DarkNumericUpDown();
-            this.darkLabel1 = new DarkUI.Controls.DarkLabel();
-            this.butFindVertex = new DarkUI.Controls.DarkButton();
-            this.butRemapVertex = new DarkUI.Controls.DarkButton();
-            this.tabVertexShadesAndNormals = new System.Windows.Forms.TabPage();
-            this.butApplyShadesToAllVertices = new DarkUI.Controls.DarkButton();
-            this.panelColor = new DarkUI.Controls.DarkPanel();
-            this.butRecalcNormalsAvg = new DarkUI.Controls.DarkButton();
-            this.darkLabel7 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel10 = new DarkUI.Controls.DarkLabel();
-            this.butRecalcNormals = new DarkUI.Controls.DarkButton();
-            this.tabVertexEffects = new System.Windows.Forms.TabPage();
-            this.butPreview = new DarkUI.Controls.DarkButton();
-            this.butConvertFromShades = new DarkUI.Controls.DarkButton();
-            this.nudMove = new DarkUI.Controls.DarkNumericUpDown();
-            this.darkLabel5 = new DarkUI.Controls.DarkLabel();
-            this.nudGlow = new DarkUI.Controls.DarkNumericUpDown();
-            this.darkLabel4 = new DarkUI.Controls.DarkLabel();
-            this.butApplyToAllVertices = new DarkUI.Controls.DarkButton();
-            this.tabSphere = new System.Windows.Forms.TabPage();
-            this.darkLabel6 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel3 = new DarkUI.Controls.DarkLabel();
-            this.butResetSphere = new DarkUI.Controls.DarkButton();
-            this.nudSphereRadius = new DarkUI.Controls.DarkNumericUpDown();
-            this.darkLabel9 = new DarkUI.Controls.DarkLabel();
-            this.nudSphereZ = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudSphereY = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudSphereX = new DarkUI.Controls.DarkNumericUpDown();
-            this.darkLabel8 = new DarkUI.Controls.DarkLabel();
-            this.cbExtra = new DarkUI.Controls.DarkCheckBox();
-            this.cbEditingMode = new DarkUI.Controls.DarkComboBox();
-            this.darkLabel2 = new DarkUI.Controls.DarkLabel();
-            this.darkSectionPanel2 = new DarkUI.Controls.DarkSectionPanel();
-            this.panelSearchTree = new DarkUI.Controls.DarkPanel();
-            this.butSearchMeshes = new DarkUI.Controls.DarkButton();
-            this.tbSearchMeshes = new DarkUI.Controls.DarkTextBox();
-            this.panelMain = new DarkUI.Controls.DarkPanel();
-            this.panelCenter = new DarkUI.Controls.DarkPanel();
-            this.topBar = new DarkUI.Controls.DarkToolStrip();
-            this.butTbUndo = new System.Windows.Forms.ToolStripButton();
-            this.butTbRedo = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.butTbImport = new System.Windows.Forms.ToolStripButton();
-            this.butTbExport = new System.Windows.Forms.ToolStripButton();
-            this.butTbRename = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.butTbResetCamera = new System.Windows.Forms.ToolStripButton();
-            this.butTbAxis = new System.Windows.Forms.ToolStripButton();
-            this.butTbWireframe = new System.Windows.Forms.ToolStripButton();
-            this.butTbAlpha = new System.Windows.Forms.ToolStripButton();
-            this.butTbBilinear = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.butTbFindSelectedTexture = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.butTbRotateTexture = new System.Windows.Forms.ToolStripButton();
-            this.butTbMirrorTexture = new System.Windows.Forms.ToolStripButton();
-            this.panelEditing = new DarkUI.Controls.DarkPanel();
-            this.panelTexturing = new DarkUI.Controls.DarkSectionPanel();
-            this.panelTextureMap = new WadTool.Controls.PanelTextureMap();
-            this.panelTexturingTools = new DarkUI.Controls.DarkPanel();
-            this.butReplaceTexture = new DarkUI.Controls.DarkButton();
-            this.butAllTextures = new DarkUI.Controls.DarkButton();
-            this.butExportTexture = new DarkUI.Controls.DarkButton();
-            this.butAddTexture = new DarkUI.Controls.DarkButton();
-            this.butDeleteTexture = new DarkUI.Controls.DarkButton();
-            this.comboCurrentTexture = new TombLib.Controls.DarkSearchableComboBox();
-            this.panelTree = new DarkUI.Controls.DarkPanel();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.statusLabel = new DarkUI.Controls.DarkLabel();
-            this.panelEditingTools.SuspendLayout();
-            this.tabsModes.SuspendLayout();
-            this.tabFaceAttributes.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudShineStrength)).BeginInit();
-            this.tabVertexRemap.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudVertexNum)).BeginInit();
-            this.tabVertexShadesAndNormals.SuspendLayout();
-            this.tabVertexEffects.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMove)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudGlow)).BeginInit();
-            this.tabSphere.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSphereRadius)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSphereZ)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSphereY)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSphereX)).BeginInit();
-            this.darkSectionPanel2.SuspendLayout();
-            this.panelSearchTree.SuspendLayout();
-            this.panelMain.SuspendLayout();
-            this.panelCenter.SuspendLayout();
-            this.topBar.SuspendLayout();
-            this.panelEditing.SuspendLayout();
-            this.panelTexturing.SuspendLayout();
-            this.panelTexturingTools.SuspendLayout();
-            this.panelTree.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMeshEditor));
+            lstMeshes = new DarkUI.Controls.DarkTreeView();
+            panelMesh = new Controls.PanelRenderingMesh();
+            btCancel = new DarkUI.Controls.DarkButton();
+            btOk = new DarkUI.Controls.DarkButton();
+            panelEditingTools = new DarkUI.Controls.DarkSectionPanel();
+            tabsModes = new TombLib.Controls.DarkTabbedContainer();
+            tabFaceAttributes = new System.Windows.Forms.TabPage();
+            cbTexture = new DarkUI.Controls.DarkCheckBox();
+            cbBlendMode = new DarkUI.Controls.DarkComboBox();
+            butApplyToAllFaces = new DarkUI.Controls.DarkButton();
+            cbBlend = new DarkUI.Controls.DarkCheckBox();
+            nudShineStrength = new DarkUI.Controls.DarkNumericUpDown();
+            cbSheen = new DarkUI.Controls.DarkCheckBox();
+            butDoubleSide = new DarkUI.Controls.DarkButton();
+            tabVertexRemap = new System.Windows.Forms.TabPage();
+            butAutoFit = new DarkUI.Controls.DarkButton();
+            nudVertexNum = new DarkUI.Controls.DarkNumericUpDown();
+            darkLabel1 = new DarkUI.Controls.DarkLabel();
+            butFindVertex = new DarkUI.Controls.DarkButton();
+            butRemapVertex = new DarkUI.Controls.DarkButton();
+            tabVertexShadesAndNormals = new System.Windows.Forms.TabPage();
+            butApplyShadesToAllVertices = new DarkUI.Controls.DarkButton();
+            panelColor = new DarkUI.Controls.DarkPanel();
+            butRecalcNormalsAvg = new DarkUI.Controls.DarkButton();
+            darkLabel7 = new DarkUI.Controls.DarkLabel();
+            darkLabel10 = new DarkUI.Controls.DarkLabel();
+            butRecalcNormals = new DarkUI.Controls.DarkButton();
+            tabVertexEffects = new System.Windows.Forms.TabPage();
+            butPreview = new DarkUI.Controls.DarkButton();
+            butConvertFromShades = new DarkUI.Controls.DarkButton();
+            nudMove = new DarkUI.Controls.DarkNumericUpDown();
+            darkLabel5 = new DarkUI.Controls.DarkLabel();
+            nudGlow = new DarkUI.Controls.DarkNumericUpDown();
+            darkLabel4 = new DarkUI.Controls.DarkLabel();
+            butApplyToAllVertices = new DarkUI.Controls.DarkButton();
+            tabVertexWeights = new System.Windows.Forms.TabPage();
+            butApplyWeightsToAllVertices = new DarkUI.Controls.DarkButton();
+            nudWeightIndex4 = new DarkUI.Controls.DarkNumericUpDown();
+            nudWeightIndex3 = new DarkUI.Controls.DarkNumericUpDown();
+            nudWeightIndex2 = new DarkUI.Controls.DarkNumericUpDown();
+            nudWeightIndex1 = new DarkUI.Controls.DarkNumericUpDown();
+            nudWeightValue4 = new DarkUI.Controls.DarkNumericUpDown();
+            nudWeightValue3 = new DarkUI.Controls.DarkNumericUpDown();
+            nudWeightValue2 = new DarkUI.Controls.DarkNumericUpDown();
+            nudWeightValue1 = new DarkUI.Controls.DarkNumericUpDown();
+            darkLabel12 = new DarkUI.Controls.DarkLabel();
+            darkLabel11 = new DarkUI.Controls.DarkLabel();
+            tabSphere = new System.Windows.Forms.TabPage();
+            darkLabel6 = new DarkUI.Controls.DarkLabel();
+            darkLabel3 = new DarkUI.Controls.DarkLabel();
+            butResetSphere = new DarkUI.Controls.DarkButton();
+            nudSphereRadius = new DarkUI.Controls.DarkNumericUpDown();
+            darkLabel9 = new DarkUI.Controls.DarkLabel();
+            nudSphereZ = new DarkUI.Controls.DarkNumericUpDown();
+            nudSphereY = new DarkUI.Controls.DarkNumericUpDown();
+            nudSphereX = new DarkUI.Controls.DarkNumericUpDown();
+            darkLabel8 = new DarkUI.Controls.DarkLabel();
+            cbExtra = new DarkUI.Controls.DarkCheckBox();
+            cbEditingMode = new DarkUI.Controls.DarkComboBox();
+            darkLabel2 = new DarkUI.Controls.DarkLabel();
+            darkSectionPanel2 = new DarkUI.Controls.DarkSectionPanel();
+            panelSearchTree = new DarkUI.Controls.DarkPanel();
+            butSearchMeshes = new DarkUI.Controls.DarkButton();
+            tbSearchMeshes = new DarkUI.Controls.DarkTextBox();
+            panelMain = new DarkUI.Controls.DarkPanel();
+            panelCenter = new DarkUI.Controls.DarkPanel();
+            topBar = new DarkUI.Controls.DarkToolStrip();
+            butTbUndo = new System.Windows.Forms.ToolStripButton();
+            butTbRedo = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            butTbImport = new System.Windows.Forms.ToolStripButton();
+            butTbExport = new System.Windows.Forms.ToolStripButton();
+            butTbRename = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            butTbResetCamera = new System.Windows.Forms.ToolStripButton();
+            butTbAxis = new System.Windows.Forms.ToolStripButton();
+            butTbWireframe = new System.Windows.Forms.ToolStripButton();
+            butTbAlpha = new System.Windows.Forms.ToolStripButton();
+            butTbBilinear = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            butTbFindSelectedTexture = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            butTbRotateTexture = new System.Windows.Forms.ToolStripButton();
+            butTbMirrorTexture = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            butHide = new System.Windows.Forms.ToolStripButton();
+            panelEditing = new DarkUI.Controls.DarkPanel();
+            panelTexturing = new DarkUI.Controls.DarkSectionPanel();
+            panelTextureMap = new Controls.PanelTextureMap();
+            panelTextureTools = new DarkUI.Controls.DarkPanel();
+            butMaterialEditor = new DarkUI.Controls.DarkButton();
+            butAnimationRanges = new DarkUI.Controls.DarkButton();
+            panelTexturingTools = new DarkUI.Controls.DarkPanel();
+            comboCurrentTexture = new TombLib.Controls.DarkSearchableComboBox();
+            darkToolStrip1 = new DarkUI.Controls.DarkToolStrip();
+            butAddTexture = new System.Windows.Forms.ToolStripDropDownButton();
+            addEmbeddedTextureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            addExternalTextureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            butReplaceTexture = new System.Windows.Forms.ToolStripDropDownButton();
+            replaceWithEmbeddedTextureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            replaceWithExternalTextureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            butExportTexture = new System.Windows.Forms.ToolStripButton();
+            butDeleteTexture = new System.Windows.Forms.ToolStripButton();
+            butAllTextures = new DarkUI.Controls.DarkButton();
+            panelTree = new DarkUI.Controls.DarkPanel();
+            toolTip = new System.Windows.Forms.ToolTip(components);
+            statusLabel = new DarkUI.Controls.DarkLabel();
+            panelEditingTools.SuspendLayout();
+            tabsModes.SuspendLayout();
+            tabFaceAttributes.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudShineStrength).BeginInit();
+            tabVertexRemap.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudVertexNum).BeginInit();
+            tabVertexShadesAndNormals.SuspendLayout();
+            tabVertexEffects.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudMove).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudGlow).BeginInit();
+            tabVertexWeights.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudWeightIndex4).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudWeightIndex3).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudWeightIndex2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudWeightIndex1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudWeightValue4).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudWeightValue3).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudWeightValue2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudWeightValue1).BeginInit();
+            tabSphere.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudSphereRadius).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudSphereZ).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudSphereY).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudSphereX).BeginInit();
+            darkSectionPanel2.SuspendLayout();
+            panelSearchTree.SuspendLayout();
+            panelMain.SuspendLayout();
+            panelCenter.SuspendLayout();
+            topBar.SuspendLayout();
+            panelEditing.SuspendLayout();
+            panelTexturing.SuspendLayout();
+            panelTextureTools.SuspendLayout();
+            panelTexturingTools.SuspendLayout();
+            darkToolStrip1.SuspendLayout();
+            panelTree.SuspendLayout();
+            SuspendLayout();
             // 
             // lstMeshes
             // 
-            this.lstMeshes.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.lstMeshes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lstMeshes.ExpandOnDoubleClick = false;
-            this.lstMeshes.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.lstMeshes.Location = new System.Drawing.Point(1, 55);
-            this.lstMeshes.MaxDragChange = 20;
-            this.lstMeshes.Name = "lstMeshes";
-            this.lstMeshes.Size = new System.Drawing.Size(257, 509);
-            this.lstMeshes.TabIndex = 1;
-            this.lstMeshes.Text = "darkTreeView1";
-            this.lstMeshes.SelectedNodesChanged += new System.EventHandler(this.lstMeshes_SelectedNodesChanged);
-            this.lstMeshes.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lstMeshes_MouseDoubleClick);
+            lstMeshes.Dock = System.Windows.Forms.DockStyle.Fill;
+            lstMeshes.ExpandOnDoubleClick = false;
+            lstMeshes.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            lstMeshes.Location = new System.Drawing.Point(1, 55);
+            lstMeshes.MaxDragChange = 20;
+            lstMeshes.Name = "lstMeshes";
+            lstMeshes.ShowIcons = true;
+            lstMeshes.Size = new System.Drawing.Size(257, 509);
+            lstMeshes.TabIndex = 1;
+            lstMeshes.Text = "darkTreeView1";
+            lstMeshes.SelectedNodesChanged += lstMeshes_SelectedNodesChanged;
+            lstMeshes.MouseDoubleClick += lstMeshes_MouseDoubleClick;
             // 
             // panelMesh
             // 
-            this.panelMesh.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMesh.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.panelMesh.Location = new System.Drawing.Point(0, 1);
-            this.panelMesh.Name = "panelMesh";
-            this.panelMesh.Size = new System.Drawing.Size(380, 559);
-            this.panelMesh.TabIndex = 0;
+            panelMesh.AllowRendering = true;
+            panelMesh.Dock = System.Windows.Forms.DockStyle.Fill;
+            panelMesh.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            panelMesh.Location = new System.Drawing.Point(0, 29);
+            panelMesh.Name = "panelMesh";
+            panelMesh.Size = new System.Drawing.Size(396, 535);
+            panelMesh.TabIndex = 0;
             // 
             // btCancel
             // 
-            this.btCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btCancel.Checked = false;
-            this.btCancel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btCancel.Location = new System.Drawing.Point(898, 575);
-            this.btCancel.Name = "btCancel";
-            this.btCancel.Size = new System.Drawing.Size(81, 23);
-            this.btCancel.TabIndex = 52;
-            this.btCancel.Text = "Cancel";
-            this.btCancel.Click += new System.EventHandler(this.btCancel_Click);
+            btCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btCancel.Checked = false;
+            btCancel.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            btCancel.Location = new System.Drawing.Point(915, 575);
+            btCancel.Name = "btCancel";
+            btCancel.Size = new System.Drawing.Size(81, 23);
+            btCancel.TabIndex = 52;
+            btCancel.Text = "Cancel";
+            btCancel.Click += btCancel_Click;
             // 
             // btOk
             // 
-            this.btOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btOk.Checked = false;
-            this.btOk.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btOk.Location = new System.Drawing.Point(811, 575);
-            this.btOk.Name = "btOk";
-            this.btOk.Size = new System.Drawing.Size(81, 23);
-            this.btOk.TabIndex = 53;
-            this.btOk.Text = "OK";
-            this.btOk.Click += new System.EventHandler(this.btOk_Click);
+            btOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btOk.Checked = false;
+            btOk.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            btOk.Location = new System.Drawing.Point(828, 575);
+            btOk.Name = "btOk";
+            btOk.Size = new System.Drawing.Size(81, 23);
+            btOk.TabIndex = 53;
+            btOk.Text = "OK";
+            btOk.Click += btOk_Click;
             // 
             // panelEditingTools
             // 
-            this.panelEditingTools.Controls.Add(this.tabsModes);
-            this.panelEditingTools.Controls.Add(this.cbExtra);
-            this.panelEditingTools.Controls.Add(this.cbEditingMode);
-            this.panelEditingTools.Controls.Add(this.darkLabel2);
-            this.panelEditingTools.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panelEditingTools.Location = new System.Drawing.Point(4, 404);
-            this.panelEditingTools.Name = "panelEditingTools";
-            this.panelEditingTools.SectionHeader = "Editing tools";
-            this.panelEditingTools.Size = new System.Drawing.Size(326, 161);
-            this.panelEditingTools.TabIndex = 54;
+            panelEditingTools.Controls.Add(tabsModes);
+            panelEditingTools.Controls.Add(cbExtra);
+            panelEditingTools.Controls.Add(cbEditingMode);
+            panelEditingTools.Controls.Add(darkLabel2);
+            panelEditingTools.Dock = System.Windows.Forms.DockStyle.Bottom;
+            panelEditingTools.Location = new System.Drawing.Point(4, 404);
+            panelEditingTools.Name = "panelEditingTools";
+            panelEditingTools.SectionHeader = "Editing tools";
+            panelEditingTools.Size = new System.Drawing.Size(327, 161);
+            panelEditingTools.TabIndex = 54;
             // 
             // tabsModes
             // 
-            this.tabsModes.Alignment = System.Windows.Forms.TabAlignment.Bottom;
-            this.tabsModes.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.tabsModes.Controls.Add(this.tabFaceAttributes);
-            this.tabsModes.Controls.Add(this.tabVertexRemap);
-            this.tabsModes.Controls.Add(this.tabVertexShadesAndNormals);
-            this.tabsModes.Controls.Add(this.tabVertexEffects);
-            this.tabsModes.Controls.Add(this.tabSphere);
-            this.tabsModes.Location = new System.Drawing.Point(1, 58);
-            this.tabsModes.Multiline = true;
-            this.tabsModes.Name = "tabsModes";
-            this.tabsModes.SelectedIndex = 0;
-            this.tabsModes.Size = new System.Drawing.Size(324, 102);
-            this.tabsModes.TabIndex = 7;
+            tabsModes.Alignment = System.Windows.Forms.TabAlignment.Bottom;
+            tabsModes.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            tabsModes.Controls.Add(tabFaceAttributes);
+            tabsModes.Controls.Add(tabVertexRemap);
+            tabsModes.Controls.Add(tabVertexShadesAndNormals);
+            tabsModes.Controls.Add(tabVertexEffects);
+            tabsModes.Controls.Add(tabVertexWeights);
+            tabsModes.Controls.Add(tabSphere);
+            tabsModes.Location = new System.Drawing.Point(1, 58);
+            tabsModes.Multiline = true;
+            tabsModes.Name = "tabsModes";
+            tabsModes.SelectedIndex = 0;
+            tabsModes.Size = new System.Drawing.Size(324, 102);
+            tabsModes.TabIndex = 7;
             // 
             // tabFaceAttributes
             // 
-            this.tabFaceAttributes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.tabFaceAttributes.Controls.Add(this.cbTexture);
-            this.tabFaceAttributes.Controls.Add(this.cbBlendMode);
-            this.tabFaceAttributes.Controls.Add(this.butApplyToAllFaces);
-            this.tabFaceAttributes.Controls.Add(this.cbBlend);
-            this.tabFaceAttributes.Controls.Add(this.nudShineStrength);
-            this.tabFaceAttributes.Controls.Add(this.cbSheen);
-            this.tabFaceAttributes.Controls.Add(this.butDoubleSide);
-            this.tabFaceAttributes.Location = new System.Drawing.Point(4, 4);
-            this.tabFaceAttributes.Name = "tabFaceAttributes";
-            this.tabFaceAttributes.Padding = new System.Windows.Forms.Padding(3);
-            this.tabFaceAttributes.Size = new System.Drawing.Size(316, 58);
-            this.tabFaceAttributes.TabIndex = 1;
-            this.tabFaceAttributes.Text = "Face attributes";
+            tabFaceAttributes.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            tabFaceAttributes.Controls.Add(cbTexture);
+            tabFaceAttributes.Controls.Add(cbBlendMode);
+            tabFaceAttributes.Controls.Add(butApplyToAllFaces);
+            tabFaceAttributes.Controls.Add(cbBlend);
+            tabFaceAttributes.Controls.Add(nudShineStrength);
+            tabFaceAttributes.Controls.Add(cbSheen);
+            tabFaceAttributes.Controls.Add(butDoubleSide);
+            tabFaceAttributes.Location = new System.Drawing.Point(4, 4);
+            tabFaceAttributes.Name = "tabFaceAttributes";
+            tabFaceAttributes.Padding = new System.Windows.Forms.Padding(3);
+            tabFaceAttributes.Size = new System.Drawing.Size(316, 58);
+            tabFaceAttributes.TabIndex = 1;
+            tabFaceAttributes.Text = "Face attributes";
             // 
             // cbTexture
             // 
-            this.cbTexture.AutoSize = true;
-            this.cbTexture.Checked = true;
-            this.cbTexture.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbTexture.Location = new System.Drawing.Point(7, 34);
-            this.cbTexture.Name = "cbTexture";
-            this.cbTexture.Size = new System.Drawing.Size(62, 17);
-            this.cbTexture.TabIndex = 15;
-            this.cbTexture.Text = "Texture";
-            this.toolTip.SetToolTip(this.cbTexture, "Apply textures to faces");
+            cbTexture.AutoSize = true;
+            cbTexture.Checked = true;
+            cbTexture.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbTexture.Location = new System.Drawing.Point(7, 34);
+            cbTexture.Name = "cbTexture";
+            cbTexture.Size = new System.Drawing.Size(63, 17);
+            cbTexture.TabIndex = 15;
+            cbTexture.Text = "Texture";
+            toolTip.SetToolTip(cbTexture, "Apply textures to faces");
             // 
             // cbBlendMode
             // 
-            this.cbBlendMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbBlendMode.FormattingEnabled = true;
-            this.cbBlendMode.Location = new System.Drawing.Point(81, 3);
-            this.cbBlendMode.Name = "cbBlendMode";
-            this.cbBlendMode.Size = new System.Drawing.Size(203, 23);
-            this.cbBlendMode.TabIndex = 11;
+            cbBlendMode.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            cbBlendMode.FormattingEnabled = true;
+            cbBlendMode.Location = new System.Drawing.Point(81, 3);
+            cbBlendMode.Name = "cbBlendMode";
+            cbBlendMode.Size = new System.Drawing.Size(203, 23);
+            cbBlendMode.TabIndex = 11;
             // 
             // butApplyToAllFaces
             // 
-            this.butApplyToAllFaces.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butApplyToAllFaces.Checked = false;
-            this.butApplyToAllFaces.Location = new System.Drawing.Point(215, 32);
-            this.butApplyToAllFaces.Name = "butApplyToAllFaces";
-            this.butApplyToAllFaces.Size = new System.Drawing.Size(99, 23);
-            this.butApplyToAllFaces.TabIndex = 9;
-            this.butApplyToAllFaces.Text = "Apply to all";
-            this.toolTip.SetToolTip(this.butApplyToAllFaces, "Apply specified face attributes to all faces");
-            this.butApplyToAllFaces.Click += new System.EventHandler(this.butApplyToAllFaces_Click);
+            butApplyToAllFaces.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            butApplyToAllFaces.Checked = false;
+            butApplyToAllFaces.Location = new System.Drawing.Point(215, 32);
+            butApplyToAllFaces.Name = "butApplyToAllFaces";
+            butApplyToAllFaces.Size = new System.Drawing.Size(99, 23);
+            butApplyToAllFaces.TabIndex = 9;
+            butApplyToAllFaces.Text = "Apply to all";
+            toolTip.SetToolTip(butApplyToAllFaces, "Apply specified face attributes to all faces");
+            butApplyToAllFaces.Click += butApplyToAllFaces_Click;
             // 
             // cbBlend
             // 
-            this.cbBlend.AutoSize = true;
-            this.cbBlend.Checked = true;
-            this.cbBlend.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbBlend.Location = new System.Drawing.Point(7, 5);
-            this.cbBlend.Name = "cbBlend";
-            this.cbBlend.Size = new System.Drawing.Size(76, 17);
-            this.cbBlend.TabIndex = 14;
-            this.cbBlend.Text = "Blending:";
-            this.toolTip.SetToolTip(this.cbBlend, "Apply blend mode and double-sided attribute to faces");
+            cbBlend.AutoSize = true;
+            cbBlend.Checked = true;
+            cbBlend.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbBlend.Location = new System.Drawing.Point(7, 5);
+            cbBlend.Name = "cbBlend";
+            cbBlend.Size = new System.Drawing.Size(75, 17);
+            cbBlend.TabIndex = 14;
+            cbBlend.Text = "Blending:";
+            toolTip.SetToolTip(cbBlend, "Apply blend mode and double-sided attribute to faces");
             // 
             // nudShineStrength
             // 
-            this.nudShineStrength.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.nudShineStrength.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.nudShineStrength.IncrementAlternate = new decimal(new int[] {
-            50,
-            0,
-            0,
-            65536});
-            this.nudShineStrength.Location = new System.Drawing.Point(146, 32);
-            this.nudShineStrength.LoopValues = false;
-            this.nudShineStrength.Maximum = new decimal(new int[] {
-            63,
-            0,
-            0,
-            0});
-            this.nudShineStrength.Name = "nudShineStrength";
-            this.nudShineStrength.Size = new System.Drawing.Size(65, 23);
-            this.nudShineStrength.TabIndex = 7;
-            this.toolTip.SetToolTip(this.nudShineStrength, "Shininess value on the range from 0 to 63");
+            nudShineStrength.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            nudShineStrength.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudShineStrength.IncrementAlternate = new decimal(new int[] { 50, 0, 0, 65536 });
+            nudShineStrength.Location = new System.Drawing.Point(146, 32);
+            nudShineStrength.LoopValues = false;
+            nudShineStrength.Maximum = new decimal(new int[] { 63, 0, 0, 0 });
+            nudShineStrength.Name = "nudShineStrength";
+            nudShineStrength.Size = new System.Drawing.Size(65, 23);
+            nudShineStrength.TabIndex = 7;
+            toolTip.SetToolTip(nudShineStrength, "Shininess value on the range from 0 to 63");
             // 
             // cbSheen
             // 
-            this.cbSheen.AutoSize = true;
-            this.cbSheen.Checked = true;
-            this.cbSheen.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbSheen.Location = new System.Drawing.Point(81, 34);
-            this.cbSheen.Name = "cbSheen";
-            this.cbSheen.Size = new System.Drawing.Size(61, 17);
-            this.cbSheen.TabIndex = 13;
-            this.cbSheen.Text = "Sheen:";
-            this.toolTip.SetToolTip(this.cbSheen, "Apply sheen attribute to faces");
+            cbSheen.AutoSize = true;
+            cbSheen.Checked = true;
+            cbSheen.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbSheen.Location = new System.Drawing.Point(81, 34);
+            cbSheen.Name = "cbSheen";
+            cbSheen.Size = new System.Drawing.Size(61, 17);
+            cbSheen.TabIndex = 13;
+            cbSheen.Text = "Sheen:";
+            toolTip.SetToolTip(cbSheen, "Apply sheen attribute to faces");
             // 
             // butDoubleSide
             // 
-            this.butDoubleSide.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butDoubleSide.Checked = false;
-            this.butDoubleSide.Image = global::WadTool.Properties.Resources.texture_DoubleSided_1_16;
-            this.butDoubleSide.Location = new System.Drawing.Point(290, 3);
-            this.butDoubleSide.Name = "butDoubleSide";
-            this.butDoubleSide.Size = new System.Drawing.Size(24, 23);
-            this.butDoubleSide.TabIndex = 12;
-            this.butDoubleSide.Tag = "";
-            this.toolTip.SetToolTip(this.butDoubleSide, "Toggle double-sided attribute");
-            this.butDoubleSide.Click += new System.EventHandler(this.butDoubleSide_Click);
+            butDoubleSide.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            butDoubleSide.Checked = false;
+            butDoubleSide.Image = Properties.Resources.texture_DoubleSided_1_16;
+            butDoubleSide.Location = new System.Drawing.Point(290, 3);
+            butDoubleSide.Name = "butDoubleSide";
+            butDoubleSide.Size = new System.Drawing.Size(24, 23);
+            butDoubleSide.TabIndex = 12;
+            butDoubleSide.Tag = "";
+            toolTip.SetToolTip(butDoubleSide, "Toggle double-sided attribute");
+            butDoubleSide.Click += butDoubleSide_Click;
             // 
             // tabVertexRemap
             // 
-            this.tabVertexRemap.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.tabVertexRemap.Controls.Add(this.butAutoFit);
-            this.tabVertexRemap.Controls.Add(this.nudVertexNum);
-            this.tabVertexRemap.Controls.Add(this.darkLabel1);
-            this.tabVertexRemap.Controls.Add(this.butFindVertex);
-            this.tabVertexRemap.Controls.Add(this.butRemapVertex);
-            this.tabVertexRemap.Location = new System.Drawing.Point(4, 4);
-            this.tabVertexRemap.Name = "tabVertexRemap";
-            this.tabVertexRemap.Size = new System.Drawing.Size(316, 58);
-            this.tabVertexRemap.TabIndex = 0;
-            this.tabVertexRemap.Text = "Vertex remap";
+            tabVertexRemap.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            tabVertexRemap.Controls.Add(butAutoFit);
+            tabVertexRemap.Controls.Add(nudVertexNum);
+            tabVertexRemap.Controls.Add(darkLabel1);
+            tabVertexRemap.Controls.Add(butFindVertex);
+            tabVertexRemap.Controls.Add(butRemapVertex);
+            tabVertexRemap.Location = new System.Drawing.Point(4, 4);
+            tabVertexRemap.Name = "tabVertexRemap";
+            tabVertexRemap.Size = new System.Drawing.Size(316, 58);
+            tabVertexRemap.TabIndex = 0;
+            tabVertexRemap.Text = "Vertex remap";
             // 
             // butAutoFit
             // 
-            this.butAutoFit.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.butAutoFit.Checked = false;
-            this.butAutoFit.Location = new System.Drawing.Point(2, 32);
-            this.butAutoFit.Name = "butAutoFit";
-            this.butAutoFit.Size = new System.Drawing.Size(312, 23);
-            this.butAutoFit.TabIndex = 6;
-            this.butAutoFit.Text = "Automatic fit";
-            this.toolTip.SetToolTip(this.butAutoFit, "Try to automatically remap all vertices sitting on mesh holes.\r\nFor legacy engine" +
-        "s, you still have to manually remap hair hole.");
-            this.butAutoFit.Click += new System.EventHandler(this.butAutoFit_Click);
+            butAutoFit.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            butAutoFit.Checked = false;
+            butAutoFit.Location = new System.Drawing.Point(2, 32);
+            butAutoFit.Name = "butAutoFit";
+            butAutoFit.Size = new System.Drawing.Size(312, 23);
+            butAutoFit.TabIndex = 6;
+            butAutoFit.Text = "Automatic fit";
+            toolTip.SetToolTip(butAutoFit, "Try to automatically remap all vertices sitting on mesh holes.\r\nFor legacy engines, you still have to manually remap hair hole.");
+            butAutoFit.Click += butAutoFit_Click;
             // 
             // nudVertexNum
             // 
-            this.nudVertexNum.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.nudVertexNum.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.nudVertexNum.IncrementAlternate = new decimal(new int[] {
-            10,
-            0,
-            0,
-            65536});
-            this.nudVertexNum.Location = new System.Drawing.Point(91, 3);
-            this.nudVertexNum.LoopValues = false;
-            this.nudVertexNum.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.nudVertexNum.Name = "nudVertexNum";
-            this.nudVertexNum.Size = new System.Drawing.Size(62, 23);
-            this.nudVertexNum.TabIndex = 2;
-            this.toolTip.SetToolTip(this.nudVertexNum, "Vertex number to operate with");
-            this.nudVertexNum.KeyDown += new System.Windows.Forms.KeyEventHandler(this.nudVertexNum_KeyDown);
+            nudVertexNum.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            nudVertexNum.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudVertexNum.IncrementAlternate = new decimal(new int[] { 10, 0, 0, 65536 });
+            nudVertexNum.Location = new System.Drawing.Point(91, 3);
+            nudVertexNum.LoopValues = false;
+            nudVertexNum.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+            nudVertexNum.Name = "nudVertexNum";
+            nudVertexNum.Size = new System.Drawing.Size(62, 23);
+            nudVertexNum.TabIndex = 2;
+            toolTip.SetToolTip(nudVertexNum, "Vertex number to operate with");
+            nudVertexNum.KeyDown += nudVertexNum_KeyDown;
             // 
             // darkLabel1
             // 
-            this.darkLabel1.AutoSize = true;
-            this.darkLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel1.Location = new System.Drawing.Point(3, 6);
-            this.darkLabel1.Name = "darkLabel1";
-            this.darkLabel1.Size = new System.Drawing.Size(84, 13);
-            this.darkLabel1.TabIndex = 1;
-            this.darkLabel1.Text = "Vertex number:";
+            darkLabel1.AutoSize = true;
+            darkLabel1.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel1.Location = new System.Drawing.Point(3, 6);
+            darkLabel1.Name = "darkLabel1";
+            darkLabel1.Size = new System.Drawing.Size(84, 13);
+            darkLabel1.TabIndex = 1;
+            darkLabel1.Text = "Vertex number:";
             // 
             // butFindVertex
             // 
-            this.butFindVertex.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butFindVertex.Checked = false;
-            this.butFindVertex.Image = global::WadTool.Properties.Resources.general_search_16;
-            this.butFindVertex.Location = new System.Drawing.Point(159, 3);
-            this.butFindVertex.Name = "butFindVertex";
-            this.butFindVertex.Size = new System.Drawing.Size(77, 23);
-            this.butFindVertex.TabIndex = 5;
-            this.butFindVertex.Text = "Jump to";
-            this.butFindVertex.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.toolTip.SetToolTip(this.butFindVertex, "Jump to specified vertex number");
-            this.butFindVertex.Click += new System.EventHandler(this.butFindVertex_Click);
+            butFindVertex.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            butFindVertex.Checked = false;
+            butFindVertex.Image = Properties.Resources.general_search_16;
+            butFindVertex.Location = new System.Drawing.Point(159, 3);
+            butFindVertex.Name = "butFindVertex";
+            butFindVertex.Size = new System.Drawing.Size(77, 23);
+            butFindVertex.TabIndex = 5;
+            butFindVertex.Text = "Jump to";
+            butFindVertex.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            toolTip.SetToolTip(butFindVertex, "Jump to specified vertex number");
+            butFindVertex.Click += butFindVertex_Click;
             // 
             // butRemapVertex
             // 
-            this.butRemapVertex.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butRemapVertex.Checked = false;
-            this.butRemapVertex.Image = global::WadTool.Properties.Resources.replace_16;
-            this.butRemapVertex.Location = new System.Drawing.Point(240, 3);
-            this.butRemapVertex.Name = "butRemapVertex";
-            this.butRemapVertex.Size = new System.Drawing.Size(74, 23);
-            this.butRemapVertex.TabIndex = 3;
-            this.butRemapVertex.Text = "Remap";
-            this.butRemapVertex.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.toolTip.SetToolTip(this.butRemapVertex, "Remap selected vertex to specified vertex number");
-            this.butRemapVertex.Click += new System.EventHandler(this.butRemapVertex_Click);
+            butRemapVertex.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            butRemapVertex.Checked = false;
+            butRemapVertex.Image = Properties.Resources.replace_16;
+            butRemapVertex.Location = new System.Drawing.Point(240, 3);
+            butRemapVertex.Name = "butRemapVertex";
+            butRemapVertex.Size = new System.Drawing.Size(74, 23);
+            butRemapVertex.TabIndex = 3;
+            butRemapVertex.Text = "Remap";
+            butRemapVertex.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            toolTip.SetToolTip(butRemapVertex, "Remap selected vertex to specified vertex number");
+            butRemapVertex.Click += butRemapVertex_Click;
             // 
             // tabVertexShadesAndNormals
             // 
-            this.tabVertexShadesAndNormals.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.tabVertexShadesAndNormals.Controls.Add(this.butApplyShadesToAllVertices);
-            this.tabVertexShadesAndNormals.Controls.Add(this.panelColor);
-            this.tabVertexShadesAndNormals.Controls.Add(this.butRecalcNormalsAvg);
-            this.tabVertexShadesAndNormals.Controls.Add(this.darkLabel7);
-            this.tabVertexShadesAndNormals.Controls.Add(this.darkLabel10);
-            this.tabVertexShadesAndNormals.Controls.Add(this.butRecalcNormals);
-            this.tabVertexShadesAndNormals.Location = new System.Drawing.Point(4, 4);
-            this.tabVertexShadesAndNormals.Name = "tabVertexShadesAndNormals";
-            this.tabVertexShadesAndNormals.Padding = new System.Windows.Forms.Padding(3);
-            this.tabVertexShadesAndNormals.Size = new System.Drawing.Size(316, 58);
-            this.tabVertexShadesAndNormals.TabIndex = 3;
-            this.tabVertexShadesAndNormals.Text = "Normals & shades";
+            tabVertexShadesAndNormals.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            tabVertexShadesAndNormals.Controls.Add(butApplyShadesToAllVertices);
+            tabVertexShadesAndNormals.Controls.Add(panelColor);
+            tabVertexShadesAndNormals.Controls.Add(butRecalcNormalsAvg);
+            tabVertexShadesAndNormals.Controls.Add(darkLabel7);
+            tabVertexShadesAndNormals.Controls.Add(darkLabel10);
+            tabVertexShadesAndNormals.Controls.Add(butRecalcNormals);
+            tabVertexShadesAndNormals.Location = new System.Drawing.Point(4, 4);
+            tabVertexShadesAndNormals.Name = "tabVertexShadesAndNormals";
+            tabVertexShadesAndNormals.Padding = new System.Windows.Forms.Padding(3);
+            tabVertexShadesAndNormals.Size = new System.Drawing.Size(316, 58);
+            tabVertexShadesAndNormals.TabIndex = 3;
+            tabVertexShadesAndNormals.Text = "Normals & shades";
             // 
             // butApplyShadesToAllVertices
             // 
-            this.butApplyShadesToAllVertices.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butApplyShadesToAllVertices.Checked = false;
-            this.butApplyShadesToAllVertices.Location = new System.Drawing.Point(220, 32);
-            this.butApplyShadesToAllVertices.Name = "butApplyShadesToAllVertices";
-            this.butApplyShadesToAllVertices.Size = new System.Drawing.Size(94, 23);
-            this.butApplyShadesToAllVertices.TabIndex = 18;
-            this.butApplyShadesToAllVertices.Text = "Apply to all";
-            this.toolTip.SetToolTip(this.butApplyShadesToAllVertices, "Apply specified vertex shade to all vertices");
-            this.butApplyShadesToAllVertices.Click += new System.EventHandler(this.butApplyShadesToAllVertices_Click);
+            butApplyShadesToAllVertices.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            butApplyShadesToAllVertices.Checked = false;
+            butApplyShadesToAllVertices.Location = new System.Drawing.Point(220, 32);
+            butApplyShadesToAllVertices.Name = "butApplyShadesToAllVertices";
+            butApplyShadesToAllVertices.Size = new System.Drawing.Size(94, 23);
+            butApplyShadesToAllVertices.TabIndex = 18;
+            butApplyShadesToAllVertices.Text = "Apply to all";
+            toolTip.SetToolTip(butApplyShadesToAllVertices, "Apply specified vertex shade to all vertices");
+            butApplyShadesToAllVertices.Click += butApplyShadesToAllVertices_Click;
             // 
             // panelColor
             // 
-            this.panelColor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelColor.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.panelColor.Location = new System.Drawing.Point(120, 32);
-            this.panelColor.Name = "panelColor";
-            this.panelColor.Size = new System.Drawing.Size(94, 23);
-            this.panelColor.TabIndex = 16;
-            this.panelColor.Tag = "";
-            this.toolTip.SetToolTip(this.panelColor, "Vertex shade (color) to apply");
-            this.panelColor.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelColor_MouseDown);
+            panelColor.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            panelColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            panelColor.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            panelColor.Location = new System.Drawing.Point(120, 32);
+            panelColor.Name = "panelColor";
+            panelColor.Size = new System.Drawing.Size(94, 23);
+            panelColor.TabIndex = 16;
+            panelColor.Tag = "";
+            toolTip.SetToolTip(panelColor, "Vertex shade (color) to apply");
+            panelColor.MouseDown += panelColor_MouseDown;
             // 
             // butRecalcNormalsAvg
             // 
-            this.butRecalcNormalsAvg.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butRecalcNormalsAvg.Checked = false;
-            this.butRecalcNormalsAvg.Location = new System.Drawing.Point(220, 3);
-            this.butRecalcNormalsAvg.Name = "butRecalcNormalsAvg";
-            this.butRecalcNormalsAvg.Size = new System.Drawing.Size(94, 23);
-            this.butRecalcNormalsAvg.TabIndex = 23;
-            this.butRecalcNormalsAvg.Text = "Averaged";
-            this.toolTip.SetToolTip(this.butRecalcNormalsAvg, "Averaged normals recalculation is more rough and straighforward way,\r\nbut still m" +
-        "ay be useful in some cases.");
-            this.butRecalcNormalsAvg.Click += new System.EventHandler(this.butRecalcNormalsAvg_Click);
+            butRecalcNormalsAvg.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            butRecalcNormalsAvg.Checked = false;
+            butRecalcNormalsAvg.Location = new System.Drawing.Point(220, 3);
+            butRecalcNormalsAvg.Name = "butRecalcNormalsAvg";
+            butRecalcNormalsAvg.Size = new System.Drawing.Size(94, 23);
+            butRecalcNormalsAvg.TabIndex = 23;
+            butRecalcNormalsAvg.Text = "Averaged";
+            toolTip.SetToolTip(butRecalcNormalsAvg, "Averaged normals recalculation is more rough and straighforward way,\r\nbut still may be useful in some cases.");
+            butRecalcNormalsAvg.Click += butRecalcNormalsAvg_Click;
             // 
             // darkLabel7
             // 
-            this.darkLabel7.AutoSize = true;
-            this.darkLabel7.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel7.Location = new System.Drawing.Point(3, 35);
-            this.darkLabel7.Name = "darkLabel7";
-            this.darkLabel7.Size = new System.Drawing.Size(110, 13);
-            this.darkLabel7.TabIndex = 21;
-            this.darkLabel7.Text = "Vertex shade (color):";
+            darkLabel7.AutoSize = true;
+            darkLabel7.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel7.Location = new System.Drawing.Point(3, 35);
+            darkLabel7.Name = "darkLabel7";
+            darkLabel7.Size = new System.Drawing.Size(110, 13);
+            darkLabel7.TabIndex = 21;
+            darkLabel7.Text = "Vertex shade (color):";
             // 
             // darkLabel10
             // 
-            this.darkLabel10.AutoSize = true;
-            this.darkLabel10.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel10.Location = new System.Drawing.Point(3, 8);
-            this.darkLabel10.Name = "darkLabel10";
-            this.darkLabel10.Size = new System.Drawing.Size(112, 13);
-            this.darkLabel10.TabIndex = 22;
-            this.darkLabel10.Text = "Recalculate normals:";
+            darkLabel10.AutoSize = true;
+            darkLabel10.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel10.Location = new System.Drawing.Point(3, 8);
+            darkLabel10.Name = "darkLabel10";
+            darkLabel10.Size = new System.Drawing.Size(112, 13);
+            darkLabel10.TabIndex = 22;
+            darkLabel10.Text = "Recalculate normals:";
             // 
             // butRecalcNormals
             // 
-            this.butRecalcNormals.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butRecalcNormals.Checked = false;
-            this.butRecalcNormals.Location = new System.Drawing.Point(120, 3);
-            this.butRecalcNormals.Name = "butRecalcNormals";
-            this.butRecalcNormals.Size = new System.Drawing.Size(94, 23);
-            this.butRecalcNormals.TabIndex = 20;
-            this.butRecalcNormals.Text = "Weighted";
-            this.toolTip.SetToolTip(this.butRecalcNormals, "Weighted normals recalculation gives better results\r\nbecause it takes angles betw" +
-        "een different faces in consideration.");
-            this.butRecalcNormals.Click += new System.EventHandler(this.butRecalcNormals_Click);
+            butRecalcNormals.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            butRecalcNormals.Checked = false;
+            butRecalcNormals.Location = new System.Drawing.Point(120, 3);
+            butRecalcNormals.Name = "butRecalcNormals";
+            butRecalcNormals.Size = new System.Drawing.Size(94, 23);
+            butRecalcNormals.TabIndex = 20;
+            butRecalcNormals.Text = "Weighted";
+            toolTip.SetToolTip(butRecalcNormals, "Weighted normals recalculation gives better results\r\nbecause it takes angles between different faces in consideration.");
+            butRecalcNormals.Click += butRecalcNormals_Click;
             // 
             // tabVertexEffects
             // 
-            this.tabVertexEffects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.tabVertexEffects.Controls.Add(this.butPreview);
-            this.tabVertexEffects.Controls.Add(this.butConvertFromShades);
-            this.tabVertexEffects.Controls.Add(this.nudMove);
-            this.tabVertexEffects.Controls.Add(this.darkLabel5);
-            this.tabVertexEffects.Controls.Add(this.nudGlow);
-            this.tabVertexEffects.Controls.Add(this.darkLabel4);
-            this.tabVertexEffects.Controls.Add(this.butApplyToAllVertices);
-            this.tabVertexEffects.Location = new System.Drawing.Point(4, 4);
-            this.tabVertexEffects.Name = "tabVertexEffects";
-            this.tabVertexEffects.Padding = new System.Windows.Forms.Padding(3);
-            this.tabVertexEffects.Size = new System.Drawing.Size(316, 58);
-            this.tabVertexEffects.TabIndex = 2;
-            this.tabVertexEffects.Text = "Vertex effects";
+            tabVertexEffects.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            tabVertexEffects.Controls.Add(butPreview);
+            tabVertexEffects.Controls.Add(butConvertFromShades);
+            tabVertexEffects.Controls.Add(nudMove);
+            tabVertexEffects.Controls.Add(darkLabel5);
+            tabVertexEffects.Controls.Add(nudGlow);
+            tabVertexEffects.Controls.Add(darkLabel4);
+            tabVertexEffects.Controls.Add(butApplyToAllVertices);
+            tabVertexEffects.Location = new System.Drawing.Point(4, 4);
+            tabVertexEffects.Name = "tabVertexEffects";
+            tabVertexEffects.Padding = new System.Windows.Forms.Padding(3);
+            tabVertexEffects.Size = new System.Drawing.Size(316, 58);
+            tabVertexEffects.TabIndex = 2;
+            tabVertexEffects.Text = "Vertex effects";
             // 
             // butPreview
             // 
-            this.butPreview.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.butPreview.Checked = false;
-            this.butPreview.Image = global::WadTool.Properties.Resources.play_16;
-            this.butPreview.Location = new System.Drawing.Point(222, 3);
-            this.butPreview.Name = "butPreview";
-            this.butPreview.Size = new System.Drawing.Size(92, 23);
-            this.butPreview.TabIndex = 21;
-            this.butPreview.Tag = "";
-            this.butPreview.Text = "Preview";
-            this.butPreview.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.toolTip.SetToolTip(this.butPreview, "Preview all effects");
-            this.butPreview.Click += new System.EventHandler(this.butPreview_Click);
+            butPreview.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            butPreview.Checked = false;
+            butPreview.Image = Properties.Resources.play_16;
+            butPreview.Location = new System.Drawing.Point(222, 3);
+            butPreview.Name = "butPreview";
+            butPreview.Size = new System.Drawing.Size(92, 23);
+            butPreview.TabIndex = 21;
+            butPreview.Tag = "";
+            butPreview.Text = "Preview";
+            butPreview.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            toolTip.SetToolTip(butPreview, "Preview all effects");
+            butPreview.Click += butPreview_Click;
             // 
             // butConvertFromShades
             // 
-            this.butConvertFromShades.Checked = false;
-            this.butConvertFromShades.Location = new System.Drawing.Point(4, 32);
-            this.butConvertFromShades.Name = "butConvertFromShades";
-            this.butConvertFromShades.Size = new System.Drawing.Size(212, 23);
-            this.butConvertFromShades.TabIndex = 20;
-            this.butConvertFromShades.Text = "Convert from shades";
-            this.toolTip.SetToolTip(this.butConvertFromShades, "Convert vertex effects from legacy workflow involving vertex shades.");
-            this.butConvertFromShades.Click += new System.EventHandler(this.butConvertFromShades_Click);
+            butConvertFromShades.Checked = false;
+            butConvertFromShades.Location = new System.Drawing.Point(4, 32);
+            butConvertFromShades.Name = "butConvertFromShades";
+            butConvertFromShades.Size = new System.Drawing.Size(212, 23);
+            butConvertFromShades.TabIndex = 20;
+            butConvertFromShades.Text = "Convert from shades";
+            toolTip.SetToolTip(butConvertFromShades, "Convert vertex effects from legacy workflow involving vertex shades.");
+            butConvertFromShades.Click += butConvertFromShades_Click;
             // 
             // nudMove
             // 
-            this.nudMove.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.nudMove.IncrementAlternate = new decimal(new int[] {
-            50,
-            0,
-            0,
-            65536});
-            this.nudMove.Location = new System.Drawing.Point(151, 3);
-            this.nudMove.LoopValues = false;
-            this.nudMove.Maximum = new decimal(new int[] {
-            63,
-            0,
-            0,
-            0});
-            this.nudMove.Name = "nudMove";
-            this.nudMove.Size = new System.Drawing.Size(65, 23);
-            this.nudMove.TabIndex = 14;
-            this.toolTip.SetToolTip(this.nudMove, "For legacy engines, any value above 0 results in constant movement only for merge" +
-        "d statics.\r\nIn such case, movement strength is derived from room effect strength" +
-        ".\r\n");
+            nudMove.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudMove.IncrementAlternate = new decimal(new int[] { 50, 0, 0, 65536 });
+            nudMove.Location = new System.Drawing.Point(151, 3);
+            nudMove.LoopValues = false;
+            nudMove.Maximum = new decimal(new int[] { 63, 0, 0, 0 });
+            nudMove.Name = "nudMove";
+            nudMove.Size = new System.Drawing.Size(65, 23);
+            nudMove.TabIndex = 14;
+            toolTip.SetToolTip(nudMove, "For legacy engines, any value above 0 results in constant movement only for merged statics.\r\nIn such case, movement strength is derived from room effect strength.\r\n");
             // 
             // darkLabel5
             // 
-            this.darkLabel5.AutoSize = true;
-            this.darkLabel5.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel5.Location = new System.Drawing.Point(109, 6);
-            this.darkLabel5.Name = "darkLabel5";
-            this.darkLabel5.Size = new System.Drawing.Size(38, 13);
-            this.darkLabel5.TabIndex = 13;
-            this.darkLabel5.Text = "Move:";
+            darkLabel5.AutoSize = true;
+            darkLabel5.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel5.Location = new System.Drawing.Point(109, 6);
+            darkLabel5.Name = "darkLabel5";
+            darkLabel5.Size = new System.Drawing.Size(38, 13);
+            darkLabel5.TabIndex = 13;
+            darkLabel5.Text = "Move:";
             // 
             // nudGlow
             // 
-            this.nudGlow.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.nudGlow.IncrementAlternate = new decimal(new int[] {
-            50,
-            0,
-            0,
-            65536});
-            this.nudGlow.Location = new System.Drawing.Point(40, 3);
-            this.nudGlow.LoopValues = false;
-            this.nudGlow.Maximum = new decimal(new int[] {
-            63,
-            0,
-            0,
-            0});
-            this.nudGlow.Name = "nudGlow";
-            this.nudGlow.Size = new System.Drawing.Size(65, 23);
-            this.nudGlow.TabIndex = 12;
-            this.toolTip.SetToolTip(this.nudGlow, "For legacy engines, any value above 0 results in constant glow only for merged st" +
-        "atics.\r\nIn such case, glow strength is derived from room effect strength.");
+            nudGlow.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudGlow.IncrementAlternate = new decimal(new int[] { 50, 0, 0, 65536 });
+            nudGlow.Location = new System.Drawing.Point(40, 3);
+            nudGlow.LoopValues = false;
+            nudGlow.Maximum = new decimal(new int[] { 63, 0, 0, 0 });
+            nudGlow.Name = "nudGlow";
+            nudGlow.Size = new System.Drawing.Size(65, 23);
+            nudGlow.TabIndex = 12;
+            toolTip.SetToolTip(nudGlow, "For legacy engines, any value above 0 results in constant glow only for merged statics.\r\nIn such case, glow strength is derived from room effect strength.");
             // 
             // darkLabel4
             // 
-            this.darkLabel4.AutoSize = true;
-            this.darkLabel4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel4.Location = new System.Drawing.Point(1, 6);
-            this.darkLabel4.Name = "darkLabel4";
-            this.darkLabel4.Size = new System.Drawing.Size(37, 13);
-            this.darkLabel4.TabIndex = 11;
-            this.darkLabel4.Text = "Glow:";
+            darkLabel4.AutoSize = true;
+            darkLabel4.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel4.Location = new System.Drawing.Point(1, 6);
+            darkLabel4.Name = "darkLabel4";
+            darkLabel4.Size = new System.Drawing.Size(37, 13);
+            darkLabel4.TabIndex = 11;
+            darkLabel4.Text = "Glow:";
             // 
             // butApplyToAllVertices
             // 
-            this.butApplyToAllVertices.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.butApplyToAllVertices.Checked = false;
-            this.butApplyToAllVertices.Location = new System.Drawing.Point(222, 32);
-            this.butApplyToAllVertices.Name = "butApplyToAllVertices";
-            this.butApplyToAllVertices.Size = new System.Drawing.Size(92, 23);
-            this.butApplyToAllVertices.TabIndex = 10;
-            this.butApplyToAllVertices.Text = "Apply to all";
-            this.toolTip.SetToolTip(this.butApplyToAllVertices, "Apply specified vertex attributes to all faces");
-            this.butApplyToAllVertices.Click += new System.EventHandler(this.butApplyToAllVertices_Click);
+            butApplyToAllVertices.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            butApplyToAllVertices.Checked = false;
+            butApplyToAllVertices.Location = new System.Drawing.Point(222, 32);
+            butApplyToAllVertices.Name = "butApplyToAllVertices";
+            butApplyToAllVertices.Size = new System.Drawing.Size(92, 23);
+            butApplyToAllVertices.TabIndex = 10;
+            butApplyToAllVertices.Text = "Apply to all";
+            toolTip.SetToolTip(butApplyToAllVertices, "Apply specified vertex attributes to all faces");
+            butApplyToAllVertices.Click += butApplyToAllVertices_Click;
+            // 
+            // tabVertexWeights
+            // 
+            tabVertexWeights.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            tabVertexWeights.Controls.Add(butApplyWeightsToAllVertices);
+            tabVertexWeights.Controls.Add(nudWeightIndex4);
+            tabVertexWeights.Controls.Add(nudWeightIndex3);
+            tabVertexWeights.Controls.Add(nudWeightIndex2);
+            tabVertexWeights.Controls.Add(nudWeightIndex1);
+            tabVertexWeights.Controls.Add(nudWeightValue4);
+            tabVertexWeights.Controls.Add(nudWeightValue3);
+            tabVertexWeights.Controls.Add(nudWeightValue2);
+            tabVertexWeights.Controls.Add(nudWeightValue1);
+            tabVertexWeights.Controls.Add(darkLabel12);
+            tabVertexWeights.Controls.Add(darkLabel11);
+            tabVertexWeights.Location = new System.Drawing.Point(4, 4);
+            tabVertexWeights.Name = "tabVertexWeights";
+            tabVertexWeights.Padding = new System.Windows.Forms.Padding(3);
+            tabVertexWeights.Size = new System.Drawing.Size(316, 58);
+            tabVertexWeights.TabIndex = 5;
+            tabVertexWeights.Text = "Vertex weights";
+            // 
+            // butApplyWeightsToAllVertices
+            // 
+            butApplyWeightsToAllVertices.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butApplyWeightsToAllVertices.Checked = false;
+            butApplyWeightsToAllVertices.Location = new System.Drawing.Point(284, 3);
+            butApplyWeightsToAllVertices.Name = "butApplyWeightsToAllVertices";
+            butApplyWeightsToAllVertices.Size = new System.Drawing.Size(30, 52);
+            butApplyWeightsToAllVertices.TabIndex = 34;
+            butApplyWeightsToAllVertices.Text = "Fill";
+            toolTip.SetToolTip(butApplyWeightsToAllVertices, "Apply current weights to all vertices");
+            butApplyWeightsToAllVertices.Click += butApplyWeightsToAllVertices_Click;
+            // 
+            // nudWeightIndex4
+            // 
+            nudWeightIndex4.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            nudWeightIndex4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudWeightIndex4.IncrementAlternate = new decimal(new int[] { 1, 0, 0, 0 });
+            nudWeightIndex4.Location = new System.Drawing.Point(223, 3);
+            nudWeightIndex4.LoopValues = false;
+            nudWeightIndex4.Maximum = new decimal(new int[] { 63, 0, 0, 0 });
+            nudWeightIndex4.Name = "nudWeightIndex4";
+            nudWeightIndex4.Size = new System.Drawing.Size(56, 23);
+            nudWeightIndex4.TabIndex = 33;
+            toolTip.SetToolTip(nudWeightIndex4, "Bone index");
+            // 
+            // nudWeightIndex3
+            // 
+            nudWeightIndex3.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            nudWeightIndex3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudWeightIndex3.IncrementAlternate = new decimal(new int[] { 1, 0, 0, 0 });
+            nudWeightIndex3.Location = new System.Drawing.Point(162, 3);
+            nudWeightIndex3.LoopValues = false;
+            nudWeightIndex3.Maximum = new decimal(new int[] { 63, 0, 0, 0 });
+            nudWeightIndex3.Name = "nudWeightIndex3";
+            nudWeightIndex3.Size = new System.Drawing.Size(56, 23);
+            nudWeightIndex3.TabIndex = 32;
+            toolTip.SetToolTip(nudWeightIndex3, "Bone index");
+            // 
+            // nudWeightIndex2
+            // 
+            nudWeightIndex2.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            nudWeightIndex2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudWeightIndex2.IncrementAlternate = new decimal(new int[] { 1, 0, 0, 0 });
+            nudWeightIndex2.Location = new System.Drawing.Point(101, 3);
+            nudWeightIndex2.LoopValues = false;
+            nudWeightIndex2.Maximum = new decimal(new int[] { 63, 0, 0, 0 });
+            nudWeightIndex2.Name = "nudWeightIndex2";
+            nudWeightIndex2.Size = new System.Drawing.Size(56, 23);
+            nudWeightIndex2.TabIndex = 31;
+            toolTip.SetToolTip(nudWeightIndex2, "Bone index");
+            // 
+            // nudWeightIndex1
+            // 
+            nudWeightIndex1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            nudWeightIndex1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudWeightIndex1.IncrementAlternate = new decimal(new int[] { 1, 0, 0, 0 });
+            nudWeightIndex1.Location = new System.Drawing.Point(40, 3);
+            nudWeightIndex1.LoopValues = false;
+            nudWeightIndex1.Maximum = new decimal(new int[] { 63, 0, 0, 0 });
+            nudWeightIndex1.Name = "nudWeightIndex1";
+            nudWeightIndex1.Size = new System.Drawing.Size(56, 23);
+            nudWeightIndex1.TabIndex = 30;
+            toolTip.SetToolTip(nudWeightIndex1, "Bone index");
+            // 
+            // nudWeightValue4
+            // 
+            nudWeightValue4.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            nudWeightValue4.DecimalPlaces = 4;
+            nudWeightValue4.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudWeightValue4.Increment = new decimal(new int[] { 1, 0, 0, 196608 });
+            nudWeightValue4.IncrementAlternate = new decimal(new int[] { 5, 0, 0, 196608 });
+            nudWeightValue4.Location = new System.Drawing.Point(223, 32);
+            nudWeightValue4.LoopValues = false;
+            nudWeightValue4.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudWeightValue4.Name = "nudWeightValue4";
+            nudWeightValue4.Size = new System.Drawing.Size(56, 23);
+            nudWeightValue4.TabIndex = 29;
+            toolTip.SetToolTip(nudWeightValue4, "Bone weight");
+            // 
+            // nudWeightValue3
+            // 
+            nudWeightValue3.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            nudWeightValue3.DecimalPlaces = 4;
+            nudWeightValue3.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudWeightValue3.Increment = new decimal(new int[] { 1, 0, 0, 196608 });
+            nudWeightValue3.IncrementAlternate = new decimal(new int[] { 5, 0, 0, 196608 });
+            nudWeightValue3.Location = new System.Drawing.Point(162, 32);
+            nudWeightValue3.LoopValues = false;
+            nudWeightValue3.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudWeightValue3.Name = "nudWeightValue3";
+            nudWeightValue3.Size = new System.Drawing.Size(56, 23);
+            nudWeightValue3.TabIndex = 28;
+            toolTip.SetToolTip(nudWeightValue3, "Bone weight");
+            // 
+            // nudWeightValue2
+            // 
+            nudWeightValue2.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            nudWeightValue2.DecimalPlaces = 4;
+            nudWeightValue2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudWeightValue2.Increment = new decimal(new int[] { 1, 0, 0, 196608 });
+            nudWeightValue2.IncrementAlternate = new decimal(new int[] { 5, 0, 0, 196608 });
+            nudWeightValue2.Location = new System.Drawing.Point(101, 32);
+            nudWeightValue2.LoopValues = false;
+            nudWeightValue2.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudWeightValue2.Name = "nudWeightValue2";
+            nudWeightValue2.Size = new System.Drawing.Size(56, 23);
+            nudWeightValue2.TabIndex = 27;
+            toolTip.SetToolTip(nudWeightValue2, "Bone weight");
+            // 
+            // nudWeightValue1
+            // 
+            nudWeightValue1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            nudWeightValue1.DecimalPlaces = 4;
+            nudWeightValue1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudWeightValue1.Increment = new decimal(new int[] { 1, 0, 0, 196608 });
+            nudWeightValue1.IncrementAlternate = new decimal(new int[] { 5, 0, 0, 196608 });
+            nudWeightValue1.Location = new System.Drawing.Point(40, 32);
+            nudWeightValue1.LoopValues = false;
+            nudWeightValue1.Maximum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudWeightValue1.Name = "nudWeightValue1";
+            nudWeightValue1.Size = new System.Drawing.Size(56, 23);
+            nudWeightValue1.TabIndex = 26;
+            toolTip.SetToolTip(nudWeightValue1, "Bone weight");
+            // 
+            // darkLabel12
+            // 
+            darkLabel12.AutoSize = true;
+            darkLabel12.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel12.Location = new System.Drawing.Point(1, 35);
+            darkLabel12.Name = "darkLabel12";
+            darkLabel12.Size = new System.Drawing.Size(38, 13);
+            darkLabel12.TabIndex = 16;
+            darkLabel12.Text = "Value:";
+            // 
+            // darkLabel11
+            // 
+            darkLabel11.AutoSize = true;
+            darkLabel11.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel11.Location = new System.Drawing.Point(1, 6);
+            darkLabel11.Name = "darkLabel11";
+            darkLabel11.Size = new System.Drawing.Size(36, 13);
+            darkLabel11.TabIndex = 15;
+            darkLabel11.Text = "Bone:";
             // 
             // tabSphere
             // 
-            this.tabSphere.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.tabSphere.Controls.Add(this.darkLabel6);
-            this.tabSphere.Controls.Add(this.darkLabel3);
-            this.tabSphere.Controls.Add(this.butResetSphere);
-            this.tabSphere.Controls.Add(this.nudSphereRadius);
-            this.tabSphere.Controls.Add(this.darkLabel9);
-            this.tabSphere.Controls.Add(this.nudSphereZ);
-            this.tabSphere.Controls.Add(this.nudSphereY);
-            this.tabSphere.Controls.Add(this.nudSphereX);
-            this.tabSphere.Controls.Add(this.darkLabel8);
-            this.tabSphere.Location = new System.Drawing.Point(4, 4);
-            this.tabSphere.Name = "tabSphere";
-            this.tabSphere.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSphere.Size = new System.Drawing.Size(316, 58);
-            this.tabSphere.TabIndex = 4;
-            this.tabSphere.Text = "Sphere";
+            tabSphere.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            tabSphere.Controls.Add(darkLabel6);
+            tabSphere.Controls.Add(darkLabel3);
+            tabSphere.Controls.Add(butResetSphere);
+            tabSphere.Controls.Add(nudSphereRadius);
+            tabSphere.Controls.Add(darkLabel9);
+            tabSphere.Controls.Add(nudSphereZ);
+            tabSphere.Controls.Add(nudSphereY);
+            tabSphere.Controls.Add(nudSphereX);
+            tabSphere.Controls.Add(darkLabel8);
+            tabSphere.Location = new System.Drawing.Point(4, 4);
+            tabSphere.Name = "tabSphere";
+            tabSphere.Padding = new System.Windows.Forms.Padding(3);
+            tabSphere.Size = new System.Drawing.Size(316, 58);
+            tabSphere.TabIndex = 4;
+            tabSphere.Text = "Sphere";
             // 
             // darkLabel6
             // 
-            this.darkLabel6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.darkLabel6.AutoSize = true;
-            this.darkLabel6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel6.Location = new System.Drawing.Point(212, 6);
-            this.darkLabel6.Name = "darkLabel6";
-            this.darkLabel6.Size = new System.Drawing.Size(16, 13);
-            this.darkLabel6.TabIndex = 23;
-            this.darkLabel6.Text = "Z:";
+            darkLabel6.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            darkLabel6.AutoSize = true;
+            darkLabel6.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel6.Location = new System.Drawing.Point(212, 6);
+            darkLabel6.Name = "darkLabel6";
+            darkLabel6.Size = new System.Drawing.Size(16, 13);
+            darkLabel6.TabIndex = 23;
+            darkLabel6.Text = "Z:";
             // 
             // darkLabel3
             // 
-            this.darkLabel3.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.darkLabel3.AutoSize = true;
-            this.darkLabel3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel3.Location = new System.Drawing.Point(107, 6);
-            this.darkLabel3.Name = "darkLabel3";
-            this.darkLabel3.Size = new System.Drawing.Size(15, 13);
-            this.darkLabel3.TabIndex = 22;
-            this.darkLabel3.Text = "Y:";
+            darkLabel3.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            darkLabel3.AutoSize = true;
+            darkLabel3.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel3.Location = new System.Drawing.Point(107, 6);
+            darkLabel3.Name = "darkLabel3";
+            darkLabel3.Size = new System.Drawing.Size(15, 13);
+            darkLabel3.TabIndex = 22;
+            darkLabel3.Text = "Y:";
             // 
             // butResetSphere
             // 
-            this.butResetSphere.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.butResetSphere.Checked = false;
-            this.butResetSphere.Location = new System.Drawing.Point(117, 32);
-            this.butResetSphere.Name = "butResetSphere";
-            this.butResetSphere.Size = new System.Drawing.Size(197, 23);
-            this.butResetSphere.TabIndex = 9;
-            this.butResetSphere.Text = "Recalculate";
-            this.toolTip.SetToolTip(this.butResetSphere, "Calculates average sphere which encloses the mesh");
-            this.butResetSphere.Click += new System.EventHandler(this.butResetSphere_Click);
+            butResetSphere.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            butResetSphere.Checked = false;
+            butResetSphere.Location = new System.Drawing.Point(117, 32);
+            butResetSphere.Name = "butResetSphere";
+            butResetSphere.Size = new System.Drawing.Size(197, 23);
+            butResetSphere.TabIndex = 9;
+            butResetSphere.Text = "Recalculate";
+            toolTip.SetToolTip(butResetSphere, "Calculates average sphere which encloses the mesh");
+            butResetSphere.Click += butResetSphere_Click;
             // 
             // nudSphereRadius
             // 
-            this.nudSphereRadius.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.nudSphereRadius.IncrementAlternate = new decimal(new int[] {
-            50,
-            0,
-            0,
-            65536});
-            this.nudSphereRadius.Location = new System.Drawing.Point(50, 32);
-            this.nudSphereRadius.LoopValues = false;
-            this.nudSphereRadius.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-            this.nudSphereRadius.Name = "nudSphereRadius";
-            this.nudSphereRadius.Size = new System.Drawing.Size(61, 23);
-            this.nudSphereRadius.TabIndex = 15;
-            this.nudSphereRadius.ValueChanged += new System.EventHandler(this.nudSphereData_ValueChanged);
-            this.nudSphereRadius.Validated += new System.EventHandler(this.nudSphereData_ValueChanged);
+            nudSphereRadius.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudSphereRadius.IncrementAlternate = new decimal(new int[] { 50, 0, 0, 65536 });
+            nudSphereRadius.Location = new System.Drawing.Point(50, 32);
+            nudSphereRadius.LoopValues = false;
+            nudSphereRadius.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            nudSphereRadius.Name = "nudSphereRadius";
+            nudSphereRadius.Size = new System.Drawing.Size(61, 23);
+            nudSphereRadius.TabIndex = 15;
+            nudSphereRadius.ValueChanged += nudSphereData_ValueChanged;
+            nudSphereRadius.Validated += nudSphereData_ValueChanged;
             // 
             // darkLabel9
             // 
-            this.darkLabel9.AutoSize = true;
-            this.darkLabel9.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel9.Location = new System.Drawing.Point(3, 35);
-            this.darkLabel9.Name = "darkLabel9";
-            this.darkLabel9.Size = new System.Drawing.Size(45, 13);
-            this.darkLabel9.TabIndex = 14;
-            this.darkLabel9.Text = "Radius:";
+            darkLabel9.AutoSize = true;
+            darkLabel9.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel9.Location = new System.Drawing.Point(3, 35);
+            darkLabel9.Name = "darkLabel9";
+            darkLabel9.Size = new System.Drawing.Size(45, 13);
+            darkLabel9.TabIndex = 14;
+            darkLabel9.Text = "Radius:";
             // 
             // nudSphereZ
             // 
-            this.nudSphereZ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.nudSphereZ.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.nudSphereZ.IncrementAlternate = new decimal(new int[] {
-            50,
-            0,
-            0,
-            65536});
-            this.nudSphereZ.Location = new System.Drawing.Point(229, 3);
-            this.nudSphereZ.LoopValues = false;
-            this.nudSphereZ.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-            this.nudSphereZ.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-            this.nudSphereZ.Name = "nudSphereZ";
-            this.nudSphereZ.Size = new System.Drawing.Size(85, 23);
-            this.nudSphereZ.TabIndex = 13;
-            this.nudSphereZ.ValueChanged += new System.EventHandler(this.nudSphereData_ValueChanged);
-            this.nudSphereZ.Validated += new System.EventHandler(this.nudSphereData_ValueChanged);
+            nudSphereZ.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            nudSphereZ.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudSphereZ.IncrementAlternate = new decimal(new int[] { 50, 0, 0, 65536 });
+            nudSphereZ.Location = new System.Drawing.Point(229, 3);
+            nudSphereZ.LoopValues = false;
+            nudSphereZ.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            nudSphereZ.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
+            nudSphereZ.Name = "nudSphereZ";
+            nudSphereZ.Size = new System.Drawing.Size(85, 23);
+            nudSphereZ.TabIndex = 13;
+            nudSphereZ.ValueChanged += nudSphereData_ValueChanged;
+            nudSphereZ.Validated += nudSphereData_ValueChanged;
             // 
             // nudSphereY
             // 
-            this.nudSphereY.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.nudSphereY.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.nudSphereY.IncrementAlternate = new decimal(new int[] {
-            50,
-            0,
-            0,
-            65536});
-            this.nudSphereY.Location = new System.Drawing.Point(124, 3);
-            this.nudSphereY.LoopValues = false;
-            this.nudSphereY.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-            this.nudSphereY.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-            this.nudSphereY.Name = "nudSphereY";
-            this.nudSphereY.Size = new System.Drawing.Size(85, 23);
-            this.nudSphereY.TabIndex = 11;
-            this.nudSphereY.ValueChanged += new System.EventHandler(this.nudSphereData_ValueChanged);
-            this.nudSphereY.Validated += new System.EventHandler(this.nudSphereData_ValueChanged);
+            nudSphereY.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            nudSphereY.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudSphereY.IncrementAlternate = new decimal(new int[] { 50, 0, 0, 65536 });
+            nudSphereY.Location = new System.Drawing.Point(124, 3);
+            nudSphereY.LoopValues = false;
+            nudSphereY.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            nudSphereY.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
+            nudSphereY.Name = "nudSphereY";
+            nudSphereY.Size = new System.Drawing.Size(85, 23);
+            nudSphereY.TabIndex = 11;
+            nudSphereY.ValueChanged += nudSphereData_ValueChanged;
+            nudSphereY.Validated += nudSphereData_ValueChanged;
             // 
             // nudSphereX
             // 
-            this.nudSphereX.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.nudSphereX.IncrementAlternate = new decimal(new int[] {
-            50,
-            0,
-            0,
-            65536});
-            this.nudSphereX.Location = new System.Drawing.Point(20, 3);
-            this.nudSphereX.LoopValues = false;
-            this.nudSphereX.Maximum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-            this.nudSphereX.Minimum = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            -2147483648});
-            this.nudSphereX.Name = "nudSphereX";
-            this.nudSphereX.Size = new System.Drawing.Size(85, 23);
-            this.nudSphereX.TabIndex = 21;
-            this.nudSphereX.ValueChanged += new System.EventHandler(this.nudSphereData_ValueChanged);
-            this.nudSphereX.Validated += new System.EventHandler(this.nudSphereData_ValueChanged);
+            nudSphereX.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            nudSphereX.IncrementAlternate = new decimal(new int[] { 50, 0, 0, 65536 });
+            nudSphereX.Location = new System.Drawing.Point(20, 3);
+            nudSphereX.LoopValues = false;
+            nudSphereX.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            nudSphereX.Minimum = new decimal(new int[] { 1000000, 0, 0, int.MinValue });
+            nudSphereX.Name = "nudSphereX";
+            nudSphereX.Size = new System.Drawing.Size(85, 23);
+            nudSphereX.TabIndex = 21;
+            nudSphereX.ValueChanged += nudSphereData_ValueChanged;
+            nudSphereX.Validated += nudSphereData_ValueChanged;
             // 
             // darkLabel8
             // 
-            this.darkLabel8.AutoSize = true;
-            this.darkLabel8.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel8.Location = new System.Drawing.Point(4, 6);
-            this.darkLabel8.Name = "darkLabel8";
-            this.darkLabel8.Size = new System.Drawing.Size(16, 13);
-            this.darkLabel8.TabIndex = 8;
-            this.darkLabel8.Text = "X:";
+            darkLabel8.AutoSize = true;
+            darkLabel8.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel8.Location = new System.Drawing.Point(4, 6);
+            darkLabel8.Name = "darkLabel8";
+            darkLabel8.Size = new System.Drawing.Size(16, 13);
+            darkLabel8.TabIndex = 8;
+            darkLabel8.Text = "X:";
             // 
             // cbExtra
             // 
-            this.cbExtra.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbExtra.Location = new System.Drawing.Point(207, 32);
-            this.cbExtra.Name = "cbExtra";
-            this.cbExtra.Size = new System.Drawing.Size(112, 17);
-            this.cbExtra.TabIndex = 4;
-            this.cbExtra.Text = "All numbers";
-            this.toolTip.SetToolTip(this.cbExtra, "Show additional screen information");
-            this.cbExtra.CheckedChanged += new System.EventHandler(this.cbVertexNumbers_CheckedChanged);
+            cbExtra.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            cbExtra.Location = new System.Drawing.Point(208, 32);
+            cbExtra.Name = "cbExtra";
+            cbExtra.Size = new System.Drawing.Size(112, 17);
+            cbExtra.TabIndex = 4;
+            cbExtra.Text = "All numbers";
+            toolTip.SetToolTip(cbExtra, "Show additional screen information");
+            cbExtra.CheckedChanged += cbVertexNumbers_CheckedChanged;
             // 
             // cbEditingMode
             // 
-            this.cbEditingMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbEditingMode.FormattingEnabled = true;
-            this.cbEditingMode.Location = new System.Drawing.Point(45, 29);
-            this.cbEditingMode.Name = "cbEditingMode";
-            this.cbEditingMode.Size = new System.Drawing.Size(155, 23);
-            this.cbEditingMode.TabIndex = 9;
-            this.toolTip.SetToolTip(this.cbEditingMode, "Mesh editor operation mode");
-            this.cbEditingMode.SelectedIndexChanged += new System.EventHandler(this.cbEditingMode_SelectedIndexChanged);
+            cbEditingMode.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            cbEditingMode.FormattingEnabled = true;
+            cbEditingMode.Location = new System.Drawing.Point(45, 29);
+            cbEditingMode.Name = "cbEditingMode";
+            cbEditingMode.Size = new System.Drawing.Size(156, 23);
+            cbEditingMode.TabIndex = 9;
+            toolTip.SetToolTip(cbEditingMode, "Mesh editor operation mode");
+            cbEditingMode.SelectedIndexChanged += cbEditingMode_SelectedIndexChanged;
             // 
             // darkLabel2
             // 
-            this.darkLabel2.AutoSize = true;
-            this.darkLabel2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel2.Location = new System.Drawing.Point(4, 32);
-            this.darkLabel2.Name = "darkLabel2";
-            this.darkLabel2.Size = new System.Drawing.Size(40, 13);
-            this.darkLabel2.TabIndex = 8;
-            this.darkLabel2.Text = "Mode:";
+            darkLabel2.AutoSize = true;
+            darkLabel2.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel2.Location = new System.Drawing.Point(4, 32);
+            darkLabel2.Name = "darkLabel2";
+            darkLabel2.Size = new System.Drawing.Size(40, 13);
+            darkLabel2.TabIndex = 8;
+            darkLabel2.Text = "Mode:";
             // 
             // darkSectionPanel2
             // 
-            this.darkSectionPanel2.Controls.Add(this.lstMeshes);
-            this.darkSectionPanel2.Controls.Add(this.panelSearchTree);
-            this.darkSectionPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.darkSectionPanel2.Location = new System.Drawing.Point(0, 0);
-            this.darkSectionPanel2.Name = "darkSectionPanel2";
-            this.darkSectionPanel2.SectionHeader = "Mesh list";
-            this.darkSectionPanel2.Size = new System.Drawing.Size(259, 565);
-            this.darkSectionPanel2.TabIndex = 55;
+            darkSectionPanel2.Controls.Add(lstMeshes);
+            darkSectionPanel2.Controls.Add(panelSearchTree);
+            darkSectionPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            darkSectionPanel2.Location = new System.Drawing.Point(0, 0);
+            darkSectionPanel2.Name = "darkSectionPanel2";
+            darkSectionPanel2.SectionHeader = "Mesh list";
+            darkSectionPanel2.Size = new System.Drawing.Size(259, 565);
+            darkSectionPanel2.TabIndex = 55;
             // 
             // panelSearchTree
             // 
-            this.panelSearchTree.Controls.Add(this.butSearchMeshes);
-            this.panelSearchTree.Controls.Add(this.tbSearchMeshes);
-            this.panelSearchTree.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelSearchTree.Location = new System.Drawing.Point(1, 25);
-            this.panelSearchTree.Name = "panelSearchTree";
-            this.panelSearchTree.Size = new System.Drawing.Size(257, 30);
-            this.panelSearchTree.TabIndex = 2;
+            panelSearchTree.Controls.Add(butSearchMeshes);
+            panelSearchTree.Controls.Add(tbSearchMeshes);
+            panelSearchTree.Dock = System.Windows.Forms.DockStyle.Top;
+            panelSearchTree.Location = new System.Drawing.Point(1, 25);
+            panelSearchTree.Name = "panelSearchTree";
+            panelSearchTree.Size = new System.Drawing.Size(257, 30);
+            panelSearchTree.TabIndex = 2;
             // 
             // butSearchMeshes
             // 
-            this.butSearchMeshes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butSearchMeshes.Checked = false;
-            this.butSearchMeshes.Image = global::WadTool.Properties.Resources.general_search_16;
-            this.butSearchMeshes.Location = new System.Drawing.Point(233, 3);
-            this.butSearchMeshes.Name = "butSearchMeshes";
-            this.butSearchMeshes.Selectable = false;
-            this.butSearchMeshes.Size = new System.Drawing.Size(24, 23);
-            this.butSearchMeshes.TabIndex = 10;
-            this.toolTip.SetToolTip(this.butSearchMeshes, "Search for meshes by name");
-            this.butSearchMeshes.Click += new System.EventHandler(this.butSearchMeshes_Click);
+            butSearchMeshes.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            butSearchMeshes.Checked = false;
+            butSearchMeshes.Image = Properties.Resources.general_search_16;
+            butSearchMeshes.Location = new System.Drawing.Point(233, 3);
+            butSearchMeshes.Name = "butSearchMeshes";
+            butSearchMeshes.Selectable = false;
+            butSearchMeshes.Size = new System.Drawing.Size(24, 23);
+            butSearchMeshes.TabIndex = 10;
+            toolTip.SetToolTip(butSearchMeshes, "Search for meshes by name");
+            butSearchMeshes.Click += butSearchMeshes_Click;
             // 
             // tbSearchMeshes
             // 
-            this.tbSearchMeshes.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.tbSearchMeshes.Location = new System.Drawing.Point(0, 3);
-            this.tbSearchMeshes.Name = "tbSearchMeshes";
-            this.tbSearchMeshes.Size = new System.Drawing.Size(233, 23);
-            this.tbSearchMeshes.TabIndex = 11;
-            this.tbSearchMeshes.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbSearchMeshes_KeyDown);
+            tbSearchMeshes.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            tbSearchMeshes.Location = new System.Drawing.Point(0, 3);
+            tbSearchMeshes.Name = "tbSearchMeshes";
+            tbSearchMeshes.Size = new System.Drawing.Size(233, 23);
+            tbSearchMeshes.TabIndex = 11;
+            tbSearchMeshes.KeyDown += tbSearchMeshes_KeyDown;
             // 
             // panelMain
             // 
-            this.panelMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelMain.Controls.Add(this.panelCenter);
-            this.panelMain.Controls.Add(this.panelEditing);
-            this.panelMain.Controls.Add(this.panelTree);
-            this.panelMain.Location = new System.Drawing.Point(6, 4);
-            this.panelMain.Name = "panelMain";
-            this.panelMain.Size = new System.Drawing.Size(973, 565);
-            this.panelMain.TabIndex = 56;
+            panelMain.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            panelMain.Controls.Add(panelCenter);
+            panelMain.Controls.Add(panelEditing);
+            panelMain.Controls.Add(panelTree);
+            panelMain.Location = new System.Drawing.Point(6, 4);
+            panelMain.Name = "panelMain";
+            panelMain.Size = new System.Drawing.Size(990, 565);
+            panelMain.TabIndex = 56;
             // 
             // panelCenter
             // 
-            this.panelCenter.Controls.Add(this.topBar);
-            this.panelCenter.Controls.Add(this.panelMesh);
-            this.panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelCenter.Location = new System.Drawing.Point(263, 0);
-            this.panelCenter.Name = "panelCenter";
-            this.panelCenter.Padding = new System.Windows.Forms.Padding(0, 1, 0, 1);
-            this.panelCenter.Size = new System.Drawing.Size(380, 565);
-            this.panelCenter.TabIndex = 57;
+            panelCenter.Controls.Add(panelMesh);
+            panelCenter.Controls.Add(topBar);
+            panelCenter.Dock = System.Windows.Forms.DockStyle.Fill;
+            panelCenter.Location = new System.Drawing.Point(263, 0);
+            panelCenter.Name = "panelCenter";
+            panelCenter.Padding = new System.Windows.Forms.Padding(0, 1, 0, 1);
+            panelCenter.Size = new System.Drawing.Size(396, 565);
+            panelCenter.TabIndex = 57;
             // 
             // topBar
             // 
-            this.topBar.AutoSize = false;
-            this.topBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.topBar.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.topBar.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.topBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.butTbUndo,
-            this.butTbRedo,
-            this.toolStripSeparator3,
-            this.butTbImport,
-            this.butTbExport,
-            this.butTbRename,
-            this.toolStripSeparator1,
-            this.butTbResetCamera,
-            this.butTbAxis,
-            this.butTbWireframe,
-            this.butTbAlpha,
-            this.butTbBilinear,
-            this.toolStripSeparator2,
-            this.butTbFindSelectedTexture,
-            this.toolStripSeparator4,
-            this.butTbRotateTexture,
-            this.butTbMirrorTexture});
-            this.topBar.Location = new System.Drawing.Point(0, 1);
-            this.topBar.Name = "topBar";
-            this.topBar.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.topBar.Size = new System.Drawing.Size(380, 28);
-            this.topBar.TabIndex = 59;
-            this.topBar.Text = "darkToolStrip1";
+            topBar.AutoSize = false;
+            topBar.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            topBar.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            topBar.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            topBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { butTbUndo, butTbRedo, toolStripSeparator3, butTbImport, butTbExport, butTbRename, toolStripSeparator1, butTbResetCamera, butTbAxis, butTbWireframe, butTbAlpha, butTbBilinear, toolStripSeparator2, butTbFindSelectedTexture, toolStripSeparator4, butTbRotateTexture, butTbMirrorTexture, toolStripSeparator5, butHide });
+            topBar.Location = new System.Drawing.Point(0, 1);
+            topBar.Name = "topBar";
+            topBar.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
+            topBar.Size = new System.Drawing.Size(396, 28);
+            topBar.TabIndex = 59;
+            topBar.Text = "darkToolStrip1";
             // 
             // butTbUndo
             // 
-            this.butTbUndo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.butTbUndo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.butTbUndo.Enabled = false;
-            this.butTbUndo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.butTbUndo.Image = global::WadTool.Properties.Resources.general_undo_16;
-            this.butTbUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.butTbUndo.Name = "butTbUndo";
-            this.butTbUndo.Size = new System.Drawing.Size(23, 25);
-            this.butTbUndo.ToolTipText = "Undo (Ctrl+Z)";
-            this.butTbUndo.Click += new System.EventHandler(this.butTbUndo_Click);
+            butTbUndo.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butTbUndo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butTbUndo.Enabled = false;
+            butTbUndo.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butTbUndo.Image = Properties.Resources.general_undo_16;
+            butTbUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butTbUndo.Name = "butTbUndo";
+            butTbUndo.Size = new System.Drawing.Size(23, 25);
+            butTbUndo.ToolTipText = "Undo (Ctrl+Z)";
+            butTbUndo.Click += butTbUndo_Click;
             // 
             // butTbRedo
             // 
-            this.butTbRedo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.butTbRedo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.butTbRedo.Enabled = false;
-            this.butTbRedo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.butTbRedo.Image = global::WadTool.Properties.Resources.general_redo_16;
-            this.butTbRedo.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.butTbRedo.Name = "butTbRedo";
-            this.butTbRedo.Size = new System.Drawing.Size(23, 25);
-            this.butTbRedo.ToolTipText = "Redo (Ctrl+Y)";
-            this.butTbRedo.Click += new System.EventHandler(this.butTbRedo_Click);
+            butTbRedo.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butTbRedo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butTbRedo.Enabled = false;
+            butTbRedo.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butTbRedo.Image = Properties.Resources.general_redo_16;
+            butTbRedo.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butTbRedo.Name = "butTbRedo";
+            butTbRedo.Size = new System.Drawing.Size(23, 25);
+            butTbRedo.ToolTipText = "Redo (Ctrl+Y)";
+            butTbRedo.Click += butTbRedo_Click;
             // 
             // toolStripSeparator3
             // 
-            this.toolStripSeparator3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.toolStripSeparator3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripSeparator3.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 28);
+            toolStripSeparator3.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            toolStripSeparator3.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripSeparator3.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new System.Drawing.Size(6, 28);
             // 
             // butTbImport
             // 
-            this.butTbImport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.butTbImport.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.butTbImport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.butTbImport.Image = global::WadTool.Properties.Resources.general_Import_16;
-            this.butTbImport.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.butTbImport.Name = "butTbImport";
-            this.butTbImport.Size = new System.Drawing.Size(23, 25);
-            this.butTbImport.ToolTipText = "Import mesh";
-            this.butTbImport.Click += new System.EventHandler(this.butTbImport_Click);
+            butTbImport.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butTbImport.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butTbImport.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butTbImport.Image = Properties.Resources.general_Import_16;
+            butTbImport.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butTbImport.Name = "butTbImport";
+            butTbImport.Size = new System.Drawing.Size(23, 25);
+            butTbImport.ToolTipText = "Import mesh";
+            butTbImport.Click += butTbImport_Click;
             // 
             // butTbExport
             // 
-            this.butTbExport.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.butTbExport.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.butTbExport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.butTbExport.Image = global::WadTool.Properties.Resources.general_Export_16;
-            this.butTbExport.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.butTbExport.Name = "butTbExport";
-            this.butTbExport.Size = new System.Drawing.Size(23, 25);
-            this.butTbExport.ToolTipText = "Export mesh";
-            this.butTbExport.Click += new System.EventHandler(this.butTbExport_Click);
+            butTbExport.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butTbExport.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butTbExport.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butTbExport.Image = Properties.Resources.general_Export_16;
+            butTbExport.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butTbExport.Name = "butTbExport";
+            butTbExport.Size = new System.Drawing.Size(23, 25);
+            butTbExport.ToolTipText = "Export mesh";
+            butTbExport.Click += butTbExport_Click;
             // 
             // butTbRename
             // 
-            this.butTbRename.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.butTbRename.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.butTbRename.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.butTbRename.Image = global::WadTool.Properties.Resources.edit_16;
-            this.butTbRename.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.butTbRename.Name = "butTbRename";
-            this.butTbRename.Size = new System.Drawing.Size(23, 25);
-            this.butTbRename.ToolTipText = "Rename mesh";
-            this.butTbRename.Click += new System.EventHandler(this.butTbRename_Click);
+            butTbRename.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butTbRename.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butTbRename.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butTbRename.Image = Properties.Resources.edit_16;
+            butTbRename.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butTbRename.Name = "butTbRename";
+            butTbRename.Size = new System.Drawing.Size(23, 25);
+            butTbRename.ToolTipText = "Rename mesh";
+            butTbRename.Click += butTbRename_Click;
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.toolStripSeparator1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripSeparator1.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 28);
+            toolStripSeparator1.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            toolStripSeparator1.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripSeparator1.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(6, 28);
             // 
             // butTbResetCamera
             // 
-            this.butTbResetCamera.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.butTbResetCamera.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.butTbResetCamera.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.butTbResetCamera.Image = global::WadTool.Properties.Resources.general_target_16;
-            this.butTbResetCamera.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.butTbResetCamera.Name = "butTbResetCamera";
-            this.butTbResetCamera.Size = new System.Drawing.Size(23, 25);
-            this.butTbResetCamera.ToolTipText = "Reset camera";
-            this.butTbResetCamera.Click += new System.EventHandler(this.butTbResetCamera_Click);
+            butTbResetCamera.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butTbResetCamera.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butTbResetCamera.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butTbResetCamera.Image = Properties.Resources.general_target_16;
+            butTbResetCamera.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butTbResetCamera.Name = "butTbResetCamera";
+            butTbResetCamera.Size = new System.Drawing.Size(23, 25);
+            butTbResetCamera.ToolTipText = "Reset camera";
+            butTbResetCamera.Click += butTbResetCamera_Click;
             // 
             // butTbAxis
             // 
-            this.butTbAxis.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.butTbAxis.CheckOnClick = true;
-            this.butTbAxis.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.butTbAxis.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.butTbAxis.Image = global::WadTool.Properties.Resources.general_axis_16;
-            this.butTbAxis.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.butTbAxis.Name = "butTbAxis";
-            this.butTbAxis.Size = new System.Drawing.Size(23, 25);
-            this.butTbAxis.ToolTipText = "Draw grid and axis";
-            this.butTbAxis.CheckedChanged += new System.EventHandler(this.butTbAxis_Click);
+            butTbAxis.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butTbAxis.CheckOnClick = true;
+            butTbAxis.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butTbAxis.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butTbAxis.Image = Properties.Resources.general_axis_16;
+            butTbAxis.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butTbAxis.Name = "butTbAxis";
+            butTbAxis.Size = new System.Drawing.Size(23, 25);
+            butTbAxis.ToolTipText = "Draw grid and axis";
+            butTbAxis.CheckedChanged += butTbAxis_Click;
             // 
             // butTbWireframe
             // 
-            this.butTbWireframe.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.butTbWireframe.CheckOnClick = true;
-            this.butTbWireframe.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.butTbWireframe.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.butTbWireframe.Image = global::WadTool.Properties.Resources.wireframe_16;
-            this.butTbWireframe.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.butTbWireframe.Name = "butTbWireframe";
-            this.butTbWireframe.Size = new System.Drawing.Size(23, 25);
-            this.butTbWireframe.ToolTipText = "Draw in wireframe mode";
-            this.butTbWireframe.CheckedChanged += new System.EventHandler(this.butTbWireframe_Click);
+            butTbWireframe.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butTbWireframe.CheckOnClick = true;
+            butTbWireframe.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butTbWireframe.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butTbWireframe.Image = Properties.Resources.wireframe_16;
+            butTbWireframe.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butTbWireframe.Name = "butTbWireframe";
+            butTbWireframe.Size = new System.Drawing.Size(23, 25);
+            butTbWireframe.ToolTipText = "Draw in wireframe mode";
+            butTbWireframe.CheckedChanged += butTbWireframe_Click;
             // 
             // butTbAlpha
             // 
-            this.butTbAlpha.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.butTbAlpha.CheckOnClick = true;
-            this.butTbAlpha.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.butTbAlpha.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.butTbAlpha.Image = global::WadTool.Properties.Resources.actions_AlphaTest_16;
-            this.butTbAlpha.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.butTbAlpha.Name = "butTbAlpha";
-            this.butTbAlpha.Size = new System.Drawing.Size(23, 25);
-            this.butTbAlpha.ToolTipText = "Toggle transparency";
-            this.butTbAlpha.CheckedChanged += new System.EventHandler(this.butTbAlpha_Click);
+            butTbAlpha.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butTbAlpha.CheckOnClick = true;
+            butTbAlpha.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butTbAlpha.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butTbAlpha.Image = Properties.Resources.actions_AlphaTest_16;
+            butTbAlpha.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butTbAlpha.Name = "butTbAlpha";
+            butTbAlpha.Size = new System.Drawing.Size(23, 25);
+            butTbAlpha.ToolTipText = "Toggle transparency";
+            butTbAlpha.CheckedChanged += butTbAlpha_Click;
             // 
             // butTbBilinear
             // 
-            this.butTbBilinear.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.butTbBilinear.CheckOnClick = true;
-            this.butTbBilinear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.butTbBilinear.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.butTbBilinear.Image = global::WadTool.Properties.Resources.general_blur_16;
-            this.butTbBilinear.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.butTbBilinear.Name = "butTbBilinear";
-            this.butTbBilinear.Size = new System.Drawing.Size(23, 25);
-            this.butTbBilinear.ToolTipText = "Toggle bilinear filter";
-            this.butTbBilinear.CheckedChanged += new System.EventHandler(this.butTbBilinear_Click);
+            butTbBilinear.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butTbBilinear.CheckOnClick = true;
+            butTbBilinear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butTbBilinear.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butTbBilinear.Image = Properties.Resources.general_blur_16;
+            butTbBilinear.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butTbBilinear.Name = "butTbBilinear";
+            butTbBilinear.Size = new System.Drawing.Size(23, 25);
+            butTbBilinear.ToolTipText = "Toggle bilinear filter";
+            butTbBilinear.CheckedChanged += butTbBilinear_Click;
             // 
             // toolStripSeparator2
             // 
-            this.toolStripSeparator2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.toolStripSeparator2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripSeparator2.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 28);
+            toolStripSeparator2.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            toolStripSeparator2.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripSeparator2.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new System.Drawing.Size(6, 28);
             // 
             // butTbFindSelectedTexture
             // 
-            this.butTbFindSelectedTexture.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.butTbFindSelectedTexture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.butTbFindSelectedTexture.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.butTbFindSelectedTexture.Image = global::WadTool.Properties.Resources.general_search_texture_16;
-            this.butTbFindSelectedTexture.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.butTbFindSelectedTexture.Name = "butTbFindSelectedTexture";
-            this.butTbFindSelectedTexture.Size = new System.Drawing.Size(23, 25);
-            this.butTbFindSelectedTexture.ToolTipText = "Search for mesh by selected texture area (Ctrl+F)";
-            this.butTbFindSelectedTexture.Click += new System.EventHandler(this.butTbFindSelectedTexture_Click);
+            butTbFindSelectedTexture.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butTbFindSelectedTexture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butTbFindSelectedTexture.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butTbFindSelectedTexture.Image = Properties.Resources.general_search_texture_16;
+            butTbFindSelectedTexture.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butTbFindSelectedTexture.Name = "butTbFindSelectedTexture";
+            butTbFindSelectedTexture.Size = new System.Drawing.Size(23, 25);
+            butTbFindSelectedTexture.ToolTipText = "Search for mesh by selected texture area (Ctrl+F)";
+            butTbFindSelectedTexture.Click += butTbFindSelectedTexture_Click;
             // 
             // toolStripSeparator4
             // 
-            this.toolStripSeparator4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.toolStripSeparator4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripSeparator4.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 28);
+            toolStripSeparator4.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            toolStripSeparator4.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripSeparator4.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new System.Drawing.Size(6, 28);
             // 
             // butTbRotateTexture
             // 
-            this.butTbRotateTexture.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.butTbRotateTexture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.butTbRotateTexture.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.butTbRotateTexture.Image = global::WadTool.Properties.Resources.general_Rotate;
-            this.butTbRotateTexture.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.butTbRotateTexture.Name = "butTbRotateTexture";
-            this.butTbRotateTexture.Size = new System.Drawing.Size(23, 25);
-            this.butTbRotateTexture.ToolTipText = "Rotate current texture (~)";
-            this.butTbRotateTexture.Click += new System.EventHandler(this.butTbRotateTexture_Click);
+            butTbRotateTexture.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butTbRotateTexture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butTbRotateTexture.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butTbRotateTexture.Image = Properties.Resources.general_Rotate;
+            butTbRotateTexture.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butTbRotateTexture.Name = "butTbRotateTexture";
+            butTbRotateTexture.Size = new System.Drawing.Size(23, 25);
+            butTbRotateTexture.ToolTipText = "Rotate current texture (~)";
+            butTbRotateTexture.Click += butTbRotateTexture_Click;
             // 
             // butTbMirrorTexture
             // 
-            this.butTbMirrorTexture.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.butTbMirrorTexture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.butTbMirrorTexture.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.butTbMirrorTexture.Image = global::WadTool.Properties.Resources.general_Mirror;
-            this.butTbMirrorTexture.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.butTbMirrorTexture.Name = "butTbMirrorTexture";
-            this.butTbMirrorTexture.Size = new System.Drawing.Size(23, 25);
-            this.butTbMirrorTexture.ToolTipText = "Mirror current texture (Shift+~)";
-            this.butTbMirrorTexture.Click += new System.EventHandler(this.butTbMirrorTexture_Click);
+            butTbMirrorTexture.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butTbMirrorTexture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butTbMirrorTexture.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butTbMirrorTexture.Image = Properties.Resources.general_Mirror;
+            butTbMirrorTexture.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butTbMirrorTexture.Name = "butTbMirrorTexture";
+            butTbMirrorTexture.Size = new System.Drawing.Size(23, 25);
+            butTbMirrorTexture.ToolTipText = "Mirror current texture (Shift+~)";
+            butTbMirrorTexture.Click += butTbMirrorTexture_Click;
+            // 
+            // toolStripSeparator5
+            // 
+            toolStripSeparator5.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            toolStripSeparator5.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripSeparator5.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+            toolStripSeparator5.Name = "toolStripSeparator5";
+            toolStripSeparator5.Size = new System.Drawing.Size(6, 28);
+            // 
+            // butHide
+            // 
+            butHide.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butHide.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butHide.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butHide.Image = (System.Drawing.Image)resources.GetObject("butHide.Image");
+            butHide.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butHide.Name = "butHide";
+            butHide.Size = new System.Drawing.Size(23, 25);
+            butHide.Text = "Hide mesh if skinned mesh is used for the parent object";
+            butHide.Click += butHide_Click;
             // 
             // panelEditing
             // 
-            this.panelEditing.Controls.Add(this.panelTexturing);
-            this.panelEditing.Controls.Add(this.panelEditingTools);
-            this.panelEditing.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelEditing.Location = new System.Drawing.Point(643, 0);
-            this.panelEditing.Name = "panelEditing";
-            this.panelEditing.Padding = new System.Windows.Forms.Padding(4, 0, 0, 0);
-            this.panelEditing.Size = new System.Drawing.Size(330, 565);
-            this.panelEditing.TabIndex = 56;
+            panelEditing.Controls.Add(panelTexturing);
+            panelEditing.Controls.Add(panelEditingTools);
+            panelEditing.Dock = System.Windows.Forms.DockStyle.Right;
+            panelEditing.Location = new System.Drawing.Point(659, 0);
+            panelEditing.Name = "panelEditing";
+            panelEditing.Padding = new System.Windows.Forms.Padding(4, 0, 0, 0);
+            panelEditing.Size = new System.Drawing.Size(331, 565);
+            panelEditing.TabIndex = 56;
             // 
             // panelTexturing
             // 
-            this.panelTexturing.Controls.Add(this.panelTextureMap);
-            this.panelTexturing.Controls.Add(this.panelTexturingTools);
-            this.panelTexturing.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelTexturing.Location = new System.Drawing.Point(4, 0);
-            this.panelTexturing.Name = "panelTexturing";
-            this.panelTexturing.SectionHeader = "Texturing";
-            this.panelTexturing.Size = new System.Drawing.Size(326, 404);
-            this.panelTexturing.TabIndex = 0;
+            panelTexturing.Controls.Add(panelTextureMap);
+            panelTexturing.Controls.Add(panelTextureTools);
+            panelTexturing.Controls.Add(panelTexturingTools);
+            panelTexturing.Dock = System.Windows.Forms.DockStyle.Fill;
+            panelTexturing.Location = new System.Drawing.Point(4, 0);
+            panelTexturing.Name = "panelTexturing";
+            panelTexturing.SectionHeader = "Texturing";
+            panelTexturing.Size = new System.Drawing.Size(327, 404);
+            panelTexturing.TabIndex = 0;
             // 
             // panelTextureMap
             // 
-            this.panelTextureMap.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelTextureMap.Location = new System.Drawing.Point(1, 55);
-            this.panelTextureMap.Name = "panelTextureMap";
-            this.panelTextureMap.Size = new System.Drawing.Size(324, 348);
-            this.panelTextureMap.TabIndex = 0;
+            panelTextureMap.Dock = System.Windows.Forms.DockStyle.Fill;
+            panelTextureMap.Location = new System.Drawing.Point(1, 55);
+            panelTextureMap.Name = "panelTextureMap";
+            panelTextureMap.Size = new System.Drawing.Size(325, 323);
+            panelTextureMap.TabIndex = 0;
+            // 
+            // panelTextureTools
+            // 
+            panelTextureTools.Controls.Add(butMaterialEditor);
+            panelTextureTools.Controls.Add(butAnimationRanges);
+            panelTextureTools.Dock = System.Windows.Forms.DockStyle.Bottom;
+            panelTextureTools.Location = new System.Drawing.Point(1, 378);
+            panelTextureTools.Name = "panelTextureTools";
+            panelTextureTools.Size = new System.Drawing.Size(325, 25);
+            panelTextureTools.TabIndex = 12;
+            // 
+            // butMaterialEditor
+            // 
+            butMaterialEditor.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            butMaterialEditor.Checked = false;
+            butMaterialEditor.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            butMaterialEditor.Location = new System.Drawing.Point(0, 2);
+            butMaterialEditor.Name = "butMaterialEditor";
+            butMaterialEditor.Size = new System.Drawing.Size(160, 23);
+            butMaterialEditor.TabIndex = 12;
+            butMaterialEditor.Tag = "EditMaterials";
+            butMaterialEditor.Text = "Materials";
+            toolTip.SetToolTip(butMaterialEditor, "Edit materials");
+            butMaterialEditor.Click += butMaterialEditor_Click;
+            // 
+            // butAnimationRanges
+            // 
+            butAnimationRanges.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            butAnimationRanges.Checked = false;
+            butAnimationRanges.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            butAnimationRanges.Location = new System.Drawing.Point(165, 2);
+            butAnimationRanges.Name = "butAnimationRanges";
+            butAnimationRanges.Size = new System.Drawing.Size(160, 23);
+            butAnimationRanges.TabIndex = 11;
+            butAnimationRanges.Tag = "EditAnimationRanges";
+            butAnimationRanges.Text = "Animated textures";
+            toolTip.SetToolTip(butAnimationRanges, "Edit animated texture sets");
+            butAnimationRanges.Click += butAnimationRanges_Click;
             // 
             // panelTexturingTools
             // 
-            this.panelTexturingTools.Controls.Add(this.butReplaceTexture);
-            this.panelTexturingTools.Controls.Add(this.butAllTextures);
-            this.panelTexturingTools.Controls.Add(this.butExportTexture);
-            this.panelTexturingTools.Controls.Add(this.butAddTexture);
-            this.panelTexturingTools.Controls.Add(this.butDeleteTexture);
-            this.panelTexturingTools.Controls.Add(this.comboCurrentTexture);
-            this.panelTexturingTools.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelTexturingTools.Location = new System.Drawing.Point(1, 25);
-            this.panelTexturingTools.Name = "panelTexturingTools";
-            this.panelTexturingTools.Size = new System.Drawing.Size(324, 30);
-            this.panelTexturingTools.TabIndex = 1;
-            // 
-            // butReplaceTexture
-            // 
-            this.butReplaceTexture.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butReplaceTexture.Checked = false;
-            this.butReplaceTexture.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.butReplaceTexture.Image = global::WadTool.Properties.Resources.actions_refresh_16;
-            this.butReplaceTexture.Location = new System.Drawing.Point(244, 3);
-            this.butReplaceTexture.Name = "butReplaceTexture";
-            this.butReplaceTexture.Size = new System.Drawing.Size(24, 23);
-            this.butReplaceTexture.TabIndex = 9;
-            this.butReplaceTexture.Tag = "";
-            this.toolTip.SetToolTip(this.butReplaceTexture, "Replace current texture");
-            this.butReplaceTexture.Click += new System.EventHandler(this.butReplaceTexture_Click);
-            // 
-            // butAllTextures
-            // 
-            this.butAllTextures.Checked = false;
-            this.butAllTextures.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.butAllTextures.Image = global::WadTool.Properties.Resources.actions_DrawAllRooms_16;
-            this.butAllTextures.Location = new System.Drawing.Point(1, 3);
-            this.butAllTextures.Name = "butAllTextures";
-            this.butAllTextures.Size = new System.Drawing.Size(24, 23);
-            this.butAllTextures.TabIndex = 8;
-            this.butAllTextures.Tag = "";
-            this.toolTip.SetToolTip(this.butAllTextures, "List all textures from wad");
-            this.butAllTextures.Click += new System.EventHandler(this.butAllTextures_Click);
-            // 
-            // butExportTexture
-            // 
-            this.butExportTexture.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butExportTexture.Checked = false;
-            this.butExportTexture.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.butExportTexture.Image = global::WadTool.Properties.Resources.general_Export_16;
-            this.butExportTexture.Location = new System.Drawing.Point(272, 3);
-            this.butExportTexture.Name = "butExportTexture";
-            this.butExportTexture.Size = new System.Drawing.Size(24, 23);
-            this.butExportTexture.TabIndex = 7;
-            this.butExportTexture.Tag = "";
-            this.toolTip.SetToolTip(this.butExportTexture, "Export current texture to file");
-            this.butExportTexture.Click += new System.EventHandler(this.butExportTexture_Click);
-            // 
-            // butAddTexture
-            // 
-            this.butAddTexture.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butAddTexture.Checked = false;
-            this.butAddTexture.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.butAddTexture.Image = global::WadTool.Properties.Resources.general_plus_math_16;
-            this.butAddTexture.Location = new System.Drawing.Point(216, 3);
-            this.butAddTexture.Name = "butAddTexture";
-            this.butAddTexture.Size = new System.Drawing.Size(24, 23);
-            this.butAddTexture.TabIndex = 5;
-            this.butAddTexture.Tag = "";
-            this.toolTip.SetToolTip(this.butAddTexture, "Add new texture file");
-            this.butAddTexture.Click += new System.EventHandler(this.butAddTexture_Click);
-            // 
-            // butDeleteTexture
-            // 
-            this.butDeleteTexture.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.butDeleteTexture.Checked = false;
-            this.butDeleteTexture.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.butDeleteTexture.Image = global::WadTool.Properties.Resources.trash_16;
-            this.butDeleteTexture.Location = new System.Drawing.Point(300, 3);
-            this.butDeleteTexture.Name = "butDeleteTexture";
-            this.butDeleteTexture.Size = new System.Drawing.Size(24, 23);
-            this.butDeleteTexture.TabIndex = 6;
-            this.toolTip.SetToolTip(this.butDeleteTexture, "Delete texture");
-            this.butDeleteTexture.Click += new System.EventHandler(this.butDeleteTexture_Click);
+            panelTexturingTools.Controls.Add(comboCurrentTexture);
+            panelTexturingTools.Controls.Add(darkToolStrip1);
+            panelTexturingTools.Controls.Add(butAllTextures);
+            panelTexturingTools.Dock = System.Windows.Forms.DockStyle.Top;
+            panelTexturingTools.Location = new System.Drawing.Point(1, 25);
+            panelTexturingTools.Name = "panelTexturingTools";
+            panelTexturingTools.Size = new System.Drawing.Size(325, 30);
+            panelTexturingTools.TabIndex = 1;
             // 
             // comboCurrentTexture
             // 
-            this.comboCurrentTexture.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboCurrentTexture.Location = new System.Drawing.Point(30, 3);
-            this.comboCurrentTexture.Name = "comboCurrentTexture";
-            this.comboCurrentTexture.Size = new System.Drawing.Size(181, 23);
-            this.comboCurrentTexture.TabIndex = 4;
-            this.comboCurrentTexture.SelectedValueChanged += new System.EventHandler(this.comboCurrentTexture_SelectedValueChanged);
+            comboCurrentTexture.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            comboCurrentTexture.Location = new System.Drawing.Point(30, 3);
+            comboCurrentTexture.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            comboCurrentTexture.Name = "comboCurrentTexture";
+            comboCurrentTexture.Size = new System.Drawing.Size(183, 23);
+            comboCurrentTexture.TabIndex = 4;
+            comboCurrentTexture.SelectedValueChanged += comboCurrentTexture_SelectedValueChanged;
+            // 
+            // darkToolStrip1
+            // 
+            darkToolStrip1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            darkToolStrip1.AutoSize = false;
+            darkToolStrip1.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            darkToolStrip1.CanOverflow = false;
+            darkToolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            darkToolStrip1.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkToolStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            darkToolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { butAddTexture, butReplaceTexture, butExportTexture, butDeleteTexture });
+            darkToolStrip1.Location = new System.Drawing.Point(213, 1);
+            darkToolStrip1.Name = "darkToolStrip1";
+            darkToolStrip1.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
+            darkToolStrip1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            darkToolStrip1.Size = new System.Drawing.Size(111, 28);
+            darkToolStrip1.TabIndex = 9;
+            darkToolStrip1.Text = "darkToolStrip1";
+            // 
+            // butAddTexture
+            // 
+            butAddTexture.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butAddTexture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butAddTexture.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addEmbeddedTextureToolStripMenuItem, addExternalTextureToolStripMenuItem });
+            butAddTexture.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butAddTexture.Image = Properties.Resources.general_plus_math_16;
+            butAddTexture.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butAddTexture.Name = "butAddTexture";
+            butAddTexture.Size = new System.Drawing.Size(29, 25);
+            // 
+            // addEmbeddedTextureToolStripMenuItem
+            // 
+            addEmbeddedTextureToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            addEmbeddedTextureToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            addEmbeddedTextureToolStripMenuItem.Name = "addEmbeddedTextureToolStripMenuItem";
+            addEmbeddedTextureToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            addEmbeddedTextureToolStripMenuItem.Text = "Add embedded texture";
+            addEmbeddedTextureToolStripMenuItem.Click += addEmbeddedTextureToolStripMenuItem_Click;
+            // 
+            // addExternalTextureToolStripMenuItem
+            // 
+            addExternalTextureToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            addExternalTextureToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            addExternalTextureToolStripMenuItem.Name = "addExternalTextureToolStripMenuItem";
+            addExternalTextureToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
+            addExternalTextureToolStripMenuItem.Text = "Add external texture";
+            addExternalTextureToolStripMenuItem.Click += addExternalTextureToolStripMenuItem_Click;
+            // 
+            // butReplaceTexture
+            // 
+            butReplaceTexture.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butReplaceTexture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butReplaceTexture.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { replaceWithEmbeddedTextureToolStripMenuItem, replaceWithExternalTextureToolStripMenuItem });
+            butReplaceTexture.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butReplaceTexture.Image = Properties.Resources.actions_refresh_16;
+            butReplaceTexture.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butReplaceTexture.Name = "butReplaceTexture";
+            butReplaceTexture.Size = new System.Drawing.Size(29, 25);
+            // 
+            // replaceWithEmbeddedTextureToolStripMenuItem
+            // 
+            replaceWithEmbeddedTextureToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            replaceWithEmbeddedTextureToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            replaceWithEmbeddedTextureToolStripMenuItem.Name = "replaceWithEmbeddedTextureToolStripMenuItem";
+            replaceWithEmbeddedTextureToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            replaceWithEmbeddedTextureToolStripMenuItem.Text = "Replace with embedded texture";
+            replaceWithEmbeddedTextureToolStripMenuItem.Click += replaceWithEmbeddedTextureToolStripMenuItem_Click;
+            // 
+            // replaceWithExternalTextureToolStripMenuItem
+            // 
+            replaceWithExternalTextureToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            replaceWithExternalTextureToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            replaceWithExternalTextureToolStripMenuItem.Name = "replaceWithExternalTextureToolStripMenuItem";
+            replaceWithExternalTextureToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            replaceWithExternalTextureToolStripMenuItem.Text = "Replace with external texture";
+            replaceWithExternalTextureToolStripMenuItem.Click += replaceWithExternalTextureToolStripMenuItem_Click;
+            // 
+            // butExportTexture
+            // 
+            butExportTexture.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butExportTexture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butExportTexture.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butExportTexture.Image = Properties.Resources.general_Export_16;
+            butExportTexture.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butExportTexture.Name = "butExportTexture";
+            butExportTexture.Size = new System.Drawing.Size(23, 25);
+            butExportTexture.Text = "Export current texture to file";
+            butExportTexture.Click += butExportTexture_Click;
+            // 
+            // butDeleteTexture
+            // 
+            butDeleteTexture.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            butDeleteTexture.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            butDeleteTexture.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            butDeleteTexture.Image = Properties.Resources.trash_16;
+            butDeleteTexture.ImageTransparentColor = System.Drawing.Color.Magenta;
+            butDeleteTexture.Name = "butDeleteTexture";
+            butDeleteTexture.Size = new System.Drawing.Size(23, 25);
+            butDeleteTexture.Text = "Delete texture";
+            butDeleteTexture.Click += butDeleteTexture_Click;
+            // 
+            // butAllTextures
+            // 
+            butAllTextures.Checked = false;
+            butAllTextures.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            butAllTextures.Image = Properties.Resources.actions_DrawAllRooms_16;
+            butAllTextures.Location = new System.Drawing.Point(1, 3);
+            butAllTextures.Name = "butAllTextures";
+            butAllTextures.Size = new System.Drawing.Size(24, 23);
+            butAllTextures.TabIndex = 8;
+            butAllTextures.Tag = "";
+            toolTip.SetToolTip(butAllTextures, "List all textures from wad");
+            butAllTextures.Click += butAllTextures_Click;
             // 
             // panelTree
             // 
-            this.panelTree.Controls.Add(this.darkSectionPanel2);
-            this.panelTree.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panelTree.Location = new System.Drawing.Point(0, 0);
-            this.panelTree.Name = "panelTree";
-            this.panelTree.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
-            this.panelTree.Size = new System.Drawing.Size(263, 565);
-            this.panelTree.TabIndex = 0;
+            panelTree.Controls.Add(darkSectionPanel2);
+            panelTree.Dock = System.Windows.Forms.DockStyle.Left;
+            panelTree.Location = new System.Drawing.Point(0, 0);
+            panelTree.Name = "panelTree";
+            panelTree.Padding = new System.Windows.Forms.Padding(0, 0, 4, 0);
+            panelTree.Size = new System.Drawing.Size(263, 565);
+            panelTree.TabIndex = 0;
             // 
             // statusLabel
             // 
-            this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.statusLabel.AutoSize = true;
-            this.statusLabel.ForeColor = System.Drawing.Color.DarkGray;
-            this.statusLabel.Location = new System.Drawing.Point(3, 580);
-            this.statusLabel.Name = "statusLabel";
-            this.statusLabel.Size = new System.Drawing.Size(284, 13);
-            this.statusLabel.TabIndex = 57;
-            this.statusLabel.Text = "This label will contain useful info about current mesh.";
+            statusLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            statusLabel.AutoSize = true;
+            statusLabel.ForeColor = System.Drawing.Color.DarkGray;
+            statusLabel.Location = new System.Drawing.Point(3, 580);
+            statusLabel.Name = "statusLabel";
+            statusLabel.Size = new System.Drawing.Size(285, 13);
+            statusLabel.TabIndex = 57;
+            statusLabel.Text = "This label will contain useful info about current mesh.";
             // 
             // FormMeshEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(984, 605);
-            this.Controls.Add(this.panelMain);
-            this.Controls.Add(this.statusLabel);
-            this.Controls.Add(this.btCancel);
-            this.Controls.Add(this.btOk);
-            this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(1000, 640);
-            this.Name = "FormMeshEditor";
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
-            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Mesh editor";
-            this.panelEditingTools.ResumeLayout(false);
-            this.panelEditingTools.PerformLayout();
-            this.tabsModes.ResumeLayout(false);
-            this.tabFaceAttributes.ResumeLayout(false);
-            this.tabFaceAttributes.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudShineStrength)).EndInit();
-            this.tabVertexRemap.ResumeLayout(false);
-            this.tabVertexRemap.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudVertexNum)).EndInit();
-            this.tabVertexShadesAndNormals.ResumeLayout(false);
-            this.tabVertexShadesAndNormals.PerformLayout();
-            this.tabVertexEffects.ResumeLayout(false);
-            this.tabVertexEffects.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudMove)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudGlow)).EndInit();
-            this.tabSphere.ResumeLayout(false);
-            this.tabSphere.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSphereRadius)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSphereZ)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSphereY)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSphereX)).EndInit();
-            this.darkSectionPanel2.ResumeLayout(false);
-            this.panelSearchTree.ResumeLayout(false);
-            this.panelSearchTree.PerformLayout();
-            this.panelMain.ResumeLayout(false);
-            this.panelCenter.ResumeLayout(false);
-            this.topBar.ResumeLayout(false);
-            this.topBar.PerformLayout();
-            this.panelEditing.ResumeLayout(false);
-            this.panelTexturing.ResumeLayout(false);
-            this.panelTexturingTools.ResumeLayout(false);
-            this.panelTree.ResumeLayout(false);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(1001, 605);
+            Controls.Add(panelMain);
+            Controls.Add(statusLabel);
+            Controls.Add(btCancel);
+            Controls.Add(btOk);
+            MinimizeBox = false;
+            MinimumSize = new System.Drawing.Size(1000, 640);
+            Name = "FormMeshEditor";
+            ShowIcon = false;
+            ShowInTaskbar = false;
+            SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            Text = "Mesh editor";
+            panelEditingTools.ResumeLayout(false);
+            panelEditingTools.PerformLayout();
+            tabsModes.ResumeLayout(false);
+            tabFaceAttributes.ResumeLayout(false);
+            tabFaceAttributes.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudShineStrength).EndInit();
+            tabVertexRemap.ResumeLayout(false);
+            tabVertexRemap.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudVertexNum).EndInit();
+            tabVertexShadesAndNormals.ResumeLayout(false);
+            tabVertexShadesAndNormals.PerformLayout();
+            tabVertexEffects.ResumeLayout(false);
+            tabVertexEffects.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudMove).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudGlow).EndInit();
+            tabVertexWeights.ResumeLayout(false);
+            tabVertexWeights.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudWeightIndex4).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudWeightIndex3).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudWeightIndex2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudWeightIndex1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudWeightValue4).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudWeightValue3).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudWeightValue2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudWeightValue1).EndInit();
+            tabSphere.ResumeLayout(false);
+            tabSphere.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudSphereRadius).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudSphereZ).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudSphereY).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudSphereX).EndInit();
+            darkSectionPanel2.ResumeLayout(false);
+            panelSearchTree.ResumeLayout(false);
+            panelSearchTree.PerformLayout();
+            panelMain.ResumeLayout(false);
+            panelCenter.ResumeLayout(false);
+            topBar.ResumeLayout(false);
+            topBar.PerformLayout();
+            panelEditing.ResumeLayout(false);
+            panelTexturing.ResumeLayout(false);
+            panelTextureTools.ResumeLayout(false);
+            panelTexturingTools.ResumeLayout(false);
+            darkToolStrip1.ResumeLayout(false);
+            darkToolStrip1.PerformLayout();
+            panelTree.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -1356,15 +1561,15 @@
         private DarkUI.Controls.DarkSectionPanel panelTexturing;
         private Controls.PanelTextureMap panelTextureMap;
         private DarkUI.Controls.DarkPanel panelTexturingTools;
-        private DarkUI.Controls.DarkButton butAddTexture;
-        private DarkUI.Controls.DarkButton butDeleteTexture;
+        private System.Windows.Forms.ToolStripDropDownButton butAddTexture;
+        private System.Windows.Forms.ToolStripButton butDeleteTexture;
         private TombLib.Controls.DarkSearchableComboBox comboCurrentTexture;
         private DarkUI.Controls.DarkCheckBox cbTexture;
         private DarkUI.Controls.DarkCheckBox cbBlend;
         private DarkUI.Controls.DarkCheckBox cbSheen;
         private DarkUI.Controls.DarkLabel darkLabel10;
         private DarkUI.Controls.DarkButton butRecalcNormalsAvg;
-        private DarkUI.Controls.DarkButton butExportTexture;
+        private System.Windows.Forms.ToolStripButton butExportTexture;
         private DarkUI.Controls.DarkNumericUpDown nudSphereRadius;
         private DarkUI.Controls.DarkButton butAllTextures;
         private DarkUI.Controls.DarkLabel darkLabel2;
@@ -1393,6 +1598,28 @@
         private System.Windows.Forms.ToolStripButton butTbFindSelectedTexture;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton butTbRename;
-        private DarkUI.Controls.DarkButton butReplaceTexture;
+        private System.Windows.Forms.ToolStripDropDownButton butReplaceTexture;
+        private System.Windows.Forms.ToolStripButton butHide;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.TabPage tabVertexWeights;
+        private DarkUI.Controls.DarkLabel darkLabel12;
+        private DarkUI.Controls.DarkLabel darkLabel11;
+        private DarkUI.Controls.DarkNumericUpDown nudWeightIndex4;
+        private DarkUI.Controls.DarkNumericUpDown nudWeightIndex3;
+        private DarkUI.Controls.DarkNumericUpDown nudWeightIndex2;
+        private DarkUI.Controls.DarkNumericUpDown nudWeightIndex1;
+        private DarkUI.Controls.DarkNumericUpDown nudWeightValue4;
+        private DarkUI.Controls.DarkNumericUpDown nudWeightValue3;
+        private DarkUI.Controls.DarkNumericUpDown nudWeightValue2;
+        private DarkUI.Controls.DarkNumericUpDown nudWeightValue1;
+		private DarkUI.Controls.DarkButton butAnimationRanges;
+        private DarkUI.Controls.DarkPanel panelTextureTools;
+        private DarkUI.Controls.DarkButton butApplyWeightsToAllVertices;
+		private DarkUI.Controls.DarkToolStrip darkToolStrip1;
+		private System.Windows.Forms.ToolStripMenuItem addEmbeddedTextureToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem addExternalTextureToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem replaceWithEmbeddedTextureToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem replaceWithExternalTextureToolStripMenuItem;
+        private DarkUI.Controls.DarkButton butMaterialEditor;
     }
 }

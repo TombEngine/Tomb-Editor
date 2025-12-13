@@ -3,7 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Windows.Forms;
+using TombLib.Forms;
 using TombLib.GeometryIO;
 using TombLib.Graphics;
 using TombLib.LevelData;
@@ -82,7 +84,9 @@ namespace TombEditor.Controls.Panel3D
                 return;
 
             // Reset internal bool for deselection
-            _noSelectionConfirm = false;
+            var distance = new Vector2(_startMousePosition.X, _startMousePosition.Y) - new Vector2(location.X, location.Y);
+            if (distance.Length() > 8.0f)
+                _noSelectionConfirm = false;
 
             bool redrawWindow = false;
 
@@ -159,6 +163,7 @@ namespace TombEditor.Controls.Panel3D
         {
             // Check if we are done with all common file tasks
             var filesToProcess = EditorActions.DragDropCommonFiles(e, FindForm());
+
             if (filesToProcess == 0)
                 return;
 
@@ -175,6 +180,7 @@ namespace TombEditor.Controls.Panel3D
                     _editor.SelectedRoom = newSectorPicking.Room;
 
                 var obj = e.Data.GetData(e.Data.GetFormats()[0]) as IWadObject;
+
                 if (obj != null)
                 {
                     PositionBasedObjectInstance instance = null;
@@ -200,8 +206,11 @@ namespace TombEditor.Controls.Panel3D
                         if (!BaseGeometryImporter.FileExtensions.Matches(file))
                             continue;
 
-                        if (!file.CheckAndWarnIfNotANSI(this))
+                        if (!file.IsANSI())
+                        {
+                            MessageBoxes.NonANSIFilePathError(FindForm());
                             continue;
+                        }
 
                         EditorActions.AddAndPlaceImportedGeometry(this, newSectorPicking.Pos, file);
                     }

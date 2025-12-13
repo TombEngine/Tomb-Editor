@@ -7,7 +7,7 @@
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <Configurations>Debug;Release</Configurations>
-    <Platforms>AnyCPU;x64;x86</Platforms>
+    <Platforms>x64;x86</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <OutputPath>..\..\Build ($(Platform))\</OutputPath>
@@ -81,10 +81,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FreeImage.Standard" Version="4.3.8" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\DarkUI\DarkUI\DarkUI.csproj" />
     <ProjectReference Include="..\TombIDE.ProjectMaster\TombIDE.ProjectMaster.csproj" />
     <ProjectReference Include="..\TombIDE.ScriptingStudio\TombIDE.ScriptingStudio.csproj" />
     <ProjectReference Include="..\TombIDE.Shared\TombIDE.Shared.csproj" />

@@ -381,7 +381,7 @@ namespace TombLib.LevelData
             });
 
             foreach (AnimatedTextureSet set in Settings.AnimatedTextureSets)
-                set.Frames.RemoveAll(frame => askIfTextureToRemove(frame.Texture));
+                set.Frames.RemoveAll(frame => askIfTextureToRemove((LevelTexture)frame.Texture));
 
             // Clean up empty texture sets as well
             Settings.AnimatedTextureSets.RemoveAll(set => set.Frames.Count == 0);

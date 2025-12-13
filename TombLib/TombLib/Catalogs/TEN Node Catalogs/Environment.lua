@@ -27,10 +27,10 @@ LevelFuncs.Engine.Node.ConstructWeatherTimedData = function(dataType, operand, n
 		value = {x1 = color.r, x2 = color.g, x3 = color.b, x4 = TEN.Flow.GetCurrentLevel().layer2.speed}
     elseif (dataType == 4) then
 		prefix = "_starfield"
-        local starCount = TEN.Flow.GetCurrentLevel().starField.starCount
-        local meteorCount = TEN.Flow.GetCurrentLevel().starField.meteorCount
-		local meteorDensity = TEN.Flow.GetCurrentLevel().starField.meteorSpawnDensity
-		local meteorVelocity = TEN.Flow.GetCurrentLevel().starField.meteorVelocity
+        local starCount = TEN.Flow.GetCurrentLevel().starfield.starCount
+        local meteorCount = TEN.Flow.GetCurrentLevel().starfield.meteorCount
+		local meteorDensity = TEN.Flow.GetCurrentLevel().starfield.meteorSpawnDensity
+		local meteorVelocity = TEN.Flow.GetCurrentLevel().starfield.meteorVelocity
 		value = {x1 = starCount, x2 = meteorCount, x3 = meteorDensity, x4 = meteorVelocity}
 	elseif (dataType == 5) then
 		prefix = "_weatherStrength"
@@ -139,10 +139,10 @@ LevelFuncs.Engine.Node.TransformWeatherTimedData = function(dataName)
 		TEN.Flow.GetCurrentLevel().layer2.color = Color(newValue1, newValue2, newValue3)
 		TEN.Flow.GetCurrentLevel().layer2.speed = newValue4
     elseif (LevelVars.Engine.WeatherData[dataName].DataType == 4) then
-        TEN.Flow.GetCurrentLevel().starField.starCount = newValue1
-        TEN.Flow.GetCurrentLevel().starField.meteorCount = newValue2
-		TEN.Flow.GetCurrentLevel().starField.meteorSpawnDensity = newValue3
-		TEN.Flow.GetCurrentLevel().starField.meteorVelocity = newValue4
+        TEN.Flow.GetCurrentLevel().starfield.starCount = newValue1
+        TEN.Flow.GetCurrentLevel().starfield.meteorCount = newValue2
+		TEN.Flow.GetCurrentLevel().starfield.meteorSpawnDensity = newValue3
+		TEN.Flow.GetCurrentLevel().starfield.meteorVelocity = newValue4
     elseif (LevelVars.Engine.WeatherData[dataName].DataType == 5) then
        TEN.Flow.GetCurrentLevel().weatherStrength = newValue1
 	elseif (LevelVars.Engine.WeatherData[dataName].DataType == 6) then
@@ -344,10 +344,12 @@ end
 -- !Name "Set weather"
 -- !Section "Environment"
 -- !Description "Sets weather conditions."
--- !Arguments "Enumeration, 25, [ None | Rain | Snow ], {0}, Weather type" "Numerical, 15, [ 0 | 1 | 2 | 0.1 ], Weather strength"
-LevelFuncs.Engine.Node.SetWeather = function(weather, strength)
+-- !Arguments "NewLine, Enumeration, 50, [ None | Rain | Snow ], {0}, Weather type" "Numerical, 30, [ 0 | 1 | 2 | 0.1 ], Weather strength"
+-- !Arguments "Boolean, 20, Clustered"
+LevelFuncs.Engine.Node.SetWeather = function(weather, strength, clustered)
     TEN.Flow.GetCurrentLevel().weather = weather
 	TEN.Flow.GetCurrentLevel().weatherStrength = strength
+	TEN.Flow.GetCurrentLevel().weatherClustering = clustered
 end
 
 -- !Name "Change weather strength over time"
@@ -371,7 +373,7 @@ end
 -- !Description "Checks if any stars or meteors are currently visible."
 -- !Conditional "True"
 LevelFuncs.Engine.Node.TestStarField = function()
-	return TEN.Flow.GetCurrentLevel().starField.starCount > 0 or TEN.Flow.GetCurrentLevel().starField.meteorCount > 0
+	return TEN.Flow.GetCurrentLevel().starfield.starCount > 0 or TEN.Flow.GetCurrentLevel().starfield.meteorCount > 0
 end
 
 -- !Name "Set starfield"
@@ -381,10 +383,10 @@ end
 -- !Arguments "Numerical, 25, [ 0 | 10 ], Meteor spawn density" "Numerical, 25, [ 0 | 40 ], Meteor velocity"
 LevelFuncs.Engine.Node.SetStarField = function(stars, meteors, meteorSpawnDensity, meteorVel)
 	
-	TEN.Flow.GetCurrentLevel().starField.starCount = stars
-    TEN.Flow.GetCurrentLevel().starField.meteorCount = meteors
-	TEN.Flow.GetCurrentLevel().starField.meteorSpawnDensity = meteorSpawnDensity
-	TEN.Flow.GetCurrentLevel().starField.meteorVelocity = meteorVel
+	TEN.Flow.GetCurrentLevel().starfield.starCount = stars
+    TEN.Flow.GetCurrentLevel().starfield.meteorCount = meteors
+	TEN.Flow.GetCurrentLevel().starfield.meteorSpawnDensity = meteorSpawnDensity
+	TEN.Flow.GetCurrentLevel().starfield.meteorVelocity = meteorVel
 
 end
 

@@ -12,7 +12,7 @@ namespace TombLib.Controls
     {
         private DarkListBox _listBox;
         private bool _isAdded;
-        private String _formerValue = String.Empty;
+        private String _formerValue = string.Empty;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public List<String> AutocompleteWords { get; set; } = new List<string>();

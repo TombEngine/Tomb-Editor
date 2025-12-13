@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using TombIDE.Shared;
 using TombIDE.Shared.SharedClasses;
+using TombLib.LevelData;
 using TombLib.Utils;
 
 namespace TombIDE.ProjectMaster
@@ -25,7 +26,7 @@ namespace TombIDE.ProjectMaster
 
 			checkBox_FullPaths.Checked = _ide.IDEConfiguration.ViewFullFolderPaths;
 
-			if (_ide.Project.GameVersion == TombLib.LevelData.TRVersion.Game.TR1 || _ide.Project.GameVersion == TombLib.LevelData.TRVersion.Game.TombEngine)
+			if (_ide.Project.GameVersion is TRVersion.Game.TR1 or TRVersion.Game.TR2X or TRVersion.Game.TombEngine)
 			{
 				button_ChangeScriptPath.Visible = false;
 				textBox_ScriptPath.Width = 589;

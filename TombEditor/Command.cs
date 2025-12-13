@@ -20,6 +20,7 @@ using TombLib.Wad.Catalog;
 using TombLib.Utils;
 using TombLib.LevelData.SectorEnums;
 using TombLib.LevelData.SectorEnums.Extensions;
+using TombEditor.Controls;
 
 namespace TombEditor
 {
@@ -1085,7 +1086,7 @@ namespace TombEditor
                         colorDialog.Color = oldLightColor;
 
                     var newColor = colorDialog.Color.ToFloat3Color() * 2.0f;
-                    if (args.Editor.Level.Settings.GameVersion < TRVersion.Game.TR3)
+                    if (args.Editor.Level.Settings.GameVersion.Native() < TRVersion.Game.TR3)
                     {
                         if (!colorDialog.Color.IsGrayscale())
                             args.Editor.SendMessage("Only grayscale lighting is possible for this game version.", PopupType.Info);
@@ -1140,7 +1141,7 @@ namespace TombEditor
 
             AddCommand("AddSprite", "Add room sprite", CommandType.Objects, delegate (CommandArgs args)
             {
-                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion <= TRVersion.Game.TR2, "Room sprite"))
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion.Native() <= TRVersion.Game.TR2, "Room sprite"))
                     return;
 
                 args.Editor.Action = new EditorActionPlace(false, (l, r) => new SpriteInstance());
@@ -1325,7 +1326,8 @@ namespace TombEditor
                                 "File already exists", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
                             return;
                     }
-                    texture.Image.Save(pngFilePath);
+
+                    texture.Image.SaveToFile(pngFilePath);
 
                     args.Editor.SendMessage("TGA texture map was converted to PNG without errors and saved at \"" + pngFilePath + "\".", PopupType.Info);
                     texture.SetPath(args.Editor.Level.Settings, pngFilePath);
@@ -1382,9 +1384,16 @@ namespace TombEditor
             AddCommand("EditAnimationRanges", "Edit animation ranges...", CommandType.Textures, delegate (CommandArgs args)
             {
                 var existingWindow = Application.OpenForms[nameof(FormAnimatedTextures)];
+
                 if (existingWindow == null)
                 {
-                    var form = new FormAnimatedTextures(args.Editor);
+                    var context = new TombEditorAnimatedTexturesContext(args.Editor);
+                    var form = new FormAnimatedTextures(
+                        new PanelTextureMapForAnimations(),
+                        context,
+                        args.Editor.Configuration
+                    );
+
                     form.Show(args.Window);
                 }
                 else
@@ -1445,6 +1454,48 @@ namespace TombEditor
                 if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
                     return;
                 EditorActions.SharpRandom(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, -1, SectorVerticalPart.WS);
+            });
+
+            AddCommand("RealignFloorToStepHeight", "Re-align floor to step height", CommandType.Geometry, delegate (CommandArgs args)
+            {
+                if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
+                    return;
+                EditorActions.RealignToStepHeight(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorVerticalPart.QA, args.Editor.IncrementReference);
+            });
+
+            AddCommand("RealignCeilingToStepHeight", "Re-align ceiling to step height", CommandType.Geometry, delegate (CommandArgs args)
+            {
+                if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
+                    return;
+                EditorActions.RealignToStepHeight(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorVerticalPart.WS, args.Editor.IncrementReference);
+            });
+
+            AddCommand("ConvertFloorToQuads", "Convert floor to quads", CommandType.Geometry, delegate (CommandArgs args)
+            {
+                if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
+                    return;
+                EditorActions.ConvertAreaToQuads(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorVerticalPart.QA, args.Editor.IncrementReference);
+            });
+
+            AddCommand("ConvertCeilingToQuads", "Convert ceiling to quads", CommandType.Geometry, delegate (CommandArgs args)
+            {
+                if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
+                    return;
+                EditorActions.ConvertAreaToQuads(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorVerticalPart.WS, args.Editor.IncrementReference);
+            });
+
+            AddCommand("SmoothFloor", "Smooth floor", CommandType.Geometry, delegate (CommandArgs args)
+            {
+                if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
+                    return;
+                EditorActions.SmoothArea(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorVerticalPart.QA, args.Editor.IncrementReference);
+            });
+
+            AddCommand("SmoothCeiling", "Smooth ceiling", CommandType.Geometry, delegate (CommandArgs args)
+            {
+                if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
+                    return;
+                EditorActions.SmoothArea(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorVerticalPart.WS, args.Editor.IncrementReference);
             });
 
             AddCommand("AverageFloor", "Average floor", CommandType.Geometry, delegate (CommandArgs args)
@@ -1914,7 +1965,7 @@ namespace TombEditor
             {
                 if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
                     return;
-                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TR3, "Monkeyswing"))
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion.Native() >= TRVersion.Game.TR3, "Monkeyswing"))
                     return;
                 EditorActions.ToggleSectorFlag(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorFlags.Monkey);
             });
@@ -1923,7 +1974,7 @@ namespace TombEditor
             {
                 if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
                     return;
-                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TR2, "Climbing"))
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion.SupportsClimbing(), "Climbing"))
                     return;
                 EditorActions.ToggleSectorFlag(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorFlags.ClimbPositiveZ);
             });
@@ -1932,7 +1983,7 @@ namespace TombEditor
             {
                 if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
                     return;
-                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TR2, "Climbing"))
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion.SupportsClimbing(), "Climbing"))
                     return;
                 EditorActions.ToggleSectorFlag(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorFlags.ClimbPositiveX);
             });
@@ -1941,7 +1992,7 @@ namespace TombEditor
             {
                 if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
                     return;
-                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TR2, "Climbing"))
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion.SupportsClimbing(), "Climbing"))
                     return;
                 EditorActions.ToggleSectorFlag(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorFlags.ClimbNegativeZ);
             });
@@ -1950,7 +2001,7 @@ namespace TombEditor
             {
                 if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
                     return;
-                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TR2, "Climbing"))
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion.SupportsClimbing(), "Climbing"))
                     return;
                 EditorActions.ToggleSectorFlag(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorFlags.ClimbNegativeX);
             });
@@ -1987,7 +2038,7 @@ namespace TombEditor
             {
                 if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
                     return;
-                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TR3, "This flag"))
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion.Native() >= TRVersion.Game.TR3, "This flag"))
                     return;
                 EditorActions.ToggleSectorFlag(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorFlags.Beetle);
             });
@@ -1996,7 +2047,7 @@ namespace TombEditor
             {
                 if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
                     return;
-                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TR3, "This flag"))
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion.Native() >= TRVersion.Game.TR3, "This flag"))
                     return;
                 EditorActions.ToggleSectorFlag(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorFlags.TriggerTriggerer);
             });
@@ -2035,7 +2086,7 @@ namespace TombEditor
 
             AddCommand("SetRoomNoLensflare", "Disable global lensflare", CommandType.Rooms, delegate (CommandArgs args)
             {
-                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TR4, "NL flag"))
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion.Native() >= TRVersion.Game.TR4, "NL flag"))
                     return;
                 if (args.Editor.SelectedRoom != null)
                 {

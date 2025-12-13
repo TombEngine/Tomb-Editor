@@ -43,7 +43,7 @@ end
 -- !Arguments "Numerical, 30, Scale value, [ 0 | 256 | 2 ]"
 
 LevelFuncs.Engine.Node.TestStaticScale = function(staticName, operator, value)
-	local scale = TEN.Objects.GetStaticByName(staticName):GetScale()
+	local scale = TEN.Objects.GetStaticByName(staticName):GetScale().x
 	return LevelFuncs.Engine.Node.CompareValue(scale, value, operator)
 end
 
@@ -78,6 +78,17 @@ end
 LevelFuncs.Engine.Node.TestStaticCollisionMode = function(staticName)
 	return TEN.Objects.GetStaticByName(staticName):GetSolid()
 end
+
+-- !Name "If color of a static is..."
+-- !Section "Static mesh parameters"
+-- !Description "Checks if the specified static is a certain color."
+-- !Conditional "True"
+-- !Arguments "NewLine, Statics, 80, Static to check" "Color, 20, Color to compare"
+
+LevelFuncs.Engine.Node.TestStaticColor = function(staticName, targetColor)
+    local stat = TEN.Objects.GetStaticByName(staticName):GetColor()
+    return stat == targetColor
+end		
 
 -- !Name "Enable static mesh"
 -- !Section "Static mesh state"
@@ -156,7 +167,7 @@ LevelFuncs.Engine.Node.SetStaticScale = function(operation, value, staticName)
 	local stat = TEN.Objects.GetStaticByName(staticName)
 
 	if (operation == 0) then
-		local scale = stat:GetScale();
+		local scale = stat:GetScale().x;
 		stat:SetScale(scale + value)
 	else
 		stat:SetScale(value)

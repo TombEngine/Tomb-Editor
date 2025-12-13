@@ -15,684 +15,710 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSkeletonEditor));
-            this.treeSkeleton = new DarkUI.Controls.DarkTreeView();
-            this.cbDrawGizmo = new DarkUI.Controls.DarkCheckBox();
-            this.cbDrawGrid = new DarkUI.Controls.DarkCheckBox();
-            this.butSaveChanges = new DarkUI.Controls.DarkButton();
-            this.butRenameBone = new DarkUI.Controls.DarkButton();
-            this.butDeleteBone = new DarkUI.Controls.DarkButton();
-            this.butLoadModel = new DarkUI.Controls.DarkButton();
-            this.darkStatusStrip1 = new DarkUI.Controls.DarkStatusStrip();
-            this.butAddFromWad2 = new DarkUI.Controls.DarkButton();
-            this.butAddFromFile = new DarkUI.Controls.DarkButton();
-            this.butReplaceFromWad2 = new DarkUI.Controls.DarkButton();
-            this.butReplaceFromFile = new DarkUI.Controls.DarkButton();
-            this.cmBone = new DarkUI.Controls.DarkContextMenu();
-            this.popToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pushToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-            this.moveUpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.moveDownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.addChildBoneFromFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
-            this.addChildBoneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.replaceFromWad2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
-            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sectionCurrentBone = new DarkUI.Controls.DarkSectionPanel();
-            this.comboLightType = new DarkUI.Controls.DarkComboBox();
-            this.butSetToAll = new DarkUI.Controls.DarkButton();
-            this.darkLabel1 = new DarkUI.Controls.DarkLabel();
-            this.nudTransZ = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudTransY = new DarkUI.Controls.DarkNumericUpDown();
-            this.darkLabel29 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel27 = new DarkUI.Controls.DarkLabel();
-            this.nudTransX = new DarkUI.Controls.DarkNumericUpDown();
-            this.darkLabel26 = new DarkUI.Controls.DarkLabel();
-            this.darkLabel21 = new DarkUI.Controls.DarkLabel();
-            this.panelAll = new DarkUI.Controls.DarkPanel();
-            this.panelMain = new DarkUI.Controls.DarkPanel();
-            this.panelRendering = new WadTool.Controls.PanelRenderingSkeleton();
-            this.panelRight = new DarkUI.Controls.DarkPanel();
-            this.section3D = new DarkUI.Controls.DarkSectionPanel();
-            this.butEditMesh = new DarkUI.Controls.DarkButton();
-            this.butExportSelectedMesh = new DarkUI.Controls.DarkButton();
-            this.butCancel = new DarkUI.Controls.DarkButton();
-            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.cmBone.SuspendLayout();
-            this.sectionCurrentBone.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudTransZ)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudTransY)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudTransX)).BeginInit();
-            this.panelAll.SuspendLayout();
-            this.panelMain.SuspendLayout();
-            this.panelRight.SuspendLayout();
-            this.section3D.SuspendLayout();
-            this.SuspendLayout();
+            treeSkeleton = new DarkUI.Controls.DarkTreeView();
+            cbDrawGizmo = new DarkUI.Controls.DarkCheckBox();
+            cbDrawGrid = new DarkUI.Controls.DarkCheckBox();
+            butSaveChanges = new DarkUI.Controls.DarkButton();
+            butRenameBone = new DarkUI.Controls.DarkButton();
+            butDeleteBone = new DarkUI.Controls.DarkButton();
+            butLoadModel = new DarkUI.Controls.DarkButton();
+            darkStatusStrip1 = new DarkUI.Controls.DarkStatusStrip();
+            butAddFromWad2 = new DarkUI.Controls.DarkButton();
+            butAddFromFile = new DarkUI.Controls.DarkButton();
+            butReplaceFromWad2 = new DarkUI.Controls.DarkButton();
+            butReplaceFromFile = new DarkUI.Controls.DarkButton();
+            cmBone = new DarkUI.Controls.DarkContextMenu();
+            popToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            pushToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+            moveUpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            moveDownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
+            addChildBoneFromFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            replaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
+            addChildBoneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            replaceFromWad2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
+            deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            sectionCurrentBone = new DarkUI.Controls.DarkSectionPanel();
+            comboLightType = new DarkUI.Controls.DarkComboBox();
+            butSetToAll = new DarkUI.Controls.DarkButton();
+            darkLabel1 = new DarkUI.Controls.DarkLabel();
+            nudTransZ = new DarkUI.Controls.DarkNumericUpDown();
+            nudTransY = new DarkUI.Controls.DarkNumericUpDown();
+            darkLabel29 = new DarkUI.Controls.DarkLabel();
+            darkLabel27 = new DarkUI.Controls.DarkLabel();
+            nudTransX = new DarkUI.Controls.DarkNumericUpDown();
+            darkLabel26 = new DarkUI.Controls.DarkLabel();
+            darkLabel21 = new DarkUI.Controls.DarkLabel();
+            panelAll = new DarkUI.Controls.DarkPanel();
+            panelMain = new DarkUI.Controls.DarkPanel();
+            panelRendering = new Controls.PanelRenderingSkeleton();
+            panelRight = new DarkUI.Controls.DarkPanel();
+            section3D = new DarkUI.Controls.DarkSectionPanel();
+            darkPanel1 = new DarkUI.Controls.DarkPanel();
+            butEditMesh = new DarkUI.Controls.DarkButton();
+            butExportSelectedMesh = new DarkUI.Controls.DarkButton();
+            panelSkinned = new DarkUI.Controls.DarkPanel();
+            darkPanel2 = new DarkUI.Controls.DarkPanel();
+            lblSkin = new DarkUI.Controls.DarkLabel();
+            butClearSkin = new DarkUI.Controls.DarkButton();
+            butSetSkin = new DarkUI.Controls.DarkButton();
+            butCancel = new DarkUI.Controls.DarkButton();
+            toolTip = new System.Windows.Forms.ToolTip(components);
+            cmBone.SuspendLayout();
+            sectionCurrentBone.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudTransZ).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudTransY).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudTransX).BeginInit();
+            panelAll.SuspendLayout();
+            panelMain.SuspendLayout();
+            panelRight.SuspendLayout();
+            section3D.SuspendLayout();
+            darkPanel1.SuspendLayout();
+            panelSkinned.SuspendLayout();
+            darkPanel2.SuspendLayout();
+            SuspendLayout();
             // 
             // treeSkeleton
             // 
-            this.treeSkeleton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.treeSkeleton.ExpandOnDoubleClick = false;
-            this.treeSkeleton.Location = new System.Drawing.Point(3, 28);
-            this.treeSkeleton.MaxDragChange = 20;
-            this.treeSkeleton.Name = "treeSkeleton";
-            this.treeSkeleton.Size = new System.Drawing.Size(310, 354);
-            this.treeSkeleton.TabIndex = 0;
-            this.treeSkeleton.Click += new System.EventHandler(this.treeSkeleton_Click);
-            this.treeSkeleton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.treeSkeleton_MouseDown);
+            treeSkeleton.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            treeSkeleton.ExpandOnDoubleClick = false;
+            treeSkeleton.Location = new System.Drawing.Point(2, 3);
+            treeSkeleton.MaxDragChange = 20;
+            treeSkeleton.Name = "treeSkeleton";
+            treeSkeleton.Size = new System.Drawing.Size(310, 327);
+            treeSkeleton.TabIndex = 0;
+            treeSkeleton.Click += treeSkeleton_Click;
+            treeSkeleton.MouseDown += treeSkeleton_MouseDown;
             // 
             // cbDrawGizmo
             // 
-            this.cbDrawGizmo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbDrawGizmo.AutoSize = true;
-            this.cbDrawGizmo.Checked = true;
-            this.cbDrawGizmo.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbDrawGizmo.Location = new System.Drawing.Point(86, 570);
-            this.cbDrawGizmo.Name = "cbDrawGizmo";
-            this.cbDrawGizmo.Size = new System.Drawing.Size(87, 17);
-            this.cbDrawGizmo.TabIndex = 82;
-            this.cbDrawGizmo.Text = "Draw gizmo";
-            this.cbDrawGizmo.CheckedChanged += new System.EventHandler(this.cbDrawGizmo_CheckedChanged);
+            cbDrawGizmo.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            cbDrawGizmo.AutoSize = true;
+            cbDrawGizmo.Checked = true;
+            cbDrawGizmo.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbDrawGizmo.Location = new System.Drawing.Point(86, 570);
+            cbDrawGizmo.Name = "cbDrawGizmo";
+            cbDrawGizmo.Size = new System.Drawing.Size(87, 17);
+            cbDrawGizmo.TabIndex = 82;
+            cbDrawGizmo.Text = "Draw gizmo";
+            toolTip.SetToolTip(cbDrawGizmo, "Draw gizmo");
+            cbDrawGizmo.CheckedChanged += cbDrawGizmo_CheckedChanged;
             // 
             // cbDrawGrid
             // 
-            this.cbDrawGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbDrawGrid.AutoSize = true;
-            this.cbDrawGrid.Checked = true;
-            this.cbDrawGrid.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbDrawGrid.Location = new System.Drawing.Point(7, 570);
-            this.cbDrawGrid.Name = "cbDrawGrid";
-            this.cbDrawGrid.Size = new System.Drawing.Size(77, 17);
-            this.cbDrawGrid.TabIndex = 81;
-            this.cbDrawGrid.Text = "Draw grid";
-            this.cbDrawGrid.CheckedChanged += new System.EventHandler(this.cbDrawGrid_CheckedChanged);
+            cbDrawGrid.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            cbDrawGrid.AutoSize = true;
+            cbDrawGrid.Checked = true;
+            cbDrawGrid.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbDrawGrid.Location = new System.Drawing.Point(7, 570);
+            cbDrawGrid.Name = "cbDrawGrid";
+            cbDrawGrid.Size = new System.Drawing.Size(77, 17);
+            cbDrawGrid.TabIndex = 81;
+            cbDrawGrid.Text = "Draw grid";
+            toolTip.SetToolTip(cbDrawGrid, "Draw coordinate grid");
+            cbDrawGrid.CheckedChanged += cbDrawGrid_CheckedChanged;
             // 
             // butSaveChanges
             // 
-            this.butSaveChanges.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.butSaveChanges.Checked = false;
-            this.butSaveChanges.Location = new System.Drawing.Point(609, 566);
-            this.butSaveChanges.Name = "butSaveChanges";
-            this.butSaveChanges.Size = new System.Drawing.Size(81, 23);
-            this.butSaveChanges.TabIndex = 80;
-            this.butSaveChanges.Text = "OK";
-            this.butSaveChanges.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.butSaveChanges.Click += new System.EventHandler(this.butSaveChanges_Click);
+            butSaveChanges.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butSaveChanges.Checked = false;
+            butSaveChanges.Location = new System.Drawing.Point(609, 566);
+            butSaveChanges.Name = "butSaveChanges";
+            butSaveChanges.Size = new System.Drawing.Size(81, 23);
+            butSaveChanges.TabIndex = 80;
+            butSaveChanges.Text = "OK";
+            butSaveChanges.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            butSaveChanges.Click += butSaveChanges_Click;
             // 
             // butRenameBone
             // 
-            this.butRenameBone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.butRenameBone.Checked = false;
-            this.butRenameBone.Location = new System.Drawing.Point(3, 388);
-            this.butRenameBone.Name = "butRenameBone";
-            this.butRenameBone.Size = new System.Drawing.Size(100, 23);
-            this.butRenameBone.TabIndex = 84;
-            this.butRenameBone.Text = "Rename";
-            this.butRenameBone.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.toolTip.SetToolTip(this.butRenameBone, "Rename currently selected bone");
-            this.butRenameBone.Click += new System.EventHandler(this.butRenameBone_Click);
+            butRenameBone.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butRenameBone.Checked = false;
+            butRenameBone.Location = new System.Drawing.Point(3, 335);
+            butRenameBone.Name = "butRenameBone";
+            butRenameBone.Size = new System.Drawing.Size(100, 23);
+            butRenameBone.TabIndex = 84;
+            butRenameBone.Text = "Rename";
+            butRenameBone.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            toolTip.SetToolTip(butRenameBone, "Rename currently selected bone");
+            butRenameBone.Click += butRenameBone_Click;
             // 
             // butDeleteBone
             // 
-            this.butDeleteBone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.butDeleteBone.Checked = false;
-            this.butDeleteBone.Location = new System.Drawing.Point(214, 388);
-            this.butDeleteBone.Name = "butDeleteBone";
-            this.butDeleteBone.Size = new System.Drawing.Size(99, 23);
-            this.butDeleteBone.TabIndex = 83;
-            this.butDeleteBone.Text = "Delete";
-            this.butDeleteBone.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.toolTip.SetToolTip(this.butDeleteBone, "Delete currently selected bone");
-            this.butDeleteBone.Click += new System.EventHandler(this.butDeleteBone_Click);
+            butDeleteBone.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butDeleteBone.Checked = false;
+            butDeleteBone.Location = new System.Drawing.Point(214, 335);
+            butDeleteBone.Name = "butDeleteBone";
+            butDeleteBone.Size = new System.Drawing.Size(99, 23);
+            butDeleteBone.TabIndex = 83;
+            butDeleteBone.Text = "Delete";
+            butDeleteBone.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            toolTip.SetToolTip(butDeleteBone, "Delete currently selected bone");
+            butDeleteBone.Click += butDeleteBone_Click;
             // 
             // butLoadModel
             // 
-            this.butLoadModel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.butLoadModel.Checked = false;
-            this.butLoadModel.Location = new System.Drawing.Point(214, 446);
-            this.butLoadModel.Name = "butLoadModel";
-            this.butLoadModel.Size = new System.Drawing.Size(99, 23);
-            this.butLoadModel.TabIndex = 80;
-            this.butLoadModel.Text = "Replace model";
-            this.butLoadModel.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.toolTip.SetToolTip(this.butLoadModel, "Replace all meshes in skeleton from single 3D model");
-            this.butLoadModel.Click += new System.EventHandler(this.butLoadModel_Click);
+            butLoadModel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butLoadModel.Checked = false;
+            butLoadModel.Location = new System.Drawing.Point(214, 393);
+            butLoadModel.Name = "butLoadModel";
+            butLoadModel.Size = new System.Drawing.Size(99, 23);
+            butLoadModel.TabIndex = 80;
+            butLoadModel.Text = "Replace model";
+            butLoadModel.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            toolTip.SetToolTip(butLoadModel, "Replace all meshes in skeleton from single 3D model");
+            butLoadModel.Click += butLoadModel_Click;
             // 
             // darkStatusStrip1
             // 
-            this.darkStatusStrip1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.darkStatusStrip1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkStatusStrip1.Location = new System.Drawing.Point(0, 595);
-            this.darkStatusStrip1.Name = "darkStatusStrip1";
-            this.darkStatusStrip1.Padding = new System.Windows.Forms.Padding(0, 5, 0, 3);
-            this.darkStatusStrip1.Size = new System.Drawing.Size(784, 24);
-            this.darkStatusStrip1.TabIndex = 85;
-            this.darkStatusStrip1.Text = "darkStatusStrip1";
+            darkStatusStrip1.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            darkStatusStrip1.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkStatusStrip1.Location = new System.Drawing.Point(0, 595);
+            darkStatusStrip1.Name = "darkStatusStrip1";
+            darkStatusStrip1.Padding = new System.Windows.Forms.Padding(0, 5, 0, 3);
+            darkStatusStrip1.Size = new System.Drawing.Size(784, 24);
+            darkStatusStrip1.TabIndex = 85;
+            darkStatusStrip1.Text = "darkStatusStrip1";
             // 
             // butAddFromWad2
             // 
-            this.butAddFromWad2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.butAddFromWad2.Checked = false;
-            this.butAddFromWad2.Location = new System.Drawing.Point(109, 417);
-            this.butAddFromWad2.Name = "butAddFromWad2";
-            this.butAddFromWad2.Size = new System.Drawing.Size(99, 23);
-            this.butAddFromWad2.TabIndex = 87;
-            this.butAddFromWad2.Text = "Add existing";
-            this.butAddFromWad2.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.toolTip.SetToolTip(this.butAddFromWad2, "Make new bone by using existing mesh from current wad");
-            this.butAddFromWad2.Click += new System.EventHandler(this.butSelectMesh_Click);
+            butAddFromWad2.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butAddFromWad2.Checked = false;
+            butAddFromWad2.Location = new System.Drawing.Point(109, 364);
+            butAddFromWad2.Name = "butAddFromWad2";
+            butAddFromWad2.Size = new System.Drawing.Size(99, 23);
+            butAddFromWad2.TabIndex = 87;
+            butAddFromWad2.Text = "Add existing";
+            butAddFromWad2.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            toolTip.SetToolTip(butAddFromWad2, "Make new bone by using existing mesh from current wad");
+            butAddFromWad2.Click += butSelectMesh_Click;
             // 
             // butAddFromFile
             // 
-            this.butAddFromFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.butAddFromFile.Checked = false;
-            this.butAddFromFile.Location = new System.Drawing.Point(3, 417);
-            this.butAddFromFile.Name = "butAddFromFile";
-            this.butAddFromFile.Size = new System.Drawing.Size(100, 23);
-            this.butAddFromFile.TabIndex = 86;
-            this.butAddFromFile.Text = "Add new";
-            this.butAddFromFile.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.toolTip.SetToolTip(this.butAddFromFile, "Make new bone by importing 3D model");
-            this.butAddFromFile.Click += new System.EventHandler(this.butAddFromFile_Click);
+            butAddFromFile.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butAddFromFile.Checked = false;
+            butAddFromFile.Location = new System.Drawing.Point(3, 364);
+            butAddFromFile.Name = "butAddFromFile";
+            butAddFromFile.Size = new System.Drawing.Size(100, 23);
+            butAddFromFile.TabIndex = 86;
+            butAddFromFile.Text = "Add new";
+            butAddFromFile.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            toolTip.SetToolTip(butAddFromFile, "Make new bone by importing 3D model");
+            butAddFromFile.Click += butAddFromFile_Click;
             // 
             // butReplaceFromWad2
             // 
-            this.butReplaceFromWad2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.butReplaceFromWad2.Checked = false;
-            this.butReplaceFromWad2.Location = new System.Drawing.Point(214, 417);
-            this.butReplaceFromWad2.Name = "butReplaceFromWad2";
-            this.butReplaceFromWad2.Size = new System.Drawing.Size(99, 23);
-            this.butReplaceFromWad2.TabIndex = 90;
-            this.butReplaceFromWad2.Text = "Replace existing";
-            this.butReplaceFromWad2.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.toolTip.SetToolTip(this.butReplaceFromWad2, "Replace mesh for currently selected bone with existing one in wad");
-            this.butReplaceFromWad2.Click += new System.EventHandler(this.butReplaceFromWad2_Click);
+            butReplaceFromWad2.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butReplaceFromWad2.Checked = false;
+            butReplaceFromWad2.Location = new System.Drawing.Point(214, 364);
+            butReplaceFromWad2.Name = "butReplaceFromWad2";
+            butReplaceFromWad2.Size = new System.Drawing.Size(99, 23);
+            butReplaceFromWad2.TabIndex = 90;
+            butReplaceFromWad2.Text = "Replace existing";
+            butReplaceFromWad2.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            toolTip.SetToolTip(butReplaceFromWad2, "Replace mesh for currently selected bone with existing one in wad");
+            butReplaceFromWad2.Click += butReplaceFromWad2_Click;
             // 
             // butReplaceFromFile
             // 
-            this.butReplaceFromFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.butReplaceFromFile.Checked = false;
-            this.butReplaceFromFile.Location = new System.Drawing.Point(3, 446);
-            this.butReplaceFromFile.Name = "butReplaceFromFile";
-            this.butReplaceFromFile.Size = new System.Drawing.Size(100, 23);
-            this.butReplaceFromFile.TabIndex = 89;
-            this.butReplaceFromFile.Text = "Import mesh";
-            this.butReplaceFromFile.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.toolTip.SetToolTip(this.butReplaceFromFile, "Import new mesh for currently selected bone from 3D model");
-            this.butReplaceFromFile.Click += new System.EventHandler(this.butReplaceFromFile_Click);
+            butReplaceFromFile.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butReplaceFromFile.Checked = false;
+            butReplaceFromFile.Location = new System.Drawing.Point(3, 393);
+            butReplaceFromFile.Name = "butReplaceFromFile";
+            butReplaceFromFile.Size = new System.Drawing.Size(100, 23);
+            butReplaceFromFile.TabIndex = 89;
+            butReplaceFromFile.Text = "Import mesh";
+            butReplaceFromFile.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            toolTip.SetToolTip(butReplaceFromFile, "Import new mesh for currently selected bone from 3D model");
+            butReplaceFromFile.Click += butReplaceFromFile_Click;
             // 
             // cmBone
             // 
-            this.cmBone.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.cmBone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.cmBone.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.popToolStripMenuItem,
-            this.pushToolStripMenuItem,
-            this.toolStripMenuItem1,
-            this.moveUpToolStripMenuItem,
-            this.moveDownToolStripMenuItem,
-            this.toolStripMenuItem2,
-            this.addChildBoneFromFileToolStripMenuItem,
-            this.replaceToolStripMenuItem,
-            this.toolStripMenuItem4,
-            this.addChildBoneToolStripMenuItem,
-            this.replaceFromWad2ToolStripMenuItem,
-            this.toolStripMenuItem3,
-            this.deleteToolStripMenuItem,
-            this.renameToolStripMenuItem});
-            this.cmBone.Name = "cmBone";
-            this.cmBone.Size = new System.Drawing.Size(191, 252);
+            cmBone.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            cmBone.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            cmBone.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { popToolStripMenuItem, pushToolStripMenuItem, toolStripMenuItem1, moveUpToolStripMenuItem, moveDownToolStripMenuItem, toolStripMenuItem2, addChildBoneFromFileToolStripMenuItem, replaceToolStripMenuItem, toolStripMenuItem4, addChildBoneToolStripMenuItem, replaceFromWad2ToolStripMenuItem, toolStripMenuItem3, deleteToolStripMenuItem, renameToolStripMenuItem });
+            cmBone.Name = "cmBone";
+            cmBone.Size = new System.Drawing.Size(218, 252);
             // 
             // popToolStripMenuItem
             // 
-            this.popToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.popToolStripMenuItem.CheckOnClick = true;
-            this.popToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.popToolStripMenuItem.Name = "popToolStripMenuItem";
-            this.popToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.popToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.popToolStripMenuItem.Text = "Pop";
-            this.popToolStripMenuItem.Click += new System.EventHandler(this.PopToolStripMenuItem_Click);
+            popToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            popToolStripMenuItem.CheckOnClick = true;
+            popToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            popToolStripMenuItem.Name = "popToolStripMenuItem";
+            popToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O;
+            popToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            popToolStripMenuItem.Text = "Pop";
+            popToolStripMenuItem.Click += PopToolStripMenuItem_Click;
             // 
             // pushToolStripMenuItem
             // 
-            this.pushToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.pushToolStripMenuItem.CheckOnClick = true;
-            this.pushToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.pushToolStripMenuItem.Name = "pushToolStripMenuItem";
-            this.pushToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+P";
-            this.pushToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.pushToolStripMenuItem.Text = "Push";
-            this.pushToolStripMenuItem.Click += new System.EventHandler(this.PushToolStripMenuItem_Click);
+            pushToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            pushToolStripMenuItem.CheckOnClick = true;
+            pushToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            pushToolStripMenuItem.Name = "pushToolStripMenuItem";
+            pushToolStripMenuItem.ShortcutKeyDisplayString = "Ctrl+P";
+            pushToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            pushToolStripMenuItem.Text = "Push";
+            pushToolStripMenuItem.Click += PushToolStripMenuItem_Click;
             // 
             // toolStripMenuItem1
             // 
-            this.toolStripMenuItem1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.toolStripMenuItem1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripMenuItem1.Margin = new System.Windows.Forms.Padding(0, 0, 0, 1);
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(187, 6);
+            toolStripMenuItem1.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            toolStripMenuItem1.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripMenuItem1.Margin = new System.Windows.Forms.Padding(0, 0, 0, 1);
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new System.Drawing.Size(214, 6);
             // 
             // moveUpToolStripMenuItem
             // 
-            this.moveUpToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.moveUpToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.moveUpToolStripMenuItem.Name = "moveUpToolStripMenuItem";
-            this.moveUpToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Up)));
-            this.moveUpToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.moveUpToolStripMenuItem.Text = "Move up";
-            this.moveUpToolStripMenuItem.Click += new System.EventHandler(this.MoveUpToolStripMenuItem_Click);
+            moveUpToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            moveUpToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            moveUpToolStripMenuItem.Name = "moveUpToolStripMenuItem";
+            moveUpToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Up;
+            moveUpToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            moveUpToolStripMenuItem.Text = "Move up";
+            moveUpToolStripMenuItem.Click += MoveUpToolStripMenuItem_Click;
             // 
             // moveDownToolStripMenuItem
             // 
-            this.moveDownToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.moveDownToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.moveDownToolStripMenuItem.Name = "moveDownToolStripMenuItem";
-            this.moveDownToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Down)));
-            this.moveDownToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.moveDownToolStripMenuItem.Text = "Move down";
-            this.moveDownToolStripMenuItem.Click += new System.EventHandler(this.MoveDownToolStripMenuItem_Click);
+            moveDownToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            moveDownToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            moveDownToolStripMenuItem.Name = "moveDownToolStripMenuItem";
+            moveDownToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Down;
+            moveDownToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            moveDownToolStripMenuItem.Text = "Move down";
+            moveDownToolStripMenuItem.Click += MoveDownToolStripMenuItem_Click;
             // 
             // toolStripMenuItem2
             // 
-            this.toolStripMenuItem2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.toolStripMenuItem2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripMenuItem2.Margin = new System.Windows.Forms.Padding(0, 0, 0, 1);
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(187, 6);
+            toolStripMenuItem2.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            toolStripMenuItem2.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripMenuItem2.Margin = new System.Windows.Forms.Padding(0, 0, 0, 1);
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new System.Drawing.Size(214, 6);
             // 
             // addChildBoneFromFileToolStripMenuItem
             // 
-            this.addChildBoneFromFileToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.addChildBoneFromFileToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.addChildBoneFromFileToolStripMenuItem.Image = global::WadTool.Properties.Resources.general_plus_math_16;
-            this.addChildBoneFromFileToolStripMenuItem.Name = "addChildBoneFromFileToolStripMenuItem";
-            this.addChildBoneFromFileToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.addChildBoneFromFileToolStripMenuItem.Text = "Add child bone from file";
-            this.addChildBoneFromFileToolStripMenuItem.Click += new System.EventHandler(this.AddChildBoneFromFileToolStripMenuItem_Click);
+            addChildBoneFromFileToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            addChildBoneFromFileToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            addChildBoneFromFileToolStripMenuItem.Image = Properties.Resources.general_plus_math_16;
+            addChildBoneFromFileToolStripMenuItem.Name = "addChildBoneFromFileToolStripMenuItem";
+            addChildBoneFromFileToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            addChildBoneFromFileToolStripMenuItem.Text = "Add child bone from file";
+            addChildBoneFromFileToolStripMenuItem.Click += AddChildBoneFromFileToolStripMenuItem_Click;
             // 
             // replaceToolStripMenuItem
             // 
-            this.replaceToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.replaceToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.replaceToolStripMenuItem.Image = global::WadTool.Properties.Resources.actions_refresh_16;
-            this.replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
-            this.replaceToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.replaceToolStripMenuItem.Text = "Replace from file";
-            this.replaceToolStripMenuItem.Click += new System.EventHandler(this.ReplaceToolStripMenuItem_Click);
+            replaceToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            replaceToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            replaceToolStripMenuItem.Image = Properties.Resources.actions_refresh_16;
+            replaceToolStripMenuItem.Name = "replaceToolStripMenuItem";
+            replaceToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            replaceToolStripMenuItem.Text = "Replace from file";
+            replaceToolStripMenuItem.Click += ReplaceToolStripMenuItem_Click;
             // 
             // toolStripMenuItem4
             // 
-            this.toolStripMenuItem4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.toolStripMenuItem4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripMenuItem4.Margin = new System.Windows.Forms.Padding(0, 0, 0, 1);
-            this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(187, 6);
+            toolStripMenuItem4.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            toolStripMenuItem4.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripMenuItem4.Margin = new System.Windows.Forms.Padding(0, 0, 0, 1);
+            toolStripMenuItem4.Name = "toolStripMenuItem4";
+            toolStripMenuItem4.Size = new System.Drawing.Size(214, 6);
             // 
             // addChildBoneToolStripMenuItem
             // 
-            this.addChildBoneToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.addChildBoneToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.addChildBoneToolStripMenuItem.Image = global::WadTool.Properties.Resources.general_search_16;
-            this.addChildBoneToolStripMenuItem.Name = "addChildBoneToolStripMenuItem";
-            this.addChildBoneToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.addChildBoneToolStripMenuItem.Text = "Add child bone from Wad2";
-            this.addChildBoneToolStripMenuItem.Click += new System.EventHandler(this.AddChildBoneToolStripMenuItem_Click);
+            addChildBoneToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            addChildBoneToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            addChildBoneToolStripMenuItem.Image = Properties.Resources.general_search_16;
+            addChildBoneToolStripMenuItem.Name = "addChildBoneToolStripMenuItem";
+            addChildBoneToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            addChildBoneToolStripMenuItem.Text = "Add child bone from Wad2";
+            addChildBoneToolStripMenuItem.Click += AddChildBoneToolStripMenuItem_Click;
             // 
             // replaceFromWad2ToolStripMenuItem
             // 
-            this.replaceFromWad2ToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.replaceFromWad2ToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.replaceFromWad2ToolStripMenuItem.Image = global::WadTool.Properties.Resources.general_search_16;
-            this.replaceFromWad2ToolStripMenuItem.Name = "replaceFromWad2ToolStripMenuItem";
-            this.replaceFromWad2ToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.replaceFromWad2ToolStripMenuItem.Text = "Replace from Wad2";
-            this.replaceFromWad2ToolStripMenuItem.Click += new System.EventHandler(this.ReplaceFromWad2ToolStripMenuItem_Click);
+            replaceFromWad2ToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            replaceFromWad2ToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            replaceFromWad2ToolStripMenuItem.Image = Properties.Resources.general_search_16;
+            replaceFromWad2ToolStripMenuItem.Name = "replaceFromWad2ToolStripMenuItem";
+            replaceFromWad2ToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            replaceFromWad2ToolStripMenuItem.Text = "Replace from Wad2";
+            replaceFromWad2ToolStripMenuItem.Click += ReplaceFromWad2ToolStripMenuItem_Click;
             // 
             // toolStripMenuItem3
             // 
-            this.toolStripMenuItem3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.toolStripMenuItem3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripMenuItem3.Margin = new System.Windows.Forms.Padding(0, 0, 0, 1);
-            this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(187, 6);
+            toolStripMenuItem3.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            toolStripMenuItem3.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripMenuItem3.Margin = new System.Windows.Forms.Padding(0, 0, 0, 1);
+            toolStripMenuItem3.Name = "toolStripMenuItem3";
+            toolStripMenuItem3.Size = new System.Drawing.Size(214, 6);
             // 
             // deleteToolStripMenuItem
             // 
-            this.deleteToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.deleteToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.deleteToolStripMenuItem.Image = global::WadTool.Properties.Resources.trash_16;
-            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.deleteToolStripMenuItem.Text = "Delete";
-            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.DeleteToolStripMenuItem_Click);
+            deleteToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            deleteToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            deleteToolStripMenuItem.Image = Properties.Resources.trash_16;
+            deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            deleteToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            deleteToolStripMenuItem.Text = "Delete";
+            deleteToolStripMenuItem.Click += DeleteToolStripMenuItem_Click;
             // 
             // renameToolStripMenuItem
             // 
-            this.renameToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.renameToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.renameToolStripMenuItem.Image = global::WadTool.Properties.Resources.edit_16;
-            this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.renameToolStripMenuItem.Text = "Rename";
-            this.renameToolStripMenuItem.Click += new System.EventHandler(this.RenameToolStripMenuItem_Click);
+            renameToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            renameToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            renameToolStripMenuItem.Image = Properties.Resources.edit_16;
+            renameToolStripMenuItem.Name = "renameToolStripMenuItem";
+            renameToolStripMenuItem.Size = new System.Drawing.Size(217, 22);
+            renameToolStripMenuItem.Text = "Rename";
+            renameToolStripMenuItem.Click += RenameToolStripMenuItem_Click;
             // 
             // sectionCurrentBone
             // 
-            this.sectionCurrentBone.Controls.Add(this.comboLightType);
-            this.sectionCurrentBone.Controls.Add(this.butSetToAll);
-            this.sectionCurrentBone.Controls.Add(this.darkLabel1);
-            this.sectionCurrentBone.Controls.Add(this.nudTransZ);
-            this.sectionCurrentBone.Controls.Add(this.nudTransY);
-            this.sectionCurrentBone.Controls.Add(this.darkLabel29);
-            this.sectionCurrentBone.Controls.Add(this.darkLabel27);
-            this.sectionCurrentBone.Controls.Add(this.nudTransX);
-            this.sectionCurrentBone.Controls.Add(this.darkLabel26);
-            this.sectionCurrentBone.Controls.Add(this.darkLabel21);
-            this.sectionCurrentBone.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.sectionCurrentBone.Location = new System.Drawing.Point(0, 472);
-            this.sectionCurrentBone.Name = "sectionCurrentBone";
-            this.sectionCurrentBone.SectionHeader = "Current mesh";
-            this.sectionCurrentBone.Size = new System.Drawing.Size(316, 82);
-            this.sectionCurrentBone.TabIndex = 107;
+            sectionCurrentBone.Controls.Add(comboLightType);
+            sectionCurrentBone.Controls.Add(butSetToAll);
+            sectionCurrentBone.Controls.Add(darkLabel1);
+            sectionCurrentBone.Controls.Add(nudTransZ);
+            sectionCurrentBone.Controls.Add(nudTransY);
+            sectionCurrentBone.Controls.Add(darkLabel29);
+            sectionCurrentBone.Controls.Add(darkLabel27);
+            sectionCurrentBone.Controls.Add(nudTransX);
+            sectionCurrentBone.Controls.Add(darkLabel26);
+            sectionCurrentBone.Controls.Add(darkLabel21);
+            sectionCurrentBone.Dock = System.Windows.Forms.DockStyle.Bottom;
+            sectionCurrentBone.Location = new System.Drawing.Point(0, 472);
+            sectionCurrentBone.Name = "sectionCurrentBone";
+            sectionCurrentBone.SectionHeader = "Current mesh";
+            sectionCurrentBone.Size = new System.Drawing.Size(316, 82);
+            sectionCurrentBone.TabIndex = 107;
             // 
             // comboLightType
             // 
-            this.comboLightType.FormattingEnabled = true;
-            this.comboLightType.Items.AddRange(new object[] {
-            "Dynamic Lighting",
-            "Static Lighting"});
-            this.comboLightType.Location = new System.Drawing.Point(82, 56);
-            this.comboLightType.Name = "comboLightType";
-            this.comboLightType.Size = new System.Drawing.Size(147, 23);
-            this.comboLightType.TabIndex = 106;
-            this.comboLightType.SelectedIndexChanged += new System.EventHandler(this.comboLightType_SelectedIndexChanged);
+            comboLightType.FormattingEnabled = true;
+            comboLightType.Items.AddRange(new object[] { "Dynamic Lighting", "Static Lighting" });
+            comboLightType.Location = new System.Drawing.Point(82, 56);
+            comboLightType.Name = "comboLightType";
+            comboLightType.Size = new System.Drawing.Size(147, 23);
+            comboLightType.TabIndex = 106;
+            comboLightType.SelectedIndexChanged += comboLightType_SelectedIndexChanged;
             // 
             // butSetToAll
             // 
-            this.butSetToAll.Checked = false;
-            this.butSetToAll.Location = new System.Drawing.Point(235, 56);
-            this.butSetToAll.Name = "butSetToAll";
-            this.butSetToAll.Size = new System.Drawing.Size(78, 23);
-            this.butSetToAll.TabIndex = 108;
-            this.butSetToAll.Text = "Set to all";
-            this.butSetToAll.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.butSetToAll.Click += new System.EventHandler(this.butSetToAll_Click);
+            butSetToAll.Checked = false;
+            butSetToAll.Location = new System.Drawing.Point(235, 56);
+            butSetToAll.Name = "butSetToAll";
+            butSetToAll.Size = new System.Drawing.Size(78, 23);
+            butSetToAll.TabIndex = 108;
+            butSetToAll.Text = "Set to all";
+            butSetToAll.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            butSetToAll.Click += butSetToAll_Click;
             // 
             // darkLabel1
             // 
-            this.darkLabel1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel1.Location = new System.Drawing.Point(4, 59);
-            this.darkLabel1.Name = "darkLabel1";
-            this.darkLabel1.Size = new System.Drawing.Size(76, 13);
-            this.darkLabel1.TabIndex = 107;
-            this.darkLabel1.Text = "Light mode:";
+            darkLabel1.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel1.Location = new System.Drawing.Point(4, 59);
+            darkLabel1.Name = "darkLabel1";
+            darkLabel1.Size = new System.Drawing.Size(76, 13);
+            darkLabel1.TabIndex = 107;
+            darkLabel1.Text = "Light mode:";
             // 
             // nudTransZ
             // 
-            this.nudTransZ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.nudTransZ.DecimalPlaces = 4;
-            this.nudTransZ.IncrementAlternate = new decimal(new int[] {
-            160,
-            0,
-            0,
-            65536});
-            this.nudTransZ.Location = new System.Drawing.Point(248, 28);
-            this.nudTransZ.LoopValues = false;
-            this.nudTransZ.Maximum = new decimal(new int[] {
-            32767,
-            0,
-            0,
-            0});
-            this.nudTransZ.Minimum = new decimal(new int[] {
-            32768,
-            0,
-            0,
-            -2147483648});
-            this.nudTransZ.Name = "nudTransZ";
-            this.nudTransZ.Size = new System.Drawing.Size(65, 22);
-            this.nudTransZ.TabIndex = 104;
-            this.nudTransZ.ValueChanged += new System.EventHandler(this.nudTransZ_ValueChanged);
+            nudTransZ.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            nudTransZ.DecimalPlaces = 4;
+            nudTransZ.IncrementAlternate = new decimal(new int[] { 160, 0, 0, 65536 });
+            nudTransZ.Location = new System.Drawing.Point(248, 28);
+            nudTransZ.LoopValues = false;
+            nudTransZ.Maximum = new decimal(new int[] { 32767, 0, 0, 0 });
+            nudTransZ.Minimum = new decimal(new int[] { 32768, 0, 0, int.MinValue });
+            nudTransZ.Name = "nudTransZ";
+            nudTransZ.Size = new System.Drawing.Size(65, 22);
+            nudTransZ.TabIndex = 104;
+            nudTransZ.ValueChanged += nudTransZ_ValueChanged;
             // 
             // nudTransY
             // 
-            this.nudTransY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.nudTransY.DecimalPlaces = 4;
-            this.nudTransY.IncrementAlternate = new decimal(new int[] {
-            160,
-            0,
-            0,
-            65536});
-            this.nudTransY.Location = new System.Drawing.Point(165, 28);
-            this.nudTransY.LoopValues = false;
-            this.nudTransY.Maximum = new decimal(new int[] {
-            32767,
-            0,
-            0,
-            0});
-            this.nudTransY.Minimum = new decimal(new int[] {
-            32768,
-            0,
-            0,
-            -2147483648});
-            this.nudTransY.Name = "nudTransY";
-            this.nudTransY.Size = new System.Drawing.Size(64, 22);
-            this.nudTransY.TabIndex = 103;
-            this.nudTransY.ValueChanged += new System.EventHandler(this.nudTransY_ValueChanged);
+            nudTransY.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            nudTransY.DecimalPlaces = 4;
+            nudTransY.IncrementAlternate = new decimal(new int[] { 160, 0, 0, 65536 });
+            nudTransY.Location = new System.Drawing.Point(165, 28);
+            nudTransY.LoopValues = false;
+            nudTransY.Maximum = new decimal(new int[] { 32767, 0, 0, 0 });
+            nudTransY.Minimum = new decimal(new int[] { 32768, 0, 0, int.MinValue });
+            nudTransY.Name = "nudTransY";
+            nudTransY.Size = new System.Drawing.Size(64, 22);
+            nudTransY.TabIndex = 103;
+            nudTransY.ValueChanged += nudTransY_ValueChanged;
             // 
             // darkLabel29
             // 
-            this.darkLabel29.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.darkLabel29.Location = new System.Drawing.Point(4, 30);
-            this.darkLabel29.Name = "darkLabel29";
-            this.darkLabel29.Size = new System.Drawing.Size(60, 13);
-            this.darkLabel29.TabIndex = 105;
-            this.darkLabel29.Text = "Pivot:";
+            darkLabel29.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel29.Location = new System.Drawing.Point(4, 30);
+            darkLabel29.Name = "darkLabel29";
+            darkLabel29.Size = new System.Drawing.Size(60, 13);
+            darkLabel29.TabIndex = 105;
+            darkLabel29.Text = "Pivot:";
             // 
             // darkLabel27
             // 
-            this.darkLabel27.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.darkLabel27.AutoSize = true;
-            this.darkLabel27.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.darkLabel27.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.darkLabel27.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(211)))), ((int)(((byte)(211)))), ((int)(((byte)(211)))));
-            this.darkLabel27.Location = new System.Drawing.Point(66, 30);
-            this.darkLabel27.Name = "darkLabel27";
-            this.darkLabel27.Size = new System.Drawing.Size(14, 13);
-            this.darkLabel27.TabIndex = 99;
-            this.darkLabel27.Text = "X";
+            darkLabel27.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            darkLabel27.AutoSize = true;
+            darkLabel27.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            darkLabel27.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            darkLabel27.ForeColor = System.Drawing.Color.FromArgb(211, 211, 211);
+            darkLabel27.Location = new System.Drawing.Point(66, 30);
+            darkLabel27.Name = "darkLabel27";
+            darkLabel27.Size = new System.Drawing.Size(14, 13);
+            darkLabel27.TabIndex = 99;
+            darkLabel27.Text = "X";
             // 
             // nudTransX
             // 
-            this.nudTransX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.nudTransX.DecimalPlaces = 4;
-            this.nudTransX.IncrementAlternate = new decimal(new int[] {
-            160,
-            0,
-            0,
-            65536});
-            this.nudTransX.Location = new System.Drawing.Point(82, 28);
-            this.nudTransX.LoopValues = false;
-            this.nudTransX.Maximum = new decimal(new int[] {
-            32767,
-            0,
-            0,
-            0});
-            this.nudTransX.Minimum = new decimal(new int[] {
-            32768,
-            0,
-            0,
-            -2147483648});
-            this.nudTransX.Name = "nudTransX";
-            this.nudTransX.Size = new System.Drawing.Size(64, 22);
-            this.nudTransX.TabIndex = 102;
-            this.nudTransX.ValueChanged += new System.EventHandler(this.nudTransX_ValueChanged);
+            nudTransX.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            nudTransX.DecimalPlaces = 4;
+            nudTransX.IncrementAlternate = new decimal(new int[] { 160, 0, 0, 65536 });
+            nudTransX.Location = new System.Drawing.Point(82, 28);
+            nudTransX.LoopValues = false;
+            nudTransX.Maximum = new decimal(new int[] { 32767, 0, 0, 0 });
+            nudTransX.Minimum = new decimal(new int[] { 32768, 0, 0, int.MinValue });
+            nudTransX.Name = "nudTransX";
+            nudTransX.Size = new System.Drawing.Size(64, 22);
+            nudTransX.TabIndex = 102;
+            nudTransX.ValueChanged += nudTransX_ValueChanged;
             // 
             // darkLabel26
             // 
-            this.darkLabel26.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.darkLabel26.AutoSize = true;
-            this.darkLabel26.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.darkLabel26.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.darkLabel26.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(211)))), ((int)(((byte)(211)))), ((int)(((byte)(211)))));
-            this.darkLabel26.Location = new System.Drawing.Point(150, 30);
-            this.darkLabel26.Name = "darkLabel26";
-            this.darkLabel26.Size = new System.Drawing.Size(14, 13);
-            this.darkLabel26.TabIndex = 100;
-            this.darkLabel26.Text = "Y";
+            darkLabel26.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            darkLabel26.AutoSize = true;
+            darkLabel26.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            darkLabel26.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            darkLabel26.ForeColor = System.Drawing.Color.FromArgb(211, 211, 211);
+            darkLabel26.Location = new System.Drawing.Point(150, 30);
+            darkLabel26.Name = "darkLabel26";
+            darkLabel26.Size = new System.Drawing.Size(14, 13);
+            darkLabel26.TabIndex = 100;
+            darkLabel26.Text = "Y";
             // 
             // darkLabel21
             // 
-            this.darkLabel21.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.darkLabel21.AutoSize = true;
-            this.darkLabel21.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.darkLabel21.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.darkLabel21.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(211)))), ((int)(((byte)(211)))), ((int)(((byte)(211)))));
-            this.darkLabel21.Location = new System.Drawing.Point(233, 30);
-            this.darkLabel21.Name = "darkLabel21";
-            this.darkLabel21.Size = new System.Drawing.Size(14, 13);
-            this.darkLabel21.TabIndex = 101;
-            this.darkLabel21.Text = "Z";
+            darkLabel21.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            darkLabel21.AutoSize = true;
+            darkLabel21.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            darkLabel21.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            darkLabel21.ForeColor = System.Drawing.Color.FromArgb(211, 211, 211);
+            darkLabel21.Location = new System.Drawing.Point(233, 30);
+            darkLabel21.Name = "darkLabel21";
+            darkLabel21.Size = new System.Drawing.Size(14, 13);
+            darkLabel21.TabIndex = 101;
+            darkLabel21.Text = "Z";
             // 
             // panelAll
             // 
-            this.panelAll.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panelAll.Controls.Add(this.panelMain);
-            this.panelAll.Controls.Add(this.panelRight);
-            this.panelAll.Location = new System.Drawing.Point(7, 6);
-            this.panelAll.Name = "panelAll";
-            this.panelAll.Size = new System.Drawing.Size(770, 554);
-            this.panelAll.TabIndex = 108;
+            panelAll.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            panelAll.Controls.Add(panelMain);
+            panelAll.Controls.Add(panelRight);
+            panelAll.Location = new System.Drawing.Point(7, 6);
+            panelAll.Name = "panelAll";
+            panelAll.Size = new System.Drawing.Size(770, 554);
+            panelAll.TabIndex = 108;
             // 
             // panelMain
             // 
-            this.panelMain.Controls.Add(this.panelRendering);
-            this.panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMain.Location = new System.Drawing.Point(0, 0);
-            this.panelMain.Name = "panelMain";
-            this.panelMain.Padding = new System.Windows.Forms.Padding(0, 0, 2, 0);
-            this.panelMain.Size = new System.Drawing.Size(454, 554);
-            this.panelMain.TabIndex = 0;
+            panelMain.Controls.Add(panelRendering);
+            panelMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            panelMain.Location = new System.Drawing.Point(0, 0);
+            panelMain.Name = "panelMain";
+            panelMain.Padding = new System.Windows.Forms.Padding(0, 0, 2, 0);
+            panelMain.Size = new System.Drawing.Size(454, 554);
+            panelMain.TabIndex = 0;
             // 
             // panelRendering
             // 
-            this.panelRendering.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelRendering.Location = new System.Drawing.Point(0, 0);
-            this.panelRendering.Name = "panelRendering";
-            this.panelRendering.Size = new System.Drawing.Size(452, 554);
-            this.panelRendering.TabIndex = 0;
-            this.panelRendering.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.panelRendering_MouseDoubleClick);
+            panelRendering.AllowRendering = true;
+            panelRendering.Dock = System.Windows.Forms.DockStyle.Fill;
+            panelRendering.Location = new System.Drawing.Point(0, 0);
+            panelRendering.Name = "panelRendering";
+            panelRendering.Size = new System.Drawing.Size(452, 554);
+            panelRendering.TabIndex = 0;
+            panelRendering.MouseDoubleClick += panelRendering_MouseDoubleClick;
             // 
             // panelRight
             // 
-            this.panelRight.Controls.Add(this.section3D);
-            this.panelRight.Controls.Add(this.sectionCurrentBone);
-            this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelRight.Location = new System.Drawing.Point(454, 0);
-            this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(316, 554);
-            this.panelRight.TabIndex = 1;
+            panelRight.Controls.Add(section3D);
+            panelRight.Controls.Add(sectionCurrentBone);
+            panelRight.Dock = System.Windows.Forms.DockStyle.Right;
+            panelRight.Location = new System.Drawing.Point(454, 0);
+            panelRight.Name = "panelRight";
+            panelRight.Size = new System.Drawing.Size(316, 554);
+            panelRight.TabIndex = 1;
             // 
             // section3D
             // 
-            this.section3D.Controls.Add(this.butAddFromWad2);
-            this.section3D.Controls.Add(this.butRenameBone);
-            this.section3D.Controls.Add(this.butAddFromFile);
-            this.section3D.Controls.Add(this.butEditMesh);
-            this.section3D.Controls.Add(this.butExportSelectedMesh);
-            this.section3D.Controls.Add(this.treeSkeleton);
-            this.section3D.Controls.Add(this.butLoadModel);
-            this.section3D.Controls.Add(this.butDeleteBone);
-            this.section3D.Controls.Add(this.butReplaceFromWad2);
-            this.section3D.Controls.Add(this.butReplaceFromFile);
-            this.section3D.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.section3D.Location = new System.Drawing.Point(0, 0);
-            this.section3D.Name = "section3D";
-            this.section3D.SectionHeader = "Mesh tree";
-            this.section3D.Size = new System.Drawing.Size(316, 472);
-            this.section3D.TabIndex = 108;
+            section3D.Controls.Add(darkPanel1);
+            section3D.Controls.Add(panelSkinned);
+            section3D.Dock = System.Windows.Forms.DockStyle.Fill;
+            section3D.Location = new System.Drawing.Point(0, 0);
+            section3D.Name = "section3D";
+            section3D.SectionHeader = "Mesh tree";
+            section3D.Size = new System.Drawing.Size(316, 472);
+            section3D.TabIndex = 108;
+            // 
+            // darkPanel1
+            // 
+            darkPanel1.Controls.Add(treeSkeleton);
+            darkPanel1.Controls.Add(butAddFromWad2);
+            darkPanel1.Controls.Add(butReplaceFromFile);
+            darkPanel1.Controls.Add(butRenameBone);
+            darkPanel1.Controls.Add(butReplaceFromWad2);
+            darkPanel1.Controls.Add(butAddFromFile);
+            darkPanel1.Controls.Add(butDeleteBone);
+            darkPanel1.Controls.Add(butEditMesh);
+            darkPanel1.Controls.Add(butLoadModel);
+            darkPanel1.Controls.Add(butExportSelectedMesh);
+            darkPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            darkPanel1.Location = new System.Drawing.Point(1, 25);
+            darkPanel1.Name = "darkPanel1";
+            darkPanel1.Size = new System.Drawing.Size(314, 417);
+            darkPanel1.TabIndex = 113;
             // 
             // butEditMesh
             // 
-            this.butEditMesh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.butEditMesh.Checked = false;
-            this.butEditMesh.Location = new System.Drawing.Point(109, 388);
-            this.butEditMesh.Name = "butEditMesh";
-            this.butEditMesh.Size = new System.Drawing.Size(99, 23);
-            this.butEditMesh.TabIndex = 92;
-            this.butEditMesh.Text = "Edit mesh";
-            this.butEditMesh.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.toolTip.SetToolTip(this.butEditMesh, "Edit mesh for currently selected bone");
-            this.butEditMesh.Click += new System.EventHandler(this.butEditMesh_Click);
+            butEditMesh.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butEditMesh.Checked = false;
+            butEditMesh.Location = new System.Drawing.Point(109, 335);
+            butEditMesh.Name = "butEditMesh";
+            butEditMesh.Size = new System.Drawing.Size(99, 23);
+            butEditMesh.TabIndex = 92;
+            butEditMesh.Text = "Edit mesh";
+            butEditMesh.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            toolTip.SetToolTip(butEditMesh, "Edit mesh for currently selected bone");
+            butEditMesh.Click += butEditMesh_Click;
             // 
             // butExportSelectedMesh
             // 
-            this.butExportSelectedMesh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.butExportSelectedMesh.Checked = false;
-            this.butExportSelectedMesh.Location = new System.Drawing.Point(109, 446);
-            this.butExportSelectedMesh.Name = "butExportSelectedMesh";
-            this.butExportSelectedMesh.Size = new System.Drawing.Size(99, 23);
-            this.butExportSelectedMesh.TabIndex = 91;
-            this.butExportSelectedMesh.Text = "Export mesh";
-            this.butExportSelectedMesh.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.toolTip.SetToolTip(this.butExportSelectedMesh, "Export currently selected bone\'s mesh to 3D model");
-            this.butExportSelectedMesh.Click += new System.EventHandler(this.butExportSelectedMesh_Click);
+            butExportSelectedMesh.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butExportSelectedMesh.Checked = false;
+            butExportSelectedMesh.Location = new System.Drawing.Point(109, 393);
+            butExportSelectedMesh.Name = "butExportSelectedMesh";
+            butExportSelectedMesh.Size = new System.Drawing.Size(99, 23);
+            butExportSelectedMesh.TabIndex = 91;
+            butExportSelectedMesh.Text = "Export mesh";
+            butExportSelectedMesh.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            toolTip.SetToolTip(butExportSelectedMesh, "Export currently selected bone's mesh to 3D model");
+            butExportSelectedMesh.Click += butExportSelectedMesh_Click;
+            // 
+            // panelSkinned
+            // 
+            panelSkinned.Controls.Add(darkPanel2);
+            panelSkinned.Controls.Add(butClearSkin);
+            panelSkinned.Controls.Add(butSetSkin);
+            panelSkinned.Dock = System.Windows.Forms.DockStyle.Bottom;
+            panelSkinned.Location = new System.Drawing.Point(1, 442);
+            panelSkinned.Name = "panelSkinned";
+            panelSkinned.Size = new System.Drawing.Size(314, 29);
+            panelSkinned.TabIndex = 93;
+            // 
+            // darkPanel2
+            // 
+            darkPanel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            darkPanel2.Controls.Add(lblSkin);
+            darkPanel2.Location = new System.Drawing.Point(3, 3);
+            darkPanel2.Name = "darkPanel2";
+            darkPanel2.Size = new System.Drawing.Size(205, 23);
+            darkPanel2.TabIndex = 109;
+            // 
+            // lblSkin
+            // 
+            lblSkin.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            lblSkin.ForeColor = System.Drawing.Color.Gray;
+            lblSkin.Location = new System.Drawing.Point(3, 5);
+            lblSkin.Name = "lblSkin";
+            lblSkin.Size = new System.Drawing.Size(199, 13);
+            lblSkin.TabIndex = 106;
+            lblSkin.Text = "Skinned mesh:";
+            lblSkin.Click += butSetSkin_Click;
+            // 
+            // butClearSkin
+            // 
+            butClearSkin.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butClearSkin.Checked = false;
+            butClearSkin.Location = new System.Drawing.Point(266, 3);
+            butClearSkin.Name = "butClearSkin";
+            butClearSkin.Size = new System.Drawing.Size(47, 23);
+            butClearSkin.TabIndex = 108;
+            butClearSkin.Text = "Clear";
+            butClearSkin.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            toolTip.SetToolTip(butClearSkin, "Remove skinned mesh");
+            butClearSkin.Click += butClearSkin_Click;
+            // 
+            // butSetSkin
+            // 
+            butSetSkin.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butSetSkin.Checked = false;
+            butSetSkin.Location = new System.Drawing.Point(214, 3);
+            butSetSkin.Name = "butSetSkin";
+            butSetSkin.Size = new System.Drawing.Size(47, 23);
+            butSetSkin.TabIndex = 107;
+            butSetSkin.Text = "Add";
+            butSetSkin.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            toolTip.SetToolTip(butSetSkin, "Add skinned mesh");
+            butSetSkin.Click += butSetSkin_Click;
             // 
             // butCancel
             // 
-            this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.butCancel.Checked = false;
-            this.butCancel.Location = new System.Drawing.Point(696, 566);
-            this.butCancel.Name = "butCancel";
-            this.butCancel.Size = new System.Drawing.Size(81, 23);
-            this.butCancel.TabIndex = 112;
-            this.butCancel.Text = "Cancel";
-            this.butCancel.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
+            butCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butCancel.Checked = false;
+            butCancel.Location = new System.Drawing.Point(696, 566);
+            butCancel.Name = "butCancel";
+            butCancel.Size = new System.Drawing.Size(81, 23);
+            butCancel.TabIndex = 112;
+            butCancel.Text = "Cancel";
+            butCancel.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            butCancel.Click += butCancel_Click;
             // 
             // FormSkeletonEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 619);
-            this.Controls.Add(this.butCancel);
-            this.Controls.Add(this.panelAll);
-            this.Controls.Add(this.cbDrawGrid);
-            this.Controls.Add(this.cbDrawGizmo);
-            this.Controls.Add(this.darkStatusStrip1);
-            this.Controls.Add(this.butSaveChanges);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.KeyPreview = true;
-            this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(800, 500);
-            this.Name = "FormSkeletonEditor";
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Skeleton editor";
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.formSkeletonEditor_KeyDown);
-            this.cmBone.ResumeLayout(false);
-            this.sectionCurrentBone.ResumeLayout(false);
-            this.sectionCurrentBone.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudTransZ)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudTransY)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudTransX)).EndInit();
-            this.panelAll.ResumeLayout(false);
-            this.panelMain.ResumeLayout(false);
-            this.panelRight.ResumeLayout(false);
-            this.section3D.ResumeLayout(false);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(784, 619);
+            Controls.Add(butCancel);
+            Controls.Add(panelAll);
+            Controls.Add(cbDrawGrid);
+            Controls.Add(cbDrawGizmo);
+            Controls.Add(darkStatusStrip1);
+            Controls.Add(butSaveChanges);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            KeyPreview = true;
+            MinimizeBox = false;
+            MinimumSize = new System.Drawing.Size(800, 500);
+            Name = "FormSkeletonEditor";
+            ShowIcon = false;
+            ShowInTaskbar = false;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            Text = "Skeleton editor";
+            KeyDown += formSkeletonEditor_KeyDown;
+            cmBone.ResumeLayout(false);
+            sectionCurrentBone.ResumeLayout(false);
+            sectionCurrentBone.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudTransZ).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudTransY).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudTransX).EndInit();
+            panelAll.ResumeLayout(false);
+            panelMain.ResumeLayout(false);
+            panelRight.ResumeLayout(false);
+            section3D.ResumeLayout(false);
+            darkPanel1.ResumeLayout(false);
+            panelSkinned.ResumeLayout(false);
+            darkPanel2.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -744,5 +770,11 @@
         private DarkUI.Controls.DarkComboBox comboLightType;
         private DarkUI.Controls.DarkButton butEditMesh;
         private System.Windows.Forms.ToolTip toolTip;
+        private DarkUI.Controls.DarkPanel panelSkinned;
+        private DarkUI.Controls.DarkButton butSetSkin;
+        private DarkUI.Controls.DarkLabel lblSkin;
+        private DarkUI.Controls.DarkButton butClearSkin;
+        private DarkUI.Controls.DarkPanel darkPanel1;
+        private DarkUI.Controls.DarkPanel darkPanel2;
     }
 }

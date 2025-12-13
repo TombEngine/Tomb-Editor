@@ -164,6 +164,10 @@ namespace DarkUI.Controls
             }
         }
 
+        [Category("Behavior")]
+        [DefaultValue(false)]
+        public bool DisableMouseScrolling { get; set; }
+
         #endregion Properties
 
         #region Methods
@@ -264,6 +268,20 @@ namespace DarkUI.Controls
             e.Graphics.Clear(BackColor);
         }
         #endregion Drawing
+
+        #region Windows Events
+
+        private const int WM_MOUSEWHEEL = 0x020A;
+
+        protected override void WndProc(ref Message m)
+        {
+            if (DisableMouseScrolling && m.Msg == WM_MOUSEWHEEL)
+                return;
+
+            base.WndProc(ref m);
+        }
+
+        #endregion Windows Events
 
         #endregion On Events
     }

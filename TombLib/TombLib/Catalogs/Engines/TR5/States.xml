@@ -12,16 +12,25 @@
     <state item="0" id="127" name="TIGHTROPE_RESTORE_BALANCE" />
     <state item="0" id="128" name="BARS_SWING" />
     <state item="0" id="129" name="BARS_JUMP" />
-    <state item="0" id="130" name="UNKNOWN2" />
+    <state item="0" id="130" name="RADIO_START" />
     <state item="0" id="131" name="RADIO_LISTENING" />
     <state item="0" id="132" name="RADIO_OFF" />
-    <state item="0" id="133" name="UNKNOWN3" />
+    <state item="0" id="133" name="USE_KEYCARD" />
     <state item="0" id="134" name="UNKNOWN4" />
-    <state item="0" id="135" name="UNKNOWN5" />
+    <state item="0" id="135" name="VALVE_TURN" />
     <state item="0" id="136" name="UNKNOWN6" />
     <state item="0" id="137" name="PICKUP_FROM_CHEST" />
 
-    <!-- HUSKIE -->
+    <!-- Brown beast -->
+    <state item="77" id="1" name="IDLE" />
+    <state item="77" id="2" name="WALK_FORWARD" />
+    <state item="77" id="3" name="RUN_FORWARD" />
+    <state item="77" id="4" name="SWIPE_ATTACK" />
+    <state item="77" id="5" name="JUMP_BITE_ATTACK_UNUSED" />
+    <state item="77" id="6" name="JUMP_SWIPE_ATTACK" />
+    <state item="77" id="7" name="DEATH" />
+
+    <!-- Huskie -->
     <state item="130" id="0" name="EMPTY" />
     <state item="130" id="1" name="STOP" />
     <state item="130" id="2" name="WALK" />

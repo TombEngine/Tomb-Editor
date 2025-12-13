@@ -191,6 +191,21 @@ namespace TombLib
             return (int)Math.Pow(2, (int)Math.Log(x, 2));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int NearestPowerOf2(int x)
+        {
+            if (x <= 1)
+                return 1;
+
+            int p = 1;
+            while (p < x) p <<= 1;
+
+            int lower = p >> 1;
+            int upper = p;
+
+            return (x - lower < upper - x) ? lower : upper;
+        }
+
         /// <summary>
         /// Checks if a - b are almost equals within a float epsilon.
         /// </summary>
@@ -520,6 +535,40 @@ namespace TombLib
             var B = (float)Lerp(multiplicative.Z, additive.Z, luma);
 
             return new Vector3(R, G, B);
+        }
+
+        public static Vector4 HsvToRgb(float h, float s, float v)
+        {
+            float c = v * s;
+            float x = c * (1 - MathF.Abs((h * 6) % 2 - 1));
+            float m = v - c;
+
+            float r = 0, g = 0, b = 0;
+            int hue = (int)(h * 6);
+
+            switch (hue)
+            {
+                case 0: r = c; g = x; b = 0; break;
+                case 1: r = x; g = c; b = 0; break;
+                case 2: r = 0; g = c; b = x; break;
+                case 3: r = 0; g = x; b = c; break;
+                case 4: r = x; g = 0; b = c; break;
+                case 5: r = c; g = 0; b = x; break;
+            }
+
+            return new Vector4(r + m, g + m, b + m, 1.0f);
+        }
+
+        public static Vector4 GetRandomColorByIndex(int index, int maxIndices, float saturation = 1.0f)
+        {
+            if (maxIndices <= 0 || index < 0)
+                throw new ArgumentOutOfRangeException(nameof(maxIndices), "Color index and index count must be greater than zero.");
+
+            int stride = 7;
+            int shuffledIndex = (index * stride) % maxIndices;
+            float hue = shuffledIndex / (float)maxIndices;
+
+            return HsvToRgb(hue, saturation, 1.0f);
         }
     }
 }
