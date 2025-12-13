@@ -16,10 +16,10 @@
     <moveable id="14" name="LARA_SCREAM" use_body_from="12" hidden="true" />
     <moveable id="15" name="LARA_CROSSBOW_LASER" use_body_from="12" hidden="true" />
     <moveable id="16" name="LARA_REVOLVER_LASER" use_body_from="12" hidden="true" />
-    <moveable id="17" name="LARA_HOLSTERS" hidden="true" />
-    <moveable id="18" name="LARA_HOLSTERS_PISTOLS" hidden="true" />
-    <moveable id="19" name="LARA_HOLSTERS_UZIS" hidden="true" />
-    <moveable id="20" name="LARA_HOLSTERS_REVOLVER" hidden="true" />
+    <moveable id="17" name="LARA_HOLSTERS" use_body_from="12" hidden="true" />
+    <moveable id="18" name="LARA_HOLSTERS_PISTOLS" use_body_from="12" hidden="true" />
+    <moveable id="19" name="LARA_HOLSTERS_UZIS" use_body_from="12" hidden="true" />
+    <moveable id="20" name="LARA_HOLSTERS_REVOLVER" use_body_from="12" hidden="true" />
     <moveable id="21" name="LARA_SPEECH_HEAD1" use_body_from="12" hidden="true" />
     <moveable id="22" name="LARA_SPEECH_HEAD2" use_body_from="12" hidden="true" />
     <moveable id="23" name="LARA_SPEECH_HEAD3" use_body_from="12" hidden="true" />
@@ -28,7 +28,7 @@
     <moveable id="26" name="ACTOR1_SPEECH_HEAD2" hidden="true" />
     <moveable id="27" name="ACTOR2_SPEECH_HEAD1" hidden="true" />
     <moveable id="28" name="ACTOR2_SPEECH_HEAD2" hidden="true" />
-    <moveable id="29" name="LARA_BINOCULARS_MESH" hidden="true" />
+    <moveable id="29" name="LARA_BINOCULARS_MESH" use_body_from="12" hidden="true" />
     <moveable id="30" name="LARA_EXTRA_MESH1" hidden="true" />
     <moveable id="31" name="LARA_EXTRA_MESH2" hidden="true" />
     <moveable id="32" name="LARA_WATER_MESH" use_body_from="12" hidden="true" />

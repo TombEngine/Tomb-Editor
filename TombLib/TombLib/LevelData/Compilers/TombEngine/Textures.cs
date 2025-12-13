@@ -317,39 +317,30 @@ namespace TombLib.LevelData.Compilers.TombEngine
         {
             writer.Write(atlasList.Count);
             foreach (var atlas in atlasList)
-			{
-				writer.Write(atlas.ColorMap.Width);
-				writer.Write(atlas.ColorMap.Height);
+            {
+                writer.Write(atlas.ColorMap.Width);
+                writer.Write(atlas.ColorMap.Height);
 
-				WriteImageFast(writer, atlas.ColorMap, CompressionFormat.Bc3);
-             
-				writer.Write(atlas.NormalMap is not null);
-				if (atlas.NormalMap is not null)
-				{
-					using (var ms = new MemoryStream())
-					{
-                        WriteImageFast(writer, atlas.NormalMap.Value, CompressionFormat.Bc5);
-					}
-				}
+                WriteImageFast(writer, atlas.ColorMap, CompressionFormat.Bc3);
 
-				writer.Write(atlas.ORSHMap is not  null);
-				if (atlas.ORSHMap is not null)
-				{
-					using (var ms = new MemoryStream())
-					{
-						WriteImageFast(writer, atlas.ORSHMap.Value, CompressionFormat.Bc3);
-					}
-				}
+                writer.Write(atlas.NormalMap is not null);
+                if (atlas.NormalMap is not null)
+                {
+                    WriteImageFast(writer, atlas.NormalMap.Value, CompressionFormat.Bc5);
+                }
 
-				writer.Write(atlas.EmissiveMap is not null);
-				if (atlas.EmissiveMap is not null)
-				{
-					using (var ms = new MemoryStream())
-					{
-						WriteImageFast(writer, atlas.EmissiveMap.Value, CompressionFormat.Bc3);
-					}
-				}
-			}
+                writer.Write(atlas.ORSHMap is not null);
+                if (atlas.ORSHMap is not null)
+                {
+                    WriteImageFast(writer, atlas.ORSHMap.Value, CompressionFormat.Bc3);
+                }
+
+                writer.Write(atlas.EmissiveMap is not null);
+                if (atlas.EmissiveMap is not null)
+                {
+                    WriteImageFast(writer, atlas.EmissiveMap.Value, CompressionFormat.Bc3);
+                }
+            }
         }
     }
 }

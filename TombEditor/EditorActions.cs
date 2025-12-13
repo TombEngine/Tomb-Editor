@@ -4147,7 +4147,34 @@ namespace TombEditor
                 return false;
             }
 
-            if (!level.Settings.Textures.All(texture => texture.IsAvailable))
+            foreach (var room in level.Rooms.Where(r => r is not null))
+            {
+                foreach (var obj in room.Objects.Where(o => o is MoveableInstance))
+                {
+                    var moveableInstance = (MoveableInstance)obj;
+
+                    if (!level.Settings.Wads.Any(w => w.Wad.Moveables.ContainsKey(moveableInstance.WadObjectId)))
+                    {
+                        if (!silent)
+                            _editor.SendMessage("The object " + moveableInstance.ToString() + " was not found in any wad.\nCan't compile level with missing objects.", PopupType.Error);
+                        return false;
+                    }
+                }
+
+                foreach (var obj in room.Objects.Where(o => o is StaticInstance))
+                {
+                    var staticInstance = (StaticInstance)obj;
+
+                    if (!level.Settings.Wads.Any(w => w.Wad.Statics.ContainsKey(staticInstance.WadObjectId)))
+                    {
+                        if (!silent)
+                            _editor.SendMessage("The object " + staticInstance.ToString() + " was not found in any wad.\nCan't compile level with missing objects.", PopupType.Error);
+                        return false;
+                    }
+                }
+            }
+
+                if (!level.Settings.Textures.All(texture => texture.IsAvailable))
             {
                 if (!silent)
                     _editor.SendMessage("Textures are missing. Can't compile level without textures.", PopupType.Error);

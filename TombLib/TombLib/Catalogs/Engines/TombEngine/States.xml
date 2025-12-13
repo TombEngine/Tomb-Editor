@@ -59,6 +59,18 @@
     <state item="113" id="1" name="RUN" />
     <state item="113" id="2" name="JUMP_ATTACK" />
     <state item="113" id="3" name="ATTACK" />
+
+    <!-- SCUBA_DIVER -->
+    <state item="151" id="0" name="EMPTY" />
+    <state item="151" id="1" name="SDIVER_STATE_SWIM" />
+    <state item="151" id="2" name="SDIVER_STATE_TREAD_WATER_IDLE" />
+    <state item="151" id="3" name="SDIVER_STATE_SWIM_SHOOT" />
+    <state item="151" id="4" name="SDIVER_STATE_SWIM_AIM" />
+    <!-- <state item="151" id="5" name="" /> -->
+    <state item="151" id="6" name="SDIVER_STATE_TREAD_WATER_AIM" />
+    <state item="151" id="7" name="SDIVER_STATE_TREAD_WATER_SHOOT" />
+    <!-- <state item="151" id="8" name="" /> -->
+    <state item="151" id="9" name="SDIVER_STATE_DEATH" />
     
     <!-- KNIFE THROWER -->
     <state item="162" id="1" name= "IDLE" />

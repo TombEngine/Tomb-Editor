@@ -240,7 +240,7 @@
     <moveable id="301" name="Spiky gunflare for MP5" hidden="true" ten="GUN_FLASH2" />
     <moveable id="304" name="Camera target" essential="false" ten="CAMERA_TARGET" />
     <moveable id="305" name="Waterfall mist" essential="false" ten="WATERFALLMIST" />
-    <moveable id="306" name="Harpoon (single)" hidden="true" ten="HARPOON"/>
+    <moveable id="306" name="Harpoon (single)" hidden="true" ten="SCUBA_HARPOON"/>
     <moveable id="309" name="Rocket (single)" hidden="true"  ten="ROCKET"/>
     <moveable id="310" name="Harpoon (single)" hidden="true" ten="HARPOON"/>
     <moveable id="311" name="Grenade (single)" hidden="true"  ten="GRENADE"/>
