@@ -37,6 +37,14 @@ namespace TombLib.IO
             Write(value.W);
         }
 
+        public void Write(Plane value)
+        {
+            Write(value.Normal.X);
+            Write(value.Normal.Y);
+            Write(value.Normal.Z);
+            Write(value.D);
+        }
+
         public void Write(Quaternion value)
         {
             Write(value.X);

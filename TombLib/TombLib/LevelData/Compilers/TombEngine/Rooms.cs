@@ -1023,10 +1023,10 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                     compiledSector.FloorCollision = new TombEngineCollisionInfo();
                     compiledSector.FloorCollision.Portals = new int[2] {-1, -1};
-                    compiledSector.FloorCollision.Planes = new Vector3[2];
+                    compiledSector.FloorCollision.Planes = new Plane[2];
                     compiledSector.CeilingCollision = new TombEngineCollisionInfo();
                     compiledSector.CeilingCollision.Portals = new int[2] {-1, -1};
-                    compiledSector.CeilingCollision.Planes = new Vector3[2];
+                    compiledSector.CeilingCollision.Planes = new Plane[2];
                     compiledSector.WallPortal = -1;
                     compiledSector.StepSound = (int)GetTextureSound(room, x, z);
                     compiledSector.BoxIndex = -1;
