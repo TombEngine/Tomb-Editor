@@ -631,7 +631,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
             foreach (var animation in Animations)
             {
                 writer.Write(animation.StateID);
-                writer.Write(animation.Interpolation);
                 writer.Write(animation.FrameEnd);
                 writer.Write(animation.NextAnimation);
                 writer.Write(animation.NextFrame);
@@ -692,7 +691,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         var nextKeyframe = animation.KeyFrames[i + 1];
 
                         // Write interpolated frames.
-                        for (int j = 0; j < animation.Interpolation; j++)
+                        for (int j = 1; j < animation.Interpolation; j++)
                         {
                             float alpha = alphaStep * j;
 
