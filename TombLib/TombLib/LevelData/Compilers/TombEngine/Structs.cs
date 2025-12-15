@@ -52,7 +52,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
     {
         public float SplitAngle;
         public int[] Portals;
-        public Plane[] Planes;
+        public Vector3[] Planes;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -665,7 +665,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 writer.Write(fixedMotionCurveZ.StartHandle);
                 writer.Write(fixedMotionCurveZ.EndHandle);
 
-                // Write dummy frame if no key frames exist.
                 if (animation.KeyFrames.Count == 0)
                 {
                     var defaultKeyFrame = new TombEngineKeyFrame();
@@ -674,49 +673,12 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     writer.Write(1);
                     defaultKeyFrame.Write(writer);
                 }
-                // Write baked frames.
                 else
                 {
-                    // Write key frame.
-                    writer.Write(animation.KeyFrames.Count * animation.Interpolation);
-
-                    float alphaStep = 1.0f / (float)animation.Interpolation;
-                    for (int i = 0; i < animation.KeyFrames.Count; i++)
+                    writer.Write(animation.KeyFrames.Count);
+                    foreach (var keyFrame in animation.KeyFrames)
                     {
-                        var currentKeyframe = animation.KeyFrames[i];
-                        currentKeyframe.Write(writer);
-
-                        if (i == (animation.KeyFrames.Count - 1))
-                            continue;
-
-                        var nextKeyframe = animation.KeyFrames[i + 1];
-
-                        // Write interpolated frames.
-                        for (int j = 1; j < animation.Interpolation; j++)
-                        {
-                            float alpha = alphaStep * j;
-
-                            var center = Vector3.Lerp(currentKeyframe.BoundingBox.Center, nextKeyframe.BoundingBox.Center, alpha);
-                            var extents = Vector3.Lerp(currentKeyframe.BoundingBox.Extents, nextKeyframe.BoundingBox.Extents, alpha);
-
-                            var rootPos = Vector3.Lerp(currentKeyframe.RootOffset, nextKeyframe.RootOffset, alpha);
-
-                            var boneOrients = new List<Quaternion>(currentKeyframe.BoneOrientations.Count);
-                            for (int k = 0; k < boneOrients.Count; k++)
-                                boneOrients[k] = Quaternion.Slerp(currentKeyframe.BoneOrientations[k], nextKeyframe.BoneOrientations[k], alpha);
-
-                            var frame = new TombEngineKeyFrame();
-                            frame.BoundingBox = new TombEngineBoundingBox();
-                            frame.BoundingBox.X1 = (short)(center.X - extents.X);
-                            frame.BoundingBox.X2 = (short)(center.X + extents.X);
-                            frame.BoundingBox.Y1 = (short)(center.Y - extents.Y);
-                            frame.BoundingBox.Y2 = (short)(center.Y + extents.Y);
-                            frame.BoundingBox.Z1 = (short)(center.Z + extents.Z);
-                            frame.BoundingBox.Z2 = (short)(center.Z - extents.Z);
-                            frame.RootOffset = rootPos;
-                            frame.BoneOrientations = boneOrients;
-                            frame.Write(writer);
-                        }
+                        keyFrame.Write(writer);
                     }
                 }
 
@@ -795,8 +757,17 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         public void Write(BinaryWriterEx writer)
         {
-            writer.Write(BoundingBox.Center);
-            writer.Write(BoundingBox.Extents);
+            var center = new Vector3(
+                BoundingBox.X1 + BoundingBox.X2,
+                BoundingBox.Y1 + BoundingBox.Y2,
+                BoundingBox.Z1 + BoundingBox.Z2) / 2;
+            var extents = new Vector3(
+                BoundingBox.X2 - BoundingBox.X1,
+                BoundingBox.Y2 - BoundingBox.Y1,
+                BoundingBox.Z2 - BoundingBox.Z1) / 2;
+
+            writer.Write(center);
+            writer.Write(extents);
             writer.Write(RootOffset);
 
             writer.Write(BoneOrientations.Count);
@@ -813,28 +784,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public short Y2;
         public short Z1;
         public short Z2;
-
-        public Vector3 Center
-        {
-            get
-            {
-                return new Vector3(
-                    X1 + X2,
-                    Y1 + Y2,
-                    Z1 + Z2) / 2;
-            }
-        }
-
-        public Vector3 Extents
-        {
-            get
-            {
-                return new Vector3(
-                    X1 - X2,
-                    Y1 - Y2,
-                    Z1 - Z2) / 2;
-            }
-        }
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
