@@ -11,6 +11,10 @@ namespace TombLib.Wad
         {
             var stateChange = (WadStateChange)MemberwiseClone();
             stateChange.Dispatches = new List<WadAnimDispatch>(Dispatches);
+
+            foreach (var dispatch in Dispatches)
+                dispatch.BlendCurve = dispatch.BlendCurve.Clone();
+
             return stateChange;
         }
     }

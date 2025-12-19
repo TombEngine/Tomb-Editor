@@ -461,7 +461,7 @@ namespace TombLib.LevelData.Compilers
                             newAnimDispatch.Low = unchecked((ushort)(dispatch.InFrame + newAnimation.FrameStart));
                             newAnimDispatch.High = unchecked((ushort)(dispatch.OutFrame + newAnimation.FrameStart));
                             newAnimDispatch.NextAnimation = checked((ushort)(dispatch.NextAnimation + lastAnimation));
-                            newAnimDispatch.NextFrame = dispatch.NextFrame;
+                            newAnimDispatch.NextFrame = dispatch.NextFrameLow;
 
                             _animDispatches.Add(newAnimDispatch);
                             lastAnimDispatch++;

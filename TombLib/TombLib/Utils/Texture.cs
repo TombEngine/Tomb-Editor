@@ -1,9 +1,12 @@
 ﻿using System;
-using System.Numerics;
-using System.Linq;
 using System.Collections.Generic;
-using TombLib.LevelData;
+using System.Linq;
+using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
+using TombLib.LevelData;
 
 namespace TombLib.Utils
 {
@@ -269,38 +272,75 @@ namespace TombLib.Utils
         }
     }
 
+    [StructLayout(LayoutKind.Sequential)]
     public struct TextureArea : IEquatable<TextureArea>
     {
+        public Vector2 TexCoord0;
+        public Vector2 TexCoord1;
+        public Vector2 TexCoord2;
+        public Vector2 TexCoord3;
+        public Rectangle2 ParentArea;
+
         public static readonly TextureArea None;
         public static readonly TextureArea Invisible = new TextureArea { Texture = TextureInvisible.Instance };
 
         public Texture Texture;
-        public Rectangle2 ParentArea;
-        public Vector2 TexCoord0; // No array for those because:
-        public Vector2 TexCoord1; //    - Cache locality
-        public Vector2 TexCoord2; //    - No array bounds checks
-        public Vector2 TexCoord3; //    - 'Clone', 'GetHashCode' and so on work by default
         public BlendMode BlendMode;
         public bool DoubleSided;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public static bool operator ==(TextureArea first, TextureArea second)
         {
-            return
-                first.Texture == second.Texture &&
-                first.TexCoord0.Equals(second.TexCoord0) &&
-                first.TexCoord1.Equals(second.TexCoord1) &&
-                first.TexCoord2.Equals(second.TexCoord2) &&
-                first.TexCoord3.Equals(second.TexCoord3) &&
-                first.ParentArea.Start.Equals(second.ParentArea.Start) &&
-                first.ParentArea.End.Equals(second.ParentArea.End) &&
-                first.BlendMode == second.BlendMode &&
-                first.DoubleSided == second.DoubleSided;
+            // Early exit
+            if (first.Texture != second.Texture || first.BlendMode != second.BlendMode || first.DoubleSided != second.DoubleSided)
+                return false;
+
+            // SIMD for TexCoords
+            if (!EqualsTexCoords(first, second))
+                return false;
+
+            // ParentArea
+            return first.ParentArea.Start.Equals(second.ParentArea.Start) &&
+                   first.ParentArea.End.Equals(second.ParentArea.End);
         }
 
         public static bool operator !=(TextureArea first, TextureArea second) => !(first == second);
         public bool Equals(TextureArea other) => this == other;
         public override bool Equals(object other) => other is TextureArea && this == (TextureArea)other;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        private static bool EqualsTexCoords(in TextureArea a, in TextureArea b)
+        {
+            if (Avx.IsSupported)
+            {
+                ref readonly var aVec = ref Unsafe.As<Vector2, Vector256<float>>(ref Unsafe.AsRef(in a.TexCoord0));
+                ref readonly var bVec = ref Unsafe.As<Vector2, Vector256<float>>(ref Unsafe.AsRef(in b.TexCoord0));
+
+                var cmp = Avx.Compare(aVec, bVec, FloatComparisonMode.OrderedEqualNonSignaling);
+                return Avx.MoveMask(cmp) == 0xFF;
+            }
+
+            if (Sse.IsSupported)
+            {
+                ref readonly var aVec0 = ref Unsafe.As<Vector2, Vector128<float>>(ref Unsafe.AsRef(in a.TexCoord0));
+                ref readonly var bVec0 = ref Unsafe.As<Vector2, Vector128<float>>(ref Unsafe.AsRef(in b.TexCoord0));
+
+                if (Sse.MoveMask(Sse.CompareEqual(aVec0, bVec0)) != 0xF)
+                    return false;
+
+                ref readonly var aVec1 = ref Unsafe.As<Vector2, Vector128<float>>(ref Unsafe.AsRef(in a.TexCoord2));
+                ref readonly var bVec1 = ref Unsafe.As<Vector2, Vector128<float>>(ref Unsafe.AsRef(in b.TexCoord2));
+
+                return Sse.MoveMask(Sse.CompareEqual(aVec1, bVec1)) == 0xF;
+            }
+
+            return a.TexCoord0.Equals(b.TexCoord0) &&
+                   a.TexCoord1.Equals(b.TexCoord1) &&
+                   a.TexCoord2.Equals(b.TexCoord2) &&
+                   a.TexCoord3.Equals(b.TexCoord3);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public override int GetHashCode()
         {
             var hash = new HashCode();

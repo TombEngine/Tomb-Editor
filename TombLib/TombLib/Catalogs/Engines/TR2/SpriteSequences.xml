@@ -30,8 +30,8 @@
     <sprite_sequence id="194" name="Key 2" />
     <sprite_sequence id="195" name="Key 3" />
     <sprite_sequence id="196" name="Key 4" />
-    <sprite_sequence id="205" name="Pickup 5" />
-    <sprite_sequence id="206" name="Pickup 6" />
+    <sprite_sequence id="205" name="Pickup 1" />
+    <sprite_sequence id="206" name="Pickup 2" />
     <sprite_sequence id="220" name="Extra Fire (Ice Palace)" />
     <sprite_sequence id="224" name="Gray disk" />
     <sprite_sequence id="229" name="Grenade blast" zoom="-2.4" />

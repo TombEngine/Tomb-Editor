@@ -27,7 +27,7 @@ namespace WadTool
             Configuration.ConfigureWindow(this, _editor.Tool.Configuration);
         }
 
-        private bool FixAnimation(AnimationNode animation, bool fixEndFrame, bool fixNextAnim, bool fixNextFrame, bool fixStateChangeRanges, bool fixStateChangeNextAnim, bool fixStateChangeNextFrame, bool fixName)
+        private bool FixAnimation(AnimationNode animation, bool fixEndFrame, bool fixNextAnim, bool fixNextFrame, bool fixStateChangeRanges, bool fixStateChangeNextAnim, bool fixStateChangeNextFrameLow, bool fixName)
         {
             bool anyChange = false;
 
@@ -86,10 +86,10 @@ namespace WadTool
                         anyChange = true;
                     }
 
-                    if (fixStateChangeNextFrame &&
-                        disp.NextAnimation < _editor.Animations.Count && disp.NextFrame > _editor.Animations[disp.NextAnimation].WadAnimation.EndFrame)
+                    if (fixStateChangeNextFrameLow &&
+                        disp.NextAnimation < _editor.Animations.Count && disp.NextFrameLow > _editor.Animations[disp.NextAnimation].WadAnimation.EndFrame)
                     {
-                        disp.NextFrame = _editor.Animations[disp.NextAnimation].WadAnimation.EndFrame;
+                        disp.NextFrameLow = _editor.Animations[disp.NextAnimation].WadAnimation.EndFrame;
                         anyChange = true;
                     }
                 }

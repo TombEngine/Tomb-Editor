@@ -631,4 +631,17 @@ LevelFuncs.Engine.Node.CheckItemFlag = function(moveable, itemFlagLocation, item
         return false
     end
 end
+
+-- !Name "Add interaction highlight to moveable"
+-- !Section "Moveable parameters"
+-- !Description "Adds an interaction highlight to the specified moveable"
+-- !Arguments "NewLine,Moveables,70,Select moveable" "Enumeration, 30, [ Pickup | Talk | Use ], Interaction icon to use"
+
+LevelFuncs.Engine.Node.AddInteractionHighlight = function(moveable,iconType)
+
+	local mov = GetMoveableByName(moveable)
+	local icon = LevelFuncs.Engine.Node.SetInteractionHighlightType(iconType)
+
+mov:ShowInteractionHighlight(icon)
+end
 	

@@ -691,7 +691,8 @@ namespace TombLib.Wad
                     }
                     else if (id2 == Wad2Chunks.AnimationObsolete || 
                              id2 == Wad2Chunks.Animation ||
-                             id2 == Wad2Chunks.Animation2)
+                             id2 == Wad2Chunks.Animation2 ||
+                             id2 == Wad2Chunks.Animation3)
                     {
                         var animation = new WadAnimation();
 
@@ -708,7 +709,7 @@ namespace TombLib.Wad
                         int oldSpeed, oldAccel, oldLatSpeed, oldLatAccel;
                         oldSpeed = oldAccel = oldLatSpeed = oldLatAccel = 0;
 
-                        if (id2 != Wad2Chunks.Animation2)
+                        if (id2 != Wad2Chunks.Animation2 && id2 != Wad2Chunks.Animation3)
                         {
                             // Use old speeds/accels for legacy chunk versions
                             oldSpeed    = LEB128.ReadInt(chunkIO.Raw);
@@ -728,10 +729,29 @@ namespace TombLib.Wad
                         animation.NextAnimation = LEB128.ReadUShort(chunkIO.Raw);
                         animation.NextFrame = LEB128.ReadUShort(chunkIO.Raw);
 
+                        if (id2 == Wad2Chunks.Animation3)
+                            animation.BlendFrameCount = LEB128.ReadUShort(chunkIO.Raw);
+
                         bool foundNewVelocitiesChunk = false;
                         chunkIO.ReadChunks((id3, chunkSize3) =>
                         {
-                            if (id3 == Wad2Chunks.AnimationName)
+                            if (id3 == Wad2Chunks.CurveStart)
+                            {
+                                animation.BlendCurve.Start = chunkIO.ReadChunkVector2(chunkSize3);
+                            }
+                            else if (id3 == Wad2Chunks.CurveEnd)
+                            {
+                                animation.BlendCurve.End = chunkIO.ReadChunkVector2(chunkSize3);
+                            }
+                            else if (id3 == Wad2Chunks.CurveStartHandle)
+                            {
+                                animation.BlendCurve.StartHandle = chunkIO.ReadChunkVector2(chunkSize3);
+                            }
+                            else if (id3 == Wad2Chunks.CurveEndHandle)
+                            {
+                                animation.BlendCurve.EndHandle = chunkIO.ReadChunkVector2(chunkSize3);
+                            }
+                            else if (id3 == Wad2Chunks.AnimationName)
                             {
                                 animation.Name = chunkIO.ReadChunkString(chunkSize3);
                             }
@@ -789,13 +809,35 @@ namespace TombLib.Wad
                                 stateChange.StateId = LEB128.ReadUShort(chunkIO.Raw);
                                 chunkIO.ReadChunks((id4, chunkSize4) =>
                                 {
-                                    if (id4 == Wad2Chunks.Dispatch)
+                                    if (id4 == Wad2Chunks.Dispatch || id4 == Wad2Chunks.Dispatch2)
                                     {
                                         var dispatch = new WadAnimDispatch();
                                         dispatch.InFrame = LEB128.ReadUShort(chunkIO.Raw);
                                         dispatch.OutFrame = LEB128.ReadUShort(chunkIO.Raw);
                                         dispatch.NextAnimation = LEB128.ReadUShort(chunkIO.Raw);
-                                        dispatch.NextFrame = LEB128.ReadUShort(chunkIO.Raw);
+                                        dispatch.NextFrameLow = LEB128.ReadUShort(chunkIO.Raw);
+
+                                        if (id4 == Wad2Chunks.Dispatch2)
+                                        {
+                                            dispatch.NextFrameHigh = LEB128.ReadUShort(chunkIO.Raw);
+                                            dispatch.BlendFrameCount = LEB128.ReadUShort(chunkIO.Raw);
+
+                                            chunkIO.ReadChunks((id5, chunkSize5) =>
+                                            {
+                                                if (id5 == Wad2Chunks.CurveStart)
+                                                    dispatch.BlendCurve.Start = chunkIO.ReadChunkVector2(chunkSize5);
+                                                else if (id5 == Wad2Chunks.CurveEnd)
+                                                    dispatch.BlendCurve.End = chunkIO.ReadChunkVector2(chunkSize5);
+                                                else if (id5 == Wad2Chunks.CurveStartHandle)
+                                                    dispatch.BlendCurve.StartHandle = chunkIO.ReadChunkVector2(chunkSize5);
+                                                else if (id5 == Wad2Chunks.CurveEndHandle)
+                                                    dispatch.BlendCurve.EndHandle = chunkIO.ReadChunkVector2(chunkSize5);
+                                                else
+                                                    return false;
+                                                return true;
+                                            });
+                                        }
+
                                         stateChange.Dispatches.Add(dispatch);
                                     }
                                     else

@@ -53,6 +53,9 @@
     <Compile Update="Controls\AnimationTrackBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Controls\BezierCurveEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\DarkAutocompleteTextBox.cs" />
     <Compile Update="Controls\DarkDataGridViewControls.cs">
       <SubType>UserControl</SubType>

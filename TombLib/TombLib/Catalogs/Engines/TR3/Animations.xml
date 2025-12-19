@@ -195,6 +195,26 @@
     <anim item="22" id="23" name="CROUCH_ATTACK" />
     <anim item="22" id="24" name="CROUCH_TO_STOP" />
 
+    <!-- Scuba diver -->
+    <anim item="26" id="0" name="SWIM" />
+    <anim item="26" id="1" name="TREAD_WATER_IDLE" />
+    <anim item="26" id="2" name="RESURFACE" />
+    <anim item="26" id="3" name="SWIM_AIM_CONTINUE" />
+    <anim item="26" id="4" name="SWIM_AIM_END" />
+    <anim item="26" id="5" name="SWIM_SHOOT_LEFT" />
+    <anim item="26" id="6" name="SWIM_SHOOT_RIGHT" />
+    <anim item="26" id="7" name="SWIM_AIM_START_LEFT" />
+    <anim item="26" id="8" name="SWIM_AIM_START_RIGHT" />
+    <anim item="26" id="9" name="TREAD_WATER_AIM_CONTINUE" />
+    <anim item="26" id="10" name="TREAD_WATER_AIM_END" />
+    <anim item="26" id="11" name="TREAD_WATER_SHOOT_LEFT" />
+    <anim item="26" id="12" name="TREAD_WATER_SHOOT_RIGHT" />
+    <anim item="26" id="13" name="TREAD_WATER_AIM_START_LEFT" />
+    <anim item="26" id="14" name="TREAD_WATER_AIM_START_RIGHT" />
+    <anim item="26" id="15" name="DIVE" />
+    <anim item="26" id="16" name="DEATH_START" />
+    <anim item="26" id="17" name="DEATH_END" />
+
     <!-- Crocodile (in water) -->
     <anim item="32" id="0" name="SWIM" />
     <anim item="32" id="1" name="SWIM_TO_UNDERWATER_ATTACK" />

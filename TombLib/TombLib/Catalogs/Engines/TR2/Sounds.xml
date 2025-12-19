@@ -239,15 +239,15 @@
     <sound id="247" name="SPLASH_SURFACE" ten="247" />
     <sound id="248" name="WATERFALL1" ten="248" />
     <sound id="249" name="ENEMY_FEET_SNOW" ten="486" />
-    <sound id="250" name="ENEMY_FIRE3" ten="250" />
+    <sound id="250" name="ENEMY_FIRE3" ten="490" />
     <sound id="251" name="ENEMY_FIRE_SEMIAUTO" ten="487" />
-    <sound id="252" name="ENEMY_DEATH3" ten="252" />
-    <sound id="253" name="ENEMY_DEATH4" ten="253" />
+    <sound id="252" name="ENEMY_DEATH3" ten="482" />
+    <sound id="253" name="ENEMY_DEATH4" ten="483" />
     <sound id="254" name="CIRCLE_BLADE" ten="657" />
     <sound id="255" name="KNIFETHROWER_FEET" ten="629" />
     <sound id="256" name="MONK_OYE" ten="570" />
     <sound id="257" name="MONK_AWEH" ten="567" />
-    <sound id="258" name="CIRCLE_BLADE_HIT" ten="656" />
+    <sound id="258" name="CIRCLE_BLADE_HIT" ten="658" />
     <sound id="259" name="KNIFETHROWER_WARRIOR_FEET" ten="631" />
     <sound id="260" name="WARRIOR_BLADE_SWING1" ten="579" />
     <sound id="261" name="WARRIOR_BLADE_SWING2" ten="580" />
@@ -257,8 +257,8 @@
     <sound id="265" name="WARRIOR_GROWL1" ten="582" />
     <sound id="267" name="WARRIOR_WAKE" ten="588" />
     <sound id="268" name="WARRIOR_GROWL2" ten="583" />
-    <sound id="269" name="SMALL_SWITCH" ten="269" />
-    <sound id="278" name="CHAIN_PULLEY" ten="278" />
+    <sound id="269" name="SMALL_SWITCH" ten="644" />
+    <sound id="278" name="CHAIN_PULLEY" ten="656" />
     <sound id="279" name="DEATH_SLIDE_GRAB" ten="625" />
     <sound id="280" name="DEATH_SLIDE_GO" ten="624" />
     <sound id="281" name="DEATH_SLIDE_STOP" ten="626" />

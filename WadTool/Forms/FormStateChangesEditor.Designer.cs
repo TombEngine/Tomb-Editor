@@ -15,213 +15,314 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.dgvStateChanges = new DarkUI.Controls.DarkDataGridView();
-            this.columnStateName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnStateId = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnLowFrame = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnHighFrame = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnNextAnimation = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.columnNextFrame = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.btCancel = new DarkUI.Controls.DarkButton();
-            this.btOk = new DarkUI.Controls.DarkButton();
-            this.darkSectionPanel1 = new DarkUI.Controls.DarkSectionPanel();
-            this.butPlayStateChange = new DarkUI.Controls.DarkButton();
-            this.dgvControls = new TombLib.Controls.DarkDataGridViewControls();
-            this.lblStateChangeAnnouncement = new DarkUI.Controls.DarkLabel();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.butApply = new DarkUI.Controls.DarkButton();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvStateChanges)).BeginInit();
-            this.darkSectionPanel1.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            dgvStateChanges = new DarkUI.Controls.DarkDataGridView();
+            columnStateName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            columnStateId = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            columnLowFrame = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            columnHighFrame = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            columnNextAnimation = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            columnNextFrame = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            btCancel = new DarkUI.Controls.DarkButton();
+            btOk = new DarkUI.Controls.DarkButton();
+            butPlayStateChange = new DarkUI.Controls.DarkButton();
+            dgvControls = new TombLib.Controls.DarkDataGridViewControls();
+            lblStateChangeAnnouncement = new DarkUI.Controls.DarkLabel();
+            toolTip1 = new System.Windows.Forms.ToolTip(components);
+            nudBlendEndFrame = new DarkUI.Controls.DarkNumericUpDown();
+            nudBlendFrameCount = new DarkUI.Controls.DarkNumericUpDown();
+            cbBlendPreset = new DarkUI.Controls.DarkComboBox();
+            bezierCurveEditor = new Controls.BezierCurveEditor();
+            butApply = new DarkUI.Controls.DarkButton();
+            stateChangeGroup = new DarkUI.Controls.DarkGroupBox();
+            blendingGroup = new DarkUI.Controls.DarkGroupBox();
+            darkLabel1 = new DarkUI.Controls.DarkLabel();
+            darkLabel3 = new DarkUI.Controls.DarkLabel();
+            darkLabel2 = new DarkUI.Controls.DarkLabel();
+            ((System.ComponentModel.ISupportInitialize)dgvStateChanges).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudBlendEndFrame).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudBlendFrameCount).BeginInit();
+            stateChangeGroup.SuspendLayout();
+            blendingGroup.SuspendLayout();
+            SuspendLayout();
             // 
             // dgvStateChanges
             // 
-            this.dgvStateChanges.AllowUserToAddRows = false;
-            this.dgvStateChanges.AllowUserToDragDropRows = false;
-            this.dgvStateChanges.AllowUserToPasteCells = false;
-            this.dgvStateChanges.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgvStateChanges.AutoGenerateColumns = false;
-            this.dgvStateChanges.ColumnHeadersHeight = 17;
-            this.dgvStateChanges.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.columnStateName,
-            this.columnStateId,
-            this.columnLowFrame,
-            this.columnHighFrame,
-            this.columnNextAnimation,
-            this.columnNextFrame});
-            this.dgvStateChanges.ForegroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.dgvStateChanges.Location = new System.Drawing.Point(6, 6);
-            this.dgvStateChanges.Name = "dgvStateChanges";
-            this.dgvStateChanges.RowHeadersWidth = 40;
-            this.dgvStateChanges.RowTemplate.Height = 16;
-            this.dgvStateChanges.ShowCellErrors = false;
-            this.dgvStateChanges.Size = new System.Drawing.Size(525, 209);
-            this.dgvStateChanges.TabIndex = 48;
-            this.dgvStateChanges.CellFormattingSafe += new DarkUI.Controls.DarkDataGridViewSafeCellFormattingEventHandler(this.dgvStateChanges_CellFormattingSafe);
-            this.dgvStateChanges.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvStateChanges_CellEndEdit);
-            this.dgvStateChanges.CellMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvStateChanges_CellMouseDoubleClick);
-            this.dgvStateChanges.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dgvStateChanges_CellValidating);
-            this.dgvStateChanges.UserDeletedRow += new System.Windows.Forms.DataGridViewRowEventHandler(this.dgvStateChanges_UserDeletedRow);
+            dgvStateChanges.AllowUserToAddRows = false;
+            dgvStateChanges.AllowUserToDragDropRows = false;
+            dgvStateChanges.AllowUserToPasteCells = false;
+            dgvStateChanges.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            dgvStateChanges.AutoGenerateColumns = false;
+            dgvStateChanges.ColumnHeadersHeight = 17;
+            dgvStateChanges.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { columnStateName, columnStateId, columnLowFrame, columnHighFrame, columnNextAnimation, columnNextFrame });
+            dgvStateChanges.ForegroundColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            dgvStateChanges.Location = new System.Drawing.Point(7, 22);
+            dgvStateChanges.Name = "dgvStateChanges";
+            dgvStateChanges.RowHeadersWidth = 40;
+            dgvStateChanges.RowTemplate.Height = 16;
+            dgvStateChanges.ShowCellErrors = false;
+            dgvStateChanges.Size = new System.Drawing.Size(489, 292);
+            dgvStateChanges.TabIndex = 48;
+            dgvStateChanges.CellFormattingSafe += dgvStateChanges_CellFormattingSafe;
+            dgvStateChanges.CellEndEdit += dgvStateChanges_CellEndEdit;
+            dgvStateChanges.CellMouseDoubleClick += dgvStateChanges_CellMouseDoubleClick;
+            dgvStateChanges.CellValidating += dgvStateChanges_CellValidating;
+            dgvStateChanges.SelectionChanged += dgvStateChanges_SelectionChanged;
+            dgvStateChanges.UserDeletedRow += dgvStateChanges_UserDeletedRow;
             // 
             // columnStateName
             // 
-            this.columnStateName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.columnStateName.DataPropertyName = "StateName";
-            this.columnStateName.HeaderText = "State name";
-            this.columnStateName.Name = "columnStateName";
-            this.columnStateName.ReadOnly = true;
+            columnStateName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            columnStateName.DataPropertyName = "StateName";
+            columnStateName.HeaderText = "State name";
+            columnStateName.Name = "columnStateName";
+            columnStateName.ReadOnly = true;
             // 
             // columnStateId
             // 
-            this.columnStateId.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.columnStateId.DataPropertyName = "StateId";
-            this.columnStateId.FillWeight = 50F;
-            this.columnStateId.HeaderText = "State ID";
-            this.columnStateId.Name = "columnStateId";
+            columnStateId.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            columnStateId.DataPropertyName = "StateId";
+            columnStateId.FillWeight = 50F;
+            columnStateId.HeaderText = "State ID";
+            columnStateId.Name = "columnStateId";
             // 
             // columnLowFrame
             // 
-            this.columnLowFrame.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.columnLowFrame.DataPropertyName = "LowFrame";
-            this.columnLowFrame.FillWeight = 50F;
-            this.columnLowFrame.HeaderText = "Low frame";
-            this.columnLowFrame.Name = "columnLowFrame";
+            columnLowFrame.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            columnLowFrame.DataPropertyName = "LowFrame";
+            columnLowFrame.FillWeight = 50F;
+            columnLowFrame.HeaderText = "Low frame";
+            columnLowFrame.Name = "columnLowFrame";
             // 
             // columnHighFrame
             // 
-            this.columnHighFrame.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.columnHighFrame.DataPropertyName = "HighFrame";
-            this.columnHighFrame.FillWeight = 50F;
-            this.columnHighFrame.HeaderText = "High frame";
-            this.columnHighFrame.Name = "columnHighFrame";
+            columnHighFrame.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            columnHighFrame.DataPropertyName = "HighFrame";
+            columnHighFrame.FillWeight = 50F;
+            columnHighFrame.HeaderText = "High frame";
+            columnHighFrame.Name = "columnHighFrame";
             // 
             // columnNextAnimation
             // 
-            this.columnNextAnimation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.columnNextAnimation.DataPropertyName = "NextAnimation";
-            this.columnNextAnimation.FillWeight = 50F;
-            this.columnNextAnimation.HeaderText = "Next anim";
-            this.columnNextAnimation.Name = "columnNextAnimation";
+            columnNextAnimation.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            columnNextAnimation.DataPropertyName = "NextAnimation";
+            columnNextAnimation.FillWeight = 50F;
+            columnNextAnimation.HeaderText = "Next anim";
+            columnNextAnimation.Name = "columnNextAnimation";
             // 
             // columnNextFrame
             // 
-            this.columnNextFrame.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.columnNextFrame.DataPropertyName = "NextFrame";
-            this.columnNextFrame.FillWeight = 50F;
-            this.columnNextFrame.HeaderText = "Next frame";
-            this.columnNextFrame.Name = "columnNextFrame";
+            columnNextFrame.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            columnNextFrame.DataPropertyName = "NextFrame";
+            columnNextFrame.FillWeight = 50F;
+            columnNextFrame.HeaderText = "Next frame";
+            columnNextFrame.Name = "columnNextFrame";
             // 
             // btCancel
             // 
-            this.btCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btCancel.Checked = false;
-            this.btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btCancel.Location = new System.Drawing.Point(494, 232);
-            this.btCancel.Name = "btCancel";
-            this.btCancel.Size = new System.Drawing.Size(81, 23);
-            this.btCancel.TabIndex = 50;
-            this.btCancel.Text = "Cancel";
-            this.btCancel.Click += new System.EventHandler(this.btCancel_Click);
+            btCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btCancel.Checked = false;
+            btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            btCancel.Location = new System.Drawing.Point(721, 336);
+            btCancel.Name = "btCancel";
+            btCancel.Size = new System.Drawing.Size(81, 23);
+            btCancel.TabIndex = 50;
+            btCancel.Text = "Cancel";
+            btCancel.Click += btCancel_Click;
             // 
             // btOk
             // 
-            this.btOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btOk.Checked = false;
-            this.btOk.Location = new System.Drawing.Point(407, 232);
-            this.btOk.Name = "btOk";
-            this.btOk.Size = new System.Drawing.Size(81, 23);
-            this.btOk.TabIndex = 51;
-            this.btOk.Text = "OK";
-            this.btOk.Click += new System.EventHandler(this.btOk_Click);
-            // 
-            // darkSectionPanel1
-            // 
-            this.darkSectionPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.darkSectionPanel1.Controls.Add(this.butPlayStateChange);
-            this.darkSectionPanel1.Controls.Add(this.dgvStateChanges);
-            this.darkSectionPanel1.Controls.Add(this.dgvControls);
-            this.darkSectionPanel1.Location = new System.Drawing.Point(5, 5);
-            this.darkSectionPanel1.Name = "darkSectionPanel1";
-            this.darkSectionPanel1.SectionHeader = null;
-            this.darkSectionPanel1.Size = new System.Drawing.Size(570, 221);
-            this.darkSectionPanel1.TabIndex = 52;
+            btOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            btOk.Checked = false;
+            btOk.Location = new System.Drawing.Point(634, 336);
+            btOk.Name = "btOk";
+            btOk.Size = new System.Drawing.Size(81, 23);
+            btOk.TabIndex = 51;
+            btOk.Text = "OK";
+            btOk.Click += btOk_Click;
             // 
             // butPlayStateChange
             // 
-            this.butPlayStateChange.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.butPlayStateChange.Checked = false;
-            this.butPlayStateChange.Image = global::WadTool.Properties.Resources.actions_play_16;
-            this.butPlayStateChange.Location = new System.Drawing.Point(537, 191);
-            this.butPlayStateChange.Name = "butPlayStateChange";
-            this.butPlayStateChange.Size = new System.Drawing.Size(27, 24);
-            this.butPlayStateChange.TabIndex = 50;
-            this.toolTip1.SetToolTip(this.butPlayStateChange, "Play state change in chain mode");
-            this.butPlayStateChange.Click += new System.EventHandler(this.butPlayStateChange_Click);
+            butPlayStateChange.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butPlayStateChange.Checked = false;
+            butPlayStateChange.Image = Properties.Resources.actions_play_16;
+            butPlayStateChange.Location = new System.Drawing.Point(502, 290);
+            butPlayStateChange.Name = "butPlayStateChange";
+            butPlayStateChange.Size = new System.Drawing.Size(28, 24);
+            butPlayStateChange.TabIndex = 50;
+            toolTip1.SetToolTip(butPlayStateChange, "Play state change in chain mode");
+            butPlayStateChange.Click += butPlayStateChange_Click;
             // 
             // dgvControls
             // 
-            this.dgvControls.AlwaysInsertAtZero = false;
-            this.dgvControls.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgvControls.Enabled = false;
-            this.dgvControls.Location = new System.Drawing.Point(537, 6);
-            this.dgvControls.MinimumSize = new System.Drawing.Size(24, 24);
-            this.dgvControls.Name = "dgvControls";
-            this.dgvControls.Size = new System.Drawing.Size(27, 178);
-            this.dgvControls.TabIndex = 49;
+            dgvControls.AlwaysInsertAtZero = false;
+            dgvControls.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            dgvControls.Enabled = false;
+            dgvControls.Location = new System.Drawing.Point(502, 22);
+            dgvControls.Margin = new System.Windows.Forms.Padding(0, 0, 3, 0);
+            dgvControls.MinimumSize = new System.Drawing.Size(0, 32);
+            dgvControls.Name = "dgvControls";
+            dgvControls.Size = new System.Drawing.Size(28, 258);
+            dgvControls.TabIndex = 49;
             // 
             // lblStateChangeAnnouncement
             // 
-            this.lblStateChangeAnnouncement.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblStateChangeAnnouncement.ForeColor = System.Drawing.Color.Gray;
-            this.lblStateChangeAnnouncement.Location = new System.Drawing.Point(8, 237);
-            this.lblStateChangeAnnouncement.Name = "lblStateChangeAnnouncement";
-            this.lblStateChangeAnnouncement.Size = new System.Drawing.Size(307, 13);
-            this.lblStateChangeAnnouncement.TabIndex = 53;
-            this.lblStateChangeAnnouncement.Text = "Pending state change...";
-            this.lblStateChangeAnnouncement.Visible = false;
+            lblStateChangeAnnouncement.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            lblStateChangeAnnouncement.ForeColor = System.Drawing.Color.Gray;
+            lblStateChangeAnnouncement.Location = new System.Drawing.Point(8, 341);
+            lblStateChangeAnnouncement.Name = "lblStateChangeAnnouncement";
+            lblStateChangeAnnouncement.Size = new System.Drawing.Size(534, 13);
+            lblStateChangeAnnouncement.TabIndex = 53;
+            lblStateChangeAnnouncement.Text = "Pending state change...";
+            lblStateChangeAnnouncement.Visible = false;
+            // 
+            // nudBlendEndFrame
+            // 
+            nudBlendEndFrame.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            nudBlendEndFrame.IncrementAlternate = new decimal(new int[] { 10, 0, 0, 65536 });
+            nudBlendEndFrame.Location = new System.Drawing.Point(176, 46);
+            nudBlendEndFrame.LoopValues = false;
+            nudBlendEndFrame.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            nudBlendEndFrame.Name = "nudBlendEndFrame";
+            nudBlendEndFrame.Size = new System.Drawing.Size(71, 22);
+            nudBlendEndFrame.TabIndex = 103;
+            toolTip1.SetToolTip(nudBlendEndFrame, "Ending frame for blended transition in the next animation");
+            nudBlendEndFrame.ValueChanged += nudBlendEndFrame_ValueChanged;
+            // 
+            // nudBlendFrameCount
+            // 
+            nudBlendFrameCount.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            nudBlendFrameCount.IncrementAlternate = new decimal(new int[] { 10, 0, 0, 65536 });
+            nudBlendFrameCount.Location = new System.Drawing.Point(176, 19);
+            nudBlendFrameCount.LoopValues = false;
+            nudBlendFrameCount.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            nudBlendFrameCount.Name = "nudBlendFrameCount";
+            nudBlendFrameCount.Size = new System.Drawing.Size(71, 22);
+            nudBlendFrameCount.TabIndex = 100;
+            toolTip1.SetToolTip(nudBlendFrameCount, "Blending duration to the next animation in frames");
+            nudBlendFrameCount.ValueChanged += nudBlendFrameCount_ValueChanged;
+            // 
+            // cbBlendPreset
+            // 
+            cbBlendPreset.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            cbBlendPreset.FormattingEnabled = true;
+            cbBlendPreset.Items.AddRange(new object[] { "Linear", "Ease In", "Ease Out", "Ease In and Out" });
+            cbBlendPreset.Location = new System.Drawing.Point(53, 291);
+            cbBlendPreset.Name = "cbBlendPreset";
+            cbBlendPreset.Size = new System.Drawing.Size(194, 23);
+            cbBlendPreset.TabIndex = 105;
+            toolTip1.SetToolTip(cbBlendPreset, "Predefined curve preset");
+            cbBlendPreset.SelectedIndexChanged += cbBlendPreset_SelectedIndexChanged;
+            // 
+            // bezierCurveEditor
+            // 
+            bezierCurveEditor.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            bezierCurveEditor.Location = new System.Drawing.Point(6, 74);
+            bezierCurveEditor.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+            bezierCurveEditor.Name = "bezierCurveEditor";
+            bezierCurveEditor.Size = new System.Drawing.Size(241, 211);
+            bezierCurveEditor.TabIndex = 102;
+            toolTip1.SetToolTip(bezierCurveEditor, "Specify blending curve by dragging handles");
+            bezierCurveEditor.ValueChanged += bezierCurveEditor_ValueChanged;
             // 
             // butApply
             // 
-            this.butApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.butApply.Checked = false;
-            this.butApply.Location = new System.Drawing.Point(321, 232);
-            this.butApply.Name = "butApply";
-            this.butApply.Size = new System.Drawing.Size(80, 23);
-            this.butApply.TabIndex = 102;
-            this.butApply.Text = "Apply";
-            this.butApply.Click += new System.EventHandler(this.butApply_Click);
+            butApply.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            butApply.Checked = false;
+            butApply.Location = new System.Drawing.Point(548, 336);
+            butApply.Name = "butApply";
+            butApply.Size = new System.Drawing.Size(80, 23);
+            butApply.TabIndex = 102;
+            butApply.Text = "Apply";
+            butApply.Click += butApply_Click;
+            // 
+            // stateChangeGroup
+            // 
+            stateChangeGroup.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            stateChangeGroup.Controls.Add(dgvControls);
+            stateChangeGroup.Controls.Add(butPlayStateChange);
+            stateChangeGroup.Controls.Add(dgvStateChanges);
+            stateChangeGroup.Location = new System.Drawing.Point(5, 9);
+            stateChangeGroup.Name = "stateChangeGroup";
+            stateChangeGroup.Size = new System.Drawing.Size(537, 321);
+            stateChangeGroup.TabIndex = 104;
+            stateChangeGroup.TabStop = false;
+            stateChangeGroup.Text = "State change editor";
+            // 
+            // blendingGroup
+            // 
+            blendingGroup.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            blendingGroup.Controls.Add(darkLabel1);
+            blendingGroup.Controls.Add(cbBlendPreset);
+            blendingGroup.Controls.Add(nudBlendEndFrame);
+            blendingGroup.Controls.Add(nudBlendFrameCount);
+            blendingGroup.Controls.Add(darkLabel3);
+            blendingGroup.Controls.Add(darkLabel2);
+            blendingGroup.Controls.Add(bezierCurveEditor);
+            blendingGroup.Location = new System.Drawing.Point(548, 9);
+            blendingGroup.Name = "blendingGroup";
+            blendingGroup.Size = new System.Drawing.Size(254, 321);
+            blendingGroup.TabIndex = 105;
+            blendingGroup.TabStop = false;
+            blendingGroup.Text = "Animation blending";
+            // 
+            // darkLabel1
+            // 
+            darkLabel1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            darkLabel1.AutoSize = true;
+            darkLabel1.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel1.Location = new System.Drawing.Point(6, 295);
+            darkLabel1.Name = "darkLabel1";
+            darkLabel1.Size = new System.Drawing.Size(41, 13);
+            darkLabel1.TabIndex = 106;
+            darkLabel1.Text = "Preset:";
+            // 
+            // darkLabel3
+            // 
+            darkLabel3.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel3.Location = new System.Drawing.Point(6, 48);
+            darkLabel3.Name = "darkLabel3";
+            darkLabel3.Size = new System.Drawing.Size(178, 13);
+            darkLabel3.TabIndex = 104;
+            darkLabel3.Text = "Next anim blending end frame:";
+            // 
+            // darkLabel2
+            // 
+            darkLabel2.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel2.Location = new System.Drawing.Point(6, 21);
+            darkLabel2.Name = "darkLabel2";
+            darkLabel2.Size = new System.Drawing.Size(178, 13);
+            darkLabel2.TabIndex = 101;
+            darkLabel2.Text = "Next anim blending duration:";
             // 
             // FormStateChangesEditor
             // 
-            this.AcceptButton = this.btOk;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.btCancel;
-            this.ClientSize = new System.Drawing.Size(580, 260);
-            this.Controls.Add(this.butApply);
-            this.Controls.Add(this.lblStateChangeAnnouncement);
-            this.Controls.Add(this.darkSectionPanel1);
-            this.Controls.Add(this.btCancel);
-            this.Controls.Add(this.btOk);
-            this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(596, 242);
-            this.Name = "FormStateChangesEditor";
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
-            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "State changes";
-            ((System.ComponentModel.ISupportInitialize)(this.dgvStateChanges)).EndInit();
-            this.darkSectionPanel1.ResumeLayout(false);
-            this.ResumeLayout(false);
-
+            AcceptButton = btOk;
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            CancelButton = btCancel;
+            ClientSize = new System.Drawing.Size(807, 364);
+            Controls.Add(blendingGroup);
+            Controls.Add(stateChangeGroup);
+            Controls.Add(butApply);
+            Controls.Add(lblStateChangeAnnouncement);
+            Controls.Add(btCancel);
+            Controls.Add(btOk);
+            MinimizeBox = false;
+            MinimumSize = new System.Drawing.Size(596, 242);
+            Name = "FormStateChangesEditor";
+            ShowIcon = false;
+            ShowInTaskbar = false;
+            SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            Text = "State changes";
+            ((System.ComponentModel.ISupportInitialize)dgvStateChanges).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudBlendEndFrame).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudBlendFrameCount).EndInit();
+            stateChangeGroup.ResumeLayout(false);
+            blendingGroup.ResumeLayout(false);
+            blendingGroup.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion
@@ -230,7 +331,6 @@
         private DarkUI.Controls.DarkDataGridView dgvStateChanges;
         private DarkUI.Controls.DarkButton btCancel;
         private DarkUI.Controls.DarkButton btOk;
-        private DarkUI.Controls.DarkSectionPanel darkSectionPanel1;
         private DarkUI.Controls.DarkButton butPlayStateChange;
         private DarkUI.Controls.DarkLabel lblStateChangeAnnouncement;
         private System.Windows.Forms.ToolTip toolTip1;
@@ -241,5 +341,19 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn columnNextAnimation;
         private System.Windows.Forms.DataGridViewTextBoxColumn columnNextFrame;
         private DarkUI.Controls.DarkButton butApply;
+        private DarkUI.Controls.DarkGroupBox stateChangeGroup;
+        private DarkUI.Controls.DarkGroupBox blendingGroup;
+        private DarkUI.Controls.DarkCheckBox cbRotR;
+        private DarkUI.Controls.DarkCheckBox cbPosX;
+        private DarkUI.Controls.DarkCheckBox cbRotP;
+        private DarkUI.Controls.DarkCheckBox cbPosY;
+        private DarkUI.Controls.DarkCheckBox cbRotY;
+        private Controls.BezierCurveEditor bezierCurveEditor;
+        private DarkUI.Controls.DarkNumericUpDown nudBlendFrameCount;
+        private DarkUI.Controls.DarkLabel darkLabel2;
+        private DarkUI.Controls.DarkNumericUpDown nudBlendEndFrame;
+        private DarkUI.Controls.DarkLabel darkLabel3;
+        private DarkUI.Controls.DarkLabel darkLabel1;
+        private DarkUI.Controls.DarkComboBox cbBlendPreset;
     }
 }

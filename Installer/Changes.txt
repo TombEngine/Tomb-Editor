@@ -3,6 +3,7 @@ Version 1.10.2
 
 TEN nodes:
  * Added nodes to check the color of a moveable or static mesh.
+ * Added node to add an interaction highlight to a moveable"
 
 Version 1.10.1
 ==============

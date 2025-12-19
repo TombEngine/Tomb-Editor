@@ -170,10 +170,8 @@
     <moveable id="202" name="Lock 2" ten="KEY_HOLE2" />
     <moveable id="203" name="Lock 3" ten="KEY_HOLE3" />
     <moveable id="204" name="Lock 4" ten="KEY_HOLE4" />
-    <moveable id="205" name="Pickup 1" ten="PICKUP_ITEM1" />
-    <moveable id="206" name="Pickup 2" ten="PICKUP_ITEM2" />
-    <moveable id="207" name="Pickup 3" ten="PICKUP_ITEM3" />
-    <moveable id="208" name="Pickup 4" ten="PICKUP_ITEM4" />
+    <moveable id="207" name="Pickup 1" id2="205" ten="PICKUP_ITEM1" />
+    <moveable id="208" name="Pickup 2" id2="206" ten="PICKUP_ITEM2" />
     <moveable id="209" name="Dragon explosion effect (expanding netted bubble)" hidden="true" ten="SPHERE_OF_DOOM" />
     <moveable id="210" name="Dragon explosion effect (expanding netted bubble)" hidden="true" ten="SPHERE_OF_DOOM2" />
     <moveable id="211" name="Dragon explosion effect (expanding solid bubble)" hidden="true"  ten="SPHERE_OF_DOOM3" />

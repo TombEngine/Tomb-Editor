@@ -198,3 +198,14 @@ LevelFuncs.Engine.Node.SetPostProcessMode = function(index)
 	}
 	return postProcessMode[index]
 end
+
+LevelFuncs.Engine.Node.SetInteractionHighlightType = function(index)
+	local interactionIconType =
+	{
+		[0] = TEN.Objects.InteractionType.PICKUP,
+		[1] = TEN.Objects.InteractionType.TALK,
+		[2] = TEN.Objects.InteractionType.USE,
+	}	
+	return interactionIconType[index]
+end
+		

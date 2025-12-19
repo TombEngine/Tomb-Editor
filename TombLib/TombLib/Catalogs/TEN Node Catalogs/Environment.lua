@@ -355,7 +355,7 @@ end
 -- !Name "Change weather strength over time"
 -- !Section "Environment"
 -- !Description "Changes weather strength over specified time."
--- !Arguments "NewLine, Numerical, 20, [ 0 | 1 | 2 | 0.1 ], Strength"
+-- !Arguments "NewLine, Numerical, 20, [ -1 | 1 | 2 | 0.1 ], Strength"
 -- !Arguments "Numerical, [ 0.1 | 65535 | 2 | 0.1 | 1 ], {1}, 20, Time (in seconds)" 
 -- !Arguments "30, Boolean, Relative"
 LevelFuncs.Engine.Node.ChangeWeatherOverTime = function(newStrength, time, relative)
@@ -603,7 +603,7 @@ end
 -- !Section "Environment"
 -- !Description "Gradually changes transparency of a specified horizon layer over specified timespan."
 -- !Arguments "NewLine, Enumeration, 25, [ Horizon 1 | Horizon 2 ], {0}, Horizon layer"
--- !Arguments "Numerical, 20, [ 0 | 1 | 2 | 0.1 | 1 ], {1} Transparency" 
+-- !Arguments "Numerical, 20, [ -1 | 1 | 2 | 0.1 | 1 ], {1} Transparency" 
 -- !Arguments "Numerical, [ 0.1 | 65535 | 2 | 0.1 | 1 ], {1}, 20, Time (in seconds)"
 -- !Arguments "Boolean, 35, Relative coordinates"
 LevelFuncs.Engine.Node.ChangeHorizonTransparencyOverTimespan = function(type, newTransparency, time, relative)
