@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
 using TombLib.LevelData.SectorEnums;
 
 namespace TombLib.LevelData.Compilers.TombEngine
@@ -141,7 +143,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                 int numOverlapsAdded = 0;
 
-                if ( box1.Flag0x04)
+                if (box1.Flag0x04)
                 {
                     if (dec_flipped)
                     {
@@ -240,22 +242,56 @@ namespace TombLib.LevelData.Compilers.TombEngine
             return true;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         private int Dec_AddBox(dec_TombEngine_box_aux box)
         {
             int boxIndex = -1;
 
-            for (int i = 0; i < dec_boxes.Count; i++)
+            // Pack search values
+            int boxWaterInt = box.Water ? 1 : 0;
+
+            if (Sse2.IsSupported)
             {
-                if (dec_boxes[i].Xmin == box.Xmin &&
-                    dec_boxes[i].Xmax == box.Xmax &&
-                    dec_boxes[i].Zmin == box.Zmin &&
-                    dec_boxes[i].Zmax == box.Zmax &&
-                    dec_boxes[i].TrueFloor == box.TrueFloor &&
-                    dec_boxes[i].Water == box.Water)
+                var searchBounds = Vector128.Create(box.Xmin, box.Xmax, box.Zmin, box.Zmax);
+                var searchExtra = Vector128.Create(box.TrueFloor, boxWaterInt, 0, 0);
+
+                for (int i = 0; i < dec_boxes.Count; i++)
                 {
-                    boxIndex = i;
-                    break;
+                    var candidate = dec_boxes[i];
+
+                    var candBounds = Vector128.Create(candidate.Xmin, candidate.Xmax, candidate.Zmin, candidate.Zmax);
+                    var candExtra = Vector128.Create(candidate.TrueFloor, candidate.Water ? 1 : 0, 0, 0);
+
+                    // Compare all 4 bounds at once
+                    var cmpBounds = Sse2.CompareEqual(searchBounds, candBounds);
+                    var cmpExtra = Sse2.CompareEqual(searchExtra, candExtra);
+
+                    int maskBounds = Sse2.MoveMask(cmpBounds.AsByte());
+                    int maskExtra = Sse2.MoveMask(cmpExtra.AsByte());
+
+                    // All 4 bounds must match (0xFFFF) and first 2 extra must match (0x00FF)
+                    if (maskBounds == 0xFFFF && (maskExtra & 0x00FF) == 0x00FF)
+                    {
+                        boxIndex = i;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // Scalar fallback
+                for (int i = 0; i < dec_boxes.Count; i++)
+                {
+                    if (dec_boxes[i].Xmin == box.Xmin &&
+                        dec_boxes[i].Xmax == box.Xmax &&
+                        dec_boxes[i].Zmin == box.Zmin &&
+                        dec_boxes[i].Zmax == box.Zmax &&
+                        dec_boxes[i].TrueFloor == box.TrueFloor &&
+                        dec_boxes[i].Water == box.Water)
+                    {
+                        boxIndex = i;
+                        break;
+                    }
                 }
             }
 
@@ -267,7 +303,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
             }
             else
             {
-                if (dec_flipped) dec_boxes[boxIndex].Flag0x02 = true;
+                if (dec_flipped)
+                    dec_boxes[boxIndex].Flag0x02 = true;
             }
 
             return boxIndex;
@@ -1236,7 +1273,24 @@ namespace TombLib.LevelData.Compilers.TombEngine
             return false;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        private int Dec_CalculateMeanFloor(int floorXnZp, int floorXpZp, int floorXpZn, int floorXnZn)
+        {
+            if (Sse2.IsSupported)
+            {
+                var floors = Vector128.Create(floorXnZp, floorXpZp, floorXpZn, floorXnZn);
+
+                // Horizontal add: sum all 4 elements
+                var sum1 = Sse2.Add(floors, Sse2.Shuffle(floors, 0b10_11_00_01)); // [0+1, 2+3, ...]
+                var sum2 = Sse2.Add(sum1, Sse2.Shuffle(sum1, 0b01_00_11_10));     // [0+1+2+3, ...]
+
+                return sum2.GetElement(0) / 4;
+            }
+
+            return (floorXnZp + floorXpZp + floorXpZn + floorXnZn) / 4;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public bool Dec_OverlapZmax(dec_TombEngine_box_aux a, dec_TombEngine_box_aux b)
         {
             int startX = b.Xmin;
@@ -1308,6 +1362,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
             return false;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         private bool Dec_BoxesOverlap(dec_TombEngine_box_aux a, dec_TombEngine_box_aux b)
         {
             dec_jump = false;
@@ -1322,33 +1377,77 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 box2 = a;
             }
 
-            if (box1.Xmax <= box2.Xmin || box1.Xmin >= box2.Xmax)
+            // Cache values to avoid repeated memory access
+            int b1Xmin = box1.Xmin, b1Xmax = box1.Xmax, b1Zmin = box1.Zmin, b1Zmax = box1.Zmax;
+            int b2Xmin = box2.Xmin, b2Xmax = box2.Xmax, b2Zmin = box2.Zmin, b2Zmax = box2.Zmax;
+
+            // AABB overlap test with SIMD
+            bool xNoOverlap, zOverlap;
+
+            if (Sse2.IsSupported)
             {
-                if (box1.Zmax > box2.Zmin && box1.Zmin < box2.Zmax && Dec_CheckIfCanJumpZ(box1, box2))
+                // Load bounds into vectors
+                // [b1Xmax, b1Zmax, b2Xmax, b2Zmax]
+                var maxs = Vector128.Create(b1Xmax, b1Zmax, b2Xmax, b2Zmax);
+                // [b2Xmin, b2Zmin, b1Xmin, b1Zmin]
+                var mins = Vector128.Create(b2Xmin, b2Zmin, b1Xmin, b1Zmin);
+
+                // Test: max > min for each pair
+                // Result: [b1Xmax > b2Xmin, b1Zmax > b2Zmin, b2Xmax > b1Xmin, b2Zmax > b1Zmin]
+                var cmp = Sse2.CompareGreaterThan(maxs, mins);
+                int mask = Sse2.MoveMask(cmp.AsByte());
+
+                // Extract results (each int = 4 bytes, so check groups of 4 bits)
+                bool b1XmaxGtB2Xmin = (mask & 0x000F) == 0x000F;
+                bool b1ZmaxGtB2Zmin = (mask & 0x00F0) == 0x00F0;
+                bool b2XmaxGtB1Xmin = (mask & 0x0F00) == 0x0F00;
+                bool b2ZmaxGtB1Zmin = (mask & 0xF000) == 0xF000;
+
+                bool xOverlap = b1XmaxGtB2Xmin && b2XmaxGtB1Xmin;
+                zOverlap = b1ZmaxGtB2Zmin && b2ZmaxGtB1Zmin;
+                xNoOverlap = !xOverlap;
+            }
+            else
+            {
+                // Scalar fallback
+                bool xOverlap = b1Xmax > b2Xmin && b1Xmin < b2Xmax;
+                zOverlap = b1Zmax > b2Zmin && b1Zmin < b2Zmax;
+                xNoOverlap = !xOverlap;
+            }
+
+            // Main logic (same structure as original)
+            if (xNoOverlap)
+            {
+                if (zOverlap && Dec_CheckIfCanJumpZ(box1, box2))
                 {
                     dec_jump = true;
                     return true;
                 }
 
-                if (box1.Xmax < box2.Xmin ||
-                    box1.Xmin > box2.Xmax ||
-                    box1.Zmax <= box2.Zmin ||
-                    box1.Zmin >= box2.Zmax ||
-                    box1.Xmax == box2.Xmin && !Dec_OverlapXmax(box1, box2) ||
-                    box1.Xmin == box2.Xmax && !Dec_OverlapXmin(box1, box2))
-                {
+                // Early exit with cached values
+                if (b1Xmax < b2Xmin || b1Xmin > b2Xmax || b1Zmax <= b2Zmin || b1Zmin >= b2Zmax)
                     return false;
-                }
 
-                if (box1.Monkey && box2.Monkey) dec_monkey = true;
+                if (b1Xmax == b2Xmin && !Dec_OverlapXmax(box1, box2))
+                    return false;
+
+                if (b1Xmin == b2Xmax && !Dec_OverlapXmin(box1, box2))
+                    return false;
+
+                if (box1.Monkey && box2.Monkey)
+                    dec_monkey = true;
+
                 return true;
             }
 
-            if (box1.Zmax > box2.Zmin && box1.Zmin < box2.Zmax)
+            if (zOverlap)
             {
-                if (box1.TrueFloor != box2.TrueFloor) return false;
+                if (box1.TrueFloor != box2.TrueFloor)
+                    return false;
 
-                if (box1.Monkey && box2.Monkey) dec_monkey = true;
+                if (box1.Monkey && box2.Monkey)
+                    dec_monkey = true;
+
                 return true;
             }
 
@@ -1358,22 +1457,25 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 return true;
             }
 
-            if (box1.Zmax < box2.Zmin ||
-                box1.Zmin > box2.Zmax ||
-                box1.Zmax == box2.Zmin && !Dec_OverlapZmax(box1, box2))
-            {
+            if (b1Zmax < b2Zmin || b1Zmin > b2Zmax)
                 return false;
-            }
 
-            if (box1.Zmin != box2.Zmax)
+            if (b1Zmax == b2Zmin && !Dec_OverlapZmax(box1, box2))
+                return false;
+
+            if (b1Zmin != b2Zmax)
             {
-                if (box1.Monkey && box2.Monkey) dec_monkey = true;
+                if (box1.Monkey && box2.Monkey)
+                    dec_monkey = true;
+
                 return true;
             }
 
             if (Dec_OverlapZmin(box1, box2))
             {
-                if (box1.Monkey && box2.Monkey) dec_monkey = true;
+                if (box1.Monkey && box2.Monkey)
+                    dec_monkey = true;
+
                 return true;
             }
 
