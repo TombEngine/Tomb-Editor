@@ -10,7 +10,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
         {
             Skeleton,
             Basic,
-            Crocodile,
+            Water,      // For underwater enemies (fish, etc.). They stay in water only.
+            Amphibious, // For amphibious enemies (crocodile). They can cross water/land boundary.
             Human,
             Flyer
         }
@@ -136,12 +137,12 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     bool water = (_tempRooms[dec_boxes[boxIndex].Room].Flags & 0x01) != 0;
                     int  step = Math.Abs(_boxes[next].TrueFloor - _boxes[boxIndex].TrueFloor);
 
-                    // Don't add a box if it is underwater (for fly zone) or a slope (for all other zones).
-                    if (zoneType != ZoneType.Flyer && dec_boxes[boxIndex].Slope)
+                    // Don't add a box if it is a slope (except for Flyer and Water zones).
+                    if (zoneType != ZoneType.Flyer && zoneType != ZoneType.Water && dec_boxes[boxIndex].Slope)
                         continue;
 
-                    // Water state check - CROC and HUMAN + monkey can cross water boundary
-                    bool canCrossWater = (zoneType == ZoneType.Crocodile) ||
+                    // Water state check - only AMPHIBIOUS and HUMAN + monkey can cross water boundary
+                    bool canCrossWater = (zoneType == ZoneType.Amphibious) ||
                                          (zoneType == ZoneType.Human && canMonkey);
                     if (water != isWater && !canCrossWater)
                         continue;
@@ -156,13 +157,18 @@ namespace TombLib.LevelData.Compilers.TombEngine
                             break;
 
                         case ZoneType.Basic:
-                            // Enemies like scorpions, mummies, dogs, wild boars. They can go only on land, and climb 1 click step
+                            // Enemies like scorpions, mummies, dogs, wild boars. They can go only on land, and climb 1 click step.
                             add = (step <= Clicks.ToWorld(1));
                             break;
 
-                        case ZoneType.Crocodile:
-                            // Enemies like crocodiles. They can go on land and inside water, and climb 1 click step.
-                            // In water they act like flying enemies. Guide seems to belong to this zone.
+                        case ZoneType.Water:
+                            // Underwater enemies like fish. They stay in water only and act like flying enemies (no step limit).
+                            add = true;
+                            break;
+
+                        case ZoneType.Amphibious:
+                            // Amphibious enemies like crocodiles. They can go on land and inside water, and climb 1 click step.
+                            // In water they act like flying enemies.
                             add = (step <= Clicks.ToWorld(1) || water);
                             break;
 
