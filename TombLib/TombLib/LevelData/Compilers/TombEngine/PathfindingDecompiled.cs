@@ -1,11 +1,9 @@
-﻿using Microsoft.Toolkit.HighPerformance;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
-using System.Windows.Forms;
 using TombLib.LevelData.SectorEnums;
 
 namespace TombLib.LevelData.Compilers.TombEngine
@@ -476,14 +474,14 @@ namespace TombLib.LevelData.Compilers.TombEngine
         {
             int boxIndex = -1;
 
-            // Convert bool to int for SIMD comparison
-            int boxWaterInt = box.Water ? 1 : 0;
-
             // ===================================================================================
             // SIMD-ACCELERATED DUPLICATE SEARCH
             // ===================================================================================
             if (Sse2.IsSupported)
             {
+                // Convert bool to int for SIMD comparison
+                int boxWaterInt = box.Water ? 1 : 0;
+
                 // Pack search criteria into 128-bit vectors (4 x 32-bit integers)
                 var searchBounds = Vector128.Create(box.Xmin, box.Xmax, box.Zmin, box.Zmax);
                 var searchExtra = Vector128.Create(box.Height, boxWaterInt, 0, 0);
