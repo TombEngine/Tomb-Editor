@@ -63,9 +63,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
         // =========================================================================================
         // BOX FLAGS
         // =========================================================================================
-        public bool Splitter;      // Box is a "splitter" (1x1 box at TT_SPLITTER trigger)
+        public bool Splitter;      // Box is a "splitter" (1x1 box at SPLITTER)
         public bool NotWalkableBox;// Box is marked as not walkable
-        public bool Monkey;        // Box has monkey swing ceiling (TT_MONKEY trigger)
+        public bool Monkey;        // Box has monkey swing ceiling (MONKEY)
         public bool Jump;          // Box requires jumping to reach (set during overlap check)
         public bool Water;         // Box is in a water room (or shallow water treated as land)
 
@@ -96,7 +96,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
         // They are used to pass state between functions without explicit parameters.
 
         /// <summary>
-        /// Flag set by Dec_GetHeight when a TT_SPLITTER trigger is encountered.
+        /// Flag set by Dec_GetHeight when a SPLITTER is encountered.
         /// When true, the current sector must become a 1x1 "splitter" box.
         /// Splitter boxes break up larger boxes to allow fine-grained AI control.
         /// </summary>
@@ -110,7 +110,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
         private bool dec_checkUnderwater = true;
 
         /// <summary>
-        /// Flag set by Dec_GetHeight when a TT_MONKEY trigger is encountered.
+        /// Flag set by Dec_GetHeight when a MONKEY is encountered.
         /// Indicates the sector has a monkey swing ceiling.
         /// Boxes with monkey swing get the MONKEY_BOX_FLAG.
         /// </summary>
@@ -137,12 +137,12 @@ namespace TombLib.LevelData.Compilers.TombEngine
         /// <summary>
         /// Floor corner heights for the current sector.
         /// Used to detect slopes and calculate average floor height.
-        /// Naming: dec_tilt[1-4] corresponds to XnZp, XpZp, XpZn, XnZn corners.
+        /// Naming: dec_cornerHeight[1-4] corresponds to XnZp, XpZp, XpZn, XnZn corners.
         /// </summary>
-        private int dec_tilt1 = Clicks.ToWorld(-1);  // Floor.XnZp (X-, Z+)
-        private int dec_tilt2 = Clicks.ToWorld(-1);  // Floor.XpZp (X+, Z+)
-        private int dec_tilt3 = Clicks.ToWorld(-1);  // Floor.XpZn (X+, Z-)
-        private int dec_tilt4 = Clicks.ToWorld(-1);  // Floor.XnZn (X-, Z-)
+        private int dec_cornerHeight1 = Clicks.ToWorld(-1);  // Floor.XnZp (X-, Z+)
+        private int dec_cornerHeight2 = Clicks.ToWorld(-1);  // Floor.XpZp (X+, Z+)
+        private int dec_cornerHeight3 = Clicks.ToWorld(-1);  // Floor.XpZn (X+, Z-)
+        private int dec_cornerHeight4 = Clicks.ToWorld(-1);  // Floor.XnZn (X-, Z-)
 
         /// <summary>
         /// List of generated boxes (internal format).
@@ -574,7 +574,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
         ///
         /// SPLITTER BOXES:
         /// ===============
-        /// If a TT_SPLITTER trigger is encountered, the box becomes a 1x1 splitter box.
+        /// If a SPLITTER is encountered, the box becomes a 1x1 splitter box.
         /// Splitter boxes are used to create fine-grained AI control points.
         ///
         /// GHOST BLOCKS:
@@ -614,10 +614,10 @@ namespace TombLib.LevelData.Compilers.TombEngine
             // ===================================================================================
             // Use ghost block if present, otherwise use actual floor
             // Ghost blocks override floor geometry for AI purposes
-            dec_tilt1 = sector.HasGhostBlock ? sector.GhostBlock.Floor.XnZp : sector.Floor.XnZp;
-            dec_tilt2 = sector.HasGhostBlock ? sector.GhostBlock.Floor.XpZp : sector.Floor.XpZp;
-            dec_tilt3 = sector.HasGhostBlock ? sector.GhostBlock.Floor.XpZn : sector.Floor.XpZn;
-            dec_tilt4 = sector.HasGhostBlock ? sector.GhostBlock.Floor.XnZn : sector.Floor.XnZn;
+            dec_cornerHeight1 = sector.HasGhostBlock ? sector.GhostBlock.Floor.XnZp : sector.Floor.XnZp;
+            dec_cornerHeight2 = sector.HasGhostBlock ? sector.GhostBlock.Floor.XpZp : sector.Floor.XpZp;
+            dec_cornerHeight3 = sector.HasGhostBlock ? sector.GhostBlock.Floor.XpZn : sector.Floor.XpZn;
+            dec_cornerHeight4 = sector.HasGhostBlock ? sector.GhostBlock.Floor.XnZn : sector.Floor.XnZn;
 
             // Convert local coordinates to world sector coordinates
             int currentX = room.Position.X + x;
@@ -677,7 +677,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
             // ===================================================================================
             if (dec_splitter)
             {
-                // TT_SPLITTER trigger encountered - create 1x1 box
+                // SPLITTER encountered - create 1x1 box
                 box.Xmin = currentX;
                 box.Zmin = currentZ;
                 box.Xmax = currentX + 1;
@@ -1132,9 +1132,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
         /// SIDE EFFECTS:
         /// =============
         /// This function sets several global state variables:
-        /// - dec_tilt1-4: Corner heights for the sector
+        /// - dec_cornerHeight1-4: Corner heights for the sector
         /// - dec_monkey: True if sector has monkey swing flag
-        /// - dec_splitter: Set to true if TT_SPLITTER trigger encountered
+        /// - dec_splitter: Set to true if SPLITTER encountered
         /// - dec_checkUnderwater: Set to false if shallow water detected
         /// - dec_room: Updated when traversing through portals
         /// - dec_doorCheck: Set when crossing room boundaries
@@ -1176,10 +1176,10 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 sector.WallPortal != null && sector.WallPortal.Opacity == PortalOpacity.SolidFaces) ||
                 (sector.Flags & SectorFlags.NotWalkableFloor) != 0)
             {
-                dec_tilt1 = Clicks.ToWorld(-1);
-                dec_tilt2 = Clicks.ToWorld(-1);
-                dec_tilt3 = Clicks.ToWorld(-1);
-                dec_tilt4 = Clicks.ToWorld(-1);
+                dec_cornerHeight1 = Clicks.ToWorld(-1);
+                dec_cornerHeight2 = Clicks.ToWorld(-1);
+                dec_cornerHeight3 = Clicks.ToWorld(-1);
+                dec_cornerHeight4 = Clicks.ToWorld(-1);
 
                 return _noHeight;
             }
@@ -1233,15 +1233,15 @@ namespace TombLib.LevelData.Compilers.TombEngine
             int sumHeights = floorXnZp + floorXpZp + floorXpZn + floorXnZn;
             int tilt = sumHeights / 4;
 
-            dec_tilt1 = floorXnZp;
-            dec_tilt2 = floorXpZp;
-            dec_tilt3 = floorXpZn;
-            dec_tilt4 = floorXnZn;
+            dec_cornerHeight1 = floorXnZp;
+            dec_cornerHeight2 = floorXpZp;
+            dec_cornerHeight3 = floorXpZn;
+            dec_cornerHeight4 = floorXnZn;
 
-            int grad1 = Math.Abs(dec_tilt1 - dec_tilt2) >= Clicks.ToWorld(3) ? 1 : 0;
-            int grad2 = Math.Abs(dec_tilt2 - dec_tilt3) >= Clicks.ToWorld(3) ? 1 : 0;
-            int grad3 = Math.Abs(dec_tilt3 - dec_tilt4) >= Clicks.ToWorld(3) ? 1 : 0;
-            int grad4 = Math.Abs(dec_tilt4 - dec_tilt1) >= Clicks.ToWorld(3) ? 1 : 0;
+            int grad1 = Math.Abs(dec_cornerHeight1 - dec_cornerHeight2) >= Clicks.ToWorld(3) ? 1 : 0;
+            int grad2 = Math.Abs(dec_cornerHeight2 - dec_cornerHeight3) >= Clicks.ToWorld(3) ? 1 : 0;
+            int grad3 = Math.Abs(dec_cornerHeight3 - dec_cornerHeight4) >= Clicks.ToWorld(3) ? 1 : 0;
+            int grad4 = Math.Abs(dec_cornerHeight4 - dec_cornerHeight1) >= Clicks.ToWorld(3) ? 1 : 0;
 
             int type;
 
