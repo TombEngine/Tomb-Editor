@@ -646,7 +646,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
             // Set box room and water state
             box.Room = dec_room;
-            box.Water = room.Properties.Type == RoomType.Water;
+            box.Water = dec_room.Properties.Type == RoomType.Water;
 
             // Set flip state flags
             if (dec_flipped)
@@ -1264,7 +1264,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 : sector.Ceiling.Max + room.Position.Y;
 
             // Check for shallow water
-            if (dec_checkUnderwater && room.Properties.Type == RoomType.Water && ceiling - tilt <= Clicks.ToWorld(1) && sector.CeilingPortal != null)
+            if (dec_checkUnderwater && room.Properties.Type == RoomType.Water && (height - ceiling) <= Clicks.ToWorld(1) && sector.CeilingPortal != null)
             {
                 adjoiningRoom = sector.CeilingPortal.AdjoiningRoom;
                 if (adjoiningRoom.AlternateRoom != null && dec_flipped) 

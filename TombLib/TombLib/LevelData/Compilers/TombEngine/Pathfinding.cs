@@ -294,7 +294,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     // =======================================================================
                     // Most enemies cannot walk on steep slopes (gradient >= 3 clicks)
                     // Exception: Flyers (no ground movement) and Water enemies (swimming)
-                    if (zoneType != ZoneType.Flyer && zoneType != ZoneType.Water && dec_boxes[boxIndex].Slope)
+                    if (zoneType != ZoneType.Flyer && zoneType != ZoneType.Water && dec_boxes[boxIndex].Slope && zoneType != ZoneType.Amphibious)
                         continue;
 
                     // =======================================================================
