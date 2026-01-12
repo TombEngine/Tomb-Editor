@@ -632,7 +632,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
             dec_splitter = false;
             dec_checkUnderwater = true;
             dec_monkey = false;
-
+            
             // ===================================================================================
             // GET INITIAL FLOOR HEIGHT AND PROPERTIES
             // ===================================================================================
@@ -1264,7 +1264,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 : sector.Ceiling.Max + room.Position.Y;
 
             // Check for shallow water
-            if (dec_checkUnderwater && room.Properties.Type == RoomType.Water && (height - ceiling) <= Clicks.ToWorld(1) && sector.CeilingPortal != null)
+            if (dec_checkUnderwater && room.Properties.Type == RoomType.Water && (ceiling - height) <= Clicks.ToWorld(1) && sector.CeilingPortal != null)
             {
                 adjoiningRoom = sector.CeilingPortal.AdjoiningRoom;
                 if (adjoiningRoom.AlternateRoom != null && dec_flipped) 
