@@ -132,7 +132,7 @@ namespace TombEditor.Controls
             rbNodeEditor.TabIndex = 1;
             rbNodeEditor.TabStop = true;
             rbNodeEditor.Text = "Node editor";
-            toolTip.SetToolTip(rbNodeEditor, "Visually construct a trigger");
+            toolTip.SetToolTip(rbNodeEditor, "Visually construct an event");
             rbNodeEditor.CheckedChanged += rbNodeEditor_CheckedChanged;
             // 
             // nudCallCount
@@ -144,7 +144,7 @@ namespace TombEditor.Controls
             nudCallCount.Name = "nudCallCount";
             nudCallCount.Size = new System.Drawing.Size(63, 22);
             nudCallCount.TabIndex = 3;
-            toolTip.SetToolTip(nudCallCount, "Determines how many times trigger will be called.\r\nIf 0, it means trigger will be called infinitely.");
+            toolTip.SetToolTip(nudCallCount, "Determines how many times an event will be called.\r\nIf 0, it means event will be called infinitely.");
             nudCallCount.ValueChanged += nudCallCount_ValueChanged;
             // 
             // tbArgument
@@ -203,7 +203,7 @@ namespace TombEditor.Controls
             nudCallCount2.Name = "nudCallCount2";
             nudCallCount2.Size = new System.Drawing.Size(63, 22);
             nudCallCount2.TabIndex = 3;
-            toolTip.SetToolTip(nudCallCount2, "Determines how many times trigger will be called.\r\nIf 0, it means trigger will be called infinitely.");
+            toolTip.SetToolTip(nudCallCount2, "Determines how many times an event will be called.\r\nIf 0, it means event will be called infinitely.");
             nudCallCount2.ValueChanged += nudCallCount_ValueChanged;
             // 
             // butClearNodes

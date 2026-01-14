@@ -31,7 +31,7 @@ namespace WadTool
             public ushort NextFrame { get; set; }
             public ushort BlendFrameCount { get; set; }
             public ushort BlendEndFrame { get; set; }
-            public BezierCurve2 BlendCurve { get; set; }
+            public BezierCurve2 BlendCurve { get; set; } = BezierCurve2.Linear.Clone();
 
             public WadStateChangeRow(string stateName, ushort stateId, ushort lowFrame, ushort highFrame, ushort nextAnimation,
                                      ushort nextFrameLow, ushort nextFrameHigh, ushort blendFrameCount, BezierCurve2 blendCurve)

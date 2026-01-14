@@ -296,8 +296,8 @@ namespace TombLib.Wad
                     var p = m.Polys[i];
 
                     var rect = p.Texture.GetRect();
-                    var image = ImageC.CreateNew((int)rect.Width, (int)rect.Height);
-                    image.CopyFrom(0, 0, p.Texture.Texture.Image, (int)rect.TopLeft.X, (int)rect.TopLeft.Y, (int)rect.Width, (int)rect.Height);
+                    var image = ImageC.CreateNew((int)Math.Clamp(rect.Width, 1, int.MaxValue), (int)Math.Clamp(rect.Height, 1, int.MaxValue));
+                    image.CopyFrom(0, 0, p.Texture.Texture.Image, (int)rect.TopLeft.X, (int)rect.TopLeft.Y, image.Width, image.Height);
 
                     var texture = p.Texture;
                     texture.Texture = new WadTexture(image);

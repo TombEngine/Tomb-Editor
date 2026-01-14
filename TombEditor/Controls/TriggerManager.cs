@@ -433,6 +433,8 @@ namespace TombEditor.Controls
             if (nodeEditor.SelectedNode == null)
                 return;
 
+            nodeEditor.LockNodeChanges = true;
+
             using (var colorDialog = new RealtimeColorDialog(-1, -1, c =>
             {
                 nodeEditor.SelectedNode.Color = c.ToFloat3Color();
@@ -446,15 +448,15 @@ namespace TombEditor.Controls
                 {
                     nodeEditor.SelectedNode.Color = oldColor.ToFloat3Color();
                     nodeEditor.Invalidate();
-                    return;
                 }
-
-                if (oldColor != colorDialog.Color)
+                else if (oldColor != colorDialog.Color)
                 {
                     nodeEditor.SelectedNode.Color = colorDialog.Color.ToFloat3Color();
                     nodeEditor.Invalidate();
                 }
             }
+
+            nodeEditor.LockNodeChanges = false;
         }
 
         private void butLinkSelectedNodes_Click(object sender, EventArgs e)

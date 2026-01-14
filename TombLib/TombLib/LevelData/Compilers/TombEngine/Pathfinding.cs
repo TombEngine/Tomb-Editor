@@ -10,7 +10,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
         {
             Skeleton,
             Basic,
-            Water,
+            Crocodile,
             Human,
             Flyer
         }
@@ -137,11 +137,13 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     int  step = Math.Abs(_boxes[next].TrueFloor - _boxes[boxIndex].TrueFloor);
 
                     // Don't add a box if it is underwater (for fly zone) or a slope (for all other zones).
-                    if ((zoneType == ZoneType.Flyer && water) || (zoneType != ZoneType.Flyer && dec_boxes[boxIndex].Slope))
+                    if (zoneType != ZoneType.Flyer && dec_boxes[boxIndex].Slope)
                         continue;
 
-                    // Don't add a box which doesn't match water state.
-                    if (water != isWater)
+                    // Water state check - CROC and HUMAN + monkey can cross water boundary
+                    bool canCrossWater = (zoneType == ZoneType.Crocodile) ||
+                                         (zoneType == ZoneType.Human && canMonkey);
+                    if (water != isWater && !canCrossWater)
                         continue;
 
                     bool add = false;
@@ -158,7 +160,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                             add = (step <= Clicks.ToWorld(1));
                             break;
 
-                        case ZoneType.Water:
+                        case ZoneType.Crocodile:
                             // Enemies like crocodiles. They can go on land and inside water, and climb 1 click step.
                             // In water they act like flying enemies. Guide seems to belong to this zone.
                             add = (step <= Clicks.ToWorld(1) || water);
@@ -189,7 +191,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 }
             }
 
-            return boxes;
+            return boxes.Distinct();
         }
     }
 }

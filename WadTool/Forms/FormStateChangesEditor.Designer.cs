@@ -284,16 +284,16 @@
             darkLabel3.Name = "darkLabel3";
             darkLabel3.Size = new System.Drawing.Size(178, 13);
             darkLabel3.TabIndex = 104;
-            darkLabel3.Text = "Next anim blending end frame:";
+            darkLabel3.Text = "Next anim blending duration:";
             // 
-            // darkLabel2
+            // darkLabel2 TODO: Should be in column instead.
             // 
             darkLabel2.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
             darkLabel2.Location = new System.Drawing.Point(6, 21);
             darkLabel2.Name = "darkLabel2";
             darkLabel2.Size = new System.Drawing.Size(178, 13);
             darkLabel2.TabIndex = 101;
-            darkLabel2.Text = "Next anim blending duration:";
+            darkLabel2.Text = "Next high frame:";
             // 
             // FormStateChangesEditor
             // 

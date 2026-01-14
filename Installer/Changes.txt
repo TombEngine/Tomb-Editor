@@ -1,9 +1,20 @@
-Version 1.10.2
-==============
+Version 1.11
+============
+
+Tomb Editor:
+* Fixed node parameter corruption after changing node background color.
+
+WadTool:
+ * Added animation blending and root motion controls to animation editor for TEN target.
+ * Added indication of missing external texture file.
+ * Fixed misplaced backholster meshes for classic engines.
+ * Fixed external textures not loading when wad was moved to another directory.
+ * Fixed exception while loading wads with material xml files placed in the same folder as wad.
+ * Fixed exception while exporting meshes with degenerate textures.
 
 TEN nodes:
  * Added nodes to check the color of a moveable or static mesh.
- * Added node to add an interaction highlight to a moveable"
+ * Added node to add an interaction highlight to a moveable.
 
 Version 1.10.1
 ==============
