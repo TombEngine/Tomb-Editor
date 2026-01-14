@@ -1691,35 +1691,47 @@ namespace TombLib.LevelData.Compilers.TombEngine
             dec_jump = false;
             dec_monkey = false;
 
+            // Always process from higher to lower box (numerically higher Height value)
             dec_TombEngine_box_aux box1 = a;
             dec_TombEngine_box_aux box2 = b;
 
-            // Always process from higher to lower box (numerically higher Height value)
             if (b.Height > a.Height)
             {
                 box1 = b;
                 box2 = a;
             }
 
+            bool hasXOverlap = box1.Xmax > box2.Xmin && box1.Xmin < box2.Xmax;
+            bool hasZOverlap = box1.Zmax > box2.Zmin && box1.Zmin < box2.Zmax;
+
             // ===================================================================================
             // CASE 1: No X overlap - check for X-direction connections
             // ===================================================================================
-            if (box1.Xmax <= box2.Xmin || box1.Xmin >= box2.Xmax)
+            if (!hasXOverlap)
             {
                 // Try X-direction jump if Z ranges overlap
-                if (box1.Zmax > box2.Zmin && box1.Zmin < box2.Zmax && Dec_TestJumpOverlapZ(box1, box2))
+                if (hasZOverlap && Dec_TestJumpOverlapZ(box1, box2))
                 {
                     dec_jump = true;
                     return true;
                 }
 
-                // Check for edge adjacency or no connection
-                if (box1.Xmax < box2.Xmin ||
-                    box1.Xmin > box2.Xmax ||
-                    box1.Zmax <= box2.Zmin ||
-                    box1.Zmin >= box2.Zmax ||
-                    box1.Xmax == box2.Xmin && !Dec_TestOverlapXmax(box1, box2) ||
-                    box1.Xmin == box2.Xmax && !Dec_TestOverlapXmin(box1, box2))
+                // Edge adjacency requires Z overlap
+                if (!hasZOverlap)
+                    return false;
+
+                // Check X edge adjacency
+                if (box1.Xmax == box2.Xmin)
+                {
+                    if (!Dec_TestOverlapXmax(box1, box2))
+                        return false;
+                }
+                else if (box1.Xmin == box2.Xmax)
+                {
+                    if (!Dec_TestOverlapXmin(box1, box2))
+                        return false;
+                }
+                else
                 {
                     return false;
                 }
@@ -1729,12 +1741,13 @@ namespace TombLib.LevelData.Compilers.TombEngine
             }
 
             // ===================================================================================
-            // CASE 2: X overlap exists - check for Z overlap (straight overlap)
+            // CASE 2: X overlap and Z overlap - straight overlap
             // ===================================================================================
-            if (box1.Zmax > box2.Zmin && box1.Zmin < box2.Zmax)
+            if (hasZOverlap)
             {
                 // Straight overlap - must have same height
-                if (box1.Height != box2.Height) return false;
+                if (box1.Height != box2.Height)
+                    return false;
 
                 if (box1.Monkey && box2.Monkey) dec_monkey = true;
                 return true;
@@ -1750,27 +1763,24 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 return true;
             }
 
-            // Check for Z edge adjacency
-            if (box1.Zmax < box2.Zmin ||
-                box1.Zmin > box2.Zmax ||
-                box1.Zmax == box2.Zmin && !Dec_TestOverlapZmax(box1, box2))
+            // Check Z edge adjacency
+            if (box1.Zmax == box2.Zmin)
+            {
+                if (!Dec_TestOverlapZmax(box1, box2))
+                    return false;
+            }
+            else if (box1.Zmin == box2.Zmax)
+            {
+                if (!Dec_TestOverlapZmin(box1, box2))
+                    return false;
+            }
+            else
             {
                 return false;
             }
 
-            if (box1.Zmin != box2.Zmax)
-            {
-                if (box1.Monkey && box2.Monkey) dec_monkey = true;
-                return true;
-            }
-
-            if (Dec_TestOverlapZmin(box1, box2))
-            {
-                if (box1.Monkey && box2.Monkey) dec_monkey = true;
-                return true;
-            }
-
-            return false;
+            if (box1.Monkey && box2.Monkey) dec_monkey = true;
+            return true;
         }
     }
 }
