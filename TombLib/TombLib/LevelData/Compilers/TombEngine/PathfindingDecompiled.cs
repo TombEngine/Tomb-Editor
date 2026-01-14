@@ -171,7 +171,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         /// <summary>
         /// Main entry point for box and overlap generation.
-        /// Corresponds to CreateBoxes() in original box.c.
         ///
         /// ALGORITHM:
         /// ==========
@@ -273,7 +272,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         /// <summary>
         /// Builds overlap connections between all box pairs.
-        /// Corresponds to GetBoxOverlap() in original box.c.
         ///
         /// OVERLAP DATA FORMAT:
         /// ====================
@@ -445,7 +443,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         /// <summary>
         /// Adds a box to the box list, with deduplication.
-        /// Corresponds to AddBox() in original box.c.
         ///
         /// DEDUPLICATION:
         /// ==============
@@ -553,7 +550,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         /// <summary>
         /// Creates a box starting from a specific sector, expanding in all 4 directions.
-        /// Corresponds to GetBox() in original box.c.
         ///
         /// BOX EXPANSION ALGORITHM (Spiral Expansion):
         /// ============================================
@@ -960,7 +956,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         /// <summary>
         /// Traverses through portals to find the room containing a world position.
-        /// Corresponds to GetRoom() / ClampRoom() in original box.c.
         ///
         /// This function handles two types of portal traversal:
         /// 1. WALL PORTALS: Horizontal connections between rooms
@@ -1112,7 +1107,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         /// <summary>
         /// Gets floor height and slope status at a world position.
-        /// Corresponds to GetHeight() in original box.c.
         ///
         /// This function calculates the average floor height at a sector and determines
         /// if the sector is a slope (too steep for most enemies to walk on).
@@ -1307,7 +1301,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         /// <summary>
         /// Tests if two boxes can be connected via a jump in the Z direction.
-        /// Corresponds to TestTBJumpOverlap() (Top-Bottom) in original box.c.
         ///
         /// JUMP DETECTION:
         /// ===============
@@ -1441,7 +1434,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         /// <summary>
         /// Tests if two boxes can be connected via a jump in the X direction.
-        /// Corresponds to TestLRJumpOverlap() (Left-Right) in original box.c.
         ///
         /// See Dec_TestJumpOverlapX for detailed documentation.
         /// This function tests the X direction (left-right) while that one tests Z.
@@ -1563,7 +1555,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         /// <summary>
         /// Tests edge adjacency when test.Xmax touches box (right edge overlap).
-        /// Corresponds to TestRightOverlap() in original box.c.
         ///
         /// EDGE ADJACENCY:
         /// ===============
@@ -1596,7 +1587,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         /// <summary>
         /// Tests edge adjacency when test.Xmin touches box (left edge overlap).
-        /// Corresponds to TestLeftOverlap() in original box.c.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public bool Dec_TestOverlapXmin(dec_TombEngine_box_aux test, dec_TombEngine_box_aux box)
@@ -1622,7 +1612,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         /// <summary>
         /// Tests edge adjacency when test.Zmax touches box (top edge overlap).
-        /// Corresponds to TestBottomOverlap() in original box.c (inverted axis).
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public bool Dec_TestOverlapZmax(dec_TombEngine_box_aux test, dec_TombEngine_box_aux box)
@@ -1648,7 +1637,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         /// <summary>
         /// Tests edge adjacency when test.Zmin touches box (bottom edge overlap).
-        /// Corresponds to TestTopOverlap() in original box.c (inverted axis).
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public bool Dec_TestOverlapZmin(dec_TombEngine_box_aux test, dec_TombEngine_box_aux box)
@@ -1674,7 +1662,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         /// <summary>
         /// Main overlap check between two boxes.
-        /// Corresponds to CheckOverlap() in original box.c.
         ///
         /// OVERLAP TYPES:
         /// ==============
