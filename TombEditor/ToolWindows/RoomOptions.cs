@@ -57,6 +57,7 @@ namespace TombEditor.ToolWindows
                 cbFlagOutside.Enabled = !isTR1 || _editor.Level.IsTRX;
                 cbFlagCold.Enabled = isNGorTEN;
                 cbFlagDamage.Enabled = isNGorTEN;
+                cbFlagNoCaustics.Enabled = isNGorTEN;
                 cbNoLensflare.Enabled = supportsLensflare;
                 comboReverberation.Enabled = supportsReverb;
                 comboReverberation.SelectedIndexChanged -= comboReverberation_SelectedIndexChanged; // Prevent SelectedIndexChanged event from DataSource assignment in next line
@@ -107,6 +108,17 @@ namespace TombEditor.ToolWindows
                 if (obj is Editor.InitEvent || obj is Editor.SelectedRoomChangedEvent)
                     comboRoom.SelectedIndex = _editor.Level.Rooms.ReferenceIndexOf(room);
 
+                // determine water-room condition
+                bool isWaterRoom = room.Properties.Type == RoomType.Water;
+
+                // make them mutually exclusive (same location in designer)
+                cbFlagOutside.Visible = !isWaterRoom;
+                cbFlagNoCaustics.Visible = isWaterRoom;
+
+                // set enabled/availability as needed (you can also combine with existing version checks)
+                cbFlagOutside.Enabled = !isWaterRoom; // or any other condition
+                cbFlagNoCaustics.Enabled = isWaterRoom;   // or version checks, etc.
+
                 // Update the state of other controls
                 ReadRoomType();
                 panelRoomAmbientLight.BackColor = (room.Properties.AmbientLight * new Vector3(0.5f, 0.5f, 0.5f)).ToWinFormsColor();
@@ -117,6 +129,7 @@ namespace TombEditor.ToolWindows
                 cbFlagCold.Checked = room.Properties.FlagCold;
                 cbFlagDamage.Checked = room.Properties.FlagDamage;
                 cbFlagOutside.Checked = room.Properties.FlagOutside;
+                cbFlagNoCaustics.Checked = room.Properties.FlagNoCaustics;
                 cbHorizon.Checked = room.Properties.FlagHorizon;
                 cbNoLensflare.Checked = room.Properties.FlagNoLensflare;
                 cbNoPathfinding.Checked = room.Properties.FlagExcludeFromPathFinding;
@@ -293,7 +306,7 @@ namespace TombEditor.ToolWindows
                         break;
                 }
             }
-            
+
             comboRoomType.SelectedIndex = roomType;
 
             // If selected type is -1 it means this room type is unsupported in current version. Throw a message about it.
