@@ -441,7 +441,7 @@
             cbFlagNoCaustics.Size = new System.Drawing.Size(81, 26);
             cbFlagNoCaustics.TabIndex = 113;
             cbFlagNoCaustics.Tag = "SetRoomNoCaustics";
-            cbFlagNoCaustics.Text = "No Caustics";
+            cbFlagNoCaustics.Text = "No caustics";
             // 
             // RoomOptions
             // 
