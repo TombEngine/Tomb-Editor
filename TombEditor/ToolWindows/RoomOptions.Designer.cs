@@ -104,7 +104,7 @@
             darkLabel16.AutoSize = true;
             darkLabel16.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             darkLabel16.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            darkLabel16.Location = new System.Drawing.Point(140, 184);
+            darkLabel16.Location = new System.Drawing.Point(140, 200);
             darkLabel16.Name = "darkLabel16";
             darkLabel16.Size = new System.Drawing.Size(36, 13);
             darkLabel16.TabIndex = 96;
@@ -160,7 +160,7 @@
             panelRoomAmbientLight.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             panelRoomAmbientLight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             panelRoomAmbientLight.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            panelRoomAmbientLight.Location = new System.Drawing.Point(3, 200);
+            panelRoomAmbientLight.Location = new System.Drawing.Point(3, 216);
             panelRoomAmbientLight.Name = "panelRoomAmbientLight";
             panelRoomAmbientLight.Size = new System.Drawing.Size(59, 23);
             panelRoomAmbientLight.TabIndex = 12;
@@ -172,7 +172,7 @@
             darkLabel3.AutoSize = true;
             darkLabel3.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             darkLabel3.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            darkLabel3.Location = new System.Drawing.Point(0, 184);
+            darkLabel3.Location = new System.Drawing.Point(0, 200);
             darkLabel3.Name = "darkLabel3";
             darkLabel3.Size = new System.Drawing.Size(50, 13);
             darkLabel3.TabIndex = 88;
@@ -200,7 +200,7 @@
             numLightEffectStrength.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             numLightEffectStrength.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             numLightEffectStrength.IncrementAlternate = new decimal(new int[] { 10, 0, 0, 65536 });
-            numLightEffectStrength.Location = new System.Drawing.Point(246, 200);
+            numLightEffectStrength.Location = new System.Drawing.Point(246, 216);
             numLightEffectStrength.LoopValues = false;
             numLightEffectStrength.Maximum = new decimal(new int[] { 4, 0, 0, 0 });
             numLightEffectStrength.Name = "numLightEffectStrength";
@@ -216,7 +216,7 @@
             comboPortalShade.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             comboPortalShade.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             comboPortalShade.Items.AddRange(new object[] { "Default", "Smooth", "Sharp" });
-            comboPortalShade.Location = new System.Drawing.Point(68, 200);
+            comboPortalShade.Location = new System.Drawing.Point(68, 216);
             comboPortalShade.Name = "comboPortalShade";
             comboPortalShade.Size = new System.Drawing.Size(69, 23);
             comboPortalShade.TabIndex = 13;
@@ -228,7 +228,7 @@
             comboLightEffect.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             comboLightEffect.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             comboLightEffect.Items.AddRange(new object[] { "None", "Default", "Reflection", "Glow", "Move", "Glow & Move", "Mist" });
-            comboLightEffect.Location = new System.Drawing.Point(143, 200);
+            comboLightEffect.Location = new System.Drawing.Point(143, 216);
             comboLightEffect.Name = "comboLightEffect";
             comboLightEffect.Size = new System.Drawing.Size(97, 23);
             comboLightEffect.TabIndex = 14;
@@ -264,7 +264,7 @@
             darkLabel1.AutoSize = true;
             darkLabel1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             darkLabel1.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            darkLabel1.Location = new System.Drawing.Point(65, 184);
+            darkLabel1.Location = new System.Drawing.Point(65, 200);
             darkLabel1.Name = "darkLabel1";
             darkLabel1.Size = new System.Drawing.Size(71, 13);
             darkLabel1.TabIndex = 112;
@@ -436,9 +436,9 @@
             // 
             cbFlagNoCaustics.AutoCheck = false;
             cbFlagNoCaustics.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            cbFlagNoCaustics.Location = new System.Drawing.Point(3, 155);
+            cbFlagNoCaustics.Location = new System.Drawing.Point(129, 172);
             cbFlagNoCaustics.Name = "cbFlagNoCaustics";
-            cbFlagNoCaustics.Size = new System.Drawing.Size(59, 26);
+            cbFlagNoCaustics.Size = new System.Drawing.Size(81, 26);
             cbFlagNoCaustics.TabIndex = 113;
             cbFlagNoCaustics.Tag = "SetRoomNoCaustics";
             cbFlagNoCaustics.Text = "No Caustics";
@@ -447,6 +447,7 @@
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(cbFlagCold);
             Controls.Add(cbFlagNoCaustics);
             Controls.Add(butHidden);
             Controls.Add(butSelectPreviousRoom);
@@ -470,7 +471,6 @@
             Controls.Add(comboLightEffect);
             Controls.Add(darkLabel16);
             Controls.Add(cbFlagOutside);
-            Controls.Add(cbFlagCold);
             Controls.Add(cbFlagDamage);
             Controls.Add(comboRoomType);
             Controls.Add(darkLabel15);
@@ -485,7 +485,7 @@
             MinimumSize = new System.Drawing.Size(284, 226);
             Name = "RoomOptions";
             SerializationKey = "RoomOptions";
-            Size = new System.Drawing.Size(284, 226);
+            Size = new System.Drawing.Size(284, 242);
             ((System.ComponentModel.ISupportInitialize)numLightEffectStrength).EndInit();
             ResumeLayout(false);
             PerformLayout();
