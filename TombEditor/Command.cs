@@ -2115,7 +2115,7 @@ namespace TombEditor
                 }
             });
 
-            AddCommand("SetRoomNoCaustics", "Disables Caustics", CommandType.Rooms, delegate (CommandArgs args)
+            AddCommand("SetRoomNoCaustics", "Disable caustics in water rooms", CommandType.Rooms, delegate (CommandArgs args)
             {
                 if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion == TRVersion.Game.TombEngine, "No caustics"))
                     return;

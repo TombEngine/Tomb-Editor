@@ -52,12 +52,14 @@ namespace TombEditor.ToolWindows
                 bool supportsLensflare = _editor.Level.Settings.GameVersion.SupportsLensflare();
                 bool supportsReverb = _editor.Level.Settings.GameVersion.SupportsReverberation();
                 bool isTR1 = _editor.Level.Settings.GameVersion.Native() == TRVersion.Game.TR1;
+                bool isTEN = _editor.Level.Settings.GameVersion is TRVersion.Game.TombEngine;
 
                 cbHorizon.Enabled = !isTR1 || _editor.Level.IsTRX;
                 cbFlagOutside.Enabled = !isTR1 || _editor.Level.IsTRX;
                 cbFlagCold.Enabled = isNGorTEN;
                 cbFlagDamage.Enabled = isNGorTEN;
-                cbFlagNoCaustics.Enabled = isNGorTEN;
+                cbFlagNoCaustics.Enabled = isTEN;
+                cbFlagNoCaustics.Visible = isTEN;
                 cbNoLensflare.Enabled = supportsLensflare;
                 comboReverberation.Enabled = supportsReverb;
                 comboReverberation.SelectedIndexChanged -= comboReverberation_SelectedIndexChanged; // Prevent SelectedIndexChanged event from DataSource assignment in next line
@@ -107,14 +109,6 @@ namespace TombEditor.ToolWindows
                 Room room = _editor.SelectedRoom;
                 if (obj is Editor.InitEvent || obj is Editor.SelectedRoomChangedEvent)
                     comboRoom.SelectedIndex = _editor.Level.Rooms.ReferenceIndexOf(room);
-
-                // determine water-room condition
-                bool isWaterRoom = room.Properties.Type == RoomType.Water;
-                bool isTEN = _editor.Level.Settings.GameVersion is TRVersion.Game.TombEngine;
-
-                // No Caustics checkbox only visible/enabled when it's TEN AND water room
-                cbFlagNoCaustics.Visible = isTEN;
-                cbFlagNoCaustics.Enabled = isWaterRoom && isTEN;
 
                 // Update the state of other controls
                 ReadRoomType();
