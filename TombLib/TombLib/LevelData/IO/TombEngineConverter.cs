@@ -199,6 +199,7 @@ namespace TombLib.LevelData.IO
                 case "ANIMATING14":
                 case "ANIMATING15":
                 case "ANIMATING16":
+                case "FIREROPE":
                     {
                         if (sourceVersion != TRVersion.Game.TR4)
                             break;

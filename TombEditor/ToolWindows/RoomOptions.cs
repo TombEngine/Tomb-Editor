@@ -53,8 +53,8 @@ namespace TombEditor.ToolWindows
                 bool supportsReverb = _editor.Level.Settings.GameVersion.SupportsReverberation();
                 bool isTR1 = _editor.Level.Settings.GameVersion.Native() == TRVersion.Game.TR1;
 
-                cbHorizon.Enabled = !isTR1;
-                cbFlagOutside.Enabled = !isTR1;
+                cbHorizon.Enabled = !isTR1 || _editor.Level.IsTRX;
+                cbFlagOutside.Enabled = !isTR1 || _editor.Level.IsTRX;
                 cbFlagCold.Enabled = isNGorTEN;
                 cbFlagDamage.Enabled = isNGorTEN;
                 cbNoLensflare.Enabled = supportsLensflare;
@@ -185,6 +185,7 @@ namespace TombEditor.ToolWindows
             comboRoomType.Items.Add("Water");
 
             if (_editor.Level.Settings.GameVersion == TRVersion.Game.TR3 ||
+                _editor.Level.IsTRX ||
                 _editor.Level.IsNG ||
                 _editor.Level.IsTombEngine)
                 comboRoomType.Items.Add("Quicksand");
@@ -265,7 +266,8 @@ namespace TombEditor.ToolWindows
             if (room.Properties.Type == RoomType.Quicksand &&
                 (_editor.Level.Settings.GameVersion != TRVersion.Game.TR3 &&
                  _editor.Level.Settings.GameVersion != TRVersion.Game.TRNG &&
-                 _editor.Level.Settings.GameVersion != TRVersion.Game.TombEngine))
+                 _editor.Level.Settings.GameVersion != TRVersion.Game.TombEngine &&
+                 !_editor.Level.IsTRX))
                 roomType = -1;
             else if ((room.Properties.Type == RoomType.Rain || room.Properties.Type == RoomType.Snow) &&
                      _editor.Level.Settings.GameVersion != TRVersion.Game.TRNG)

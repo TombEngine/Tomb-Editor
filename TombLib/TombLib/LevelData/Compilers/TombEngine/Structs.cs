@@ -4,11 +4,26 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using TombLib.IO;
+using TombLib.Types;
 using TombLib.Utils;
 using TombLib.Wad;
 
 namespace TombLib.LevelData.Compilers.TombEngine
 {
+    public enum TombEnginePolygonShape : int
+    {
+        Quad,
+        Triangle
+    }
+
+    public enum TombEngineAnimationBlendType
+    {
+        Linear,
+        Smooth,
+        EaseIn,
+        EaseOut
+    }
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TombEngineSpriteTexture
     {
@@ -21,12 +36,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public float Y3;
         public float X4;
         public float Y4;
-    }
-
-    public enum TombEnginePolygonShape : int
-    {
-        Quad,
-        Triangle
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -607,51 +616,163 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public int NumMeshes;
         public int StartingMesh;
         public int MeshTree;
-        public int FrameOffset;
-        public int Animation;
+        public int NumAnimations;
+        public List<TombEngineAnimation> Animations;
+
+        public void Write(BinaryWriterEx writer)
+        {
+            writer.Write(ObjectID);
+            writer.Write(Skin);
+            writer.Write(NumMeshes);
+            writer.Write(StartingMesh);
+            writer.Write(MeshTree);
+
+            writer.Write(NumAnimations);
+            foreach (var animation in Animations)
+            {
+                writer.Write(animation.StateID);
+                writer.Write(animation.Interpolation);
+                writer.Write(animation.FrameEnd);
+                writer.Write(animation.NextAnimation);
+                writer.Write(animation.NextFrame);
+                writer.Write(animation.BlendFrameCount);
+                writer.Write(animation.BlendCurve.Start);
+                writer.Write(animation.BlendCurve.End);
+                writer.Write(animation.BlendCurve.StartHandle);
+                writer.Write(animation.BlendCurve.EndHandle);
+
+                var startX = new Vector2(0.0f, animation.VelocityStart.X);
+                var endX = new Vector2(1.0f, animation.VelocityEnd.X);
+                var fixedMotionCurveX = new BezierCurve2(startX, endX, startX, endX);
+                writer.Write(fixedMotionCurveX.Start);
+                writer.Write(fixedMotionCurveX.End);
+                writer.Write(fixedMotionCurveX.StartHandle);
+                writer.Write(fixedMotionCurveX.EndHandle);
+
+                var startY = new Vector2(0.0f, animation.VelocityStart.Y);
+                var endY = new Vector2(1.0f, animation.VelocityEnd.Y);
+                var fixedMotionCurveY = new BezierCurve2(startY, endY, startY, endY);
+                writer.Write(fixedMotionCurveY.Start);
+                writer.Write(fixedMotionCurveY.End);
+                writer.Write(fixedMotionCurveY.StartHandle);
+                writer.Write(fixedMotionCurveY.EndHandle);
+
+                var startZ = new Vector2(0.0f, animation.VelocityStart.Z);
+                var endZ = new Vector2(1.0f, animation.VelocityEnd.Z);
+                var fixedMotionCurveZ = new BezierCurve2(startZ, endZ, startZ, endZ);
+                writer.Write(fixedMotionCurveZ.Start);
+                writer.Write(fixedMotionCurveZ.End);
+                writer.Write(fixedMotionCurveZ.StartHandle);
+                writer.Write(fixedMotionCurveZ.EndHandle);
+
+                if (animation.KeyFrames.Count == 0)
+                {
+                    var defaultKeyFrame = new TombEngineKeyFrame();
+                    defaultKeyFrame.BoneOrientations = new List<Quaternion>(Enumerable.Repeat(Quaternion.Identity, NumMeshes));
+
+                    writer.Write(1);
+                    defaultKeyFrame.Write(writer);
+                }
+                else
+                {
+                    writer.Write(animation.KeyFrames.Count);
+                    foreach (var keyFrame in animation.KeyFrames)
+                    {
+                        keyFrame.Write(writer);
+                    }
+                }
+
+                writer.Write(animation.StateChanges.Count);
+                foreach (var stateChange in animation.StateChanges)
+                {
+                    writer.Write(stateChange.StateID);
+                    writer.Write(stateChange.FrameLow);
+                    writer.Write(stateChange.FrameHigh);
+                    writer.Write(stateChange.NextAnimation);
+                    writer.Write(stateChange.NextFrameLow);
+                    writer.Write(stateChange.NextFrameHigh);
+                    writer.Write(stateChange.BlendFrameCount);
+                    writer.Write(stateChange.BlendCurve.Start);
+                    writer.Write(stateChange.BlendCurve.End);
+                    writer.Write(stateChange.BlendCurve.StartHandle);
+                    writer.Write(stateChange.BlendCurve.EndHandle);
+                }
+
+                writer.Write(animation.NumAnimCommands);
+                foreach (var element in animation.CommandData)
+                {
+                    if (element is int intComponent)
+                    {
+                        writer.Write(intComponent);
+                    }
+                    else if (element is Vector3 vector3Component)
+                    {
+                        writer.Write(vector3Component);
+                    }
+                }
+
+                writer.Write(animation.Flags);
+            }
+        }
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TombEngineStateChange
     {
         public int StateID;
-        public int NumAnimDispatches;
-        public int AnimDispatch;
-    }
-
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct TombEngineAnimDispatch
-    {
-        public int Low;
-        public int High;
+        public int FrameLow;
+        public int FrameHigh;
         public int NextAnimation;
-        public int NextFrame;
+        public int NextFrameLow;
+        public int NextFrameHigh;
+        public int BlendFrameCount;
+        public BezierCurve2 BlendCurve;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TombEngineAnimation
     {
-        public int FrameOffset;
-        public int FrameRate;
         public int StateID;
-        public Vector3 VelocityStart;
-        public Vector3 VelocityEnd;
-        public int FrameStart;
+        public int Interpolation;
         public int FrameEnd;
         public int NextAnimation;
         public int NextFrame;
-        public int NumStateChanges;
-        public int StateChangeOffset;
+        public int BlendFrameCount;
+        public BezierCurve2 BlendCurve;
+        public Vector3 VelocityStart;
+        public Vector3 VelocityEnd;
+        public List<TombEngineKeyFrame> KeyFrames;
+        public List<TombEngineStateChange> StateChanges;
         public int NumAnimCommands;
-        public int AnimCommand;
+        public List<object> CommandData;
+        public int Flags;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public class TombEngineKeyFrame
     {
         public TombEngineBoundingBox BoundingBox;
-        public Vector3 Offset;
-        public List<Quaternion> Angles;
+        public Vector3 RootOffset;
+        public List<Quaternion> BoneOrientations;
+
+        public void Write(BinaryWriterEx writer)
+        {
+            var center = new Vector3(
+                BoundingBox.X1 + BoundingBox.X2,
+                BoundingBox.Y1 + BoundingBox.Y2,
+                BoundingBox.Z1 + BoundingBox.Z2) / 2;
+            var extents = new Vector3(
+                BoundingBox.X2 - BoundingBox.X1,
+                BoundingBox.Y2 - BoundingBox.Y1,
+                BoundingBox.Z2 - BoundingBox.Z1) / 2;
+
+            writer.Write(center);
+            writer.Write(extents);
+            writer.Write(RootOffset);
+
+            writer.Write(BoneOrientations.Count);
+            writer.WriteBlockArray(BoneOrientations);
+        }
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

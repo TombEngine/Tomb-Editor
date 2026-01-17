@@ -13,10 +13,10 @@
     <moveable id="10" name="LARA_SCREAM" description="Lara Scream" use_body_from="8" ten="LARA_SCREAM" hidden="true" />
     <moveable id="11" name="LARA_CROSSBOW_LASER" description="Lara Crossbow Laser" use_body_from="8" ten="LARA_CROSSBOW_LASER" hidden="true" />
     <moveable id="12" name="LARA_REVOLVER_LASER" description="Lara Revolver Laser" use_body_from="8" ten="LARA_REVOLVER_LASER" hidden="true" />
-    <moveable id="13" name="LARA_HOLSTERS" description="Lara Holsters" ten="LARA_HOLSTERS" hidden="true" />
-    <moveable id="14" name="LARA_HOLSTERS_PISTOLS" description="Lara Holsters Pistols" ten="LARA_HOLSTERS_PISTOLS" hidden="true" />
-    <moveable id="15" name="LARA_HOLSTERS_UZIS" description="Lara Holsters Uzis" ten="LARA_HOLSTERS_UZIS" hidden="true" />
-    <moveable id="16" name="LARA_HOLSTERS_SIXSHOOTER" description="Lara Holsters Sixshooter" ten="LARA_HOLSTERS_REVOLVER" hidden="true" />
+    <moveable id="13" name="LARA_HOLSTERS" description="Lara Holsters" use_body_from="8" ten="LARA_HOLSTERS" hidden="true" />
+    <moveable id="14" name="LARA_HOLSTERS_PISTOLS" description="Lara Holsters Pistols" use_body_from="8" ten="LARA_HOLSTERS_PISTOLS" hidden="true" />
+    <moveable id="15" name="LARA_HOLSTERS_UZIS" description="Lara Holsters Uzis" use_body_from="8" ten="LARA_HOLSTERS_UZIS" hidden="true" />
+    <moveable id="16" name="LARA_HOLSTERS_SIXSHOOTER" description="Lara Holsters Sixshooter" use_body_from="8" ten="LARA_HOLSTERS_REVOLVER" hidden="true" />
     <moveable id="17" name="LARA_SPEECH_HEAD1" description="Lara Speech Head1" use_body_from="8" ten="LARA_SPEECH_HEAD1" hidden="true" />
     <moveable id="18" name="LARA_SPEECH_HEAD2" description="Lara Speech Head2" use_body_from="8" ten="LARA_SPEECH_HEAD2" hidden="true" />
     <moveable id="19" name="LARA_SPEECH_HEAD3" description="Lara Speech Head3" use_body_from="8" ten="LARA_SPEECH_HEAD3" hidden="true" />

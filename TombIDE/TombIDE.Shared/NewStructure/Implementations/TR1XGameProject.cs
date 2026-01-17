@@ -20,12 +20,15 @@ namespace TombIDE.Shared.NewStructure
 		{
 			get
 			{
-				string tomb1MainPath = Path.Combine(GetEngineRootDirectoryPath(), "Tomb1Main.exe");
+				var rootDir = GetEngineRootDirectoryPath();
+				foreach (var exe in new[] { "TRX.exe", "TR1X.exe", "Tomb1Main.exe" })
+				{
+					var path = Path.Combine(rootDir, exe);
+					if (File.Exists(path))
+						return exe;
+				}
 
-				if (File.Exists(tomb1MainPath))
-					return "Tomb1Main.exe";
-
-				return "TR1X.exe"; // Default
+				return "TRX.exe"; // Default
 			}
 		}
 
@@ -79,7 +82,7 @@ namespace TombIDE.Shared.NewStructure
 			{
 				string engineExecutablePath = GetEngineExecutableFilePath();
 				string versionInfo = FileVersionInfo.GetVersionInfo(engineExecutablePath).ProductVersion;
-				versionInfo = versionInfo.Replace("TR1X ", string.Empty);
+				versionInfo = versionInfo.Replace("TRX ", string.Empty);
 
 				return new Version(versionInfo);
 			}
@@ -98,14 +101,14 @@ namespace TombIDE.Shared.NewStructure
 				string enginePresetPath = Path.Combine(DefaultPaths.PresetsDirectory, "TR1.zip");
 
 				using ZipArchive archive = ZipFile.OpenRead(enginePresetPath);
-				ZipArchiveEntry entry = archive.Entries.FirstOrDefault(e => e.Name == "TR1X.exe");
+				ZipArchiveEntry entry = archive.Entries.FirstOrDefault(e => e.Name == "TRX.exe");
 
 				if (entry == null)
 					return null;
 
 				entry.ExtractToFile(tempFileName, true);
 				string productVersion = FileVersionInfo.GetVersionInfo(tempFileName).ProductVersion;
-				productVersion = productVersion.Replace("TR1X ", string.Empty);
+				productVersion = productVersion.Replace("TRX ", string.Empty);
 
 				return new Version(productVersion);
 			}

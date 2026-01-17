@@ -2970,7 +2970,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>TR4_Vehicle_Jeep_Accelerate_01.wav</FileName>
+					<FileName>TR4_Vehicle_Jeep_Revving_01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2989,7 +2989,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>TR4_Vehicle_Motorbike_Moving_01.wav</FileName>
+					<FileName>TR4_Vehicle_Jeep_Moving_01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>

@@ -47,12 +47,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
         private readonly ScriptIdTable<IHasScriptID> _scriptingIdsTable;
         private readonly List<ushort> _floorData = new List<ushort>();
         private readonly List<TombEngineMesh> _meshes = new List<TombEngineMesh>();
-        private readonly List<TombEngineAnimation> _animations = new List<TombEngineAnimation>();
-        private readonly List<TombEngineStateChange> _stateChanges = new List<TombEngineStateChange>();
-        private readonly List<TombEngineAnimDispatch> _animDispatches = new List<TombEngineAnimDispatch>();
-        private readonly List<int> _animCommands = new List<int>();
         private readonly List<int> _meshTrees = new List<int>();
-        private readonly List<TombEngineKeyFrame> _frames = new List<TombEngineKeyFrame>();
         private List<TombEngineMoveable> _moveables = new List<TombEngineMoveable>();
         private readonly List<TombEngineStaticMesh> _staticMeshes = new List<TombEngineStaticMesh>();
 

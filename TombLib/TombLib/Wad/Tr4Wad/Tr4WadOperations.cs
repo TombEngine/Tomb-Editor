@@ -369,7 +369,7 @@ namespace TombLib.Wad.Tr4Wad
                         ad.InFrame = (ushort)(wadAd.Low - newFrameStart);
                         ad.OutFrame = (ushort)(wadAd.High - newFrameStart);
                         ad.NextAnimation = (ushort)((wadAd.NextAnimation - oldMoveable.AnimationIndex) % numAnimations);
-                        ad.NextFrame = (ushort)wadAd.NextFrame;
+                        ad.NextFrameLow = (ushort)wadAd.NextFrame;
 
                         sc.Dispatches.Add(ad);
                     }
@@ -535,7 +535,7 @@ namespace TombLib.Wad.Tr4Wad
                         if (animDispatch.NextAnimation > short.MaxValue)
                         {
                             animDispatch.NextAnimation = 0;
-                            animDispatch.NextFrame = 0;
+                            animDispatch.NextFrameLow = 0;
                             continue;
                         }
 
@@ -543,9 +543,9 @@ namespace TombLib.Wad.Tr4Wad
                         {
                             // HACK: In some cases dispatches have invalid NextFrame.
                             // From tests it seems that's ok to make NextFrame equal to max frame number.
-                            animDispatch.NextFrame -= frameBases[newMoveable.Animations[animDispatch.NextAnimation]][0];
-                            if (animDispatch.NextFrame > frameBases[newMoveable.Animations[animDispatch.NextAnimation]][1])
-                                animDispatch.NextFrame = frameBases[newMoveable.Animations[animDispatch.NextAnimation]][1];
+                            animDispatch.NextFrameLow -= frameBases[newMoveable.Animations[animDispatch.NextAnimation]][0];
+                            if (animDispatch.NextFrameLow > frameBases[newMoveable.Animations[animDispatch.NextAnimation]][1])
+                                animDispatch.NextFrameLow = frameBases[newMoveable.Animations[animDispatch.NextAnimation]][1];
                         }
                         stateChange.Dispatches[j] = animDispatch;
                     }

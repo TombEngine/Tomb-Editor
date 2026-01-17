@@ -1145,7 +1145,7 @@ custom menu creation, photo mode or time freeze.</description>
 			</parameters>
 			<returns>
 				<return>
-					<type>int</type>
+					<type>bool</type>
 					<description>Status of the flipmap group (true means on, false means off).</description>
 				</return>
 			</returns>
@@ -1940,6 +1940,12 @@ custom menu creation, photo mode or time freeze.</description>
 					<type>string</type>
 					<description>Filename to check. Should be without extension and without full directory path.</description>
 				</parameter>
+				<parameter>
+					<name>type</name>
+					<type>Sound.SoundTrackType</type>
+					<optional>true</optional>
+					<description>Type of the audio track to check. If omitted, all types will be checked.</description>
+				</parameter>
 			</parameters>
 		</function>
 		<function>
@@ -2522,6 +2528,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 			<module>View</module>
 			<name>ResetObjCamera</name>
 			<summary>Reset object camera back to Lara and deactivate object camera.</summary>
+			<description>Can be used after @{Objects.Moveable.AttachObjCamera}.</description>
 		</function>
 		<function>
 			<module>View</module>
@@ -5050,7 +5057,7 @@ This setting does not affect ability to use weapons or flares.</description>
 				<field>
 					<name>resetHub</name>
 					<summary>(bool) Reset hub data.</summary>
-					<description>Resets the state for all previous levels, including items, flipmaps and statistics.</description>
+					<description>If true, resets the state of all previously visited levels, including items, flipmaps and statistics.</description>
 				</field>
 				<field>
 					<name>objects</name>
@@ -6586,7 +6593,7 @@ most can just be ignored (see usage).</description>
 							<name>swapIndex</name>
 							<type>int</type>
 							<optional>true</optional>
-							<description>Index of a mesh from meshswap slot to use.</description>
+							<description>Index of a mesh from meshswap slot to use. In WadTool, you have to set vertex weights for this mesh according to original mesh index to avoid rendering issues.</description>
 						</parameter>
 					</parameters>
 				</method>
@@ -6714,22 +6721,24 @@ most can just be ignored (see usage).</description>
 				</method>
 				<method>
 					<name>Moveable:AttachObjCamera</name>
-					<summary>Attach camera to a moveable.</summary>
+					<summary>Attach camera to the moveable's current position, and target another moveable.</summary>
+					<description>The camera's position and target position will be maintained until this function is called again.
+ Use @{View.ResetObjCamera} to restore the regular camera.</description>
 					<parameters>
 						<parameter>
 							<name>mesh</name>
 							<type>int</type>
-							<description>Mesh of a moveable to use as a camera position.</description>
+							<description>Mesh of the moveable to which the camera will be attached.</description>
 						</parameter>
 						<parameter>
 							<name>target</name>
 							<type>Objects.Moveable</type>
-							<description>Target moveable to attach camera to.</description>
+							<description>Moveable to target.</description>
 						</parameter>
 						<parameter>
 							<name>targetMesh</name>
 							<type>int</type>
-							<description>Mesh of a target moveable to use as a camera target.</description>
+							<description>Mesh of the moveable to target.</description>
 						</parameter>
 					</parameters>
 				</method>
@@ -9188,7 +9197,7 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 		<enum>
 			<name>Effects.EffectID</name>
 			<summary>Constants for effect IDs.</summary>
-			<description>To be used with @{Objects.Moveable.SetEffect} and @{Objects.Moveable.GetEffect} functions.</description>
+			<description>To be used with @{Objects.Moveable.SetEffect}, @{Objects.Moveable.SetCustomEffect} and @{Objects.Moveable.GetEffect} functions.</description>
 			<values>
 				<value>
 					<name>NONE</name>
@@ -9217,6 +9226,7 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 				<value>
 					<name>CUSTOM</name>
 					<summary>Custom effect.</summary>
+					<description>Used when @{Objects.Moveable.SetCustomEffect} is called.</description>
 				</value>
 			</values>
 		</enum>

@@ -168,6 +168,7 @@ namespace TombLib.Controls.VisualScripting
                 return;
 
             Visible = false;
+            Editor.LockNodeChanges = true;
             SuspendLayout();
             DisposeUI();
 
@@ -278,6 +279,7 @@ namespace TombLib.Controls.VisualScripting
 
             RefreshLock();
             ResumeLayout();
+            Editor.LockNodeChanges = false;
             Visible = true;
             Invalidate();
             Editor?.Invalidate();

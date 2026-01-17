@@ -25,6 +25,19 @@ namespace TombLib.LevelData.Compilers
 
     public class TombEngineTexInfoManager
     {
+        [ThreadStatic]
+        private static HashSet<int>? _candidatePool;
+
+        private static HashSet<int> GetCandidateSet()
+        {
+            if (_candidatePool == null)
+                _candidatePool = new HashSet<int>(128);
+            else
+                _candidatePool.Clear();
+
+            return _candidatePool;
+        }
+
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         private const int _noTexInfo = -1;
@@ -944,6 +957,16 @@ namespace TombLib.LevelData.Compilers
             for (int i = 0; i < coordCount; i++)
                 lookupCoordinates[i] = areaToLook.GetTexCoord(i);
 
+            // Build a bounding rectangle in UV space for the lookup area.
+            // For triangles, we compute a rectangle that encloses the 3 UVs.
+            // For quads, the rectangle encloses all 4 UVs.
+            Rectangle2 rect = isForTriangle
+                ? Rectangle2.FromCoordinates(lookupCoordinates[0], lookupCoordinates[1], lookupCoordinates[2])
+                : Rectangle2.FromCoordinates(lookupCoordinates[0], lookupCoordinates[1], lookupCoordinates[2], lookupCoordinates[3]);
+
+            // Preallocate this
+            var candidates = GetCandidateSet();
+
             // Iterate over all parents by reference (CollectionsMarshal.AsSpan avoids
             // Enumerator overhead and allows direct ref access to list elements).
             foreach (ref var parent in CollectionsMarshal.AsSpan(parentList))
@@ -953,28 +976,21 @@ namespace TombLib.LevelData.Compilers
                 if (!parent.ParametersSimilar(areaToLook, destination))
                     continue;
 
-                // Build a bounding rectangle in UV space for the lookup area.
-                // For triangles, we compute a rectangle that encloses the 3 UVs.
-                // For quads, the rectangle encloses all 4 UVs.
-                Rectangle2 rect = isForTriangle
-                    ? Rectangle2.FromCoordinates(lookupCoordinates[0], lookupCoordinates[1], lookupCoordinates[2])
-                    : Rectangle2.FromCoordinates(lookupCoordinates[0], lookupCoordinates[1], lookupCoordinates[2], lookupCoordinates[3]);
-
                 // --- Phase 1: use the grid / spatial index to get a reduced candidate set ---
-
-                // HashSet used to avoid duplicate indices when collecting from the grid.
-                HashSet<int> candidates = new HashSet<int>();
 
                 // Collect candidate child indices whose bounding rectangles overlap 'rect'.
                 // This is a fast pre-filter: it reduces the number of expensive UV comparisons.
+                candidates.Clear();
                 parent.CollectCandidates(rect, candidates);
 
                 if (candidates.Count > 0)
                 {
+                    var children = parent.Children;
+
                     // Check each candidate from the spatial index.
                     foreach (var candidateIndex in candidates)
                     {
-                        var child = parent.Children[candidateIndex];
+                        var child = children[candidateIndex];
 
                         // Skip if the primitive type (triangle vs quad) does not match.
                         if (child.IsForTriangle != isForTriangle)

@@ -257,6 +257,17 @@ LevelFuncs.Engine.Node.TestMoveableDistanceWithStatic = function(operator, value
 
 	return LevelFuncs.Engine.Node.CompareValue(distance, value, operator)
 end
+
+-- !Name "If color of a moveable is..."
+-- !Section "Moveable parameters"
+-- !Description "Checks if the specified moveable is a certain color."
+-- !Conditional "True"
+-- !Arguments "NewLine, Moveables, 80, Moveable to check" "Color, 20, Color to compare"
+
+LevelFuncs.Engine.Node.TestMoveableColor = function(moveableName, targetColor)
+    local mov = TEN.Objects.GetMoveableByName(moveableName):GetColor()
+    return mov == targetColor
+end
 			   
 -- !Name "Create moveable"
 -- !Section "Moveable state"
@@ -619,5 +630,18 @@ LevelFuncs.Engine.Node.CheckItemFlag = function(moveable, itemFlagLocation, item
     else
         return false
     end
+end
+
+-- !Name "Add interaction highlight to moveable"
+-- !Section "Moveable parameters"
+-- !Description "Adds an interaction highlight to the specified moveable"
+-- !Arguments "NewLine,Moveables,70,Select moveable" "Enumeration, 30, [ Pickup | Talk | Use ], Interaction icon to use"
+
+LevelFuncs.Engine.Node.AddInteractionHighlight = function(moveable,iconType)
+
+	local mov = GetMoveableByName(moveable)
+	local icon = LevelFuncs.Engine.Node.SetInteractionHighlightType(iconType)
+
+mov:ShowInteractionHighlight(icon)
 end
 	

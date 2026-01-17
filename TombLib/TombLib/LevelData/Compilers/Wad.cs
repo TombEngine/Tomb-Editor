@@ -461,7 +461,7 @@ namespace TombLib.LevelData.Compilers
                             newAnimDispatch.Low = unchecked((ushort)(dispatch.InFrame + newAnimation.FrameStart));
                             newAnimDispatch.High = unchecked((ushort)(dispatch.OutFrame + newAnimation.FrameStart));
                             newAnimDispatch.NextAnimation = checked((ushort)(dispatch.NextAnimation + lastAnimation));
-                            newAnimDispatch.NextFrame = dispatch.NextFrame;
+                            newAnimDispatch.NextFrame = dispatch.NextFrameLow;
 
                             _animDispatches.Add(newAnimDispatch);
                             lastAnimDispatch++;
@@ -495,7 +495,7 @@ namespace TombLib.LevelData.Compilers
                     var tree = new tr_meshtree();
                     var bone = oldMoveable.Bones[b];
 
-                    if (skin != null && skin.Bones.Count == oldMoveable.Bones.Count)
+                    if (skin != null && skin.Bones.Count == oldMoveable.Bones.Count && IsSkinBoneValid(_level.Settings.GameVersion, oldMoveable.Id.TypeId, b))
                         bone = skin.Bones[b];
 
                     tree.Opcode = (int)oldMoveable.Bones[b].OpCode;
@@ -1061,6 +1061,50 @@ namespace TombLib.LevelData.Compilers
             _meshes.Add(newMesh);
 
             return newMesh;
+        }
+
+        bool IsSkinBoneValid(TRVersion.Game version, uint moveableId, int boneIndex)
+        {
+            if (boneIndex != 14)
+                return true;
+
+            // HACK: Weapon animation slots in original games remap headmesh to a backholster mesh.
+            // We can't determine it programmatically, so an explicit check is needed.
+
+            switch (version.Native())
+            {
+                case TRVersion.Game.TR1:
+                    if (moveableId == 2)
+                        return false;
+                    break;
+
+                case TRVersion.Game.TR2:
+                    if (moveableId == 3 ||
+                        moveableId == 6 ||
+                        moveableId == 7 ||
+                        moveableId == 8)
+                        return false;
+                    break;
+
+                case TRVersion.Game.TR3:
+                    if (moveableId == 3 ||
+                        moveableId == 6 ||
+                        moveableId == 7 ||
+                        moveableId == 8 ||
+                        moveableId == 9)
+                        return false;
+                    break;
+
+                case TRVersion.Game.TR4:
+                case TRVersion.Game.TR5:
+                    if (moveableId == 3 ||
+                        moveableId == 4 ||
+                        moveableId == 5)
+                        return false;
+                    break;
+            }
+
+            return true;
         }
     }
 }

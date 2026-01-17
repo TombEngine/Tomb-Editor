@@ -58,6 +58,26 @@
     <anim item="113" id="1" name="RUN" />
     <anim item="113" id="2" name="JUMP_ATTACK" />
     <anim item="113" id="3" name="ATTACK" />
+
+    <!-- SCUBA_DIVER -->
+    <anim item="151" id="0" name="SWIM" />
+    <anim item="151" id="1" name="TREAD_WATER_IDLE" />
+    <anim item="151" id="2" name="RESURFACE" />
+    <anim item="151" id="3" name="SWIM_AIM_CONTINUE" />
+    <anim item="151" id="4" name="SWIM_AIM_END" />
+    <anim item="151" id="5" name="SWIM_SHOOT_LEFT" />
+    <anim item="151" id="6" name="SWIM_SHOOT_RIGHT" />
+    <anim item="151" id="7" name="SWIM_AIM_START_LEFT" />
+    <anim item="151" id="8" name="SWIM_AIM_START_RIGHT" />
+    <anim item="151" id="9" name="TREAD_WATER_AIM_CONTINUE" />
+    <anim item="151" id="10" name="TREAD_WATER_AIM_END" />
+    <anim item="151" id="11" name="TREAD_WATER_SHOOT_LEFT" />
+    <anim item="151" id="12" name="TREAD_WATER_SHOOT_RIGHT" />
+    <anim item="151" id="13" name="TREAD_WATER_AIM_START_LEFT" />
+    <anim item="151" id="14" name="TREAD_WATER_AIM_START_RIGHT" />
+    <anim item="151" id="15" name="DIVE" />
+    <anim item="151" id="16" name="DEATH_START" />
+    <anim item="151" id="17" name="DEATH_END" />
     
     <!-- KNIFE THROWER -->	
     <anim item="162" id="0" name="IDLE" />

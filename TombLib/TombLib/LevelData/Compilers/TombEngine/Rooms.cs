@@ -892,19 +892,21 @@ namespace TombLib.LevelData.Compilers.TombEngine
             foreach (var instance in room.Objects.OfType<StaticInstance>())
             {
                 var sm = _level.Settings?.WadTryGetStatic(instance.WadObjectId);
-                newRoom.StaticMeshes.Add(new TombEngineRoomStaticMesh
-                {
-                    X = (int)Math.Round(newRoom.Info.X + instance.Position.X),
-                    Y = (int)-Math.Round(room.WorldPos.Y + instance.Position.Y),
-                    Z = (int)Math.Round(newRoom.Info.Z + instance.Position.Z),
-                    Yaw = ToTrAngle(instance.RotationY),
-                    Scale = instance.Scale,
-                    ObjectID = checked((ushort)instance.WadObjectId.TypeId),
-                    Flags = (ushort)(0x0007), // FIXME: later let user choose if solid (0x0007) or soft (0x0005)!
-                    Color = new Vector4(instance.Color.X, instance.Color.Y, instance.Color.Z, 1.0f),
-                    HitPoints = 0,
-                    LuaName = instance.LuaName ?? string.Empty
-                }) ;
+
+                if (sm != null)
+                    newRoom.StaticMeshes.Add(new TombEngineRoomStaticMesh
+                    {
+                        X = (int)Math.Round(newRoom.Info.X + instance.Position.X),
+                        Y = (int)-Math.Round(room.WorldPos.Y + instance.Position.Y),
+                        Z = (int)Math.Round(newRoom.Info.Z + instance.Position.Z),
+                        Yaw = ToTrAngle(instance.RotationY),
+                        Scale = instance.Scale,
+                        ObjectID = checked((ushort)instance.WadObjectId.TypeId),
+                        Flags = (ushort)(0x0007), // FIXME: later let user choose if solid (0x0007) or soft (0x0005)!
+                        Color = new Vector4(instance.Color.X, instance.Color.Y, instance.Color.Z, 1.0f),
+                        HitPoints = 0,
+                        LuaName = instance.LuaName ?? string.Empty
+                    }) ;
             }
 
             ConvertLights(room, newRoom);

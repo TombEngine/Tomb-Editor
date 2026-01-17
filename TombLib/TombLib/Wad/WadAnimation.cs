@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TombLib.Types;
 
 namespace TombLib.Wad
 {
@@ -19,6 +20,10 @@ namespace TombLib.Wad
         public float StartLateralVelocity { get; set; }
         public float EndLateralVelocity { get; set; }
 
+        // New parameters for animation blending (TEN only).
+        public ushort BlendFrameCount { get; set; }
+        public BezierCurve2 BlendCurve { get; set; } = BezierCurve2.Linear.Clone();
+
         public List<WadKeyFrame> KeyFrames { get; private set; } = new List<WadKeyFrame>();
         public List<WadStateChange> StateChanges { get; private set; } = new List<WadStateChange>();
         public List<WadAnimCommand> AnimCommands { get; private set; } = new List<WadAnimCommand>();
@@ -35,6 +40,8 @@ namespace TombLib.Wad
             animation.StateChanges = new List<WadStateChange>();
             foreach (var sc in StateChanges)
                 animation.StateChanges.Add(sc.Clone());
+
+            animation.BlendCurve = BlendCurve.Clone();
 
             return animation;
         }

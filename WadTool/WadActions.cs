@@ -1326,7 +1326,7 @@ namespace WadTool
                             nextAnimation = reader.ReadInt16();
                             disp.NextAnimation = (ushort)(MathC.Clamp(sourceAnimIndex + nextAnimation, 0, ushort.MaxValue));
 
-                            disp.NextFrame = reader.ReadUInt16();
+                            disp.NextFrameLow = reader.ReadUInt16();
 
                             sc.Dispatches.Add(disp);
                             padCounter += 4; // 4 bytes per 1 dispatch, don't ask why.

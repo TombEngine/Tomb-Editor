@@ -347,9 +347,7 @@ namespace TombLib.Controls.VisualScripting
         protected override void OnBackColorChanged(EventArgs e)
         {
             // HACK: Force background color for reluctant controls.
-
             base.OnBackColorChanged(e);
-            //tabBoolean.BackColor = tableVector3.BackColor = BackColor;
         }
 
         protected override void OnLocationChanged(EventArgs e)
@@ -665,8 +663,16 @@ namespace TombLib.Controls.VisualScripting
         private void nudVector2_ValueChanged(object sender, EventArgs e) => BoxVector2Value();
         private void nudVector3_ValueChanged(object sender, EventArgs e) => BoxVector3Value();
         private void tbString_TextChanged(object sender, EventArgs e) => BoxStringValue();
-        private void panelColor_BackColorChanged(object sender, EventArgs e) => BoxColorValue();
         private void cbList_SelectedIndexChanged(object sender, EventArgs e) => BoxListValue();
+
+        private void panelColor_BackColorChanged(object sender, EventArgs e)
+        {
+            // HACK: Due to design quirks, WinForms triggers this event when parent node's background is changed.
+            if ((Parent as VisibleNodeBase)?.Editor.LockNodeChanges ?? true)
+                return;
+
+            BoxColorValue();
+        }
 
         private void panelColor_MouseClick(object sender, MouseEventArgs e)
         {

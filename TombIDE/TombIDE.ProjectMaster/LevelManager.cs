@@ -98,21 +98,10 @@ namespace TombIDE.ProjectMaster
 					{
 						button_Update.Visible = true;
 
-						// 3.0 is the first version that supports auto-updating - 4.8 introduced breaking changes
-						if (engineVersion.Major <= 4 && engineVersion.Minor <= 7)
+						// Auto-update ability resets at TRX 1.0
+						if (engineVersion.Major < 1)
 						{
-							button_Update.Text = engineVersion.Major <= 2
-								? "Cannot Auto-Update engine. Current version is too old."
-								: "Cannot Auto-Update engine. TR1X 4.8 introduced breaking changes, which require manual migration.";
-
-							button_Update.Enabled = false;
-							button_Update.Width = 300;
-						}
-
-						if (engineVersion.Major <= 4 && engineVersion.Minor <= 14)
-						{
-							button_Update.Text = "Cannot Auto-Update engine. TR1X 4.15 introduced breaking changes, which require manual migration.";
-
+							button_Update.Text = "Cannot Auto-Update engine. TRX 1.0 introduced breaking changes, which require manual migration.";
 							button_Update.Enabled = false;
 							button_Update.Width = 300;
 						}
@@ -122,10 +111,10 @@ namespace TombIDE.ProjectMaster
 					{
 						button_Update.Visible = true;
 
-						if (engineVersion.Major <= 1 && engineVersion.Minor <= 4)
+						// Auto-update ability resets at TRX 1.0
+						if (engineVersion.Major < 1)
 						{
-							button_Update.Text = "Cannot Auto-Update engine. TR2X 1.5 introduced breaking changes, which require manual migration.";
-
+							button_Update.Text = "Cannot Auto-Update engine. TRX 1.0 introduced breaking changes, which require manual migration.";
 							button_Update.Enabled = false;
 							button_Update.Width = 300;
 						}
@@ -307,19 +296,10 @@ namespace TombIDE.ProjectMaster
 		{
 			var prevVersion = _ide.Project.GetCurrentEngineVersion();
 
-			// 4.8 had breaking changes
-			if (prevVersion.Major <= 4 && prevVersion.Minor <= 7)
+			// Auto-update ability resets at TRX 1.0
+			if (prevVersion.Major < 1)
 			{
-				MessageBox.Show(this, "Cannot Auto-Update engine. TR1X 4.8 introduced breaking changes, which require manual migration.",
-					"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-				return;
-			}
-
-			// 4.15 also had breaking changes
-			if (prevVersion.Major <= 4 && prevVersion.Minor <= 14)
-			{
-				MessageBox.Show(this, "Cannot Auto-Update engine. TR1X 4.15 introduced breaking changes, which require manual migration.",
+				MessageBox.Show(this, "Cannot Auto-Update engine. TRX 1.0 introduced breaking changes, which require manual migration.",
 					"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 				return;
@@ -329,8 +309,7 @@ namespace TombIDE.ProjectMaster
 				"This update will replace the following directories and files:\n\n" +
 
 				"- Engine/shaders/\n" +
-				"- Engine/TR1X.exe\n" +
-				"- Engine/TR1X_ConfigTool.exe\n\n" +
+				"- Engine/TRX.exe\n\n" +
 
 				"If any of these directories / files are important to you, please update the engine manually or create a copy of these files before performing this update.\n\n" +
 
@@ -374,10 +353,10 @@ namespace TombIDE.ProjectMaster
 		{
 			var prevVersion = _ide.Project.GetCurrentEngineVersion();
 
-			// 1.5 had breaking changes
-			if (prevVersion.Major <= 1 && prevVersion.Minor <= 4)
+			// Auto-update ability resets at TRX 1.0
+			if (prevVersion.Major < 1)
 			{
-				MessageBox.Show(this, "Cannot Auto-Update engine. TR2X 1.5 introduced breaking changes, which require manual migration.",
+				MessageBox.Show(this, "Cannot Auto-Update engine. TRX 1.0 introduced breaking changes, which require manual migration.",
 					"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 				return;
@@ -387,8 +366,7 @@ namespace TombIDE.ProjectMaster
 				"This update will replace the following directories and files:\n\n" +
 
 				"- Engine/shaders/\n" +
-				"- Engine/TR2X.exe\n" +
-				"- Engine/TR2X_ConfigTool.exe\n\n" +
+				"- Engine/TRX.exe\n\n" +
 
 				"If any of these directories / files are important to you, please update the engine manually or create a copy of these files before performing this update.\n\n" +
 
