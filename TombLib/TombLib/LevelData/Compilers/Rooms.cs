@@ -225,8 +225,6 @@ namespace TombLib.LevelData.Compilers
                 newRoom.Flags |= 0x1000;
             if (isNL && room.Properties.FlagNoLensflare)
                 newRoom.Flags |= 0x0080;
-            if (isNL && room.Properties.FlagNoCaustics)
-                newRoom.Flags |= 0x200;
 
             // Room type
             switch (room.Properties.Type)

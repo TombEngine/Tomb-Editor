@@ -186,6 +186,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 newRoom.Flags |= 0x1000;
             if (room.Properties.FlagNoLensflare)
                 newRoom.Flags |= 0x0080;
+            if (room.Properties.FlagNoCaustics)
+                newRoom.Flags |= 0x200;
 
             // Room type
             switch (room.Properties.Type)

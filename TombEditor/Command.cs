@@ -2117,9 +2117,8 @@ namespace TombEditor
 
             AddCommand("SetRoomNoCaustics", "Disables Caustics", CommandType.Rooms, delegate (CommandArgs args)
             {
-                // Optional version check, if your flag only applies to certain game versions:
-                // if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TRNG, "MyFlag"))
-                //     return;
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion == TRVersion.Game.TombEngine, "No caustics"))
+                    return;
 
                 if (args.Editor.SelectedRoom != null)
                 {
