@@ -135,7 +135,7 @@ namespace TombLib.LevelData.IO
 
                 case "HAIR_PRIMARY":
                     {
-                        if (moveable.Bones.Count < 2)
+                        if (sourceVersion.Native() <= TRVersion.Game.TR3 || moveable.Bones.Count < 2)
                             break;
 
                         progressReporter?.ReportInfo("    Adjusting mesh connections for " + newSlotName);
