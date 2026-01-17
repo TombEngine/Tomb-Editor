@@ -2115,6 +2115,19 @@ namespace TombEditor
                 }
             });
 
+            AddCommand("SetRoomNoCaustics", "Disables Caustics", CommandType.Rooms, delegate (CommandArgs args)
+            {
+                // Optional version check, if your flag only applies to certain game versions:
+                // if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TRNG, "MyFlag"))
+                //     return;
+
+                if (args.Editor.SelectedRoom != null)
+                {
+                    args.Editor.SelectedRoom.Properties.FlagNoCaustics = !args.Editor.SelectedRoom.Properties.FlagNoCaustics;
+                    args.Editor.RoomPropertiesChange(args.Editor.SelectedRoom);
+                }
+            });
+
             AddCommand("SetRoomDamage", "Set room to damage (TRNG only)", CommandType.Rooms, delegate (CommandArgs args)
             {
                 if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TRNG, "Damage flag"))

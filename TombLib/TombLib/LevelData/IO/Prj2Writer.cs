@@ -506,6 +506,7 @@ namespace TombLib.LevelData.IO
                         // Write room properties
                         chunkIO.WriteChunkVector3(Prj2Chunks.RoomAmbientLight, room.Properties.AmbientLight);
                         chunkIO.WriteChunkBool(Prj2Chunks.RoomFlagCold, room.Properties.FlagCold);
+                        chunkIO.WriteChunkBool(Prj2Chunks.RoomFlagNoCaustics, room.Properties.FlagNoCaustics);
                         chunkIO.WriteChunkBool(Prj2Chunks.RoomFlagDamage, room.Properties.FlagDamage);
                         chunkIO.WriteChunkBool(Prj2Chunks.RoomFlagHorizon, room.Properties.FlagHorizon);
                         chunkIO.WriteChunkBool(Prj2Chunks.RoomFlagOutside, room.Properties.FlagOutside);

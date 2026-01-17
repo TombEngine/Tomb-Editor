@@ -989,6 +989,8 @@ namespace TombLib.LevelData.IO
                     }
                     else if (id2 == Prj2Chunks.RoomFlagCold)
                         room.Properties.FlagCold = chunkIO.ReadChunkBool(chunkSize2);
+                    else if (id2 == Prj2Chunks.RoomFlagNoCaustics)
+                        room.Properties.FlagNoCaustics = chunkIO.ReadChunkBool(chunkSize2);
                     else if (id2 == Prj2Chunks.RoomFlagDamage)
                         room.Properties.FlagDamage = chunkIO.ReadChunkBool(chunkSize2);
                     else if (id2 == Prj2Chunks.RoomFlagHorizon)
