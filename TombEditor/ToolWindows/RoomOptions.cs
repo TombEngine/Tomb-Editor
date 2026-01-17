@@ -110,14 +110,14 @@ namespace TombEditor.ToolWindows
 
                 // determine water-room condition
                 bool isWaterRoom = room.Properties.Type == RoomType.Water;
-
+                bool isTEN = _editor.Level.Settings.GameVersion is TRVersion.Game.TombEngine;
                 // make them mutually exclusive (same location in designer)
-                cbFlagOutside.Visible = !isWaterRoom;
-                cbFlagNoCaustics.Visible = isWaterRoom;
+                cbFlagOutside.Visible = !(isWaterRoom && isTEN);
+                cbFlagOutside.Enabled = !(isWaterRoom && isTEN);
 
-                // set enabled/availability as needed (you can also combine with existing version checks)
-                cbFlagOutside.Enabled = !isWaterRoom; // or any other condition
-                cbFlagNoCaustics.Enabled = isWaterRoom;   // or version checks, etc.
+                // No Caustics checkbox only visible/enabled when it's TEN AND water room
+                cbFlagNoCaustics.Visible = isWaterRoom && isTEN;
+                cbFlagNoCaustics.Enabled = isWaterRoom && isTEN;
 
                 // Update the state of other controls
                 ReadRoomType();
