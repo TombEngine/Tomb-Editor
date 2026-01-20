@@ -204,6 +204,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         flags |= 0x2000;
                         break;
                 }
+                
+                if (instance.Enabled)
+                    flags |= 0x1000;
 
                 Vector3 position = instance.Room.WorldPos + instance.Position;
                 _soundSources.Add(new TombEngineSoundSource
