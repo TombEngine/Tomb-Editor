@@ -94,12 +94,17 @@ namespace TombLib.LevelData.Compilers.TombEngine
         {
             public const int Water		= 0x0200;
             public const int Shallow	= 0x0400;
-            public const int Jump		= 0x0800;
-            public const int Monkey		= 0x2000;
             public const int Blocked	= 0x4000;
             public const int Splitter	= 0x8000;
-            public const int End		= 0x8000;
         }
+
+        public class OverlapFlags
+		{
+			public const int Jump = 0x0800;
+			public const int Monkey = 0x2000;
+            public const int AmphibiousTraversable = 0x4000;
+			public const int End = 0x8000;
+		}
 
         // =========================================================================================
         // GLOBAL STATE VARIABLES
@@ -120,6 +125,13 @@ namespace TombLib.LevelData.Compilers.TombEngine
         /// Shallow water is treated as dry land for pathfinding purposes.
         /// </summary>
         private bool dec_checkUnderwater = true;
+
+        /// <summary>
+        /// Flag set by Dec_GetHeight when shallow water is detected.
+        /// True when water depth &lt;= 1 click and there's air above.
+        /// Used to set the SHALLOW flag (0x0400) on the box.
+        /// </summary>
+        private bool dec_shallowWater;
 
         /// <summary>
         /// Flag set by Dec_GetHeight when a MONKEY is encountered.
@@ -374,9 +386,17 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                                     // Set capability flags based on Dec_CheckOverlap results
                                     if (dec_jump)
-                                        overlap.Flags |= BoxFlags.Jump;   // JUMP_BIT
+                                        overlap.Flags |= OverlapFlags.Jump;   // JUMP_BIT
                                     if (dec_monkey)
-                                        overlap.Flags |= BoxFlags.Monkey;  // MONKEY_BIT
+                                        overlap.Flags |= OverlapFlags.Monkey;  // MONKEY_BIT
+
+                                    // Set AmphibiousTraversable flag
+                                    // Water-Water: always traversable
+                                    // Land-Land or Water-Land: traversable if height diff <= 1 click
+                                    bool bothWater = (box1.Water || box1.Shallow) && (box2.Water || box2.Shallow);
+                                    int heightDiff = Math.Abs(box1.Height - box2.Height);
+                                    if (bothWater || heightDiff <= Clicks.ToWorld(1))
+                                        overlap.Flags |= OverlapFlags.AmphibiousTraversable;
 
                                     dec_overlaps.Add(overlap);
                                     numOverlapsAdded++;
@@ -424,9 +444,17 @@ namespace TombLib.LevelData.Compilers.TombEngine
                                         };
 
                                         if (dec_jump)
-                                            overlap.Flags |= BoxFlags.Jump;
+                                            overlap.Flags |= OverlapFlags.Jump;
                                         if (dec_monkey)
-                                            overlap.Flags |= BoxFlags.Monkey;
+                                            overlap.Flags |= OverlapFlags.Monkey;
+
+                                        // Set AmphibiousTraversable flag
+                                        // Water-Water: always traversable
+                                        // Land-Land or Water-Land: traversable if height diff <= 1 click
+                                        bool bothWater = box1.Water && box2.Water;
+                                        int heightDiff = Math.Abs(box1.Height - box2.Height);
+                                        if (bothWater || heightDiff <= Clicks.ToWorld(1))
+                                            overlap.Flags |= OverlapFlags.AmphibiousTraversable;
 
                                         dec_overlaps.Add(overlap);
                                         numOverlapsAdded++;
@@ -444,7 +472,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                 // Mark end of this box's overlap list with END_BIT
                 if (numOverlapsAdded != 0)
-                    dec_overlaps[dec_overlaps.Count - 1].Flags |= BoxFlags.End;  // END_BIT
+                    dec_overlaps[dec_overlaps.Count - 1].Flags |= OverlapFlags.End;  // END_BIT
             }
             while (i < dec_boxes.Count);
 
@@ -490,10 +518,11 @@ namespace TombLib.LevelData.Compilers.TombEngine
             {
                 // Convert bool to int for SIMD comparison
                 int boxWaterInt = box.Water ? 1 : 0;
+                int boxShallowInt = box.Shallow ? 1 : 0;
 
                 // Pack search criteria into 128-bit vectors (4 x 32-bit integers)
                 var searchBounds = Vector128.Create(box.Xmin, box.Xmax, box.Zmin, box.Zmax);
-                var searchExtra = Vector128.Create(box.Height, boxWaterInt, 0, 0);
+                var searchExtra = Vector128.Create(box.Height, boxWaterInt, boxShallowInt, 0);
 
                 for (int i = 0; i < dec_boxes.Count; i++)
                 {
@@ -501,7 +530,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                     // Pack candidate values
                     var candBounds = Vector128.Create(candidate.Xmin, candidate.Xmax, candidate.Zmin, candidate.Zmax);
-                    var candExtra = Vector128.Create(candidate.Height, candidate.Water ? 1 : 0, 0, 0);
+                    var candExtra = Vector128.Create(candidate.Height, candidate.Water ? 1 : 0, candidate.Shallow ? 1 : 0, 0);
 
                     // Compare all 4 bounds simultaneously
                     var cmpBounds = Sse2.CompareEqual(searchBounds, candBounds);
@@ -512,8 +541,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     int maskExtra = Sse2.MoveMask(cmpExtra.AsByte());
 
                     // All 4 bounds must match (0xFFFF = all 16 bytes equal)
-                    // First 2 extra values must match (0x00FF = first 8 bytes equal)
-                    if (maskBounds == 0xFFFF && (maskExtra & 0x00FF) == 0x00FF)
+                    // First 3 extra values must match (0x0FFF = first 12 bytes equal)
+                    if (maskBounds == 0xFFFF && (maskExtra & 0x0FFF) == 0x0FFF)
                     {
                         boxIndex = i;
                         break;
@@ -532,7 +561,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         dec_boxes[i].Zmin == box.Zmin &&
                         dec_boxes[i].Zmax == box.Zmax &&
                         dec_boxes[i].Height == box.Height &&
-                        dec_boxes[i].Water == box.Water)
+                        dec_boxes[i].Water == box.Water &&
+                        dec_boxes[i].Shallow == box.Shallow)
                     {
                         boxIndex = i;
                         break;
@@ -639,6 +669,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
             // Reset state flags for Dec_GetHeight
             dec_splitter = false;
             dec_checkUnderwater = true;
+            dec_shallowWater = false;
             dec_monkey = false;
             
             // ===================================================================================
@@ -677,9 +708,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
             // Shallow water is treated as dry land for pathfinding
             if (!dec_checkUnderwater)
             {
-                box.Shallow = box.Water;
                 box.Water = false;
             }
+            box.Shallow = dec_shallowWater;
 
             // ===================================================================================
             // SPLITTER BOX - Single sector box
@@ -1280,6 +1311,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 if (adjoiningRoom.Properties.Type != RoomType.Water)
                 {
                     dec_checkUnderwater = false;
+                    dec_shallowWater = true;
                 }
             }
 

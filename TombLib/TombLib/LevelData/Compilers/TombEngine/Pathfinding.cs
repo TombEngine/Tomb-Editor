@@ -281,11 +281,11 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         return boxes;
 
                     // Check for end-of-list marker (0x8000 = END_BIT)
-                    last = (_overlaps[overlapIndex].Flags & BoxFlags.End) != 0;
+                    last = (_overlaps[overlapIndex].Flags & OverlapFlags.End) != 0;
 
                     // Extract overlap capability flags
-                    bool canJump = (_overlaps[overlapIndex].Flags & BoxFlags.Jump) != 0;      // JUMP_BIT
-                    bool canMonkey = (_overlaps[overlapIndex].Flags & BoxFlags.Monkey) != 0;  // MONKEY_BIT
+                    bool canJump = (_overlaps[overlapIndex].Flags & OverlapFlags.Jump) != 0;      // JUMP_BIT
+                    bool canMonkey = (_overlaps[overlapIndex].Flags & OverlapFlags.Monkey) != 0;  // MONKEY_BIT
 
                     var boxIndex = _overlaps[overlapIndex].Box;
 
