@@ -99,12 +99,12 @@ namespace TombLib.LevelData.Compilers.TombEngine
         }
 
         public class OverlapFlags
-		{
-			public const int Jump = 0x0800;
-			public const int Monkey = 0x2000;
+        {
+            public const int Jump = 0x0800;
+            public const int Monkey = 0x2000;
             public const int AmphibiousTraversable = 0x4000;
-			public const int End = 0x8000;
-		}
+            public const int End = 0x8000;
+        }
 
         // =========================================================================================
         // GLOBAL STATE VARIABLES
