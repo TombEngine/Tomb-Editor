@@ -393,7 +393,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                                     // Set AmphibiousTraversable flag
                                     // Water-Water: always traversable
                                     // Land-Land or Water-Land: traversable if height diff <= 1 click
-                                    bool bothWater = (box1.Water || box1.Shallow) && (box2.Water || box2.Shallow);
+                                    bool bothWater = box1.Water && box2.Water;
                                     int heightDiff = Math.Abs(box1.Height - box2.Height);
                                     if (bothWater || heightDiff <= Clicks.ToWorld(1))
                                         overlap.Flags |= OverlapFlags.AmphibiousTraversable;
@@ -1301,8 +1301,10 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 ? sector.GhostBlock.Ceiling.Max + room.Position.Y
                 : sector.Ceiling.Max + room.Position.Y;
 
+            int delta = ceiling - height;
+
             // Check for shallow water
-            if (dec_checkUnderwater && room.Properties.Type == RoomType.Water && (ceiling - height) <= Clicks.ToWorld(1) && sector.CeilingPortal != null)
+            if (dec_checkUnderwater && room.Properties.Type == RoomType.Water && delta <= Clicks.ToWorld(2) && sector.CeilingPortal != null)
             {
                 adjoiningRoom = sector.CeilingPortal.AdjoiningRoom;
                 if (adjoiningRoom.AlternateRoom != null && dec_flipped) 
@@ -1310,7 +1312,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                 if (adjoiningRoom.Properties.Type != RoomType.Water)
                 {
-                    dec_checkUnderwater = false;
+                    dec_checkUnderwater = delta > Clicks.ToWorld(1);
                     dec_shallowWater = true;
                 }
             }

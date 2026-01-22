@@ -306,7 +306,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     // =======================================================================
                     // Most enemies cannot walk on steep slopes (gradient >= 3 clicks)
                     // Exception: Flyers (no ground movement) and Water enemies (swimming)
-                    if (zoneType != ZoneType.Flyer && zoneType != ZoneType.Water && dec_boxes[boxIndex].Slope && zoneType != ZoneType.Amphibious)
+                    if (zoneType != ZoneType.Flyer && zoneType != ZoneType.Water && zoneType != ZoneType.Amphibious && dec_boxes[boxIndex].Slope)
                         continue;
 
                     // =======================================================================
@@ -348,9 +348,10 @@ namespace TombLib.LevelData.Compilers.TombEngine
                             break;
 
                         case ZoneType.Amphibious:
-                            // Amphibious: 1 click step on land, no limit in water
-                            // Can transition between water and land
-                            add = (step <= Clicks.ToWorld(1) || water);
+                            // Amphibious: 1 click step and non-slope on land, no limit in water
+                            // Can transition between water and land boxes
+                            add = (dec_boxes[boxIndex].Water == dec_boxes[box].Water && dec_boxes[box].Water) ||
+								  (!(dec_boxes[boxIndex].Slope && !dec_boxes[boxIndex].Water) && step <= Clicks.ToWorld(2));
                             break;
 
                         case ZoneType.Human:
