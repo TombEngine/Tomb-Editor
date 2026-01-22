@@ -67,7 +67,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public bool NotWalkableBox;// Box is marked as not walkable
         public bool Monkey;        // Box has monkey swing ceiling (MONKEY)
         public bool Jump;          // Box requires jumping to reach (set during overlap check)
-        public bool Water;         // Box is in a water room (or shallow water treated as land)
+        public bool Water;         // Box is in a water room
+        public bool Shallow;       // Box is in shallow water (water depth <= 1 click)
 
         // =========================================================================================
         // FLIP STATE FLAGS
@@ -89,6 +90,17 @@ namespace TombLib.LevelData.Compilers.TombEngine
     /// </summary>
     public sealed partial class LevelCompilerTombEngine
     {
+        public class BoxFlags
+        {
+            public const int Water		= 0x0200;
+            public const int Shallow	= 0x0400;
+            public const int Jump		= 0x0800;
+            public const int Monkey		= 0x2000;
+            public const int Blocked	= 0x4000;
+            public const int Splitter	= 0x8000;
+            public const int End		= 0x8000;
+        }
+
         // =========================================================================================
         // GLOBAL STATE VARIABLES
         // =========================================================================================
@@ -362,9 +374,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                                     // Set capability flags based on Dec_CheckOverlap results
                                     if (dec_jump)
-                                        overlap.Flags |= 0x800;   // JUMP_BIT
+                                        overlap.Flags |= BoxFlags.Jump;   // JUMP_BIT
                                     if (dec_monkey)
-                                        overlap.Flags |= 0x2000;  // MONKEY_BIT
+                                        overlap.Flags |= BoxFlags.Monkey;  // MONKEY_BIT
 
                                     dec_overlaps.Add(overlap);
                                     numOverlapsAdded++;
@@ -412,9 +424,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
                                         };
 
                                         if (dec_jump)
-                                            overlap.Flags |= 0x800;
+                                            overlap.Flags |= BoxFlags.Jump;
                                         if (dec_monkey)
-                                            overlap.Flags |= 0x2000;
+                                            overlap.Flags |= BoxFlags.Monkey;
 
                                         dec_overlaps.Add(overlap);
                                         numOverlapsAdded++;
@@ -432,7 +444,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                 // Mark end of this box's overlap list with END_BIT
                 if (numOverlapsAdded != 0)
-                    dec_overlaps[dec_overlaps.Count - 1].Flags |= 0x8000;  // END_BIT
+                    dec_overlaps[dec_overlaps.Count - 1].Flags |= BoxFlags.End;  // END_BIT
             }
             while (i < dec_boxes.Count);
 
@@ -665,6 +677,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
             // Shallow water is treated as dry land for pathfinding
             if (!dec_checkUnderwater)
             {
+                box.Shallow = box.Water;
                 box.Water = false;
             }
 

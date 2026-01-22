@@ -149,6 +149,17 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
             for (var i = 0; i < dec_boxes.Count; i++)
             {
+                int flags = 0;
+
+                if (dec_boxes[i].Splitter)
+                    flags |= BoxFlags.Splitter;
+
+                if (dec_boxes[i].Water)
+                    flags |= BoxFlags.Water;
+
+                if (dec_boxes[i].Shallow)
+                    flags |= BoxFlags.Shallow;
+
                 var box = new TombEngineBox()
                 {
                     Xmin = dec_boxes[i].Xmin,                              // Left boundary (in sectors)
@@ -157,8 +168,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     Zmax = dec_boxes[i].Zmax,                              // Top boundary (in sectors)
                     TrueFloor = -dec_boxes[i].Height,                      // Floor height (negated: TR uses inverted Y)
                     OverlapIndex = dec_boxes[i].OverlapIndex,              // Index into _overlaps array (-1 if none)
-                    Flags = dec_boxes[i].Splitter ? 0x8000 : 0             // 0x8000 = BLOCKABLE flag (splitter box)
+                    Flags = flags
                 };
+
                 _boxes.Add(box);
 
                 // Create corresponding zone group (one per box)
@@ -269,11 +281,11 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         return boxes;
 
                     // Check for end-of-list marker (0x8000 = END_BIT)
-                    last = (_overlaps[overlapIndex].Flags & 0x8000) != 0;
+                    last = (_overlaps[overlapIndex].Flags & BoxFlags.End) != 0;
 
                     // Extract overlap capability flags
-                    bool canJump = (_overlaps[overlapIndex].Flags & 0x0800) != 0;    // JUMP_BIT
-                    bool canMonkey = (_overlaps[overlapIndex].Flags & 0x2000) != 0;  // MONKEY_BIT
+                    bool canJump = (_overlaps[overlapIndex].Flags & BoxFlags.Jump) != 0;      // JUMP_BIT
+                    bool canMonkey = (_overlaps[overlapIndex].Flags & BoxFlags.Monkey) != 0;  // MONKEY_BIT
 
                     var boxIndex = _overlaps[overlapIndex].Box;
 
@@ -306,6 +318,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     // - Human + monkey swing: Can cross via ceiling (but not swimming)
                     bool canCrossWater = (zoneType == ZoneType.Amphibious) ||
                                          (zoneType == ZoneType.Human && canMonkey);
+
                     if (water != isWater && !canCrossWater)
                         continue;
 
