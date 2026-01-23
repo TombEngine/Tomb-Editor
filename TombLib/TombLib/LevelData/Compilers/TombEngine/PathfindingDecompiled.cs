@@ -286,12 +286,181 @@ namespace TombLib.LevelData.Compilers.TombEngine
             watch.Restart();
 
             // ===================================================================================
+            // DUPLICATE BOX REDUCTION
+            // ===================================================================================
+            // Reduce boxes with same coordinates but different Water/Shallow flags.
+            // Keep the box with the highest priority: Water+Shallow > Water|Shallow > neither.
+            Dec_ReduceDuplicateBoxes();
+
+            watch.Stop();
+            Console.WriteLine("Dec_BuildBoxesAndOverlaps() -> Reduce duplicates: " + watch.ElapsedMilliseconds + " ms, Count = " + dec_boxes.Count);
+
+            watch.Restart();
+
+            // ===================================================================================
             // OVERLAP GENERATION
             // ===================================================================================
             Dec_BuildOverlaps();
 
             watch.Stop();
             Console.WriteLine("Dec_BuildBoxesAndOverlaps() -> Build overlaps: " + watch.ElapsedMilliseconds + " ms, Count = " + dec_overlaps.Count);
+        }
+
+        /// <summary>
+        /// Reduces duplicate boxes with same coordinates but different Water/Shallow flags.
+        ///
+        /// When multiple boxes exist with identical bounds and height but different Water/Shallow
+        /// flags, this method keeps only the box with the highest priority and removes the others.
+        ///
+        /// PRIORITY ORDER (highest to lowest):
+        /// 1. Water=true AND Shallow=true (score 3) - Shallow water boxes
+        /// 2. Water=true OR Shallow=true (score 2) - Deep water or shallow-only boxes
+        /// 3. Water=false AND Shallow=false (score 1) - Dry land boxes
+        ///
+        /// This ensures that water/shallow information is preserved when boxes overlap,
+        /// while avoiding duplicate boxes in the final output.
+        /// </summary>
+        private void Dec_ReduceDuplicateBoxes()
+        {
+            if (dec_boxes.Count == 0)
+                return;
+
+            // Group boxes by their coordinates (Xmin, Xmax, Zmin, Zmax, Height)
+            var boxGroups = new Dictionary<(int, int, int, int, int), List<int>>();
+
+            for (int i = 0; i < dec_boxes.Count; i++)
+            {
+                var box = dec_boxes[i];
+                var key = (box.Xmin, box.Xmax, box.Zmin, box.Zmax, box.Height);
+
+                if (!boxGroups.ContainsKey(key))
+                    boxGroups[key] = new List<int>();
+
+                boxGroups[key].Add(i);
+            }
+
+            // Find groups with duplicates and determine which box to keep
+            var boxesToRemove = new HashSet<int>();
+            var indexMapping = new Dictionary<int, int>(); // oldIndex -> newIndex (for merging)
+
+            foreach (var group in boxGroups.Values)
+            {
+                if (group.Count <= 1)
+                    continue;
+
+                // Calculate score for each box in the group
+                // Water=1 && Shallow=1: score 3
+                // Water=1 && Shallow=0: score 2
+                // Water=0 && Shallow=1: score 2
+                // Water=0 && Shallow=0: score 1
+                int bestIndex = group[0];
+                int bestScore = GetBoxWaterScore(dec_boxes[bestIndex]);
+
+                for (int i = 1; i < group.Count; i++)
+                {
+                    int currentIndex = group[i];
+                    int currentScore = GetBoxWaterScore(dec_boxes[currentIndex]);
+
+                    if (currentScore > bestScore)
+                    {
+                        // Current box has higher priority - mark previous best for removal
+                        boxesToRemove.Add(bestIndex);
+                        indexMapping[bestIndex] = currentIndex;
+                        bestIndex = currentIndex;
+                        bestScore = currentScore;
+                    }
+                    else
+                    {
+                        // Current box has lower or equal priority - mark it for removal
+                        boxesToRemove.Add(currentIndex);
+                        indexMapping[currentIndex] = bestIndex;
+                    }
+                }
+
+                // Merge flip flags from removed boxes into the kept box
+                var keptBox = dec_boxes[bestIndex];
+                foreach (int removedIndex in group)
+                {
+                    if (removedIndex != bestIndex)
+                    {
+                        var removedBox = dec_boxes[removedIndex];
+                        if (removedBox.Unflipped) keptBox.Unflipped = true;
+                        if (removedBox.Flipped) keptBox.Flipped = true;
+                    }
+                }
+            }
+
+            if (boxesToRemove.Count == 0)
+                return;
+
+            // Build final index mapping (old index -> new index after removal)
+            var finalMapping = new int[dec_boxes.Count];
+            int newIndex = 0;
+
+            for (int oldIndex = 0; oldIndex < dec_boxes.Count; oldIndex++)
+            {
+                if (boxesToRemove.Contains(oldIndex))
+                {
+                    // This box is removed - find which box it maps to
+                    int targetIndex = indexMapping[oldIndex];
+                    // Follow chain in case target was also removed
+                    while (indexMapping.ContainsKey(targetIndex))
+                        targetIndex = indexMapping[targetIndex];
+                    finalMapping[oldIndex] = -1 - targetIndex; // Negative to mark as "needs remapping"
+                }
+                else
+                {
+                    finalMapping[oldIndex] = newIndex++;
+                }
+            }
+
+            // Second pass: resolve negative mappings
+            for (int i = 0; i < finalMapping.Length; i++)
+            {
+                if (finalMapping[i] < 0)
+                {
+                    int targetOldIndex = -1 - finalMapping[i];
+                    finalMapping[i] = finalMapping[targetOldIndex];
+                }
+            }
+
+            // Update sector references
+            foreach (var tempRoom in _tempRooms.Values)
+            {
+                for (int i = 0; i < tempRoom.Sectors.Length; i++)
+                {
+                    int oldBoxIndex = tempRoom.Sectors[i].BoxIndex;
+                    if (oldBoxIndex >= 0 && oldBoxIndex < finalMapping.Length)
+                    {
+                        tempRoom.Sectors[i].BoxIndex = finalMapping[oldBoxIndex];
+                    }
+                }
+            }
+
+            // Remove boxes and rebuild the list
+            var newBoxes = new List<dec_TombEngine_box_aux>();
+            for (int i = 0; i < dec_boxes.Count; i++)
+            {
+                if (!boxesToRemove.Contains(i))
+                {
+                    newBoxes.Add(dec_boxes[i]);
+                }
+            }
+
+            dec_boxes = newBoxes;
+        }
+
+        /// <summary>
+        /// Calculates the water/shallow priority score for a box.
+        /// Higher scores indicate higher priority when reducing duplicates.
+        /// </summary>
+        private static int GetBoxWaterScore(dec_TombEngine_box_aux box)
+        {
+            if (box.Water && box.Shallow)
+                return 3; // Highest priority: shallow water
+            if (box.Water || box.Shallow)
+                return 2; // Medium priority: deep water or shallow-only
+            return 1;     // Lowest priority: dry land
         }
 
         /// <summary>
