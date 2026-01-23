@@ -742,14 +742,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
             else
             {
                 // Duplicate found - update flags if needed
-                if (box.Flipped)
-                    dec_boxes[boxIndex].Flipped = true;
-
-                if (box.Water)
-                    dec_boxes[boxIndex].Water = true;
-
-                if (box.Shallow)
-                    dec_boxes[boxIndex].Shallow = true;
+                dec_boxes[boxIndex].Flipped |= box.Flipped;
+                dec_boxes[boxIndex].Water   |= box.Water;
+                dec_boxes[boxIndex].Shallow |= box.Shallow;
             }
 
             return boxIndex;
