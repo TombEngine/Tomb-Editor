@@ -286,6 +286,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     // Extract overlap capability flags
                     bool canJump = (_overlaps[overlapIndex].Flags & OverlapFlags.Jump) != 0;      // JUMP_BIT
                     bool canMonkey = (_overlaps[overlapIndex].Flags & OverlapFlags.Monkey) != 0;  // MONKEY_BIT
+                    bool canTraverseAmphibious = (_overlaps[overlapIndex].Flags & OverlapFlags.AmphibiousTraversable) != 0;
 
                     var boxIndex = _overlaps[overlapIndex].Box;
 
@@ -350,8 +351,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         case ZoneType.Amphibious:
                             // Amphibious: 1 click step and non-slope on land, no limit in water
                             // Can transition between water and land boxes
-                            add = (dec_boxes[boxIndex].Water == dec_boxes[box].Water && dec_boxes[box].Water) ||
-								  (!(dec_boxes[boxIndex].Slope && !dec_boxes[boxIndex].Water) && step <= Clicks.ToWorld(2));
+                            add = canTraverseAmphibious ||
+                                  (dec_boxes[boxIndex].Water == dec_boxes[box].Water && dec_boxes[box].Water) ||
+                                  (!(dec_boxes[boxIndex].Slope && !dec_boxes[boxIndex].Water) && step <= Clicks.ToWorld(2));
                             break;
 
                         case ZoneType.Human:
