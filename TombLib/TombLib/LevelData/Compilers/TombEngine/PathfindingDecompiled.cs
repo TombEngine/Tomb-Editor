@@ -550,9 +550,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         dec_boxes[i].Xmax == box.Xmax &&
                         dec_boxes[i].Zmin == box.Zmin &&
                         dec_boxes[i].Zmax == box.Zmax &&
-                        dec_boxes[i].Height == box.Height &&
-                        dec_boxes[i].Water == box.Water &&
-                        dec_boxes[i].Shallow == box.Shallow)
+                        dec_boxes[i].Height == box.Height)
                     {
                         boxIndex = i;
                         break;
