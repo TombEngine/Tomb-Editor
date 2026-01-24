@@ -1181,6 +1181,12 @@ namespace TombEditor.Controls.Panel3D
                         }
 
                         DrawOrQueueServiceObject(instance, _littleCube, color, effect, sprites);
+                        
+                        // Draw shape for shape types (Circle, Ellipse, Square, Rectangle)
+                        if (instance.RequiresRadius())
+                        {
+                            DrawWayPointShape(instance, color);
+                        }
                     }
 
                 if (group.Key == typeof(MemoInstance))
@@ -1467,6 +1473,95 @@ namespace TombEditor.Controls.Panel3D
             effect.Parameters["Color"].SetValue(color);
             effect.Techniques[0].Passes[0].Apply();
             _legacyDevice.DrawIndexed(PrimitiveType.TriangleList, primitive.IndexBuffer.ElementCount);
+        }
+
+        private void DrawWayPointShape(WayPointInstance instance, Vector4 color)
+        {
+            // Get world position
+            Vector3 position = instance.Position + instance.Room.WorldPos;
+            
+            // Create transformation matrix for the shape orientation
+            Matrix4x4 rotation = Matrix4x4.CreateRotationY(instance.RotationY * (float)Math.PI / 180.0f) *
+                                Matrix4x4.CreateRotationZ(instance.Roll * (float)Math.PI / 180.0f);
+            
+            // Number of segments for circles/ellipses
+            int segments = 32;
+            var vertices = new List<Vector3>();
+            
+            switch (instance.Type)
+            {
+                case WayPointType.Circle:
+                    // Draw circle with Radius1
+                    for (int i = 0; i <= segments; i++)
+                    {
+                        float angle = (i / (float)segments) * 2.0f * (float)Math.PI;
+                        float x = (float)Math.Cos(angle) * instance.Radius1;
+                        float z = (float)Math.Sin(angle) * instance.Radius1;
+                        Vector3 point = Vector3.Transform(new Vector3(x, 0, z), rotation) + position;
+                        vertices.Add(point);
+                    }
+                    break;
+                    
+                case WayPointType.Ellipse:
+                    // Draw ellipse with Radius1 and Radius2
+                    for (int i = 0; i <= segments; i++)
+                    {
+                        float angle = (i / (float)segments) * 2.0f * (float)Math.PI;
+                        float x = (float)Math.Cos(angle) * instance.Radius1;
+                        float z = (float)Math.Sin(angle) * instance.Radius2;
+                        Vector3 point = Vector3.Transform(new Vector3(x, 0, z), rotation) + position;
+                        vertices.Add(point);
+                    }
+                    break;
+                    
+                case WayPointType.Square:
+                    // Draw square with Radius1
+                    {
+                        float r = instance.Radius1;
+                        Vector3[] corners = new Vector3[]
+                        {
+                            new Vector3(-r, 0, -r),
+                            new Vector3(r, 0, -r),
+                            new Vector3(r, 0, r),
+                            new Vector3(-r, 0, r),
+                            new Vector3(-r, 0, -r) // Close the loop
+                        };
+                        foreach (var corner in corners)
+                        {
+                            vertices.Add(Vector3.Transform(corner, rotation) + position);
+                        }
+                    }
+                    break;
+                    
+                case WayPointType.Rectangle:
+                    // Draw rectangle with Radius1 and Radius2
+                    {
+                        float r1 = instance.Radius1;
+                        float r2 = instance.Radius2;
+                        Vector3[] corners = new Vector3[]
+                        {
+                            new Vector3(-r1, 0, -r2),
+                            new Vector3(r1, 0, -r2),
+                            new Vector3(r1, 0, r2),
+                            new Vector3(-r1, 0, r2),
+                            new Vector3(-r1, 0, -r2) // Close the loop
+                        };
+                        foreach (var corner in corners)
+                        {
+                            vertices.Add(Vector3.Transform(corner, rotation) + position);
+                        }
+                    }
+                    break;
+            }
+            
+            // Draw the shape using line rendering
+            if (vertices.Count > 1)
+            {
+                for (int i = 0; i < vertices.Count - 1; i++)
+                {
+                    AddLine(vertices[i], vertices[i + 1], color.To4());
+                }
+            }
         }
 
         private void DrawCardinalDirections(List<Text> textToDraw)
