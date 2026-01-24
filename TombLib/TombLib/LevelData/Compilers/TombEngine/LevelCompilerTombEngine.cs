@@ -354,6 +354,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     Sequence = instance.Sequence,
                     Number = instance.Number,
                     PathType = (int)instance.PathType,
+                    Shape = (int)instance.Shape,
+                    Radius1 = instance.Radius1,
+                    Radius2 = instance.Radius2,
                     Name = instance.Name,
                     LuaName = instance.ScriptId.HasValue ? (_scriptingIdsTable.TryGetOrDefault(instance.ScriptId.Value, string.Empty) ?? string.Empty) : string.Empty
                 });

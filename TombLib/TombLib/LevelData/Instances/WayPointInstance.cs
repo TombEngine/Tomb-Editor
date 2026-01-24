@@ -10,6 +10,12 @@ namespace TombLib.LevelData
         Bezier
     }
 
+    public enum WayPointShape
+    {
+        Circle,
+        Ellipse
+    }
+
     public class WayPointInstance : PositionAndScriptBasedObjectInstance, IRotateableYXRoll
     {
         private string _baseName = "WayPoint";
@@ -62,6 +68,9 @@ namespace TombLib.LevelData
         }
 
         public PathType PathType { get; set; } = PathType.Linear;
+        public WayPointShape Shape { get; set; } = WayPointShape.Circle;
+        public float Radius1 { get; set; } = 1024.0f; // Default radius in units
+        public float Radius2 { get; set; } = 1024.0f; // Default radius in units (same as Radius1 for circle)
 
         private float _rotationX { get; set; }
         private float _rotationY { get; set; }
@@ -85,6 +94,9 @@ namespace TombLib.LevelData
                 Number = currNum;
                 _baseName = prevWayPoint._baseName;
                 PathType = prevWayPoint.PathType;
+                Shape = prevWayPoint.Shape;
+                Radius1 = prevWayPoint.Radius1;
+                Radius2 = prevWayPoint.Radius2;
 
                 // Additionally copy last waypoint parameters
                 RotationX = prevWayPoint.RotationX;
@@ -123,6 +135,7 @@ namespace TombLib.LevelData
                 ", Sequence = " + Sequence +
                 ", Number = " + Number +
                 ", PathType = " + PathType +
+                ", Shape = " + Shape +
                 " (" + (Room?.ToString() ?? "NULL") + ")" +
                 ", X = " + SectorPosition.X +
                 ", Z = " + SectorPosition.Y +

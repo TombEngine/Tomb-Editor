@@ -598,6 +598,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public ushort Sequence;
         public ushort Number;
         public int PathType;
+        public int Shape;
+        public float Radius1;
+        public float Radius2;
         public string Name;
         public string LuaName;
     }

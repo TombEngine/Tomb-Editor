@@ -32,9 +32,26 @@ namespace TombEditor.Forms
             numSequence.Value = _wayPoint.Sequence;
             numNumber.Value = _wayPoint.Number;
             cmbPathType.SelectedIndex = (int)_wayPoint.PathType;
+            cmbShape.SelectedIndex = (int)_wayPoint.Shape;
+            numRadius1.Value = (decimal)_wayPoint.Radius1;
+            numRadius2.Value = (decimal)_wayPoint.Radius2;
             numRotationX.Value = (decimal)_wayPoint.RotationX;
             numRotationY.Value = (decimal)_wayPoint.RotationY;
             numRoll.Value = (decimal)_wayPoint.Roll;
+
+            UpdateRadiusVisibility();
+        }
+
+        private void cmbShape_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateRadiusVisibility();
+        }
+
+        private void UpdateRadiusVisibility()
+        {
+            bool isEllipse = cmbShape.SelectedIndex == (int)WayPointShape.Ellipse;
+            lblRadius2.Visible = isEllipse;
+            numRadius2.Visible = isEllipse;
         }
 
         private void butOK_Click(object sender, EventArgs e)
@@ -43,6 +60,9 @@ namespace TombEditor.Forms
             _wayPoint.Sequence = (ushort)numSequence.Value;
             _wayPoint.Number = (ushort)numNumber.Value;
             _wayPoint.PathType = (PathType)cmbPathType.SelectedIndex;
+            _wayPoint.Shape = (WayPointShape)cmbShape.SelectedIndex;
+            _wayPoint.Radius1 = (float)numRadius1.Value;
+            _wayPoint.Radius2 = (float)numRadius2.Value;
             _wayPoint.RotationX = (float)numRotationX.Value;
             _wayPoint.RotationY = (float)numRotationY.Value;
             _wayPoint.Roll = (float)numRoll.Value;

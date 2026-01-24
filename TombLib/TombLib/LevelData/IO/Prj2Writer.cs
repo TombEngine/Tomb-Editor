@@ -693,6 +693,9 @@ namespace TombLib.LevelData.IO
                             LEB128.Write(chunkIO.Raw, instance.Number);
                             LEB128.Write(chunkIO.Raw, instance.Sequence);
                             LEB128.Write(chunkIO.Raw, (int)instance.PathType);
+                            LEB128.Write(chunkIO.Raw, (int)instance.Shape);
+                            chunkIO.Raw.Write(instance.Radius1);
+                            chunkIO.Raw.Write(instance.Radius2);
                         });
                     else if (o is MemoInstance)
                         using (var chunk = chunkIO.WriteChunk(Prj2Chunks.ObjectMemo2, LEB128.MaximumSize3Byte))

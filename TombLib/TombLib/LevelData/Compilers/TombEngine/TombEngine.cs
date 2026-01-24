@@ -90,6 +90,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     writer.Write(waypoint.Sequence);
                     writer.Write(waypoint.Number);
                     writer.Write(waypoint.PathType);
+                    writer.Write(waypoint.Shape);
+                    writer.Write(waypoint.Radius1);
+                    writer.Write(waypoint.Radius2);
                     writer.Write(waypoint.Name);
                     writer.Write(waypoint.LuaName);
                 }

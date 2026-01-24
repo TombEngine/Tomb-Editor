@@ -1413,6 +1413,9 @@ namespace TombLib.LevelData.IO
                     instance.Number = LEB128.ReadUShort(chunkIO.Raw);
                     instance.Sequence = LEB128.ReadUShort(chunkIO.Raw);
                     instance.PathType = (PathType)LEB128.ReadInt(chunkIO.Raw);
+                    instance.Shape = (WayPointShape)LEB128.ReadInt(chunkIO.Raw);
+                    instance.Radius1 = chunkIO.Raw.ReadSingle();
+                    instance.Radius2 = chunkIO.Raw.ReadSingle();
                     addObject(instance);
                     newObjects.TryAdd(objectID, instance);
                 }
