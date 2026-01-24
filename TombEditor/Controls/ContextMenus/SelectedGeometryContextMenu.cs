@@ -56,6 +56,11 @@ namespace TombEditor.Controls.ContextMenus
                 EditorActions.PlaceObject(targetRoom, targetSector, new FlybyCameraInstance(editor.SelectedObject));
             }));
 
+            Items.Add(new ToolStripMenuItem("Add waypoint", Properties.Resources.objects_movie_projector_16, (o, e) =>
+            {
+                EditorActions.PlaceObject(targetRoom, targetSector, new WayPointInstance(editor.SelectedObject));
+            }));
+
             Items.Add(new ToolStripMenuItem("Add sink", Properties.Resources.objects_tornado_16, (o, e) =>
             {
                 EditorActions.PlaceObject(targetRoom, targetSector, new SinkInstance());

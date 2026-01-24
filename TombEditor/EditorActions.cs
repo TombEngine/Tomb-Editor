@@ -1129,6 +1129,13 @@ namespace TombEditor
                         return;
                 _editor.ObjectChange(instance, ObjectChangeType.Change);
             }
+            else if (instance is WayPointInstance)
+            {
+                using (var formWayPoint = GetObjectSetupWindow((WayPointInstance)instance))
+                    if (formWayPoint.ShowDialog(owner) != DialogResult.OK)
+                        return;
+                _editor.ObjectChange(instance, ObjectChangeType.Change);
+            }
             else if (instance is CameraInstance)
             {
                 using (var formCamera = GetObjectSetupWindow((CameraInstance)instance))

@@ -1152,6 +1152,11 @@ namespace TombEditor
                 args.Editor.Action = new EditorActionPlace(false, (l, r) => new FlybyCameraInstance(args.Editor.SelectedObject));
             });
 
+            AddCommand("AddWayPoint", "Add waypoint", CommandType.Objects, delegate (CommandArgs args)
+            {
+                args.Editor.Action = new EditorActionPlace(false, (l, r) => new WayPointInstance(args.Editor.SelectedObject));
+            });
+
             AddCommand("AddSink", "Add sink", CommandType.Objects, delegate (CommandArgs args)
             {
                 args.Editor.Action = new EditorActionPlace(false, (l, r) => new SinkInstance());
