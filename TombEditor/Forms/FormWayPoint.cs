@@ -146,11 +146,11 @@ namespace TombEditor.Forms
             // 2. Exception: same base name allowed ONLY if numbers are different
             //    (e.g., "test_0" and "test_1" are OK, but "test" Circle and "test" Point are NOT OK)
             bool nameChanged = oldBaseName != newName;
-            bool numberChanged = _wayPoint.Number != (ushort)numNumber.Value;
+            ushort currentNumber = (ushort)numNumber.Value;
+            bool numberChanged = _wayPoint.Number != currentNumber;
             
             if ((nameChanged || numberChanged) && _editor?.Level != null)
             {
-                ushort newNumber = (ushort)numNumber.Value;
                 
                 foreach (var room in _editor.Level.ExistingRooms)
                 {
@@ -163,10 +163,10 @@ namespace TombEditor.Forms
                         if (obj.BaseName == newName)
                         {
                             // Same base name found - only allowed if numbers are different
-                            if (obj.Number == newNumber)
+                            if (obj.Number == currentNumber)
                             {
                                 // Same base name AND same number = duplicate
-                                DarkMessageBox.Show(this, $"A WayPoint with the name '{newName}' and number {newNumber} already exists.", "Duplicate Name",
+                                DarkMessageBox.Show(this, $"A WayPoint with the name '{newName}' and number {currentNumber} already exists.", "Duplicate Name",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 return;
                             }
