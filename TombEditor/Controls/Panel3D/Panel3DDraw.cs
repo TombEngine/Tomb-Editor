@@ -196,6 +196,19 @@ namespace TombEditor.Controls.Panel3D
                 effect.CurrentTechnique.Passes[0].Apply();
                 _legacyDevice.Draw(PrimitiveType.TriangleList, _flybyPathVertexBuffer.ElementCount);
             }
+
+            // Add the path of waypoints
+            if (_editor.SelectedObject is WayPointInstance &&
+                AddWayPointPath(((WayPointInstance)_editor.SelectedObject).Sequence))
+            {
+                _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullNone);
+                _legacyDevice.SetVertexBuffer(_wayPointPathVertexBuffer);
+                _legacyDevice.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, _wayPointPathVertexBuffer));
+                effect.Parameters["ModelViewProjection"].SetValue(_viewProjection.ToSharpDX());
+                effect.Parameters["Color"].SetValue(new Vector4(1.0f, 0.5f, 0.0f, 1.0f)); // Orange for waypoints
+                effect.CurrentTechnique.Passes[0].Apply();
+                _legacyDevice.Draw(PrimitiveType.TriangleList, _wayPointPathVertexBuffer.ElementCount);
+            }
         }
 
         private void DrawSectorSplitHighlights(Effect effect)
@@ -1127,6 +1140,38 @@ namespace TombEditor.Controls.Panel3D
                                 textToDraw.Add(CreateTextTagForObject(
                                     instance.RotationPositionMatrix * _viewProjection,
                                     "Flyby cam (" + instance.Sequence + ":" + instance.Number + ") " +
+                                    instance.GetScriptIDOrName() + "\n" +
+                                    GetObjectPositionString(instance.Room, instance) + GetObjectTriggerString(instance)));
+
+                                // Add the line height of the object
+                                AddObjectHeightLine(instance.Room, instance.Position);
+                            }
+                        }
+
+                        DrawOrQueueServiceObject(instance, _littleCube, color, effect, sprites);
+                    }
+
+                if (group.Key == typeof(WayPointInstance))
+                    foreach (WayPointInstance instance in group)
+                    {
+                        _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullBack);
+
+                        var color = new Vector4(1.0f, 0.5f, 0.0f, 1.0f); // Orange color for waypoints
+
+                        if (_editor.SelectedObject is WayPointInstance && (_editor.SelectedObject as WayPointInstance).Sequence == instance.Sequence)
+                            color = MathC.GetRandomColorByIndex(instance.Sequence, 32, 0.7f);
+
+                        if (_highlightedObjects.Contains(instance))
+                        {
+                            color = _editor.Configuration.UI_ColorScheme.ColorSelection;
+                            _legacyDevice.SetRasterizerState(_rasterizerWireframe);
+
+                            if (_editor.SelectedObject == instance)
+                            {
+                                // Add text message
+                                textToDraw.Add(CreateTextTagForObject(
+                                    instance.RotationPositionMatrix * _viewProjection,
+                                    "WayPoint (" + instance.Sequence + ":" + instance.Number + ") " +
                                     instance.GetScriptIDOrName() + "\n" +
                                     GetObjectPositionString(instance.Room, instance) + GetObjectTriggerString(instance)));
 

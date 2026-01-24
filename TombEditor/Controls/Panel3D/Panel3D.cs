@@ -134,6 +134,7 @@ namespace TombEditor.Controls.Panel3D
         private bool _drawHeightLine;
         private Buffer<SolidVertex> _objectHeightLineVertexBuffer;
         private Buffer<SolidVertex> _flybyPathVertexBuffer;
+        private Buffer<SolidVertex> _wayPointPathVertexBuffer;
         private Buffer<SolidVertex> _ghostBlockVertexBuffer;
         private Buffer<SolidVertex> _boxVertexBuffer;
 
@@ -217,6 +218,7 @@ namespace TombEditor.Controls.Panel3D
                 _rasterizerWireframe?.Dispose();
                 _objectHeightLineVertexBuffer?.Dispose();
                 _flybyPathVertexBuffer?.Dispose();
+                _wayPointPathVertexBuffer?.Dispose();
                 _gizmo?.Dispose();
                 _sphere?.Dispose();
                 _cone?.Dispose();

@@ -183,6 +183,90 @@ namespace TombEditor.Controls.Panel3D
             return true;
         }
 
+        private bool AddWayPointPath(int sequence)
+        {
+            // Collect all waypoints
+            var wayPoints = new List<WayPointInstance>();
+
+            foreach (var room in _editor.Level.ExistingRooms)
+                foreach (var instance in room.Objects.OfType<WayPointInstance>())
+                {
+                    if (instance.Sequence == sequence)
+                        wayPoints.Add(instance);
+                }
+
+            // Is it actually necessary to show the path?
+            if (wayPoints.Count < 2)
+                return false;
+
+            // Sort waypoints
+            wayPoints.Sort((x, y) => x.Number.CompareTo(y.Number));
+
+            // Initialize variables for vertex buffer preparation
+            var vertices = new List<SolidVertex>();
+            var startColor = MathC.GetRandomColorByIndex(sequence, 32, 0.7f);
+            var endColor = MathC.GetRandomColorByIndex(sequence, 32, 0.3f);
+
+            float th = _flybyPathThickness;
+
+            // Process waypoints to calculate paths
+            var pointList = new List<Vector3>();
+            for (int i = 0; i < wayPoints.Count; i++)
+            {
+                var wp = wayPoints[i];
+                pointList.Add(wp.Position + wp.Room.WorldPos);
+            }
+
+            // Calculate the spline path based on PathType
+            List<Vector3> interpolatedPoints;
+            if (wayPoints[0].PathType == PathType.Linear)
+            {
+                // For linear, just use the points as-is
+                interpolatedPoints = pointList;
+            }
+            else
+            {
+                // For Curved and Bezier, use spline interpolation
+                interpolatedPoints = Spline.Calculate(pointList, pointList.Count * _flybyPathSmoothness);
+            }
+
+            // Add vertices for the path
+            for (int j = 0; j < interpolatedPoints.Count - 1; j++)
+            {
+                var color = Vector4.Lerp(startColor, endColor, j / (float)interpolatedPoints.Count);
+                var points = new List<Vector3[]>()
+                {
+                    new Vector3[]
+                    {
+                        interpolatedPoints[j],
+                        new Vector3(interpolatedPoints[j].X + th, interpolatedPoints[j].Y + th, interpolatedPoints[j].Z + th),
+                        new Vector3(interpolatedPoints[j].X - th, interpolatedPoints[j].Y + th, interpolatedPoints[j].Z + th)
+                    },
+                    new Vector3[]
+                    {
+                        interpolatedPoints[j + 1],
+                        new Vector3(interpolatedPoints[j + 1].X + th, interpolatedPoints[j + 1].Y + th, interpolatedPoints[j + 1].Z + th),
+                        new Vector3(interpolatedPoints[j + 1].X - th, interpolatedPoints[j + 1].Y + th, interpolatedPoints[j + 1].Z + th)
+                    }
+                };
+
+                for (int k = 0; k < _flybyPathIndices.Count; k++)
+                {
+                    var v = new SolidVertex();
+                    v.Position = points[_flybyPathIndices[k].Y][_flybyPathIndices[k].X];
+                    v.Color = color;
+                    vertices.Add(v);
+                }
+            }
+
+            // Prepare the Vertex Buffer
+            if (_wayPointPathVertexBuffer != null)
+                _wayPointPathVertexBuffer.Dispose();
+            _wayPointPathVertexBuffer = SharpDX.Toolkit.Graphics.Buffer.Vertex.New(_legacyDevice, vertices.ToArray(), SharpDX.Direct3D11.ResourceUsage.Dynamic);
+
+            return true;
+        }
+
         private class Comparer : IComparer<StaticInstance>, IComparer<MoveableInstance>, IComparer<ImportedGeometryInstance>
         {
             public int Compare(StaticInstance x, StaticInstance y)
