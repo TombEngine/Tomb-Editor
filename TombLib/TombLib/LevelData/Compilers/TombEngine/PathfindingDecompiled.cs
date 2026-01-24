@@ -393,8 +393,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
                                     // Set AmphibiousTraversable flag
                                     // Water-Water: always traversable
                                     // Land-Land or Water-Land: traversable if height diff <= 1 click
-                                    bool bothWater = box1.Water && box2.Water;
+                                    bool bothWater = (box1.Water || box1.Shallow) && (box2.Water || box2.Shallow);
                                     int heightDiff = Math.Abs(box1.Height - box2.Height);
+
                                     if (bothWater || heightDiff <= Clicks.ToWorld(1))
                                         overlap.Flags |= OverlapFlags.AmphibiousTraversable;
 
@@ -451,8 +452,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
                                         // Set AmphibiousTraversable flag
                                         // Water-Water: always traversable
                                         // Land-Land or Water-Land: traversable if height diff <= 1 click
-                                        bool bothWater = box1.Water && box2.Water;
+                                        bool bothWater = (box1.Water || box1.Shallow) && (box2.Water || box2.Shallow);
                                         int heightDiff = Math.Abs(box1.Height - box2.Height);
+
                                         if (bothWater || heightDiff <= Clicks.ToWorld(1))
                                             overlap.Flags |= OverlapFlags.AmphibiousTraversable;
 
@@ -516,12 +518,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
             // ===================================================================================
             if (Sse2.IsSupported)
             {
-                // Convert bool to int for SIMD comparison
-                int boxWaterInt = box.Water ? 1 : 0;
-
                 // Pack search criteria into 128-bit vectors (4 x 32-bit integers)
                 var searchBounds = Vector128.Create(box.Xmin, box.Xmax, box.Zmin, box.Zmax);
-                var searchExtra = Vector128.Create(box.Height, boxWaterInt, 0, 0);
 
                 for (int i = 0; i < dec_boxes.Count; i++)
                 {
@@ -529,19 +527,13 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                     // Pack candidate values
                     var candBounds = Vector128.Create(candidate.Xmin, candidate.Xmax, candidate.Zmin, candidate.Zmax);
-                    var candExtra = Vector128.Create(candidate.Height, candidate.Water ? 1 : 0, 0, 0);
 
-                    // Compare all 4 bounds simultaneously
+                    // Compare all 4 bounds simultaneously and extract comparison results as bitmasks
                     var cmpBounds = Sse2.CompareEqual(searchBounds, candBounds);
-                    var cmpExtra = Sse2.CompareEqual(searchExtra, candExtra);
-
-                    // Extract comparison results as bitmasks
                     int maskBounds = Sse2.MoveMask(cmpBounds.AsByte());
-                    int maskExtra = Sse2.MoveMask(cmpExtra.AsByte());
 
                     // All 4 bounds must match (0xFFFF = all 16 bytes equal)
-                    // First 2 extra values must match (0x00FF = first 8 bytes equal)
-                    if (maskBounds == 0xFFFF && (maskExtra & 0x00FF) == 0x00FF)
+                    if (maskBounds == 0xFFFF && candidate.Height == box.Height)
                     {
                         boxIndex = i;
                         break;
@@ -559,8 +551,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         dec_boxes[i].Xmax == box.Xmax &&
                         dec_boxes[i].Zmin == box.Zmin &&
                         dec_boxes[i].Zmax == box.Zmax &&
-                        dec_boxes[i].Height == box.Height &&
-						dec_boxes[i].Water == box.Water)
+                        dec_boxes[i].Height == box.Height)
                     {
                         boxIndex = i;
                         break;
@@ -580,9 +571,14 @@ namespace TombLib.LevelData.Compilers.TombEngine
             }
             else
             {
-                // Duplicate found - update flip state if needed
-                if (dec_flipped)
-                    dec_boxes[boxIndex].Flipped = true;
+                // Update room reference, if water/shallow
+                if (box.Water || box.Shallow)
+                    dec_boxes[boxIndex].Room = box.Room;
+
+                // Duplicate found - update flags if needed
+                dec_boxes[boxIndex].Flipped |= box.Flipped;
+                dec_boxes[boxIndex].Water   |= box.Water;
+                dec_boxes[boxIndex].Shallow |= box.Shallow;
             }
 
             return boxIndex;

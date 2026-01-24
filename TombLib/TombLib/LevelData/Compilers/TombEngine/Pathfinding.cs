@@ -264,8 +264,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
             stack.Push(box);
 
             // Determine if starting box is in water - used for water boundary checks
-            // Room flag 0x01 = UNDERWATER flag in TR format
-            var isWater = (_tempRooms[dec_boxes[box].Room].Flags & 0x01) != 0;
+            var isWater = dec_boxes[box].Water;
 
             while (stack.Count > 0)
             {
@@ -299,15 +298,16 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         continue;
 
                     // Get target box properties
-                    bool water = (_tempRooms[dec_boxes[boxIndex].Room].Flags & 0x01) != 0;
+                    bool water = dec_boxes[boxIndex].Water;
                     int step = Math.Abs(_boxes[next].TrueFloor - _boxes[boxIndex].TrueFloor);
 
                     // =======================================================================
                     // FILTER 2: Slope check
                     // =======================================================================
                     // Most enemies cannot walk on steep slopes (gradient >= 3 clicks)
-                    // Exception: Flyers (no ground movement) and Water enemies (swimming)
-                    if (zoneType != ZoneType.Flyer && zoneType != ZoneType.Water && zoneType != ZoneType.Amphibious && dec_boxes[boxIndex].Slope)
+                    // Exception: Flyers (no ground movement), Amphibious and Water enemies (swimming)
+                    bool landZone = zoneType != ZoneType.Flyer && zoneType != ZoneType.Water && zoneType != ZoneType.Amphibious;
+                    if (landZone && dec_boxes[boxIndex].Slope)
                         continue;
 
                     // =======================================================================
@@ -320,7 +320,14 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     bool canCrossWater = (zoneType == ZoneType.Amphibious) ||
                                          (zoneType == ZoneType.Human && canMonkey);
 
-                    if (water != isWater && !canCrossWater)
+					// Enemies that can't cross land/water boundary can traverse shallow water
+                    bool shallowOverlap = (dec_boxes[boxIndex].Shallow && dec_boxes[box].Shallow) ||
+                                          (dec_boxes[boxIndex].Shallow && !dec_boxes[box].Water) ||
+                                          (dec_boxes[box].Shallow && !dec_boxes[boxIndex].Water);
+
+                    shallowOverlap = landZone && shallowOverlap;
+
+                    if (water != isWater && !canCrossWater && !shallowOverlap)
                         continue;
 
                     // =======================================================================
@@ -351,9 +358,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         case ZoneType.Amphibious:
                             // Amphibious: 1 click step and non-slope on land, no limit in water
                             // Can transition between water and land boxes
-                            add = canTraverseAmphibious ||
-                                  (dec_boxes[boxIndex].Water == dec_boxes[box].Water && dec_boxes[box].Water) ||
-                                  (!(dec_boxes[boxIndex].Slope && !dec_boxes[boxIndex].Water) && step <= Clicks.ToWorld(2));
+                            add = canTraverseAmphibious || (isWater && (water == isWater)) ||
+                                  (!(dec_boxes[boxIndex].Slope && !dec_boxes[boxIndex].Water) && step <= Clicks.ToWorld(1));
                             break;
 
                         case ZoneType.Human:
