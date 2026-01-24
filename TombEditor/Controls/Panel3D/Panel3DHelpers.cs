@@ -209,6 +209,12 @@ namespace TombEditor.Controls.Panel3D
 
             float th = _flybyPathThickness;
 
+            // Determine the PathType to use for the sequence (use the most common one)
+            var pathTypeCounts = wayPoints.GroupBy(wp => wp.PathType)
+                                         .OrderByDescending(g => g.Count())
+                                         .ToList();
+            var pathType = pathTypeCounts.FirstOrDefault()?.Key ?? PathType.Linear;
+
             // Process waypoints to calculate paths
             var pointList = new List<Vector3>();
             for (int i = 0; i < wayPoints.Count; i++)
@@ -219,7 +225,7 @@ namespace TombEditor.Controls.Panel3D
 
             // Calculate the spline path based on PathType
             List<Vector3> interpolatedPoints;
-            if (wayPoints[0].PathType == PathType.Linear)
+            if (pathType == PathType.Linear)
             {
                 // For linear, just use the points as-is
                 interpolatedPoints = pointList;
@@ -260,8 +266,8 @@ namespace TombEditor.Controls.Panel3D
             }
 
             // Prepare the Vertex Buffer
-            if (_wayPointPathVertexBuffer != null)
-                _wayPointPathVertexBuffer.Dispose();
+            _wayPointPathVertexBuffer?.Dispose();
+            _wayPointPathVertexBuffer = null;
             _wayPointPathVertexBuffer = SharpDX.Toolkit.Graphics.Buffer.Vertex.New(_legacyDevice, vertices.ToArray(), SharpDX.Direct3D11.ResourceUsage.Dynamic);
 
             return true;

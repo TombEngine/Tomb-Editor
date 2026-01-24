@@ -69,9 +69,8 @@ namespace TombLib.LevelData
 
         public WayPointInstance(ObjectInstance selectedObject = null)
         {
-            if (selectedObject != null && selectedObject is WayPointInstance)
+            if (selectedObject is WayPointInstance prevWayPoint)
             {
-                var prevWayPoint = (WayPointInstance)selectedObject;
                 var currSeq = prevWayPoint.Sequence;
                 var currNum = (ushort)(prevWayPoint.Number + 1);
 
