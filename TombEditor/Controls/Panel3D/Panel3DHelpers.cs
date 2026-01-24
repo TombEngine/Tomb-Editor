@@ -207,8 +207,9 @@ namespace TombEditor.Controls.Panel3D
 
             // Initialize variables for vertex buffer preparation
             var vertices = new List<SolidVertex>();
-            // Use name hash for color selection
-            int nameHash = name.GetHashCode();
+            // Use name hash for color selection (ensure positive and non-zero)
+            int nameHash = Math.Abs(name?.GetHashCode() ?? 1);
+            if (nameHash == 0) nameHash = 1;
             var startColor = MathC.GetRandomColorByIndex(nameHash, 32, 0.7f);
             var endColor = MathC.GetRandomColorByIndex(nameHash, 32, 0.3f);
 

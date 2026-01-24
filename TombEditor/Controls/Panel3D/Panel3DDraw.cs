@@ -1159,7 +1159,11 @@ namespace TombEditor.Controls.Panel3D
                         var color = new Vector4(1.0f, 0.5f, 0.0f, 1.0f); // Orange color for waypoints
 
                         if (_editor.SelectedObject is WayPointInstance selectedWaypoint && selectedWaypoint.Name == instance.Name)
-                            color = MathC.GetRandomColorByIndex(instance.Name.GetHashCode(), 32, 0.7f);
+                        {
+                            int nameHash = Math.Abs(instance.Name?.GetHashCode() ?? 1);
+                            if (nameHash == 0) nameHash = 1;
+                            color = MathC.GetRandomColorByIndex(nameHash, 32, 0.7f);
+                        }
 
                         if (_highlightedObjects.Contains(instance))
                         {
