@@ -689,11 +689,10 @@ namespace TombLib.LevelData.IO
                             chunkIO.Raw.Write(instance.RotationX);
                             chunkIO.Raw.Write(instance.Roll);
                             LEB128.Write(chunkIO.Raw, ((long?)instance.ScriptId ?? -1));
-                            chunkIO.Raw.WriteStringUTF8(instance.Name);
+                            chunkIO.Raw.WriteStringUTF8(instance.BaseName);
                             LEB128.Write(chunkIO.Raw, instance.Number);
                             LEB128.Write(chunkIO.Raw, instance.Sequence);
-                            LEB128.Write(chunkIO.Raw, (int)instance.PathType);
-                            LEB128.Write(chunkIO.Raw, (int)instance.Shape);
+                            LEB128.Write(chunkIO.Raw, (int)instance.Type);
                             chunkIO.Raw.Write(instance.Radius1);
                             chunkIO.Raw.Write(instance.Radius2);
                         });

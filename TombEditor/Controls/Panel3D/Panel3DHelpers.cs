@@ -195,6 +195,9 @@ namespace TombEditor.Controls.Panel3D
                         wayPoints.Add(instance);
                 }
 
+            // Filter to only multi-point types (Linear, Bezier)
+            wayPoints = wayPoints.Where(wp => wp.Type == WayPointType.Linear || wp.Type == WayPointType.Bezier).ToList();
+
             // Is it actually necessary to show the path?
             if (wayPoints.Count < 2)
                 return false;
@@ -209,11 +212,11 @@ namespace TombEditor.Controls.Panel3D
 
             float th = _flybyPathThickness;
 
-            // Determine the PathType to use for the sequence (use the most common one)
-            var pathTypeCounts = wayPoints.GroupBy(wp => wp.PathType)
+            // Determine the Type to use for the sequence (use the most common one)
+            var typeCounts = wayPoints.GroupBy(wp => wp.Type)
                                          .OrderByDescending(g => g.Count())
                                          .ToList();
-            var pathType = pathTypeCounts.FirstOrDefault()?.Key ?? PathType.Linear;
+            var wpType = typeCounts.FirstOrDefault()?.Key ?? WayPointType.Linear;
 
             // Process waypoints to calculate paths
             var pointList = new List<Vector3>();
@@ -223,9 +226,9 @@ namespace TombEditor.Controls.Panel3D
                 pointList.Add(wp.Position + wp.Room.WorldPos);
             }
 
-            // Calculate the spline path based on PathType
+            // Calculate the spline path based on Type
             List<Vector3> interpolatedPoints;
-            if (pathType == PathType.Linear)
+            if (wpType == WayPointType.Linear)
             {
                 // For linear, just use the points as-is
                 interpolatedPoints = pointList;

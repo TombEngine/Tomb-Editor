@@ -35,8 +35,7 @@ namespace TombEditor.Forms
             this.lblName = new DarkUI.Controls.DarkLabel();
             this.lblSequence = new DarkUI.Controls.DarkLabel();
             this.lblNumber = new DarkUI.Controls.DarkLabel();
-            this.lblPathType = new DarkUI.Controls.DarkLabel();
-            this.lblShape = new DarkUI.Controls.DarkLabel();
+            this.lblType = new DarkUI.Controls.DarkLabel();
             this.lblRadius1 = new DarkUI.Controls.DarkLabel();
             this.lblRadius2 = new DarkUI.Controls.DarkLabel();
             this.lblRotationX = new DarkUI.Controls.DarkLabel();
@@ -45,8 +44,7 @@ namespace TombEditor.Forms
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.numSequence = new DarkUI.Controls.DarkNumericUpDown();
             this.numNumber = new DarkUI.Controls.DarkNumericUpDown();
-            this.cmbPathType = new DarkUI.Controls.DarkComboBox();
-            this.cmbShape = new DarkUI.Controls.DarkComboBox();
+            this.cmbType = new DarkUI.Controls.DarkComboBox();
             this.numRadius1 = new DarkUI.Controls.DarkNumericUpDown();
             this.numRadius2 = new DarkUI.Controls.DarkNumericUpDown();
             this.numRotationX = new DarkUI.Controls.DarkNumericUpDown();
@@ -116,74 +114,64 @@ namespace TombEditor.Forms
             this.lblNumber.TabIndex = 4;
             this.lblNumber.Text = "Number:";
             // 
-            // lblPathType
+            // lblType
             // 
-            this.lblPathType.AutoSize = true;
-            this.lblPathType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.lblPathType.Location = new System.Drawing.Point(12, 93);
-            this.lblPathType.Name = "lblPathType";
-            this.lblPathType.Size = new System.Drawing.Size(59, 13);
-            this.lblPathType.TabIndex = 6;
-            this.lblPathType.Text = "Path Type:";
-            // 
-            // lblShape
-            // 
-            this.lblShape.AutoSize = true;
-            this.lblShape.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.lblShape.Location = new System.Drawing.Point(12, 119);
-            this.lblShape.Name = "lblShape";
-            this.lblShape.Size = new System.Drawing.Size(42, 13);
-            this.lblShape.TabIndex = 8;
-            this.lblShape.Text = "Shape:";
+            this.lblType.AutoSize = true;
+            this.lblType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.lblType.Location = new System.Drawing.Point(12, 93);
+            this.lblType.Name = "lblType";
+            this.lblType.Size = new System.Drawing.Size(34, 13);
+            this.lblType.TabIndex = 6;
+            this.lblType.Text = "Type:";
             // 
             // lblRadius1
             // 
             this.lblRadius1.AutoSize = true;
             this.lblRadius1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.lblRadius1.Location = new System.Drawing.Point(12, 145);
+            this.lblRadius1.Location = new System.Drawing.Point(12, 119);
             this.lblRadius1.Name = "lblRadius1";
             this.lblRadius1.Size = new System.Drawing.Size(52, 13);
-            this.lblRadius1.TabIndex = 10;
+            this.lblRadius1.TabIndex = 8;
             this.lblRadius1.Text = "Radius 1:";
             // 
             // lblRadius2
             // 
             this.lblRadius2.AutoSize = true;
             this.lblRadius2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.lblRadius2.Location = new System.Drawing.Point(12, 171);
+            this.lblRadius2.Location = new System.Drawing.Point(12, 145);
             this.lblRadius2.Name = "lblRadius2";
             this.lblRadius2.Size = new System.Drawing.Size(52, 13);
-            this.lblRadius2.TabIndex = 12;
+            this.lblRadius2.TabIndex = 10;
             this.lblRadius2.Text = "Radius 2:";
             // 
             // lblRotationX
             // 
             this.lblRotationX.AutoSize = true;
             this.lblRotationX.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.lblRotationX.Location = new System.Drawing.Point(12, 197);
+            this.lblRotationX.Location = new System.Drawing.Point(12, 171);
             this.lblRotationX.Name = "lblRotationX";
             this.lblRotationX.Size = new System.Drawing.Size(64, 13);
-            this.lblRotationX.TabIndex = 14;
+            this.lblRotationX.TabIndex = 12;
             this.lblRotationX.Text = "Rotation X:";
             // 
             // lblRotationY
             // 
             this.lblRotationY.AutoSize = true;
             this.lblRotationY.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.lblRotationY.Location = new System.Drawing.Point(12, 223);
+            this.lblRotationY.Location = new System.Drawing.Point(12, 197);
             this.lblRotationY.Name = "lblRotationY";
             this.lblRotationY.Size = new System.Drawing.Size(63, 13);
-            this.lblRotationY.TabIndex = 16;
+            this.lblRotationY.TabIndex = 14;
             this.lblRotationY.Text = "Rotation Y:";
             // 
             // lblRoll
             // 
             this.lblRoll.AutoSize = true;
             this.lblRoll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.lblRoll.Location = new System.Drawing.Point(12, 249);
+            this.lblRoll.Location = new System.Drawing.Point(12, 223);
             this.lblRoll.Name = "lblRoll";
             this.lblRoll.Size = new System.Drawing.Size(30, 13);
-            this.lblRoll.TabIndex = 18;
+            this.lblRoll.TabIndex = 16;
             this.lblRoll.Text = "Roll:";
             // 
             // txtName
@@ -229,29 +217,22 @@ namespace TombEditor.Forms
             this.numNumber.Size = new System.Drawing.Size(237, 22);
             this.numNumber.TabIndex = 5;
             // 
-            // cmbPathType
+            // cmbType
             // 
-            this.cmbPathType.FormattingEnabled = true;
-            this.cmbPathType.Items.AddRange(new object[] {
-            "Linear",
-            "Curved",
-            "Bezier"});
-            this.cmbPathType.Location = new System.Drawing.Point(82, 90);
-            this.cmbPathType.Name = "cmbPathType";
-            this.cmbPathType.Size = new System.Drawing.Size(237, 23);
-            this.cmbPathType.TabIndex = 7;
-            // 
-            // cmbShape
-            // 
-            this.cmbShape.FormattingEnabled = true;
-            this.cmbShape.Items.AddRange(new object[] {
+            this.cmbType.FormattingEnabled = true;
+            this.cmbType.Items.AddRange(new object[] {
+            "Point",
             "Circle",
-            "Ellipse"});
-            this.cmbShape.Location = new System.Drawing.Point(82, 116);
-            this.cmbShape.Name = "cmbShape";
-            this.cmbShape.Size = new System.Drawing.Size(237, 23);
-            this.cmbShape.TabIndex = 9;
-            this.cmbShape.SelectedIndexChanged += new System.EventHandler(this.cmbShape_SelectedIndexChanged);
+            "Ellipse",
+            "Square",
+            "Rectangle",
+            "Linear",
+            "Bezier"});
+            this.cmbType.Location = new System.Drawing.Point(82, 90);
+            this.cmbType.Name = "cmbType";
+            this.cmbType.Size = new System.Drawing.Size(237, 23);
+            this.cmbType.TabIndex = 7;
+            this.cmbType.SelectedIndexChanged += new System.EventHandler(this.cmbType_SelectedIndexChanged);
             // 
             // numRadius1
             // 
@@ -261,7 +242,7 @@ namespace TombEditor.Forms
             0,
             0,
             0});
-            this.numRadius1.Location = new System.Drawing.Point(82, 142);
+            this.numRadius1.Location = new System.Drawing.Point(82, 116);
             this.numRadius1.LoopValues = false;
             this.numRadius1.Maximum = new decimal(new int[] {
             100000,
@@ -275,7 +256,7 @@ namespace TombEditor.Forms
             0});
             this.numRadius1.Name = "numRadius1";
             this.numRadius1.Size = new System.Drawing.Size(237, 22);
-            this.numRadius1.TabIndex = 11;
+            this.numRadius1.TabIndex = 9;
             this.numRadius1.Value = new decimal(new int[] {
             1024,
             0,
@@ -290,7 +271,7 @@ namespace TombEditor.Forms
             0,
             0,
             0});
-            this.numRadius2.Location = new System.Drawing.Point(82, 168);
+            this.numRadius2.Location = new System.Drawing.Point(82, 142);
             this.numRadius2.LoopValues = false;
             this.numRadius2.Maximum = new decimal(new int[] {
             100000,
@@ -304,7 +285,7 @@ namespace TombEditor.Forms
             0});
             this.numRadius2.Name = "numRadius2";
             this.numRadius2.Size = new System.Drawing.Size(237, 22);
-            this.numRadius2.TabIndex = 13;
+            this.numRadius2.TabIndex = 11;
             this.numRadius2.Value = new decimal(new int[] {
             1024,
             0,
@@ -319,7 +300,7 @@ namespace TombEditor.Forms
             0,
             0,
             65536});
-            this.numRotationX.Location = new System.Drawing.Point(82, 194);
+            this.numRotationX.Location = new System.Drawing.Point(82, 168);
             this.numRotationX.LoopValues = false;
             this.numRotationX.Maximum = new decimal(new int[] {
             90,
@@ -333,7 +314,7 @@ namespace TombEditor.Forms
             -2147483648});
             this.numRotationX.Name = "numRotationX";
             this.numRotationX.Size = new System.Drawing.Size(237, 22);
-            this.numRotationX.TabIndex = 15;
+            this.numRotationX.TabIndex = 13;
             // 
             // numRotationY
             // 
@@ -385,8 +366,7 @@ namespace TombEditor.Forms
             this.Controls.Add(this.numRotationX);
             this.Controls.Add(this.numRadius2);
             this.Controls.Add(this.numRadius1);
-            this.Controls.Add(this.cmbShape);
-            this.Controls.Add(this.cmbPathType);
+            this.Controls.Add(this.cmbType);
             this.Controls.Add(this.numNumber);
             this.Controls.Add(this.numSequence);
             this.Controls.Add(this.txtName);
@@ -395,8 +375,7 @@ namespace TombEditor.Forms
             this.Controls.Add(this.lblRotationX);
             this.Controls.Add(this.lblRadius2);
             this.Controls.Add(this.lblRadius1);
-            this.Controls.Add(this.lblShape);
-            this.Controls.Add(this.lblPathType);
+            this.Controls.Add(this.lblType);
             this.Controls.Add(this.lblNumber);
             this.Controls.Add(this.lblSequence);
             this.Controls.Add(this.lblName);
@@ -430,8 +409,7 @@ namespace TombEditor.Forms
         private DarkLabel lblName;
         private DarkLabel lblSequence;
         private DarkLabel lblNumber;
-        private DarkLabel lblPathType;
-        private DarkLabel lblShape;
+        private DarkLabel lblType;
         private DarkLabel lblRadius1;
         private DarkLabel lblRadius2;
         private DarkLabel lblRotationX;
@@ -440,8 +418,7 @@ namespace TombEditor.Forms
         private DarkTextBox txtName;
         private DarkNumericUpDown numSequence;
         private DarkNumericUpDown numNumber;
-        private DarkComboBox cmbPathType;
-        private DarkComboBox cmbShape;
+        private DarkComboBox cmbType;
         private DarkNumericUpDown numRadius1;
         private DarkNumericUpDown numRadius2;
         private DarkNumericUpDown numRotationX;

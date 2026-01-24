@@ -28,39 +28,62 @@ namespace TombEditor.Forms
 
         private void FormWayPoint_Load(object sender, EventArgs e)
         {
-            txtName.Text = _wayPoint.Name;
+            txtName.Text = _wayPoint.BaseName;
             numSequence.Value = _wayPoint.Sequence;
             numNumber.Value = _wayPoint.Number;
-            cmbPathType.SelectedIndex = (int)_wayPoint.PathType;
-            cmbShape.SelectedIndex = (int)_wayPoint.Shape;
+            cmbType.SelectedIndex = (int)_wayPoint.Type;
             numRadius1.Value = (decimal)_wayPoint.Radius1;
             numRadius2.Value = (decimal)_wayPoint.Radius2;
             numRotationX.Value = (decimal)_wayPoint.RotationX;
             numRotationY.Value = (decimal)_wayPoint.RotationY;
             numRoll.Value = (decimal)_wayPoint.Roll;
 
-            UpdateRadiusVisibility();
+            UpdateFieldVisibility();
         }
 
-        private void cmbShape_SelectedIndexChanged(object sender, EventArgs e)
+        private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateRadiusVisibility();
+            UpdateFieldVisibility();
         }
 
-        private void UpdateRadiusVisibility()
+        private void UpdateFieldVisibility()
         {
-            bool isEllipse = cmbShape.SelectedIndex == (int)WayPointShape.Ellipse;
-            lblRadius2.Visible = isEllipse;
-            numRadius2.Visible = isEllipse;
+            WayPointType type = (WayPointType)cmbType.SelectedIndex;
+            
+            // Check if this is a singular type
+            bool isSingular = type == WayPointType.Point ||
+                             type == WayPointType.Circle ||
+                             type == WayPointType.Ellipse ||
+                             type == WayPointType.Square ||
+                             type == WayPointType.Rectangle;
+
+            // Number field only for multi-point types
+            lblNumber.Visible = !isSingular;
+            numNumber.Visible = !isSingular;
+
+            // Radius fields only for shape types
+            bool requiresRadius = type == WayPointType.Circle ||
+                                 type == WayPointType.Ellipse ||
+                                 type == WayPointType.Square ||
+                                 type == WayPointType.Rectangle;
+
+            lblRadius1.Visible = requiresRadius;
+            numRadius1.Visible = requiresRadius;
+
+            // Radius2 only for ellipse and rectangle
+            bool requiresTwoRadii = type == WayPointType.Ellipse ||
+                                    type == WayPointType.Rectangle;
+
+            lblRadius2.Visible = requiresTwoRadii;
+            numRadius2.Visible = requiresTwoRadii;
         }
 
         private void butOK_Click(object sender, EventArgs e)
         {
-            _wayPoint.Name = txtName.Text;
+            _wayPoint.BaseName = txtName.Text;
             _wayPoint.Sequence = (ushort)numSequence.Value;
             _wayPoint.Number = (ushort)numNumber.Value;
-            _wayPoint.PathType = (PathType)cmbPathType.SelectedIndex;
-            _wayPoint.Shape = (WayPointShape)cmbShape.SelectedIndex;
+            _wayPoint.Type = (WayPointType)cmbType.SelectedIndex;
             _wayPoint.Radius1 = (float)numRadius1.Value;
             _wayPoint.Radius2 = (float)numRadius2.Value;
             _wayPoint.RotationX = (float)numRotationX.Value;

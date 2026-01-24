@@ -1409,11 +1409,10 @@ namespace TombLib.LevelData.IO
                     instance.SetArbitaryRotationsYX(chunkIO.Raw.ReadSingle(), chunkIO.Raw.ReadSingle());
                     instance.Roll = chunkIO.Raw.ReadSingle();
                     instance.ScriptId = ReadOptionalLEB128Int(chunkIO.Raw);
-                    instance.Name = chunkIO.Raw.ReadStringUTF8();
+                    instance.BaseName = chunkIO.Raw.ReadStringUTF8();
                     instance.Number = LEB128.ReadUShort(chunkIO.Raw);
                     instance.Sequence = LEB128.ReadUShort(chunkIO.Raw);
-                    instance.PathType = (PathType)LEB128.ReadInt(chunkIO.Raw);
-                    instance.Shape = (WayPointShape)LEB128.ReadInt(chunkIO.Raw);
+                    instance.Type = (WayPointType)LEB128.ReadInt(chunkIO.Raw);
                     instance.Radius1 = chunkIO.Raw.ReadSingle();
                     instance.Radius2 = chunkIO.Raw.ReadSingle();
                     addObject(instance);

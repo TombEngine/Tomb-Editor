@@ -597,8 +597,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public float Roll;
         public ushort Sequence;
         public ushort Number;
-        public int PathType;
-        public int Shape;
+        public int Type;
         public float Radius1;
         public float Radius2;
         public string Name;
