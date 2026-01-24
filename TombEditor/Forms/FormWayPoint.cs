@@ -165,34 +165,16 @@ namespace TombEditor.Forms
             _wayPoint.RotationY = (float)numRotationY.Value;
             _wayPoint.Roll = (float)numRoll.Value;
 
-            // Batch type update: if type changed, update all waypoints with the same name
+            // Batch type update: if type changed, update all waypoints with the same original base name
             if (oldType != newType && _editor?.Level != null)
             {
                 foreach (var room in _editor.Level.ExistingRooms)
                 {
                     foreach (var obj in room.Objects.OfType<WayPointInstance>())
                     {
-                        if (obj != _wayPoint)
+                        if (obj != _wayPoint && obj.BaseName == oldBaseName)
                         {
-                            // Extract base name
-                            string objBaseName = obj.Name;
-                            if (!obj.IsSingularType())
-                            {
-                                int lastUnderscore = objBaseName.LastIndexOf('_');
-                                if (lastUnderscore >= 0)
-                                {
-                                    string suffix = objBaseName.Substring(lastUnderscore + 1);
-                                    if (ushort.TryParse(suffix, out _))
-                                    {
-                                        objBaseName = objBaseName.Substring(0, lastUnderscore);
-                                    }
-                                }
-                            }
-                            
-                            if (objBaseName == newName)
-                            {
-                                obj.Type = newType;
-                            }
+                            obj.Type = newType;
                         }
                     }
                 }

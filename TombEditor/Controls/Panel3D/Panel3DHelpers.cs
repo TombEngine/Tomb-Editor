@@ -191,7 +191,7 @@ namespace TombEditor.Controls.Panel3D
             foreach (var room in _editor.Level.ExistingRooms)
                 foreach (var instance in room.Objects.OfType<WayPointInstance>())
                 {
-                    if (instance.Name == name)
+                    if (instance.BaseName == name)
                         wayPoints.Add(instance);
                 }
 
