@@ -20,6 +20,12 @@ namespace TombLib.LevelData
         private ushort _number;
         private WayPointType _type = WayPointType.Point;
 
+        // Public property to access the base name (without number suffix)
+        public string BaseName
+        {
+            get { return _name; }
+        }
+
         public string Name
         {
             get 
@@ -57,19 +63,32 @@ namespace TombLib.LevelData
                 {
                     _name = "";
                 }
+                
+                // Update LuaName to match Name
+                LuaName = Name;
             }
         }
 
         public ushort Number
         {
             get { return _number; }
-            set { _number = value; }
+            set 
+            { 
+                _number = value;
+                // Update LuaName when number changes
+                LuaName = Name;
+            }
         }
 
         public WayPointType Type 
         { 
             get { return _type; }
-            set { _type = value; }
+            set 
+            { 
+                _type = value;
+                // Update LuaName when type changes (affects Name format)
+                LuaName = Name;
+            }
         }
 
         public float Radius1 { get; set; } = 1024.0f; // Default radius in units
@@ -130,6 +149,9 @@ namespace TombLib.LevelData
                 RotationX = prevWayPoint.RotationX;
                 RotationY = prevWayPoint.RotationY;
                 Roll = prevWayPoint.Roll;
+                
+                // Set LuaName to match Name
+                LuaName = Name;
             }
         }
 

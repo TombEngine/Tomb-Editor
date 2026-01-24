@@ -1172,10 +1172,10 @@ namespace TombEditor.Controls.Panel3D
 
                             if (_editor.SelectedObject == instance)
                             {
-                                // Add text message
+                                // Add text message with format: Name (Number) for multi-point, just Name for singular
                                 string label = instance.IsSingularType() ? 
-                                    $"WayPoint ({instance.Name}) " : 
-                                    $"WayPoint ({instance.Name}:{instance.Number}) ";
+                                    $"{instance.BaseName} " : 
+                                    $"{instance.BaseName} ({instance.Number}) ";
                                 
                                 textToDraw.Add(CreateTextTagForObject(
                                     instance.RotationPositionMatrix * _viewProjection,
