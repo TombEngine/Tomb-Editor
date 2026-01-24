@@ -56,6 +56,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
         private readonly List<TombEngineCamera> _cameras = new List<TombEngineCamera>();
         private readonly List<TombEngineSink> _sinks = new List<TombEngineSink>();
         private readonly List<tr4_flyby_camera> _flyByCameras = new List<tr4_flyby_camera>();
+        private readonly List<TombEngineWayPoint> _wayPoints = new List<TombEngineWayPoint>();
         private readonly List<TombEngineSoundSource> _soundSources = new List<TombEngineSoundSource>();
         private List<TombEngineBox> _boxes = new List<TombEngineBox>();
         private List<TombEngineOverlap> _overlaps = new List<TombEngineOverlap>();
@@ -74,6 +75,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
         private Dictionary<MoveableInstance, int> _aiObjectsTable;
         private Dictionary<SoundSourceInstance, int> _soundSourcesTable;
         private Dictionary<FlybyCameraInstance, int> _flybyTable;
+        private Dictionary<WayPointInstance, int> _wayPointTable;
 
         // Collected game limits
         private Dictionary<Limit, int> _limits;
@@ -228,10 +230,12 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 int sinkID = 0;
                 int camID = 0;
                 int flybyID = 0;
+                int wayPointID = 0;
 
                 _cameraTable = new Dictionary<CameraInstance, int>(new ReferenceEqualityComparer<CameraInstance>());
                 _sinkTable = new Dictionary<SinkInstance, int>(new ReferenceEqualityComparer<SinkInstance>());
                 _flybyTable = new Dictionary<FlybyCameraInstance, int>(new ReferenceEqualityComparer<FlybyCameraInstance>());
+                _wayPointTable = new Dictionary<WayPointInstance, int>(new ReferenceEqualityComparer<WayPointInstance>());
 
                 foreach (var room in _level.ExistingRooms)
                 {
@@ -241,6 +245,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         _flybyTable.Add(obj, flybyID++);
                     foreach (var obj in room.Objects.OfType<SinkInstance>())
                         _sinkTable.Add(obj, sinkID++);
+                    foreach (var obj in room.Objects.OfType<WayPointInstance>())
+                        _wayPointTable.Add(obj, wayPointID++);
                 }
             }
 
@@ -332,8 +338,53 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 lastIndex = _flyByCameras[i].Index;
             }
 
+            // Collect waypoints
+            foreach (var instance in _wayPointTable.Keys)
+            {
+                Vector3 position = instance.Room.WorldPos + instance.Position;
+                _wayPoints.Add(new TombEngineWayPoint
+                {
+                    X = (int)Math.Round(position.X),
+                    Y = (int)Math.Round(-position.Y),
+                    Z = (int)Math.Round(position.Z),
+                    Room = _roomRemapping[instance.Room],
+                    RotationX = instance.RotationX,
+                    RotationY = instance.RotationY,
+                    Roll = instance.Roll,
+                    Sequence = instance.Sequence,
+                    Number = instance.Number,
+                    PathType = (int)instance.PathType,
+                    Name = instance.Name,
+                    LuaName = instance.ScriptId.HasValue ? (_scriptingIdsTable.TryGetOrDefault(instance.ScriptId.Value, string.Empty) ?? string.Empty) : string.Empty
+                });
+            }
+            _wayPoints.Sort((x, y) =>
+            {
+                int seqCompare = x.Sequence.CompareTo(y.Sequence);
+                if (seqCompare != 0) return seqCompare;
+                return x.Number.CompareTo(y.Number);
+            });
+
+            // Check waypoint duplicates
+            lastSeq   = -1;
+            lastIndex = -1;
+
+            for (int i = 0; i < _wayPoints.Count; i++)
+            {
+                if(_wayPoints[i].Sequence != lastSeq)
+                {
+                    lastSeq = _wayPoints[i].Sequence;
+                    lastIndex = -1;
+                }
+
+                if (_wayPoints[i].Number == lastIndex && _wayPoints[i].Sequence == lastSeq)
+                    _progressReporter.ReportWarn("Warning: waypoint sequence " + _wayPoints[i].Sequence + " has duplicated waypoint with ID " + lastIndex);
+                lastIndex = _wayPoints[i].Number;
+            }
+
             ReportProgress(47, "    Number of cameras: " + _cameraTable.Count);
             ReportProgress(47, "    Number of flyby cameras: " + _flyByCameras.Count);
+            ReportProgress(47, "    Number of waypoints: " + _wayPointTable.Count);
             ReportProgress(47, "    Number of sinks: " + _sinkTable.Count);
         }
 

@@ -56,6 +56,7 @@ namespace TombEditor.Controls.ContextMenus
                 EditorActions.PlaceObject(targetRoom, targetSector, new FlybyCameraInstance(editor.SelectedObject));
             }));
 
+            if (editor.Level.IsTombEngine)
             Items.Add(new ToolStripMenuItem("Add waypoint", Properties.Resources.objects_movie_projector_16, (o, e) =>
             {
                 EditorActions.PlaceObject(targetRoom, targetSector, new WayPointInstance(editor.SelectedObject));

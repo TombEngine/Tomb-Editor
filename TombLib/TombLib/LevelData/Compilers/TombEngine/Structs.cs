@@ -586,6 +586,23 @@ namespace TombLib.LevelData.Compilers.TombEngine
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct TombEngineWayPoint
+    {
+        public int X;
+        public int Y;
+        public int Z;
+        public int Room;
+        public float RotationX;
+        public float RotationY;
+        public float Roll;
+        public ushort Sequence;
+        public ushort Number;
+        public int PathType;
+        public string Name;
+        public string LuaName;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TombEngineSoundSource
     {
         public int X;

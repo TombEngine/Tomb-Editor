@@ -779,6 +779,8 @@ namespace TombEditor
 
             AddCommand("AddWayPoint", "Add waypoint", CommandType.Objects, delegate ()
             {
+                if (!VersionCheck(_editor.Level.IsTombEngine, "WayPoint"))
+                    return;
                 _editor.Action = new EditorActionPlace(false, (l, r) => new WayPointInstance());
             });
 
