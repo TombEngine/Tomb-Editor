@@ -183,7 +183,7 @@ namespace TombEditor.Controls.Panel3D
             return true;
         }
 
-        private bool AddWayPointPath(int sequence)
+        private bool AddWayPointPath(string name)
         {
             // Collect all waypoints
             var wayPoints = new List<WayPointInstance>();
@@ -191,7 +191,7 @@ namespace TombEditor.Controls.Panel3D
             foreach (var room in _editor.Level.ExistingRooms)
                 foreach (var instance in room.Objects.OfType<WayPointInstance>())
                 {
-                    if (instance.Sequence == sequence)
+                    if (instance.Name == name)
                         wayPoints.Add(instance);
                 }
 

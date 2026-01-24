@@ -198,8 +198,8 @@ namespace TombEditor.Controls.Panel3D
             }
 
             // Add the path of waypoints
-            if (_editor.SelectedObject is WayPointInstance &&
-                AddWayPointPath(((WayPointInstance)_editor.SelectedObject).Sequence))
+            if (_editor.SelectedObject is WayPointInstance waypoint &&
+                AddWayPointPath(waypoint.Name))
             {
                 _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullNone);
                 _legacyDevice.SetVertexBuffer(_wayPointPathVertexBuffer);
@@ -1158,8 +1158,8 @@ namespace TombEditor.Controls.Panel3D
 
                         var color = new Vector4(1.0f, 0.5f, 0.0f, 1.0f); // Orange color for waypoints
 
-                        if (_editor.SelectedObject is WayPointInstance && (_editor.SelectedObject as WayPointInstance).Sequence == instance.Sequence)
-                            color = MathC.GetRandomColorByIndex(instance.Sequence, 32, 0.7f);
+                        if (_editor.SelectedObject is WayPointInstance selectedWaypoint && selectedWaypoint.Name == instance.Name)
+                            color = MathC.GetRandomColorByIndex(instance.Name.GetHashCode(), 32, 0.7f);
 
                         if (_highlightedObjects.Contains(instance))
                         {

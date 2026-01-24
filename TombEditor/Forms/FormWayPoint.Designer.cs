@@ -87,7 +87,7 @@ namespace TombEditor.Forms
             this.lblName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.lblName.Location = new System.Drawing.Point(12, 15);
             this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Point(39, 13);
+            this.lblName.Size = new System.Drawing.Size(39, 13);
             this.lblName.TabIndex = 0;
             this.lblName.Text = "Name:";
             // 
