@@ -679,6 +679,21 @@ namespace TombLib.LevelData.IO
                             LEB128.Write(chunkIO.Raw, instance.Sequence);
                             LEB128.Write(chunkIO.Raw, instance.Timer);
                         });
+                    else if (o is WayPointInstance)
+                        chunkIO.WriteChunk(Prj2Chunks.ObjectWayPoint, () =>
+                        {
+                            var instance = (WayPointInstance)o;
+                            LEB128.Write(chunkIO.Raw, objectInstanceLookup.TryGetOrDefault(instance, -1));
+                            chunkIO.Raw.Write(instance.Position);
+                            chunkIO.Raw.Write(instance.RotationY);
+                            chunkIO.Raw.Write(instance.RotationX);
+                            chunkIO.Raw.Write(instance.Roll);
+                            LEB128.Write(chunkIO.Raw, ((long?)instance.ScriptId ?? -1));
+                            chunkIO.Raw.WriteStringUTF8(instance.Name);
+                            LEB128.Write(chunkIO.Raw, instance.Number);
+                            LEB128.Write(chunkIO.Raw, instance.Sequence);
+                            LEB128.Write(chunkIO.Raw, (int)instance.PathType);
+                        });
                     else if (o is MemoInstance)
                         using (var chunk = chunkIO.WriteChunk(Prj2Chunks.ObjectMemo2, LEB128.MaximumSize3Byte))
                         {
