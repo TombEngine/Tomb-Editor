@@ -1008,6 +1008,72 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                 newRoom.Lights.Add(newLight);
             }
+            // Process Move and Glow lights for static vertex flags
+            ApplyVertexEffectsFromSpecialLights(room, newRoom);
+        }
+
+        private void ApplyVertexEffectsFromSpecialLights(Room room, TombEngineRoom newRoom)
+        {
+            var moveLights = room.Objects.OfType<LightInstance>()
+                .Where(l => l.Type == LightType.Move && l.Enabled).ToList();
+
+            var glowLights = room.Objects.OfType<LightInstance>()
+                .Where(l => l.Type == LightType.Glow && l.Enabled).ToList();
+
+            if (moveLights.Count == 0 && glowLights.Count == 0)
+                return;
+
+            // Iterate through all vertices in the room
+            for (int i = 0; i < newRoom.Vertices.Count; i++)
+            {
+                var vertex = newRoom.Vertices[i];
+                var worldVertex = new Vector3(vertex.Position.X, -vertex.Position.Y, vertex.Position.Z);
+
+                // Apply Move effect
+                foreach (var moveLight in moveLights)
+                {
+                    float distance = Vector3.Distance(worldVertex, moveLight.Position);
+                    float intensity = CalculateVertexIntensity(distance, moveLight.InnerRange, moveLight.OuterRange);
+
+                    if (intensity > 0)
+                    {
+                        // Apply MOVE effect using the vertex.Move property
+                        vertex.Move = Math.Max(vertex.Move, intensity * (moveLight.Intensity));
+                    }
+                }
+
+                // Apply Glow effect
+                foreach (var glowLight in glowLights)
+                {
+                    float distance = Vector3.Distance(worldVertex, glowLight.Position);
+                    float intensity = CalculateVertexIntensity(distance, glowLight.InnerRange, glowLight.OuterRange);
+
+                    if (intensity > 0)
+                    {
+                        // Apply GLOW effect using the vertex.Glow property
+                        vertex.Glow = Math.Max(vertex.Glow, intensity * (glowLight.Intensity));
+                    }
+                }
+
+                newRoom.Vertices[i] = vertex;
+            }
+        }
+
+        private float CalculateVertexIntensity(float distance, float innerRadius, float outerRadius)
+        {
+            // Full intensity within inner radius
+            if (distance <= innerRadius * Level.SectorSizeUnit)
+                return 1.0f;
+
+            // Linear falloff from outer to inner radius
+            float scaledOuter = outerRadius * Level.SectorSizeUnit;
+
+            if (distance >= scaledOuter)
+                return 0.0f;
+
+            // Linear interpolation: intensity goes from 1.0 at innerRadius to 0.0 at outerRadius
+            float intensity = (scaledOuter - distance) / (scaledOuter - (innerRadius * Level.SectorSizeUnit));
+            return Math.Max(0.0f, Math.Min(1.0f, intensity));
         }
 
         private void ConvertSectors(Room room, TombEngineRoom newRoom)

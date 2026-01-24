@@ -474,6 +474,10 @@ namespace TombEditor.Controls.Panel3D
                     color = new Vector4(1.0f, 1.0f, 0.25f, 1.0f);
                 if (light.Type == LightType.Sun)
                     color = new Vector4(1.0f, 0.5f, 0.0f, 1.0f);
+                if (light.Type == LightType.Glow)
+                    color = new Vector4(1.0f, 1.0f, 0.25f, 1.0f);
+                if (light.Type == LightType.Move)
+                    color = new Vector4(1.0f, 1.0f, 0.25f, 1.0f);
                 if (_highlightedObjects.Contains(light))
                     color = _editor.Configuration.UI_ColorScheme.ColorSelection;
 
@@ -486,7 +490,8 @@ namespace TombEditor.Controls.Panel3D
             {
                 var light = (LightInstance)_editor.SelectedObject;
                 if (ShowLightMeshes)
-                    if (light.Type == LightType.Point || light.Type == LightType.Shadow || light.Type == LightType.FogBulb)
+                    if (light.Type == LightType.Point || light.Type == LightType.Shadow || light.Type == LightType.FogBulb ||
+                    light.Type == LightType.Move || light.Type == LightType.Glow)
                     {
                         _legacyDevice.SetVertexBuffer(_sphere.VertexBuffer);
                         _legacyDevice.SetVertexInputLayout(_sphere.InputLayout);
@@ -494,7 +499,7 @@ namespace TombEditor.Controls.Panel3D
 
                         Matrix4x4 model;
 
-                        if (light.Type == LightType.Point || light.Type == LightType.Shadow)
+                        if (light.Type == LightType.Point || light.Type == LightType.Shadow || light.Type == LightType.Move || light.Type == LightType.Glow)
                         {
                             model = Matrix4x4.CreateScale(light.InnerRange * 2.0f) * light.ObjectMatrix;
                             effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection).ToSharpDX());

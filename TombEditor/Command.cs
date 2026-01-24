@@ -1896,6 +1896,28 @@ namespace TombEditor
                 EditorActions.PlaceLight(LightType.FogBulb);
             });
 
+            AddCommand("AddMoveLight", "Add move light", CommandType.Lighting, delegate (CommandArgs args)
+            {
+                if (args.Editor.Level.Settings.GameVersion != TRVersion.Game.TombEngine)
+                {
+                    args.Editor.SendMessage("Move lights are only available for TombEngine format.", PopupType.Warning);
+                    return;
+                }
+
+                EditorActions.PlaceLight(LightType.Move);
+            });
+
+            AddCommand("AddGlowLight", "Add glow light", CommandType.Lighting, delegate (CommandArgs args)
+            {
+                if (args.Editor.Level.Settings.GameVersion != TRVersion.Game.TombEngine)
+                {
+                    args.Editor.SendMessage("Glow lights are only available for TombEngine format.", PopupType.Warning);
+                    return;
+                }
+
+                EditorActions.PlaceLight(LightType.Glow);
+            });
+
             AddCommand("EditObjectTransform", "Edit object transform", CommandType.Objects, delegate (CommandArgs args)
             {
                 if (args.Editor.SelectedObject is not PositionBasedObjectInstance)
