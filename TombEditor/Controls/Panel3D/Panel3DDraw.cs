@@ -1486,7 +1486,7 @@ namespace TombEditor.Controls.Panel3D
             
             // Number of segments for circles/ellipses
             int segments = 32;
-            var vertices = new List<Vector3>();
+            var points = new List<Vector3>();
             
             switch (instance.Type)
             {
@@ -1498,7 +1498,7 @@ namespace TombEditor.Controls.Panel3D
                         float x = (float)Math.Cos(angle) * instance.Radius1;
                         float z = (float)Math.Sin(angle) * instance.Radius1;
                         Vector3 point = Vector3.Transform(new Vector3(x, 0, z), rotation) + position;
-                        vertices.Add(point);
+                        points.Add(point);
                     }
                     break;
                     
@@ -1510,7 +1510,7 @@ namespace TombEditor.Controls.Panel3D
                         float x = (float)Math.Cos(angle) * instance.Radius1;
                         float z = (float)Math.Sin(angle) * instance.Radius2;
                         Vector3 point = Vector3.Transform(new Vector3(x, 0, z), rotation) + position;
-                        vertices.Add(point);
+                        points.Add(point);
                     }
                     break;
                     
@@ -1528,7 +1528,7 @@ namespace TombEditor.Controls.Panel3D
                         };
                         foreach (var corner in corners)
                         {
-                            vertices.Add(Vector3.Transform(corner, rotation) + position);
+                            points.Add(Vector3.Transform(corner, rotation) + position);
                         }
                     }
                     break;
@@ -1548,18 +1548,62 @@ namespace TombEditor.Controls.Panel3D
                         };
                         foreach (var corner in corners)
                         {
-                            vertices.Add(Vector3.Transform(corner, rotation) + position);
+                            points.Add(Vector3.Transform(corner, rotation) + position);
                         }
                     }
                     break;
             }
             
-            // Draw the shape using line rendering
-            if (vertices.Count > 1)
+            // Convert points to line vertices using the same approach as flyby paths
+            if (points.Count > 1)
             {
-                for (int i = 0; i < vertices.Count - 1; i++)
+                var vertices = new List<SolidVertex>();
+                float th = 4.0f; // Line thickness
+                
+                for (int i = 0; i < points.Count - 1; i++)
                 {
-                    AddLine(vertices[i], vertices[i + 1], color.To4());
+                    var linePoints = new List<Vector3[]>()
+                    {
+                        new Vector3[]
+                        {
+                            points[i],
+                            new Vector3(points[i].X + th, points[i].Y + th, points[i].Z + th),
+                            new Vector3(points[i].X - th, points[i].Y + th, points[i].Z + th)
+                        },
+                        new Vector3[]
+                        {
+                            points[i + 1],
+                            new Vector3(points[i + 1].X + th, points[i + 1].Y + th, points[i + 1].Z + th),
+                            new Vector3(points[i + 1].X - th, points[i + 1].Y + th, points[i + 1].Z + th)
+                        }
+                    };
+                    
+                    // Add triangles to form the line segment
+                    for (int k = 0; k < _flybyPathIndices.Count; k++)
+                    {
+                        var v = new SolidVertex();
+                        v.Position = linePoints[_flybyPathIndices[k].Y][_flybyPathIndices[k].X];
+                        v.Color = color;
+                        vertices.Add(v);
+                    }
+                }
+                
+                // Create temporary vertex buffer for this shape
+                if (vertices.Count > 0)
+                {
+                    var shapeBuffer = SharpDX.Toolkit.Graphics.Buffer.Vertex.New(_legacyDevice,
+                        vertices.ToArray(), SharpDX.Direct3D11.ResourceUsage.Dynamic);
+                    
+                    // Draw the shape
+                    var effect = _legacyDevice.Extensions.DeviceManager.___LegacyEffects["Solid"];
+                    effect.Parameters["ModelViewProjection"].SetValue(_viewProjection.ToSharpDX());
+                    effect.Parameters["Color"].SetValue(color);
+                    effect.Techniques[0].Passes[0].Apply();
+                    _legacyDevice.SetVertexBuffer(shapeBuffer);
+                    _legacyDevice.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, shapeBuffer));
+                    _legacyDevice.Draw(PrimitiveType.TriangleList, vertices.Count);
+                    
+                    shapeBuffer.Dispose();
                 }
             }
         }

@@ -170,9 +170,9 @@ namespace TombEditor.Forms
             this.lblRoll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.lblRoll.Location = new System.Drawing.Point(12, 223);
             this.lblRoll.Name = "lblRoll";
-            this.lblRoll.Size = new System.Drawing.Size(30, 13);
+            this.lblRoll.Size = new System.Drawing.Size(42, 13);
             this.lblRoll.TabIndex = 16;
-            this.lblRoll.Text = "Roll:";
+            this.lblRoll.Text = "Z Axis:";
             // 
             // txtName
             // 
@@ -324,7 +324,7 @@ namespace TombEditor.Forms
             0,
             0,
             65536});
-            this.numRotationY.Location = new System.Drawing.Point(82, 220);
+            this.numRotationY.Location = new System.Drawing.Point(82, 194);
             this.numRotationY.LoopValues = false;
             this.numRotationY.Maximum = new decimal(new int[] {
             360,
@@ -333,7 +333,7 @@ namespace TombEditor.Forms
             0});
             this.numRotationY.Name = "numRotationY";
             this.numRotationY.Size = new System.Drawing.Size(237, 22);
-            this.numRotationY.TabIndex = 11;
+            this.numRotationY.TabIndex = 15;
             // 
             // numRoll
             // 
@@ -343,7 +343,7 @@ namespace TombEditor.Forms
             0,
             0,
             65536});
-            this.numRoll.Location = new System.Drawing.Point(82, 168);
+            this.numRoll.Location = new System.Drawing.Point(82, 220);
             this.numRoll.LoopValues = false;
             this.numRoll.Maximum = new decimal(new int[] {
             360,
@@ -352,7 +352,7 @@ namespace TombEditor.Forms
             0});
             this.numRoll.Name = "numRoll";
             this.numRoll.Size = new System.Drawing.Size(237, 22);
-            this.numRoll.TabIndex = 13;
+            this.numRoll.TabIndex = 17;
             // 
             // FormWayPoint
             // 
@@ -360,7 +360,7 @@ namespace TombEditor.Forms
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.butCancel;
-            this.ClientSize = new System.Drawing.Size(331, 255);
+            this.ClientSize = new System.Drawing.Size(331, 333);
             this.Controls.Add(this.numRoll);
             this.Controls.Add(this.numRotationY);
             this.Controls.Add(this.numRotationX);

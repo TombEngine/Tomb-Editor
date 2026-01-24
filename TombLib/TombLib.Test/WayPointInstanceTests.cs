@@ -6,49 +6,60 @@ namespace TombLib.Test
     public class WayPointInstanceTests
     {
         [TestMethod]
-        public void WayPoint_AutoNaming_DefaultName()
+        public void WayPoint_DefaultType()
         {
             // Arrange & Act
             var wayPoint = new WayPointInstance();
 
             // Assert
-            Assert.AreEqual("WayPoint_0", wayPoint.Name, "Default WayPoint name should be 'WayPoint_0'");
+            Assert.AreEqual(WayPointType.Point, wayPoint.Type, "Default Type should be Point");
         }
 
         [TestMethod]
-        public void WayPoint_AutoNaming_CustomBaseName()
+        public void WayPoint_TypeCanBeSet()
         {
             // Arrange
             var wayPoint = new WayPointInstance();
 
             // Act
-            wayPoint.Name = "Camera";
-            wayPoint.Number = 0;
+            wayPoint.Type = WayPointType.Bezier;
 
             // Assert
-            Assert.AreEqual("Camera_0", wayPoint.Name, "Custom name should be 'Camera_0'");
+            Assert.AreEqual(WayPointType.Bezier, wayPoint.Type, "Type should be settable to Bezier");
         }
 
         [TestMethod]
-        public void WayPoint_AutoNaming_SequenceChange()
+        public void WayPoint_AutoNaming_SingularType()
         {
-            // Arrange
+            // Arrange & Act
             var wayPoint = new WayPointInstance();
-            wayPoint.Name = "MyPath";
+            wayPoint.Type = WayPointType.Circle;
+            wayPoint.BaseName = "Patrol";
 
-            // Act
+            // Assert
+            Assert.AreEqual("Patrol", wayPoint.Name, "Singular type should use base name only");
+        }
+
+        [TestMethod]
+        public void WayPoint_AutoNaming_MultiPointType()
+        {
+            // Arrange & Act
+            var wayPoint = new WayPointInstance();
+            wayPoint.Type = WayPointType.Linear;
+            wayPoint.BaseName = "Path";
             wayPoint.Number = 5;
 
             // Assert
-            Assert.AreEqual("MyPath_5", wayPoint.Name, "Name should update to 'MyPath_5' when number changes");
+            Assert.AreEqual("Path_5", wayPoint.Name, "Multi-point type should use BaseName_Number format");
         }
 
         [TestMethod]
-        public void WayPoint_AutoNaming_NumberChange()
+        public void WayPoint_AutoNaming_NumberChangeLinear()
         {
             // Arrange
             var wayPoint = new WayPointInstance();
-            wayPoint.Name = "Camera";
+            wayPoint.Type = WayPointType.Linear;
+            wayPoint.BaseName = "Camera";
             wayPoint.Number = 3;
 
             // Act
@@ -59,41 +70,64 @@ namespace TombLib.Test
         }
 
         [TestMethod]
-        public void WayPoint_AutoNaming_PreservesBaseName()
+        public void WayPoint_AutoNaming_TypeChangeToSingular()
         {
             // Arrange
             var wayPoint = new WayPointInstance();
-            wayPoint.Name = "PatrolPath";
-            wayPoint.Number = 0;
+            wayPoint.Type = WayPointType.Bezier;
+            wayPoint.BaseName = "Target";
+            wayPoint.Number = 3;
+            Assert.AreEqual("Target_3", wayPoint.Name, "Initially should be Target_3");
 
             // Act
-            wayPoint.Number = 10;
+            wayPoint.Type = WayPointType.Ellipse;
 
             // Assert
-            Assert.AreEqual("PatrolPath_10", wayPoint.Name, "Base name 'PatrolPath' should be preserved");
+            Assert.AreEqual("Target", wayPoint.Name, "After changing to singular type, name should be just 'Target'");
         }
 
         [TestMethod]
-        public void WayPoint_DefaultPathType()
+        public void WayPoint_RequiresRadius_Circle()
         {
             // Arrange & Act
             var wayPoint = new WayPointInstance();
+            wayPoint.Type = WayPointType.Circle;
 
             // Assert
-            Assert.AreEqual(PathType.Linear, wayPoint.PathType, "Default PathType should be Linear");
+            Assert.IsTrue(wayPoint.RequiresRadius(), "Circle should require radius");
         }
 
         [TestMethod]
-        public void WayPoint_PathTypeCanBeSet()
+        public void WayPoint_RequiresTwoRadii_Ellipse()
         {
-            // Arrange
+            // Arrange & Act
             var wayPoint = new WayPointInstance();
-
-            // Act
-            wayPoint.PathType = PathType.Bezier;
+            wayPoint.Type = WayPointType.Ellipse;
 
             // Assert
-            Assert.AreEqual(PathType.Bezier, wayPoint.PathType, "PathType should be settable to Bezier");
+            Assert.IsTrue(wayPoint.RequiresTwoRadii(), "Ellipse should require two radii");
+        }
+
+        [TestMethod]
+        public void WayPoint_IsSingularType_Point()
+        {
+            // Arrange & Act
+            var wayPoint = new WayPointInstance();
+            wayPoint.Type = WayPointType.Point;
+
+            // Assert
+            Assert.IsTrue(wayPoint.IsSingularType(), "Point should be a singular type");
+        }
+
+        [TestMethod]
+        public void WayPoint_IsSingularType_Linear()
+        {
+            // Arrange & Act
+            var wayPoint = new WayPointInstance();
+            wayPoint.Type = WayPointType.Linear;
+
+            // Assert
+            Assert.IsFalse(wayPoint.IsSingularType(), "Linear should not be a singular type");
         }
 
         [TestMethod]
