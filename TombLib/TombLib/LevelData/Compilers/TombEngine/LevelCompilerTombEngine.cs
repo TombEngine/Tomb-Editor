@@ -371,14 +371,14 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
             for (int i = 0; i < _wayPoints.Count; i++)
             {
-                if(_wayPoints[i].Sequence != lastSeq)
+                if (_wayPoints[i].Sequence != lastSeq)
                 {
                     lastSeq = _wayPoints[i].Sequence;
                     lastIndex = -1;
                 }
 
                 if (_wayPoints[i].Number == lastIndex && _wayPoints[i].Sequence == lastSeq)
-                    _progressReporter.ReportWarn("Warning: waypoint sequence " + _wayPoints[i].Sequence + " has duplicated waypoint with ID " + lastIndex);
+                    _progressReporter.ReportWarn($"Warning: waypoint sequence {_wayPoints[i].Sequence} has duplicated waypoint with ID {lastIndex}");
                 lastIndex = _wayPoints[i].Number;
             }
 
