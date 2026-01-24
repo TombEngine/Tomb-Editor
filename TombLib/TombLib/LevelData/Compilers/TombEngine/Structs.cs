@@ -595,7 +595,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public float RotationX;
         public float RotationY;
         public float Roll;
-        public ushort Sequence;
         public ushort Number;
         public int Type;
         public float Radius1;

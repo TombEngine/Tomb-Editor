@@ -689,9 +689,24 @@ namespace TombLib.LevelData.IO
                             chunkIO.Raw.Write(instance.RotationX);
                             chunkIO.Raw.Write(instance.Roll);
                             LEB128.Write(chunkIO.Raw, ((long?)instance.ScriptId ?? -1));
-                            chunkIO.Raw.WriteStringUTF8(instance.BaseName);
+                            
+                            // Extract base name from full name
+                            string baseName = instance.Name;
+                            if (!instance.IsSingularType())
+                            {
+                                int lastUnderscore = baseName.LastIndexOf('_');
+                                if (lastUnderscore >= 0)
+                                {
+                                    string suffix = baseName.Substring(lastUnderscore + 1);
+                                    if (ushort.TryParse(suffix, out _))
+                                    {
+                                        baseName = baseName.Substring(0, lastUnderscore);
+                                    }
+                                }
+                            }
+                            
+                            chunkIO.Raw.WriteStringUTF8(baseName);
                             LEB128.Write(chunkIO.Raw, instance.Number);
-                            LEB128.Write(chunkIO.Raw, instance.Sequence);
                             LEB128.Write(chunkIO.Raw, (int)instance.Type);
                             chunkIO.Raw.Write(instance.Radius1);
                             chunkIO.Raw.Write(instance.Radius2);

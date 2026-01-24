@@ -34,7 +34,7 @@ namespace TombLib.Test
             // Arrange & Act
             var wayPoint = new WayPointInstance();
             wayPoint.Type = WayPointType.Circle;
-            wayPoint.BaseName = "Patrol";
+            wayPoint.Name = "Patrol";
 
             // Assert
             Assert.AreEqual("Patrol", wayPoint.Name, "Singular type should use base name only");
@@ -46,11 +46,11 @@ namespace TombLib.Test
             // Arrange & Act
             var wayPoint = new WayPointInstance();
             wayPoint.Type = WayPointType.Linear;
-            wayPoint.BaseName = "Path";
+            wayPoint.Name = "Path";
             wayPoint.Number = 5;
 
             // Assert
-            Assert.AreEqual("Path_5", wayPoint.Name, "Multi-point type should use BaseName_Number format");
+            Assert.AreEqual("Path_5", wayPoint.Name, "Multi-point type should use Name_Number format");
         }
 
         [TestMethod]
@@ -59,7 +59,7 @@ namespace TombLib.Test
             // Arrange
             var wayPoint = new WayPointInstance();
             wayPoint.Type = WayPointType.Linear;
-            wayPoint.BaseName = "Camera";
+            wayPoint.Name = "Camera";
             wayPoint.Number = 3;
 
             // Act
@@ -75,7 +75,7 @@ namespace TombLib.Test
             // Arrange
             var wayPoint = new WayPointInstance();
             wayPoint.Type = WayPointType.Bezier;
-            wayPoint.BaseName = "Target";
+            wayPoint.Name = "Target";
             wayPoint.Number = 3;
             Assert.AreEqual("Target_3", wayPoint.Name, "Initially should be Target_3");
 

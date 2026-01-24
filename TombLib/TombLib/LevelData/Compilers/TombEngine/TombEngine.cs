@@ -87,7 +87,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     writer.Write(waypoint.RotationX);
                     writer.Write(waypoint.RotationY);
                     writer.Write(waypoint.Roll);
-                    writer.Write(waypoint.Sequence);
                     writer.Write(waypoint.Number);
                     writer.Write(waypoint.Type);
                     writer.Write(waypoint.Radius1);

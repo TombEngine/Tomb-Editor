@@ -338,21 +338,40 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 lastIndex = _flyByCameras[i].Index;
             }
 
-            // Collect waypoints with selective compilation logic
-            // If any waypoint in a sequence is singular type, only compile that one
-            var waypointsBySequence = new Dictionary<ushort, List<WayPointInstance>>();
+            // Collect waypoints with name-based grouping and selective compilation logic
+            // Skip waypoints without a name
+            // If any waypoint with a name is singular type, only compile singular types with that name
+            var waypointsByName = new Dictionary<string, List<WayPointInstance>>();
             foreach (var instance in _wayPointTable.Keys)
             {
-                if (!waypointsBySequence.ContainsKey(instance.Sequence))
-                    waypointsBySequence[instance.Sequence] = new List<WayPointInstance>();
-                waypointsBySequence[instance.Sequence].Add(instance);
+                // Extract base name
+                string baseName = instance.Name;
+                if (string.IsNullOrEmpty(baseName))
+                    continue; // Skip waypoints without a name
+                    
+                if (!instance.IsSingularType())
+                {
+                    int lastUnderscore = baseName.LastIndexOf('_');
+                    if (lastUnderscore >= 0)
+                    {
+                        string suffix = baseName.Substring(lastUnderscore + 1);
+                        if (ushort.TryParse(suffix, out _))
+                        {
+                            baseName = baseName.Substring(0, lastUnderscore);
+                        }
+                    }
+                }
+                
+                if (!waypointsByName.ContainsKey(baseName))
+                    waypointsByName[baseName] = new List<WayPointInstance>();
+                waypointsByName[baseName].Add(instance);
             }
 
-            foreach (var sequencePair in waypointsBySequence)
+            foreach (var namePair in waypointsByName)
             {
-                var waypoints = sequencePair.Value;
+                var waypoints = namePair.Value;
                 
-                // Check if any waypoint in this sequence is singular type
+                // Check if any waypoint with this name is singular type
                 bool hasSingularType = waypoints.Any(wp => wp.IsSingularType());
                 
                 // If there's a singular type, only compile singular type waypoints
@@ -373,7 +392,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         RotationX = instance.RotationX,
                         RotationY = instance.RotationY,
                         Roll = instance.Roll,
-                        Sequence = instance.Sequence,
                         Number = instance.Number,
                         Type = (int)instance.Type,
                         Radius1 = instance.Radius1,
@@ -383,27 +401,41 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     });
                 }
             }
+            
+            // Sort by name, then number
             _wayPoints.Sort((x, y) =>
             {
-                int seqCompare = x.Sequence.CompareTo(y.Sequence);
-                if (seqCompare != 0) return seqCompare;
+                int nameCompare = string.Compare(x.Name, y.Name, StringComparison.Ordinal);
+                if (nameCompare != 0) return nameCompare;
                 return x.Number.CompareTo(y.Number);
             });
 
             // Check waypoint duplicates
-            lastSeq   = -1;
+            string lastName = "";
             lastIndex = -1;
 
             for (int i = 0; i < _wayPoints.Count; i++)
             {
-                if (_wayPoints[i].Sequence != lastSeq)
+                // Extract base name for comparison
+                string baseName = _wayPoints[i].Name;
+                if (baseName.Contains("_"))
                 {
-                    lastSeq = _wayPoints[i].Sequence;
+                    int lastUnderscore = baseName.LastIndexOf('_');
+                    string suffix = baseName.Substring(lastUnderscore + 1);
+                    if (ushort.TryParse(suffix, out _))
+                    {
+                        baseName = baseName.Substring(0, lastUnderscore);
+                    }
+                }
+                
+                if (baseName != lastName)
+                {
+                    lastName = baseName;
                     lastIndex = -1;
                 }
 
-                if (_wayPoints[i].Number == lastIndex && _wayPoints[i].Sequence == lastSeq)
-                    _progressReporter.ReportWarn($"Warning: waypoint sequence {_wayPoints[i].Sequence} has duplicated waypoint with ID {lastIndex}");
+                if (_wayPoints[i].Number == lastIndex && baseName == lastName)
+                    _progressReporter.ReportWarn($"Warning: waypoint '{baseName}' has duplicated waypoint with number {lastIndex}");
                 lastIndex = _wayPoints[i].Number;
             }
 

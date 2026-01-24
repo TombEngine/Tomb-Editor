@@ -16,26 +16,19 @@ namespace TombLib.LevelData
 
     public class WayPointInstance : PositionAndScriptBasedObjectInstance, IRotateableYXRoll
     {
-        private string _baseName = "WayPoint";
-        private ushort _sequence;
+        private string _name = "";
         private ushort _number;
         private WayPointType _type = WayPointType.Point;
-
-        public string BaseName
-        {
-            get { return _baseName; }
-            set { _baseName = value ?? "WayPoint"; }
-        }
 
         public string Name
         {
             get 
             {
-                // Singular types don't have number suffix
+                // Singular types use name as-is
                 if (IsSingularType())
-                    return _baseName;
+                    return _name;
                 else
-                    return _baseName + "_" + _number;
+                    return _name + "_" + _number;
             }
             set 
             { 
@@ -48,29 +41,23 @@ namespace TombLib.LevelData
                         string suffix = value.Substring(lastUnderscore + 1);
                         if (ushort.TryParse(suffix, out _))
                         {
-                            _baseName = value.Substring(0, lastUnderscore);
+                            _name = value.Substring(0, lastUnderscore);
                         }
                         else
                         {
-                            _baseName = value;
+                            _name = value;
                         }
                     }
                     else
                     {
-                        _baseName = value;
+                        _name = value;
                     }
                 }
                 else
                 {
-                    _baseName = "WayPoint";
+                    _name = "";
                 }
             }
-        }
-
-        public ushort Sequence
-        {
-            get { return _sequence; }
-            set { _sequence = value; }
         }
 
         public ushort Number
@@ -119,23 +106,22 @@ namespace TombLib.LevelData
         {
             if (selectedObject is WayPointInstance prevWayPoint)
             {
-                var currSeq = prevWayPoint.Sequence;
                 var currNum = (ushort)(prevWayPoint.Number + 1);
 
                 // Only push forward if it's a multi-point type
                 if (!prevWayPoint.IsSingularType())
                 {
-                    // Push next waypoints in sequence forward
+                    // Push next waypoints with same name forward
                     var level = selectedObject.Room.Level;
+                    var prevName = prevWayPoint._name;
                     foreach (var room in level.ExistingRooms)
                         foreach (var instance in room.Objects.OfType<WayPointInstance>())
-                            if (instance.Sequence == currSeq && instance.Number >= currNum)
+                            if (instance._name == prevName && instance.Number >= currNum)
                                 instance.Number++;
                 }
 
-                Sequence = currSeq;
                 Number = prevWayPoint.IsSingularType() ? (ushort)0 : currNum;
-                _baseName = prevWayPoint._baseName;
+                _name = prevWayPoint._name;
                 Type = prevWayPoint.Type;
                 Radius1 = prevWayPoint.Radius1;
                 Radius2 = prevWayPoint.Radius2;
@@ -174,7 +160,6 @@ namespace TombLib.LevelData
         {
             return "WayPoint " +
                 ", Name = " + Name +
-                ", Sequence = " + Sequence +
                 (IsSingularType() ? "" : ", Number = " + Number) +
                 ", Type = " + Type +
                 " (" + (Room?.ToString() ?? "NULL") + ")" +
@@ -183,12 +168,6 @@ namespace TombLib.LevelData
                 GetScriptIDOrName(false);
         }
 
-        public string ShortName() => "WayPoint " + (IsSingularType() ? "" : "(" + Sequence + ":" + Number + ") ") + GetScriptIDOrName() + " (" + (Room?.ToString() ?? "NULL") + ")";
-
-        public override void CopyDependentLevelSettings(Room.CopyDependentLevelSettingsArgs args)
-        {
-            base.CopyDependentLevelSettings(args);
-            Sequence = args.ReassociateFlyBySequence(Sequence);
-        }
+        public string ShortName() => "WayPoint " + Name + (IsSingularType() ? "" : " (" + Number + ")") + " " + GetScriptIDOrName() + " (" + (Room?.ToString() ?? "NULL") + ")";
     }
 }
