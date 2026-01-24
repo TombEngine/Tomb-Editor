@@ -58,6 +58,28 @@ namespace TombEditor.Forms
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
         {
+            WayPointType newType = (WayPointType)cmbType.SelectedIndex;
+            WayPointType oldType = _wayPoint.Type;
+            
+            // If type changed to singular, reset number to 0
+            bool newIsSingular = newType == WayPointType.Point ||
+                                newType == WayPointType.Circle ||
+                                newType == WayPointType.Ellipse ||
+                                newType == WayPointType.Square ||
+                                newType == WayPointType.Rectangle;
+            
+            bool oldIsSingular = oldType == WayPointType.Point ||
+                                oldType == WayPointType.Circle ||
+                                oldType == WayPointType.Ellipse ||
+                                oldType == WayPointType.Square ||
+                                oldType == WayPointType.Rectangle;
+            
+            // Reset number to 0 when changing to singular type from multi-point type
+            if (newIsSingular && !oldIsSingular)
+            {
+                numNumber.Value = 0;
+            }
+            
             UpdateFieldVisibility();
         }
 
@@ -154,9 +176,77 @@ namespace TombEditor.Forms
                 }
             }
 
+            // Generate the new full name that will be used
+            string fullNewName = newName;
+            ushort newNumber = (ushort)numNumber.Value;
+            
+            bool newIsSingular = newType == WayPointType.Point ||
+                                newType == WayPointType.Circle ||
+                                newType == WayPointType.Ellipse ||
+                                newType == WayPointType.Square ||
+                                newType == WayPointType.Rectangle;
+            
+            if (!newIsSingular)
+            {
+                fullNewName = newName + "_" + newNumber;
+            }
+
+            // Check if a LuaName with this value already exists
+            if (_editor?.Level != null)
+            {
+                foreach (var room in _editor.Level.ExistingRooms)
+                {
+                    foreach (var obj in room.Objects)
+                    {
+                        if (obj == _wayPoint)
+                            continue;
+                            
+                        if (obj is PositionAndScriptBasedObjectInstance scriptObj)
+                        {
+                            if (!string.IsNullOrEmpty(scriptObj.LuaName) && scriptObj.LuaName == fullNewName)
+                            {
+                                // LuaName conflict - clear the LuaName for this waypoint
+                                _wayPoint.LuaName = "";
+                                DarkMessageBox.Show(this, $"A LuaName '{fullNewName}' already exists for another object. The LuaName for this waypoint has been cleared. Please generate a new LuaName.", "LuaName Conflict",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                
+                                // Update waypoint properties but with cleared LuaName
+                                _wayPoint.Name = newName;
+                                _wayPoint.Number = newNumber;
+                                _wayPoint.Type = newType;
+                                _wayPoint.Radius1 = (float)numDimension1.Value;
+                                _wayPoint.Radius2 = (float)numDimension2.Value;
+                                _wayPoint.RotationX = (float)numRotationX.Value;
+                                _wayPoint.RotationY = (float)numRotationY.Value;
+                                _wayPoint.Roll = (float)numRoll.Value;
+
+                                // Batch type update
+                                if (oldType != newType && _editor?.Level != null)
+                                {
+                                    foreach (var r in _editor.Level.ExistingRooms)
+                                    {
+                                        foreach (var o in r.Objects.OfType<WayPointInstance>())
+                                        {
+                                            if (o != _wayPoint && o.BaseName == oldBaseName)
+                                            {
+                                                o.Type = newType;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                DialogResult = DialogResult.OK;
+                                Close();
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
             // Update waypoint properties
             _wayPoint.Name = newName;
-            _wayPoint.Number = (ushort)numNumber.Value;
+            _wayPoint.Number = newNumber;
             _wayPoint.Type = newType;
             _wayPoint.Radius1 = (float)numDimension1.Value;
             _wayPoint.Radius2 = (float)numDimension2.Value;

@@ -14,7 +14,7 @@ namespace TombLib.LevelData
         Bezier      // Multi-point bezier path
     }
 
-    public class WayPointInstance : PositionAndScriptBasedObjectInstance, IRotateableYXRoll
+    public class WayPointInstance : PositionAndScriptBasedObjectInstance, IRotateableYXRoll, ISizeable
     {
         private string _name = "";
         private ushort _number;
@@ -94,6 +94,26 @@ namespace TombLib.LevelData
         public float Radius1 { get; set; } = 1024.0f; // Default radius in units
         public float Radius2 { get; set; } = 1024.0f; // Default radius in units
 
+        // ISizeable implementation for scale gizmo support on X and Z axes
+        public Vector3 DefaultSize => new Vector3(Radius1 * 2, 0, Radius2 * 2);
+        
+        public Vector3 Size
+        {
+            get => new Vector3(Radius1 * 2, 0, Radius2 * 2);
+            set
+            {
+                // Only allow scaling on X and Z axes for shapes
+                if (RequiresRadius())
+                {
+                    Radius1 = Math.Max(0.01f, value.X / 2);
+                    if (RequiresTwoRadii())
+                        Radius2 = Math.Max(0.01f, value.Z / 2);
+                    else
+                        Radius2 = Radius1; // Keep them synchronized for single-radius shapes
+                }
+            }
+        }
+
         private float _rotationX { get; set; }
         private float _rotationY { get; set; }
         private float _roll { get; set; }
@@ -153,6 +173,25 @@ namespace TombLib.LevelData
                 // Set LuaName to match Name
                 LuaName = Name;
             }
+        }
+
+        public override ObjectInstance Clone()
+        {
+            var clone = (WayPointInstance)base.Clone();
+            
+            // For singular types, clear the name so user must provide a new one
+            if (IsSingularType())
+            {
+                clone._name = "";
+                clone.LuaName = "";
+            }
+            else
+            {
+                // For multi-point types, increment the number
+                clone.Number = (ushort)(Number + 1);
+            }
+            
+            return clone;
         }
 
         /// <summary> Degrees in the range [-90, 90] </summary>
