@@ -199,7 +199,7 @@ namespace TombEditor.Controls.Panel3D
 
             // Add the path of waypoints
             if (_editor.SelectedObject is WayPointInstance waypoint &&
-                AddWayPointPath(waypoint.Name))
+                AddWayPointPath(waypoint.BaseName))
             {
                 _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullNone);
                 _legacyDevice.SetVertexBuffer(_wayPointPathVertexBuffer);
@@ -1586,8 +1586,17 @@ namespace TombEditor.Controls.Panel3D
                         }
                     };
                     
-                    // Add triangles to form the line segment
+                    // Add triangles to form the line segment (both sides for double-sided rendering)
                     for (int k = 0; k < _flybyPathIndices.Count; k++)
+                    {
+                        var v = new SolidVertex();
+                        v.Position = linePoints[_flybyPathIndices[k].Y][_flybyPathIndices[k].X];
+                        v.Color = color;
+                        vertices.Add(v);
+                    }
+                    
+                    // Add reversed triangles for the back side
+                    for (int k = _flybyPathIndices.Count - 1; k >= 0; k--)
                     {
                         var v = new SolidVertex();
                         v.Position = linePoints[_flybyPathIndices[k].Y][_flybyPathIndices[k].X];

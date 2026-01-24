@@ -119,37 +119,31 @@ namespace TombEditor.Forms
                 }
             }
 
-            // Check for duplicate names only if name changed
-            bool nameChanged = oldBaseName != newName;
-            if (nameChanged && _editor?.Level != null)
+            // Check for duplicate full names (base name + number combination)
+            // Only check if this creates an actual duplicate, not just same base name
+            bool nameOrNumberChanged = oldBaseName != newName || _wayPoint.Number != (ushort)numNumber.Value;
+            if (nameOrNumberChanged && _editor?.Level != null)
             {
+                // Build the full name that will be generated
+                ushort newNumber = (ushort)numNumber.Value;
+                var newTypeToCheck = (WayPointType)cmbType.SelectedIndex;
+                bool isSingularNew = newTypeToCheck == WayPointType.Point ||
+                                    newTypeToCheck == WayPointType.Circle ||
+                                    newTypeToCheck == WayPointType.Ellipse ||
+                                    newTypeToCheck == WayPointType.Square ||
+                                    newTypeToCheck == WayPointType.Rectangle;
+                
+                string fullNameToCheck = isSingularNew ? newName : $"{newName}_{newNumber}";
+                
                 foreach (var room in _editor.Level.ExistingRooms)
                 {
                     foreach (var obj in room.Objects.OfType<WayPointInstance>())
                     {
-                        if (obj != _wayPoint)
+                        if (obj != _wayPoint && obj.Name == fullNameToCheck)
                         {
-                            // Extract base name from existing waypoint
-                            string existingBaseName = obj.Name;
-                            if (!obj.IsSingularType())
-                            {
-                                int lastUnderscore = existingBaseName.LastIndexOf('_');
-                                if (lastUnderscore >= 0)
-                                {
-                                    string suffix = existingBaseName.Substring(lastUnderscore + 1);
-                                    if (ushort.TryParse(suffix, out _))
-                                    {
-                                        existingBaseName = existingBaseName.Substring(0, lastUnderscore);
-                                    }
-                                }
-                            }
-                            
-                            if (existingBaseName == newName)
-                            {
-                                DarkMessageBox.Show(this, $"A WayPoint with the name '{newName}' already exists.", "Duplicate Name",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return;
-                            }
+                            DarkMessageBox.Show(this, $"A WayPoint with the name '{fullNameToCheck}' already exists.", "Duplicate Name",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
                         }
                     }
                 }
