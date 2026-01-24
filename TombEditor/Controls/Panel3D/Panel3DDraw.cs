@@ -1595,7 +1595,7 @@ namespace TombEditor.Controls.Panel3D
                         vertices.ToArray(), SharpDX.Direct3D11.ResourceUsage.Dynamic);
                     
                     // Draw the shape
-                    var effect = _legacyDevice.Extensions.DeviceManager.___LegacyEffects["Solid"];
+                    var effect = DeviceManager.DefaultDeviceManager.___LegacyEffects["Solid"];
                     effect.Parameters["ModelViewProjection"].SetValue(_viewProjection.ToSharpDX());
                     effect.Parameters["Color"].SetValue(color);
                     effect.Techniques[0].Passes[0].Apply();
