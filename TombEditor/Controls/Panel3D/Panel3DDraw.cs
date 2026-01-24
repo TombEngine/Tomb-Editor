@@ -1566,7 +1566,7 @@ namespace TombEditor.Controls.Panel3D
             if (points.Count > 1)
             {
                 var vertices = new List<SolidVertex>();
-                float th = 4.0f; // Line thickness
+                float th = 16.0f; // Line thickness (increased for better visibility)
                 
                 for (int i = 0; i < points.Count - 1; i++)
                 {
