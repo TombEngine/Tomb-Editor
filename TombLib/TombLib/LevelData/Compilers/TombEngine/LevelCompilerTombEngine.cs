@@ -358,7 +358,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     Radius1 = instance.Radius1,
                     Radius2 = instance.Radius2,
                     Name = instance.Name,
-                    LuaName = instance.ScriptId.HasValue ? (_scriptingIdsTable.TryGetOrDefault(instance.ScriptId.Value, string.Empty) ?? string.Empty) : string.Empty
+                    LuaName = instance.LuaName ?? string.Empty
                 });
             }
             _wayPoints.Sort((x, y) =>
