@@ -471,18 +471,16 @@ namespace TombLib.LevelData.Compilers.TombEngine
                             if (!entry.TintAsAmbient)
                             {
                                 color = CalculateLightForCustomVertex(room, position, normal, false, room.Properties.AmbientLight * 128);
-								// Apply Shade factor
-								// TODO: * 0.5f here too?
-								color *= shade;
-                                // Apply Instance Color (color is in 0...2 range, let's divide by two for returning it in 0...1 range
+                                // Apply Shade factor (shade is already in 0...1 range from WAD vertex colors)
+                                color *= shade;
+                                // Apply Instance Color (staticMesh.Color is in 0...2 range, convert to 0...1)
                                 color *= staticMesh.Color * 0.5f;
                             }
                             else
                             {
                                 color = CalculateLightForCustomVertex(room, position, normal, false, staticMesh.Color * 128);
-								// Apply Shade factor
-								// TODO: * 0.5f here too?
-								color *= shade;
+                                // Apply Shade factor (shade is already in 0...1 range from WAD vertex colors)
+                                color *= shade;
                             }
 
                             var trVertex = new TombEngineVertex
@@ -625,8 +623,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
                                         }
                                         else
                                         {
-                                            var color = room.Properties.AmbientLight;
-                                            trVertex.Color = color;
+                                            // AmbientLight is in 0...2 range, convert to 0...1
+                                            trVertex.Color = room.Properties.AmbientLight * 0.5f;
                                         }
 
                                         // HACK: Find a vertex with same coordinates and merge with it.
