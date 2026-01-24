@@ -13,7 +13,7 @@ namespace TombIDE.Shared.NewStructure
 
 		private static readonly string[] ValidEngineExecutableNames = new string[]
 		{
-			"Tomb1Main.exe", "TR1X.exe", "TR2X.exe", "Tomb2.exe", "tomb3.exe", "tomb4.exe", "TombEngine.exe" // Only the ones TIDE currently supports
+			"Tomb1Main.exe", "TR1X.exe", "TR2X.exe", "TRX.exe", "Tomb2.exe", "tomb3.exe", "tomb4.exe", "TombEngine.exe" // Only the ones TIDE currently supports
 		};
 
 		private static readonly string[] PlatformSpecificDirectories = new string[] // TEN only

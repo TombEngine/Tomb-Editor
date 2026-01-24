@@ -81,12 +81,14 @@ namespace TombIDE.ProjectMaster.Forms
 				Path.Combine(engineDirectory, "music"),
 				Path.Combine(engineDirectory, "cfg"),
 				Path.Combine(engineDirectory, "data"),
-				Path.Combine(engineDirectory, "shaders")
+				Path.Combine(engineDirectory, "shaders"),
+				Path.Combine(engineDirectory, "scripting"),
 			};
 
 			string[] importantFiles = new string[]
 			{
 				Path.Combine(engineDirectory, "splash.bmp"),
+				Path.Combine(engineDirectory, "TRX.exe"),
 				Path.Combine(engineDirectory, "TR1X.exe"),
 				Path.Combine(engineDirectory, "Tomb1Main.exe"),
 				Path.Combine(engineDirectory, "TR1X_ConfigTool.exe"),
@@ -106,12 +108,14 @@ namespace TombIDE.ProjectMaster.Forms
 				Path.Combine(engineDirectory, "music"),
 				Path.Combine(engineDirectory, "cfg"),
 				Path.Combine(engineDirectory, "data"),
-				Path.Combine(engineDirectory, "shaders")
+				Path.Combine(engineDirectory, "shaders"),
+				Path.Combine(engineDirectory, "scripting"),
 			};
 
 			string[] importantFiles = new string[]
 			{
 				Path.Combine(engineDirectory, "splash.bmp"),
+				Path.Combine(engineDirectory, "TRX.exe"),
 				Path.Combine(engineDirectory, "TR2X.exe"),
 				Path.Combine(engineDirectory, "TR2X_ConfigTool.exe"),
 				Path.Combine(engineDirectory, "splash.xml")

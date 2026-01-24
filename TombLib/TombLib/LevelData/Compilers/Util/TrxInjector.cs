@@ -193,3 +193,33 @@ public class TrxClimbEntry : TrxSectorEdit
         writer.Write(direction);
     }
 }
+
+public class TrxTriangulationEntry : TrxSectorEdit
+{
+    public override int Command => 13;
+
+    public List<ushort> Floor { get; set; }
+    public List<ushort> Ceiling { get; set; }
+    
+    protected override void SerializeImpl(BinaryWriterEx writer)
+    {
+        var type = 0;
+        var data = new List<ushort>();
+        if (Floor != null)
+        {
+            type |= 1 << 0;
+            data.AddRange(Floor);
+        }
+        if (Ceiling != null)
+        {
+            type |= 1 << 1;
+            data.AddRange(Ceiling);
+        }
+
+        writer.Write(type);
+        foreach (var val in data)
+        {
+            writer.Write(val);
+        }
+    }
+}
