@@ -28,156 +28,151 @@
         /// </summary>
         private void InitializeComponent()
         {
-            butOK = new DarkUI.Controls.DarkButton();
-            butCancel = new DarkUI.Controls.DarkButton();
-            optionPlaySoundFromWadGroupBox = new DarkUI.Controls.DarkGroupBox();
-            cbSoundEnabled = new DarkUI.Controls.DarkCheckBox();
-            butSearch = new DarkUI.Controls.DarkButton();
-            tbSearch = new DarkUI.Controls.DarkTextBox();
-            comboPlayMode = new DarkUI.Controls.DarkComboBox();
-            darkLabel2 = new DarkUI.Controls.DarkLabel();
-            butPlaySound = new DarkUI.Controls.DarkButton();
-            lstSounds = new DarkUI.Controls.DarkListView();
-            optionPlaySoundFromWadGroupBox.SuspendLayout();
-            SuspendLayout();
+            this.butOK = new DarkUI.Controls.DarkButton();
+            this.butCancel = new DarkUI.Controls.DarkButton();
+            this.optionPlaySoundFromWadGroupBox = new DarkUI.Controls.DarkGroupBox();
+            this.butSearch = new DarkUI.Controls.DarkButton();
+            this.tbSearch = new DarkUI.Controls.DarkTextBox();
+            this.comboPlayMode = new DarkUI.Controls.DarkComboBox();
+            this.darkLabel2 = new DarkUI.Controls.DarkLabel();
+            this.butPlaySound = new DarkUI.Controls.DarkButton();
+            this.lstSounds = new DarkUI.Controls.DarkListView();
+            this.optionPlaySoundFromWadGroupBox.SuspendLayout();
+            this.SuspendLayout();
             // 
             // butOK
             // 
-            butOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            butOK.Checked = false;
-            butOK.Location = new System.Drawing.Point(306, 535);
-            butOK.Name = "butOK";
-            butOK.Size = new System.Drawing.Size(80, 23);
-            butOK.TabIndex = 0;
-            butOK.Text = "OK";
-            butOK.Click += butOK_Click;
+            this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.butOK.Location = new System.Drawing.Point(306, 535);
+            this.butOK.Name = "butOK";
+            this.butOK.Size = new System.Drawing.Size(80, 23);
+            this.butOK.TabIndex = 0;
+            this.butOK.Text = "OK";
+            this.butOK.Click += new System.EventHandler(this.butOK_Click);
             // 
             // butCancel
             // 
-            butCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            butCancel.Checked = false;
-            butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            butCancel.Location = new System.Drawing.Point(392, 535);
-            butCancel.Name = "butCancel";
-            butCancel.Size = new System.Drawing.Size(80, 23);
-            butCancel.TabIndex = 1;
-            butCancel.Text = "Cancel";
-            butCancel.Click += butCancel_Click;
+            this.butCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.butCancel.Location = new System.Drawing.Point(392, 535);
+            this.butCancel.Name = "butCancel";
+            this.butCancel.Size = new System.Drawing.Size(80, 23);
+            this.butCancel.TabIndex = 1;
+            this.butCancel.Text = "Cancel";
+            this.butCancel.Click += new System.EventHandler(this.butCancel_Click);
             // 
             // optionPlaySoundFromWadGroupBox
             // 
-            optionPlaySoundFromWadGroupBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            optionPlaySoundFromWadGroupBox.Controls.Add(butSearch);
-            optionPlaySoundFromWadGroupBox.Controls.Add(tbSearch);
-            optionPlaySoundFromWadGroupBox.Controls.Add(comboPlayMode);
-            optionPlaySoundFromWadGroupBox.Controls.Add(darkLabel2);
-            optionPlaySoundFromWadGroupBox.Controls.Add(butPlaySound);
-            optionPlaySoundFromWadGroupBox.Controls.Add(lstSounds);
-            optionPlaySoundFromWadGroupBox.Location = new System.Drawing.Point(12, 12);
-            optionPlaySoundFromWadGroupBox.Name = "optionPlaySoundFromWadGroupBox";
-            optionPlaySoundFromWadGroupBox.Size = new System.Drawing.Size(460, 517);
-            optionPlaySoundFromWadGroupBox.TabIndex = 66;
-            optionPlaySoundFromWadGroupBox.TabStop = false;
-            optionPlaySoundFromWadGroupBox.Text = "Sound to play";
-            // 
-            // cbSoundEnabled
-            // 
-            cbSoundEnabled.AutoSize = true;
-            cbSoundEnabled.Location = new System.Drawing.Point(12, 541);
-            cbSoundEnabled.Name = "cbSoundEnabled";
-            cbSoundEnabled.Size = new System.Drawing.Size(68, 17);
-            cbSoundEnabled.TabIndex = 110;
-            cbSoundEnabled.Text = "Enabled";
+            this.optionPlaySoundFromWadGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.optionPlaySoundFromWadGroupBox.Controls.Add(this.butSearch);
+            this.optionPlaySoundFromWadGroupBox.Controls.Add(this.tbSearch);
+            this.optionPlaySoundFromWadGroupBox.Controls.Add(this.comboPlayMode);
+            this.optionPlaySoundFromWadGroupBox.Controls.Add(this.darkLabel2);
+            this.optionPlaySoundFromWadGroupBox.Controls.Add(this.butPlaySound);
+            this.optionPlaySoundFromWadGroupBox.Controls.Add(this.lstSounds);
+            this.optionPlaySoundFromWadGroupBox.Location = new System.Drawing.Point(12, 12);
+            this.optionPlaySoundFromWadGroupBox.Name = "optionPlaySoundFromWadGroupBox";
+            this.optionPlaySoundFromWadGroupBox.Size = new System.Drawing.Size(460, 517);
+            this.optionPlaySoundFromWadGroupBox.TabIndex = 66;
+            this.optionPlaySoundFromWadGroupBox.TabStop = false;
+            this.optionPlaySoundFromWadGroupBox.Text = "Sound to play";
             // 
             // butSearch
             // 
-            butSearch.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            butSearch.Checked = false;
-            butSearch.Image = Properties.Resources.general_search_16;
-            butSearch.Location = new System.Drawing.Point(428, 21);
-            butSearch.Name = "butSearch";
-            butSearch.Selectable = false;
-            butSearch.Size = new System.Drawing.Size(24, 23);
-            butSearch.TabIndex = 109;
-            butSearch.Click += butSearch_Click;
+            this.butSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.butSearch.Image = global::TombEditor.Properties.Resources.general_search_16;
+            this.butSearch.Location = new System.Drawing.Point(428, 21);
+            this.butSearch.Name = "butSearch";
+            this.butSearch.Selectable = false;
+            this.butSearch.Size = new System.Drawing.Size(24, 23);
+            this.butSearch.TabIndex = 109;
+            this.butSearch.Click += new System.EventHandler(this.butSearch_Click);
             // 
             // tbSearch
             // 
-            tbSearch.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            tbSearch.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            tbSearch.Location = new System.Drawing.Point(8, 21);
-            tbSearch.Name = "tbSearch";
-            tbSearch.Size = new System.Drawing.Size(421, 23);
-            tbSearch.TabIndex = 0;
-            tbSearch.KeyDown += tbSearch_KeyDown;
+            this.tbSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbSearch.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.tbSearch.Location = new System.Drawing.Point(8, 21);
+            this.tbSearch.Name = "tbSearch";
+            this.tbSearch.Size = new System.Drawing.Size(421, 23);
+            this.tbSearch.TabIndex = 0;
+            this.tbSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbSearch_KeyDown);
             // 
             // comboPlayMode
             // 
-            comboPlayMode.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            comboPlayMode.FormattingEnabled = true;
-            comboPlayMode.Items.AddRange(new object[] { "Always", "Only when flipmaps are off", "Only when flipmaps are on", "Auto-decide based on room type" });
-            comboPlayMode.Location = new System.Drawing.Point(77, 486);
-            comboPlayMode.Name = "comboPlayMode";
-            comboPlayMode.Size = new System.Drawing.Size(277, 23);
-            comboPlayMode.TabIndex = 2;
+            this.comboPlayMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboPlayMode.FormattingEnabled = true;
+            this.comboPlayMode.Items.AddRange(new object[] {
+            "Always",
+            "Only when flipmaps are off",
+            "Only when flipmaps are on",
+            "Auto-decide based on room type"});
+            this.comboPlayMode.Location = new System.Drawing.Point(77, 486);
+            this.comboPlayMode.Name = "comboPlayMode";
+            this.comboPlayMode.Size = new System.Drawing.Size(277, 23);
+            this.comboPlayMode.TabIndex = 2;
             // 
             // darkLabel2
             // 
-            darkLabel2.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            darkLabel2.AutoSize = true;
-            darkLabel2.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            darkLabel2.Location = new System.Drawing.Point(9, 489);
-            darkLabel2.Name = "darkLabel2";
-            darkLabel2.Size = new System.Drawing.Size(62, 13);
-            darkLabel2.TabIndex = 63;
-            darkLabel2.Text = "Play mode:";
+            this.darkLabel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.darkLabel2.AutoSize = true;
+            this.darkLabel2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.darkLabel2.Location = new System.Drawing.Point(9, 489);
+            this.darkLabel2.Name = "darkLabel2";
+            this.darkLabel2.Size = new System.Drawing.Size(62, 13);
+            this.darkLabel2.TabIndex = 63;
+            this.darkLabel2.Text = "Play mode:";
             // 
             // butPlaySound
             // 
-            butPlaySound.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            butPlaySound.Checked = false;
-            butPlaySound.Image = Properties.Resources.actions_play_16;
-            butPlaySound.Location = new System.Drawing.Point(360, 486);
-            butPlaySound.Name = "butPlaySound";
-            butPlaySound.Size = new System.Drawing.Size(92, 23);
-            butPlaySound.TabIndex = 3;
-            butPlaySound.Text = "Play sound";
-            butPlaySound.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            butPlaySound.Click += butPlay_Click;
+            this.butPlaySound.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.butPlaySound.Image = global::TombEditor.Properties.Resources.actions_play_16;
+            this.butPlaySound.Location = new System.Drawing.Point(360, 486);
+            this.butPlaySound.Name = "butPlaySound";
+            this.butPlaySound.Size = new System.Drawing.Size(92, 23);
+            this.butPlaySound.TabIndex = 3;
+            this.butPlaySound.Text = "Play sound";
+            this.butPlaySound.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.butPlaySound.Click += new System.EventHandler(this.butPlay_Click);
             // 
             // lstSounds
             // 
-            lstSounds.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            lstSounds.Location = new System.Drawing.Point(8, 50);
-            lstSounds.Name = "lstSounds";
-            lstSounds.Size = new System.Drawing.Size(444, 430);
-            lstSounds.TabIndex = 1;
-            lstSounds.Text = "darkListView1";
-            lstSounds.Click += lstSounds_Click;
-            lstSounds.DoubleClick += lstSounds_DoubleClick;
+            this.lstSounds.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstSounds.Location = new System.Drawing.Point(8, 50);
+            this.lstSounds.Name = "lstSounds";
+            this.lstSounds.Size = new System.Drawing.Size(444, 430);
+            this.lstSounds.TabIndex = 1;
+            this.lstSounds.Text = "darkListView1";
+            this.lstSounds.Click += new System.EventHandler(this.lstSounds_Click);
+            this.lstSounds.DoubleClick += new System.EventHandler(this.lstSounds_DoubleClick);
             // 
             // FormSoundSource
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            CancelButton = butCancel;
-            ClientSize = new System.Drawing.Size(484, 570);
-            Controls.Add(cbSoundEnabled);
-            Controls.Add(butOK);
-            Controls.Add(butCancel);
-            Controls.Add(optionPlaySoundFromWadGroupBox);
-            MinimizeBox = false;
-            MinimumSize = new System.Drawing.Size(500, 520);
-            Name = "FormSoundSource";
-            ShowIcon = false;
-            ShowInTaskbar = false;
-            SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            Text = "Sound source";
-            optionPlaySoundFromWadGroupBox.ResumeLayout(false);
-            optionPlaySoundFromWadGroupBox.PerformLayout();
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.butCancel;
+            this.ClientSize = new System.Drawing.Size(484, 570);
+            this.Controls.Add(this.butOK);
+            this.Controls.Add(this.butCancel);
+            this.Controls.Add(this.optionPlaySoundFromWadGroupBox);
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(500, 520);
+            this.Name = "FormSoundSource";
+            this.ShowIcon = false;
+            this.ShowInTaskbar = false;
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Sound source";
+            this.optionPlaySoundFromWadGroupBox.ResumeLayout(false);
+            this.optionPlaySoundFromWadGroupBox.PerformLayout();
+            this.ResumeLayout(false);
+
         }
 
         #endregion
@@ -190,6 +185,5 @@
         private DarkUI.Controls.DarkLabel darkLabel2;
         private DarkUI.Controls.DarkButton butSearch;
         private DarkUI.Controls.DarkTextBox tbSearch;
-        private DarkUI.Controls.DarkCheckBox cbSoundEnabled;
     }
 }

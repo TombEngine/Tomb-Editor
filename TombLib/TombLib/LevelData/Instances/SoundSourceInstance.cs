@@ -7,15 +7,14 @@ namespace TombLib.LevelData
         Always = 0,
         OnlyInBaseRoom = 1,
         OnlyInAlternateRoom = 2,
-        Automatic = 3,
-        Disabled = 4
+        Automatic = 3
     }
 
     public class SoundSourceInstance : PositionAndScriptBasedObjectInstance, IReplaceable
     {
         public int SoundId { get; set; } = -1;
         public SoundSourcePlayMode PlayMode { get; set; } = SoundSourcePlayMode.Automatic;
-        public bool Enabled { get; set; } = true;
+
         public bool IsEmpty => SoundId == -1;
 
         public WadSoundInfo GetSoundInfo(Level level)
