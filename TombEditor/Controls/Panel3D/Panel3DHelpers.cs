@@ -207,8 +207,10 @@ namespace TombEditor.Controls.Panel3D
 
             // Initialize variables for vertex buffer preparation
             var vertices = new List<SolidVertex>();
-            var startColor = MathC.GetRandomColorByIndex(sequence, 32, 0.7f);
-            var endColor = MathC.GetRandomColorByIndex(sequence, 32, 0.3f);
+            // Use name hash for color selection
+            int nameHash = name.GetHashCode();
+            var startColor = MathC.GetRandomColorByIndex(nameHash, 32, 0.7f);
+            var endColor = MathC.GetRandomColorByIndex(nameHash, 32, 0.3f);
 
             float th = _flybyPathThickness;
 

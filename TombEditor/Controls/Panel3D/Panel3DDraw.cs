@@ -1169,9 +1169,13 @@ namespace TombEditor.Controls.Panel3D
                             if (_editor.SelectedObject == instance)
                             {
                                 // Add text message
+                                string label = instance.IsSingularType() ? 
+                                    $"WayPoint ({instance.Name}) " : 
+                                    $"WayPoint ({instance.Name}:{instance.Number}) ";
+                                
                                 textToDraw.Add(CreateTextTagForObject(
                                     instance.RotationPositionMatrix * _viewProjection,
-                                    "WayPoint (" + instance.Sequence + ":" + instance.Number + ") " +
+                                    label +
                                     instance.GetScriptIDOrName() + "\n" +
                                     GetObjectPositionString(instance.Room, instance) + GetObjectTriggerString(instance)));
 
