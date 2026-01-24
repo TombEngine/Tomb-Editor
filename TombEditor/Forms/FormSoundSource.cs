@@ -33,10 +33,6 @@ namespace TombEditor.Forms
                 lstSounds.Items.Add(new DarkUI.Controls.DarkListItem(sound.Id.ToString().PadLeft(4, '0') + ": " + sound.Name) { Tag = sound });
 
             SelectSound(_soundSource.SoundId);
-
-            bool isTEN = _editor.Level.Settings.GameVersion is TRVersion.Game.TombEngine;
-            cbSoundEnabled.Enabled = isTEN;
-            cbSoundEnabled.Visible = isTEN;
         }
 
         private void SelectSound(int id)
@@ -74,7 +70,6 @@ namespace TombEditor.Forms
         {
             _soundSource.SoundId = _soundId;
             _soundSource.PlayMode = (SoundSourcePlayMode)comboPlayMode.SelectedIndex;
-            _soundSource.Enabled = cbSoundEnabled.Checked;
 
             DialogResult = DialogResult.OK;
             WadSoundPlayer.StopSample();

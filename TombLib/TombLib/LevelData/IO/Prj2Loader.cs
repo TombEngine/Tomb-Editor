@@ -1535,7 +1535,6 @@ namespace TombLib.LevelData.IO
                     instance.Position = chunkIO.Raw.ReadVector3();
                     instance.SoundId = chunkIO.Raw.ReadInt32();
                     instance.PlayMode = (SoundSourcePlayMode)chunkIO.Raw.ReadInt32();
-                    instance.Enabled = chunkIO.Raw.ReadBoolean();
                     instance.LuaName = chunkIO.Raw.ReadStringUTF8();
                     addObject(instance);
                     newObjects.TryAdd(objectID, instance);
