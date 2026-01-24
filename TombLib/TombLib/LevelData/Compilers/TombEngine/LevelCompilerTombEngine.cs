@@ -338,27 +338,50 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 lastIndex = _flyByCameras[i].Index;
             }
 
-            // Collect waypoints
+            // Collect waypoints with selective compilation logic
+            // If any waypoint in a sequence is singular type, only compile that one
+            var waypointsBySequence = new Dictionary<ushort, List<WayPointInstance>>();
             foreach (var instance in _wayPointTable.Keys)
             {
-                Vector3 position = instance.Room.WorldPos + instance.Position;
-                _wayPoints.Add(new TombEngineWayPoint
+                if (!waypointsBySequence.ContainsKey(instance.Sequence))
+                    waypointsBySequence[instance.Sequence] = new List<WayPointInstance>();
+                waypointsBySequence[instance.Sequence].Add(instance);
+            }
+
+            foreach (var sequencePair in waypointsBySequence)
+            {
+                var waypoints = sequencePair.Value;
+                
+                // Check if any waypoint in this sequence is singular type
+                bool hasSingularType = waypoints.Any(wp => wp.IsSingularType());
+                
+                // If there's a singular type, only compile singular type waypoints
+                // Otherwise, compile all waypoints
+                var waypointsToCompile = hasSingularType 
+                    ? waypoints.Where(wp => wp.IsSingularType()).ToList()
+                    : waypoints;
+
+                foreach (var instance in waypointsToCompile)
                 {
-                    X = (int)Math.Round(position.X),
-                    Y = (int)Math.Round(-position.Y),
-                    Z = (int)Math.Round(position.Z),
-                    Room = _roomRemapping[instance.Room],
-                    RotationX = instance.RotationX,
-                    RotationY = instance.RotationY,
-                    Roll = instance.Roll,
-                    Sequence = instance.Sequence,
-                    Number = instance.Number,
-                    Type = (int)instance.Type,
-                    Radius1 = instance.Radius1,
-                    Radius2 = instance.Radius2,
-                    Name = instance.Name,
-                    LuaName = instance.LuaName ?? string.Empty
-                });
+                    Vector3 position = instance.Room.WorldPos + instance.Position;
+                    _wayPoints.Add(new TombEngineWayPoint
+                    {
+                        X = (int)Math.Round(position.X),
+                        Y = (int)Math.Round(-position.Y),
+                        Z = (int)Math.Round(position.Z),
+                        Room = _roomRemapping[instance.Room],
+                        RotationX = instance.RotationX,
+                        RotationY = instance.RotationY,
+                        Roll = instance.Roll,
+                        Sequence = instance.Sequence,
+                        Number = instance.Number,
+                        Type = (int)instance.Type,
+                        Radius1 = instance.Radius1,
+                        Radius2 = instance.Radius2,
+                        Name = instance.Name,
+                        LuaName = instance.LuaName ?? string.Empty
+                    });
+                }
             }
             _wayPoints.Sort((x, y) =>
             {
