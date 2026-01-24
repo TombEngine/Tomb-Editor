@@ -119,31 +119,36 @@ namespace TombEditor.Forms
                 }
             }
 
-            // Check for duplicate full names (base name + number combination)
-            // Only check if this creates an actual duplicate, not just same base name
-            bool nameOrNumberChanged = oldBaseName != newName || _wayPoint.Number != (ushort)numNumber.Value;
-            if (nameOrNumberChanged && _editor?.Level != null)
+            // Check for duplicate names with validation rules:
+            // 1. Base name must be unique across all waypoints
+            // 2. Exception: same base name allowed ONLY if numbers are different
+            //    (e.g., "test_0" and "test_1" are OK, but "test" Circle and "test" Point are NOT OK)
+            bool nameChanged = oldBaseName != newName;
+            bool numberChanged = _wayPoint.Number != (ushort)numNumber.Value;
+            
+            if ((nameChanged || numberChanged) && _editor?.Level != null)
             {
-                // Build the full name that will be generated
                 ushort newNumber = (ushort)numNumber.Value;
-                var newTypeToCheck = (WayPointType)cmbType.SelectedIndex;
-                bool isSingularNew = newTypeToCheck == WayPointType.Point ||
-                                    newTypeToCheck == WayPointType.Circle ||
-                                    newTypeToCheck == WayPointType.Ellipse ||
-                                    newTypeToCheck == WayPointType.Square ||
-                                    newTypeToCheck == WayPointType.Rectangle;
-                
-                string fullNameToCheck = isSingularNew ? newName : $"{newName}_{newNumber}";
                 
                 foreach (var room in _editor.Level.ExistingRooms)
                 {
                     foreach (var obj in room.Objects.OfType<WayPointInstance>())
                     {
-                        if (obj != _wayPoint && obj.Name == fullNameToCheck)
+                        if (obj == _wayPoint)
+                            continue;
+                            
+                        // Check if another waypoint uses this base name
+                        if (obj.BaseName == newName)
                         {
-                            DarkMessageBox.Show(this, $"A WayPoint with the name '{fullNameToCheck}' already exists.", "Duplicate Name",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
+                            // Same base name found - only allowed if numbers are different
+                            if (obj.Number == newNumber)
+                            {
+                                // Same base name AND same number = duplicate
+                                DarkMessageBox.Show(this, $"A WayPoint with the name '{newName}' and number {newNumber} already exists.", "Duplicate Name",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+                            // Different numbers - this is OK
                         }
                     }
                 }
