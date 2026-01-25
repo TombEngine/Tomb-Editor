@@ -45,6 +45,7 @@ namespace TombEditor.Forms
             }
             
             txtName.Text = baseName;
+            numSequence.Value = _wayPoint.Sequence;
             numNumber.Value = _wayPoint.Number;
             cmbType.SelectedIndex = (int)_wayPoint.Type;
             numDimension1.Value = (decimal)_wayPoint.Radius1;
@@ -212,6 +213,7 @@ namespace TombEditor.Forms
                                 
                                 // Update waypoint properties but with cleared LuaName
                                 _wayPoint.Name = newName;
+                                _wayPoint.Sequence = (ushort)numSequence.Value;
                                 _wayPoint.Number = newNumber;
                                 _wayPoint.Type = newType;
                                 _wayPoint.Radius1 = (float)numDimension1.Value;
@@ -223,11 +225,12 @@ namespace TombEditor.Forms
                                 // Batch type update
                                 if (oldType != newType && _editor?.Level != null)
                                 {
+                                    var oldSequence = _wayPoint.Sequence;
                                     foreach (var r in _editor.Level.ExistingRooms)
                                     {
                                         foreach (var o in r.Objects.OfType<WayPointInstance>())
                                         {
-                                            if (o != _wayPoint && o.BaseName == oldBaseName)
+                                            if (o != _wayPoint && (o.BaseName == oldBaseName || o.Sequence == oldSequence))
                                             {
                                                 o.Type = newType;
                                             }
@@ -246,6 +249,7 @@ namespace TombEditor.Forms
 
             // Update waypoint properties
             _wayPoint.Name = newName;
+            _wayPoint.Sequence = (ushort)numSequence.Value;
             _wayPoint.Number = newNumber;
             _wayPoint.Type = newType;
             _wayPoint.Radius1 = (float)numDimension1.Value;
@@ -254,14 +258,17 @@ namespace TombEditor.Forms
             _wayPoint.RotationY = (float)numRotationY.Value;
             _wayPoint.Roll = (float)numRoll.Value;
 
-            // Batch type update: if type changed, update all waypoints with the same original base name
+            // Batch type update: if type changed, update all waypoints with either:
+            // 1. Same original base name OR
+            // 2. Same sequence number
             if (oldType != newType && _editor?.Level != null)
             {
+                var oldSequence = _wayPoint.Sequence;
                 foreach (var room in _editor.Level.ExistingRooms)
                 {
                     foreach (var obj in room.Objects.OfType<WayPointInstance>())
                     {
-                        if (obj != _wayPoint && obj.BaseName == oldBaseName)
+                        if (obj != _wayPoint && (obj.BaseName == oldBaseName || obj.Sequence == oldSequence))
                         {
                             obj.Type = newType;
                         }

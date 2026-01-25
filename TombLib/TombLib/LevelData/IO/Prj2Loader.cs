@@ -1410,6 +1410,7 @@ namespace TombLib.LevelData.IO
                     instance.Roll = chunkIO.Raw.ReadSingle();
                     instance.ScriptId = ReadOptionalLEB128Int(chunkIO.Raw);
                     string baseName = chunkIO.Raw.ReadStringUTF8();
+                    instance.Sequence = LEB128.ReadUShort(chunkIO.Raw);
                     instance.Number = LEB128.ReadUShort(chunkIO.Raw);
                     instance.Type = (WayPointType)LEB128.ReadInt(chunkIO.Raw);
                     instance.Radius1 = chunkIO.Raw.ReadSingle();

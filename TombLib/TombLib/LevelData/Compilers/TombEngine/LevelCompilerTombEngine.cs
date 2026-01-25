@@ -392,6 +392,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         RotationX = instance.RotationX,
                         RotationY = instance.RotationY,
                         Roll = instance.Roll,
+                        Sequence = instance.Sequence,
                         Number = instance.Number,
                         Type = (int)instance.Type,
                         Radius1 = instance.Radius1,

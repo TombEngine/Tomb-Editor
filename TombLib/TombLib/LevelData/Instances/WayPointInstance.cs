@@ -18,6 +18,7 @@ namespace TombLib.LevelData
     public class WayPointInstance : PositionAndScriptBasedObjectInstance, IRotateableYXRoll, ISizeable
     {
         private string _name = "";
+        private ushort _sequence;
         private ushort _number;
         private WayPointType _type = WayPointType.Point;
 
@@ -25,6 +26,12 @@ namespace TombLib.LevelData
         public string BaseName
         {
             get { return _name; }
+        }
+
+        public ushort Sequence
+        {
+            get { return _sequence; }
+            set { _sequence = value; }
         }
 
         public string Name

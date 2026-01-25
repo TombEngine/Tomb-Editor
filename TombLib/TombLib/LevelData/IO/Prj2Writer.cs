@@ -706,6 +706,7 @@ namespace TombLib.LevelData.IO
                             }
                             
                             chunkIO.Raw.WriteStringUTF8(baseName);
+                            LEB128.Write(chunkIO.Raw, instance.Sequence);
                             LEB128.Write(chunkIO.Raw, instance.Number);
                             LEB128.Write(chunkIO.Raw, (int)instance.Type);
                             chunkIO.Raw.Write(instance.Radius1);
