@@ -1489,7 +1489,9 @@ namespace TombEditor.Controls.Panel3D
             Vector3 position = instance.Position + instance.Room.WorldPos;
             
             // Create transformation matrix for the shape orientation
-            Matrix4x4 rotation = Matrix4x4.CreateRotationY(instance.RotationY * (float)Math.PI / 180.0f) *
+            // Apply rotations in order: X, Y, Z (Roll)
+            Matrix4x4 rotation = Matrix4x4.CreateRotationX(instance.RotationX * (float)Math.PI / 180.0f) *
+                                Matrix4x4.CreateRotationY(instance.RotationY * (float)Math.PI / 180.0f) *
                                 Matrix4x4.CreateRotationZ(instance.Roll * (float)Math.PI / 180.0f);
             
             // Number of segments for circles/ellipses
