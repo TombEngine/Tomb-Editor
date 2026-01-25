@@ -393,7 +393,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                                     // Set AmphibiousTraversable flag
                                     // Water-Water: always traversable
                                     // Land-Land or Water-Land: traversable if height diff <= 1 click
-                                    bool bothWater = (box1.Water || box1.Shallow) && (box2.Water || box2.Shallow);
+                                    bool bothWater = (box1.Water && box2.Water) || (box1.Shallow && box2.Shallow);
                                     int heightDiff = Math.Abs(box1.Height - box2.Height);
 
                                     if (bothWater || heightDiff <= Clicks.ToWorld(1))
@@ -452,7 +452,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                                         // Set AmphibiousTraversable flag
                                         // Water-Water: always traversable
                                         // Land-Land or Water-Land: traversable if height diff <= 1 click
-                                        bool bothWater = (box1.Water || box1.Shallow) && (box2.Water || box2.Shallow);
+                                        bool bothWater = (box1.Water && box2.Water) || (box1.Shallow && box2.Shallow);
                                         int heightDiff = Math.Abs(box1.Height - box2.Height);
 
                                         if (bothWater || heightDiff <= Clicks.ToWorld(1))
