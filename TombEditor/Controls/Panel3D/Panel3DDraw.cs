@@ -1177,10 +1177,14 @@ namespace TombEditor.Controls.Panel3D
                                     $"{instance.BaseName} " : 
                                     $"{instance.BaseName} ({instance.Number}) ";
                                 
+                                string rotationInfo = GetObjectRotationString(instance.Room, instance);
+                                if (!string.IsNullOrEmpty(rotationInfo))
+                                    rotationInfo = "\n" + rotationInfo;
+                                
                                 textToDraw.Add(CreateTextTagForObject(
                                     instance.RotationPositionMatrix * _viewProjection,
                                     label +
-                                    GetObjectPositionString(instance.Room, instance) + GetObjectTriggerString(instance)));
+                                    GetObjectPositionString(instance.Room, instance) + rotationInfo + GetObjectTriggerString(instance)));
 
                                 // Add the line height of the object
                                 AddObjectHeightLine(instance.Room, instance.Position);

@@ -33,7 +33,7 @@ namespace TombEditor.Controls.ContextMenus
                 }
             }
 
-            if (!(targetObject is LightInstance || targetObject is GhostBlockInstance || targetObject is WayPointInstance))
+            if (!(targetObject is LightInstance || targetObject is GhostBlockInstance))
             { 
                 Items.Add(new ToolStripMenuItem("Edit object", Properties.Resources.general_edit_16, (o, e) =>
                 {
