@@ -688,7 +688,6 @@ namespace TombLib.LevelData.IO
                             chunkIO.Raw.Write(instance.RotationY);
                             chunkIO.Raw.Write(instance.RotationX);
                             chunkIO.Raw.Write(instance.Roll);
-                            LEB128.Write(chunkIO.Raw, ((long?)instance.ScriptId ?? -1));
                             
                             // Extract base name from full name
                             string baseName = instance.Name;

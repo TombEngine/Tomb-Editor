@@ -1408,7 +1408,6 @@ namespace TombLib.LevelData.IO
                     instance.Position = chunkIO.Raw.ReadVector3();
                     instance.SetArbitaryRotationsYX(chunkIO.Raw.ReadSingle(), chunkIO.Raw.ReadSingle());
                     instance.Roll = chunkIO.Raw.ReadSingle();
-                    instance.ScriptId = ReadOptionalLEB128Int(chunkIO.Raw);
                     string baseName = chunkIO.Raw.ReadStringUTF8();
                     instance.Sequence = LEB128.ReadUShort(chunkIO.Raw);
                     instance.Number = LEB128.ReadUShort(chunkIO.Raw);

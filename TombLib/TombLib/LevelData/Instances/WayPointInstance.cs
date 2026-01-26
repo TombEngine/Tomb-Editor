@@ -171,8 +171,6 @@ namespace TombLib.LevelData
                 RotationY = prevWayPoint.RotationY;
                 Roll = prevWayPoint.Roll;
                 
-                // Set LuaName to match Name
-                LuaName = Name;
             }
         }
 
@@ -184,7 +182,6 @@ namespace TombLib.LevelData
             if (IsSingularType())
             {
                 clone._name = "";
-                clone.LuaName = "";
             }
             else
             {
@@ -226,10 +223,9 @@ namespace TombLib.LevelData
                 ", Type = " + Type +
                 " (" + (Room?.ToString() ?? "NULL") + ")" +
                 ", X = " + SectorPosition.X +
-                ", Z = " + SectorPosition.Y +
-                GetScriptIDOrName(false);
+                ", Z = " + SectorPosition.Y;
         }
 
-        public string ShortName() => "WayPoint " + Name + (IsSingularType() ? "" : " (" + Number + ")") + " " + GetScriptIDOrName() + " (" + (Room?.ToString() ?? "NULL") + ")";
+        public string ShortName() => "WayPoint " + Name + (IsSingularType() ? "" : " (" + Number + ")") + " " + " (" + (Room?.ToString() ?? "NULL") + ")";
     }
 }
