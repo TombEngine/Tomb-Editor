@@ -149,8 +149,10 @@ namespace TombEditor.Forms
             bool nameChanged = oldBaseName != newName;
             ushort currentNumber = (ushort)numNumber.Value;
             bool numberChanged = _wayPoint.Number != currentNumber;
+            ushort currentSequence = (ushort)numSequence.Value;
+            bool sequenceChanged = _wayPoint.Sequence != currentSequence;
             
-            if ((nameChanged || numberChanged) && _editor?.Level != null)
+            if (((nameChanged || numberChanged) || sequenceChanged) && _editor?.Level != null)
             {
                 
                 foreach (var room in _editor.Level.ExistingRooms)
@@ -172,6 +174,16 @@ namespace TombEditor.Forms
                                 return;
                             }
                             // Different numbers - this is OK
+                        }
+                        
+                        // Check for duplicate sequence numbers
+                        // Sequence must be unique UNLESS the base name is the same
+                        if (obj.Sequence == currentSequence && obj.BaseName != newName)
+                        {
+                            // Same sequence but different base name = NOT allowed
+                            DarkMessageBox.Show(this, $"A WayPoint with sequence number {currentSequence} already exists with a different name ('{obj.BaseName}'). Sequence numbers must be unique unless waypoints share the same base name.", "Duplicate Sequence",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
                         }
                     }
                 }
