@@ -119,14 +119,14 @@ namespace TombEditor.Forms
             string newName = txtName.Text.Trim();
             if (string.IsNullOrEmpty(newName))
             {
-                DarkMessageBox.Show(this, "WayPoint name cannot be empty.", "Validation Error",
+                DarkMessageBox.Show(this, "Waypoint name cannot be empty.", "Validation Error",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             var oldType = _wayPoint.Type;
             var newType = (WayPointType)cmbType.SelectedIndex;
-            
+
             // Extract old base name for comparison
             string oldBaseName = _wayPoint.Name;
             if (!_wayPoint.IsSingularType())
@@ -142,48 +142,76 @@ namespace TombEditor.Forms
                 }
             }
 
-            // Check for duplicate names with validation rules:
-            // 1. Base name must be unique across all waypoints
-            // 2. Exception: same base name allowed ONLY if numbers are different
-            //    (e.g., "test_0" and "test_1" are OK, but "test" Circle and "test" Point are NOT OK)
+            // Check for changes
             bool nameChanged = oldBaseName != newName;
             ushort currentNumber = (ushort)numNumber.Value;
             bool numberChanged = _wayPoint.Number != currentNumber;
             ushort currentSequence = (ushort)numSequence.Value;
             bool sequenceChanged = _wayPoint.Sequence != currentSequence;
-            
-            if (((nameChanged || numberChanged) || sequenceChanged) && _editor?.Level != null)
+
+            // Validation rules:
+            // 1. Same name + same sequence can only exist if numbers are different
+            // 2. Same name + different sequence is NOT allowed
+            // 3. Different name + same sequence is NOT allowed
+            // 4. Same sequence + same name + same number is NOT allowed
+            // Always validate if any of these changed (removed the condition check)
+            if (_editor?.Level != null)
             {
-                
                 foreach (var room in _editor.Level.ExistingRooms)
                 {
                     foreach (var obj in room.Objects.OfType<WayPointInstance>())
                     {
                         if (obj == _wayPoint)
                             continue;
-                            
-                        // Check if another waypoint uses this base name
-                        if (obj.BaseName == newName)
+
+                        // Rule 1 & 4: Check for same name + same sequence
+                        if (obj.BaseName == newName && obj.Sequence == currentSequence)
                         {
-                            // Same base name found - only allowed if numbers are different
+                            // Only allowed if numbers are different
                             if (obj.Number == currentNumber)
                             {
-                                // Same base name AND same number = duplicate
-                                DarkMessageBox.Show(this, $"A WayPoint with the name '{newName}' and number {currentNumber} already exists.", "Duplicate Name",
+                                DarkMessageBox.Show(this,
+                                    $"A waypoint with name '{newName}', sequence {currentSequence}, and number {currentNumber} already exists.",
+                                    "Validation Error",
                                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 return;
                             }
-                            // Different numbers - this is OK
+                            // Different numbers - this is allowed
                         }
-                        
-                        // Check for duplicate sequence numbers
-                        // Sequence must be unique UNLESS the base name is the same
-                        if (obj.Sequence == currentSequence && obj.BaseName != newName)
+                        // Rule 2: Check for same name + different sequence
+                        else if (obj.BaseName == newName && obj.Sequence != currentSequence)
                         {
-                            // Same sequence but different base name = NOT allowed
-                            DarkMessageBox.Show(this, $"A WayPoint with sequence number {currentSequence} already exists with a different name ('{obj.BaseName}'). Sequence numbers must be unique unless waypoints share the same base name.", "Duplicate Sequence",
+                            DarkMessageBox.Show(this,
+                                $"A waypoint with name '{newName}' already exists with a different sequence ({obj.Sequence}). The same name cannot be used with different sequence numbers.",
+                                "Validation Error",
                                 MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
+                        }
+                        // Rule 3: Check for different name + same sequence
+                        else if (obj.BaseName != newName && obj.Sequence == currentSequence)
+                        {
+                            DarkMessageBox.Show(this,
+                                $"A waypoint with sequence {currentSequence} already exists with a different name ('{obj.BaseName}'). The same sequence number cannot be used with different names.",
+                                "Validation Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            // Batch type update: if type changed, update all waypoints with the same name/sequence pair
+            if (oldType != newType && _editor?.Level != null)
+            {
+                var oldSequence = _wayPoint.Sequence;
+                foreach (var room in _editor.Level.ExistingRooms)
+                {
+                    foreach (var obj in room.Objects.OfType<WayPointInstance>())
+                    {
+                        // Update all waypoints that share the same base name (which implies same sequence)
+                        if (obj != _wayPoint && obj.BaseName == oldBaseName)
+                        {
+                            obj.Type = newType;
                         }
                     }
                 }
