@@ -863,6 +863,16 @@ namespace TombEditor.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap objects_WayPoint_16 {
+            get {
+                object obj = ResourceManager.GetObject("objects_WayPoint_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap sectortype_Beetle_16 {
             get {
                 object obj = ResourceManager.GetObject("sectortype_Beetle_16", resourceCulture);
