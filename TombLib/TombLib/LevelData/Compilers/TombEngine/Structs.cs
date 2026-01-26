@@ -601,7 +601,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public float Radius1;
         public float Radius2;
         public string Name;
-        public string LuaName;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

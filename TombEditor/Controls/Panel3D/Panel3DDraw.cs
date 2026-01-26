@@ -1180,7 +1180,6 @@ namespace TombEditor.Controls.Panel3D
                                 textToDraw.Add(CreateTextTagForObject(
                                     instance.RotationPositionMatrix * _viewProjection,
                                     label +
-                                    instance.GetScriptIDOrName() + "\n" +
                                     GetObjectPositionString(instance.Room, instance) + GetObjectTriggerString(instance)));
 
                                 // Add the line height of the object

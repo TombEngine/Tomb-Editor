@@ -15,7 +15,7 @@ namespace TombLib.LevelData
         Bezier      // Multi-point bezier path
     }
 
-    public class WayPointInstance : PositionAndScriptBasedObjectInstance, IRotateableYXRoll, ISizeable
+    public class WayPointInstance : PositionBasedObjectInstance, IRotateableYXRoll, ISizeable
     {
         private string _name = "";
         private ushort _sequence;
@@ -71,9 +71,6 @@ namespace TombLib.LevelData
                 {
                     _name = "";
                 }
-                
-                // Update LuaName to match Name
-                LuaName = Name;
             }
         }
 
@@ -83,8 +80,6 @@ namespace TombLib.LevelData
             set 
             { 
                 _number = value;
-                // Update LuaName when number changes
-                LuaName = Name;
             }
         }
 
@@ -94,8 +89,6 @@ namespace TombLib.LevelData
             set 
             { 
                 _type = value;
-                // Update LuaName when type changes (affects Name format)
-                LuaName = Name;
             }
         }
 

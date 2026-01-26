@@ -93,7 +93,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     writer.Write(waypoint.Radius1);
                     writer.Write(waypoint.Radius2);
                     writer.Write(waypoint.Name);
-                    writer.Write(waypoint.LuaName);
                 }
 
                 writer.Write((uint)_sinks.Count);

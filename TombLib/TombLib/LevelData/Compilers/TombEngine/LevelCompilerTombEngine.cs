@@ -397,8 +397,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         Type = (int)instance.Type,
                         Radius1 = instance.Radius1,
                         Radius2 = instance.Radius2,
-                        Name = instance.Name,
-                        LuaName = instance.LuaName ?? string.Empty
+                        Name = instance.Name
                     });
                 }
             }

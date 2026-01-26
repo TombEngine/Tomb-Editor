@@ -192,61 +192,6 @@ namespace TombEditor.Forms
                 fullNewName = newName + "_" + newNumber;
             }
 
-            // Check if a LuaName with this value already exists
-            if (_editor?.Level != null)
-            {
-                foreach (var room in _editor.Level.ExistingRooms)
-                {
-                    foreach (var obj in room.Objects)
-                    {
-                        if (obj == _wayPoint)
-                            continue;
-                            
-                        if (obj is PositionAndScriptBasedObjectInstance scriptObj)
-                        {
-                            if (!string.IsNullOrEmpty(scriptObj.LuaName) && scriptObj.LuaName == fullNewName)
-                            {
-                                // LuaName conflict - clear the LuaName for this waypoint
-                                _wayPoint.LuaName = "";
-                                DarkMessageBox.Show(this, $"A LuaName '{fullNewName}' already exists for another object. The LuaName for this waypoint has been cleared. Please generate a new LuaName.", "LuaName Conflict",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                
-                                // Update waypoint properties but with cleared LuaName
-                                _wayPoint.Name = newName;
-                                _wayPoint.Sequence = (ushort)numSequence.Value;
-                                _wayPoint.Number = newNumber;
-                                _wayPoint.Type = newType;
-                                _wayPoint.Radius1 = (float)numDimension1.Value;
-                                _wayPoint.Radius2 = (float)numDimension2.Value;
-                                _wayPoint.RotationX = (float)numRotationX.Value;
-                                _wayPoint.RotationY = (float)numRotationY.Value;
-                                _wayPoint.Roll = (float)numRoll.Value;
-
-                                // Batch type update
-                                if (oldType != newType && _editor?.Level != null)
-                                {
-                                    var oldSequence = _wayPoint.Sequence;
-                                    foreach (var r in _editor.Level.ExistingRooms)
-                                    {
-                                        foreach (var o in r.Objects.OfType<WayPointInstance>())
-                                        {
-                                            if (o != _wayPoint && (o.BaseName == oldBaseName || o.Sequence == oldSequence))
-                                            {
-                                                o.Type = newType;
-                                            }
-                                        }
-                                    }
-                                }
-
-                                DialogResult = DialogResult.OK;
-                                Close();
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-
             // Update waypoint properties
             _wayPoint.Name = newName;
             _wayPoint.Sequence = (ushort)numSequence.Value;
