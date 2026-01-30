@@ -82,7 +82,6 @@ namespace TombIDE.ProjectMaster.Forms
 				Path.Combine(engineDirectory, "cfg"),
 				Path.Combine(engineDirectory, "data"),
 				Path.Combine(engineDirectory, "shaders"),
-				Path.Combine(engineDirectory, "scripting"),
 			};
 
 			string[] importantFiles = new string[]
@@ -109,7 +108,6 @@ namespace TombIDE.ProjectMaster.Forms
 				Path.Combine(engineDirectory, "cfg"),
 				Path.Combine(engineDirectory, "data"),
 				Path.Combine(engineDirectory, "shaders"),
-				Path.Combine(engineDirectory, "scripting"),
 			};
 
 			string[] importantFiles = new string[]
