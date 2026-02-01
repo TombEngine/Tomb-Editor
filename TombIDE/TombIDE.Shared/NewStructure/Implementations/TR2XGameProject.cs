@@ -144,32 +144,6 @@ namespace TombIDE.Shared.NewStructure
 		/// </summary>
 		/// <param name="versionString">The version string to parse.</param>
 		private static Version GetActualVersion(string versionString)
-		{
-			bool isLegacyVersion = !versionString.StartsWith(VersionPrefix); // Legacy TR2X builds did not have similar version strings to TR1X
-
-			// Only remove prefix if it's actually present (for modern versions)
-			if (!isLegacyVersion)
-				versionString = versionString.Replace(VersionPrefix, string.Empty);
-
-			versionString = versionString.Trim();
-
-			if (string.IsNullOrEmpty(versionString))
-				throw new FormatException("Version string is empty after removing prefix.");
-
-			// For legacy versions, prepend "0." only if the version doesn't already have too many components
-			if (isLegacyVersion)
-			{
-				// Count version components (dots + 1)
-				int componentCount = versionString.Count(c => c == '.') + 1;
-				
-				// Version class supports up to 4 components, so if we already have 4, don't prepend
-				if (componentCount >= 4)
-					return new Version(versionString);
-				
-				return new Version("0." + versionString); // Legacy versions get a 0.x major version
-			}
-			
-			return new Version(versionString);
-		}
+			=> TRXVersionHelper.ParseTRXVersion(versionString, legacyVersionPrefix: string.Empty, hasLegacyPrefix: false);
 	}
 }
