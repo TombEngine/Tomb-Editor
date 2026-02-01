@@ -147,11 +147,29 @@ namespace TombIDE.Shared.NewStructure
 		{
 			bool isLegacyVersion = !versionString.StartsWith(VersionPrefix); // Legacy TR2X builds did not have similar version strings to TR1X
 
-			versionString = versionString.Replace(VersionPrefix, string.Empty);
+			// Only remove prefix if it's actually present (for modern versions)
+			if (!isLegacyVersion)
+				versionString = versionString.Replace(VersionPrefix, string.Empty);
 
-			return isLegacyVersion
-				? new Version("0." + versionString) // Legacy versions get a 0.x major version
-				: new Version(versionString);
+			versionString = versionString.Trim();
+
+			if (string.IsNullOrEmpty(versionString))
+				throw new FormatException("Version string is empty after removing prefix.");
+
+			// For legacy versions, prepend "0." only if the version doesn't already have too many components
+			if (isLegacyVersion)
+			{
+				// Count version components (dots + 1)
+				int componentCount = versionString.Count(c => c == '.') + 1;
+				
+				// Version class supports up to 4 components, so if we already have 4, don't prepend
+				if (componentCount >= 4)
+					return new Version(versionString);
+				
+				return new Version("0." + versionString); // Legacy versions get a 0.x major version
+			}
+			
+			return new Version(versionString);
 		}
 	}
 }

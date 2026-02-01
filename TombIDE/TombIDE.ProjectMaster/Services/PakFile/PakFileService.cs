@@ -18,6 +18,9 @@ public sealed class PakFileService : IPakFileService
 		{
 			using var stream = new FileStream(pakFilePath, FileMode.Open, FileAccess.Read);
 
+			if (stream.Length < 4)
+				throw new InvalidOperationException($"PAK file is too small (less than 4 bytes): {pakFilePath}");
+
 			byte[] bytes = new byte[stream.Length];
 			stream.Read(bytes, 0, (int)stream.Length);
 

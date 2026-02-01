@@ -31,7 +31,11 @@ public sealed class LauncherManagementService : ILauncherManagementService
 		if (!File.Exists(currentPath))
 			throw new FileNotFoundException("Launcher file not found.");
 
-		string directory = Path.GetDirectoryName(currentPath) ?? string.Empty;
+		string? directory = Path.GetDirectoryName(currentPath);
+		
+		if (string.IsNullOrEmpty(directory))
+			throw new InvalidOperationException("Cannot determine launcher directory.");
+
 		string newPath = Path.Combine(directory, newName + ".exe");
 
 		if (File.Exists(newPath) && !newPath.Equals(currentPath, StringComparison.OrdinalIgnoreCase))

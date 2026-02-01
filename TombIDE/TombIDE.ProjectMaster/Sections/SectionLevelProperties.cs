@@ -263,7 +263,7 @@ namespace TombIDE.ProjectMaster
 			{
 				FileName = programPath,
 				Arguments = "\"" + selectedFilePath + "\"",
-				WorkingDirectory = Path.GetDirectoryName(selectedFilePath),
+				WorkingDirectory = Path.GetDirectoryName(selectedFilePath) ?? string.Empty,
 				UseShellExecute = true
 			};
 
