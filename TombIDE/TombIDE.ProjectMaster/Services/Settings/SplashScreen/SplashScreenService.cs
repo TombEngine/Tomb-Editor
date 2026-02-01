@@ -55,9 +55,8 @@ public sealed class SplashScreenService : ISplashScreenService
 	}
 
 	public bool IsValidResolution(Image image)
-		=> (image.Width == 512 && image.Height == 256)
-		|| (image.Width == 768 && image.Height == 384)
-		|| (image.Width == 1024 && image.Height == 512);
+		=> image.Width is 1024 or 768 or 512 or 384
+		&& image.Height is 512 or 384 or 256;
 
 	private static string GetSplashScreenPath(IGameProject project)
 		=> Path.Combine(project.GetEngineRootDirectoryPath(), "splash.bmp");
