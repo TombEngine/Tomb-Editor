@@ -17,17 +17,15 @@ namespace TombIDE.Shared.NewStructure
 		/// Parses a version string from a TRX-based engine, handling both modern and legacy version formats.
 		/// </summary>
 		/// <param name="versionString">The version string to parse.</param>
-		/// <param name="legacyVersionPrefix">The prefix used by legacy versions (e.g., "TR1X ", "TR2X ", or empty for no legacy prefix).</param>
-		/// <param name="hasLegacyPrefix">Whether the engine uses a legacy prefix for old versions.</param>
+		/// <param name="legacyVersionPrefix">The prefix used by legacy versions (e.g., "TR1X "), or null if legacy versions have no prefix.</param>
 		/// <returns>A parsed Version object with the appropriate major version.</returns>
 		/// <exception cref="FormatException">Thrown when the version string is empty after removing the prefix.</exception>
-		public static Version ParseTRXVersion(string versionString, string legacyVersionPrefix, bool hasLegacyPrefix = true)
+		public static Version ParseTRXVersion(string versionString, string? legacyVersionPrefix)
 		{
-			bool isLegacyVersion = DetermineLegacyVersion(versionString, legacyVersionPrefix, hasLegacyPrefix);
-			string versionPrefix = isLegacyVersion && hasLegacyPrefix ? legacyVersionPrefix : ModernVersionPrefix;
+			bool isLegacyVersion = DetermineLegacyVersion(versionString, legacyVersionPrefix);
 
 			// Remove the appropriate prefix
-			if (isLegacyVersion && hasLegacyPrefix)
+			if (isLegacyVersion && legacyVersionPrefix is not null)
 				versionString = versionString.Replace(legacyVersionPrefix, string.Empty);
 			else if (!isLegacyVersion)
 				versionString = versionString.Replace(ModernVersionPrefix, string.Empty);
@@ -61,11 +59,11 @@ namespace TombIDE.Shared.NewStructure
 		/// <summary>
 		/// Determines whether a version string represents a legacy version.
 		/// </summary>
-		private static bool DetermineLegacyVersion(string versionString, string legacyVersionPrefix, bool hasLegacyPrefix)
+		private static bool DetermineLegacyVersion(string versionString, string? legacyVersionPrefix)
 		{
-			if (!hasLegacyPrefix)
+			if (legacyVersionPrefix is null)
 			{
-				// If there's no legacy prefix support, check if it doesn't start with modern prefix
+				// If there's no legacy prefix defined, check if it doesn't start with modern prefix
 				return !versionString.StartsWith(ModernVersionPrefix);
 			}
 

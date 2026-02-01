@@ -150,6 +150,6 @@ namespace TombIDE.Shared.NewStructure
 		/// </summary>
 		/// <param name="versionString">The version string to parse.</param>
 		private static Version GetActualVersion(string versionString)
-			=> TRXVersionHelper.ParseTRXVersion(versionString, LegacyVersionPrefix, hasLegacyPrefix: true);
+			=> TRXVersionHelper.ParseTRXVersion(versionString, LegacyVersionPrefix);
 	}
 }
