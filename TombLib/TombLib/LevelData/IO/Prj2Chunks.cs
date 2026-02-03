@@ -147,6 +147,7 @@ namespace TombLib.LevelData.IO
         /**********/public static readonly ChunkId AlternateGroup = ChunkId.FromString("TeGroup");
         /******/public static readonly ChunkId RoomFlagCold = ChunkId.FromString("TeCold");
         /******/public static readonly ChunkId RoomFlagDamage = ChunkId.FromString("TeDmg");
+        /******/public static readonly ChunkId RoomFlagNoCaustics = ChunkId.FromString("TeNoCaustics");
         /******/public static readonly ChunkId RoomFlagHorizon = ChunkId.FromString("TeHorizon");
         /******/public static readonly ChunkId RoomFlagOutside = ChunkId.FromString("TeOutside");
         /******/public static readonly ChunkId RoomFlagNoLensflare = ChunkId.FromString("TeNoLens");

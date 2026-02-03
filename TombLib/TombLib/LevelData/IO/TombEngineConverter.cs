@@ -131,6 +131,34 @@ namespace TombLib.LevelData.IO
                     }
                     break;
 
+                // Custom hair meshes often don't connect properly
+
+                case "HAIR_PRIMARY":
+                    {
+                        if (sourceVersion.Native() <= TRVersion.Game.TR3 || moveable.Bones.Count < 2)
+                            break;
+
+                        progressReporter?.ReportInfo("    Adjusting mesh connections for " + newSlotName);
+
+                        // Vertices 4-5-6-7 of a mesh should match the position of vertices 0-1-2-3 of the next mesh
+                        for (int m = 0; m < moveable.Bones.Count - 1; m++)
+                        {
+                            var mesh = moveable.Bones[m].Mesh;
+                            var nextBone = moveable.Bones[m + 1];
+                            var nextMesh = nextBone.Mesh;
+                            
+                            if (mesh.VertexPositions.Count < 8 || nextMesh.VertexPositions.Count < 4)
+                                break;
+
+                            for (int i = 0; i < 4; i++)
+                            {   
+                                mesh.VertexPositions[i + 4] = nextMesh.VertexPositions[i] + nextBone.Translation;
+                            }
+                        }
+
+                    }
+                    break;
+
                 // Correct pivot points
 
                 case "EXPANDING_PLATFORM":

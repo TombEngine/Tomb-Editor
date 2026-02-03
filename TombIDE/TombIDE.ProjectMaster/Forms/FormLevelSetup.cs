@@ -16,8 +16,8 @@ namespace TombIDE.ProjectMaster
 {
 	public partial class FormLevelSetup : DarkForm
 	{
-		public ILevelProject CreatedLevel { get; private set; }
-		public List<string> GeneratedScriptLines { get; private set; }
+		public ILevelProject? CreatedLevel { get; private set; }
+		public List<string> GeneratedScriptLines { get; private set; } = [];
 
 		private IGameProject _targetProject;
 
@@ -155,7 +155,7 @@ namespace TombIDE.ProjectMaster
 
 				level.Settings.LoadDefaultSoundCatalog();
 
-				string defaultWadPath = _targetProject.GameVersion switch
+				string? defaultWadPath = _targetProject.GameVersion switch
 				{
 					TRVersion.Game.TombEngine => Path.Combine(_targetProject.DirectoryPath, "Assets", "Wads", "TombEngine.wad2"),
 					_ => null

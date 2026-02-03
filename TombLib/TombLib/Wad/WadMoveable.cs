@@ -49,8 +49,11 @@ namespace TombLib.Wad
         public static WadMoveableId Lara = new WadMoveableId(0);
 
         public static WadMoveableId? GetHorizon(TRVersion.Game gameVersion) {
-            switch (gameVersion.Native()) {
+            switch (gameVersion) {
+                case TRVersion.Game.TR1X:
+                    return new WadMoveableId(184);
                 case TRVersion.Game.TR2:
+                case TRVersion.Game.TR2X:
                     return new WadMoveableId(254);
                 case TRVersion.Game.TR3:
                     return new WadMoveableId(355);

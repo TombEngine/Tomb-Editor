@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using TombIDE.Shared.NewStructure.Implementations;
 using TombLib.LevelData;
 
 namespace TombIDE.Shared.NewStructure
@@ -88,7 +87,7 @@ namespace TombIDE.Shared.NewStructure
 		/// <summary>
 		/// Returns a list of all valid level projects in the project's Levels directory and external level file paths.
 		/// </summary>
-		LevelProject[] GetAllValidLevelProjects();
+		ILevelProject[] GetAllValidLevelProjects();
 
 		string GetScriptRootDirectory();
 

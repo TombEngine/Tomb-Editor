@@ -58,6 +58,8 @@ namespace TombLib.LevelData
         public bool FlagExcludeFromPathFinding { get; set; }
         [DisplayName("No lensflare")]
         public bool FlagNoLensflare { get; set; }
+        [DisplayName("No caustics")]
+        public bool FlagNoCaustics { get; set; }
         [DisplayName("Reverb type")]
         public byte Reverberation { get; set; }
         [DisplayName("Locked")]

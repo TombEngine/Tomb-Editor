@@ -1,472 +1,172 @@
 ﻿using DarkUI.Forms;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
 using System.Windows.Forms;
 using TombIDE.ProjectMaster.Forms;
+using TombIDE.ProjectMaster.Services;
+using TombIDE.ProjectMaster.Services.EngineUpdate;
+using TombIDE.ProjectMaster.Services.EngineVersion;
+using TombIDE.ProjectMaster.Services.FileExtraction;
+using TombIDE.ProjectMaster.Services.LevelCompile;
 using TombIDE.Shared;
-using TombIDE.Shared.NewStructure;
-using TombIDE.Shared.NewStructure.Implementations;
-using TombIDE.Shared.SharedClasses;
 using TombLib.LevelData;
-using TombLib.Utils;
 
-namespace TombIDE.ProjectMaster
+namespace TombIDE.ProjectMaster;
+
+public partial class LevelManager : UserControl
 {
-	public partial class LevelManager : UserControl
+	private IDE _ide = null!;
+
+	private readonly IEngineVersionService _engineVersionService;
+	private readonly IEngineUpdateServiceFactory _engineUpdateServiceFactory;
+	private readonly ILevelCompileService _levelBuildService;
+	private readonly IUIResourceService _uiResourceService;
+
+	public LevelManager() : this(null, null, null, null)
+	{ }
+
+	public LevelManager(
+		IEngineVersionService? engineVersionService,
+		IEngineUpdateServiceFactory? engineUpdateServiceFactory,
+		ILevelCompileService? levelBuildService,
+		IUIResourceService? uiResourceService)
 	{
-		private IDE _ide;
+		InitializeComponent();
 
-		public LevelManager()
+		// Initialize services with default implementations if not provided
+		var fileExtractionService = new FileExtractionService();
+
+		_engineUpdateServiceFactory = engineUpdateServiceFactory ?? new EngineUpdateServiceFactory(fileExtractionService);
+		_engineVersionService = engineVersionService ?? new EngineVersionService(_engineUpdateServiceFactory);
+		_levelBuildService = levelBuildService ?? new LevelCompileService();
+		_uiResourceService = uiResourceService ?? new UIResourceService();
+	}
+
+	public void Initialize(IDE ide)
+	{
+		_ide = ide;
+		_ide.IDEEventRaised += IDE_IDEEventRaised;
+
+		panel_GameLabel.BackgroundImage = _uiResourceService.GetLevelPanelIcon(_ide.Project.GameVersion);
+
+		UpdateVersionLabel();
+
+		section_LevelList.Initialize(ide, _levelBuildService);
+		section_LevelProperties.Initialize(ide);
+	}
+
+	private void IDE_IDEEventRaised(IIDEEvent obj)
+	{
+		if (obj is IDE.BeginEngineUpdateEvent)
+			BeginEngineUpdate();
+	}
+
+	private void UpdateVersionLabel()
+	{
+		button_Update.Visible = false;
+
+		if (_ide.Project.GameVersion is TRVersion.Game.TR4)
 		{
-			InitializeComponent();
+			label_OutdatedState.Visible = false;
+			label_EngineVersion.Text = "Engine Version: TRLE";
+			return;
 		}
 
-		public void Initialize(IDE ide)
-		{
-			_ide = ide;
-			_ide.IDEEventRaised += IDE_IDEEventRaised;
+		var versionInfo = _engineVersionService.GetVersionInfo(_ide.Project);
 
-			switch (_ide.Project.GameVersion)
+		string engineVersionString = versionInfo.CurrentVersion == new Version(0, 0) ? "Unknown" : versionInfo.CurrentVersion?.ToString() ?? "Unknown";
+		label_EngineVersion.Text = $"Engine Version: {engineVersionString}";
+
+		if (versionInfo.CurrentVersion is null || versionInfo.LatestVersion is null)
+		{
+			label_OutdatedState.Visible = false;
+		}
+		else
+		{
+			label_OutdatedState.Visible = true;
+
+			if (versionInfo.IsOutdated)
 			{
-				case TRVersion.Game.TombEngine: panel_GameLabel.BackgroundImage = Properties.Resources.TEN_LVL; break;
-				case TRVersion.Game.TRNG: panel_GameLabel.BackgroundImage = Properties.Resources.TRNG_LVL; break;
-				case TRVersion.Game.TR4: panel_GameLabel.BackgroundImage = Properties.Resources.TR4_LVL; break;
-				case TRVersion.Game.TR3: panel_GameLabel.BackgroundImage = Properties.Resources.TR3_LVL; break;
-				case TRVersion.Game.TR2 or TRVersion.Game.TR2X: panel_GameLabel.BackgroundImage = Properties.Resources.TR2_LVL; break;
-				case TRVersion.Game.TR1 or TRVersion.Game.TR1X: panel_GameLabel.BackgroundImage = Properties.Resources.TR1_LVL; break;
+				label_OutdatedState.Text = $"(Outdated, Latest version is: {versionInfo.LatestVersion})";
+				label_OutdatedState.ForeColor = Color.LightPink;
+
+				// Show update button if auto-update is supported
+				var updateService = _engineUpdateServiceFactory.GetUpdateService(_ide.Project.GameVersion);
+
+				if (updateService is not null)
+				{
+					button_Update.Visible = true;
+
+					if (!versionInfo.SupportsAutoUpdate)
+					{
+						button_Update.Enabled = false;
+						button_Update.Text = versionInfo.AutoUpdateBlockReason;
+						button_Update.Width = 300;
+					}
+					else
+					{
+						button_Update.Enabled = true;
+						button_Update.Text = "Update Engine";
+						button_Update.Width = 200;
+					}
+				}
 			}
-
-			UpdateVersionLabel();
-
-			section_LevelList.Initialize(ide);
-			section_LevelProperties.Initialize(ide);
-		}
-
-		private void IDE_IDEEventRaised(IIDEEvent obj)
-		{
-			if (obj is IDE.BeginEngineUpdateEvent)
-				BeginEngineUpdate();
-		}
-
-		private void UpdateVersionLabel()
-		{
-			button_Update.Visible = false;
-
-			if (_ide.Project.GameVersion is TRVersion.Game.TR4)
-			{
-				label_OutdatedState.Visible = false;
-				label_EngineVersion.Text = "Engine Version: TRLE";
-				return;
-			}
-
-			Version engineVersion = _ide.Project.GetCurrentEngineVersion();
-			string engineVersionString = engineVersion == new Version(0, 0) ? "Unknown" : engineVersion.ToString();
-			label_EngineVersion.Text = $"Engine Version: {engineVersionString}";
-
-			Version latestVersion = _ide.Project.GetLatestEngineVersion();
-
-			if (engineVersion is null || latestVersion is null)
-				label_OutdatedState.Visible = false;
 			else
 			{
-				label_OutdatedState.Visible = true;
-
-				if (engineVersion < latestVersion)
-				{
-					label_OutdatedState.Text = $"(Outdated, Latest version is: {latestVersion})";
-					label_OutdatedState.ForeColor = Color.LightPink;
-
-					if (_ide.Project.GameVersion is TRVersion.Game.TombEngine)
-					{
-						button_Update.Visible = true;
-
-						// 1.0.9 is the first version that supports auto-updating
-						if (engineVersion.Major <= 1 && engineVersion.Minor <= 0 && engineVersion.Build <= 8)
-						{
-							button_Update.Enabled = false;
-							button_Update.Text = "Cannot Auto-Update engine. Current version is too old.";
-							button_Update.Width = 300;
-						}
-					}
-
-					if (_ide.Project.GameVersion is TRVersion.Game.TR1)
-					{
-						button_Update.Visible = true;
-
-						// 3.0 is the first version that supports auto-updating - 4.8 introduced breaking changes
-						if (engineVersion.Major <= 4 && engineVersion.Minor <= 7)
-						{
-							button_Update.Text = engineVersion.Major <= 2
-								? "Cannot Auto-Update engine. Current version is too old."
-								: "Cannot Auto-Update engine. TR1X 4.8 introduced breaking changes, which require manual migration.";
-
-							button_Update.Enabled = false;
-							button_Update.Width = 300;
-						}
-
-						if (engineVersion.Major <= 4 && engineVersion.Minor <= 14)
-						{
-							button_Update.Text = "Cannot Auto-Update engine. TR1X 4.15 introduced breaking changes, which require manual migration.";
-
-							button_Update.Enabled = false;
-							button_Update.Width = 300;
-						}
-					}
-
-					if (_ide.Project.GameVersion is TRVersion.Game.TR2X)
-					{
-						button_Update.Visible = true;
-
-						if (engineVersion.Major <= 1 && engineVersion.Minor <= 4)
-						{
-							button_Update.Text = "Cannot Auto-Update engine. TR2X 1.5 introduced breaking changes, which require manual migration.";
-
-							button_Update.Enabled = false;
-							button_Update.Width = 300;
-						}
-					}
-				}
-				else
-				{
-					label_OutdatedState.Text = "(Latest)";
-					label_OutdatedState.ForeColor = Color.LightGreen;
-				}
+				label_OutdatedState.Text = "(Latest)";
+				label_OutdatedState.ForeColor = Color.LightGreen;
 			}
 		}
+	}
 
-		private void button_RebuildAll_Click(object sender, EventArgs e)
+	private void button_RebuildAll_Click(object sender, EventArgs e)
+	{
+		if (!_levelBuildService.RebuildAllLevels(_ide.Project))
 		{
-			LevelProject[] levels = _ide.Project.GetAllValidLevelProjects();
-
-			if (levels.Length == 0)
-			{
-				DarkMessageBox.Show(this,
-					"There are no levels in the current project.",
-					"Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-				return;
-			}
-
-			var batchList = new BatchCompileList();
-
-			foreach (ILevelProject level in levels)
-			{
-				string prj2Path;
-
-				if (level.TargetPrj2FileName is null)
-					prj2Path = Path.Combine(level.DirectoryPath, level.GetMostRecentlyModifiedPrj2FileName());
-				else
-					prj2Path = Path.Combine(level.DirectoryPath, level.TargetPrj2FileName);
-
-				batchList.Files.Add(prj2Path);
-			}
-
-			string batchListFilePath = Path.Combine(Path.GetTempPath(), "tide_batch.xml");
-			BatchCompileList.SaveToXml(batchListFilePath, batchList);
-
-			var startInfo = new ProcessStartInfo
-			{
-				FileName = Path.Combine(DefaultPaths.ProgramDirectory, "TombEditor.exe"),
-				Arguments = "\"" + batchListFilePath + "\"",
-				WorkingDirectory = DefaultPaths.ProgramDirectory,
-				UseShellExecute = true
-			};
-
-			Process.Start(startInfo);
+			DarkMessageBox.Show(this,
+				"There are no levels in the current project.",
+				"Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
+	}
 
-		private void button_Update_Click(object sender, EventArgs e)
-			=> BeginEngineUpdate();
+	private void button_Update_Click(object sender, EventArgs e)
+		=> BeginEngineUpdate();
 
-		private void BeginEngineUpdate()
+	private void BeginEngineUpdate()
+	{
+		var updateService = _engineUpdateServiceFactory.GetUpdateService(_ide.Project.GameVersion);
+
+		if (updateService is null)
 		{
-			switch (_ide.Project.GameVersion)
-			{
-				case TRVersion.Game.TombEngine:
-					UpdateTEN();
-					break;
+			DarkMessageBox.Show(this, "Auto-update is not supported for this game version.",
+				"Not Supported", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-				case TRVersion.Game.TR1:
-					UpdateTR1X();
-					break;
-
-				case TRVersion.Game.TR2X:
-					UpdateTR2X();
-					break;
-			}
+			return;
 		}
 
-		private void UpdateTEN()
+		var versionInfo = _engineVersionService.GetVersionInfo(_ide.Project);
+
+		if (versionInfo.CurrentVersion is null || versionInfo.LatestVersion is null)
 		{
-			var newVersion = _ide.Project.GetLatestEngineVersion();
-			var prevVersion = _ide.Project.GetCurrentEngineVersion();
+			DarkMessageBox.Show(this, "Could not determine the current or latest engine version.",
+				"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-			// 1.0.9 is the first version that supports auto-updating
-			if (prevVersion.Major <= 1 && prevVersion.Minor <= 0 && prevVersion.Build <= 8)
-			{
-				MessageBox.Show(this, "Cannot Auto-Update engine. Current version is too old.",
-					"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-				return;
-			}
-
-			// In 1.6 onwards we need to upgrade settings file.
-			var settingsUpdate16 = newVersion.Major == 1 && newVersion.Minor >= 6 && prevVersion.Major == 1 && prevVersion.Minor <= 6 && prevVersion <= newVersion;
-
-			var message =
-				@"This update will replace the following directories and files:
-
-				- Engine/Bin/
-				- Engine/Shaders/
-				- Engine/Scripts/Engine/
-				- Engine/Scripts/SystemStrings.lua" +
-
-				(settingsUpdate16 ? "\n- Engine/Scripts/Settings.lua" : "") +
-
-				"\n\n" +
-				@"If any of these directories or files are important to you, please update the engine manually or create a copy of these files before performing this update.
-
-				Are you sure you want to continue?
-				This action cannot be reverted.";
-
-			DialogResult result = MessageBox.Show(this, message.TrimIndentation(),
-				"Warning...", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
-
-			if (result is not DialogResult.Yes)
-				return;
-
-			string engineDirectoryPath = Path.Combine(_ide.Project.DirectoryPath, "Engine");
-
-			if (!Directory.Exists(engineDirectoryPath))
-			{
-				DarkMessageBox.Show(this, "Couldn't locate \"Engine\" directory. Updating is not supported for your project structure.", "Update Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
-			}
-
-			try
-			{
-				string enginePresetPath = Path.Combine(DefaultPaths.PresetsDirectory, "TEN.zip");
-				string libsPath = Path.Combine(DefaultPaths.TemplatesDirectory, "Shared", "TEN External DLLs.zip");
-				string resourcesPath = Path.Combine(DefaultPaths.TemplatesDirectory, "Shared", "TEN Resources.zip");
-				using var engineArchive = new ZipArchive(File.OpenRead(enginePresetPath));
-				using var libsArchive = new ZipArchive(File.OpenRead(libsPath));
-				using var resourcesArchive = new ZipArchive(File.OpenRead(resourcesPath));
-
-				var bin = engineArchive.Entries.Where(entry => entry.FullName.StartsWith("Engine/Bin")).ToList();
-				bin.AddRange(libsArchive.Entries);
-				ExtractEntries(bin, _ide.Project);
-
-				// Delete the "Engine/Shaders/Bin" directory before extracting new shaders
-				string compiledShadersPath = Path.Combine(_ide.Project.DirectoryPath, "Engine/Shaders/Bin");
-
-				if (Directory.Exists(compiledShadersPath))
-					Directory.Delete(compiledShadersPath, true);
-
-				var shaders = engineArchive.Entries.Where(entry => entry.FullName.StartsWith("Engine/Shaders")).ToList();
-				ExtractEntries(shaders, _ide.Project);
-
-				// Delete the "Engine/Scripts/Engine" directory before extracting new scripts
-				string engineScriptsPath = Path.Combine(_ide.Project.DirectoryPath, "Engine/Scripts/Engine");
-
-				if (Directory.Exists(engineScriptsPath))
-					Directory.Delete(engineScriptsPath, true);
-
-				var scriptsEngine = engineArchive.Entries.Where(entry => entry.FullName.StartsWith("Engine/Scripts/Engine")).ToList();
-				ExtractEntries(scriptsEngine, _ide.Project);
-
-				ZipArchiveEntry systemStrings = engineArchive.Entries.FirstOrDefault(entry => entry.Name.Equals("SystemStrings.lua"));
-				systemStrings?.ExtractToFile(Path.Combine(_ide.Project.DirectoryPath, systemStrings.FullName), true);
-
-				// Version-specific file updates.
-				if (settingsUpdate16)
-				{
-					ZipArchiveEntry settings = engineArchive.Entries.FirstOrDefault(entry => entry.Name.Equals("Settings.lua"));
-					settings?.ExtractToFile(Path.Combine(_ide.Project.DirectoryPath, settings.FullName), true);
-				}
-
-				// Extract resources, but don't overwrite
-				ExtractEntries(resourcesArchive.Entries, _ide.Project, false);
-
-				UpdateTENApi(newVersion);
-				UpdateVersionLabel();
-
-				DarkMessageBox.Show(this, "Engine has been updated successfully!", "Done.", MessageBoxButtons.OK, MessageBoxIcon.Information);
-			}
-			catch (Exception ex)
-			{
-				DarkMessageBox.Show(this, "An error occurred while updating the engine:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
+			return;
 		}
 
-		private void UpdateTR1X()
-		{
-			var prevVersion = _ide.Project.GetCurrentEngineVersion();
+		bool success = updateService.UpdateEngine(
+			_ide.Project,
+			versionInfo.CurrentVersion,
+			versionInfo.LatestVersion,
+			this);
 
-			// 4.8 had breaking changes
-			if (prevVersion.Major <= 4 && prevVersion.Minor <= 7)
-			{
-				MessageBox.Show(this, "Cannot Auto-Update engine. TR1X 4.8 introduced breaking changes, which require manual migration.",
-					"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		if (success)
+			UpdateVersionLabel();
+	}
 
-				return;
-			}
-
-			// 4.15 also had breaking changes
-			if (prevVersion.Major <= 4 && prevVersion.Minor <= 14)
-			{
-				MessageBox.Show(this, "Cannot Auto-Update engine. TR1X 4.15 introduced breaking changes, which require manual migration.",
-					"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-				return;
-			}
-
-			DialogResult result = MessageBox.Show(this,
-				"This update will replace the following directories and files:\n\n" +
-
-				"- Engine/shaders/\n" +
-				"- Engine/TR1X.exe\n" +
-				"- Engine/TR1X_ConfigTool.exe\n\n" +
-
-				"If any of these directories / files are important to you, please update the engine manually or create a copy of these files before performing this update.\n\n" +
-
-				"Are you sure you want to continue?\n" +
-				"This action cannot be reverted.",
-				"Warning...", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
-
-			if (result is not DialogResult.Yes)
-				return;
-
-			string engineDirectoryPath = Path.Combine(_ide.Project.DirectoryPath, "Engine");
-
-			if (!Directory.Exists(engineDirectoryPath))
-			{
-				DarkMessageBox.Show(this, "Couldn't locate \"Engine\" directory. Updating is not supported for your project structure.", "Update Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
-			}
-
-			try
-			{
-				string enginePresetPath = Path.Combine(DefaultPaths.PresetsDirectory, "TR1.zip");
-				using var engineArchive = new ZipArchive(File.OpenRead(enginePresetPath));
-
-				var shaders = engineArchive.Entries.Where(entry => entry.FullName.StartsWith("Engine/shaders")).ToList();
-				ExtractEntries(shaders, _ide.Project);
-
-				var executables = engineArchive.Entries.Where(entry => entry.FullName.EndsWith(".exe")).ToList();
-				ExtractEntries(executables, _ide.Project);
-
-				UpdateVersionLabel();
-
-				DarkMessageBox.Show(this, "Engine has been updated successfully!", "Done.", MessageBoxButtons.OK, MessageBoxIcon.Information);
-			}
-			catch (Exception ex)
-			{
-				DarkMessageBox.Show(this, "An error occurred while updating the engine:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-		}
-
-		private void UpdateTR2X()
-		{
-			var prevVersion = _ide.Project.GetCurrentEngineVersion();
-
-			// 1.5 had breaking changes
-			if (prevVersion.Major <= 1 && prevVersion.Minor <= 4)
-			{
-				MessageBox.Show(this, "Cannot Auto-Update engine. TR2X 1.5 introduced breaking changes, which require manual migration.",
-					"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-				return;
-			}
-
-			DialogResult result = MessageBox.Show(this,
-				"This update will replace the following directories and files:\n\n" +
-
-				"- Engine/shaders/\n" +
-				"- Engine/TR2X.exe\n" +
-				"- Engine/TR2X_ConfigTool.exe\n\n" +
-
-				"If any of these directories / files are important to you, please update the engine manually or create a copy of these files before performing this update.\n\n" +
-
-				"Are you sure you want to continue?\n" +
-				"This action cannot be reverted.",
-				"Warning...", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
-
-			if (result is not DialogResult.Yes)
-				return;
-
-			string engineDirectoryPath = Path.Combine(_ide.Project.DirectoryPath, "Engine");
-
-			if (!Directory.Exists(engineDirectoryPath))
-			{
-				DarkMessageBox.Show(this, "Couldn't locate \"Engine\" directory. Updating is not supported for your project structure.", "Update Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
-			}
-
-			try
-			{
-				string enginePresetPath = Path.Combine(DefaultPaths.PresetsDirectory, "TR2X.zip");
-				using var engineArchive = new ZipArchive(File.OpenRead(enginePresetPath));
-
-				var shaders = engineArchive.Entries.Where(entry => entry.FullName.StartsWith("Engine/shaders")).ToList();
-				ExtractEntries(shaders, _ide.Project);
-
-				var executables = engineArchive.Entries.Where(entry => entry.FullName.EndsWith(".exe")).ToList();
-				ExtractEntries(executables, _ide.Project);
-
-				UpdateVersionLabel();
-
-				DarkMessageBox.Show(this, "Engine has been updated successfully!", "Done.", MessageBoxButtons.OK, MessageBoxIcon.Information);
-			}
-			catch (Exception ex)
-			{
-				DarkMessageBox.Show(this, "An error occurred while updating the engine:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-		}
-
-		private static void ExtractEntries(IEnumerable<ZipArchiveEntry> entries, IGameProject targetProject, bool overwrite = true)
-		{
-			foreach (ZipArchiveEntry entry in entries)
-			{
-				if (entry.FullName.EndsWith("/"))
-				{
-					string dirPath = Path.Combine(targetProject.DirectoryPath, entry.FullName);
-
-					if (!Directory.Exists(dirPath))
-						Directory.CreateDirectory(dirPath);
-				}
-				else
-				{
-					string targetPath = Path.Combine(targetProject.DirectoryPath, entry.FullName);
-
-					if (overwrite)
-						entry.ExtractToFile(targetPath, true);
-					else if (!File.Exists(targetPath))
-						entry.ExtractToFile(targetPath, false);
-				}
-			}
-		}
-
-		private void button_Publish_Click(object sender, EventArgs e)
-		{
-			using var form = new FormGameArchive(_ide);
-			form.ShowDialog();
-		}
-
-		private void UpdateTENApi(Version currentEngineVersion)
-		{
-			try
-			{
-				TENApiService.InjectTENApi(_ide.Project, currentEngineVersion);
-			}
-			catch (Exception ex)
-			{
-				DarkMessageBox.Show(this, "An error occurred while updating the API:\n\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-		}
+	private void button_Publish_Click(object sender, EventArgs e)
+	{
+		using var form = new FormGameArchive(_ide);
+		form.ShowDialog();
 	}
 }

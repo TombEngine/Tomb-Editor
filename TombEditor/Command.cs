@@ -2115,6 +2115,18 @@ namespace TombEditor
                 }
             });
 
+            AddCommand("SetRoomNoCaustics", "Disable caustics in water rooms", CommandType.Rooms, delegate (CommandArgs args)
+            {
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion == TRVersion.Game.TombEngine, "No caustics"))
+                    return;
+
+                if (args.Editor.SelectedRoom != null)
+                {
+                    args.Editor.SelectedRoom.Properties.FlagNoCaustics = !args.Editor.SelectedRoom.Properties.FlagNoCaustics;
+                    args.Editor.RoomPropertiesChange(args.Editor.SelectedRoom);
+                }
+            });
+
             AddCommand("SetRoomDamage", "Set room to damage (TRNG only)", CommandType.Rooms, delegate (CommandArgs args)
             {
                 if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TRNG, "Damage flag"))
