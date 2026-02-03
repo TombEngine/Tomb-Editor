@@ -179,7 +179,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
             if (!room.Properties.FlagHorizon && !room.PortalsCache.Any(p => p.Room.Properties.FlagHorizon))
                 newRoom.Flags |= 0x0040;
 
-            // TRNG-specific flags
             if (room.Properties.FlagDamage)
                 newRoom.Flags |= 0x0800;
             if (room.Properties.FlagCold)
@@ -187,7 +186,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
             if (room.Properties.FlagNoLensflare)
                 newRoom.Flags |= 0x0080;
             if (room.Properties.FlagNoCaustics)
-                newRoom.Flags |= 0x200;
+                newRoom.Flags |= 0x0200;
 
             // Room type
             switch (room.Properties.Type)
