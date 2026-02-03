@@ -58,7 +58,7 @@
             // 
             cbNoPathfinding.AutoCheck = false;
             cbNoPathfinding.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            cbNoPathfinding.Location = new System.Drawing.Point(129, 134);
+            cbNoPathfinding.Location = new System.Drawing.Point(129, 130);
             cbNoPathfinding.Name = "cbNoPathfinding";
             cbNoPathfinding.Size = new System.Drawing.Size(96, 17);
             cbNoPathfinding.TabIndex = 8;
@@ -69,7 +69,7 @@
             // 
             cbHorizon.AutoCheck = false;
             cbHorizon.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            cbHorizon.Location = new System.Drawing.Point(3, 134);
+            cbHorizon.Location = new System.Drawing.Point(3, 130);
             cbHorizon.Name = "cbHorizon";
             cbHorizon.Size = new System.Drawing.Size(58, 17);
             cbHorizon.TabIndex = 6;
@@ -81,7 +81,7 @@
             darkLabel19.AutoSize = true;
             darkLabel19.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             darkLabel19.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            darkLabel19.Location = new System.Drawing.Point(87, 85);
+            darkLabel19.Location = new System.Drawing.Point(87, 84);
             darkLabel19.Name = "darkLabel19";
             darkLabel19.Size = new System.Drawing.Size(48, 13);
             darkLabel19.TabIndex = 103;
@@ -104,7 +104,7 @@
             darkLabel16.AutoSize = true;
             darkLabel16.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             darkLabel16.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            darkLabel16.Location = new System.Drawing.Point(140, 200);
+            darkLabel16.Location = new System.Drawing.Point(140, 194);
             darkLabel16.Name = "darkLabel16";
             darkLabel16.Size = new System.Drawing.Size(36, 13);
             darkLabel16.TabIndex = 96;
@@ -114,7 +114,7 @@
             // 
             cbFlagOutside.AutoCheck = false;
             cbFlagOutside.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            cbFlagOutside.Location = new System.Drawing.Point(3, 155);
+            cbFlagOutside.Location = new System.Drawing.Point(3, 150);
             cbFlagOutside.Name = "cbFlagOutside";
             cbFlagOutside.Size = new System.Drawing.Size(50, 17);
             cbFlagOutside.TabIndex = 9;
@@ -126,7 +126,7 @@
             cbFlagCold.AutoCheck = false;
             cbFlagCold.AutoSize = true;
             cbFlagCold.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            cbFlagCold.Location = new System.Drawing.Point(64, 155);
+            cbFlagCold.Location = new System.Drawing.Point(64, 150);
             cbFlagCold.Name = "cbFlagCold";
             cbFlagCold.Size = new System.Drawing.Size(50, 17);
             cbFlagCold.TabIndex = 10;
@@ -137,7 +137,7 @@
             // 
             cbFlagDamage.AutoCheck = false;
             cbFlagDamage.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            cbFlagDamage.Location = new System.Drawing.Point(64, 134);
+            cbFlagDamage.Location = new System.Drawing.Point(64, 130);
             cbFlagDamage.Name = "cbFlagDamage";
             cbFlagDamage.Size = new System.Drawing.Size(64, 17);
             cbFlagDamage.TabIndex = 7;
@@ -149,7 +149,7 @@
             darkLabel15.AutoSize = true;
             darkLabel15.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             darkLabel15.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            darkLabel15.Location = new System.Drawing.Point(0, 85);
+            darkLabel15.Location = new System.Drawing.Point(0, 84);
             darkLabel15.Name = "darkLabel15";
             darkLabel15.Size = new System.Drawing.Size(62, 13);
             darkLabel15.TabIndex = 91;
@@ -160,7 +160,7 @@
             panelRoomAmbientLight.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             panelRoomAmbientLight.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             panelRoomAmbientLight.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            panelRoomAmbientLight.Location = new System.Drawing.Point(3, 216);
+            panelRoomAmbientLight.Location = new System.Drawing.Point(3, 210);
             panelRoomAmbientLight.Name = "panelRoomAmbientLight";
             panelRoomAmbientLight.Size = new System.Drawing.Size(59, 23);
             panelRoomAmbientLight.TabIndex = 12;
@@ -172,7 +172,7 @@
             darkLabel3.AutoSize = true;
             darkLabel3.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             darkLabel3.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            darkLabel3.Location = new System.Drawing.Point(0, 200);
+            darkLabel3.Location = new System.Drawing.Point(0, 194);
             darkLabel3.Name = "darkLabel3";
             darkLabel3.Size = new System.Drawing.Size(50, 13);
             darkLabel3.TabIndex = 88;
@@ -182,7 +182,7 @@
             // 
             cbNoLensflare.AutoCheck = false;
             cbNoLensflare.AutoSize = true;
-            cbNoLensflare.Location = new System.Drawing.Point(129, 155);
+            cbNoLensflare.Location = new System.Drawing.Point(129, 150);
             cbNoLensflare.Name = "cbNoLensflare";
             cbNoLensflare.Size = new System.Drawing.Size(88, 17);
             cbNoLensflare.TabIndex = 11;
@@ -200,7 +200,7 @@
             numLightEffectStrength.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             numLightEffectStrength.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             numLightEffectStrength.IncrementAlternate = new decimal(new int[] { 10, 0, 0, 65536 });
-            numLightEffectStrength.Location = new System.Drawing.Point(246, 216);
+            numLightEffectStrength.Location = new System.Drawing.Point(246, 210);
             numLightEffectStrength.LoopValues = false;
             numLightEffectStrength.Maximum = new decimal(new int[] { 4, 0, 0, 0 });
             numLightEffectStrength.Name = "numLightEffectStrength";
@@ -216,7 +216,7 @@
             comboPortalShade.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             comboPortalShade.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             comboPortalShade.Items.AddRange(new object[] { "Default", "Smooth", "Sharp" });
-            comboPortalShade.Location = new System.Drawing.Point(68, 216);
+            comboPortalShade.Location = new System.Drawing.Point(68, 210);
             comboPortalShade.Name = "comboPortalShade";
             comboPortalShade.Size = new System.Drawing.Size(69, 23);
             comboPortalShade.TabIndex = 13;
@@ -228,7 +228,7 @@
             comboLightEffect.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             comboLightEffect.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             comboLightEffect.Items.AddRange(new object[] { "None", "Default", "Reflection", "Glow", "Move", "Glow & Move", "Mist" });
-            comboLightEffect.Location = new System.Drawing.Point(143, 216);
+            comboLightEffect.Location = new System.Drawing.Point(143, 210);
             comboLightEffect.Name = "comboLightEffect";
             comboLightEffect.Size = new System.Drawing.Size(97, 23);
             comboLightEffect.TabIndex = 14;
@@ -254,7 +254,7 @@
             darkLabel2.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
             darkLabel2.Location = new System.Drawing.Point(1, 59);
             darkLabel2.Name = "darkLabel2";
-            darkLabel2.Size = new System.Drawing.Size(32, 13);
+            darkLabel2.Size = new System.Drawing.Size(33, 13);
             darkLabel2.TabIndex = 110;
             darkLabel2.Text = "Tags:";
             // 
@@ -264,7 +264,7 @@
             darkLabel1.AutoSize = true;
             darkLabel1.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             darkLabel1.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            darkLabel1.Location = new System.Drawing.Point(65, 200);
+            darkLabel1.Location = new System.Drawing.Point(65, 194);
             darkLabel1.Name = "darkLabel1";
             darkLabel1.Size = new System.Drawing.Size(71, 13);
             darkLabel1.TabIndex = 112;
@@ -330,7 +330,7 @@
             // 
             comboFlipMap.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             comboFlipMap.Items.AddRange(new object[] { "None", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15" });
-            comboFlipMap.Location = new System.Drawing.Point(90, 101);
+            comboFlipMap.Location = new System.Drawing.Point(90, 100);
             comboFlipMap.Name = "comboFlipMap";
             comboFlipMap.Size = new System.Drawing.Size(55, 23);
             comboFlipMap.TabIndex = 4;
@@ -352,7 +352,7 @@
             comboReverberation.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             comboReverberation.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             comboReverberation.Items.AddRange(new object[] { "None", "Small", "Medium", "Large", "Pipe" });
-            comboReverberation.Location = new System.Drawing.Point(151, 101);
+            comboReverberation.Location = new System.Drawing.Point(151, 100);
             comboReverberation.Name = "comboReverberation";
             comboReverberation.Size = new System.Drawing.Size(71, 23);
             comboReverberation.TabIndex = 5;
@@ -361,7 +361,7 @@
             // comboRoomType
             // 
             comboRoomType.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            comboRoomType.Location = new System.Drawing.Point(3, 101);
+            comboRoomType.Location = new System.Drawing.Point(3, 100);
             comboRoomType.Name = "comboRoomType";
             comboRoomType.Size = new System.Drawing.Size(81, 23);
             comboRoomType.TabIndex = 3;
@@ -436,7 +436,7 @@
             // 
             cbFlagNoCaustics.AutoCheck = false;
             cbFlagNoCaustics.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            cbFlagNoCaustics.Location = new System.Drawing.Point(129, 172);
+            cbFlagNoCaustics.Location = new System.Drawing.Point(129, 165);
             cbFlagNoCaustics.Name = "cbFlagNoCaustics";
             cbFlagNoCaustics.Size = new System.Drawing.Size(81, 26);
             cbFlagNoCaustics.TabIndex = 113;
@@ -482,10 +482,10 @@
             Controls.Add(butCropRoom);
             Controls.Add(butSplitRoom);
             DockText = "Room Options";
-            MinimumSize = new System.Drawing.Size(284, 226);
+            MinimumSize = new System.Drawing.Size(284, 236);
             Name = "RoomOptions";
             SerializationKey = "RoomOptions";
-            Size = new System.Drawing.Size(284, 242);
+            Size = new System.Drawing.Size(284, 236);
             ((System.ComponentModel.ISupportInitialize)numLightEffectStrength).EndInit();
             ResumeLayout(false);
             PerformLayout();
