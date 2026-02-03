@@ -10,6 +10,7 @@ Tomb Editor:
  * Added support for triangular geometry in TR1X and TR2X levels.
  * Added support for no caustics room flag in TEN.
  * Fixed node parameter corruption after changing node background color.
+ * Fixed crash with  keypad nodes.
 
 WadTool:
  * Added animation blending and root motion controls to animation editor for TEN target.
