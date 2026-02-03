@@ -58,7 +58,7 @@ namespace TombEditor.ToolWindows
                 cbFlagOutside.Enabled = !isTR1 || _editor.Level.IsTRX;
                 cbFlagCold.Enabled = isNGorTEN;
                 cbFlagDamage.Enabled = isNGorTEN;
-                cbFlagNoCaustics.Enabled = cbFlagNoCaustics.Visible = isTEN;
+                cbFlagNoCaustics.Enabled = isTEN;
                 cbNoLensflare.Enabled = supportsLensflare;
                 comboReverberation.Enabled = supportsReverb;
                 comboReverberation.SelectedIndexChanged -= comboReverberation_SelectedIndexChanged; // Prevent SelectedIndexChanged event from DataSource assignment in next line
