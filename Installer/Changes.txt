@@ -8,6 +8,7 @@ Tomb Editor:
  * Added support for quicksand rooms in TR1X and TR2X levels.
  * Added support for additive blending in TR1X and TR2X levels.
  * Added support for triangular geometry in TR1X and TR2X levels.
+ * Added support for no caustics room flag in TEN.
  * Fixed node parameter corruption after changing node background color.
 
 WadTool:
@@ -20,11 +21,12 @@ WadTool:
  * Fixed exception while exporting meshes with degenerate textures.
 
 TombIDE:
- * Updated TR1X and TR2X presets to TRX 1.0.3.
+ * Updated TR1X and TR2X presets to TRX 1.1.
 
 TEN nodes:
  * Added nodes to check the color of a moveable or static mesh.
  * Added node to add an interaction highlight to a moveable.
+ * Added node set inventory item count
 
 Version 1.10.1
 ==============

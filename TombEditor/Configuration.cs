@@ -336,7 +336,7 @@ namespace TombEditor
                             Contents = new List<string> { "RoomOptions" },
                             VisibleContent = "RoomOptions",
                             Order = 1,
-                            Size = new Size(284,226)
+                            Size = new Size(284,236)
                         },
                         new DockGroupState
                         {

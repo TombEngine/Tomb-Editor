@@ -52,11 +52,13 @@ namespace TombEditor.ToolWindows
                 bool supportsLensflare = _editor.Level.Settings.GameVersion.SupportsLensflare();
                 bool supportsReverb = _editor.Level.Settings.GameVersion.SupportsReverberation();
                 bool isTR1 = _editor.Level.Settings.GameVersion.Native() == TRVersion.Game.TR1;
+                bool isTEN = _editor.Level.Settings.GameVersion is TRVersion.Game.TombEngine;
 
                 cbHorizon.Enabled = !isTR1 || _editor.Level.IsTRX;
                 cbFlagOutside.Enabled = !isTR1 || _editor.Level.IsTRX;
                 cbFlagCold.Enabled = isNGorTEN;
                 cbFlagDamage.Enabled = isNGorTEN;
+                cbFlagNoCaustics.Enabled = isTEN;
                 cbNoLensflare.Enabled = supportsLensflare;
                 comboReverberation.Enabled = supportsReverb;
                 comboReverberation.SelectedIndexChanged -= comboReverberation_SelectedIndexChanged; // Prevent SelectedIndexChanged event from DataSource assignment in next line
@@ -117,6 +119,7 @@ namespace TombEditor.ToolWindows
                 cbFlagCold.Checked = room.Properties.FlagCold;
                 cbFlagDamage.Checked = room.Properties.FlagDamage;
                 cbFlagOutside.Checked = room.Properties.FlagOutside;
+                cbFlagNoCaustics.Checked = room.Properties.FlagNoCaustics;
                 cbHorizon.Checked = room.Properties.FlagHorizon;
                 cbNoLensflare.Checked = room.Properties.FlagNoLensflare;
                 cbNoPathfinding.Checked = room.Properties.FlagExcludeFromPathFinding;
@@ -293,7 +296,7 @@ namespace TombEditor.ToolWindows
                         break;
                 }
             }
-            
+
             comboRoomType.SelectedIndex = roomType;
 
             // If selected type is -1 it means this room type is unsupported in current version. Throw a message about it.
@@ -405,5 +408,6 @@ namespace TombEditor.ToolWindows
 
             tbRoomTags.ReadOnly = false; // Re-enable editing
         }
+
     }
 }

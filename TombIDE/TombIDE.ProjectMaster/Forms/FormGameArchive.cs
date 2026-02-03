@@ -1,315 +1,109 @@
 ﻿using DarkUI.Forms;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using TombIDE.ProjectMaster.Services.ArchiveCreation;
 using TombIDE.Shared;
-using TombIDE.Shared.SharedClasses;
-using TombLib.LevelData;
 
-namespace TombIDE.ProjectMaster.Forms
+namespace TombIDE.ProjectMaster.Forms;
+
+public partial class FormGameArchive : DarkForm
 {
-	public partial class FormGameArchive : DarkForm
+	private readonly IDE _ide;
+
+	private readonly IGameArchiveServiceFactory _archiveServiceFactory;
+
+	public FormGameArchive(IDE ide) : this(ide, new GameArchiveServiceFactory())
+	{ }
+
+	public FormGameArchive(IDE ide, IGameArchiveServiceFactory archiveServiceFactory)
 	{
-		private IDE _ide;
-		private FormPleaseWait _waitForm = new FormPleaseWait();
+		InitializeComponent();
 
-		public FormGameArchive(IDE ide)
+		_ide = ide;
+		_archiveServiceFactory = archiveServiceFactory;
+	}
+
+	private async void button_Generate_Click(object sender, EventArgs e)
+	{
+		using var dialog = new SaveFileDialog
 		{
-			InitializeComponent();
+			InitialDirectory = _ide.Project.DirectoryPath,
+			FileName = $"{_ide.Project.Name.Replace(' ', '_')}.zip",
+			Filter = "Zip Archive (*.zip)|*.zip",
+			DefaultExt = "zip"
+		};
 
-			_ide = ide;
-		}
+		if (dialog.ShowDialog(this) == DialogResult.OK)
+			await CreateArchiveAsync(dialog.FileName);
+	}
 
-		private string _fileName;
+	private async Task CreateArchiveAsync(string fileName)
+	{
+		using var cts = new CancellationTokenSource();
+		using var waitForm = new FormPleaseWait();
 
-		private void button_Generate_Click(object sender, EventArgs e)
+		waitForm.CancellationTokenSource = cts;
+		waitForm.SetCancelButtonVisible(true);
+		waitForm.UpdateProgressAndStatus(0, "Initializing archive creation...");
+		waitForm.Show(this);
+
+		var archiveService = _archiveServiceFactory.GetArchiveService(_ide.Project.GameVersion);
+
+		// Define the event handler so we can unsubscribe later
+		void progressHandler(object? sender, ArchiveProgressEventArgs e)
+			=> waitForm.UpdateProgressAndStatus(e.PercentComplete, e.CurrentOperation);
+
+		try
 		{
-			using (var dialog = new SaveFileDialog())
-			{
-				dialog.InitialDirectory = _ide.Project.DirectoryPath;
-				dialog.FileName = $"{_ide.Project.Name.Replace(' ', '_')}.zip";
-				dialog.Filter = "Zip Archive (*.zip)|*.zip";
-				dialog.DefaultExt = "zip";
+			// Wire up progress reporting
+			archiveService.ProgressChanged += progressHandler;
 
-				if (dialog.ShowDialog(this) == DialogResult.OK)
-				{
-					_fileName = dialog.FileName;
-					_waitForm.Show(this);
-					timer.Start();
-				}
-			}
-		}
+			// Execute async archive creation with cancellation support
+			await archiveService.CreateGameArchiveAsync(_ide.Project, fileName, richTextBox.Text, cts.Token);
 
-		public void GenerateArchive(string filePath, string readmeText)
-		{
-			switch (_ide.Project.GameVersion)
-			{
-				case TRVersion.Game.TR1:
-					GenerateTR1Archive(filePath, readmeText);
-					break;
-
-				case TRVersion.Game.TR2X:
-					GenerateTR2XArchive(filePath, readmeText);
-					break;
-
-				case TRVersion.Game.TR2:
-					GenerateTR2Archive(filePath, readmeText);
-					break;
-
-				case TRVersion.Game.TR3:
-					GenerateTR3Archive(filePath, readmeText);
-					break;
-
-				case TRVersion.Game.TR4 or TRVersion.Game.TRNG:
-					GenerateTR4Archive(filePath, readmeText);
-					break;
-
-				case TRVersion.Game.TombEngine:
-					GenerateTENArchive(filePath, readmeText);
-					break;
-			}
-		}
-
-		public void GenerateTR1Archive(string filePath, string readmeText)
-		{
-			string engineDirectory = _ide.Project.GetEngineRootDirectoryPath();
-
-			string[] importantFolders = new string[]
-			{
-				Path.Combine(engineDirectory, "music"),
-				Path.Combine(engineDirectory, "cfg"),
-				Path.Combine(engineDirectory, "data"),
-				Path.Combine(engineDirectory, "shaders"),
-				Path.Combine(engineDirectory, "scripting"),
-			};
-
-			string[] importantFiles = new string[]
-			{
-				Path.Combine(engineDirectory, "splash.bmp"),
-				Path.Combine(engineDirectory, "TRX.exe"),
-				Path.Combine(engineDirectory, "TR1X.exe"),
-				Path.Combine(engineDirectory, "Tomb1Main.exe"),
-				Path.Combine(engineDirectory, "TR1X_ConfigTool.exe"),
-				Path.Combine(engineDirectory, "Tomb1Main_ConfigTool.exe"),
-				Path.Combine(engineDirectory, "splash.xml")
-			};
-
-			CreateArchive(importantFolders, importantFiles, filePath, readmeText);
-		}
-
-		public void GenerateTR2XArchive(string filePath, string readmeText)
-		{
-			string engineDirectory = _ide.Project.GetEngineRootDirectoryPath();
-
-			string[] importantFolders = new string[]
-			{
-				Path.Combine(engineDirectory, "music"),
-				Path.Combine(engineDirectory, "cfg"),
-				Path.Combine(engineDirectory, "data"),
-				Path.Combine(engineDirectory, "shaders"),
-				Path.Combine(engineDirectory, "scripting"),
-			};
-
-			string[] importantFiles = new string[]
-			{
-				Path.Combine(engineDirectory, "splash.bmp"),
-				Path.Combine(engineDirectory, "TRX.exe"),
-				Path.Combine(engineDirectory, "TR2X.exe"),
-				Path.Combine(engineDirectory, "TR2X_ConfigTool.exe"),
-				Path.Combine(engineDirectory, "splash.xml")
-			};
-
-			CreateArchive(importantFolders, importantFiles, filePath, readmeText);
-		}
-
-		public void GenerateTR2Archive(string filePath, string readmeText)
-		{
-			string engineDirectory = _ide.Project.GetEngineRootDirectoryPath();
-
-			string[] importantFolders = new string[]
-			{
-				Path.Combine(engineDirectory, "audio"),
-				Path.Combine(engineDirectory, "data"),
-				Path.Combine(engineDirectory, "ExtraOptions"),
-				Path.Combine(engineDirectory, "music"),
-				Path.Combine(engineDirectory, "pix")
-			};
-
-			string[] importantFiles = new string[]
-			{
-				Path.Combine(engineDirectory, "splash.bmp"),
-				Path.Combine(engineDirectory, "COPYING.txt"),
-				Path.Combine(engineDirectory, "Tomb2.exe"),
-				Path.Combine(engineDirectory, "TR2Main.json"),
-				Path.Combine(engineDirectory, "splash.xml")
-			};
-
-			var allImportantFiles = new List<string>();
-			allImportantFiles.AddRange(importantFiles);
-			allImportantFiles.AddRange(Directory.GetFiles(engineDirectory, "*.dll", SearchOption.TopDirectoryOnly));
-
-			CreateArchive(importantFolders, allImportantFiles, filePath, readmeText);
-		}
-
-		public void GenerateTR3Archive(string filePath, string readmeText)
-		{
-			string engineDirectory = _ide.Project.GetEngineRootDirectoryPath();
-
-			string[] importantFolders = new string[]
-			{
-				Path.Combine(engineDirectory, "data"),
-				Path.Combine(engineDirectory, "pix")
-			};
-
-			string[] importantFiles = new string[]
-			{
-				Path.Combine(engineDirectory, "splash.bmp"),
-				Path.Combine(engineDirectory, "audio", "cdaudio.wad"),
-				Path.Combine(engineDirectory, "data.bin"),
-				Path.Combine(engineDirectory, "tomb3.exe"),
-				Path.Combine(engineDirectory, "tomb3_ConfigTool.exe"),
-				Path.Combine(engineDirectory, "splash.xml")
-			};
-
-			var allImportantFiles = new List<string>();
-			allImportantFiles.AddRange(importantFiles);
-			allImportantFiles.AddRange(Directory.GetFiles(engineDirectory, "*.dll", SearchOption.TopDirectoryOnly));
-
-			CreateArchive(importantFolders, allImportantFiles, filePath, readmeText, true);
-		}
-
-		public void GenerateTR4Archive(string filePath, string readmeText)
-		{
-			string engineDirectory = _ide.Project.GetEngineRootDirectoryPath();
-
-			string[] importantFolders = new string[]
-			{
-				Path.Combine(engineDirectory, "splash.bmp"),
-				Path.Combine(engineDirectory, "audio"),
-				Path.Combine(engineDirectory, "data"),
-				Path.Combine(engineDirectory, "pix"),
-				Path.Combine(engineDirectory, "patches")
-			};
-
-			string[] importantFiles = new string[]
-			{
-				Path.Combine(engineDirectory, "load.bmp"),
-				Path.Combine(engineDirectory, "splash.bmp"),
-				Path.Combine(engineDirectory, "patches.bin"),
-				Path.Combine(engineDirectory, "patches.fpd"),
-				Path.Combine(engineDirectory, "tomb4.exe"),
-				Path.Combine(engineDirectory, "splash.xml")
-			};
-
-			var allImportantFiles = new List<string>();
-			allImportantFiles.AddRange(importantFiles);
-			allImportantFiles.AddRange(Directory.GetFiles(engineDirectory, "*.dll", SearchOption.TopDirectoryOnly));
-			allImportantFiles.AddRange(Directory.GetFiles(engineDirectory, "*.dat", SearchOption.TopDirectoryOnly));
-
-			CreateArchive(importantFolders, allImportantFiles, filePath, readmeText);
-		}
-
-		public void GenerateTENArchive(string filePath, string readmeText)
-		{
-			string engineDirectory = _ide.Project.GetEngineRootDirectoryPath();
-
-			string[] importantFolders = new string[]
-			{
-				Path.Combine(engineDirectory, "Audio"),
-				Path.Combine(engineDirectory, "Bin"),
-				Path.Combine(engineDirectory, "Data"),
-				Path.Combine(engineDirectory, "FMV"),
-				Path.Combine(engineDirectory, "Screens"),
-				Path.Combine(engineDirectory, "Scripts"),
-				Path.Combine(engineDirectory, "Shaders"),
-				Path.Combine(engineDirectory, "Textures")
-			};
-
-			string[] importantFiles = new string[]
-			{
-				Path.Combine(engineDirectory, "splash.bmp"),
-				Path.Combine(engineDirectory, "TombEngine.exe"),
-				Path.Combine(engineDirectory, "splash.xml")
-			};
-
-			var allImportantFiles = new List<string>();
-			allImportantFiles.AddRange(importantFiles);
-			allImportantFiles.AddRange(Directory.GetFiles(engineDirectory, "*.dll", SearchOption.TopDirectoryOnly));
-
-			CreateArchive(importantFolders, allImportantFiles, filePath, readmeText);
-		}
-
-		private void CreateArchive(IEnumerable<string> importantFolders, IEnumerable<string> importantFiles,
-			string filePath, string readmeText, bool createSavesFolder = false)
-		{
-			string tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-
-			if (!Directory.Exists(tempDirectory))
-				Directory.CreateDirectory(tempDirectory);
-
-			string engineDirectory = _ide.Project.GetEngineRootDirectoryPath();
-			string targetTempEngineDirectory = Path.Combine(tempDirectory, "Engine");
-
-			foreach (string folder in importantFolders)
-			{
-				if (!Directory.Exists(folder))
-					continue;
-
-				string pathPart = folder.Remove(0, engineDirectory.Length);
-				string targetPath = Path.Combine(targetTempEngineDirectory, pathPart.Trim('\\'));
-
-				SharedMethods.CopyFilesRecursively(folder, targetPath);
-			}
-
-			if (createSavesFolder)
-				Directory.CreateDirectory(Path.Combine(targetTempEngineDirectory, "saves"));
-
-			foreach (string file in importantFiles)
-			{
-				if (!File.Exists(file))
-					continue;
-
-				string pathPart = file.Remove(0, engineDirectory.Length);
-				string targetPath = Path.Combine(targetTempEngineDirectory, pathPart.Trim('\\'));
-
-				string targetDirectory = Path.GetDirectoryName(targetPath);
-
-				if (!Directory.Exists(targetDirectory))
-					Directory.CreateDirectory(targetDirectory);
-
-				File.Copy(file, targetPath);
-			}
-
-			// Copy launch.exe
-			string launchFilePath = _ide.Project.GetLauncherFilePath();
-
-			if (File.Exists(launchFilePath))
-				File.Copy(launchFilePath, Path.Combine(tempDirectory, Path.GetFileName(launchFilePath)), true);
-
-			if (!string.IsNullOrWhiteSpace(readmeText))
-				File.WriteAllText(Path.Combine(tempDirectory, "README.txt"), readmeText);
-
-			if (File.Exists(filePath))
-				File.Delete(filePath);
-
-			ZipFile.CreateFromDirectory(tempDirectory, filePath);
-
-			if (Directory.Exists(tempDirectory))
-				Directory.Delete(tempDirectory, true);
-		}
-
-		private void timer_Tick(object sender, EventArgs e)
-		{
-			timer.Stop();
-
-			GenerateArchive(_fileName, richTextBox.Text);
-			_waitForm.Close();
+			waitForm.Close();
 
 			DarkMessageBox.Show(this, "Archive creation completed.", "Done!", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
 			DialogResult = DialogResult.OK;
+		}
+		catch (OperationCanceledException)
+		{
+			waitForm.Close();
+
+			// Delete partial archive if it exists
+			if (File.Exists(fileName))
+			{
+				try
+				{
+					File.Delete(fileName);
+				}
+				catch
+				{
+					// Ignore cleanup errors
+				}
+			}
+
+			DarkMessageBox.Show(this, "Archive creation was cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+			DialogResult = DialogResult.None;
+		}
+		catch (Exception ex)
+		{
+			waitForm.Close();
+
+			DarkMessageBox.Show(this, $"Archive creation failed:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+			DialogResult = DialogResult.None;
+		}
+		finally
+		{
+			// Always unsubscribe to prevent memory leaks
+			archiveService.ProgressChanged -= progressHandler;
+			waitForm.CancellationTokenSource = null;
 		}
 	}
 }

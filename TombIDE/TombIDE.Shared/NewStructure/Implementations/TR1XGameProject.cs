@@ -13,19 +13,42 @@ namespace TombIDE.Shared.NewStructure
 		public const string MainScriptFileNameFilter = "*gameflow.json5";
 		public const string LanguageFileNameFilter = MainScriptFileNameFilter; // Same file as main script file
 
+		/// <summary>
+		/// Version prefix used in TRX engine executables.
+		/// </summary>
+		private const string VersionPrefix = "TRX ";
+
+		/// <summary>
+		/// Legacy version prefix used in older TR1X engine versions (before unification with TR2X).
+		/// </summary>
+		private const string LegacyVersionPrefix = "TR1X ";
+
+		/// <summary>
+		/// Valid executable names for TR1X projects, ordered by priority.
+		/// </summary>
+		private readonly string[] ValidOrderedExecutableNames = new[]
+		{
+			"TRX.exe",
+			"TR1X.exe", // Legacy name (before TR1X and TR2X were unified into TRX)
+			"Tomb1Main.exe" // Very legacy name (before TR1X rebranding)
+		};
+
 		public override TRVersion.Game GameVersion => TRVersion.Game.TR1;
 
 		public override string DataFileExtension => ".phd";
+
 		public override string EngineExecutableFileName
 		{
 			get
 			{
-				var rootDir = GetEngineRootDirectoryPath();
-				foreach (var exe in new[] { "TRX.exe", "TR1X.exe", "Tomb1Main.exe" })
+				string rootDirectory = GetEngineRootDirectoryPath();
+
+				foreach (string exeName in ValidOrderedExecutableNames)
 				{
-					var path = Path.Combine(rootDir, exe);
-					if (File.Exists(path))
-						return exe;
+					string exePath = Path.Combine(rootDirectory, exeName);
+
+					if (File.Exists(exePath))
+						return exeName;
 				}
 
 				return "TRX.exe"; // Default
@@ -82,9 +105,8 @@ namespace TombIDE.Shared.NewStructure
 			{
 				string engineExecutablePath = GetEngineExecutableFilePath();
 				string versionInfo = FileVersionInfo.GetVersionInfo(engineExecutablePath).ProductVersion;
-				versionInfo = versionInfo.Replace("TRX ", string.Empty);
 
-				return new Version(versionInfo);
+				return GetActualVersion(versionInfo);
 			}
 			catch
 			{
@@ -103,12 +125,12 @@ namespace TombIDE.Shared.NewStructure
 				using ZipArchive archive = ZipFile.OpenRead(enginePresetPath);
 				ZipArchiveEntry entry = archive.Entries.FirstOrDefault(e => e.Name == "TRX.exe");
 
-				if (entry == null)
+				if (entry is null)
 					return null;
 
 				entry.ExtractToFile(tempFileName, true);
 				string productVersion = FileVersionInfo.GetVersionInfo(tempFileName).ProductVersion;
-				productVersion = productVersion.Replace("TRX ", string.Empty);
+				productVersion = productVersion.Replace(VersionPrefix, string.Empty);
 
 				return new Version(productVersion);
 			}
@@ -122,5 +144,12 @@ namespace TombIDE.Shared.NewStructure
 					File.Delete(tempFileName);
 			}
 		}
+
+		/// <summary>
+		/// Parses the actual version from a version string, handling legacy version formats.
+		/// </summary>
+		/// <param name="versionString">The version string to parse.</param>
+		private static Version GetActualVersion(string versionString)
+			=> TRXVersionHelper.ParseTRXVersion(versionString, LegacyVersionPrefix);
 	}
 }

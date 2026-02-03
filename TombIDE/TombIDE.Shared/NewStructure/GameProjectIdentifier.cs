@@ -323,6 +323,7 @@ namespace TombIDE.Shared.NewStructure
 				"TOMB1MAIN" => TRVersion.Game.TR1,
 				"TR1X" => TRVersion.Game.TR1,
 				"TR2X" => TRVersion.Game.TR2X,
+				"TRX" => TRVersion.Game.TR1, // TODO: Distinguish between TR1X and TR2X later
 				"TOMB2" => TRVersion.Game.TR2,
 				"TOMB3" => TRVersion.Game.TR3,
 				"TOMB4" => TRVersion.Game.TR4,
@@ -336,6 +337,24 @@ namespace TombIDE.Shared.NewStructure
 
 				if (File.Exists(trngDllFilePath))
 					version = TRVersion.Game.TRNG;
+			}
+
+			if (version == TRVersion.Game.TR1)
+			{
+				// Check if there are any .phd or .tr2 files in the data directory to distinguish between TR1X and TR2X
+				string engineDirectory = Path.GetDirectoryName(engineExecutableFilePath);
+				string dataDirectory = Path.Combine(engineDirectory, "data");
+
+				if (Directory.Exists(dataDirectory))
+				{
+					string[] phdFiles = Directory.GetFiles(dataDirectory, "*.phd", SearchOption.TopDirectoryOnly);
+					string[] tr2Files = Directory.GetFiles(dataDirectory, "*.tr2", SearchOption.TopDirectoryOnly);
+
+					// Which ones are there more of?
+					version = phdFiles.Length >= tr2Files.Length
+						? TRVersion.Game.TR1
+						: TRVersion.Game.TR2X;
+				}
 			}
 
 			return version;

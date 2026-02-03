@@ -27,6 +27,15 @@ LevelFuncs.Engine.Node.RemoveInventoryItem = function(item, count)
     end
 end
 
+-- !Name "Set item count in inventory"
+-- !Section "Inventory"
+-- !Description "Set item count for an item in the inventory."
+-- !Arguments "NewLine, 80, WadSlots, [ _ITEM ], Object to set count of an item in Lara's inventory."
+-- !Arguments "20, Numerical, [ -1 | 1000 ], Amount of item to set (0 to give default amount, -1 is infinite)."
+LevelFuncs.Engine.Node.SetInventoryItemCount = function(item, count)
+    TEN.Inventory.SetItemCount(item, count)
+end
+
 -- !Name "Set last used item"
 -- !Section "Inventory"
 -- !Description "Sets last used inventory item. If item will not be handled by the engine, 'No' sound will play."

@@ -4,103 +4,95 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using TombIDE.ProjectMaster.Forms;
+using TombIDE.ProjectMaster.Services.Settings.Launcher;
+using TombIDE.ProjectMaster.Services.Settings.LogCleaning;
 using TombIDE.Shared;
 
-namespace TombIDE.ProjectMaster
+namespace TombIDE.ProjectMaster;
+
+public partial class SettingsSpecialFunctions : UserControl
 {
-	public partial class SettingsSpecialFunctions : UserControl
+	private IDE _ide = null!;
+
+	private readonly ILauncherManagementService _launcherService;
+	private readonly ILogCleaningService _logCleaningService;
+
+	public SettingsSpecialFunctions()
+		: this(new LauncherManagementService(), new LogCleaningService())
+	{ }
+
+	public SettingsSpecialFunctions(
+		ILauncherManagementService launcherService,
+		ILogCleaningService logCleaningService)
 	{
-		private IDE _ide;
+		InitializeComponent();
 
-		public SettingsSpecialFunctions()
+		_launcherService = launcherService;
+		_logCleaningService = logCleaningService;
+	}
+
+	public void Initialize(IDE ide)
+	{
+		_ide = ide;
+
+		if (_launcherService.CanRenameLauncher(_ide.Project))
 		{
-			InitializeComponent();
+			textBox_LauncherName.Text = _launcherService.GetLauncherName(_ide.Project);
 		}
-
-		public void Initialize(IDE ide)
+		else
 		{
-			_ide = ide;
+			button_RenameLauncher.Enabled = false;
 
-			if (_ide.Project.DirectoryPath.Equals(_ide.Project.GetEngineRootDirectoryPath(), StringComparison.OrdinalIgnoreCase))
+			textBox_LauncherName.ForeColor = Color.Gray;
+			textBox_LauncherName.Text = "Unavailable for legacy projects";
+		}
+	}
+
+	private void button_DeleteLogs_Click(object sender, EventArgs e)
+	{
+		try
+		{
+			int deletedCount = _logCleaningService.DeleteAllLogFiles(_ide.Project);
+
+			if (deletedCount > 0)
 			{
-				button_RenameLauncher.Enabled = false;
-
-				textBox_LauncherName.ForeColor = Color.Gray;
-				textBox_LauncherName.Text = "Unavailable for legacy projects";
+				DarkMessageBox.Show(this, $"Successfully deleted {deletedCount} log files\n" +
+					"and error dumps from the project folder.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 			else
-				textBox_LauncherName.Text = Path.GetFileName(_ide.Project.GetLauncherFilePath());
-		}
-
-		private void button_DeleteLogs_Click(object sender, EventArgs e)
-		{
-			try
 			{
-				string engineDirectory = _ide.Project.GetEngineRootDirectoryPath();
-				string[] files = Directory.GetFiles(engineDirectory);
-
-				bool wereFilesDeleted = false;
-
-				foreach (string file in files)
-				{
-					string fileName = Path.GetFileName(file);
-
-					if (fileName == "db_patches_crash.bin"
-						|| fileName == "DETECTED CRASH.txt"
-						|| fileName == "LastExtraction.lst"
-						|| (fileName.StartsWith("Last_Crash_") && (fileName.EndsWith(".txt") || fileName.EndsWith(".mem")))
-						|| fileName.EndsWith("_warm_up_log.txt")
-						|| Path.GetExtension(fileName).Equals(".log", StringComparison.OrdinalIgnoreCase))
-					{
-						File.Delete(file);
-						wereFilesDeleted = true;
-					}
-				}
-
-				string logsDirectory = Path.Combine(engineDirectory, "logs");
-
-				if (Directory.Exists(logsDirectory))
-				{
-					Directory.Delete(logsDirectory, true);
-					wereFilesDeleted = true;
-				}
-
-				if (wereFilesDeleted)
-					DarkMessageBox.Show(this, "Successfully deleted all log files\n" +
-					"and error dumps from the project folder.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				else
-					DarkMessageBox.Show(this, "No log files or error dumps were found.", "Information",
-						MessageBoxButtons.OK, MessageBoxIcon.Information);
-			}
-			catch (Exception ex)
-			{
-				DarkMessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				DarkMessageBox.Show(this, "No log files or error dumps were found.", "Information",
+					MessageBoxButtons.OK, MessageBoxIcon.Information);
 			}
 		}
-
-		private void button_RenameLauncher_Click(object sender, EventArgs e)
+		catch (Exception ex)
 		{
-			string launcherExecutable = _ide.Project.GetLauncherFilePath();
+			DarkMessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+		}
+	}
 
-			if (!File.Exists(launcherExecutable))
-			{
-				DarkMessageBox.Show(this, "Couldn't find the launcher executable of the project.\n" +
-					"Please restart TombIDE to resolve any issues.", "Error",
+	private void button_RenameLauncher_Click(object sender, EventArgs e)
+	{
+		string launcherExecutable = _ide.Project.GetLauncherFilePath();
+
+		if (!File.Exists(launcherExecutable))
+		{
+			DarkMessageBox.Show(this, "Couldn't find the launcher executable of the project.\n" +
+				"Please restart TombIDE to resolve any issues.", "Error",
 					MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-				return;
-			}
-
-			using (var form = new FormRenameLauncher(_ide))
-				form.ShowDialog(this);
-
-			textBox_LauncherName.Text = Path.GetFileName(launcherExecutable);
+			return;
 		}
 
-		private void button_BuildArchive_Click(object sender, EventArgs e)
-		{
-			using var form = new FormGameArchive(_ide);
-			form.ShowDialog();
-		}
+		using (var form = new FormRenameLauncher(_ide))
+			form.ShowDialog(this);
+
+		textBox_LauncherName.Text = _launcherService.GetLauncherName(_ide.Project);
+	}
+
+	private void button_BuildArchive_Click(object sender, EventArgs e)
+	{
+		using var form = new FormGameArchive(_ide);
+		form.ShowDialog();
 	}
 }
