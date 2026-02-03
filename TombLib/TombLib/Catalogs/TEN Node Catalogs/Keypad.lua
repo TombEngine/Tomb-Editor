@@ -101,7 +101,6 @@ LevelFuncs.Engine.ActivateKeypad = function(object)
         Lara:SetVisible(false)
         View.SetFOV(30)
         LevelVars.Engine.ActivatedKeypad = object
-        TEN.Logic.AddCallback(TEN.Logic.CallbackPoint.PREFREEZE, LevelFuncs.Engine.RunKeypad)
         Flow.SetFreezeMode(Flow.FreezeMode.SPECTATOR)
     end
 
@@ -111,18 +110,22 @@ LevelFuncs.Engine.ExitKeypad = function(object, status)
 
     local cameraObject = GetMoveableByName("keypadCam1")
     local dataName = object .. "_KeypadData"
-
+    
+    LevelVars.Engine.ActivatedKeypad = nil
     LevelVars.Engine.Keypad[dataName].Status = status
     View.SetFOV(80)
     Lara:SetVisible(true)
     ResetObjCamera()
     cameraObject:Destroy()
     Flow.SetFreezeMode(Flow.FreezeMode.NONE)
-    TEN.Logic.RemoveCallback(TEN.Logic.CallbackPoint.PREFREEZE, LevelFuncs.Engine.RunKeypad)
 
 end
 
 LevelFuncs.Engine.RunKeypad = function()
+
+    if not LevelVars.Engine.ActivatedKeypad then
+        return
+    end
 
     local soundIDs = {
         ["Clear"] = 983,    -- TR5_Keypad_Hash (Cancel)
@@ -279,3 +282,5 @@ LevelFuncs.Engine.RunKeypad = function()
     ShowString(controlsText, 1 / 30)
 
 end
+
+TEN.Logic.AddCallback(TEN.Logic.CallbackPoint.PREFREEZE, LevelFuncs.Engine.RunKeypad)
