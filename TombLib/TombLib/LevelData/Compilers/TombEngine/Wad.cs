@@ -40,13 +40,15 @@ namespace TombLib.LevelData.Compilers.TombEngine
             {
                 var pos    = oldMesh.VertexPositions[i];
                 var normal = oldMesh.VertexNormals[i];
-                var color  = (oldMesh.HasColors) ? oldMesh.VertexColors[i] : new Vector3(1.0f);
+
+				// TE uses the 0...2 range, we'll fix it in the future
+				var color  = (oldMesh.HasColors) ? oldMesh.VertexColors[i] / 0.5f : new Vector3(0.5f);
 
                 var v = new TombEngineVertex() 
                 { 
                     Position   = new Vector3(pos.X, -pos.Y, pos.Z),
                     Normal     = Vector3.Normalize(new Vector3(normal.X, -normal.Y, normal.Z)),
-                    Color      = color, // WAD vertex colors are already in 0...1 range
+                    Color      = color,
                     BoneIndex  = oldMesh.HasWeights && oldMesh.VertexWeights[i].Valid() ? oldMesh.VertexWeights[i].Index : new int[4] { meshIndex, 0, 0, 0 },
                     BoneWeight = oldMesh.HasWeights && oldMesh.VertexWeights[i].Valid() ? oldMesh.VertexWeights[i].Weight : new float[4] { 1, 0, 0, 0 },
                     Glow       = oldMesh.HasAttributes ? (float)oldMesh.VertexAttributes[i].Glow / 64.0f : 0.0f,
