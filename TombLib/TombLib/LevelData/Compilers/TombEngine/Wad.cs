@@ -40,7 +40,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
             {
                 var pos    = oldMesh.VertexPositions[i];
                 var normal = oldMesh.VertexNormals[i];
-
                 var color  = (oldMesh.HasColors) ? oldMesh.VertexColors[i] : new Vector3(0.5f);
 
                 var v = new TombEngineVertex() 
