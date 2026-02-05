@@ -42,7 +42,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 var normal = oldMesh.VertexNormals[i];
 
 				// TE uses the 0...2 range, we'll fix it in the future
-				var color  = (oldMesh.HasColors) ? oldMesh.VertexColors[i] / 0.5f : new Vector3(0.5f);
+				var color  = (oldMesh.HasColors) ? oldMesh.VertexColors[i] : new Vector3(0.5f);
 
                 var v = new TombEngineVertex() 
                 { 
