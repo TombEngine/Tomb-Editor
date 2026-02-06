@@ -1,5 +1,6 @@
 local Timer = require("Engine.Timer")
 local textOp = {[0] = "+", [1] = "-", [2] = "*", [3] = "/", [4] = "=", }
+local textCompareOp = {[0] = "equal to", [1] = "greater than", [2] = "less than", [3] = "greater than or equal to", [4] = "less than or equal to", [5] = "not equal to", }
 LevelVars.nodeTimers = {}
 
 -- !Ignore
@@ -487,12 +488,26 @@ end
 LevelFuncs.Engine.Node.IfRemainingTimeIs = function(name, operator, value)
     if name ~= '' then
         if Timer.IfExists(name) then
-            if Timer.Get(name):IsActive() and Timer.Get(name):IsTicking() then
-                local remainingTime = Timer.Get(name):GetRemainingTimeInSeconds()
+            local timer = Timer.Get(name)
+            if timer:IsActive()then
+                local result
                 local floatValue = value + 0.0
-                local result = Timer.Get(name):IfRemainingTimeIs(operator, floatValue)
-                if LevelVars.nodeTimers[name].debug then
-                    TEN.Util.PrintLog("If the remaining time is "..  floatValue .. ". Remaining time: " .. remainingTime .. ". Result: " .. tostring(result), TEN.Util.LogLevel.INFO, true)
+                local remainingTime = timer:GetRemainingTimeInSeconds()
+                local test = timer:IfRemainingTimeIs(operator, floatValue)
+                local isTicking = timer:IsTicking()
+                if operator == 0 or operator == 1 then
+                    -- Equal / Not Equal -- need to check if the timer is ticking
+                    result = isTicking and test or false
+                else
+                    -- Greater / Greater or Equal / Less / Less or Equal -- not need to check if the timer is ticking
+                    result = test
+                end
+                if LevelVars.nodeTimers[name].debug and (
+                    ((operator == 0 or operator == 1) and isTicking) -- only log Equal / Not Equal if the timer is ticking
+                    or
+                    (operator ~= 0 and operator ~= 1)) -- log always for the other operators
+                    then
+                    TEN.Util.PrintLog("If the remaining time (".. remainingTime ..") is " .. textCompareOp[operator] .. " " ..  floatValue .. ". . Result: " .. tostring(result), TEN.Util.LogLevel.INFO, true)
                 end
                 return result
             end

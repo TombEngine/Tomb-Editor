@@ -273,6 +273,10 @@ namespace TombLib.LevelData.Compilers
             else
             {
                 if (dec_flipped) dec_boxes[boxIndex].Flag0x02 = true;
+
+                // Update room reference for water boxes to ensure correct water flag detection during zone building
+                if (box.Water)
+                    dec_boxes[boxIndex].Room = box.Room;
             }
 
             return boxIndex;
