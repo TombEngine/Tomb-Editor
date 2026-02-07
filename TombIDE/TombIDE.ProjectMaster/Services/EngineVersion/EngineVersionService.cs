@@ -12,25 +12,26 @@ public sealed class EngineVersionService : IEngineVersionService
 
 	public EngineVersionInfo GetVersionInfo(IGameProject project)
 	{
-		var info = new EngineVersionInfo
-		{
-			CurrentVersion = project.GetCurrentEngineVersion(),
-			LatestVersion = project.GetLatestEngineVersion()
-		};
+		var currentVersion = project.GetCurrentEngineVersion();
+		var latestVersion = project.GetLatestEngineVersion();
 
 		// Check if auto-update is supported
 		var updateService = _updateServiceFactory.GetUpdateService(project.GameVersion);
 
-		if (updateService is not null && info.CurrentVersion is not null)
+		bool supportsAutoUpdate = false;
+		string? autoUpdateBlockReason = null;
+
+		if (updateService is not null && currentVersion is not null)
 		{
-			info.SupportsAutoUpdate = updateService.CanAutoUpdate(info.CurrentVersion, out string? blockReason);
-			info.AutoUpdateBlockReason = blockReason;
-		}
-		else
-		{
-			info.SupportsAutoUpdate = false;
+			supportsAutoUpdate = updateService.CanAutoUpdate(currentVersion, out autoUpdateBlockReason);
 		}
 
-		return info;
+		return new EngineVersionInfo
+		{
+			CurrentVersion = currentVersion,
+			LatestVersion = latestVersion,
+			SupportsAutoUpdate = supportsAutoUpdate,
+			AutoUpdateBlockReason = autoUpdateBlockReason
+		};
 	}
 }

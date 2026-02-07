@@ -161,13 +161,13 @@ namespace TombIDE.Shared
 
 		public class ScriptEditor_AppendScriptLinesEvent : IIDEEvent
 		{
-			public List<string> Lines { get; internal set; }
+			public IReadOnlyList<string> Lines { get; internal set; }
 		}
 
 		/// <summary>
 		/// Sends a request to the Script Editor to append new lines of code at the end of the main script file.
 		/// </summary>
-		public void ScriptEditor_AppendScriptLines(List<string> lines) =>
+		public void ScriptEditor_AppendScriptLines(IReadOnlyList<string> lines) =>
 			RaiseEvent(new ScriptEditor_AppendScriptLinesEvent { Lines = lines });
 
 		#endregion ScriptEditor_AppendScriptLines

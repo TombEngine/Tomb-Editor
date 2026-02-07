@@ -7,7 +7,10 @@ using TombIDE.ProjectMaster.Services;
 using TombIDE.ProjectMaster.Services.EngineUpdate;
 using TombIDE.ProjectMaster.Services.EngineVersion;
 using TombIDE.ProjectMaster.Services.FileExtraction;
-using TombIDE.ProjectMaster.Services.LevelCompile;
+using TombIDE.ProjectMaster.Services.Level.Compile;
+using TombIDE.ProjectMaster.Services.Level.Import;
+using TombIDE.ProjectMaster.Services.Level.Rename;
+using TombIDE.ProjectMaster.Services.Level.Setup;
 using TombIDE.Shared;
 using TombLib.LevelData;
 
@@ -20,15 +23,21 @@ public partial class LevelManager : UserControl
 	private readonly IEngineVersionService _engineVersionService;
 	private readonly IEngineUpdateServiceFactory _engineUpdateServiceFactory;
 	private readonly ILevelCompileService _levelBuildService;
+	private readonly ILevelSetupService _levelSetupService;
+	private readonly ILevelRenameService _levelRenameService;
+	private readonly ILevelImportService _levelImportService;
 	private readonly IUIResourceService _uiResourceService;
 
-	public LevelManager() : this(null, null, null, null)
+	public LevelManager() : this(null, null, null, null, null, null, null)
 	{ }
 
 	public LevelManager(
 		IEngineVersionService? engineVersionService,
 		IEngineUpdateServiceFactory? engineUpdateServiceFactory,
 		ILevelCompileService? levelBuildService,
+		ILevelSetupService? levelSetupService,
+		ILevelRenameService? levelRenameService,
+		ILevelImportService? levelImportService,
 		IUIResourceService? uiResourceService)
 	{
 		InitializeComponent();
@@ -39,6 +48,9 @@ public partial class LevelManager : UserControl
 		_engineUpdateServiceFactory = engineUpdateServiceFactory ?? new EngineUpdateServiceFactory(fileExtractionService);
 		_engineVersionService = engineVersionService ?? new EngineVersionService(_engineUpdateServiceFactory);
 		_levelBuildService = levelBuildService ?? new LevelCompileService();
+		_levelSetupService = levelSetupService ?? new LevelSetupService();
+		_levelRenameService = levelRenameService ?? new LevelRenameService();
+		_levelImportService = levelImportService ?? new LevelImportService();
 		_uiResourceService = uiResourceService ?? new UIResourceService();
 	}
 
@@ -51,7 +63,7 @@ public partial class LevelManager : UserControl
 
 		UpdateVersionLabel();
 
-		section_LevelList.Initialize(ide, _levelBuildService);
+		section_LevelList.Initialize(ide, _levelBuildService, _levelSetupService, _levelRenameService, _levelImportService);
 		section_LevelProperties.Initialize(ide);
 	}
 

@@ -6,7 +6,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using TombIDE.ProjectMaster.Services.LevelCompile;
+using TombIDE.ProjectMaster.Services.Level.Compile;
+using TombIDE.ProjectMaster.Services.Level.Import;
+using TombIDE.ProjectMaster.Services.Level.Rename;
+using TombIDE.ProjectMaster.Services.Level.Setup;
 using TombIDE.Shared;
 using TombIDE.Shared.NewStructure;
 using TombIDE.Shared.SharedClasses;
@@ -18,6 +21,9 @@ namespace TombIDE.ProjectMaster
 	{
 		private IDE _ide = null!;
 		private ILevelCompileService _levelCompileService = null!;
+		private ILevelSetupService _levelSetupService = null!;
+		private ILevelRenameService _levelRenameService = null!;
+		private ILevelImportService _levelImportService = null!;
 
 		#region Initialization
 
@@ -26,10 +32,18 @@ namespace TombIDE.ProjectMaster
 			InitializeComponent();
 		}
 
-		public void Initialize(IDE ide, ILevelCompileService levelCompileService)
+		public void Initialize(
+			IDE ide,
+			ILevelCompileService levelCompileService,
+			ILevelSetupService levelSetupService,
+			ILevelRenameService levelRenameService,
+			ILevelImportService levelImportService)
 		{
 			_ide = ide;
 			_levelCompileService = levelCompileService;
+			_levelSetupService = levelSetupService;
+			_levelRenameService = levelRenameService;
+			_levelImportService = levelImportService;
 			_ide.IDEEventRaised += OnIDEEventRaised;
 
 			FillLevelList(); // With levels taken from the .trproj file (current _ide.Project)
@@ -166,7 +180,7 @@ namespace TombIDE.ProjectMaster
 
 		private void ShowLevelSetupForm()
 		{
-			using var form = new FormLevelSetup(_ide.Project);
+			using var form = new FormLevelSetup(_ide.Project, _levelSetupService);
 
 			if (form.ShowDialog(this) == DialogResult.OK && form.CreatedLevel is not null)
 				OnLevelAdded(form.CreatedLevel, form.GeneratedScriptLines);
@@ -188,9 +202,9 @@ namespace TombIDE.ProjectMaster
 					if (Prj2Helper.IsBackupFile(dialog.FileName))
 						throw new ArgumentException("You cannot import backup files.");
 
-					using var form = new FormImportLevel(_ide.Project, dialog.FileName);
+					using var form = new FormImportLevel(_ide.Project, dialog.FileName, _levelImportService);
 
-					if (form.ShowDialog(this) == DialogResult.OK)
+					if (form.ShowDialog(this) == DialogResult.OK && form.ImportedLevel is not null)
 						OnLevelAdded(form.ImportedLevel, form.GeneratedScriptLines);
 				}
 				catch (Exception ex)
@@ -205,7 +219,7 @@ namespace TombIDE.ProjectMaster
 			if (!IsValidLevel(_ide.SelectedLevel))
 				return;
 
-			using var form = new FormRenameLevel(_ide);
+			using var form = new FormRenameLevel(_ide, _levelRenameService);
 			form.ShowDialog(this); // After the form is done, it will trigger IDE.SelectedLevelSettingsChangedEvent
 		}
 
@@ -347,7 +361,7 @@ namespace TombIDE.ProjectMaster
 
 		#region Methods
 
-		private void OnLevelAdded(ILevelProject addedLevel, List<string> scriptLines)
+		private void OnLevelAdded(ILevelProject addedLevel, IReadOnlyList<string> scriptLines)
 		{
 			AddLevelToList(addedLevel, true);
 
@@ -363,7 +377,7 @@ namespace TombIDE.ProjectMaster
 				}
 			}
 
-			if (scriptLines != null && scriptLines.Count > 0)
+			if (scriptLines.Count > 0)
 			{
 				_ide.ScriptEditor_AppendScriptLines(scriptLines);
 				_ide.ScriptEditor_AddNewLevelString(addedLevel.Name);
@@ -409,7 +423,9 @@ namespace TombIDE.ProjectMaster
 				errorMessage = "The selected level is null.";
 			}
 			else
+			{
 				isValid = level.IsValid(out errorMessage);
+			}
 
 			if (!isValid)
 			{

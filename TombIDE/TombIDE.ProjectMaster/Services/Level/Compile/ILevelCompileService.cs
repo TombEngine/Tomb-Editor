@@ -1,6 +1,6 @@
 using TombIDE.Shared.NewStructure;
 
-namespace TombIDE.ProjectMaster.Services.LevelCompile;
+namespace TombIDE.ProjectMaster.Services.Level.Compile;
 
 /// <summary>
 /// Provides functionality for batch building levels.

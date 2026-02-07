@@ -4,7 +4,7 @@ using System.Linq;
 using TombIDE.Shared.NewStructure;
 using TombLib.LevelData;
 
-namespace TombIDE.ProjectMaster.Services.LevelCompile;
+namespace TombIDE.ProjectMaster.Services.Level.Compile;
 
 public sealed class LevelCompileService : ILevelCompileService
 {
