@@ -1,14 +1,30 @@
 LevelVars.Engine.Keypad = LevelVars.Engine.Keypad or {}
-LevelVars.Engine.ActivatedKeypad = nil
+LevelVars.Engine.Keypad.ActivatedKeypad = nil
 
--- !Name "Create a keypad"
--- !Section "User interface"
--- !Description "Creates a keypad."
--- !Arguments "NewLine, 80, Moveables, Keypad Object"
--- !Arguments "Numerical, 20, [ 1000 | 9999 ], Pass code"
--- !Arguments "NewLine, Volumes, Volume to use for the keypad"
+local inventoryDelay = 0
+local inventoryOpen = false
+local setupComplete = false
+local inputMode = false
 
-LevelFuncs.Engine.Node.KeypadCreate = function(object, code, volume)
+local SOUND_MAP = {
+["Clear"] = 983,    -- TR5_Keypad_Hash (Cancel)
+["Enter"] = 984,    -- TR5_Keypad_Asterisk (Confirm)
+[0] = 985,          -- TR5_Keypad_0
+[1] = 986,          -- TR5_Keypad_1
+[2] = 987,          -- TR5_Keypad_2
+[3] = 988,          -- TR5_Keypad_3
+[4] = 989,          -- TR5_Keypad_4
+[5] = 990,          -- TR5_Keypad_5
+[6] = 991,          -- TR5_Keypad_6
+[7] = 992,          -- TR5_Keypad_7
+[8] = 993,          -- TR5_Keypad_8
+[9] = 994,          -- TR5_Keypad_9
+["Failure"] = 995,  -- TR5_Keypad_Entry_No
+["Success"] = 996,  -- TR5_Keypad_Entry_Yes
+["Click"] = 644,    -- TR2_Click
+}
+
+local function keypadCreate(object, code)
 
     local dataName = object .. "_KeypadData"
 
@@ -17,161 +33,213 @@ LevelFuncs.Engine.Node.KeypadCreate = function(object, code, volume)
     LevelVars.Engine.Keypad[dataName]           = {}
 	LevelVars.Engine.Keypad[dataName].Code      = LevelVars.Engine.Keypad[dataName].Code or codeS
     LevelVars.Engine.Keypad[dataName].CodeInput = ""
-    LevelVars.Engine.Keypad[dataName].Volume    = volume
     LevelVars.Engine.Keypad[dataName].Status    = false
     LevelVars.Engine.Keypad[dataName].CursorX   = 1
     LevelVars.Engine.Keypad[dataName].CursorY   = 1
 
 end
 
+local function closeKeypad(keypadObject)
+    
+    local dataName = keypadObject .. "_KeypadData"
+
+    local keypad = GetMoveableByName(keypadObject)
+    keypad:SetItemFlags(1,0)
+    LevelVars.Engine.Keypad[dataName] = nil
+    LevelVars.Engine.Keypad.ActivatedKeypad = nil
+
+end
+
+local function activateKeypad(object)
+
+    local keypad = GetMoveableByName(object)
+
+    if keypad:GetItemFlags(0) == 0 then
+        Lara:Interact(keypad)
+    end
+
+    if Lara:GetAnim() == 197 and Lara:GetFrame() >= 22 and Lara:GetFrame() <= 22 then
+        LevelVars.Engine.Keypad.ActivatedKeypad = object
+        inventoryOpen = true
+    end
+
+    if inventoryOpen == true then
+        inventoryDelay = inventoryDelay + 1
+        TEN.View.SetPostProcessMode(View.PostProcessMode.MONOCHROME)
+        TEN.View.SetPostProcessStrength(1)
+        TEN.View.SetPostProcessTint(Color(128,128,128,255))
+        TEN.View.DisplayItem.ResetCamera()
+        if inventoryDelay >= 2 then
+
+            inventoryOpen = false
+            inventoryDelay = 0
+            setupComplete = true
+            Flow.SetFreezeMode(Flow.FreezeMode.FULL)
+        end
+    end
+
+end
+
+local function exitKeypad(object, status)
+
+    local dataName = object .. "_KeypadData"
+    local keypadObject = TEN.View.DisplayItem.GetItemByName(dataName)
+
+    LevelVars.Engine.Keypad[dataName].Status = status
+    keypadObject:Remove()
+    LevelVars.Engine.Keypad.ActivatedKeypad = nil
+    Flow.SetFreezeMode(Flow.FreezeMode.NONE)
+    
+end
+
+local function displayInput(object, keypad)
+    
+    local dataName = object .. "_KeypadData"
+
+    if inputMode then
+        local selectedKey = keypad[LevelVars.Engine.Keypad[dataName].CursorY][LevelVars.Engine.Keypad[dataName].CursorX]
+        LevelVars.Engine.Keypad[dataName].CodeInput = tostring(selectedKey)
+    end
+
+end
+
 -- !Name "Run a keypad (triggers)"
 -- !Section "User interface"
 -- !Description "Creates a keypad to activate the triggers using Trigger Triggerer."
--- !Arguments "NewLine, Moveables, Keypad object"
+-- !Arguments "NewLine, 80, Moveables, Keypad Object"
+-- !Arguments "Numerical, 20, [ 1000 | 9999 ], Pass code"
 -- !Arguments "NewLine, Moveables, Trigger Triggerer object to activate"
 
-LevelFuncs.Engine.Node.KeypadTrigger = function(object, triggerer)
+LevelFuncs.Engine.Node.KeypadTrigger = function(object, code, triggerer)
 
     local dataName = object .. "_KeypadData"
     
+    if not LevelVars.Engine.Keypad[dataName] then
+        keypadCreate(object, code)
+        inputMode = false
+    end
+
     if LevelVars.Engine.Keypad[dataName].Status then
         local triggerer = GetMoveableByName(triggerer)
-        local volume = GetVolumeByName(LevelVars.Engine.Keypad[dataName].Volume)
         triggerer:Enable()
-        LevelVars.Engine.Keypad[dataName] = nil
-        LevelVars.Engine.ActivatedKeypad = nil
-        volume:Disable()
+        closeKeypad(object)
     end
   
-    LevelFuncs.Engine.ActivateKeypad(object)
+    activateKeypad(object)
 
 end
 -- !Name "Run a keypad (volume event)"
 -- !Section "User interface"
 -- !Description "Creates a keypad to run a volume event."
--- !Arguments "NewLine, Moveables, Keypad object"
+-- !Arguments "NewLine, 80, Moveables, Keypad Object"
+-- !Arguments "Numerical, 20, [ 1000 | 9999 ], Pass code"
 -- !Arguments "NewLine, 65, VolumeEventSets, Target event set"
 -- !Arguments "VolumeEvents, 35, Event to run"
 
-LevelFuncs.Engine.Node.KeypadVolume = function(object, volumeEvent, eventType)
+LevelFuncs.Engine.Node.KeypadVolume = function(object, code, volumeEvent, eventType)
 
     local dataName = object .. "_KeypadData"
     
-    if LevelVars.Engine.Keypad[dataName].Status then
-        local volume = GetVolumeByName(LevelVars.Engine.Keypad[dataName].Volume)
-        LevelVars.Engine.Keypad[dataName] = nil
-        LevelVars.Engine.ActivatedKeypad  = nil
-        TEN.Logic.HandleEvent(volumeEvent, eventType, Lara)
-        volume:Disable()
+    if not LevelVars.Engine.Keypad[dataName] then
+        keypadCreate(object, code)
+        inputMode = false
     end
 
-    LevelFuncs.Engine.ActivateKeypad(object)
+    if LevelVars.Engine.Keypad[dataName].Status then
+        TEN.Logic.HandleEvent(volumeEvent, eventType, Lara)
+        closeKeypad(object)
+    end
+
+    activateKeypad(object)
 
 end
 
 -- !Name "Run a keypad (script function)"
 -- !Section "User interface"
 -- !Description "Creates a keypad to run a script function."
--- !Arguments "NewLine, Moveables, Keypad object"
+-- !Arguments "NewLine, 80, Moveables, Keypad Object"
+-- !Arguments "Numerical, 20, [ 1000 | 9999 ], Pass code"
 -- !Arguments "NewLine, LuaScript, Target Lua script function" "NewLine, String, Arguments"
 
-LevelFuncs.Engine.Node.KeypadScript = function(object, funcName, args)
+LevelFuncs.Engine.Node.KeypadScript = function(object, code, funcName, args)
 
     local dataName = object .. "_KeypadData"
+
+    if not LevelVars.Engine.Keypad[dataName] then
+        keypadCreate(object, code)
+        inputMode = false
+    end
     
     if LevelVars.Engine.Keypad[dataName].Status then
-        local volume = GetVolumeByName(LevelVars.Engine.Keypad[dataName].Volume)
-        LevelVars.Engine.Keypad[dataName] = nil
-        LevelVars.Engine.ActivatedKeypad = nil
         funcName(table.unpack(LevelFuncs.Engine.Node.SplitString(args, ",")))
-        volume:Disable()
+        closeKeypad(object)
     end
 
-    LevelFuncs.Engine.ActivateKeypad(object)
+    activateKeypad(object)
 
 end
 
-LevelFuncs.Engine.ActivateKeypad = function(object)
+-- !Name "Run a keypad (Numerical Input)"
+-- !Section "User interface"
+-- !Description "Creates a keypad to input numerical number."
+-- !Arguments "NewLine, Moveables, Keypad Object"
+LevelFuncs.Engine.Node.KeypadInput = function(object)
 
-    local target = GetMoveableByName(object)
-
-    Lara:Interact(target)
-
-    if Lara:GetAnim() == 197 and Lara:GetFrame() >= 22 and Lara:GetFrame() <= 22 then
-        Lara:SetVisible(false)
-        View.SetFOV(30)
-        LevelVars.Engine.ActivatedKeypad = object
-        TEN.Logic.AddCallback(TEN.Logic.CallbackPoint.PREFREEZE, LevelFuncs.Engine.RunKeypad)
-        Flow.SetFreezeMode(Flow.FreezeMode.SPECTATOR)
-    end
-
-end
-
-LevelFuncs.Engine.ExitKeypad = function(object, status)
-
-    local cameraObject = GetMoveableByName("keypadCam1")
     local dataName = object .. "_KeypadData"
 
-    LevelVars.Engine.Keypad[dataName].Status = status
-    View.SetFOV(80)
-    Lara:SetVisible(true)
-    ResetObjCamera()
-    cameraObject:Destroy()
-    Flow.SetFreezeMode(Flow.FreezeMode.NONE)
-    TEN.Logic.RemoveCallback(TEN.Logic.CallbackPoint.PREFREEZE, LevelFuncs.Engine.RunKeypad)
+    if not LevelVars.Engine.Keypad[dataName] then
+        keypadCreate(object, 1)
+        inputMode = true
+    end
+
+    activateKeypad(object)
 
 end
 
-LevelFuncs.Engine.RunKeypad = function()
+-- !Name "If Numerical Input from a keypad is..."
+-- !Section "User interface"
+-- !Conditional "True"
+-- !Description "Read a keypad's number."
+-- !Arguments "NewLine, Moveables, Keypad Object"
+-- !Arguments "NewLine, CompareOperator, 20"
+-- !Arguments "Numerical, 20, [ 0 | 9 ], Input to test"
+LevelFuncs.Engine.Node.KeypadRead = function(object, operator, value)
 
-    local soundIDs = {
-        ["Clear"] = 983,    -- TR5_Keypad_Hash (Cancel)
-        ["Enter"] = 984,    -- TR5_Keypad_Asterisk (Confirm)
-        [0] = 985,          -- TR5_Keypad_0
-        [1] = 986,          -- TR5_Keypad_1
-        [2] = 987,          -- TR5_Keypad_2
-        [3] = 988,          -- TR5_Keypad_3
-        [4] = 989,          -- TR5_Keypad_4
-        [5] = 990,          -- TR5_Keypad_5
-        [6] = 991,          -- TR5_Keypad_6
-        [7] = 992,          -- TR5_Keypad_7
-        [8] = 993,          -- TR5_Keypad_8
-        [9] = 994,          -- TR5_Keypad_9
-        ["Failure"] = 995,  -- TR5_Keypad_Entry_No
-        ["Success"] = 996,  -- TR5_Keypad_Entry_Yes
-        ["Click"] = 644,    -- TR2_Click
-    }
-
-    local object = LevelVars.Engine.ActivatedKeypad 
     local dataName = object .. "_KeypadData"
-    local target = GetMoveableByName(object)
-    local targetPos = target:GetPosition()
-    local targetRot = target:GetRotation()
-    local targetRoom = target:GetRoomNumber()
 
-    local offset = 296
-    local heightOffset = 618
-    local cameraPos = targetPos
-	
-    if (targetRot.y == 0) then
-        cameraPos = Vec3(targetPos.x, targetPos.y-heightOffset, targetPos.z - offset)
-    elseif (targetRot.y == 90) then
-        cameraPos = Vec3(targetPos.x- offset, targetPos.y-heightOffset, targetPos.z)
-    elseif (targetRot.y == 180) then
-        cameraPos = Vec3(targetPos.x, targetPos.y-heightOffset, targetPos.z + offset)
-    elseif (targetRot.y == 270) then
-        cameraPos = Vec3(targetPos.x+ offset, targetPos.y-heightOffset, targetPos.z )
+    if not LevelVars.Engine.Keypad[dataName] then
+        return false
     end
 
-    if not IsNameInUse("keypadCam1")  then
-        Moveable(TEN.Objects.ObjID.CAMERA_TARGET, "keypadCam1", cameraPos, Rotation(0,0,0), targetRoom)
+    if LevelVars.Engine.Keypad[dataName].Status then
+        LevelVars.Engine.Keypad.ActivatedKeypad = nil
+        local numericString = LevelVars.Engine.Keypad[dataName].CodeInput:gsub("%-", "")
+        local numberValue = tonumber(numericString)
+        LevelVars.Engine.Keypad[dataName].CodeInput = ""
+        LevelVars.Engine.Keypad[dataName].Status = false
+        return LevelFuncs.Engine.Node.CompareValue(numberValue, value, operator)
+    end
+    
+
+end
+
+LevelFuncs.Engine.Node.RunKeypad = function()
+
+    if not LevelVars.Engine.Keypad.ActivatedKeypad then
+        return
     end
 
-    local cameraObject = GetMoveableByName("keypadCam1")
+    if setupComplete then
+        TEN.View.SetPostProcessMode(View.PostProcessMode.NONE)
+        TEN.View.SetPostProcessStrength(0)
+        TEN.View.SetPostProcessTint(Color(255,255,255,255))
+        setupComplete = false
+    end
 
-    cameraObject:SetPosition(cameraPos)
-    cameraObject:SetRoomNumber(targetRoom)
-    cameraObject:AttachObjCamera(0, target, 0)
+    local object = LevelVars.Engine.Keypad.ActivatedKeypad
+    local objectSlot = GetMoveableByName(object):GetObjectID()
+    local dataName = object .. "_KeypadData"
+    local target = TEN.View.DisplayItem(dataName, objectSlot, Vec3(0,2500,1024), Rotation(0,0,0), 4)
 
     local keypad = {
         {1, 2, 3},
@@ -194,42 +262,65 @@ LevelFuncs.Engine.RunKeypad = function()
 
     if KeyIsHit(ActionID.ACTION) then
         local selectedKey = keypad[LevelVars.Engine.Keypad[dataName].CursorY][LevelVars.Engine.Keypad[dataName].CursorX]
-        TEN.Sound.PlaySound(soundIDs[selectedKey])
+        TEN.Sound.PlaySound(SOUND_MAP[selectedKey])
         if selectedKey == "Clear" then
             LevelVars.Engine.Keypad[dataName].CodeInput = ""  -- Clear the entered code
-            TEN.Sound.PlaySound(soundIDs["Clear"])
+            TEN.Sound.PlaySound(SOUND_MAP["Clear"])
         elseif selectedKey == "Enter" then
-            if LevelVars.Engine.Keypad[dataName].CodeInput == correctCode then
-                TEN.Sound.PlaySound(soundIDs["Success"])
+            if inputMode then
+                
                 for _, mesh in pairs(meshMappings) do
-                    target:SetMeshVisible(mesh.dark, true)  -- Show dark keys
-                    target:SetMeshVisible(mesh.bright, false)  -- Hide bright keys
+                    target:SetMeshVisible(mesh.dark, true)
+                    target:SetMeshVisible(mesh.bright, false)
                 end
-                LevelFuncs.Engine.ExitKeypad(object, true)
+                exitKeypad(object, true)
                 return
             else
-                TEN.Sound.PlaySound(soundIDs["Failure"])
-                LevelVars.Engine.Keypad[dataName].CodeInput = ""  -- Reset the entered code if incorrect
+                if LevelVars.Engine.Keypad[dataName].CodeInput == correctCode then
+                    TEN.Sound.PlaySound(SOUND_MAP["Success"])
+                    for _, mesh in pairs(meshMappings) do
+                        target:SetMeshVisible(mesh.dark, true)  -- Show dark keys
+                        target:SetMeshVisible(mesh.bright, false)  -- Hide bright keys
+                    end
+                    exitKeypad(object, true)
+                    return
+                else
+                    TEN.Sound.PlaySound(SOUND_MAP["Failure"])
+                    LevelVars.Engine.Keypad[dataName].CodeInput = ""  -- Reset the entered code if incorrect
+                end
             end
         else
-            if string.len(LevelVars.Engine.Keypad[dataName].CodeInput) < maxCodeLength then
+            if string.len(LevelVars.Engine.Keypad[dataName].CodeInput) < maxCodeLength or inputMode then
+                
+                if inputMode then
+                
+                    for _, mesh in pairs(meshMappings) do
+                        target:SetMeshVisible(mesh.dark, true)
+                        target:SetMeshVisible(mesh.bright, false)
+                    end
+                    exitKeypad(object, true)
+                    return
+                end
+                
                 LevelVars.Engine.Keypad[dataName].CodeInput = LevelVars.Engine.Keypad[dataName].CodeInput .. tostring(selectedKey)
+
             end
         end
     elseif KeyIsHit(ActionID.FORWARD) then
         LevelVars.Engine.Keypad[dataName].CursorY = LevelVars.Engine.Keypad[dataName].CursorY -1
-        TEN.Sound.PlaySound(soundIDs["Click"])
+        TEN.Sound.PlaySound(SOUND_MAP["Click"])
     elseif KeyIsHit(ActionID.BACK)  then
         LevelVars.Engine.Keypad[dataName].CursorY = LevelVars.Engine.Keypad[dataName].CursorY + 1
-        TEN.Sound.PlaySound(soundIDs["Click"])
+        TEN.Sound.PlaySound(SOUND_MAP["Click"])
     elseif KeyIsHit(ActionID.LEFT)  then
         LevelVars.Engine.Keypad[dataName].CursorX = LevelVars.Engine.Keypad[dataName].CursorX - 1
-        TEN.Sound.PlaySound(soundIDs["Click"])
+        TEN.Sound.PlaySound(SOUND_MAP["Click"])
     elseif KeyIsHit(ActionID.RIGHT) then
         LevelVars.Engine.Keypad[dataName].CursorX = LevelVars.Engine.Keypad[dataName].CursorX + 1
-        TEN.Sound.PlaySound(soundIDs["Click"])
+        TEN.Sound.PlaySound(SOUND_MAP["Click"])
+        
     elseif KeyIsHit(ActionID.INVENTORY) then
-        TEN.Sound.PlaySound(soundIDs["Failure"])
+        TEN.Sound.PlaySound(SOUND_MAP["Failure"])
         LevelVars.Engine.Keypad[dataName].CodeInput = ""
         LevelVars.Engine.Keypad[dataName].CursorX = 1
         LevelVars.Engine.Keypad[dataName].CursorY = 1
@@ -239,7 +330,7 @@ LevelFuncs.Engine.RunKeypad = function()
             target:SetMeshVisible(mesh.bright, false)  -- Hide bright keys
         end
 
-        LevelFuncs.Engine.ExitKeypad(object, false)
+        exitKeypad(object, false)
         return
 
     end
@@ -249,6 +340,9 @@ LevelFuncs.Engine.RunKeypad = function()
 
     -- Clamp cursorY within the total number of rows
     LevelVars.Engine.Keypad[dataName].CursorY = math.max(1, math.min(LevelVars.Engine.Keypad[dataName].CursorY, 4))
+    
+    --if Keypad is input type show the currently hovering number
+    displayInput(object, keypad)
 
     -- Function to format entered code with dashes
         local codeWithDashes = LevelVars.Engine.Keypad[dataName].CodeInput or ""
@@ -275,7 +369,9 @@ LevelFuncs.Engine.RunKeypad = function()
     end
 
     -- Display entered code with dashes
-    local controlsText = TEN.Strings.DisplayString(codeWithDashes, TEN.Vec2(TEN.Util.PercentToScreen(57.5, 19.5)), 1.60, TEN.Color(255,255,255), false, {Strings.DisplayStringOption.RIGHT})
+    local controlsText = TEN.Strings.DisplayString(codeWithDashes, TEN.Vec2(TEN.Util.PercentToScreen(55, 30)), 1.0, TEN.Color(192,192,192), false, {Strings.DisplayStringOption.RIGHT})
     ShowString(controlsText, 1 / 30)
 
 end
+
+TEN.Logic.AddCallback(TEN.Logic.CallbackPoint.PREFREEZE, LevelFuncs.Engine.Node.RunKeypad)
