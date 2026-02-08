@@ -106,7 +106,7 @@ namespace TombIDE.ScriptingStudio
 			}
 		}
 
-		private void AppendScriptLines(List<string> inputLines,
+		private void AppendScriptLines(IReadOnlyList<string> inputLines,
 			bool wasScriptFileAlreadyOpened, bool wasScriptFileFileChanged,
 			bool wasLanguageFileAlreadyOpened, bool wasLanguageFileFileChanged)
 		{

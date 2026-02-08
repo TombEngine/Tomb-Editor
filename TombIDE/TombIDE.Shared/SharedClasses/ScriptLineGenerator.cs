@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using TombLib.LevelData;
+using TombLib.Utils;
 
 namespace TombIDE.Shared.SharedClasses;
 
@@ -30,7 +31,7 @@ public static class ScriptLineGenerator
 			_ => null
 		};
 
-		return script is not null ? script.Split('\n') : [];
+		return script is not null ? script.SplitLines() : [];
 	}
 
 	private static string GenerateTR2Script(string levelName, string dataFileName, int ambientSoundId)
@@ -41,7 +42,7 @@ public static class ScriptLineGenerator
 
 				LOAD_PIC: pix\mansion.pcx
 				TRACK: {{ambientSoundId}}
-				GAME: data\{{dataFileName.ToLower()}}.tr2
+				GAME: data\{{dataFileName.ToLowerInvariant()}}.tr2
 				COMPLETE:
 
 			END:
@@ -56,7 +57,7 @@ public static class ScriptLineGenerator
 
 				LOAD_PIC: pix\house.bmp
 				TRACK: {{ambientSoundId}}
-				GAME: data\{{dataFileName.ToLower()}}.tr2
+				GAME: data\{{dataFileName.ToLowerInvariant()}}.tr2
 				COMPLETE:
 
 			END:
@@ -71,7 +72,7 @@ public static class ScriptLineGenerator
 
 			[Level]
 			Name= {{levelName}}
-			Level= DATA\{{dataFileName.ToUpper()}}, {{ambientSoundId}}
+			Level= DATA\{{dataFileName.ToUpperInvariant()}}, {{ambientSoundId}}
 			LoadCamera= 0, 0, 0, 0, 0, 0, 0
 			Horizon= {{horizonValue}}
 			""";

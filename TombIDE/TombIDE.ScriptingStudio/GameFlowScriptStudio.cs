@@ -93,7 +93,7 @@ namespace TombIDE.ScriptingStudio
 			}
 		}
 
-		private void AppendScriptLines(List<string> inputLines)
+		private void AppendScriptLines(IReadOnlyList<string> inputLines)
 		{
 			EditorTabControl.OpenFile(PathHelper.GetScriptFilePath(ScriptRootDirectoryPath, TombLib.LevelData.TRVersion.Game.TR2));
 
