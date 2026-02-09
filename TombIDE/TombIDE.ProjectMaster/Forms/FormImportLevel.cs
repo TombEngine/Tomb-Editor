@@ -16,7 +16,7 @@ namespace TombIDE.ProjectMaster
 	public partial class FormImportLevel : DarkForm, IProgressReportingForm
 	{
 		public ILevelProject? ImportedLevel { get; private set; }
-		public IReadOnlyList<string> GeneratedScriptLines { get; private set; } = [];
+		public ScriptGenerationResult? GeneratedScript { get; private set; }
 
 		private readonly IGameProject _targetProject;
 		private readonly ILevelImportService _importService;
@@ -118,7 +118,7 @@ namespace TombIDE.ProjectMaster
 				LevelImportResult result = _importService.ImportLevel(_targetProject, options, this);
 
 				ImportedLevel = result.ImportedLevel;
-				GeneratedScriptLines = result.GeneratedScriptLines;
+				GeneratedScript = result.GeneratedScript;
 			}
 			catch (Exception ex)
 			{

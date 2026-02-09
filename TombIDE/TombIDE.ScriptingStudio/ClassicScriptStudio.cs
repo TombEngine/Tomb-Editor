@@ -1,7 +1,6 @@
 ﻿using DarkUI.Docking;
 using DarkUI.Forms;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -75,7 +74,7 @@ namespace TombIDE.ScriptingStudio
 		}
 
 		private bool IsSilentAction(IIDEEvent obj)
-			=> obj is IDE.ScriptEditor_AppendScriptLinesEvent
+			=> obj is IDE.ScriptEditor_AppendScriptEvent
 			|| obj is IDE.ScriptEditor_AddNewLevelStringEvent
 			|| obj is IDE.ScriptEditor_AddNewPluginEntryEvent
 			|| obj is IDE.ScriptEditor_AddNewNGStringEvent
@@ -97,9 +96,9 @@ namespace TombIDE.ScriptingStudio
 				bool wasLanguageFileAlreadyOpened = languageFileTab != null;
 				bool wasLanguageFileFileChanged = wasLanguageFileAlreadyOpened && EditorTabControl.GetEditorOfTab(languageFileTab).IsContentChanged;
 
-				if (obj is IDE.ScriptEditor_AppendScriptLinesEvent asle && asle.Lines.Count > 0)
+				if (obj is IDE.ScriptEditor_AppendScriptEvent asle && asle.Result.HasContent)
 				{
-					AppendScriptLines(asle.Lines);
+					AppendScript(asle.Result.GameFlowScript);
 					EndSilentScriptAction(cachedTab, true, !wasScriptFileFileChanged, !wasScriptFileAlreadyOpened);
 				}
 				else if (obj is IDE.ScriptEditor_AddNewLevelStringEvent anlse)
@@ -149,13 +148,13 @@ namespace TombIDE.ScriptingStudio
 			}
 		}
 
-		private void AppendScriptLines(IReadOnlyList<string> inputLines)
+		private void AppendScript(string scriptText)
 		{
 			EditorTabControl.OpenFile(PathHelper.GetScriptFilePath(ScriptRootDirectoryPath, TombLib.LevelData.TRVersion.Game.TR4));
 
 			if (CurrentEditor is TextEditorBase editor)
 			{
-				editor.AppendText(string.Join(Environment.NewLine, inputLines) + Environment.NewLine);
+				editor.AppendText(Environment.NewLine + scriptText + Environment.NewLine);
 				editor.ScrollToLine(editor.LineCount);
 			}
 		}

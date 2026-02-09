@@ -183,7 +183,7 @@ namespace TombIDE.ProjectMaster
 			using var form = new FormLevelSetup(_ide.Project, _levelSetupService);
 
 			if (form.ShowDialog(this) == DialogResult.OK && form.CreatedLevel is not null)
-				OnLevelAdded(form.CreatedLevel, form.GeneratedScriptLines);
+				OnLevelAdded(form.CreatedLevel, form.GeneratedScript);
 		}
 
 		private void ImportLevel()
@@ -205,7 +205,7 @@ namespace TombIDE.ProjectMaster
 					using var form = new FormImportLevel(_ide.Project, dialog.FileName, _levelImportService);
 
 					if (form.ShowDialog(this) == DialogResult.OK && form.ImportedLevel is not null)
-						OnLevelAdded(form.ImportedLevel, form.GeneratedScriptLines);
+						OnLevelAdded(form.ImportedLevel, form.GeneratedScript);
 				}
 				catch (Exception ex)
 				{
@@ -361,7 +361,7 @@ namespace TombIDE.ProjectMaster
 
 		#region Methods
 
-		private void OnLevelAdded(ILevelProject addedLevel, IReadOnlyList<string> scriptLines)
+		private void OnLevelAdded(ILevelProject addedLevel, ScriptGenerationResult? generatedScript)
 		{
 			AddLevelToList(addedLevel, true);
 
@@ -377,9 +377,9 @@ namespace TombIDE.ProjectMaster
 				}
 			}
 
-			if (scriptLines.Count > 0)
+			if (generatedScript is not null && generatedScript.HasContent)
 			{
-				_ide.ScriptEditor_AppendScriptLines(scriptLines);
+				_ide.ScriptEditor_AppendScript(generatedScript);
 				_ide.ScriptEditor_AddNewLevelString(addedLevel.Name);
 			}
 		}

@@ -41,18 +41,18 @@ public sealed class LevelSetupService : ILevelSetupService
 		}
 
 		ILevelProject createdLevel = new LevelProject(levelName, levelFolderPath);
-		IReadOnlyList<string> generatedScriptLines = [];
+		ScriptGenerationResult? generatedScript = null;
 
 		// Create the .prj2 file
 		CreatePrj2File(targetProject, createdLevel, dataFileName);
 
 		if (options.GenerateScript)
-			generatedScriptLines = ScriptLineGenerator.GenerateScriptLines(levelName, dataFileName, targetProject.GameVersion, options.AmbientSoundId, options.EnableHorizon);
+			generatedScript = ScriptGenerator.GenerateScripts(levelName, dataFileName, targetProject.GameVersion, options.AmbientSoundId, options.EnableHorizon);
 
 		var result = new LevelSetupResult
 		{
 			CreatedLevel = createdLevel,
-			GeneratedScriptLines = generatedScriptLines
+			GeneratedScript = generatedScript
 		};
 
 		createdLevel.Save();

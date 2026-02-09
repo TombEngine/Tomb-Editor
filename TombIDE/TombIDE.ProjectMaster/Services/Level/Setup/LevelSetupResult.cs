@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using TombIDE.Shared.NewStructure;
+using TombIDE.Shared.SharedClasses;
 
 namespace TombIDE.ProjectMaster.Services.Level.Setup;
 
@@ -14,9 +14,9 @@ public sealed record LevelSetupResult
 	public ILevelProject? CreatedLevel { get; init; }
 
 	/// <summary>
-	/// Script lines generated for the level, if requested.
+	/// Script generation result for the level, if requested.
 	/// </summary>
-	public IReadOnlyList<string> GeneratedScriptLines { get; init; } = [];
+	public ScriptGenerationResult? GeneratedScript { get; init; }
 
 	/// <summary>
 	/// Indicates whether the operation was successful.

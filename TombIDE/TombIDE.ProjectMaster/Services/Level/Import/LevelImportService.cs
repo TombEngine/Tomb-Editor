@@ -147,15 +147,15 @@ public sealed class LevelImportService : ILevelImportService
 		string? targetFileName)
 	{
 		var importedLevel = new LevelProject(levelName, levelFolderPath, targetFileName);
-		IReadOnlyList<string> generatedScriptLines = [];
+		ScriptGenerationResult? generatedScript = null;
 
 		if (options.GenerateScript)
-			generatedScriptLines = ScriptLineGenerator.GenerateScriptLines(levelName, dataFileName, targetProject.GameVersion, options.AmbientSoundId, options.EnableHorizon);
+			generatedScript = ScriptGenerator.GenerateScripts(levelName, dataFileName, targetProject.GameVersion, options.AmbientSoundId, options.EnableHorizon);
 
 		var result = new LevelImportResult
 		{
 			ImportedLevel = importedLevel,
-			GeneratedScriptLines = generatedScriptLines
+			GeneratedScript = generatedScript
 		};
 
 		importedLevel.Save();

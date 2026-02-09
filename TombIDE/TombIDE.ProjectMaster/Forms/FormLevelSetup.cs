@@ -1,6 +1,5 @@
 ﻿using DarkUI.Forms;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using TombIDE.ProjectMaster.Services.Level.Setup;
@@ -13,7 +12,7 @@ namespace TombIDE.ProjectMaster
 	public partial class FormLevelSetup : DarkForm
 	{
 		public ILevelProject? CreatedLevel { get; private set; }
-		public IReadOnlyList<string> GeneratedScriptLines { get; private set; } = [];
+		public ScriptGenerationResult? GeneratedScript { get; private set; }
 
 		private readonly IGameProject _targetProject;
 		private readonly ILevelSetupService _levelSetupService;
@@ -112,7 +111,7 @@ namespace TombIDE.ProjectMaster
 				LevelSetupResult result = _levelSetupService.CreateLevel(_targetProject, options);
 
 				CreatedLevel = result.CreatedLevel;
-				GeneratedScriptLines = result.GeneratedScriptLines;
+				GeneratedScript = result.GeneratedScript;
 			}
 			catch (Exception ex)
 			{
