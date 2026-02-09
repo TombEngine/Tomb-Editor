@@ -141,7 +141,7 @@ public static class ScriptGenerator
 			""";
 
 		string languageScript = $$"""
-			{{dataFileName}} = { "{{levelName}}" }
+				{{dataFileName}} = { "{{levelName}}" }
 			""";
 
 		string levelScript = $$"""
