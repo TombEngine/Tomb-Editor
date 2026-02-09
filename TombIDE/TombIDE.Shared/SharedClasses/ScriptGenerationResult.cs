@@ -15,13 +15,9 @@ public sealed record GeneratedScriptFile(string RelativePath, string Content);
 /// Contains the results of script generation, with explicit separation between
 /// gameflow script content and language file content.
 /// </summary>
+/// <param name="DataFileName">The data file name (without extension) used to generate the script.</param>
 public sealed record ScriptGenerationResult(string DataFileName)
 {
-	/// <summary>
-	/// The data file name (without extension) used to generate the script.
-	/// </summary>
-	public string DataFileName { get; init; } = DataFileName;
-
 	/// <summary>
 	/// Text to append to the main gameflow/script file.
 	/// </summary>
