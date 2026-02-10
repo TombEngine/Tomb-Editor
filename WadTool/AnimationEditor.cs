@@ -288,8 +288,6 @@ namespace WadTool
 
         public void UpdateTransform(int meshIndex, Vector3 newRot, Vector3 newPos)
         {
-            var deltaRot = newRot - _initialRot;
-
             Quaternion EulerStrategy(int index, float weight, bool evolve)
             {
                 var deltaRot = newRot - _initialRot;
@@ -312,8 +310,6 @@ namespace WadTool
 
         public void UpdateTransform(int meshIndex, Quaternion targetQuat, Vector3 newPos)
         {
-            var deltaQuat = Quaternion.Inverse(_initialQuat) * targetQuat;
-
             Quaternion QuatStrategy(int index, float weight, bool evolve)
             {
                 var deltaQuat = Quaternion.Inverse(_initialQuat) * targetQuat;
