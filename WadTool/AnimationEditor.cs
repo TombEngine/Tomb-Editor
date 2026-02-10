@@ -253,7 +253,7 @@ namespace WadTool
                 float bias = (currentStep <= midFrame) ? (reverse ? 1.0f : currentStep / midFrame) : (frameCount - currentStep) / (frameCount - midFrame);
 
                 // Single-pass smoothstep doesn't look organic on fast animations, hence we're using 2-pass smootherstep here.
-                float weight   = smooth ? (float)MathC.SmoothStep(0, 1, MathC.SmoothStep(0, 1, bias)) : bias;
+                float weight = smooth ? (float)MathC.SmoothStep(0, 1, MathC.SmoothStep(0, 1, bias)) : bias;
 
                 var translation = _backupPos[index] + deltaPos;
 
