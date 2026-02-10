@@ -15,6 +15,7 @@ WadTool:
  * Added animation blending and root motion controls to animation editor for TEN target.
  * Added indication of missing external texture file.
  * Automatically correct hair mesh connections when importing TR4 outfits to TEN wad.
+ * Fixed gizmo behaviour in animation editor.
  * Fixed misplaced backholster meshes for classic engines.
  * Fixed external textures not loading when wad was moved to another directory.
  * Fixed exception while loading wads with material xml files placed in the same folder as wad.
