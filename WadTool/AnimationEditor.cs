@@ -46,9 +46,11 @@ namespace WadTool
 
         // Internal state, used for transform functions
         private List<Vector3> _backupRot = new List<Vector3>();
+        private List<Quaternion> _backupQuat = new List<Quaternion>();
         private List<Vector3> _backupPos = new List<Vector3>();
         private Vector3 _initialPos;
         private Vector3 _initialRot;
+        private Quaternion _initialQuat;
 
         // Helpers
         public bool SelectionIsEmpty => Selection.X == -1 || Selection.Y == -1;
@@ -211,11 +213,17 @@ namespace WadTool
             {
                 _initialPos = CurrentKeyFrame.Translations[0];
                 _initialRot = CurrentKeyFrame.Rotations[meshIndex];
+                _initialQuat = CurrentKeyFrame.Quaternions[meshIndex];
 
                 _backupPos.Clear();
                 _backupRot.Clear();
+                _backupQuat.Clear();
 
-                ActiveFrames.ForEach(f => { _backupRot.Add(f.Rotations[meshIndex]); _backupPos.Add(f.Translations[0]); });
+                ActiveFrames.ForEach(f => {
+                    _backupRot.Add(f.Rotations[meshIndex]);
+                    _backupQuat.Add(f.Quaternions[meshIndex]);
+                    _backupPos.Add(f.Translations[0]);
+                });
 
                 Tool.UndoManager.PushAnimationChanged(this, CurrentAnim);
                 MadeChanges = true;
@@ -268,22 +276,126 @@ namespace WadTool
                     // Calculate source and destination quats and decide on direction based on dot product.
                     var srcQuat = Quaternion.CreateFromYawPitchRoll(_backupRot[index].Y, _backupRot[index].X, _backupRot[index].Z);
                     var destQuat = Quaternion.CreateFromYawPitchRoll(currRot.Y, currRot.X, currRot.Z);
-                    if (Quaternion.Dot(srcQuat, destQuat) < 0) Quaternion.Negate(srcQuat);
+                    if (Quaternion.Dot(srcQuat, destQuat) < 0) srcQuat = Quaternion.Negate(srcQuat);
                     finalQuat = Quaternion.Lerp(srcQuat, destQuat, weight);
                 }
                 else
                     finalQuat = Quaternion.CreateFromYawPitchRoll(rotVector.Y, rotVector.X, rotVector.Z);
 
-                // We're not converting quat to rotations because we have to check-up for NaNs
+                // Derive Euler angles for display/UI
                 var rotationVector = MathC.QuaternionToEuler(finalQuat);
 
                 // Foolproof stuff in case user hardly messes with transform during playback...
+                bool hasNaN = float.IsNaN(rotationVector.X) || float.IsNaN(rotationVector.Y) || float.IsNaN(rotationVector.Z);
                 if (float.IsNaN(rotationVector.X)) rotationVector.X = _backupRot[index].X;
                 if (float.IsNaN(rotationVector.Y)) rotationVector.Y = _backupRot[index].Y;
                 if (float.IsNaN(rotationVector.Z)) rotationVector.Z = _backupRot[index].Z;
 
-                // NaNs filtered out, now we can put actual data.
-                keyframe.Quaternions[meshIndex] = Quaternion.CreateFromYawPitchRoll(rotationVector.Y, rotationVector.X, rotationVector.Z);
+                // Store quaternion directly to avoid precision loss from Euler round-trip.
+                // Only reconstruct from Euler if NaN filtering was needed.
+                keyframe.Quaternions[meshIndex] = hasNaN
+                    ? Quaternion.CreateFromYawPitchRoll(rotationVector.Y, rotationVector.X, rotationVector.Z)
+                    : finalQuat;
+                keyframe.Rotations[meshIndex] = rotationVector;
+
+                index++;
+                currentStep++;
+
+                if (currentStep > frameCount)
+                    currentStep = frameCount;
+            }
+        }
+
+        /// <summary>
+        /// Quaternion-based transform update that avoids the Euler angle round-trip
+        /// which causes gimbal lock jitter during interactive gizmo manipulation.
+        /// </summary>
+        public void UpdateTransformQuaternion(int meshIndex, Quaternion targetQuat, Vector3 newPos)
+        {
+            if (CurrentAnim == null || CurrentKeyFrame == null) return;
+
+            // Backup everything and push undo on first occurrence of editing
+            if (!MadeChanges || _backupPos.Count == 0 || _backupQuat.Count == 0)
+            {
+                _initialPos = CurrentKeyFrame.Translations[0];
+                _initialRot = CurrentKeyFrame.Rotations[meshIndex];
+                _initialQuat = CurrentKeyFrame.Quaternions[meshIndex];
+
+                _backupPos.Clear();
+                _backupRot.Clear();
+                _backupQuat.Clear();
+
+                ActiveFrames.ForEach(f => {
+                    _backupRot.Add(f.Rotations[meshIndex]);
+                    _backupQuat.Add(f.Quaternions[meshIndex]);
+                    _backupPos.Add(f.Translations[0]);
+                });
+
+                Tool.UndoManager.PushAnimationChanged(this, CurrentAnim);
+                MadeChanges = true;
+            }
+
+            // Calculate deltas
+            var deltaPos = newPos - _initialPos;
+            // Quaternion delta from initial to target, applied in local bone space
+            var deltaQuat = Quaternion.Inverse(_initialQuat) * targetQuat;
+
+            // Define animation properties
+            bool evolve  = TransformMode != AnimTransformMode.Simple && ActiveFrames.Count > 1;
+            bool smooth  = TransformMode == AnimTransformMode.Smooth || TransformMode == AnimTransformMode.SmoothReverse || TransformMode == AnimTransformMode.Symmetric;
+            bool reverse = TransformMode == AnimTransformMode.LinearReverse || TransformMode == AnimTransformMode.SmoothReverse;
+            bool loop    = TransformMode == AnimTransformMode.Symmetric || TransformMode == AnimTransformMode.SymmetricLinear;
+
+            // Calculate evolution
+            float frameCount = loop || reverse ? Selection.Y - Selection.X : CurrentFrameIndex - Selection.X;
+            float currentStep = 0;
+
+            int index = 0;
+            foreach (var keyframe in ActiveFrames)
+            {
+                float midFrame = loop ? CurrentFrameIndex - Selection.X : (reverse ? CurrentFrameIndex : frameCount);
+                float bias = (currentStep <= midFrame) ? (reverse ? 1.0f : currentStep / midFrame) : (frameCount - currentStep) / (frameCount - midFrame);
+
+                // Single-pass smoothstep doesn't look organic on fast animations, hence we're using 2-pass smootherstep here.
+                float weight = smooth ? (float)MathC.SmoothStep(0, 1, MathC.SmoothStep(0, 1, bias)) : bias;
+
+                // Apply position delta
+                var translationVector = _backupPos[index] + deltaPos;
+                if (evolve)
+                    translationVector = Vector3.Lerp(_backupPos[index], translationVector, weight);
+
+                if (float.IsNaN(translationVector.X)) translationVector.X = _backupPos[index].X;
+                if (float.IsNaN(translationVector.Y)) translationVector.Y = _backupPos[index].Y;
+                if (float.IsNaN(translationVector.Z)) translationVector.Z = _backupPos[index].Z;
+
+                keyframe.Translations[0] = translationVector;
+                keyframe.TranslationsMatrices[0] = Matrix4x4.CreateTranslation(translationVector);
+
+                // Apply rotation delta entirely in quaternion space
+                Quaternion finalQuat;
+                if (evolve)
+                {
+                    var destQuat = _backupQuat[index] * deltaQuat;
+                    if (Quaternion.Dot(_backupQuat[index], destQuat) < 0)
+                        destQuat = Quaternion.Negate(destQuat);
+                    finalQuat = Quaternion.Slerp(_backupQuat[index], destQuat, weight);
+                }
+                else
+                {
+                    finalQuat = _backupQuat[index] * deltaQuat;
+                }
+
+                // Normalize to prevent floating-point drift
+                finalQuat = Quaternion.Normalize(finalQuat);
+
+                // Derive Euler angles for display/UI only
+                var rotationVector = MathC.QuaternionToEuler(finalQuat);
+                if (float.IsNaN(rotationVector.X)) rotationVector.X = _backupRot[index].X;
+                if (float.IsNaN(rotationVector.Y)) rotationVector.Y = _backupRot[index].Y;
+                if (float.IsNaN(rotationVector.Z)) rotationVector.Z = _backupRot[index].Z;
+
+                // Store quaternion directly — no Euler round-trip
+                keyframe.Quaternions[meshIndex] = finalQuat;
                 keyframe.Rotations[meshIndex] = rotationVector;
 
                 index++;
