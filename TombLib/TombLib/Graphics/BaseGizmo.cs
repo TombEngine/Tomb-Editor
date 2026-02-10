@@ -491,12 +491,12 @@ namespace TombLib.Graphics
             var solidEffect = _effect;
             GizmoMode highlight = _mode == GizmoMode.None ? _hoveredMode : _mode;
 
-            // Use frozen matrices during an active rotation drag to prevent
-            // torus rings from jumping due to Euler gimbal lock.
-            bool dragging = _mode == GizmoMode.RotateX || _mode == GizmoMode.RotateY || _mode == GizmoMode.RotateZ;
-            Matrix4x4 drawRotateMatrixY = dragging ? _frozenRotateMatrixY : RotateMatrixY;
-            Matrix4x4 drawRotateMatrixX = dragging ? _frozenRotateMatrixX : RotateMatrixX;
-            Matrix4x4 drawRotateMatrixZ = dragging ? _frozenRotateMatrixZ : RotateMatrixZ;
+            // Use a frozen matrix only for the axis currently being dragged to prevent
+            // its torus ring from jumping due to Euler gimbal lock.
+            // The other axes keep using live matrices so they update in real-time.
+            Matrix4x4 drawRotateMatrixY = _mode == GizmoMode.RotateY ? _frozenRotateMatrixY : RotateMatrixY;
+            Matrix4x4 drawRotateMatrixX = _mode == GizmoMode.RotateX ? _frozenRotateMatrixX : RotateMatrixX;
+            Matrix4x4 drawRotateMatrixZ = _mode == GizmoMode.RotateZ ? _frozenRotateMatrixZ : RotateMatrixZ;
 
             // Rotation
             if (SupportRotationX | SupportRotationY | SupportRotationZ)
