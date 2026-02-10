@@ -1,10 +1,5 @@
 ﻿using System.Numerics;
 using SharpDX.Toolkit.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TombLib.Graphics;
 using WadTool.Controls;
 using TombLib;
@@ -17,12 +12,6 @@ namespace WadTool
         private readonly PanelRenderingAnimationEditor _control;
         private readonly AnimationEditor _editor;
 
-        // Pick-time state captured once per gizmo drag to avoid gimbal lock.
-        // Using Euler values that were read back after a QuaternionToEuler round-trip
-        // would cause flickering near ±90° pitch, because the decomposition is
-        // numerically unstable there. By freezing the reference values at pick time
-        // and computing a cumulative delta from them, the quaternion target stays
-        // smooth for the entire drag.
         private Quaternion _pickQuaternion;
         private Vector3 _pickEuler;
 
@@ -52,8 +41,6 @@ namespace WadTool
                 var meshIndex = model.Meshes.IndexOf(_control.SelectedMesh);
 
                 // Capture pick-time state on the first call after each new gizmo pick.
-                // MadeChanges is reset to false by the AnimationEditorGizmoPickedEvent,
-                // so it is false exactly on the first rotation call of a new drag.
                 if (!_editor.MadeChanges)
                 {
                     _pickQuaternion = _editor.CurrentKeyFrame.Quaternions[meshIndex];
@@ -61,11 +48,8 @@ namespace WadTool
                 }
 
                 var axis = Vector3.Zero;
-                float totalDelta = 0f;
+                float totalDelta = 0.0f;
 
-                // Compute the cumulative angle change since pick time.
-                // _pickEuler is a stable, frozen snapshot — it never suffers from
-                // the QuaternionToEuler instability that the live Rotations[] values do.
                 switch (mode)
                 {
                     case GizmoMode.RotateX: totalDelta = newAngle - _pickEuler.X; axis = Vector3.UnitX; break;
@@ -73,11 +57,8 @@ namespace WadTool
                     case GizmoMode.RotateZ: totalDelta = newAngle - _pickEuler.Z; axis = Vector3.UnitZ; break;
                 }
 
-                // Apply the full cumulative delta to the stable pick-time quaternion.
-                // This avoids the old approach of computing an incremental delta from
-                // the current (potentially jumped) Euler values every frame.
-                var targetQuat = _pickQuaternion * Quaternion.CreateFromAxisAngle(axis, totalDelta);
-                _editor.UpdateTransformQuaternion(meshIndex, targetQuat, _editor.CurrentKeyFrame.Translations[0]);
+                var quat = _pickQuaternion * Quaternion.CreateFromAxisAngle(axis, totalDelta);
+                _editor.UpdateTransform(meshIndex, quat, _editor.CurrentKeyFrame.Translations[0]);
 
                 _control.Model.BuildAnimationPose(_editor.CurrentKeyFrame);
                 _control.Invalidate();

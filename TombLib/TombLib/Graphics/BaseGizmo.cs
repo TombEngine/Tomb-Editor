@@ -67,7 +67,6 @@ namespace TombLib.Graphics
         private static readonly Vector4 _xAxisColor = new Vector4(1.0f, 0.0f, 0.0f, 1.0f);
         private static readonly Vector4 _yAxisColor = new Vector4(0.0f, 1.0f, 0.0f, 1.0f);
         private static readonly Vector4 _zAxisColor = new Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-        private static readonly Vector4 _centerColor = new Vector4(1.0f, 1.0f, 0.0f, 1.0f);
         private static readonly Vector4 _hoveredAddition = new Vector4(0.6f, 0.6f, 0.6f, 1.0f);
         private static readonly float _arrowHeadOffsetMultiplier = 1.13f;
 
@@ -79,11 +78,6 @@ namespace TombLib.Graphics
         private float _rotationPickAngle;
         private float _rotationPickAngleOffset;
 
-        // Frozen rotation matrices captured at gizmo activation time.
-        // During a rotation drag, the rotation plane must remain fixed.
-        // If recomputed from live Euler angles, the plane flips near ±90° pitch
-        // (gimbal lock), corrupting the mouse-angle computation and causing
-        // wild model spinning.
         private Matrix4x4 _frozenRotateMatrixY;
         private Matrix4x4 _frozenRotateMatrixX;
         private Matrix4x4 _frozenRotateMatrixZ;
@@ -451,8 +445,6 @@ namespace TombLib.Graphics
             _rotationLastMouseAngle = SimplifyAngle(pickingResult.RotationPickAngle);
             _rotationLastMouseRadius = pickingResult.Distance;
 
-            // Freeze rotation matrices at pick time so the rotation plane
-            // stays stable for the entire drag, immune to Euler gimbal lock.
             _frozenRotateMatrixY = RotateMatrixY;
             _frozenRotateMatrixX = RotateMatrixX;
             _frozenRotateMatrixZ = RotateMatrixZ;
@@ -491,12 +483,9 @@ namespace TombLib.Graphics
             var solidEffect = _effect;
             GizmoMode highlight = _mode == GizmoMode.None ? _hoveredMode : _mode;
 
-            // Use a frozen matrix only for the axis currently being dragged to prevent
-            // its torus ring from jumping due to Euler gimbal lock.
-            // The other axes keep using live matrices so they update in real-time.
-            Matrix4x4 drawRotateMatrixY = _mode == GizmoMode.RotateY ? _frozenRotateMatrixY : RotateMatrixY;
-            Matrix4x4 drawRotateMatrixX = _mode == GizmoMode.RotateX ? _frozenRotateMatrixX : RotateMatrixX;
-            Matrix4x4 drawRotateMatrixZ = _mode == GizmoMode.RotateZ ? _frozenRotateMatrixZ : RotateMatrixZ;
+            var drawRotateMatrixY = _mode == GizmoMode.RotateY ? _frozenRotateMatrixY : RotateMatrixY;
+            var drawRotateMatrixX = _mode == GizmoMode.RotateX ? _frozenRotateMatrixX : RotateMatrixX;
+            var drawRotateMatrixZ = _mode == GizmoMode.RotateZ ? _frozenRotateMatrixZ : RotateMatrixZ;
 
             // Rotation
             if (SupportRotationX | SupportRotationY | SupportRotationZ)
