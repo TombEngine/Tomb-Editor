@@ -211,7 +211,7 @@ namespace WadTool
             if (CurrentAnim == null || CurrentKeyFrame == null)
                 return;
 
-            // Backup & undo on first edit
+            // Backup everything and push undo on first occurrence of editing
             if (!MadeChanges || _backupPos.Count == 0 || _backupQuat.Count == 0)
             {
                 _initialPos = CurrentKeyFrame.Translations[0];
@@ -233,13 +233,16 @@ namespace WadTool
                 MadeChanges = true;
             }
 
+            // Calculate deltas for other frames processing
             var deltaPos = newPos - _initialPos;
 
+            // Define animation properties
             bool evolve  = TransformMode != AnimTransformMode.Simple && ActiveFrames.Count > 1;
             bool smooth  = TransformMode == AnimTransformMode.Smooth || TransformMode == AnimTransformMode.SmoothReverse || TransformMode == AnimTransformMode.Symmetric;
             bool reverse = TransformMode == AnimTransformMode.LinearReverse || TransformMode == AnimTransformMode.SmoothReverse;
             bool loop    = TransformMode == AnimTransformMode.Symmetric || TransformMode == AnimTransformMode.SymmetricLinear;
 
+            // Calculate evolution
             float frameCount = loop || reverse ? Selection.Y - Selection.X : CurrentFrameIndex - Selection.X;
             float currentStep = 0;
 
@@ -247,7 +250,9 @@ namespace WadTool
             foreach (var keyframe in ActiveFrames)
             {
                 float midFrame = loop ? CurrentFrameIndex - Selection.X : (reverse ? CurrentFrameIndex : frameCount);
-                float bias     = (currentStep <= midFrame) ? (reverse ? 1.0f : currentStep / midFrame) : (frameCount - currentStep) / (frameCount - midFrame);
+                float bias = (currentStep <= midFrame) ? (reverse ? 1.0f : currentStep / midFrame) : (frameCount - currentStep) / (frameCount - midFrame);
+
+                // Single-pass smoothstep doesn't look organic on fast animations, hence we're using 2-pass smootherstep here.
                 float weight   = smooth ? (float)MathC.SmoothStep(0, 1, MathC.SmoothStep(0, 1, bias)) : bias;
 
                 var translation = _backupPos[index] + deltaPos;
