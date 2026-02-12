@@ -830,6 +830,105 @@ namespace TombLib.LevelData.Compilers.Util
                     }
                 }
 
+            // Check if this is a sub-area of an animated texture (e.g. applied via group texturing tools).
+            // In this case, the actual UV coordinates represent a portion of the full animation frame,
+            // so we reconstruct the full frame from ParentArea and match against reference animations.
+            if (!texture.ParentArea.IsZero && _referenceAnimTextures.Count > 0)
+            {
+                TextureArea fullTexture = texture;
+                fullTexture.TexCoord0 = new Vector2(texture.ParentArea.X0, texture.ParentArea.Y0);
+                fullTexture.TexCoord1 = new Vector2(texture.ParentArea.X0, texture.ParentArea.Y1);
+                fullTexture.TexCoord2 = new Vector2(texture.ParentArea.X1, texture.ParentArea.Y1);
+                fullTexture.TexCoord3 = new Vector2(texture.ParentArea.X1, texture.ParentArea.Y0);
+                fullTexture.ParentArea = Rectangle2.Zero;
+
+                foreach (var refTex in _referenceAnimTextures)
+                {
+                    // UVRotate and Video animation types are incompatible with sub-area splitting
+                    // because they rely on specific frame arrangement assumptions (vertical strip scrolling
+                    // for UVRotate, sequential frame playback for Video) that break when coordinates
+                    // are transformed to sub-areas.
+                    if (refTex.Origin.IsUvRotate || refTex.Origin.AnimationType == AnimatedTextureAnimationType.Video)
+                        continue;
+
+                    if (GetTexInfo(fullTexture, refTex.CompiledAnimation, isForRoom, false, false, false, remapAnimatedTextures, _animTextureLookupMargin).HasValue)
+                    {
+                        var origSet = refTex.Origin;
+                        var parentRect = texture.ParentArea;
+                        var subRect = texture.GetRect(isForTriangle);
+
+                        // Find which frame in the set matches our ParentArea
+                        AnimatedTextureFrame matchedFrame = null;
+
+                        foreach (var frame in origSet.Frames)
+                        {
+                            if (frame.Texture != texture.Texture)
+                                continue;
+
+                            var fRect = new Rectangle2(
+                                MathF.Min(frame.TexCoord0.X, MathF.Min(frame.TexCoord1.X, MathF.Min(frame.TexCoord2.X, frame.TexCoord3.X))),
+                                MathF.Min(frame.TexCoord0.Y, MathF.Min(frame.TexCoord1.Y, MathF.Min(frame.TexCoord2.Y, frame.TexCoord3.Y))),
+                                MathF.Max(frame.TexCoord0.X, MathF.Max(frame.TexCoord1.X, MathF.Max(frame.TexCoord2.X, frame.TexCoord3.X))),
+                                MathF.Max(frame.TexCoord0.Y, MathF.Max(frame.TexCoord1.Y, MathF.Max(frame.TexCoord2.Y, frame.TexCoord3.Y))));
+
+                            if (MathC.WithinEpsilon(fRect.X0, parentRect.X0, _animTextureLookupMargin) &&
+                                MathC.WithinEpsilon(fRect.Y0, parentRect.Y0, _animTextureLookupMargin) &&
+                                MathC.WithinEpsilon(fRect.X1, parentRect.X1, _animTextureLookupMargin) &&
+                                MathC.WithinEpsilon(fRect.Y1, parentRect.Y1, _animTextureLookupMargin))
+                            {
+                                matchedFrame = frame;
+                                break;
+                            }
+                        }
+
+                        if (matchedFrame == null)
+                            continue;
+
+                        // Calculate relative sub-area position within the matched frame
+                        var mfRect = new Rectangle2(
+                            MathF.Min(matchedFrame.TexCoord0.X, MathF.Min(matchedFrame.TexCoord1.X, MathF.Min(matchedFrame.TexCoord2.X, matchedFrame.TexCoord3.X))),
+                            MathF.Min(matchedFrame.TexCoord0.Y, MathF.Min(matchedFrame.TexCoord1.Y, MathF.Min(matchedFrame.TexCoord2.Y, matchedFrame.TexCoord3.Y))),
+                            MathF.Max(matchedFrame.TexCoord0.X, MathF.Max(matchedFrame.TexCoord1.X, MathF.Max(matchedFrame.TexCoord2.X, matchedFrame.TexCoord3.X))),
+                            MathF.Max(matchedFrame.TexCoord0.Y, MathF.Max(matchedFrame.TexCoord1.Y, MathF.Max(matchedFrame.TexCoord2.Y, matchedFrame.TexCoord3.Y))));
+
+                        float relX0 = (subRect.X0 - mfRect.X0) / mfRect.Width;
+                        float relY0 = (subRect.Y0 - mfRect.Y0) / mfRect.Height;
+                        float relX1 = (subRect.X1 - mfRect.X0) / mfRect.Width;
+                        float relY1 = (subRect.Y1 - mfRect.Y0) / mfRect.Height;
+
+                        // Create a synthetic AnimatedTextureSet with sub-area frames
+                        var subSet = origSet.Clone();
+                        subSet.Frames.Clear();
+
+                        foreach (var frame in origSet.Frames)
+                        {
+                            var frameRect = new Rectangle2(
+                                MathF.Min(frame.TexCoord0.X, MathF.Min(frame.TexCoord1.X, MathF.Min(frame.TexCoord2.X, frame.TexCoord3.X))),
+                                MathF.Min(frame.TexCoord0.Y, MathF.Min(frame.TexCoord1.Y, MathF.Min(frame.TexCoord2.Y, frame.TexCoord3.Y))),
+                                MathF.Max(frame.TexCoord0.X, MathF.Max(frame.TexCoord1.X, MathF.Max(frame.TexCoord2.X, frame.TexCoord3.X))),
+                                MathF.Max(frame.TexCoord0.Y, MathF.Max(frame.TexCoord1.Y, MathF.Max(frame.TexCoord2.Y, frame.TexCoord3.Y))));
+
+                            float fw = frameRect.Width;
+                            float fh = frameRect.Height;
+
+                            var subFrame = frame.Clone();
+                            subFrame.TexCoord0 = new Vector2(frameRect.X0 + relX0 * fw, frameRect.Y0 + relY0 * fh);
+                            subFrame.TexCoord1 = new Vector2(frameRect.X0 + relX0 * fw, frameRect.Y0 + relY1 * fh);
+                            subFrame.TexCoord2 = new Vector2(frameRect.X0 + relX1 * fw, frameRect.Y0 + relY1 * fh);
+                            subFrame.TexCoord3 = new Vector2(frameRect.X0 + relX1 * fw, frameRect.Y0 + relY0 * fh);
+
+                            subSet.Frames.Add(subFrame);
+                        }
+
+                        // Generate reference lookups for this sub-area animation set
+                        GenerateAnimLookups(new List<AnimatedTextureSet> { subSet });
+
+                        // Retry - the sub-area coordinates should now match the new reference lookups
+                        return AddTexture(texture, isForRoom, isForTriangle, topmostAndUnpadded);
+                    }
+                }
+            }
+
             // No animated textures identified, add texture as ordinary one
             return AddTexture(texture, _parentTextures, isForRoom, isForTriangle, topmostAndUnpadded);
         }
