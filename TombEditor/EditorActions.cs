@@ -699,7 +699,7 @@ namespace TombEditor
                         trigger.TriggerType = TriggerType.Dummy;
                     else if (isHeavy)
                         trigger.TriggerType = TriggerType.Heavy;
-
+                    else
                         return false;
 
                     useDefaultTypeForBatchTriggers = true;
