@@ -366,6 +366,8 @@
     <moveable id="456" name="TURNING_WALL_BLADE" />
     <moveable id="457" name="TURNING_CEILING_BLADE" />
     <moveable id="458" name="FIRE_PENDULUM" />
+	<moveable id="459" name="ELECTRICAL_FIELD" />
+	<moveable id="460" name="FUSEBOX" />
     <moveable id="500" name="PUZZLE_ITEM1" />
     <moveable id="501" name="PUZZLE_ITEM2" />
     <moveable id="502" name="PUZZLE_ITEM3" />
