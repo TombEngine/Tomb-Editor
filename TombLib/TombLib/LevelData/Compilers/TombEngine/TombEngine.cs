@@ -1,3 +1,4 @@
+using Microsoft.IO;
 using NAudio.Flac;
 using System;
 using System.Collections.Generic;
@@ -13,10 +14,12 @@ namespace TombLib.LevelData.Compilers.TombEngine
 {
     public sealed partial class LevelCompilerTombEngine
     {
+		private static readonly RecyclableMemoryStreamManager _streamManager = new();
+
 		private void WriteLevelTombEngine()
         {
             byte[] dynamicDataBuffer;
-            using (var dynamicDataStream = new MemoryStream())
+            using (var dynamicDataStream = _streamManager.GetStream())
             {
                 var writer = new BinaryWriterEx(dynamicDataStream); // Don't dispose
                 ReportProgress(80, "Writing dynamic data to memory buffer");
@@ -119,7 +122,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
             // Now begin to compile the geometry block in a MemoryStream
             byte[] geometryDataBuffer;
-            using (var geometryDataStream = new MemoryStream())
+            using (var geometryDataStream = _streamManager.GetStream())
             {
                 var writer = new BinaryWriterEx(geometryDataStream); // Don't dispose
                 ReportProgress(85, "Writing geometry data to memory buffer");
@@ -264,7 +267,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
 				geometryDataBuffer = geometryDataStream.ToArray();
             }
 
-            using (var mediaStream = new MemoryStream())
+            using (var mediaStream = _streamManager.GetStream())
             {
                 using (var writer = new BinaryWriterEx(mediaStream, true))
                 {
@@ -305,20 +308,20 @@ namespace TombLib.LevelData.Compilers.TombEngine
                             writer.Write(checksum);
 
                             // Audiovisual data (textures and sounds)
-                            writer.Write((int)mediaStream.Length);
-                            writer.Write((int)mediaBlock.Length);
+                            writer.Write((uint)mediaStream.Length);
+                            writer.Write((uint)mediaBlock.Length);
                             writer.Write(mediaBlock, 0, mediaBlock.Length);
                             ReportProgress(96, $"    Media data size: " + TextExtensions.ToDataSize(mediaBlock.Length));
 
                             // Geometry data
-                            writer.Write((int)geometryDataBuffer.Length);
-                            writer.Write((int)geometryBlock.Length);
+                            writer.Write((uint)geometryDataBuffer.Length);
+                            writer.Write((uint)geometryBlock.Length);
                             writer.Write(geometryBlock, 0, geometryBlock.Length);
                             ReportProgress(96, $"    Geometry data size: " + TextExtensions.ToDataSize(geometryBlock.Length));
 
                             // Dynamic data
-                            writer.Write((int)dynamicDataBuffer.Length);
-                            writer.Write((int)dynamicBlock.Length);
+                            writer.Write((uint)dynamicDataBuffer.Length);
+                            writer.Write((uint)dynamicBlock.Length);
                             writer.Write(dynamicBlock, 0, dynamicBlock.Length);
                             ReportProgress(96, $"    Dynamic data size: " + TextExtensions.ToDataSize(dynamicBlock.Length));
                         }

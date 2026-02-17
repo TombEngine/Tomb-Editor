@@ -8,9 +8,12 @@ namespace TombLib.Utils
 	{
 		public static byte[] CompressData(Stream inStream, CompressionLevel compressionLevel)
 		{
-			using var ms = new MemoryStream((int)inStream.Length);
+			long length = inStream.Length;
+			int capacity = length > 0 && length <= int.MaxValue ? (int)length : 0;
+
+			using var ms = capacity > 0 ? new MemoryStream(capacity) : new MemoryStream();
 			inStream.CopyTo(ms);
-	
+
 			return CompressRaw(ms.ToArray(), compressionLevel);
 		}
 
