@@ -1,6 +1,7 @@
 ﻿using Blake3;
 using System;
 using System.Buffers.Binary;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics;
 using System.Runtime.Intrinsics.X86;
@@ -79,20 +80,33 @@ namespace TombLib.Utils
         {
             using (SHA256 sha256 = SHA256.Create())
             {
-                // Compute the SHA-256 hash
                 byte[] hash = sha256.ComputeHash(data);
-
-                // Reduce the 256-bit hash to a 32-bit integer by XORing 4-byte chunks
-                int checksum = 0;
-                for (int i = 0; i < hash.Length; i += 4)
-                {
-                    // Combine each 4-byte segment into an integer and XOR it with checksum
-                    int segment = BitConverter.ToInt32(hash, i);
-                    checksum ^= segment;
-                }
-
-                return checksum;
+                return ReduceHash(hash);
             }
+        }
+
+        public static int Calculate(Stream data)
+        {
+            data.Position = 0;
+
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hash = sha256.ComputeHash(data);
+                return ReduceHash(hash);
+            }
+        }
+
+        private static int ReduceHash(byte[] hash)
+        {
+            int checksum = 0;
+
+            for (int i = 0; i < hash.Length; i += 4)
+            {
+                int segment = BitConverter.ToInt32(hash, i);
+                checksum ^= segment;
+            }
+
+            return checksum;
         }
     }
 }

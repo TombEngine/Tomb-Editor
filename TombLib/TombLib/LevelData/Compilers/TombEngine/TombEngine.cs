@@ -267,73 +267,85 @@ namespace TombLib.LevelData.Compilers.TombEngine
 				geometryDataBuffer = geometryDataStream.ToArray();
             }
 
-            byte[] mediaDataBuffer;
-            long mediaUncompressedLength;
-
-            using (var mediaStream = _streamManager.GetStream())
-            {
-                using (var writer = new BinaryWriterEx(mediaStream, true))
-                {
-                    WriteTextureData(writer);
-
-                    // Write sound meta data
-                    PrepareSoundsData();
-                    WriteSoundMetadata(writer);
-                    WriteSoundData(writer);
-                }
-
-                mediaUncompressedLength = mediaStream.Length;
-                mediaDataBuffer = mediaStream.ToArray();
-            }
-            // RecyclableMemoryStream is now disposed, releasing pooled buffers.
-
-            ReportProgress(95, "Compressing level...");
-
-            var mediaBlock = LZ4.CompressData(mediaDataBuffer, System.IO.Compression.CompressionLevel.Fastest);
-            mediaDataBuffer = null; // Allow GC to reclaim uncompressed media data.
-
-            var geometryBlock = LZ4.CompressData(geometryDataBuffer, System.IO.Compression.CompressionLevel.Fastest);
-            var dynamicBlock = LZ4.CompressData(dynamicDataBuffer, System.IO.Compression.CompressionLevel.Fastest);
-
             using (var fs = new FileStream(_dest, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (var writer = new BinaryWriter(fs))
             {
-                using (var bs = new BufferedStream(fs))
+                long endPos;
+
+                using (var mediaStream = _streamManager.GetStream())
                 {
-                    using (var writer = new BinaryWriter(fs))
+                    using (var mediaWriter = new BinaryWriterEx(mediaStream, true))
                     {
-                        // TEN header
-                        writer.Write(new byte[] { 0x54, 0x45, 0x4E, 0x00 });
+                        WriteTextureData(mediaWriter);
 
-                        // TE compiler version
-                        var version = Assembly.GetExecutingAssembly().GetName().Version;
-                        writer.Write(new byte[] { (byte)version.Major, (byte)version.Minor, (byte)version.Build, 0x00 });
-
-                        // Hashed system name (reserved for quick start feature)
-                        writer.Write(Math.Abs(Environment.MachineName.GetHashCode()));
-
-                        // Checksum to detect incorrect level version on rapid reload
-                        int checksum = Checksum.Calculate(mediaBlock) ^ Checksum.Calculate(geometryBlock);
-                        writer.Write(checksum);
-
-                        // Audiovisual data (textures and sounds)
-                        writer.Write((uint)mediaUncompressedLength);
-                        writer.Write((uint)mediaBlock.Length);
-                        writer.Write(mediaBlock, 0, mediaBlock.Length);
-                        ReportProgress(96, $"    Media data size: " + TextExtensions.ToDataSize(mediaBlock.Length));
-
-                        // Geometry data
-                        writer.Write((uint)geometryDataBuffer.Length);
-                        writer.Write((uint)geometryBlock.Length);
-                        writer.Write(geometryBlock, 0, geometryBlock.Length);
-                        ReportProgress(96, $"    Geometry data size: " + TextExtensions.ToDataSize(geometryBlock.Length));
-
-                        // Dynamic data
-                        writer.Write((uint)dynamicDataBuffer.Length);
-                        writer.Write((uint)dynamicBlock.Length);
-                        writer.Write(dynamicBlock, 0, dynamicBlock.Length);
-                        ReportProgress(96, $"    Dynamic data size: " + TextExtensions.ToDataSize(dynamicBlock.Length));
+                        // Write sound meta data
+                        PrepareSoundsData();
+                        WriteSoundMetadata(mediaWriter);
+                        WriteSoundData(mediaWriter);
                     }
+
+                    // Compute checksum from uncompressed data (supports >2 GB streams).
+                    int checksum = Checksum.Calculate(mediaStream) ^ Checksum.Calculate(geometryDataBuffer);
+
+                    ReportProgress(95, "Compressing level...");
+
+                    // TEN header
+                    writer.Write(new byte[] { 0x54, 0x45, 0x4E, 0x00 });
+
+                    // TE compiler version
+                    var version = Assembly.GetExecutingAssembly().GetName().Version;
+                    writer.Write(new byte[] { (byte)version.Major, (byte)version.Minor, (byte)version.Build, 0x00 });
+
+                    // Hashed system name (reserved for quick start feature)
+                    writer.Write(Math.Abs(Environment.MachineName.GetHashCode()));
+
+                    // Checksum to detect incorrect level version on rapid reload
+                    writer.Write(checksum);
+
+                    // Audiovisual data (textures and sounds) - stream compressed directly to file.
+                    writer.Write((uint)mediaStream.Length);
+                    long mediaCompSizePos = fs.Position;
+                    writer.Write((uint)0);
+
+                    mediaStream.Position = 0;
+                    long mediaCompSize = LZ4.CompressData(mediaStream, fs, System.IO.Compression.CompressionLevel.Fastest);
+
+                    endPos = fs.Position;
+                    fs.Position = mediaCompSizePos;
+                    writer.Write((uint)mediaCompSize);
+                    fs.Position = endPos;
+
+                    ReportProgress(96, $"    Media data size: " + TextExtensions.ToDataSize((int)mediaCompSize));
                 }
+                // RecyclableMemoryStream is now disposed, releasing pooled buffers.
+
+                // Geometry data
+                writer.Write((uint)geometryDataBuffer.Length);
+                long geoCompSizePos = fs.Position;
+                writer.Write((uint)0);
+
+                long geoCompSize = LZ4.CompressData(geometryDataBuffer, fs, System.IO.Compression.CompressionLevel.Fastest);
+
+                endPos = fs.Position;
+                fs.Position = geoCompSizePos;
+                writer.Write((uint)geoCompSize);
+                fs.Position = endPos;
+
+                ReportProgress(96, $"    Geometry data size: " + TextExtensions.ToDataSize((int)geoCompSize));
+
+                // Dynamic data
+                writer.Write((uint)dynamicDataBuffer.Length);
+                long dynCompSizePos = fs.Position;
+                writer.Write((uint)0);
+
+                long dynCompSize = LZ4.CompressData(dynamicDataBuffer, fs, System.IO.Compression.CompressionLevel.Fastest);
+
+                endPos = fs.Position;
+                fs.Position = dynCompSizePos;
+                writer.Write((uint)dynCompSize);
+                fs.Position = endPos;
+
+                ReportProgress(96, $"    Dynamic data size: " + TextExtensions.ToDataSize((int)dynCompSize));
             }
 
             ReportProgress(100, "Done");
