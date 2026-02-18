@@ -9,12 +9,28 @@ namespace TombLib.Utils
 		public static byte[] CompressData(Stream inStream, CompressionLevel compressionLevel)
 		{
 			long length = inStream.Length;
-			int capacity = length > 0 && length <= int.MaxValue ? (int)length : 0;
 
-			using var ms = capacity > 0 ? new MemoryStream(capacity) : new MemoryStream();
-			inStream.CopyTo(ms);
+			if (length > int.MaxValue)
+				throw new System.InvalidOperationException(
+					$"Stream data size ({length / (1024 * 1024)} MB) exceeds the 2 GB compression limit. " +
+					"Try reducing the number of texture pages or disabling texture compression.");
 
-			return CompressRaw(ms.ToArray(), compressionLevel);
+			if (inStream is MemoryStream ms)
+				return CompressRaw(ms.ToArray(), compressionLevel);
+
+			var buffer = new byte[(int)length];
+			inStream.Position = 0;
+
+			int offset = 0;
+			while (offset < buffer.Length)
+			{
+				int read = inStream.Read(buffer, offset, buffer.Length - offset);
+				if (read == 0)
+					break;
+				offset += read;
+			}
+
+			return CompressRaw(buffer, compressionLevel);
 		}
 
 		public static byte[] CompressData(byte[] inData, CompressionLevel compressionLevel)
