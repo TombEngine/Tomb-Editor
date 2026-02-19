@@ -78,7 +78,7 @@ namespace TombLib.Utils
     {
         public static int Calculate(byte[] data)
         {
-            using (SHA256 sha256 = SHA256.Create())
+            using (var sha256 = SHA256.Create())
             {
                 byte[] hash = sha256.ComputeHash(data);
                 return ReduceHash(hash);
@@ -89,7 +89,7 @@ namespace TombLib.Utils
         {
             data.Position = 0;
 
-            using (SHA256 sha256 = SHA256.Create())
+            using (var sha256 = SHA256.Create())
             {
                 byte[] hash = sha256.ComputeHash(data);
                 return ReduceHash(hash);
