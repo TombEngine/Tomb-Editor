@@ -1,22 +1,18 @@
 using Microsoft.IO;
-using NAudio.Flac;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using TombLib.IO;
-using TombLib.Types;
 using TombLib.Utils;
 
 namespace TombLib.LevelData.Compilers.TombEngine
 {
     public sealed partial class LevelCompilerTombEngine
     {
-		private static readonly RecyclableMemoryStreamManager _streamManager = new();
+        private static readonly RecyclableMemoryStreamManager _streamManager = new();
 
-		private void WriteLevelTombEngine()
+        private void WriteLevelTombEngine()
         {
             byte[] dynamicDataBuffer;
             using (var dynamicDataStream = _streamManager.GetStream())
@@ -165,10 +161,10 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     writer.Write(mesh.Buckets.Count);
                     foreach (var bucket in mesh.Buckets)
                     {
-						writer.Write(bucket.Material.Texture);
-						writer.Write(bucket.Material.BlendMode);
-						writer.Write(bucket.Material.MaterialIndex);
-						writer.Write(bucket.Material.Animated);
+                        writer.Write(bucket.Material.Texture);
+                        writer.Write(bucket.Material.BlendMode);
+                        writer.Write(bucket.Material.MaterialIndex);
+                        writer.Write(bucket.Material.Animated);
 
                         writer.Write(bucket.Polygons.Count);
                         foreach (var poly in bucket.Polygons)
@@ -253,19 +249,21 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     writer.Write(material.Key);
                     writer.Write((int)material.Value.Type);
                     writer.Write(material.Value.Parameters0);
-					writer.Write(material.Value.Parameters1);
-					writer.Write(material.Value.Parameters2);
-					writer.Write(material.Value.Parameters3);
-					writer.Write(material.Value.IsNormalMapFound);
-					writer.Write(material.Value.IsHeightMapFound);
-					writer.Write(material.Value.IsAmbientOcclusionMapFound);
-					writer.Write(material.Value.IsRoughnessMapFound);
-					writer.Write(material.Value.IsSpecularMapFound);
-					writer.Write(material.Value.IsEmissiveMapFound);
-				}
+                    writer.Write(material.Value.Parameters1);
+                    writer.Write(material.Value.Parameters2);
+                    writer.Write(material.Value.Parameters3);
+                    writer.Write(material.Value.IsNormalMapFound);
+                    writer.Write(material.Value.IsHeightMapFound);
+                    writer.Write(material.Value.IsAmbientOcclusionMapFound);
+                    writer.Write(material.Value.IsRoughnessMapFound);
+                    writer.Write(material.Value.IsSpecularMapFound);
+                    writer.Write(material.Value.IsEmissiveMapFound);
+                }
 
-				geometryDataBuffer = geometryDataStream.ToArray();
+                geometryDataBuffer = geometryDataStream.ToArray();
             }
+
+            ReportProgress(95, "Compressing level...");
 
             using (var fs = new FileStream(_dest, FileMode.Create, FileAccess.Write, FileShare.None))
             using (var writer = new BinaryWriter(fs))
@@ -278,16 +276,11 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     {
                         WriteTextureData(mediaWriter);
 
-                        // Write sound meta data
+                        // Write sound metadata.
                         PrepareSoundsData();
                         WriteSoundMetadata(mediaWriter);
                         WriteSoundData(mediaWriter);
                     }
-
-                    // Compute checksum from uncompressed data (supports >2 GB streams).
-                    int checksum = Checksum.Calculate(mediaStream) ^ Checksum.Calculate(geometryDataBuffer);
-
-                    ReportProgress(95, "Compressing level...");
 
                     // TEN header
                     writer.Write(new byte[] { 0x54, 0x45, 0x4E, 0x00 });
@@ -296,56 +289,57 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     var version = Assembly.GetExecutingAssembly().GetName().Version;
                     writer.Write(new byte[] { (byte)version.Major, (byte)version.Minor, (byte)version.Build, 0x00 });
 
-                    // Hashed system name (reserved for quick start feature)
+                    // Hashed system name (reserved for quick start feature).
                     writer.Write(Math.Abs(Environment.MachineName.GetHashCode()));
 
-                    // Checksum to detect incorrect level version on rapid reload
+                    // Checksum to detect incorrect level version on fast reload.
+                    int checksum = Checksum.Calculate(mediaStream) ^ Checksum.Calculate(geometryDataBuffer);
                     writer.Write(checksum);
 
-                    // Audiovisual data (textures and sounds) - stream compressed directly to file.
-                    writer.Write((uint)mediaStream.Length);
+                    // Media data (textures and sounds) - stream compressed directly to file.
+                    writer.Write(mediaStream.Length);
                     long mediaCompSizePos = fs.Position;
-                    writer.Write((uint)0);
+                    writer.Write((long)0);
 
                     mediaStream.Position = 0;
                     long mediaCompSize = LZ4.CompressData(mediaStream, fs, System.IO.Compression.CompressionLevel.Fastest);
 
                     endPos = fs.Position;
                     fs.Position = mediaCompSizePos;
-                    writer.Write((uint)mediaCompSize);
+                    writer.Write(mediaCompSize);
                     fs.Position = endPos;
 
-                    ReportProgress(96, $"    Media data size: " + TextExtensions.ToDataSize((int)mediaCompSize));
+                    ReportProgress(96, $"    Media data size: " + TextExtensions.ToDataSize(mediaCompSize));
                 }
                 // RecyclableMemoryStream is now disposed, releasing pooled buffers.
 
                 // Geometry data
-                writer.Write((uint)geometryDataBuffer.Length);
+                writer.Write((long)geometryDataBuffer.Length);
                 long geoCompSizePos = fs.Position;
-                writer.Write((uint)0);
+                writer.Write((long)0);
 
                 long geoCompSize = LZ4.CompressData(geometryDataBuffer, fs, System.IO.Compression.CompressionLevel.Fastest);
 
                 endPos = fs.Position;
                 fs.Position = geoCompSizePos;
-                writer.Write((uint)geoCompSize);
+                writer.Write(geoCompSize);
                 fs.Position = endPos;
 
-                ReportProgress(96, $"    Geometry data size: " + TextExtensions.ToDataSize((int)geoCompSize));
+                ReportProgress(96, $"    Geometry data size: " + TextExtensions.ToDataSize(geoCompSize));
 
                 // Dynamic data
-                writer.Write((uint)dynamicDataBuffer.Length);
+                writer.Write((long)dynamicDataBuffer.Length);
                 long dynCompSizePos = fs.Position;
-                writer.Write((uint)0);
+                writer.Write((long)0);
 
                 long dynCompSize = LZ4.CompressData(dynamicDataBuffer, fs, System.IO.Compression.CompressionLevel.Fastest);
 
                 endPos = fs.Position;
                 fs.Position = dynCompSizePos;
-                writer.Write((uint)dynCompSize);
+                writer.Write(dynCompSize);
                 fs.Position = endPos;
 
-                ReportProgress(96, $"    Dynamic data size: " + TextExtensions.ToDataSize((int)dynCompSize));
+                ReportProgress(96, $"    Dynamic data size: " + TextExtensions.ToDataSize(dynCompSize));
             }
 
             ReportProgress(100, "Done");
