@@ -163,8 +163,6 @@ namespace TombIDE.Shared.NewStructure
 
 		public virtual void Rename(string newName, bool renameDirectory, bool renameTrprojFile = false)
 		{
-			string oldTrprojFileName = TrprojFileName;
-
 			if (renameDirectory)
 			{
 				string newProjectPath = Path.Combine(Path.GetDirectoryName(DirectoryPath), newName);
@@ -190,14 +188,7 @@ namespace TombIDE.Shared.NewStructure
 			Name = newName;
 
 			if (renameTrprojFile)
-			{
 				TrprojFileName = newName + ".trproj";
-
-				string oldTrprojPath = Path.Combine(DirectoryPath, oldTrprojFileName);
-
-				if (File.Exists(oldTrprojPath) && !oldTrprojPath.Equals(GetTrprojFilePath(), StringComparison.OrdinalIgnoreCase))
-					File.Delete(oldTrprojPath);
-			}
 		}
 
 		public virtual bool IsValid(out string errorMessage)
