@@ -35,6 +35,11 @@ namespace TombIDE.Shared.NewStructure
 		public string Name { get; protected set; }
 		public string DirectoryPath { get; protected set; }
 
+		/// <summary>
+		/// The file name (not path) of the .trproj file. (e.g. <c>"MyProject.trproj"</c>)
+		/// </summary>
+		public string TrprojFileName { get; set; }
+
 		protected string CustomScriptDirectoryPath { get; set; }
 
 		public string LevelsDirectoryPath { get; set; }
@@ -51,6 +56,7 @@ namespace TombIDE.Shared.NewStructure
 
 			Name = trproj.ProjectName;
 			DirectoryPath = Path.GetDirectoryName(trproj.FilePath);
+			TrprojFileName = Path.GetFileName(trproj.FilePath);
 
 			LevelsDirectoryPath = trproj.LevelSourcingDirectory;
 
@@ -70,6 +76,7 @@ namespace TombIDE.Shared.NewStructure
 		{
 			Name = name;
 			DirectoryPath = directoryPath;
+			TrprojFileName = name + ".trproj";
 			LevelsDirectoryPath = levelsDirectoryPath;
 
 			if (SupportsCustomScriptPaths)
@@ -80,7 +87,7 @@ namespace TombIDE.Shared.NewStructure
 		}
 
 		public virtual string GetTrprojFilePath()
-			=> Path.Combine(DirectoryPath, Path.GetFileNameWithoutExtension(GetEngineExecutableFilePath()) + ".trproj");
+			=> Path.Combine(DirectoryPath, TrprojFileName);
 
 		public virtual string GetLauncherFilePath()
 		{
@@ -154,8 +161,10 @@ namespace TombIDE.Shared.NewStructure
 			return result.ToArray();
 		}
 
-		public virtual void Rename(string newName, bool renameDirectory)
+		public virtual void Rename(string newName, bool renameDirectory, bool renameTrprojFile = false)
 		{
+			string oldTrprojFileName = TrprojFileName;
+
 			if (renameDirectory)
 			{
 				string newProjectPath = Path.Combine(Path.GetDirectoryName(DirectoryPath), newName);
@@ -179,6 +188,16 @@ namespace TombIDE.Shared.NewStructure
 			}
 
 			Name = newName;
+
+			if (renameTrprojFile)
+			{
+				TrprojFileName = newName + ".trproj";
+
+				string oldTrprojPath = Path.Combine(DirectoryPath, oldTrprojFileName);
+
+				if (File.Exists(oldTrprojPath) && !oldTrprojPath.Equals(GetTrprojFilePath(), StringComparison.OrdinalIgnoreCase))
+					File.Delete(oldTrprojPath);
+			}
 		}
 
 		public virtual bool IsValid(out string errorMessage)

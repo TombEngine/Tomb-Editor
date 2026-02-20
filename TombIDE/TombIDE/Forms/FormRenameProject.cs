@@ -42,6 +42,7 @@ namespace TombIDE
 					throw new ArgumentException("Invalid name.");
 
 				bool renameDirectory = checkBox_RenameDirectory.Checked;
+				bool renameTrprojFile = checkBox_RenameTrproj.Checked;
 
 				if (newName == _targetProject.Name)
 				{
@@ -56,7 +57,12 @@ namespace TombIDE
 								throw new ArgumentException("A directory with the same name already exists in the parent directory.");
 						}
 
-						_targetProject.Rename(newName, true);
+						_targetProject.Rename(newName, true, renameTrprojFile);
+						_targetProject.Save();
+					}
+					else if (renameTrprojFile)
+					{
+						_targetProject.Rename(newName, false, true);
 						_targetProject.Save();
 					}
 					else
@@ -69,7 +75,7 @@ namespace TombIDE
 					if (renameDirectory && Directory.Exists(newDirectory) && !newDirectory.Equals(_targetProject.DirectoryPath, StringComparison.OrdinalIgnoreCase))
 						throw new ArgumentException("A directory with the same name already exists in the parent directory.");
 
-					_targetProject.Rename(newName, renameDirectory);
+					_targetProject.Rename(newName, renameDirectory, renameTrprojFile);
 					_targetProject.Save();
 				}
 			}
