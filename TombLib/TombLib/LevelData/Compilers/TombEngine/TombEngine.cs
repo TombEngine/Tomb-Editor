@@ -76,6 +76,24 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 writer.Write((uint)_flyByCameras.Count);
                 writer.WriteBlockArray(_flyByCameras);
 
+                writer.Write((uint)_wayPoints.Count);
+                foreach (var waypoint in _wayPoints)
+                {
+                    writer.Write(waypoint.X);
+                    writer.Write(waypoint.Y);
+                    writer.Write(waypoint.Z);
+                    writer.Write(waypoint.Room);
+                    writer.Write(waypoint.RotationX);
+                    writer.Write(waypoint.RotationY);
+                    writer.Write(waypoint.Roll);
+                    writer.Write(waypoint.Sequence);
+                    writer.Write(waypoint.Number);
+                    writer.Write(waypoint.Type);
+                    writer.Write(waypoint.Radius1);
+                    writer.Write(waypoint.Radius2);
+                    writer.Write(waypoint.Name);
+                }
+
                 writer.Write((uint)_sinks.Count);
                 foreach (var sink in _sinks)
                 {

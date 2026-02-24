@@ -1406,6 +1406,25 @@ namespace TombLib.LevelData.IO
                     addObject(instance);
                     newObjects.TryAdd(objectID, instance);
                 }
+                else if (id3 == Prj2Chunks.ObjectWayPoint)
+                {
+                    var instance = new WayPointInstance();
+                    instance.Position = chunkIO.Raw.ReadVector3();
+                    instance.SetArbitaryRotationsYX(chunkIO.Raw.ReadSingle(), chunkIO.Raw.ReadSingle());
+                    instance.Roll = chunkIO.Raw.ReadSingle();
+                    string baseName = chunkIO.Raw.ReadStringUTF8();
+                    instance.Sequence = LEB128.ReadUShort(chunkIO.Raw);
+                    instance.Number = LEB128.ReadUShort(chunkIO.Raw);
+                    instance.Type = (WayPointType)LEB128.ReadInt(chunkIO.Raw);
+                    instance.Radius1 = chunkIO.Raw.ReadSingle();
+                    instance.Radius2 = chunkIO.Raw.ReadSingle();
+                    
+                    // Set the name (will auto-format with _number if multi-point type)
+                    instance.Name = baseName;
+                    
+                    addObject(instance);
+                    newObjects.TryAdd(objectID, instance);
+                }
                 else if (id3 == Prj2Chunks.ObjectFlyBy2) // Obsolete; LuaScript is unused with new script concept.
                 {
                     var instance = new FlybyCameraInstance();

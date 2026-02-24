@@ -247,6 +247,9 @@
   <data name="objects_volume_sphere_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_objects\objects_volume-sphere-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="objects_WayPoint_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_objects\objects_WayPoint-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="general_animcommand_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_general\general_animcommand-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

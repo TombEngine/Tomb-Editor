@@ -14,6 +14,7 @@ namespace TombLib.Rendering
     {
         camera,
         flyby_camera,
+        waypoint,
         imp_geo,
         sink,
         sound_source,
@@ -134,6 +135,7 @@ namespace TombLib.Rendering
             else if (instance is VolumeInstance) type = ServiceObjectTexture.volume;
             else if (instance is GhostBlockInstance) type = ServiceObjectTexture.ghost_block;
             else if (instance is FlybyCameraInstance) type = ServiceObjectTexture.flyby_camera;
+            else if (instance is WayPointInstance) type = ServiceObjectTexture.waypoint;
             else if (instance is SoundSourceInstance) type = ServiceObjectTexture.sound_source;
             else if (instance is ImportedGeometryInstance) type = ServiceObjectTexture.imp_geo;
             else type = ServiceObjectTexture.unknown;

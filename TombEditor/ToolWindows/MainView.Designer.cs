@@ -61,6 +61,7 @@ namespace TombEditor.ToolWindows
 			butAddCamera = new System.Windows.Forms.ToolStripButton();
 			butAddSprite = new System.Windows.Forms.ToolStripButton();
 			butAddFlybyCamera = new System.Windows.Forms.ToolStripButton();
+			butAddWayPoint = new System.Windows.Forms.ToolStripButton();
 			butAddSink = new System.Windows.Forms.ToolStripButton();
 			butAddSoundSource = new System.Windows.Forms.ToolStripButton();
 			butAddImportedGeometry = new System.Windows.Forms.ToolStripButton();
@@ -97,7 +98,7 @@ namespace TombEditor.ToolWindows
 			toolStrip.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
 			toolStrip.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
 			toolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { but2D, but3D, butFaceEdit, butLightingMode, butUndo, butRedo, butCenterCamera, butDrawPortals, butDrawAllRooms, butDrawHorizon, butDrawRoomNames, butDrawCardinalDirections, butDrawExtraBlendingModes, butHideTransparentFaces, butBilinearFilter, butDrawWhiteLighting, butDrawStaticTint, butDrawIllegalSlopes, butDrawSlideDirections, butDisableGeometryPicking, butDisableHiddenRoomPicking, butDrawObjects, butFlipMap, butCopy, butPaste, butStamp, butOpacityNone, butOpacitySolidFaces, butOpacityTraversableFaces, butMirror, butAddCamera, butAddSprite, butAddFlybyCamera, butAddSink, butAddSoundSource, butAddImportedGeometry, butAddGhostBlock, butAddMemo, butCompileLevel, butCompileLevelAndPlay, butCompileAndPlayPreview, butAddBoxVolume, butAddSphereVolume, butTextureFloor, butTextureCeiling, butTextureWalls, butEditLevelSettings, butToggleFlyMode, butSearch, butSearchAndReplaceObjects });
+			toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { but2D, but3D, butFaceEdit, butLightingMode, butUndo, butRedo, butCenterCamera, butDrawPortals, butDrawAllRooms, butDrawHorizon, butDrawRoomNames, butDrawCardinalDirections, butDrawExtraBlendingModes, butHideTransparentFaces, butBilinearFilter, butDrawWhiteLighting, butDrawStaticTint, butDrawIllegalSlopes, butDrawSlideDirections, butDisableGeometryPicking, butDisableHiddenRoomPicking, butDrawObjects, butFlipMap, butCopy, butPaste, butStamp, butOpacityNone, butOpacitySolidFaces, butOpacityTraversableFaces, butMirror, butAddCamera, butAddSprite, butAddFlybyCamera, butAddWayPoint, butAddSink, butAddSoundSource, butAddImportedGeometry, butAddGhostBlock, butAddMemo, butCompileLevel, butCompileLevelAndPlay, butCompileAndPlayPreview, butAddBoxVolume, butAddSphereVolume, butTextureFloor, butTextureCeiling, butTextureWalls, butEditLevelSettings, butToggleFlyMode, butSearch, butSearchAndReplaceObjects });
 			toolStrip.Location = new System.Drawing.Point(0, 0);
 			toolStrip.Name = "toolStrip";
 			toolStrip.Padding = new System.Windows.Forms.Padding(6, 0, 1, 0);
@@ -567,6 +568,17 @@ namespace TombEditor.ToolWindows
 			butAddFlybyCamera.Size = new System.Drawing.Size(23, 29);
 			butAddFlybyCamera.Tag = "AddFlybyCamera";
 			// 
+			// butAddWayPoint
+			// 
+			butAddWayPoint.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+			butAddWayPoint.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			butAddWayPoint.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+			butAddWayPoint.Image = Properties.Resources.objects_WayPoint_16;
+			butAddWayPoint.ImageTransparentColor = System.Drawing.Color.Magenta;
+			butAddWayPoint.Name = "butAddWayPoint";
+			butAddWayPoint.Size = new System.Drawing.Size(23, 29);
+			butAddWayPoint.Tag = "AddWayPoint";
+			// 
 			// butAddSink
 			// 
 			butAddSink.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
@@ -902,6 +914,7 @@ namespace TombEditor.ToolWindows
         private System.Windows.Forms.ToolStripButton butOpacityTraversableFaces;
         private System.Windows.Forms.ToolStripButton butAddCamera;
         private System.Windows.Forms.ToolStripButton butAddFlybyCamera;
+        private System.Windows.Forms.ToolStripButton butAddWayPoint;
         private System.Windows.Forms.ToolStripButton butAddSoundSource;
         private System.Windows.Forms.ToolStripButton butAddSink;
         private System.Windows.Forms.ToolStripButton butAddGhostBlock;

@@ -9,7 +9,7 @@ namespace TombEditor.Controls.ContextMenus
         public MaterialObjectContextMenu(Editor editor, IWin32Window owner, ObjectInstance targetObject)
             : base(editor, owner)
         {
-            if (targetObject is IHasScriptID)
+            if (targetObject is IHasScriptID && !(targetObject is WayPointInstance))
             {
                 if (_editor.Level.IsNG && targetObject == editor.SelectedObject)
                 {
@@ -137,7 +137,7 @@ namespace TombEditor.Controls.ContextMenus
                 }));
             }
 
-            if (targetObject is PositionAndScriptBasedObjectInstance && _editor.Level.Settings.GameVersion == TRVersion.Game.TombEngine)
+            if (targetObject is PositionAndScriptBasedObjectInstance && !(targetObject is WayPointInstance) && _editor.Level.Settings.GameVersion == TRVersion.Game.TombEngine)
             {
                 Items.Add(new ToolStripMenuItem("Copy Lua name to clipboard", null, (o, e) =>
                 {

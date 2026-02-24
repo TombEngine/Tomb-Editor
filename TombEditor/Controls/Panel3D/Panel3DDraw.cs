@@ -196,6 +196,19 @@ namespace TombEditor.Controls.Panel3D
                 effect.CurrentTechnique.Passes[0].Apply();
                 _legacyDevice.Draw(PrimitiveType.TriangleList, _flybyPathVertexBuffer.ElementCount);
             }
+
+            // Add the path of waypoints
+            if (_editor.SelectedObject is WayPointInstance waypoint &&
+                AddWayPointPath(waypoint.BaseName))
+            {
+                _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullNone);
+                _legacyDevice.SetVertexBuffer(_wayPointPathVertexBuffer);
+                _legacyDevice.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, _wayPointPathVertexBuffer));
+                effect.Parameters["ModelViewProjection"].SetValue(_viewProjection.ToSharpDX());
+                effect.Parameters["Color"].SetValue(new Vector4(1.0f, 0.5f, 0.0f, 1.0f)); // Orange for waypoints
+                effect.CurrentTechnique.Passes[0].Apply();
+                _legacyDevice.Draw(PrimitiveType.TriangleList, _wayPointPathVertexBuffer.ElementCount);
+            }
         }
 
         private void DrawSectorSplitHighlights(Effect effect)
@@ -1138,6 +1151,55 @@ namespace TombEditor.Controls.Panel3D
                         DrawOrQueueServiceObject(instance, _littleCube, color, effect, sprites);
                     }
 
+                if (group.Key == typeof(WayPointInstance))
+                    foreach (WayPointInstance instance in group)
+                    {
+                        _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullBack);
+
+                        var color = new Vector4(1.0f, 0.5f, 0.0f, 1.0f); // Orange color for waypoints
+
+                        if (_editor.SelectedObject is WayPointInstance selectedWaypoint && selectedWaypoint.Name == instance.Name)
+                        {
+                            int nameHash = Math.Abs(instance.Name?.GetHashCode() ?? 1);
+                            if (nameHash == 0) nameHash = 1;
+                            color = MathC.GetRandomColorByIndex(nameHash, 32, 0.7f);
+                        }
+
+                        if (_highlightedObjects.Contains(instance))
+                        {
+                            color = _editor.Configuration.UI_ColorScheme.ColorSelection;
+                            _legacyDevice.SetRasterizerState(_rasterizerWireframe);
+
+                            if (_editor.SelectedObject == instance)
+                            {
+                                // Add text message with format: Name (Number) for multi-point, just Name for singular
+                                string label = instance.IsSingularType() ? 
+                                    $"{instance.BaseName} " : 
+                                    $"{instance.BaseName} ({instance.Number}) ";
+                                
+                                string rotationInfo = GetObjectRotationString(instance.Room, instance);
+                                if (!string.IsNullOrEmpty(rotationInfo))
+                                    rotationInfo = "\n" + rotationInfo;
+                                
+                                textToDraw.Add(CreateTextTagForObject(
+                                    instance.RotationPositionMatrix * _viewProjection,
+                                    label +
+                                    GetObjectPositionString(instance.Room, instance) + rotationInfo + GetObjectTriggerString(instance)));
+
+                                // Add the line height of the object
+                                AddObjectHeightLine(instance.Room, instance.Position);
+                            }
+                        }
+
+                        DrawOrQueueServiceObject(instance, _littleCube, color, effect, sprites);
+                        
+                        // Draw shape for shape types (Circle, Ellipse, Square, Rectangle)
+                        if (instance.RequiresRadius())
+                        {
+                            DrawWayPointShape(instance, color);
+                        }
+                    }
+
                 if (group.Key == typeof(MemoInstance))
                     foreach (MemoInstance instance in group)
                     {
@@ -1422,6 +1484,150 @@ namespace TombEditor.Controls.Panel3D
             effect.Parameters["Color"].SetValue(color);
             effect.Techniques[0].Passes[0].Apply();
             _legacyDevice.DrawIndexed(PrimitiveType.TriangleList, primitive.IndexBuffer.ElementCount);
+        }
+
+        private void DrawWayPointShape(WayPointInstance instance, Vector4 color)
+        {
+            // Get world position
+            Vector3 position = instance.Position + instance.Room.WorldPos;
+            
+            // Create transformation matrix for the shape orientation
+            // Apply rotations in order: X, Y, Z (Roll)
+            Matrix4x4 rotation = Matrix4x4.CreateRotationX(instance.RotationX * (float)Math.PI / 180.0f) *
+                                Matrix4x4.CreateRotationY(instance.RotationY * (float)Math.PI / 180.0f) *
+                                Matrix4x4.CreateRotationZ(instance.Roll * (float)Math.PI / 180.0f);
+            
+            // Number of segments for circles/ellipses
+            int segments = 32;
+            var points = new List<Vector3>();
+            
+            switch (instance.Type)
+            {
+                case WayPointType.Circle:
+                    // Draw circle with Radius1
+                    for (int i = 0; i <= segments; i++)
+                    {
+                        float angle = (i / (float)segments) * 2.0f * (float)Math.PI;
+                        float x = (float)Math.Cos(angle) * instance.Radius1;
+                        float z = (float)Math.Sin(angle) * instance.Radius1;
+                        Vector3 point = Vector3.Transform(new Vector3(x, 0, z), rotation) + position;
+                        points.Add(point);
+                    }
+                    break;
+                    
+                case WayPointType.Ellipse:
+                    // Draw ellipse with Radius1 and Radius2
+                    for (int i = 0; i <= segments; i++)
+                    {
+                        float angle = (i / (float)segments) * 2.0f * (float)Math.PI;
+                        float x = (float)Math.Cos(angle) * instance.Radius1;
+                        float z = (float)Math.Sin(angle) * instance.Radius2;
+                        Vector3 point = Vector3.Transform(new Vector3(x, 0, z), rotation) + position;
+                        points.Add(point);
+                    }
+                    break;
+                    
+                case WayPointType.Square:
+                    // Draw square with Radius1
+                    {
+                        float r = instance.Radius1;
+                        Vector3[] corners = new Vector3[]
+                        {
+                            new Vector3(-r, 0, -r),
+                            new Vector3(r, 0, -r),
+                            new Vector3(r, 0, r),
+                            new Vector3(-r, 0, r),
+                            new Vector3(-r, 0, -r) // Close the loop
+                        };
+                        foreach (var corner in corners)
+                        {
+                            points.Add(Vector3.Transform(corner, rotation) + position);
+                        }
+                    }
+                    break;
+                    
+                case WayPointType.Rectangle:
+                    // Draw rectangle with Radius1 and Radius2
+                    {
+                        float r1 = instance.Radius1;
+                        float r2 = instance.Radius2;
+                        Vector3[] corners = new Vector3[]
+                        {
+                            new Vector3(-r1, 0, -r2),
+                            new Vector3(r1, 0, -r2),
+                            new Vector3(r1, 0, r2),
+                            new Vector3(-r1, 0, r2),
+                            new Vector3(-r1, 0, -r2) // Close the loop
+                        };
+                        foreach (var corner in corners)
+                        {
+                            points.Add(Vector3.Transform(corner, rotation) + position);
+                        }
+                    }
+                    break;
+            }
+            
+            // Convert points to line vertices using the same approach as flyby paths
+            if (points.Count > 1)
+            {
+                var vertices = new List<SolidVertex>();
+                float th = 16.0f; // Line thickness (increased for better visibility)
+                
+                for (int i = 0; i < points.Count - 1; i++)
+                {
+                    var linePoints = new List<Vector3[]>()
+                    {
+                        new Vector3[]
+                        {
+                            points[i],
+                            new Vector3(points[i].X + th, points[i].Y + th, points[i].Z + th),
+                            new Vector3(points[i].X - th, points[i].Y + th, points[i].Z + th)
+                        },
+                        new Vector3[]
+                        {
+                            points[i + 1],
+                            new Vector3(points[i + 1].X + th, points[i + 1].Y + th, points[i + 1].Z + th),
+                            new Vector3(points[i + 1].X - th, points[i + 1].Y + th, points[i + 1].Z + th)
+                        }
+                    };
+                    
+                    // Add triangles to form the line segment (both sides for double-sided rendering)
+                    for (int k = 0; k < _flybyPathIndices.Count; k++)
+                    {
+                        var v = new SolidVertex();
+                        v.Position = linePoints[_flybyPathIndices[k].Y][_flybyPathIndices[k].X];
+                        v.Color = color;
+                        vertices.Add(v);
+                    }
+                    
+                    // Add reversed triangles for the back side
+                    for (int k = _flybyPathIndices.Count - 1; k >= 0; k--)
+                    {
+                        var v = new SolidVertex();
+                        v.Position = linePoints[_flybyPathIndices[k].Y][_flybyPathIndices[k].X];
+                        v.Color = color;
+                        vertices.Add(v);
+                    }
+                }
+                
+                // Create temporary vertex buffer for this shape
+                if (vertices.Count > 0)
+                {
+                    var shapeBuffer = SharpDX.Toolkit.Graphics.Buffer.Vertex.New(_legacyDevice,
+                        vertices.ToArray(), SharpDX.Direct3D11.ResourceUsage.Dynamic);
+                    
+                    // Draw the shape
+                    var effect = DeviceManager.DefaultDeviceManager.___LegacyEffects["Solid"];
+                    effect.Parameters["ModelViewProjection"].SetValue(_viewProjection.ToSharpDX());
+                    effect.Parameters["Color"].SetValue(color);
+                    effect.Techniques[0].Passes[0].Apply();
+                    _legacyDevice.SetVertexBuffer(shapeBuffer);
+                    _legacyDevice.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, shapeBuffer));
+                    _legacyDevice.Draw(PrimitiveType.TriangleList, vertices.Count);
+                    
+                    shapeBuffer.Dispose();
+                }
+            }
         }
 
         private void DrawCardinalDirections(List<Text> textToDraw)

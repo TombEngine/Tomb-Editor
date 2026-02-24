@@ -681,6 +681,38 @@ namespace TombLib.LevelData.IO
                             LEB128.Write(chunkIO.Raw, instance.Sequence);
                             LEB128.Write(chunkIO.Raw, instance.Timer);
                         });
+                    else if (o is WayPointInstance)
+                        chunkIO.WriteChunk(Prj2Chunks.ObjectWayPoint, () =>
+                        {
+                            var instance = (WayPointInstance)o;
+                            LEB128.Write(chunkIO.Raw, objectInstanceLookup.TryGetOrDefault(instance, -1));
+                            chunkIO.Raw.Write(instance.Position);
+                            chunkIO.Raw.Write(instance.RotationY);
+                            chunkIO.Raw.Write(instance.RotationX);
+                            chunkIO.Raw.Write(instance.Roll);
+                            
+                            // Extract base name from full name
+                            string baseName = instance.Name;
+                            if (!instance.IsSingularType())
+                            {
+                                int lastUnderscore = baseName.LastIndexOf('_');
+                                if (lastUnderscore >= 0)
+                                {
+                                    string suffix = baseName.Substring(lastUnderscore + 1);
+                                    if (ushort.TryParse(suffix, out _))
+                                    {
+                                        baseName = baseName.Substring(0, lastUnderscore);
+                                    }
+                                }
+                            }
+                            
+                            chunkIO.Raw.WriteStringUTF8(baseName);
+                            LEB128.Write(chunkIO.Raw, instance.Sequence);
+                            LEB128.Write(chunkIO.Raw, instance.Number);
+                            LEB128.Write(chunkIO.Raw, (int)instance.Type);
+                            chunkIO.Raw.Write(instance.Radius1);
+                            chunkIO.Raw.Write(instance.Radius2);
+                        });
                     else if (o is MemoInstance)
                         using (var chunk = chunkIO.WriteChunk(Prj2Chunks.ObjectMemo2, LEB128.MaximumSize3Byte))
                         {

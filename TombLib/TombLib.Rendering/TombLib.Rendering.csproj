@@ -151,6 +151,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <EmbeddedResource Include="Rendering\ServiceObjectTextures\flyby_camera.png" />
+    <EmbeddedResource Include="Rendering\ServiceObjectTextures\waypoint.png" />
     <EmbeddedResource Include="Rendering\ServiceObjectTextures\imp_geo.png" />
     <EmbeddedResource Include="Rendering\ServiceObjectTextures\light_effect.png" />
     <EmbeddedResource Include="Rendering\ServiceObjectTextures\light_fog.png" />

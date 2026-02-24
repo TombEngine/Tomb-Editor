@@ -56,6 +56,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
         private readonly List<TombEngineCamera> _cameras = new List<TombEngineCamera>();
         private readonly List<TombEngineSink> _sinks = new List<TombEngineSink>();
         private readonly List<tr4_flyby_camera> _flyByCameras = new List<tr4_flyby_camera>();
+        private readonly List<TombEngineWayPoint> _wayPoints = new List<TombEngineWayPoint>();
         private readonly List<TombEngineSoundSource> _soundSources = new List<TombEngineSoundSource>();
         private List<TombEngineBox> _boxes = new List<TombEngineBox>();
         private List<TombEngineOverlap> _overlaps = new List<TombEngineOverlap>();
@@ -74,6 +75,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
         private Dictionary<MoveableInstance, int> _aiObjectsTable;
         private Dictionary<SoundSourceInstance, int> _soundSourcesTable;
         private Dictionary<FlybyCameraInstance, int> _flybyTable;
+        private Dictionary<WayPointInstance, int> _wayPointTable;
 
         // Collected game limits
         private Dictionary<Limit, int> _limits;
@@ -228,10 +230,12 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 int sinkID = 0;
                 int camID = 0;
                 int flybyID = 0;
+                int wayPointID = 0;
 
                 _cameraTable = new Dictionary<CameraInstance, int>(new ReferenceEqualityComparer<CameraInstance>());
                 _sinkTable = new Dictionary<SinkInstance, int>(new ReferenceEqualityComparer<SinkInstance>());
                 _flybyTable = new Dictionary<FlybyCameraInstance, int>(new ReferenceEqualityComparer<FlybyCameraInstance>());
+                _wayPointTable = new Dictionary<WayPointInstance, int>(new ReferenceEqualityComparer<WayPointInstance>());
 
                 foreach (var room in _level.ExistingRooms)
                 {
@@ -241,6 +245,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         _flybyTable.Add(obj, flybyID++);
                     foreach (var obj in room.Objects.OfType<SinkInstance>())
                         _sinkTable.Add(obj, sinkID++);
+                    foreach (var obj in room.Objects.OfType<WayPointInstance>())
+                        _wayPointTable.Add(obj, wayPointID++);
                 }
             }
 
@@ -332,8 +338,110 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 lastIndex = _flyByCameras[i].Index;
             }
 
+            // Collect waypoints with name-based grouping and selective compilation logic
+            // Skip waypoints without a name
+            // If any waypoint with a name is singular type, only compile singular types with that name
+            var waypointsByName = new Dictionary<string, List<WayPointInstance>>();
+            foreach (var instance in _wayPointTable.Keys)
+            {
+                // Extract base name
+                string baseName = instance.Name;
+                if (string.IsNullOrEmpty(baseName))
+                    continue; // Skip waypoints without a name
+                    
+                if (!instance.IsSingularType())
+                {
+                    int lastUnderscore = baseName.LastIndexOf('_');
+                    if (lastUnderscore >= 0)
+                    {
+                        string suffix = baseName.Substring(lastUnderscore + 1);
+                        if (ushort.TryParse(suffix, out _))
+                        {
+                            baseName = baseName.Substring(0, lastUnderscore);
+                        }
+                    }
+                }
+                
+                if (!waypointsByName.ContainsKey(baseName))
+                    waypointsByName[baseName] = new List<WayPointInstance>();
+                waypointsByName[baseName].Add(instance);
+            }
+
+            foreach (var namePair in waypointsByName)
+            {
+                var waypoints = namePair.Value;
+                
+                // Check if any waypoint with this name is singular type
+                bool hasSingularType = waypoints.Any(wp => wp.IsSingularType());
+                
+                // If there's a singular type, only compile singular type waypoints
+                // Otherwise, compile all waypoints
+                var waypointsToCompile = hasSingularType 
+                    ? waypoints.Where(wp => wp.IsSingularType()).ToList()
+                    : waypoints;
+
+                foreach (var instance in waypointsToCompile)
+                {
+                    Vector3 position = instance.Room.WorldPos + instance.Position;
+                    _wayPoints.Add(new TombEngineWayPoint
+                    {
+                        X = (int)Math.Round(position.X),
+                        Y = (int)Math.Round(-position.Y),
+                        Z = (int)Math.Round(position.Z),
+                        Room = _roomRemapping[instance.Room],
+                        RotationX = instance.RotationX,
+                        RotationY = instance.RotationY,
+                        Roll = instance.Roll,
+                        Sequence = instance.Sequence,
+                        Number = instance.Number,
+                        Type = (int)instance.Type,
+                        Radius1 = instance.Radius1,
+                        Radius2 = instance.Radius2,
+                        Name = instance.Name
+                    });
+                }
+            }
+            
+            // Sort by name, then number
+            _wayPoints.Sort((x, y) =>
+            {
+                int nameCompare = string.Compare(x.Name, y.Name, StringComparison.Ordinal);
+                if (nameCompare != 0) return nameCompare;
+                return x.Number.CompareTo(y.Number);
+            });
+
+            // Check waypoint duplicates
+            string lastName = "";
+            lastIndex = -1;
+
+            for (int i = 0; i < _wayPoints.Count; i++)
+            {
+                // Extract base name for comparison
+                string baseName = _wayPoints[i].Name;
+                if (baseName.Contains("_"))
+                {
+                    int lastUnderscore = baseName.LastIndexOf('_');
+                    string suffix = baseName.Substring(lastUnderscore + 1);
+                    if (ushort.TryParse(suffix, out _))
+                    {
+                        baseName = baseName.Substring(0, lastUnderscore);
+                    }
+                }
+                
+                if (baseName != lastName)
+                {
+                    lastName = baseName;
+                    lastIndex = -1;
+                }
+
+                if (_wayPoints[i].Number == lastIndex && baseName == lastName)
+                    _progressReporter.ReportWarn($"Warning: waypoint '{baseName}' has duplicated waypoint with number {lastIndex}");
+                lastIndex = _wayPoints[i].Number;
+            }
+
             ReportProgress(47, "    Number of cameras: " + _cameraTable.Count);
             ReportProgress(47, "    Number of flyby cameras: " + _flyByCameras.Count);
+            ReportProgress(47, "    Number of waypoints: " + _wayPointTable.Count);
             ReportProgress(47, "    Number of sinks: " + _sinkTable.Count);
         }
 
