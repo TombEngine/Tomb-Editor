@@ -340,6 +340,10 @@ namespace TombLib.Rendering.DirectX11
             }
             catch (Exception exc)
             {
+                // Clean up already-created COM objects on partial construction failure.
+                Context.Dispose();
+                Device.Dispose();
+                Factory.Dispose();
                 throw new Exception("Can't assign needed Direct3D parameters! Exception: " + exc);
             }
 
@@ -420,7 +424,8 @@ namespace TombLib.Rendering.DirectX11
                 finally
                 {
                     foreach (GCHandle handle in handles)
-                        handle.Free();
+                        if (handle.IsAllocated)
+                            handle.Free();
                 }
 
                 {

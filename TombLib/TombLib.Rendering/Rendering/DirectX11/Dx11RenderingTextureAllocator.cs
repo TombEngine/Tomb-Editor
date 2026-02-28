@@ -123,12 +123,21 @@ namespace TombLib.Rendering.DirectX11
             Context->GetDevice(&pDevice);
 
             ID3D11Texture2D* pTempTexture = null;
-            SilkMarshal.ThrowHResult(pDevice->CreateTexture2D(&dx11Description, (SubresourceData*)null, &pTempTexture));
-            pDevice->Release();
+            try
+            {
+                SilkMarshal.ThrowHResult(pDevice->CreateTexture2D(&dx11Description, (SubresourceData*)null, &pTempTexture));
+            }
+            finally
+            {
+                pDevice->Release();
+            }
 
             try
             {
-                int bytesPerSlice = (Size.X >> mipLevelToRetrieve) * (Size.Y >> mipLevelToRetrieve) * ImageC.PixelSize;
+                int width = Size.Y >> mipLevelToRetrieve;   // Size convention: X=height, Y=width
+                int height = Size.X >> mipLevelToRetrieve;
+                int rowBytes = width * ImageC.PixelSize;
+                int bytesPerSlice = rowBytes * height;
                 byte[] result = new byte[bytesPerSlice * Size.Z];
                 for (int z = 0; z < Size.Z; ++z)
                 {
@@ -142,7 +151,20 @@ namespace TombLib.Rendering.DirectX11
                         Context->Map((ID3D11Resource*)pTempTexture, 0, Silk.NET.Direct3D11.Map.Read, 0, &mapped));
                     try
                     {
-                        Marshal.Copy((IntPtr)mapped.PData, result, bytesPerSlice * z, bytesPerSlice);
+                        // Copy row-by-row to handle GPU row pitch padding.
+                        int dstOffset = bytesPerSlice * z;
+                        if (mapped.RowPitch == (uint)rowBytes)
+                        {
+                            Marshal.Copy((IntPtr)mapped.PData, result, dstOffset, bytesPerSlice);
+                        }
+                        else
+                        {
+                            byte* src = (byte*)mapped.PData;
+                            for (int row = 0; row < height; row++)
+                            {
+                                Marshal.Copy((IntPtr)(src + row * mapped.RowPitch), result, dstOffset + row * rowBytes, rowBytes);
+                            }
+                        }
                     }
                     finally
                     {
