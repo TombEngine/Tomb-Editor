@@ -28,8 +28,9 @@ namespace TombLib.Graphics
                         TextureFlags.ShaderResource, 1, usage);
                 });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                logger.Warn(ex, "Failed to load texture, falling back to red placeholder.");
                 return Load(graphicsDevice, ImageC.Red, usage);
             }
 

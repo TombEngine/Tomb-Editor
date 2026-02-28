@@ -113,6 +113,7 @@ namespace TombLib.Graphics.Dx11Toolkit
     public unsafe class EffectPass
     {
         private Effect _effect;
+        private bool _disposed;
         internal ID3D11VertexShader* VertexShader { get; }
         internal ID3D11PixelShader* PixelShader { get; }
         internal byte[] VSBytecode { get; }
@@ -210,6 +211,8 @@ namespace TombLib.Graphics.Dx11Toolkit
 
         internal void Dispose()
         {
+            if (_disposed) return;
+            _disposed = true;
             if (VertexShader != null) VertexShader->Release();
             if (PixelShader != null) PixelShader->Release();
         }
