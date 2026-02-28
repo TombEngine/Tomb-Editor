@@ -34,7 +34,7 @@ namespace TombLib.Graphics.Dx11Toolkit
         private static readonly void* STANDARD_FILE_INCLUDE = (void*)1;
 
         // IID_ID3D11ShaderReflection {8d536ca1-0cca-4956-a837-786963755584}
-        private static Guid IID_ID3D11ShaderReflection = new Guid(0x8d536ca1, 0x0cca, 0x4956, 0xa8, 0x37, 0x78, 0x69, 0x63, 0x75, 0x55, 0x84);
+        private static readonly Guid IID_ID3D11ShaderReflection = new Guid(0x8d536ca1, 0x0cca, 0x4956, 0xa8, 0x37, 0x78, 0x69, 0x63, 0x75, 0x55, 0x84);
 
         // ── ID3DBlob helpers (vtable: 0=QI, 1=AddRef, 2=Release, 3=GetBufferPointer, 4=GetBufferSize) ──
 

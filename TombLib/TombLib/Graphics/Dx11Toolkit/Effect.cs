@@ -129,7 +129,7 @@ namespace TombLib.Graphics.Dx11Toolkit
             unchecked
             {
                 int hash = 17;
-                for (int i = 0; i < Math.Min(vsBytecode.Length, 256); i++)
+                for (int i = 0; i < vsBytecode.Length; i++)
                     hash = hash * 31 + vsBytecode[i];
                 VSBytecodeHash = hash;
             }

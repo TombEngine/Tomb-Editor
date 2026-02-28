@@ -171,7 +171,7 @@ namespace TombLib.Rendering.DirectX11
                         Context->Unmap((ID3D11Resource*)pTempTexture, 0);
                     }
                 }
-                return ImageC.FromByteArray(result, Size.X >> mipLevelToRetrieve, (Size.Y >> mipLevelToRetrieve) * Size.Z);
+                return ImageC.FromByteArray(result, width, height * Size.Z);
             }
             finally
             {
