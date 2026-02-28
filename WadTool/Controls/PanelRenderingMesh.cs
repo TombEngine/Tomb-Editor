@@ -685,7 +685,7 @@ namespace WadTool.Controls
 
             if (linesToDraw.Count > 0)
             {
-                var bufferLines = Buffer.New(_device, linesToDraw.ToArray(), BufferFlags.VertexBuffer, ResourceUsage.Default);
+                var bufferLines = TombLib.Graphics.Dx11Toolkit.Buffer.New(_device, linesToDraw.ToArray(), BufferFlags.VertexBuffer, ResourceUsage.Default);
 
                 _device.SetVertexBuffer(bufferLines);
                 _device.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, bufferLines));
@@ -1010,7 +1010,7 @@ namespace WadTool.Controls
                 foreach (var poly in _mesh.Polys)
                     if (poly.IsTriangle) vertexCount += 3; else vertexCount += 6;
 
-                _faceVertexBuffer = Buffer.Vertex.New<SolidVertex>(_device, vertexCount);
+                _faceVertexBuffer = TombLib.Graphics.Dx11Toolkit.Buffer.Vertex.New<SolidVertex>(_device, vertexCount);
             }
 
             _littleSphere = GeometricPrimitive.Sphere.New(_device, VertexSphereRadius, 4);
