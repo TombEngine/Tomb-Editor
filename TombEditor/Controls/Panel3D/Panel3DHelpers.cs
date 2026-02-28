@@ -1,4 +1,5 @@
-﻿using System;
+using TombLib.Graphics.Dx11Toolkit;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -82,8 +83,8 @@ namespace TombEditor.Controls.Panel3D
             // Prepare the Vertex Buffer
             if (_objectHeightLineVertexBuffer != null)
                 _objectHeightLineVertexBuffer.Dispose();
-            _objectHeightLineVertexBuffer = SharpDX.Toolkit.Graphics.Buffer.Vertex.New(_legacyDevice,
-                vertices, SharpDX.Direct3D11.ResourceUsage.Dynamic);
+            _objectHeightLineVertexBuffer = TombLib.Graphics.Dx11Toolkit.Buffer.Vertex.New(_legacyDevice,
+                vertices, ResourceUsage.Dynamic);
 
             _drawHeightLine = true;
         }
@@ -178,7 +179,7 @@ namespace TombEditor.Controls.Panel3D
             // Prepare the Vertex Buffer
             if (_flybyPathVertexBuffer != null)
                 _flybyPathVertexBuffer.Dispose();
-            _flybyPathVertexBuffer = SharpDX.Toolkit.Graphics.Buffer.Vertex.New(_legacyDevice, vertices.ToArray(), SharpDX.Direct3D11.ResourceUsage.Dynamic);
+            _flybyPathVertexBuffer = TombLib.Graphics.Dx11Toolkit.Buffer.Vertex.New(_legacyDevice, vertices.ToArray(), ResourceUsage.Dynamic);
 
             return true;
         }

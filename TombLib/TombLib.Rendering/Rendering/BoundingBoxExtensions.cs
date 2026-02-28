@@ -1,7 +1,7 @@
-﻿using SharpDX.Toolkit.Graphics;
+using TombLib.Graphics.Dx11Toolkit;
 using System.Numerics;
 using TombLib.Graphics;
-using Buffer = SharpDX.Toolkit.Graphics.Buffer;
+using Buffer = TombLib.Graphics.Dx11Toolkit.Buffer;
 
 namespace TombLib.Rendering
 {
@@ -28,7 +28,7 @@ namespace TombLib.Rendering
                 p0, p1, p1, p2, p2, p3, p3, p0
             };
 
-            return Buffer.New(device, vertices, BufferFlags.VertexBuffer, SharpDX.Direct3D11.ResourceUsage.Default);
+            return Buffer.New(device, vertices, BufferFlags.VertexBuffer, ResourceUsage.Default);
         }
     }
 }

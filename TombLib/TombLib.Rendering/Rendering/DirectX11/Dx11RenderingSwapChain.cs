@@ -1,89 +1,129 @@
-﻿using NLog;
-using SharpDX.Direct3D11;
-using SharpDX.DXGI;
+using NLog;
+using Silk.NET.Core.Native;
+using Silk.NET.Direct3D11;
+using Silk.NET.DXGI;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Buffer = SharpDX.Direct3D11.Buffer;
+using System.Runtime.InteropServices;
 
 namespace TombLib.Rendering.DirectX11
 {
-    public class Dx11RenderingSwapChain : RenderingSwapChain
+    public unsafe class Dx11RenderingSwapChain : RenderingSwapChain
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         public readonly Dx11RenderingDevice Device;
-        public readonly SwapChain SwapChain;
-        public Texture2D BackBuffer;
-        public RenderTargetView BackBufferView;
-        public Texture2D DepthBuffer;
-        public DepthStencilView DepthBufferView;
+        public ComPtr<IDXGISwapChain> SwapChain;
+        public ID3D11Texture2D* BackBuffer;
+        public ID3D11RenderTargetView* BackBufferView;
+        public ID3D11Texture2D* DepthBuffer;
+        public ID3D11DepthStencilView* DepthBufferView;
 
         public static readonly Rational RefreshRate = new Rational(60, 1);
-        public static readonly Format Format = Format.R8G8B8A8_UNorm;
-        public static readonly Format DepthFormat = Format.D32_Float;
+        public static readonly Format ColorFormat = Format.FormatR8G8B8A8Unorm;
+        public static readonly Format DepthFormat = Format.FormatD32Float;
         public const int BufferCount = 2;
+
+        private int _sampleCount;
 
         public Dx11RenderingSwapChain(Dx11RenderingDevice device, Description description)
         {
             Device = device;
             Size = description.Size;
             RenderException = null;
-            SwapChain = new SwapChain(device.Factory, device.Device,
-                new SwapChainDescription
+
+            _sampleCount = GetAntialiasQuality(description.Antialias ? 4 : 1);
+
+            SwapChainDesc swapChainDesc = new SwapChainDesc
+            {
+                BufferCount = BufferCount,
+                BufferDesc = new ModeDesc
                 {
-                    BufferCount = BufferCount,
-                    ModeDescription = new ModeDescription(Size.X, Size.Y, RefreshRate, Format),
-                    IsWindowed = true,
-                    OutputHandle = description.WindowHandle,
-                    SampleDescription = new SampleDescription(GetAntialiasQuality(description.Antialias ? 4 : 1), 0),
-                    SwapEffect = SwapEffect.Sequential,
-                    Usage = Usage.RenderTargetOutput
-                });
-            device.Factory.MakeWindowAssociation(description.WindowHandle, WindowAssociationFlags.IgnoreAll);
+                    Width = (uint)Size.X,
+                    Height = (uint)Size.Y,
+                    RefreshRate = RefreshRate,
+                    Format = ColorFormat
+                },
+                Windowed = 1,
+                OutputWindow = description.WindowHandle,
+                SampleDesc = new SampleDesc((uint)_sampleCount, 0),
+                SwapEffect = SwapEffect.Sequential,
+                BufferUsage = DXGI.UsageRenderTargetOutput
+            };
+
+            IDXGISwapChain* pSwapChain = null;
+            SilkMarshal.ThrowHResult(
+                device.Factory.Handle->CreateSwapChain((IUnknown*)device.Device.Handle, &swapChainDesc, &pSwapChain));
+            SwapChain = new ComPtr<IDXGISwapChain>(pSwapChain);
+
+            device.Factory.Handle->MakeWindowAssociation(description.WindowHandle, 1 | 2 | 4); // IgnoreAll = DXGI_MWA_NO_WINDOW_CHANGES | NO_ALT_ENTER | NO_PRINT_SCREEN
+
             CreateBuffersAndViews();
         }
 
         private void CreateBuffersAndViews()
         {
-            BackBuffer = SharpDX.Direct3D11.Resource.FromSwapChain<Texture2D>(SwapChain, 0);
-            BackBufferView = new RenderTargetView(Device.Device, BackBuffer);
+            // Get back buffer
+            Guid tex2DGuid = ID3D11Texture2D.Guid;
+            void* pBackBuffer = null;
+            SilkMarshal.ThrowHResult(
+                SwapChain.Handle->GetBuffer(0, &tex2DGuid, &pBackBuffer));
+            BackBuffer = (ID3D11Texture2D*)pBackBuffer;
 
-            DepthBuffer = new Texture2D(Device.Device, new Texture2DDescription
+            // Create render target view
+            ID3D11RenderTargetView* pRTV = null;
+            SilkMarshal.ThrowHResult(
+                Device.Device.Handle->CreateRenderTargetView((ID3D11Resource*)BackBuffer, (RenderTargetViewDesc*)null, &pRTV));
+            BackBufferView = pRTV;
+
+            // Create depth buffer
+            Texture2DDesc depthDesc = new Texture2DDesc
             {
                 Format = DepthFormat,
                 ArraySize = 1,
                 MipLevels = 1,
-                Width = Size.X,
-                Height = Size.Y,
-                SampleDescription = new SampleDescription(SwapChain.Description.SampleDescription.Count, 0),
-                Usage = ResourceUsage.Default,
-                BindFlags = BindFlags.DepthStencil,
-                CpuAccessFlags = CpuAccessFlags.None,
-                OptionFlags = ResourceOptionFlags.None
-            });
-            DepthBufferView = new DepthStencilView(Device.Device, DepthBuffer);
+                Width = (uint)Size.X,
+                Height = (uint)Size.Y,
+                SampleDesc = new SampleDesc((uint)_sampleCount, 0),
+                Usage = Usage.Default,
+                BindFlags = (uint)BindFlag.DepthStencil,
+                CPUAccessFlags = 0,
+                MiscFlags = 0
+            };
+            ID3D11Texture2D* pDepth = null;
+            SilkMarshal.ThrowHResult(
+                Device.Device.Handle->CreateTexture2D(&depthDesc, (SubresourceData*)null, &pDepth));
+            DepthBuffer = pDepth;
+
+            // Create depth stencil view
+            ID3D11DepthStencilView* pDSV = null;
+            SilkMarshal.ThrowHResult(
+                Device.Device.Handle->CreateDepthStencilView((ID3D11Resource*)DepthBuffer, (DepthStencilViewDesc*)null, &pDSV));
+            DepthBufferView = pDSV;
         }
 
         private int GetAntialiasQuality(int maxQuality)
         {
-            int AntialiasQuality = maxQuality;
-            while (AntialiasQuality > 1)
+            int antialiasQuality = maxQuality;
+            while (antialiasQuality > 1)
             {
-                if (Device.Device.CheckMultisampleQualityLevels(Format.R8G8B8A8_UNorm, AntialiasQuality) != 0)
+                uint numQualityLevels = 0;
+                Device.Device.Handle->CheckMultisampleQualityLevels(Format.FormatR8G8B8A8Unorm, (uint)antialiasQuality, &numQualityLevels);
+                if (numQualityLevels != 0)
                     break;
                 else
-                    AntialiasQuality /= 2;
+                    antialiasQuality /= 2;
             }
-            return AntialiasQuality;
+            return antialiasQuality;
         }
 
         public override void Dispose()
         {
-            BackBufferView.Dispose();
-            BackBuffer.Dispose();
-            DepthBufferView.Dispose();
-            DepthBuffer.Dispose();
+            if (BackBufferView != null) { BackBufferView->Release(); BackBufferView = null; }
+            if (BackBuffer != null) { BackBuffer->Release(); BackBuffer = null; }
+            if (DepthBufferView != null) { DepthBufferView->Release(); DepthBufferView = null; }
+            if (DepthBuffer != null) { DepthBuffer->Release(); DepthBuffer = null; }
             SwapChain.Dispose();
         }
 
@@ -96,27 +136,34 @@ namespace TombLib.Rendering.DirectX11
 
         public void BindForce()
         {
-            Device.Context.Rasterizer.SetViewport(0, 0, Size.X, Size.Y, 0.0f, 1.0f);
-            Device.Context.OutputMerger.SetTargets(DepthBufferView, BackBufferView);
+            var pContext = Device.Context.Handle;
+            Viewport viewport = new Viewport(0, 0, Size.X, Size.Y, 0.0f, 1.0f);
+            pContext->RSSetViewports(1, &viewport);
+            var bbView = BackBufferView;
+            pContext->OMSetRenderTargets(1, &bbView, DepthBufferView);
             Device.CurrentRenderTarget = this;
         }
 
         public override void Clear(Vector4 color)
         {
-            Device.Context.ClearDepthStencilView(DepthBufferView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
-            Device.Context.ClearRenderTargetView(BackBufferView, new SharpDX.Color4(color.X, color.Y, color.Z, color.W));
+            var pContext = Device.Context.Handle;
+            float* clearColor = stackalloc float[4] { color.X, color.Y, color.Z, color.W };
+            pContext->ClearDepthStencilView(DepthBufferView, (uint)(ClearFlag.Depth | ClearFlag.Stencil), 1.0f, 0);
+            pContext->ClearRenderTargetView(BackBufferView, clearColor);
         }
 
         public override void ClearDepth()
         {
-            Device.Context.ClearDepthStencilView(DepthBufferView, DepthStencilClearFlags.Depth | DepthStencilClearFlags.Stencil, 1.0f, 0);
+            var pContext = Device.Context.Handle;
+            pContext->ClearDepthStencilView(DepthBufferView, (uint)(ClearFlag.Depth | ClearFlag.Stencil), 1.0f, 0);
         }
 
         public override void Present()
         {
             try
             {
-                SwapChain.Present(0, PresentFlags.None);
+                int hr = SwapChain.Handle->Present(0, 0);
+                if (hr < 0) throw Marshal.GetExceptionForHR(hr);
             }
             catch (Exception ex)
             {
@@ -127,11 +174,17 @@ namespace TombLib.Rendering.DirectX11
                     switch (unchecked((uint)ex.HResult))
                     {
                         case 0x887A0005:
-                            message = "Renderer unexpectedly stopped due to DXGI_ERROR_DEVICE_REMOVED exception. Error code: " + Device.Device.DeviceRemovedReason.Code;
+                            {
+                                int reason = Device.Device.Handle->GetDeviceRemovedReason();
+                                message = "Renderer unexpectedly stopped due to DXGI_ERROR_DEVICE_REMOVED exception. Error code: " + reason;
+                            }
                             break;
 
                         case 0x887A0020:
-                            message = "Rendering device was lost due to DXGI_ERROR_DRIVER_INTERNAL_ERROR exception. Error code: " + Device.Device.DeviceRemovedReason.Code;
+                            {
+                                int reason = Device.Device.Handle->GetDeviceRemovedReason();
+                                message = "Rendering device was lost due to DXGI_ERROR_DRIVER_INTERNAL_ERROR exception. Error code: " + reason;
+                            }
                             break;
 
                         case 0x887A0006:
@@ -165,21 +218,21 @@ namespace TombLib.Rendering.DirectX11
 
             if (Device.CurrentRenderTarget == this)
             {
-                Device.CurrentRenderTarget = null; // To reset the viewport dimensions
-                Device.Context.OutputMerger.ResetTargets();
+                Device.CurrentRenderTarget = null;
+                Device.Context.Handle->OMSetRenderTargets(0, (ID3D11RenderTargetView**)null, (ID3D11DepthStencilView*)null);
             }
 
             Size = newSize;
-            BackBufferView.Dispose();
-            BackBuffer.Dispose();
-            DepthBufferView.Dispose();
-            DepthBuffer.Dispose();
-            SwapChain.ResizeBuffers(BufferCount, newSize.X, newSize.Y, Format, SwapChainFlags.None);
+            if (BackBufferView != null) { BackBufferView->Release(); BackBufferView = null; }
+            if (BackBuffer != null) { BackBuffer->Release(); BackBuffer = null; }
+            if (DepthBufferView != null) { DepthBufferView->Release(); DepthBufferView = null; }
+            if (DepthBuffer != null) { DepthBuffer->Release(); DepthBuffer = null; }
+            SilkMarshal.ThrowHResult(
+                SwapChain.Handle->ResizeBuffers(BufferCount, (uint)newSize.X, (uint)newSize.Y, ColorFormat, 0));
             CreateBuffersAndViews();
-            // ResizeTarget is not the correct method!
         }
 
-        public override unsafe void RenderSprites(RenderingTextureAllocator textureAllocator, bool linearFilter, bool noZ, List<Sprite> sprites)
+        public override void RenderSprites(RenderingTextureAllocator textureAllocator, bool linearFilter, bool noZ, List<Sprite> sprites)
         {
             if (sprites.Count == 0)
                 return;
@@ -192,8 +245,8 @@ namespace TombLib.Rendering.DirectX11
             fixed (byte* data = new byte[bufferSize])
             {
                 Vector3* positions = (Vector3*)(data);
-                Vector4* colours   = (Vector4*)(data + vertexCount * sizeof(Vector3));
-                ulong*   uvws      = (ulong*)  (data + vertexCount * (sizeof(Vector3) + sizeof(Vector4)));
+                Vector4* colours = (Vector4*)(data + vertexCount * sizeof(Vector3));
+                ulong* uvws = (ulong*)(data + vertexCount * (sizeof(Vector3) + sizeof(Vector4)));
 
                 // Setup vertices
                 int count = sprites.Count;
@@ -218,39 +271,65 @@ namespace TombLib.Rendering.DirectX11
                 }
 
                 // Create GPU resources
-                using (var VertexBuffer = new Buffer(Device.Device, new IntPtr(data),
-                    new BufferDescription(bufferSize, ResourceUsage.Immutable, BindFlags.VertexBuffer,
-                    CpuAccessFlags.None, ResourceOptionFlags.None, 0)))
+                BufferDesc bufferDesc = new BufferDesc
                 {
-                    var VertexBufferBindings = new VertexBufferBinding[] {
-                        new VertexBufferBinding(VertexBuffer, sizeof(Vector3), (int)((byte*)positions - data)),
-                        new VertexBufferBinding(VertexBuffer, sizeof(Vector4), (int)((byte*)colours - data)),
-                        new VertexBufferBinding(VertexBuffer, sizeof(ulong), (int)((byte*)uvws - data)) };
+                    ByteWidth = (uint)bufferSize,
+                    Usage = Usage.Immutable,
+                    BindFlags = (uint)BindFlag.VertexBuffer,
+                    CPUAccessFlags = 0,
+                    MiscFlags = 0,
+                    StructureByteStride = 0
+                };
+                SubresourceData initData = new SubresourceData { PSysMem = data, SysMemPitch = 0, SysMemSlicePitch = 0 };
+
+                ID3D11Buffer* pVB = null;
+                SilkMarshal.ThrowHResult(
+                    Device.Device.Handle->CreateBuffer(&bufferDesc, &initData, &pVB));
+                try
+                {
+                    ID3D11Buffer** ppBuffers = stackalloc ID3D11Buffer*[3] { pVB, pVB, pVB };
+                    uint* pStrides = stackalloc uint[3] { (uint)sizeof(Vector3), (uint)sizeof(Vector4), (uint)sizeof(ulong) };
+                    uint* pOffsets = stackalloc uint[3]
+                    {
+                        (uint)((byte*)positions - data),
+                        (uint)((byte*)colours - data),
+                        (uint)((byte*)uvws - data)
+                    };
+
+                    var pContext = Device.Context.Handle;
 
                     // Render
                     Bind();
-                    Device.SpriteShader.Apply(Device.Context);
-                    Device.Context.PixelShader.SetSampler(0, linearFilter ? Device.SamplerDefault : Device.SamplerRoundToNearest);
-                    Device.Context.PixelShader.SetShaderResources(0, ((Dx11RenderingTextureAllocator)(textureAllocator)).TextureView);
-                    Device.Context.InputAssembler.SetVertexBuffers(0, VertexBufferBindings);
+                    Device.SpriteShader.Apply(pContext);
+
+                    ID3D11SamplerState* pSampler = linearFilter ? Device.SamplerDefault.Handle : Device.SamplerRoundToNearest.Handle;
+                    pContext->PSSetSamplers(0, 1, &pSampler);
+
+                    ID3D11ShaderResourceView* pSRV = ((Dx11RenderingTextureAllocator)textureAllocator).TextureView.Handle;
+                    pContext->PSSetShaderResources(0, 1, &pSRV);
+
+                    pContext->IASetVertexBuffers(0, 3, ppBuffers, pStrides, pOffsets);
 
                     if (noZ)
-                        Device.Context.OutputMerger.SetDepthStencilState(Device.DepthStencilNoZBuffer);
+                        pContext->OMSetDepthStencilState(Device.DepthStencilNoZBuffer.Handle, 0);
                     else
-                        Device.Context.OutputMerger.SetDepthStencilState(Device.DepthStencilDefault);
+                        pContext->OMSetDepthStencilState(Device.DepthStencilDefault.Handle, 0);
 
-                    // Render
-                    Device.Context.Draw(vertexCount, 0);
+                    pContext->Draw((uint)vertexCount, 0);
 
                     // Reset state
-                    Device.Context.OutputMerger.SetDepthStencilState(Device.DepthStencilDefault);
+                    pContext->OMSetDepthStencilState(Device.DepthStencilDefault.Handle, 0);
+                }
+                finally
+                {
+                    pVB->Release();
                 }
             }
         }
 
-        public override unsafe void RenderGlyphs(RenderingTextureAllocator textureAllocator, List<RenderingFont.GlyphRenderInfo> glyphRenderInfos, List<RectangleInt2> overlays)
+        public override void RenderGlyphs(RenderingTextureAllocator textureAllocator, List<RenderingFont.GlyphRenderInfo> glyphRenderInfos, List<RectangleInt2> overlays)
         {
-            Vector2 posScaling = new Vector2(1.0f) / (Size / 2); // Divide the integer coordinates to avoid pixel mishmash.
+            Vector2 posScaling = new Vector2(1.0f) / (Size / 2);
             Vector2 posOffset = VectorInt2.FromRounded(posScaling * 0.5f);
             Vector2 textureScaling = new Vector2(16777216.0f) / new Vector2(textureAllocator.Size.X, textureAllocator.Size.Y);
 
@@ -298,27 +377,53 @@ namespace TombLib.Rendering.DirectX11
                 }
 
                 // Create GPU resources
-                using (var VertexBuffer = new Buffer(Device.Device, new IntPtr(data),
-                    new BufferDescription(bufferSize, ResourceUsage.Immutable, BindFlags.VertexBuffer,
-                    CpuAccessFlags.None, ResourceOptionFlags.None, 0)))
+                BufferDesc bufferDesc = new BufferDesc
                 {
-                    var VertexBufferBindings = new VertexBufferBinding[] {
-                        new VertexBufferBinding(VertexBuffer, sizeof(Vector2), (int)((byte*)positions - data)),
-                        new VertexBufferBinding(VertexBuffer, sizeof(ulong), (int)((byte*)uvws - data)) };
+                    ByteWidth = (uint)bufferSize,
+                    Usage = Usage.Immutable,
+                    BindFlags = (uint)BindFlag.VertexBuffer,
+                    CPUAccessFlags = 0,
+                    MiscFlags = 0,
+                    StructureByteStride = 0
+                };
+                SubresourceData initData = new SubresourceData { PSysMem = data, SysMemPitch = 0, SysMemSlicePitch = 0 };
+
+                ID3D11Buffer* pVB = null;
+                SilkMarshal.ThrowHResult(
+                    Device.Device.Handle->CreateBuffer(&bufferDesc, &initData, &pVB));
+                try
+                {
+                    ID3D11Buffer** ppBuffers = stackalloc ID3D11Buffer*[2] { pVB, pVB };
+                    uint* pStrides = stackalloc uint[2] { (uint)sizeof(Vector2), (uint)sizeof(ulong) };
+                    uint* pOffsets = stackalloc uint[2]
+                    {
+                        (uint)((byte*)positions - data),
+                        (uint)((byte*)uvws - data)
+                    };
+
+                    var pContext = Device.Context.Handle;
 
                     // Render
                     Bind();
-                    Device.TextShader.Apply(Device.Context);
-                    Device.Context.PixelShader.SetSampler(0, Device.SamplerRoundToNearest);
-                    Device.Context.PixelShader.SetShaderResources(0, ((Dx11RenderingTextureAllocator)(textureAllocator)).TextureView);
-                    Device.Context.InputAssembler.SetVertexBuffers(0, VertexBufferBindings);
-                    Device.Context.OutputMerger.SetDepthStencilState(Device.DepthStencilNoZBuffer);
+                    Device.TextShader.Apply(pContext);
 
-                    // Render
-                    Device.Context.Draw(vertexCount, 0);
+                    ID3D11SamplerState* pSampler = Device.SamplerRoundToNearest.Handle;
+                    pContext->PSSetSamplers(0, 1, &pSampler);
+
+                    ID3D11ShaderResourceView* pSRV = ((Dx11RenderingTextureAllocator)textureAllocator).TextureView.Handle;
+                    pContext->PSSetShaderResources(0, 1, &pSRV);
+
+                    pContext->IASetVertexBuffers(0, 2, ppBuffers, pStrides, pOffsets);
+                    pContext->OMSetDepthStencilState(Device.DepthStencilNoZBuffer.Handle, 0);
+
+                    pContext->Draw((uint)vertexCount, 0);
 
                     // Reset state
-                    Device.Context.OutputMerger.SetDepthStencilState(Device.DepthStencilDefault);
+                    pContext->OMSetDepthStencilState(Device.DepthStencilDefault.Handle, 0);
+                }
+                finally
+                {
+                    pVB->Release();
                 }
             }
         }

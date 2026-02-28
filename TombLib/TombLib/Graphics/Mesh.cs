@@ -1,4 +1,4 @@
-﻿using SharpDX.Toolkit.Graphics;
+﻿using TombLib.Graphics.Dx11Toolkit;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -8,7 +8,7 @@ namespace TombLib.Graphics
     public abstract class Mesh<T> : GraphicsResource, IRenderableObject where T : struct, IVertex
     {
         public Buffer<T> VertexBuffer { get; protected set; }
-        public SharpDX.Toolkit.Graphics.Buffer IndexBuffer { get; protected set; }
+        public Buffer IndexBuffer { get; protected set; }
         public VertexInputLayout InputLayout { get; protected set; }
         public List<Material> Materials { get; protected set; }
         public List<T> Vertices { get; protected set; } = new List<T>();

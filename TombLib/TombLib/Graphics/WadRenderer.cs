@@ -1,5 +1,5 @@
-﻿using NLog;
-using SharpDX.Toolkit.Graphics;
+using NLog;
+using TombLib.Graphics.Dx11Toolkit;
 using System;
 using System.Collections.Generic;
 using TombLib.Utils;
@@ -216,11 +216,11 @@ namespace TombLib.Graphics
         // so we create a new texture array on demand and copy the old content over
         private void EnsureTextureCapacity()
         {
-            var arraySize = Texture.Description.ArraySize;
+            var arraySize = Texture.ArraySize;
 
             if (TexturePackers.Count > arraySize)
             {
-                var newTexture = Texture2D.New(GraphicsDevice, _textureAtlasSize, _textureAtlasSize, SharpDX.DXGI.Format.B8G8R8A8_UNorm, TextureFlags.ShaderResource, TexturePackers.Count, SharpDX.Direct3D11.ResourceUsage.Default);
+                var newTexture = Texture2D.New(GraphicsDevice, _textureAtlasSize, _textureAtlasSize, DxgiFormat.B8G8R8A8_UNorm, TextureFlags.ShaderResource, TexturePackers.Count, ResourceUsage.Default);
 
                 for (int i = 0; i < arraySize; i++)
                 {
@@ -236,7 +236,7 @@ namespace TombLib.Graphics
         private void InitializeTexture()
         {
             if (Texture is null)
-                Texture = Texture2D.New(GraphicsDevice, _textureAtlasSize, _textureAtlasSize, SharpDX.DXGI.Format.B8G8R8A8_UNorm, TextureFlags.ShaderResource, TexturePackers.Count, SharpDX.Direct3D11.ResourceUsage.Default);
+                Texture = Texture2D.New(GraphicsDevice, _textureAtlasSize, _textureAtlasSize, DxgiFormat.B8G8R8A8_UNorm, TextureFlags.ShaderResource, TexturePackers.Count, ResourceUsage.Default);
         }
 
         public class TextureAtlasFullException : Exception

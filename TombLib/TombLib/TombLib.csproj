@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
@@ -26,30 +26,6 @@
   <ItemGroup>
     <Reference Include="bzPSD">
       <HintPath>..\..\Libs\bzPSD.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX">
-      <HintPath>..\..\Libs\SharpDX.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.D3DCompiler">
-      <HintPath>..\..\Libs\SharpDX.D3DCompiler.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Direct3D11">
-      <HintPath>..\..\Libs\SharpDX.Direct3D11.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Direct3D11.Effects">
-      <HintPath>..\..\Libs\SharpDX.Direct3D11.Effects.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.DXGI">
-      <HintPath>..\..\Libs\SharpDX.DXGI.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Toolkit">
-      <HintPath>..\..\Libs\SharpDX.Toolkit.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Toolkit.Compiler">
-      <HintPath>..\..\Libs\SharpDX.Toolkit.Compiler.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Toolkit.Graphics">
-      <HintPath>..\..\Libs\SharpDX.Toolkit.Graphics.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -494,6 +470,7 @@
     <PackageReference Include="Pfim" Version="0.10.3" />
     <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1" />
     <PackageReference Include="System.IO.Hashing" Version="6.0.0" />
+    <PackageReference Include="Silk.NET.Direct3D11" Version="2.21.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="GeometryIO\IOBone.cs" />

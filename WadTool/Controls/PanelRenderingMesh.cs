@@ -1,4 +1,4 @@
-﻿using SharpDX.Toolkit.Graphics;
+using TombLib.Graphics.Dx11Toolkit;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -319,12 +319,12 @@ namespace WadTool.Controls
                     TextureAllocator = _fontTexture
                 });
 
-                _rasterizerWireframe = RasterizerState.New(_device, new SharpDX.Direct3D11.RasterizerStateDescription
+                _rasterizerWireframe = RasterizerState.New(_device, new RasterizerStateDescription
                 {
-                    CullMode = SharpDX.Direct3D11.CullMode.None,
+                    CullMode = CullMode.None,
                     DepthBias = 0,
                     DepthBiasClamp = 0,
-                    FillMode = SharpDX.Direct3D11.FillMode.Wireframe,
+                    FillMode = FillMode.Wireframe,
                     IsAntialiasedLineEnabled = true,
                     IsDepthClipEnabled = true,
                     IsFrontCounterClockwise = false,
@@ -380,7 +380,7 @@ namespace WadTool.Controls
                 _device.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, _plane.VertexBuffer));
                 _device.SetIndexBuffer(_plane.IndexBuffer, true);
 
-                solidEffect.Parameters["ModelViewProjection"].SetValue(viewProjection.ToSharpDX());
+                solidEffect.Parameters["ModelViewProjection"].SetValue(viewProjection);
                 solidEffect.Parameters["Color"].SetValue(Vector4.One);
                 solidEffect.Techniques[0].Passes[0].Apply();
 
@@ -427,7 +427,7 @@ namespace WadTool.Controls
                         continue;
 
                     var posMatrix = Matrix4x4.Identity * Matrix4x4.CreateTranslation(VisibleMesh.VertexPositions[i]) * viewProjection;
-                    solidEffect.Parameters["ModelViewProjection"].SetValue(posMatrix.ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue(posMatrix);
 
                     if (selected)
                     {
@@ -619,10 +619,10 @@ namespace WadTool.Controls
                             }
                     }
 
-                    _faceVertexBuffer.SetData(vtxs);
+                    _faceVertexBuffer.SetData(_device, vtxs);
 
                     solidEffect.Parameters["Color"].SetValue(Vector4.One);
-                    solidEffect.Parameters["ModelViewProjection"].SetValue(viewProjection.ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue(viewProjection);
                     solidEffect.Techniques[0].Passes[0].Apply();
 
                     if (!DrawExtraInfo && EditingMode != MeshEditingMode.VertexWeights)
@@ -656,7 +656,7 @@ namespace WadTool.Controls
                 var posMatrix = Matrix4x4.Identity * Matrix4x4.CreateTranslation(_mesh.BoundingSphere.Center);
                 var finalMatrix = Matrix4x4.CreateScale(_mesh.BoundingSphere.Radius * 2) * posMatrix * viewProjection;
 
-                solidEffect.Parameters["ModelViewProjection"].SetValue(finalMatrix.ToSharpDX());
+                solidEffect.Parameters["ModelViewProjection"].SetValue(finalMatrix);
                 solidEffect.Parameters["Color"].SetValue(new Vector4(Vector3.One, 0.5f));
                 solidEffect.Techniques[0].Passes[0].Apply();
 
@@ -685,13 +685,13 @@ namespace WadTool.Controls
 
             if (linesToDraw.Count > 0)
             {
-                var bufferLines = SharpDX.Toolkit.Graphics.Buffer.New(_device, linesToDraw.ToArray(), BufferFlags.VertexBuffer, SharpDX.Direct3D11.ResourceUsage.Default);
+                var bufferLines = Buffer.New(_device, linesToDraw.ToArray(), BufferFlags.VertexBuffer, ResourceUsage.Default);
 
                 _device.SetVertexBuffer(bufferLines);
                 _device.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, bufferLines));
                 _device.SetIndexBuffer(null, false);
 
-                solidEffect.Parameters["ModelViewProjection"].SetValue(viewProjection.ToSharpDX());
+                solidEffect.Parameters["ModelViewProjection"].SetValue(viewProjection);
                 solidEffect.Parameters["Color"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
                 solidEffect.CurrentTechnique.Passes[0].Apply();
 
@@ -738,7 +738,7 @@ namespace WadTool.Controls
             var showColors = EditingMode == MeshEditingMode.VertexColorsAndNormals || (EditingMode == MeshEditingMode.VertexEffects && _previewTimer.Enabled);
 
             var effect = DeviceManager.DefaultDeviceManager.___LegacyEffects["Model"];
-            effect.Parameters["ModelViewProjection"].SetValue(world.ToSharpDX());
+            effect.Parameters["ModelViewProjection"].SetValue(world);
             effect.Parameters["Color"].SetValue(WireframeMode ? new Vector4(1.0f - ClearColor.To3().GetLuma()) : Vector4.One);
             effect.Parameters["StaticLighting"].SetValue(showColors);
             effect.Parameters["ColoredVertices"].SetValue(_tool.DestinationWad.GameVersion == TRVersion.Game.TombEngine);
@@ -1010,7 +1010,7 @@ namespace WadTool.Controls
                 foreach (var poly in _mesh.Polys)
                     if (poly.IsTriangle) vertexCount += 3; else vertexCount += 6;
 
-                _faceVertexBuffer = SharpDX.Toolkit.Graphics.Buffer.Vertex.New<SolidVertex>(_device, vertexCount);
+                _faceVertexBuffer = Buffer.Vertex.New<SolidVertex>(_device, vertexCount);
             }
 
             _littleSphere = GeometricPrimitive.Sphere.New(_device, VertexSphereRadius, 4);

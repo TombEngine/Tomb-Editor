@@ -1,4 +1,4 @@
-﻿using SharpDX.Toolkit.Graphics;
+using TombLib.Graphics.Dx11Toolkit;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -109,13 +109,13 @@ namespace WadTool.Controls
                 _device = deviceManager.___LegacyDevice;
                 _deviceManager = deviceManager;
                 new BasicEffect(_device); // This effect is used for editor special meshes like sinks, cameras, light meshes, etc
-                SharpDX.Direct3D11.RasterizerStateDescription renderStateDesc =
-                    new SharpDX.Direct3D11.RasterizerStateDescription
+                RasterizerStateDescription renderStateDesc =
+                    new RasterizerStateDescription
                     {
-                        CullMode = SharpDX.Direct3D11.CullMode.None,
+                        CullMode = CullMode.None,
                         DepthBias = 0,
                         DepthBiasClamp = 0,
-                        FillMode = SharpDX.Direct3D11.FillMode.Wireframe,
+                        FillMode = FillMode.Wireframe,
                         IsAntialiasedLineEnabled = true,
                         IsDepthClipEnabled = true,
                         IsFrontCounterClockwise = false,
@@ -213,7 +213,7 @@ namespace WadTool.Controls
                     else
                         effect.Parameters["Color"].SetValue(Vector4.One);
 
-                    effect.Parameters["ModelViewProjection"].SetValue((matrices[i] * viewProjection).ToSharpDX());
+                    effect.Parameters["ModelViewProjection"].SetValue((matrices[i] * viewProjection));
 
                     effect.Techniques[0].Passes[0].Apply();
 
@@ -239,7 +239,7 @@ namespace WadTool.Controls
                     effect.Parameters["Color"].SetValue(Vector4.One);
 
                     Skin.Skin.UpdateBuffers(Camera.GetPosition());
-                    Skin.RenderSkin(_device, effect, viewProjection.ToSharpDX(), _model);
+                    Skin.RenderSkin(_device, effect, viewProjection, _model);
                 }
 
                 _device.SetRasterizerState(_device.RasterizerStates.CullBack);
@@ -261,7 +261,7 @@ namespace WadTool.Controls
                         _device.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, _vertexBufferVisibility));
                         _device.SetIndexBuffer(null, false);
 
-                        solidEffect.Parameters["ModelViewProjection"].SetValue((_model.AnimationTransforms[meshIndex] * viewProjection).ToSharpDX());
+                        solidEffect.Parameters["ModelViewProjection"].SetValue((_model.AnimationTransforms[meshIndex] * viewProjection));
                         solidEffect.Parameters["Color"].SetValue(new Vector4(1.0f, 0.0f, 0.0f, 1.0f));
                         solidEffect.CurrentTechnique.Passes[0].Apply();
 
@@ -279,7 +279,7 @@ namespace WadTool.Controls
                         _device.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, _vertexBufferVisibility));
                         _device.SetIndexBuffer(null, false);
 
-                        solidEffect.Parameters["ModelViewProjection"].SetValue((viewProjection).ToSharpDX());
+                        solidEffect.Parameters["ModelViewProjection"].SetValue((viewProjection));
                         solidEffect.Parameters["Color"].SetValue(new Vector4(0.0f, 1.0f, 0.0f, 1.0f));
                         solidEffect.CurrentTechnique.Passes[0].Apply();
 
@@ -297,7 +297,7 @@ namespace WadTool.Controls
                 _device.SetRasterizerState(_rasterizerWireframe);
 
                 var shift = Matrix4x4.CreateTranslation(new Vector3(-GridPosition.X, GridPosition.Y, -GridPosition.Z));
-                solidEffect.Parameters["ModelViewProjection"].SetValue((shift * viewProjection).ToSharpDX());
+                solidEffect.Parameters["ModelViewProjection"].SetValue((shift * viewProjection));
                 solidEffect.Parameters["Color"].SetValue(Vector4.One);
                 solidEffect.Techniques[0].Passes[0].Apply();
 
@@ -315,7 +315,7 @@ namespace WadTool.Controls
             if (_editor.CurrentAnim != null && 
                 Configuration.RenderingItem_ShowDebugInfo)
             {
-                ((TombLib.Rendering.DirectX11.Dx11RenderingDevice)Device).ResetState(); // To make sure SharpDx.Toolkit didn't change settings.
+                ((TombLib.Rendering.DirectX11.Dx11RenderingDevice)Device).ResetState(); // To make sure legacy toolkit didn't change settings.
                 string debugMessage = "Frame: " + (_editor.CurrentFrameIndex + 1) + "/" + _editor.CurrentAnim.DirectXAnimation.KeyFrames.Count;
                 if (SelectedMesh != null)
                 {

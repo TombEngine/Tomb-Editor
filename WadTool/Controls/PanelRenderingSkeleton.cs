@@ -1,4 +1,4 @@
-﻿using SharpDX.Toolkit.Graphics;
+using TombLib.Graphics.Dx11Toolkit;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -92,12 +92,12 @@ namespace WadTool.Controls
             {
                 _wadRenderer = new WadRenderer(_device, false, true, 4096, 2048, false);
                 new BasicEffect(_device); // This effect is used for editor special meshes like sinks, cameras, light meshes, etc
-                _rasterizerWireframe = RasterizerState.New(_device, new SharpDX.Direct3D11.RasterizerStateDescription
+                _rasterizerWireframe = RasterizerState.New(_device, new RasterizerStateDescription
                 {
-                    CullMode = SharpDX.Direct3D11.CullMode.None,
+                    CullMode = CullMode.None,
                     DepthBias = 0,
                     DepthBiasClamp = 0,
-                    FillMode = SharpDX.Direct3D11.FillMode.Wireframe,
+                    FillMode = FillMode.Wireframe,
                     IsAntialiasedLineEnabled = true,
                     IsDepthClipEnabled = true,
                     IsFrontCounterClockwise = false,
@@ -149,7 +149,7 @@ namespace WadTool.Controls
                 _device.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, _plane.VertexBuffer));
                 _device.SetIndexBuffer(_plane.IndexBuffer, true);
 
-                solidEffect.Parameters["ModelViewProjection"].SetValue(viewProjection.ToSharpDX());
+                solidEffect.Parameters["ModelViewProjection"].SetValue(viewProjection);
                 solidEffect.Parameters["Color"].SetValue(Vector4.One);
                 solidEffect.Techniques[0].Passes[0].Apply();
 
@@ -173,7 +173,7 @@ namespace WadTool.Controls
                     mesh.UpdateBuffers(Camera.GetPosition());
 
                     effect.Parameters["Texture"].SetResource(_wadRenderer.Texture);
-                    effect.Parameters["ModelViewProjection"].SetValue((node.GlobalTransform * viewProjection).ToSharpDX());
+                    effect.Parameters["ModelViewProjection"].SetValue((node.GlobalTransform * viewProjection));
                     effect.Parameters["Color"].SetValue(Vector4.One);
                     effect.Parameters["StaticLighting"].SetValue(node.Mesh.LightingType != WadMeshLightingType.Normals);
                     effect.Parameters["ColoredVertices"].SetValue(_tool.DestinationWad.GameVersion == TombLib.LevelData.TRVersion.Game.TombEngine);
@@ -216,7 +216,7 @@ namespace WadTool.Controls
                     _device.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, _vertexBufferVisibility));
                     _device.SetIndexBuffer(null, false);
 
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((SelectedNode.GlobalTransform * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((SelectedNode.GlobalTransform * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(new Vector4(0.0f, 1.0f, 0.0f, 1.0f));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
 
@@ -234,7 +234,7 @@ namespace WadTool.Controls
             // Draw debug strings
             if (SelectedNode != null)
             {
-                ((TombLib.Rendering.DirectX11.Dx11RenderingDevice)Device).ResetState(); // To make sure SharpDx.Toolkit didn't change settings.
+                ((TombLib.Rendering.DirectX11.Dx11RenderingDevice)Device).ResetState(); // To make sure legacy toolkit didn't change settings.
                 Matrix4x4 worldViewProjection = SelectedNode.GlobalTransform * viewProjection;
                 SwapChain.RenderText(new Text
                 {

@@ -1,23 +1,34 @@
-﻿using SharpDX;
-using SharpDX.Direct3D11;
+using Silk.NET.Core.Native;
+using Silk.NET.Direct3D11;
+using Silk.NET.DXGI;
 using System;
 using System.Runtime.InteropServices;
 using TombLib.Utils;
 
 namespace TombLib.Rendering.DirectX11
 {
-    public class Dx11RenderingTextureAllocator : RenderingTextureAllocator
+    public unsafe class Dx11RenderingTextureAllocator : RenderingTextureAllocator
     {
-        public readonly DeviceContext Context;
-        public readonly Texture2D Texture;
-        public readonly ShaderResourceView TextureView;
+        public readonly ID3D11DeviceContext* Context;
+        public ComPtr<ID3D11Texture2D> Texture;
+        public ComPtr<ID3D11ShaderResourceView> TextureView;
 
         public Dx11RenderingTextureAllocator(Dx11RenderingDevice device, Description description)
             : base(device, description)
         {
-            Context = device.Context;
-            Texture = new Texture2D(device.Device, device.CreateTextureDescription(description.Size));
-            TextureView = new ShaderResourceView(device.Device, Texture);
+            Context = device.Context.Handle;
+
+            Texture2DDesc texDesc = device.CreateTextureDescription(description.Size);
+
+            ID3D11Texture2D* pTex = null;
+            SilkMarshal.ThrowHResult(
+                device.Device.Handle->CreateTexture2D(&texDesc, (SubresourceData*)null, &pTex));
+            Texture = new ComPtr<ID3D11Texture2D>(pTex);
+
+            ID3D11ShaderResourceView* pSRV = null;
+            SilkMarshal.ThrowHResult(
+                device.Device.Handle->CreateShaderResourceView((ID3D11Resource*)pTex, (ShaderResourceViewDesc*)null, &pSRV));
+            TextureView = new ComPtr<ID3D11ShaderResourceView>(pSRV);
         }
 
         public override void Dispose()
@@ -32,7 +43,7 @@ namespace TombLib.Rendering.DirectX11
             var height = texture.To.Y - texture.From.Y;
 
             // Copy original region to new image
-            var originalImage = ImageC.CreateNew(width+2, height+2);
+            var originalImage = ImageC.CreateNew(width + 2, height + 2);
             originalImage.CopyFrom(1, 1, texture.Image, texture.From.X, texture.From.Y, width, height);
 
             // Add 1px padding to prevent border bleeding
@@ -49,79 +60,100 @@ namespace TombLib.Rendering.DirectX11
             {
                 const int mipLevelToUpload = 0;
                 int subresourceIndex = pos.Z + mipLevelToUpload;
-                ResourceRegion region;
-                region.Left = pos.X;
-                region.Right = pos.X + originalImage.Width;
-                region.Top = pos.Y;
-                region.Bottom = pos.Y + originalImage.Height;
-                region.Front = 0;
-                region.Back = 1;
 
-                // Security clamps
-                // TODO: it doesn't cover all cases and it hides a potential bug, but I can't still 
-                // understand how the renderer is working
-                region.Left = Math.Max(region.Left, 0);
-                region.Right = Math.Min(region.Right, Size.X);
-                region.Top = Math.Max(region.Top, 0);
-                region.Bottom = Math.Min(region.Bottom, Size.Y);
+                int left = Math.Max(pos.X, 0);
+                int right = Math.Min(pos.X + originalImage.Width, Size.X);
+                int top = Math.Max(pos.Y, 0);
+                int bottom = Math.Min(pos.Y + originalImage.Height, Size.Y);
 
-                if (0 > region.Left || region.Left >= region.Right || region.Right > Size.X ||
-                    0 > region.Top || region.Top >= region.Bottom || region.Bottom > Size.Y)
+                if (0 > left || left >= right || right > Size.X ||
+                    0 > top || top >= bottom || bottom > Size.Y)
                 {
-                    // This check is important, otherwise the graphics driver may crash the entire system as it turned out.
                     throw new ArgumentOutOfRangeException("texture.From.X = " + texture.From.X + ", " +
                                                           "texture.From.Y = " + texture.From.Y + ", " +
                                                           "texture.To.X = " + texture.To.X + ", " +
                                                           "texture.To.Y = " + texture.To.Y + ", " +
                                                           "pos.X = " + pos.X + ", " +
                                                           "pos.Y = " + pos.Y + ", " +
-                                                          "region.Left = " + region.Left + ", "+
-                                                          "region.Right = " + region.Right + ", " +
-                                                          "region.Top = " + region.Top + ", " +
-                                                          "region.Bottom = " + region.Bottom ); 
+                                                          "region.Left = " + left + ", " +
+                                                          "region.Right = " + right + ", " +
+                                                          "region.Top = " + top + ", " +
+                                                          "region.Bottom = " + bottom);
                 }
 
-                DataBox box;
-                box.DataPointer = ptr;
-                box.RowPitch = originalImage.Width * ImageC.PixelSize;
-                box.SlicePitch = 0;
-                Context.UpdateSubresource(box, Texture, subresourceIndex, region);
+                Box region = new Box
+                {
+                    Left = (uint)left,
+                    Right = (uint)right,
+                    Top = (uint)top,
+                    Bottom = (uint)bottom,
+                    Front = 0,
+                    Back = 1
+                };
+
+                Context->UpdateSubresource(
+                    (ID3D11Resource*)Texture.Handle,
+                    (uint)subresourceIndex,
+                    &region,
+                    (void*)ptr,
+                    (uint)(originalImage.Width * ImageC.PixelSize),
+                    0);
             });
         }
 
         public override ImageC RetrieveTestImage()
         {
             const int mipLevelToRetrieve = 0;
-            Texture2DDescription dx11Description;
-            dx11Description.ArraySize = 1;
-            dx11Description.BindFlags = BindFlags.None;
-            dx11Description.CpuAccessFlags = CpuAccessFlags.Read;
-            dx11Description.Format = SharpDX.DXGI.Format.B8G8R8A8_UNorm;
-            dx11Description.Height = Size.X >> mipLevelToRetrieve;
-            dx11Description.MipLevels = 1;
-            dx11Description.OptionFlags = ResourceOptionFlags.None;
-            dx11Description.SampleDescription = new SharpDX.DXGI.SampleDescription(1, 0);
-            dx11Description.Usage = ResourceUsage.Staging;
-            dx11Description.Width = Size.Y >> mipLevelToRetrieve;
-            using (Texture2D tempTexture = new Texture2D(Context.Device, dx11Description))
+
+            Texture2DDesc dx11Description = new Texture2DDesc
+            {
+                ArraySize = 1,
+                BindFlags = 0,
+                CPUAccessFlags = (uint)CpuAccessFlag.Read,
+                Format = Format.FormatB8G8R8A8Unorm,
+                Height = (uint)(Size.X >> mipLevelToRetrieve),
+                MipLevels = 1,
+                MiscFlags = 0,
+                SampleDesc = new SampleDesc(1, 0),
+                Usage = Usage.Staging,
+                Width = (uint)(Size.Y >> mipLevelToRetrieve)
+            };
+
+            ID3D11Device* pDevice;
+            Context->GetDevice(&pDevice);
+
+            ID3D11Texture2D* pTempTexture = null;
+            SilkMarshal.ThrowHResult(pDevice->CreateTexture2D(&dx11Description, (SubresourceData*)null, &pTempTexture));
+            pDevice->Release();
+
+            try
             {
                 int bytesPerSlice = (Size.X >> mipLevelToRetrieve) * (Size.Y >> mipLevelToRetrieve) * ImageC.PixelSize;
                 byte[] result = new byte[bytesPerSlice * Size.Z];
                 for (int z = 0; z < Size.Z; ++z)
                 {
                     int subresourceIndex = z + mipLevelToRetrieve;
-                    Context.CopySubresourceRegion(Texture, subresourceIndex, null, tempTexture, 0);
-                    DataBox mappedBuffer = Context.MapSubresource(tempTexture, 0, MapMode.Read, MapFlags.None);
+                    Context->CopySubresourceRegion(
+                        (ID3D11Resource*)pTempTexture, 0, 0, 0, 0,
+                        (ID3D11Resource*)Texture.Handle, (uint)subresourceIndex, (Box*)null);
+
+                    MappedSubresource mapped;
+                    SilkMarshal.ThrowHResult(
+                        Context->Map((ID3D11Resource*)pTempTexture, 0, Silk.NET.Direct3D11.Map.Read, 0, &mapped));
                     try
                     {
-                        Marshal.Copy(mappedBuffer.DataPointer, result, bytesPerSlice * z, bytesPerSlice);
+                        Marshal.Copy((IntPtr)mapped.PData, result, bytesPerSlice * z, bytesPerSlice);
                     }
                     finally
                     {
-                        Context.UnmapSubresource(tempTexture, 0);
+                        Context->Unmap((ID3D11Resource*)pTempTexture, 0);
                     }
                 }
                 return ImageC.FromByteArray(result, Size.X >> mipLevelToRetrieve, (Size.Y >> mipLevelToRetrieve) * Size.Z);
+            }
+            finally
+            {
+                pTempTexture->Release();
             }
         }
     }

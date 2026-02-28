@@ -1,4 +1,4 @@
-﻿using SharpDX.Toolkit.Graphics;
+﻿using TombLib.Graphics.Dx11Toolkit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -240,7 +240,7 @@ namespace TombLib.Graphics
             return model.Bones[0];
         }
 
-        public void RenderSkin(GraphicsDevice device, Effect effect, SharpDX.Matrix world, AnimatedModel animSource = null)
+        public void RenderSkin(GraphicsDevice device, Effect effect, Matrix4x4 world, AnimatedModel animSource = null)
         {
             if (Skin == null)
                 return;

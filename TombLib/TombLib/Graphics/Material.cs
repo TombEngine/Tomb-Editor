@@ -1,4 +1,5 @@
-﻿using TombLib.Utils;
+﻿using TombLib.Graphics.Dx11Toolkit;
+using TombLib.Utils;
 
 namespace TombLib.Graphics
 {
@@ -29,7 +30,7 @@ namespace TombLib.Graphics
             Shininess = shininess;
         }
 
-        public void SetStates(SharpDX.Toolkit.Graphics.GraphicsDevice device, bool transparent)
+        public void SetStates(GraphicsDevice device, bool transparent)
         {
             if (transparent && AdditiveBlending)
                 device.SetBlendState(device.BlendStates.Additive);

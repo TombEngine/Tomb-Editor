@@ -1,5 +1,5 @@
 ﻿using NLog;
-using SharpDX.Toolkit.Graphics;
+using TombLib.Graphics.Dx11Toolkit;
 using System;
 using System.IO;
 using System.Reflection;
@@ -45,7 +45,7 @@ namespace TombEditor
             {
                 string errors = "";
 
-                foreach (SharpDX.Toolkit.Diagnostics.LogMessage err in result.Logger.Messages)
+                foreach (string err in result.Logger.Messages)
                     errors += err + Environment.NewLine;
 
                 LogManager.GetCurrentClassLogger().Log(LogLevel.Error, "Could not compile effect '" + name + ".fx'");
@@ -53,7 +53,7 @@ namespace TombEditor
                 return null;
             }
 
-            Effect effect = new Effect(GraphicsDevice, result.EffectData);
+            Effect effect = EffectCompiler.CreateEffect(GraphicsDevice, result);
             return effect;
         }
     }

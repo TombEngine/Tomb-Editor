@@ -1,12 +1,12 @@
-﻿using NLog;
-using SharpDX.Toolkit.Graphics;
+using NLog;
+using TombLib.Graphics.Dx11Toolkit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using TombLib.Utils;
 using TombLib.Wad;
-using Buffer = SharpDX.Toolkit.Graphics.Buffer;
+using Buffer = TombLib.Graphics.Dx11Toolkit.Buffer;
 
 namespace TombLib.Graphics
 {
@@ -31,9 +31,9 @@ namespace TombLib.Graphics
             if (IndexBuffer != null)
                 IndexBuffer.Dispose();
 
-            VertexBuffer = Buffer.Vertex.New(GraphicsDevice, Vertices.ToArray<ObjectVertex>(), SharpDX.Direct3D11.ResourceUsage.Immutable);
+            VertexBuffer = Buffer.Vertex.New(GraphicsDevice, Vertices.ToArray<ObjectVertex>(), ResourceUsage.Immutable);
             InputLayout  = VertexInputLayout.FromBuffer(0, VertexBuffer);
-            IndexBuffer  = Buffer.Index.New(GraphicsDevice, Indices.ToArray(), SharpDX.Direct3D11.ResourceUsage.Immutable);
+            IndexBuffer  = Buffer.Index.New(GraphicsDevice, Indices.ToArray(), ResourceUsage.Immutable);
             if (VertexBuffer == null)
                 logger.Error("Vertex Buffer of Mesh " + Name + " could not be created!");
             if (InputLayout == null)

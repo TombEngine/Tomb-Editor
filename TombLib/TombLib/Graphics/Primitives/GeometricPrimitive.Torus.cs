@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
+// Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -73,9 +73,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using SharpDX;
-using SharpDX.Toolkit.Graphics;
-using Vector2 = SharpDX.Vector2;
+using TombLib.Graphics.Dx11Toolkit;
 
 namespace TombLib.Graphics.Primitives
 {
@@ -115,7 +113,7 @@ namespace TombLib.Graphics.Primitives
                 {
                     float u = (float)i / tessellationOuterRing;
 
-                    float outerAngle = i * MathUtil.TwoPi / tessellationOuterRing - MathUtil.PiOverTwo;
+                    float outerAngle = i * (MathF.PI * 2f) / tessellationOuterRing - (MathF.PI / 2f);
 
                     // Create a transform matrix that will align geometry to
                     // slice perpendicularly though the current ring position.
@@ -126,7 +124,7 @@ namespace TombLib.Graphics.Primitives
                     {
                         float v = 1 - (float)j / tessellationInnerRing;
 
-                        float innerAngle = j * MathUtil.TwoPi / tessellationInnerRing + MathUtil.Pi;
+                        float innerAngle = j * (MathF.PI * 2f) / tessellationInnerRing + MathF.PI;
                         float dx = (float)Math.Cos(innerAngle), dy = (float)Math.Sin(innerAngle);
 
                         // Create a vertex.

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
+// Copyright (c) 2010-2014 SharpDX - Alexandre Mutel
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -71,9 +71,9 @@
 // particular purpose and non-infringement.
 
 using System;
+using System.Numerics;
 using System.Collections.Generic;
-using SharpDX;
-using SharpDX.Toolkit.Graphics;
+using TombLib.Graphics.Dx11Toolkit;
 
 namespace TombLib.Graphics.Primitives
 {

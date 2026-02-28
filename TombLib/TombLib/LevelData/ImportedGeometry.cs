@@ -1,5 +1,5 @@
-﻿using NLog;
-using SharpDX.Toolkit.Graphics;
+using NLog;
+using TombLib.Graphics.Dx11Toolkit;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +11,7 @@ using TombLib.GeometryIO;
 using TombLib.Graphics;
 using TombLib.Utils;
 using TombLib.Wad;
-using Buffer = SharpDX.Toolkit.Graphics.Buffer;
+using Buffer = TombLib.Graphics.Dx11Toolkit.Buffer;
 using Texture = TombLib.Utils.Texture;
 
 namespace TombLib.LevelData
@@ -57,14 +57,14 @@ namespace TombLib.LevelData
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct ImportedGeometryVertex : IVertex
     {
-        [VertexElement("POSITION", 0, SharpDX.DXGI.Format.R32G32B32_Float, 0)]
+        [VertexElement("POSITION", 0, DxgiFormat.R32G32B32_Float, 0)]
         public Vector3 Position;
         //private readonly float _unusedPadding;
-        [VertexElement("TEXCOORD", 0, SharpDX.DXGI.Format.R32G32_Float, 12)]
+        [VertexElement("TEXCOORD", 0, DxgiFormat.R32G32_Float, 12)]
         public Vector2 UV;
-        [VertexElement("COLOR", 0, SharpDX.DXGI.Format.R32G32B32_Float, 20)]
+        [VertexElement("COLOR", 0, DxgiFormat.R32G32B32_Float, 20)]
         public Vector3 Color;
-        [VertexElement("NORMAL", 0, SharpDX.DXGI.Format.R32G32B32_Float, 32)]
+        [VertexElement("NORMAL", 0, DxgiFormat.R32G32B32_Float, 32)]
         public Vector3 Normal;
 
         Vector3 IVertex.Position => Position;
@@ -98,9 +98,9 @@ namespace TombLib.LevelData
             if (IndexBuffer != null)
                 IndexBuffer.Dispose();
 
-            VertexBuffer = Buffer.Vertex.New(GraphicsDevice, Vertices.ToArray(), SharpDX.Direct3D11.ResourceUsage.Immutable);
+            VertexBuffer = Buffer.Vertex.New(GraphicsDevice, Vertices.ToArray(), ResourceUsage.Immutable);
             InputLayout  = VertexInputLayout.FromBuffer(0, VertexBuffer);
-            IndexBuffer  = Buffer.Index.New(GraphicsDevice, Indices.ToArray(), SharpDX.Direct3D11.ResourceUsage.Immutable);
+            IndexBuffer  = Buffer.Index.New(GraphicsDevice, Indices.ToArray(), ResourceUsage.Immutable);
 
             if (VertexBuffer == null)
                 logger.Error("Vertex Buffer of Imported Geometry " + Name + " could not be created!");

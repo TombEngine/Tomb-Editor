@@ -1,4 +1,4 @@
-﻿using SharpDX.Toolkit.Graphics;
+using TombLib.Graphics.Dx11Toolkit;
 using System.Numerics;
 using TombLib.Graphics.Primitives;
 using TombLib.Graphics;
@@ -55,7 +55,7 @@ namespace TombEditor.Controls.Panel3D
 
                 _wadRenderer = new WadRenderer(_legacyDevice, true, true, atlasSize, maxAllocationSize, false);
                 // Initialize vertex buffers
-                _ghostBlockVertexBuffer = SharpDX.Toolkit.Graphics.Buffer.Vertex.New<SolidVertex>(_legacyDevice, 84);
+                _ghostBlockVertexBuffer = TombLib.Graphics.Dx11Toolkit.Buffer.Vertex.New<SolidVertex>(_legacyDevice, 84);
                 _boxVertexBuffer = new BoundingBox(new Vector3(-_littleCubeRadius), new Vector3(_littleCubeRadius)).GetVertexBuffer(_legacyDevice);
 
                 // Maybe I could use this as bounding box, scaling it properly before drawing
@@ -75,12 +75,12 @@ namespace TombEditor.Controls.Panel3D
 
                 // Initialize the rasterizer state for wireframe drawing
                 var renderStateDesc =
-                    new SharpDX.Direct3D11.RasterizerStateDescription
+                    new RasterizerStateDescription
                     {
-                        CullMode = SharpDX.Direct3D11.CullMode.None,
+                        CullMode = CullMode.None,
                         DepthBias = 0,
                         DepthBiasClamp = 0,
-                        FillMode = SharpDX.Direct3D11.FillMode.Wireframe,
+                        FillMode = FillMode.Wireframe,
                         IsAntialiasedLineEnabled = true,
                         IsDepthClipEnabled = true,
                         IsFrontCounterClockwise = false,
@@ -90,10 +90,10 @@ namespace TombEditor.Controls.Panel3D
                     };
                 _rasterizerWireframe = RasterizerState.New(_legacyDevice, renderStateDesc);
 
-                _rasterizerStateDepthBias = RasterizerState.New(_legacyDevice, new SharpDX.Direct3D11.RasterizerStateDescription
+                _rasterizerStateDepthBias = RasterizerState.New(_legacyDevice, new RasterizerStateDescription
                 {
-                    CullMode = SharpDX.Direct3D11.CullMode.Back,
-                    FillMode = SharpDX.Direct3D11.FillMode.Solid,
+                    CullMode = CullMode.Back,
+                    FillMode = FillMode.Solid,
                     DepthBias = -2,
                     SlopeScaledDepthBias = -2
                 });

@@ -1,11 +1,12 @@
-﻿using SharpDX.Direct3D11;
+using Silk.NET.Core.Native;
+using Silk.NET.Direct3D11;
+using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using Buffer = SharpDX.Direct3D11.Buffer;
 
 namespace TombLib.Rendering.DirectX11
 {
-    public class Dx11RenderingStateBuffer : RenderingStateBuffer
+    public unsafe class Dx11RenderingStateBuffer : RenderingStateBuffer
     {
         // Microsoft reference for "Packing Rules for Constant Variables":
         // https://msdn.microsoft.com/en-us/library/windows/desktop/bb509632(v=vs.85).aspx
@@ -29,14 +30,27 @@ namespace TombLib.Rendering.DirectX11
         };
         public static readonly int Size = ((Marshal.SizeOf(typeof(ConstantBufferLayout)) + 15) / 16) * 16;
 
-        public readonly DeviceContext Context;
-        public readonly Buffer ConstantBuffer;
+        public readonly ID3D11DeviceContext* Context;
+        public ComPtr<ID3D11Buffer> ConstantBuffer;
 
         public Dx11RenderingStateBuffer(Dx11RenderingDevice device)
         {
-            Context = device.Context;
-            ConstantBuffer = new Buffer(device.Device, Size, ResourceUsage.Default,
-                BindFlags.ConstantBuffer, CpuAccessFlags.None, ResourceOptionFlags.None, 0);
+            Context = device.Context.Handle;
+
+            BufferDesc desc = new BufferDesc
+            {
+                ByteWidth = (uint)Size,
+                Usage = Usage.Default,
+                BindFlags = (uint)BindFlag.ConstantBuffer,
+                CPUAccessFlags = 0,
+                MiscFlags = 0,
+                StructureByteStride = 0
+            };
+
+            ID3D11Buffer* pBuffer = null;
+            SilkMarshal.ThrowHResult(
+                device.Device.Handle->CreateBuffer(&desc, (SubresourceData*)null, &pBuffer));
+            ConstantBuffer = new ComPtr<ID3D11Buffer>(pBuffer);
         }
 
         public override void Dispose()
@@ -46,15 +60,15 @@ namespace TombLib.Rendering.DirectX11
 
         public override void Set(RenderingState State)
         {
-            ConstantBufferLayout Buffer;
-            Buffer.TransformMatrix = State.TransformMatrix;
-            Buffer.RoomGridLineWidth = State.RoomGridLineWidth;
-            Buffer.RoomGridForce = State.RoomGridForce ? 1 : 0;
-            Buffer.RoomDisableVertexColors = State.RoomDisableVertexColors ? 1 : 0;
-            Buffer.ShowExtraBlendingModes = State.ShowExtraBlendingModes ? 1 : 0;
-            Buffer.ShowLightingWhiteTextureOnly = State.ShowLightingWhiteTextureOnly ? 1 : 0;
-            Buffer.LightMode = State.LightMode;
-            Context.UpdateSubresource(ref Buffer, ConstantBuffer);
+            ConstantBufferLayout buffer;
+            buffer.TransformMatrix = State.TransformMatrix;
+            buffer.RoomGridLineWidth = State.RoomGridLineWidth;
+            buffer.RoomGridForce = State.RoomGridForce ? 1 : 0;
+            buffer.RoomDisableVertexColors = State.RoomDisableVertexColors ? 1 : 0;
+            buffer.ShowExtraBlendingModes = State.ShowExtraBlendingModes ? 1 : 0;
+            buffer.ShowLightingWhiteTextureOnly = State.ShowLightingWhiteTextureOnly ? 1 : 0;
+            buffer.LightMode = State.LightMode;
+            Context->UpdateSubresource((ID3D11Resource*)ConstantBuffer.Handle, 0, (Box*)null, &buffer, 0, 0);
         }
     }
 }

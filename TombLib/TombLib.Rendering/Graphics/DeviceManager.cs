@@ -1,4 +1,4 @@
-﻿using SharpDX.Toolkit.Graphics;
+﻿using TombLib.Graphics.Dx11Toolkit;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +7,7 @@ using TombLib.Rendering;
 
 namespace TombLib.Graphics
 {
-    public class DeviceManager
+    public class DeviceManager : IDisposable
     {
         // to be removed
         public static DeviceManager DefaultDeviceManager = new DeviceManager();
@@ -24,7 +24,9 @@ namespace TombLib.Graphics
 
             // Recreate legacy environment
             {
-                ___LegacyDevice = GraphicsDevice.New(((Rendering.DirectX11.Dx11RenderingDevice)Device).Device);
+                // Bridge: wrap the Silk.NET native device pointer for legacy code
+                var nativePtr = ((Rendering.DirectX11.Dx11RenderingDevice)Device).NativeDevicePointer;
+                ___LegacyDevice = GraphicsDevice.New(nativePtr);
                 LevelData.ImportedGeometry.Device = ___LegacyDevice;
 
                 // Load legacy effects
@@ -48,7 +50,7 @@ namespace TombLib.Graphics
                             errors += err + Environment.NewLine;
                         throw new Exception("Could not compile effect '" + fileName + "'" + Environment.NewLine + errors);
                     }
-                    ___LegacyEffects.Add(effectName, new Effect(___LegacyDevice, effect.EffectData));
+                    ___LegacyEffects.Add(effectName, EffectCompiler.CreateEffect(___LegacyDevice, effect));
                 }
 
                 // Load legacy font
@@ -56,6 +58,24 @@ namespace TombLib.Graphics
                 fontData.DefaultCharacter = '\n'; // Don't crash on uncommon Unicode values
                 ___LegacyFont = SpriteFont.New(___LegacyDevice, fontData);
             }
+        }
+
+        public void Dispose()
+        {
+            foreach (var effect in ___LegacyEffects.Values)
+                effect?.Dispose();
+            ___LegacyEffects.Clear();
+
+            ___LegacyFont?.Dispose();
+            ___LegacyFont = null;
+
+            LevelData.ImportedGeometry.Device = null;
+
+            ___LegacyDevice?.Dispose();
+            ___LegacyDevice = null;
+
+            Device?.Dispose();
+            Device = null;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using SharpDX.Toolkit.Graphics;
+using TombLib.Graphics.Dx11Toolkit;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -30,7 +30,7 @@ namespace TombEditor.Controls.Panel3D
 
             _legacyDevice.SetRasterizerState(_rasterizerWireframe);
             Matrix4x4 model = Matrix4x4.CreateTranslation(_editor.SelectedRoom.WorldPos);
-            effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection).ToSharpDX());
+            effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection));
             effect.Parameters["Color"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 
             if (_drawHeightLine)
@@ -38,7 +38,7 @@ namespace TombEditor.Controls.Panel3D
                 _legacyDevice.SetVertexBuffer(_objectHeightLineVertexBuffer);
                 _legacyDevice.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, _objectHeightLineVertexBuffer));
                 Matrix4x4 model2 = Matrix4x4.CreateTranslation(_editor.SelectedObject.Room.WorldPos);
-                effect.Parameters["ModelViewProjection"].SetValue((model2 * _viewProjection).ToSharpDX());
+                effect.Parameters["ModelViewProjection"].SetValue((model2 * _viewProjection));
                 effect.CurrentTechnique.Passes[0].Apply();
                 _legacyDevice.Draw(PrimitiveType.LineList, 2);
             }
@@ -124,7 +124,7 @@ namespace TombEditor.Controls.Panel3D
             float boxY = room.WorldPos.Y + (room.GetHighestCorner() + room.GetLowestCorner()) / 2.0f;
             float boxZ = room.WorldPos.Z + room.NumZSectors * Level.SectorSizeUnit / 2.0f;
             Matrix4x4 translateMatrix = Matrix4x4.CreateTranslation(new Vector3(boxX, boxY, boxZ));
-            solidEffect.Parameters["ModelViewProjection"].SetValue((scaleMatrix * translateMatrix * _viewProjection).ToSharpDX());
+            solidEffect.Parameters["ModelViewProjection"].SetValue((scaleMatrix * translateMatrix * _viewProjection));
             solidEffect.CurrentTechnique.Passes[0].Apply();
             _legacyDevice.DrawIndexed(PrimitiveType.LineList, _linesCube.IndexBuffer.ElementCount);
         }
@@ -155,7 +155,7 @@ namespace TombEditor.Controls.Panel3D
                                        Matrix4x4.CreateTranslation(frame.BoundingBox.Center) *
                                        mov.RotationPositionMatrix;
 
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((rotPosMatrix * _viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((rotPosMatrix * _viewProjection));
                 }
 
                 if (obj is StaticInstance)
@@ -169,7 +169,7 @@ namespace TombEditor.Controls.Panel3D
                                        Matrix4x4.CreateTranslation(mesh.CollisionBox.Center * stat.Scale) *
                                        stat.RotationPositionMatrix;
 
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((rotPosMatrix * _viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((rotPosMatrix * _viewProjection));
                 }
 
                 if (_highlightedObjects.Contains(obj)) // Selection
@@ -191,7 +191,7 @@ namespace TombEditor.Controls.Panel3D
                 _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullNone);
                 _legacyDevice.SetVertexBuffer(_flybyPathVertexBuffer);
                 _legacyDevice.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, _flybyPathVertexBuffer));
-                effect.Parameters["ModelViewProjection"].SetValue(_viewProjection.ToSharpDX());
+                effect.Parameters["ModelViewProjection"].SetValue(_viewProjection);
                 effect.Parameters["Color"].SetValue(Vector4.One);
                 effect.CurrentTechnique.Passes[0].Apply();
                 _legacyDevice.Draw(PrimitiveType.TriangleList, _flybyPathVertexBuffer.ElementCount);
@@ -438,12 +438,12 @@ namespace TombEditor.Controls.Panel3D
             if (vertices.Count == 0)
                 return;
 
-            using Buffer<SolidVertex> buffer = SharpDX.Toolkit.Graphics.Buffer.Vertex.New(_legacyDevice, vertices.ToArray(), SharpDX.Direct3D11.ResourceUsage.Dynamic);
+            using Buffer<SolidVertex> buffer = TombLib.Graphics.Dx11Toolkit.Buffer.Vertex.New(_legacyDevice, vertices.ToArray(), ResourceUsage.Dynamic);
 
             _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullBack);
             _legacyDevice.SetVertexBuffer(buffer);
             _legacyDevice.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, buffer));
-            effect.Parameters["ModelViewProjection"].SetValue(_viewProjection.ToSharpDX());
+            effect.Parameters["ModelViewProjection"].SetValue(_viewProjection);
             effect.Parameters["Color"].SetValue(Vector4.One);
             effect.CurrentTechnique.Passes[0].Apply();
             _legacyDevice.Draw(PrimitiveType.TriangleList, buffer.ElementCount);
@@ -497,7 +497,7 @@ namespace TombEditor.Controls.Panel3D
                         if (light.Type == LightType.Point || light.Type == LightType.Shadow)
                         {
                             model = Matrix4x4.CreateScale(light.InnerRange * 2.0f) * light.ObjectMatrix;
-                            effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection).ToSharpDX());
+                            effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection));
                             effect.Parameters["Color"].SetValue(new Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 
                             effect.CurrentTechnique.Passes[0].Apply();
@@ -505,7 +505,7 @@ namespace TombEditor.Controls.Panel3D
                         }
 
                         model = Matrix4x4.CreateScale(light.OuterRange * 2.0f) * light.ObjectMatrix;
-                        effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection).ToSharpDX());
+                        effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection));
                         effect.Parameters["Color"].SetValue(new Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 
                         effect.CurrentTechnique.Passes[0].Apply();
@@ -523,7 +523,7 @@ namespace TombEditor.Controls.Panel3D
                         float lenScaleW = light.InnerAngle * (float)(Math.PI / 180) / coneAngle * lenScaleH;
 
                         Matrix4x4 Model = Matrix4x4.CreateScale(lenScaleW, lenScaleW, lenScaleH) * light.ObjectMatrix;
-                        effect.Parameters["ModelViewProjection"].SetValue((Model * _viewProjection).ToSharpDX());
+                        effect.Parameters["ModelViewProjection"].SetValue((Model * _viewProjection));
                         effect.Parameters["Color"].SetValue(new Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 
                         effect.CurrentTechnique.Passes[0].Apply();
@@ -535,7 +535,7 @@ namespace TombEditor.Controls.Panel3D
                         float cutoffScaleW = light.OuterAngle * (float)(Math.PI / 180) / coneAngle * cutoffScaleH;
 
                         Matrix4x4 model2 = Matrix4x4.CreateScale(cutoffScaleW, cutoffScaleW, cutoffScaleH) * light.ObjectMatrix;
-                        effect.Parameters["ModelViewProjection"].SetValue((model2 * _viewProjection).ToSharpDX());
+                        effect.Parameters["ModelViewProjection"].SetValue((model2 * _viewProjection));
                         effect.Parameters["Color"].SetValue(new Vector4(0.0f, 0.0f, 1.0f, 1.0f));
 
                         effect.CurrentTechnique.Passes[0].Apply();
@@ -548,7 +548,7 @@ namespace TombEditor.Controls.Panel3D
                         _legacyDevice.SetIndexBuffer(_cone.IndexBuffer, _cone.IsIndex32Bits);
 
                         Matrix4x4 model = Matrix4x4.CreateScale(0.01f, 0.01f, 1.0f) * light.ObjectMatrix;
-                        effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection).ToSharpDX());
+                        effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection));
                         effect.Parameters["Color"].SetValue(new Vector4(0.0f, 1.0f, 0.0f, 1.0f));
 
                         effect.CurrentTechnique.Passes[0].Apply();
@@ -625,7 +625,7 @@ namespace TombEditor.Controls.Panel3D
                                 currCubeMatrix = instance.ControlMatrixes(floor)[j];
                             currCubeMatrix *= _viewProjection;
 
-                            effect.Parameters["ModelViewProjection"].SetValue(currCubeMatrix.ToSharpDX());
+                            effect.Parameters["ModelViewProjection"].SetValue(currCubeMatrix);
                             effect.Techniques[0].Passes[0].Apply();
                             _legacyDevice.DrawIndexed(PrimitiveType.TriangleList, _littleCube.IndexBuffer.ElementCount);
 
@@ -834,9 +834,9 @@ namespace TombEditor.Controls.Panel3D
 
                 }
 
-                _ghostBlockVertexBuffer.SetData(vtxs);
+                _ghostBlockVertexBuffer.SetData(_legacyDevice, vtxs);
 
-                effect.Parameters["ModelViewProjection"].SetValue(_viewProjection.ToSharpDX());
+                effect.Parameters["ModelViewProjection"].SetValue(_viewProjection);
                 effect.CurrentTechnique.Passes[0].Apply();
                 _legacyDevice.Draw(PrimitiveType.TriangleList, 84);
             }
@@ -981,7 +981,7 @@ namespace TombEditor.Controls.Panel3D
                             effect.Parameters["Color"].SetValue(color);
                         }
 
-                        effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection).ToSharpDX());
+                        effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection));
                         effect.CurrentTechnique.Passes[0].Apply();
 
                         if (shape == VolumeShape.Box && d == 1)
@@ -1375,7 +1375,7 @@ namespace TombEditor.Controls.Panel3D
                             }
                         }
 
-                        effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection).ToSharpDX());
+                        effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection));
                         effect.Parameters["Color"].SetValue(color);
                         effect.CurrentTechnique.Passes[0].Apply();
                         _legacyDevice.DrawIndexed(PrimitiveType.TriangleList, _cone.IndexBuffer.ElementCount);
@@ -1415,9 +1415,9 @@ namespace TombEditor.Controls.Panel3D
             }
 
             if (instance is PositionBasedObjectInstance)
-                effect.Parameters["ModelViewProjection"].SetValue(((instance as PositionBasedObjectInstance).RotationPositionMatrix * _viewProjection).ToSharpDX());
+                effect.Parameters["ModelViewProjection"].SetValue(((instance as PositionBasedObjectInstance).RotationPositionMatrix * _viewProjection));
             else if (instance is GhostBlockInstance)
-                effect.Parameters["ModelViewProjection"].SetValue(((instance as GhostBlockInstance).CenterMatrix(true) * _viewProjection).ToSharpDX());
+                effect.Parameters["ModelViewProjection"].SetValue(((instance as GhostBlockInstance).CenterMatrix(true) * _viewProjection));
 
             effect.Parameters["Color"].SetValue(color);
             effect.Techniques[0].Passes[0].Apply();
@@ -1494,7 +1494,7 @@ namespace TombEditor.Controls.Panel3D
                                   model.AnimationTransforms[i] *
                                   Matrix4x4.CreateTranslation(Camera.GetPosition());
 
-                skinnedModelEffect.Parameters["ModelViewProjection"].SetValue((world * _viewProjection).ToSharpDX());
+                skinnedModelEffect.Parameters["ModelViewProjection"].SetValue((world * _viewProjection));
                 skinnedModelEffect.Techniques[0].Passes[0].Apply();
 
                 foreach (var submesh in mesh.Submeshes)
@@ -1577,7 +1577,7 @@ namespace TombEditor.Controls.Panel3D
                         }
                     }
 
-                    skin.RenderSkin(_legacyDevice, skinnedModelEffect, (instance.ObjectMatrix * _viewProjection).ToSharpDX(), model);
+                    skin.RenderSkin(_legacyDevice, skinnedModelEffect, (instance.ObjectMatrix * _viewProjection), model);
                 }
 
                 for (int i = 0; i < skin.Meshes.Count; i++)
@@ -1621,7 +1621,7 @@ namespace TombEditor.Controls.Panel3D
                         }
 
                         var world = model.AnimationTransforms[i] * instance.ObjectMatrix;
-                        skinnedModelEffect.Parameters["ModelViewProjection"].SetValue((world * _viewProjection).ToSharpDX());
+                        skinnedModelEffect.Parameters["ModelViewProjection"].SetValue((world * _viewProjection));
                         skinnedModelEffect.Techniques[0].Passes[0].Apply();
 
                         foreach (var submesh in mesh.Submeshes)
@@ -1674,7 +1674,7 @@ namespace TombEditor.Controls.Panel3D
                         if (instance.Hidden)
                             continue;
 
-                        geometryEffect.Parameters["ModelViewProjection"].SetValue((instance.ObjectMatrix * _viewProjection).ToSharpDX());
+                        geometryEffect.Parameters["ModelViewProjection"].SetValue((instance.ObjectMatrix * _viewProjection));
 
                         // Tint unselected geometry in blue if it's not pickable, otherwise use normal or selection color
                         if (!disableSelection && _highlightedObjects.Contains(instance))
@@ -1817,7 +1817,7 @@ namespace TombEditor.Controls.Panel3D
                             }
                         }
 
-                        staticMeshEffect.Parameters["ModelViewProjection"].SetValue((instance.ObjectMatrix * _viewProjection).ToSharpDX());
+                        staticMeshEffect.Parameters["ModelViewProjection"].SetValue((instance.ObjectMatrix * _viewProjection));
                         staticMeshEffect.Parameters["AlphaTest"].SetValue(HideTransparentFaces);
                         staticMeshEffect.Parameters["ColoredVertices"].SetValue(_editor.Level.IsTombEngine);
                         staticMeshEffect.Parameters["TextureSampler"].SetResource(BilinearFilter ? _legacyDevice.SamplerStates.AnisotropicWrap : _legacyDevice.SamplerStates.PointWrap);

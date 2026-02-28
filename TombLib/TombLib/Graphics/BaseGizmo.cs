@@ -1,9 +1,9 @@
-﻿using SharpDX.Toolkit.Graphics;
+using TombLib.Graphics.Dx11Toolkit;
 using System;
 using System.Numerics;
 using TombLib.Graphics.Primitives;
 using TombLib.Utils;
-using Buffer = SharpDX.Toolkit.Graphics.Buffer;
+using Buffer = TombLib.Graphics.Dx11Toolkit.Buffer;
 
 namespace TombLib.Graphics
 {
@@ -96,12 +96,12 @@ namespace TombLib.Graphics
             _cone = GeometricPrimitive.Cone.New(_device, 1.0f, 1.3f, 16);
 
             // Create the rasterizer state for wireframe drawing
-            var renderStateDesc = new SharpDX.Direct3D11.RasterizerStateDescription
+            var renderStateDesc = new RasterizerStateDescription
             {
-                CullMode = SharpDX.Direct3D11.CullMode.None,
+                CullMode = CullMode.None,
                 DepthBias = 0,
                 DepthBiasClamp = 0,
-                FillMode = SharpDX.Direct3D11.FillMode.Wireframe,
+                FillMode = FillMode.Wireframe,
                 IsAntialiasedLineEnabled = true,
                 IsDepthClipEnabled = true,
                 IsFrontCounterClockwise = false,
@@ -506,7 +506,7 @@ namespace TombLib.Graphics
                     var model = Matrix4x4.CreateScale(Size * 2.0f) *
                         drawRotateMatrixY *
                         Matrix4x4.CreateTranslation(Position);
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_yAxisColor + (highlight == GizmoMode.RotateY ? _hoveredAddition : new Vector4()));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
                     _device.DrawIndexed(PrimitiveType.TriangleList, _torus.IndexBuffer.ElementCount);
@@ -519,7 +519,7 @@ namespace TombLib.Graphics
                         Matrix4x4.CreateRotationZ((float)Math.PI / 2.0f) *
                         drawRotateMatrixX *
                         Matrix4x4.CreateTranslation(Position);
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_xAxisColor + (highlight == GizmoMode.RotateX ? _hoveredAddition : new Vector4()));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
                     _device.DrawIndexed(PrimitiveType.TriangleList, _torus.IndexBuffer.ElementCount);
@@ -532,7 +532,7 @@ namespace TombLib.Graphics
                         Matrix4x4.CreateRotationX((float)Math.PI / 2.0f) *
                         drawRotateMatrixZ *
                         Matrix4x4.CreateTranslation(Position);
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_zAxisColor + (highlight == GizmoMode.RotateZ ? _hoveredAddition : new Vector4()));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
 
@@ -551,7 +551,7 @@ namespace TombLib.Graphics
                         Matrix4x4.CreateScale(new Vector3(LineThickness * 1.1f, (upside ? -Size : Size) / 2.0f, LineThickness * 1.1f)) *
                         Matrix4x4.CreateRotationZ(-(float)Math.PI / 2.0f) *
                         Matrix4x4.CreateTranslation(Position);
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_xAxisColor + (highlight == GizmoMode.ScaleX ? _hoveredAddition : new Vector4()));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
                     _device.DrawIndexed(PrimitiveType.TriangleList, _cylinder.IndexBuffer.ElementCount);
@@ -562,7 +562,7 @@ namespace TombLib.Graphics
                     var model = Matrix4x4.CreateTranslation(new Vector3(0.0f, 0.5f, 0.0f)) *
                         Matrix4x4.CreateScale(new Vector3(LineThickness * 1.1f, (upside ? -Size : Size) / 2.0f, LineThickness * 1.1f)) *
                         Matrix4x4.CreateTranslation(Position);
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_yAxisColor + (highlight == GizmoMode.ScaleY ? _hoveredAddition : new Vector4()));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
                     _device.DrawIndexed(PrimitiveType.TriangleList, _cylinder.IndexBuffer.ElementCount);
@@ -574,7 +574,7 @@ namespace TombLib.Graphics
                         Matrix4x4.CreateScale(new Vector3(LineThickness * 1.1f, (upside ? -Size : Size) / 2.0f, LineThickness * 1.1f)) *
                         Matrix4x4.CreateRotationX(-(float)Math.PI / 2.0f) *
                         Matrix4x4.CreateTranslation(Position);
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_zAxisColor + (highlight == GizmoMode.ScaleZ ? _hoveredAddition : new Vector4()));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
                     _device.DrawIndexed(PrimitiveType.TriangleList, _cylinder.IndexBuffer.ElementCount);
@@ -586,7 +586,7 @@ namespace TombLib.Graphics
                 {
                     var model = Matrix4x4.CreateScale(ScaleCubeSize) *
                         Matrix4x4.CreateTranslation(Position + Vector3.UnitX * (upside ? -Size : Size) / 2.0f);
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_xAxisColor + (highlight == GizmoMode.ScaleX ? _hoveredAddition : new Vector4()));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
                     _device.DrawIndexed(PrimitiveType.TriangleList, _cube.IndexBuffer.ElementCount);
@@ -596,7 +596,7 @@ namespace TombLib.Graphics
                 {
                     var model = Matrix4x4.CreateScale(ScaleCubeSize) *
                         Matrix4x4.CreateTranslation(Position + Vector3.UnitY * (upside ? -Size : Size) / 2.0f);
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_yAxisColor + (highlight == GizmoMode.ScaleY ? _hoveredAddition : new Vector4()));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
                     _device.DrawIndexed(PrimitiveType.TriangleList, _cube.IndexBuffer.ElementCount);
@@ -606,7 +606,7 @@ namespace TombLib.Graphics
                 {
                     var model = Matrix4x4.CreateScale(ScaleCubeSize) *
                         Matrix4x4.CreateTranslation(Position - Vector3.UnitZ * (upside ? -Size : Size) / 2.0f);
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_zAxisColor + (highlight == GizmoMode.ScaleZ ? _hoveredAddition : new Vector4()));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
                     _device.DrawIndexed(PrimitiveType.TriangleList, _cube.IndexBuffer.ElementCount);
@@ -625,7 +625,7 @@ namespace TombLib.Graphics
                         Matrix4x4.CreateScale(new Vector3(LineThickness, (upside ? -Size : Size) * _arrowHeadOffsetMultiplier, LineThickness)) *
                         Matrix4x4.CreateRotationZ(-(float)Math.PI / 2.0f) *
                         Matrix4x4.CreateTranslation(Position);
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_xAxisColor + (highlight == GizmoMode.TranslateX ? _hoveredAddition : new Vector4()));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
                     _device.DrawIndexed(PrimitiveType.TriangleList, _cylinder.IndexBuffer.ElementCount);
@@ -637,7 +637,7 @@ namespace TombLib.Graphics
                     var model = Matrix4x4.CreateTranslation(new Vector3(0.0f, 0.5f, 0.0f)) *
                         Matrix4x4.CreateScale(new Vector3(LineThickness, (upside ? -Size : Size) * _arrowHeadOffsetMultiplier, LineThickness)) *
                         Matrix4x4.CreateTranslation(Position);
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_yAxisColor + (highlight == GizmoMode.TranslateY ? _hoveredAddition : new Vector4()));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
                     _device.DrawIndexed(PrimitiveType.TriangleList, _cylinder.IndexBuffer.ElementCount);
@@ -650,7 +650,7 @@ namespace TombLib.Graphics
                         Matrix4x4.CreateScale(new Vector3(LineThickness, (upside ? -Size : Size) * _arrowHeadOffsetMultiplier, LineThickness)) *
                         Matrix4x4.CreateRotationX(-(float)Math.PI / 2.0f) *
                         Matrix4x4.CreateTranslation(Position);
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_zAxisColor + (highlight == GizmoMode.TranslateZ ? _hoveredAddition : new Vector4()));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
                     _device.DrawIndexed(PrimitiveType.TriangleList, _cylinder.IndexBuffer.ElementCount);
@@ -664,7 +664,7 @@ namespace TombLib.Graphics
                     var model = Matrix4x4.CreateRotationY((float)(upside ? -Math.PI * 1.5f : -Math.PI * 0.5f)) *
                         Matrix4x4.CreateScale(TranslationConeSize) *
                         Matrix4x4.CreateTranslation(Position + (Vector3.UnitX + new Vector3(0.1f, 0, 0)) * ((upside ? -Size : Size) * _arrowHeadOffsetMultiplier));
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_xAxisColor + (highlight == GizmoMode.TranslateX ? _hoveredAddition : new Vector4()));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
                     _device.DrawIndexed(PrimitiveType.TriangleList, _cone.IndexBuffer.ElementCount);
@@ -676,7 +676,7 @@ namespace TombLib.Graphics
                     var model = Matrix4x4.CreateRotationX((float)(upside ? Math.PI * 1.5f : Math.PI * 0.5f)) *
                         Matrix4x4.CreateScale(TranslationConeSize) *
                         Matrix4x4.CreateTranslation(Position + (Vector3.UnitY + new Vector3(0, 0.1f, 0)) * ((upside ? -Size : Size) * _arrowHeadOffsetMultiplier));
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_yAxisColor + (highlight == GizmoMode.TranslateY ? _hoveredAddition : new Vector4()));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
                     _device.DrawIndexed(PrimitiveType.TriangleList, _cone.IndexBuffer.ElementCount);
@@ -688,7 +688,7 @@ namespace TombLib.Graphics
                     var model = Matrix4x4.CreateRotationY((float)(upside ? Math.PI : 0.0f)) *
                         Matrix4x4.CreateScale(TranslationConeSize) *
                         Matrix4x4.CreateTranslation(Position - (Vector3.UnitZ + new Vector3(0, 0, 0.1f)) * ((upside ? -Size : Size) * _arrowHeadOffsetMultiplier));
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_zAxisColor + (highlight == GizmoMode.TranslateZ ? _hoveredAddition : new Vector4()));
                     solidEffect.CurrentTechnique.Passes[0].Apply();
                     _device.DrawIndexed(PrimitiveType.TriangleList, _cone.IndexBuffer.ElementCount);
@@ -704,7 +704,7 @@ namespace TombLib.Graphics
                 // center cube
                 {
                     var model = Matrix4x4.CreateScale(CentreCubeSize) * Matrix4x4.CreateTranslation(Position);
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(_centerColor);
                     solidEffect.CurrentTechnique.Passes[0].Apply();
 
@@ -784,14 +784,14 @@ namespace TombLib.Graphics
                         _rotationLastMouseRadius / Size * (float)Math.Cos(lastMouseAngle), 0,
                         _rotationLastMouseRadius / Size * (float)-Math.Sin(lastMouseAngle)));
                     rotationHelperGeometry[_rotationTrianglesCount * 3 + 1] = middleVertex;
-                    _rotationHelperGeometry.SetData(rotationHelperGeometry);
+                    _rotationHelperGeometry.SetData(_device, rotationHelperGeometry);
 
                     // Draw
                     _device.SetRasterizerState(_device.RasterizerStates.CullNone);
                     _device.SetVertexBuffer(_rotationHelperGeometry);
                     _device.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, _rotationHelperGeometry));
                     var model = Matrix4x4.CreateScale(Size) * baseMatrix * Matrix4x4.CreateTranslation(Position);
-                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
+                    solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection));
                     solidEffect.Parameters["Color"].SetValue(color * _rotationAlpha);
                     solidEffect.CurrentTechnique.Passes[0].Apply();
                     _device.Draw(PrimitiveType.TriangleList, _rotationTrianglesCount * 3);

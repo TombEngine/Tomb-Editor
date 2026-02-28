@@ -1,5 +1,5 @@
 ﻿using System.Numerics;
-using SharpDX.Toolkit.Graphics;
+using TombLib.Graphics.Dx11Toolkit;
 using TombLib.Graphics;
 using WadTool.Controls;
 using TombLib;

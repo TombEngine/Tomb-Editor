@@ -1,4 +1,4 @@
-﻿using SharpDX.Toolkit.Graphics;
+using TombLib.Graphics.Dx11Toolkit;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -139,13 +139,13 @@ namespace TombLib.Controls
                 ResetCamera();
 
                 // Initialize the rasterizer state for wireframe drawing
-                SharpDX.Direct3D11.RasterizerStateDescription renderStateDesc =
-                    new SharpDX.Direct3D11.RasterizerStateDescription
+                RasterizerStateDescription renderStateDesc =
+                    new RasterizerStateDescription
                     {
-                        CullMode = SharpDX.Direct3D11.CullMode.None,
+                        CullMode = CullMode.None,
                         DepthBias = 0,
                         DepthBiasClamp = 0,
-                        FillMode = SharpDX.Direct3D11.FillMode.Wireframe,
+                        FillMode = FillMode.Wireframe,
                         IsAntialiasedLineEnabled = true,
                         IsDepthClipEnabled = true,
                         IsFrontCounterClockwise = false,
@@ -301,7 +301,7 @@ namespace TombLib.Controls
                 }
 
                 if (model.Skin != null)
-                    model.RenderSkin(_legacyDevice, effect, viewProjection.ToSharpDX());
+                    model.RenderSkin(_legacyDevice, effect, viewProjection);
 
                 for (int i = 0; i < model.Meshes.Count; i++)
                 {
@@ -318,7 +318,7 @@ namespace TombLib.Controls
                     _legacyDevice.SetIndexBuffer(mesh.IndexBuffer, true);
                     _legacyDevice.SetVertexInputLayout(mesh.InputLayout);
 
-                    effect.Parameters["ModelViewProjection"].SetValue((matrices[i] * viewProjection).ToSharpDX());
+                    effect.Parameters["ModelViewProjection"].SetValue((matrices[i] * viewProjection));
 
                     effect.Techniques[0].Passes[0].Apply();
 
@@ -335,7 +335,7 @@ namespace TombLib.Controls
 
                 var effect = DeviceManager.DefaultDeviceManager.___LegacyEffects["Model"];
 
-                effect.Parameters["ModelViewProjection"].SetValue(viewProjection.ToSharpDX());
+                effect.Parameters["ModelViewProjection"].SetValue(viewProjection);
                 effect.Parameters["AlphaTest"].SetValue(DrawTransparency);
                 effect.Parameters["Color"].SetValue(Vector4.One);
                 effect.Parameters["StaticLighting"].SetValue(false); 
@@ -355,7 +355,7 @@ namespace TombLib.Controls
                     _legacyDevice.SetIndexBuffer(mesh.IndexBuffer, true);
                     _legacyDevice.SetVertexInputLayout(mesh.InputLayout);
 
-                    effect.Parameters["ModelViewProjection"].SetValue(viewProjection.ToSharpDX());
+                    effect.Parameters["ModelViewProjection"].SetValue(viewProjection);
                     effect.Techniques[0].Passes[0].Apply();
 
                     foreach (var submesh in mesh.Submeshes)
@@ -409,7 +409,7 @@ namespace TombLib.Controls
                         _legacyDevice.SetIndexBuffer(mesh.IndexBuffer, true);
                         _legacyDevice.SetVertexInputLayout(mesh.InputLayout);
 
-                        effect.Parameters["ModelViewProjection"].SetValue(viewProjection.ToSharpDX());
+                        effect.Parameters["ModelViewProjection"].SetValue(viewProjection);
 
                         foreach (var submesh in mesh.Submeshes)
                         {

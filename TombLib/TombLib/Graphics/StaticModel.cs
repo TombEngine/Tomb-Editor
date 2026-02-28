@@ -1,10 +1,10 @@
-﻿using SharpDX.Toolkit.Graphics;
+﻿using TombLib.Graphics.Dx11Toolkit;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using TombLib.Utils;
 using TombLib.Wad;
-using Buffer = SharpDX.Toolkit.Graphics.Buffer;
+using Buffer = TombLib.Graphics.Dx11Toolkit.Buffer;
 
 namespace TombLib.Graphics
 {
