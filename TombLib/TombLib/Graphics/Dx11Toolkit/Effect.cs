@@ -103,6 +103,7 @@ namespace TombLib.Graphics.Dx11Toolkit
             get
             {
                 if (_parameters.TryGetValue(name, out var p)) return p;
+                System.Diagnostics.Debug.WriteLine($"[Effect] Parameter '{name}' not found in shader. Returning no-op stub.");
                 return new EffectParameter(null); // no-op stub
             }
         }
@@ -244,6 +245,8 @@ namespace TombLib.Graphics.Dx11Toolkit
 
         public CBufferData(ID3D11Device* device, int size, string name)
         {
+            // D3D11 requires constant buffer size to be a multiple of 16 bytes.
+            size = (size + 15) & ~15;
             Data = new byte[size];
             Name = name;
             var desc = new BufferDesc

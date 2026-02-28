@@ -137,12 +137,15 @@ namespace TombLib.Graphics.Dx11Toolkit
 
             internal ShaderReflectionWrapper(void* ptr) { _ptr = ptr; }
 
-            // ID3D11ShaderReflection vtable:
-            //  0-2: IUnknown
+            // ID3D11ShaderReflection vtable (d3d11shader.h):
+            //  0: QueryInterface (IUnknown)
+            //  1: AddRef         (IUnknown)
+            //  2: Release        (IUnknown)
             //  3: GetDesc
             //  4: GetConstantBufferByIndex
             //  5: GetConstantBufferByName
             //  6: GetResourceBindingDesc
+            //  7+: GetInputParameterDesc, GetOutputParameterDesc, etc.
 
             public ShaderDesc GetDesc()
             {
@@ -186,7 +189,10 @@ namespace TombLib.Graphics.Dx11Toolkit
             private readonly void* _ptr;
             internal ConstantBufferReflection(void* ptr) { _ptr = ptr; }
 
-            // vtable: 0=GetDesc, 1=GetVariableByIndex, 2=GetVariableByName
+            // ID3D11ShaderReflectionConstantBuffer vtable (d3d11shader.h):
+            // 0: GetDesc
+            // 1: GetVariableByIndex
+            // 2: GetVariableByName
 
             public ShaderBufferDesc GetDesc()
             {
@@ -211,7 +217,10 @@ namespace TombLib.Graphics.Dx11Toolkit
             private readonly void* _ptr;
             internal VariableReflection(void* ptr) { _ptr = ptr; }
 
-            // vtable: 0=GetDesc, 1=GetType, 2=GetBuffer
+            // ID3D11ShaderReflectionVariable vtable (d3d11shader.h):
+            // 0: GetDesc
+            // 1: GetType
+            // 2: GetBuffer
 
             public ShaderVariableDesc GetDesc()
             {

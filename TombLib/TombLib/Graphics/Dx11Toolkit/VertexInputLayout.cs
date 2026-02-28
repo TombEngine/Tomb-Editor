@@ -100,8 +100,13 @@ namespace TombLib.Graphics.Dx11Toolkit
             return new VertexInputLayout(elements.ToArray());
         }
 
+        /// <summary>
+        /// Fallback heuristic: infers vertex semantics from field types when [VertexElement] attributes are absent.
+        /// This may produce incorrect semantics for complex vertex layouts. Prefer using [VertexElement] attributes.
+        /// </summary>
         private static List<InputElementInfo> BuildFromStructLayout(Type vertexType, int slot)
         {
+            System.Diagnostics.Debug.WriteLine($"[VertexInputLayout] Warning: Type '{vertexType.Name}' has no [VertexElement] attributes. Using fallback struct-layout heuristic.");
             var elements = new List<InputElementInfo>();
             var fields = vertexType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             int offset = 0;

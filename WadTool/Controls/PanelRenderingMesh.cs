@@ -696,6 +696,7 @@ namespace WadTool.Controls
                 solidEffect.CurrentTechnique.Passes[0].Apply();
 
                 _device.Draw(PrimitiveType.LineList, bufferLines.ElementCount);
+                bufferLines.Dispose();
             }
         }
 
@@ -745,7 +746,6 @@ namespace WadTool.Controls
             effect.Parameters["Texture"].SetResource(_wadRenderer.Texture);
             effect.Parameters["TextureSampler"].SetResource(_bilinear ? _device.SamplerStates.AnisotropicWrap : _device.SamplerStates.PointClamp);
             effect.Parameters["AlphaTest"].SetValue(!WireframeMode && AlphaTest);
-            effect.Techniques[0].Passes[0].Apply();
 
             foreach (var mesh_ in mesh.Meshes)
             {
@@ -756,6 +756,7 @@ namespace WadTool.Controls
                 _device.SetIndexBuffer(mesh_.IndexBuffer, true);
                 _layout = VertexInputLayout.FromBuffer(0, mesh_.VertexBuffer);
                 _device.SetVertexInputLayout(_layout);
+                effect.Techniques[0].Passes[0].Apply();
 
                 foreach (var submesh in mesh_.Submeshes)
                 {

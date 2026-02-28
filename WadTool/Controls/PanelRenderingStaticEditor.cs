@@ -335,6 +335,7 @@ namespace WadTool.Controls
                     solidEffect.CurrentTechnique.Passes[0].Apply();
 
                     _device.Draw(PrimitiveType.LineList, bufferLines.ElementCount);
+                    bufferLines.Dispose();
                 }
             }
 

@@ -178,13 +178,12 @@ namespace WadTool.Controls
                     effect.Parameters["StaticLighting"].SetValue(node.Mesh.LightingType != WadMeshLightingType.Normals);
                     effect.Parameters["ColoredVertices"].SetValue(_tool.DestinationWad.GameVersion == TombLib.LevelData.TRVersion.Game.TombEngine);
 
-                    effect.Techniques[0].Passes[0].Apply();
-
                     foreach (var mesh_ in mesh.Meshes)
                     {
                         _device.SetVertexBuffer(0, mesh_.VertexBuffer);
                         _device.SetIndexBuffer(mesh_.IndexBuffer, true);
                         _device.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, mesh_.VertexBuffer));
+                        effect.Techniques[0].Passes[0].Apply();
 
                         foreach (var submesh in mesh_.Submeshes)
                         {

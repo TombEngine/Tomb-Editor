@@ -127,6 +127,9 @@ namespace TombLib.Rendering.DirectX11
             }
             catch (Exception exc)
             {
+                // Clean up Factory on failure — constructor throws, so Dispose() won't be called.
+                Factory.Dispose();
+
                 uint hresult = unchecked((uint)exc.HResult);
                 switch (hresult)
                 {
@@ -545,6 +548,11 @@ namespace TombLib.Rendering.DirectX11
             }
         }
 
+        /// <summary>
+        /// Creates a texture description from a VectorInt3 where the convention is:
+        /// X = page height, Y = page width, Z = array size (page count).
+        /// Note: default pages are square (2048x2048) so the X/Y mapping is interchangeable.
+        /// </summary>
         public Texture2DDesc CreateTextureDescription(VectorInt3 size)
         {
             return new Texture2DDesc
