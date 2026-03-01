@@ -2,8 +2,6 @@ using DarkUI.Controls;
 using DarkUI.Forms;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using TombLib.Forms.ViewModels;
@@ -184,14 +182,6 @@ namespace WadTool
         #endregion
 
         #region Event handlers
-
-        private void panelButtons_Layout(object sender, LayoutEventArgs e)
-        {
-            int y = (panelButtons.Height - butOK.Height) / 2;
-            butCancel.Location = new Point(panelButtons.ClientSize.Width - panelButtons.Padding.Right - butCancel.Width, y);
-            butOK.Location = new Point(butCancel.Left - 6 - butOK.Width, y);
-            butReset.Location = new Point(panelButtons.Padding.Left, y);
-        }
 
         private void butOK_Click(object sender, EventArgs e)
         {
