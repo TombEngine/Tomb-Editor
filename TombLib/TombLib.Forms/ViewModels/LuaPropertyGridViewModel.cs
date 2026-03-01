@@ -46,6 +46,12 @@ namespace TombLib.Forms.ViewModels
         public bool IsEmpty => Properties.Count == 0;
 
         /// <summary>
+        /// Status message displayed when the property grid is empty.
+        /// </summary>
+        [ObservableProperty]
+        private string _statusMessage = "No properties defined for this object type.";
+
+        /// <summary>
         /// The display title for the property grid header.
         /// </summary>
         [ObservableProperty]

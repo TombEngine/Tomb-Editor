@@ -1977,8 +1977,8 @@ namespace TombEditor.Forms
 			luaPropertiesToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
 			luaPropertiesToolStripMenuItem.Name = "luaPropertiesToolStripMenuItem";
 			luaPropertiesToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
-			luaPropertiesToolStripMenuItem.Tag = "ShowLuaProperties";
-			luaPropertiesToolStripMenuItem.Text = "ShowLuaProperties";
+			luaPropertiesToolStripMenuItem.Tag = "ShowItemProperties";
+			luaPropertiesToolStripMenuItem.Text = "ShowItemProperties";
 			// 
 			// statisticsToolStripMenuItem
 			// 

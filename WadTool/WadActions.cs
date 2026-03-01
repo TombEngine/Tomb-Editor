@@ -975,7 +975,7 @@ namespace WadTool
 
             if (!(wadObject is WadMoveable) && !(wadObject is WadStatic))
             {
-                tool.SendMessage("Lua properties are only available for moveables and statics.", PopupType.Info);
+                tool.SendMessage("Item properties are only available for moveables and statics.", PopupType.Info);
                 return;
             }
 

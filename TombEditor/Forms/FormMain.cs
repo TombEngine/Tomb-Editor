@@ -37,7 +37,7 @@ namespace TombEditor.Forms
             new TexturePanel(),
             new ObjectList(),
             new ToolPalette(),
-            new LuaProperties()
+            new ItemProperties()
         };
 
         // Floating tool boxes are placed on 3D view at runtime
@@ -565,7 +565,7 @@ namespace TombEditor.Forms
             lightingToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<Lighting>());
             paletteToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<Palette>());
             texturePanelToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<TexturePanel>());
-            luaPropertiesToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<LuaProperties>());
+            luaPropertiesToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<ItemProperties>());
             dockableToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<ToolPalette>());
         }
 

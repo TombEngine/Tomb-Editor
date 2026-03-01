@@ -57,7 +57,7 @@ namespace WadTool
                 return;
             }
 
-            Text = $"Lua Properties - {objectName} (Slot {typeId})";
+            Text = $"Item Properties - {objectName} (Slot {typeId})";
 
             // Save original state for undo on cancel
             _originalProperties = GetContainer().Clone();
@@ -160,7 +160,7 @@ namespace WadTool
             // Label for when no properties exist
             lblNoProperties = new DarkUI.Controls.DarkLabel
             {
-                Text = "No Lua properties defined for this object type.\n\nAdd property definitions in:\nCatalogs/TEN Property Catalogs/",
+                Text = "No item properties defined for this object type.\n\nAdd property definitions in:\nCatalogs/TEN Property Catalogs/",
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Visible = false,

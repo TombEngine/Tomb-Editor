@@ -11,7 +11,7 @@ using TombLib.Wad;
 
 namespace TombEditor.ToolWindows
 {
-    public partial class LuaProperties : DarkToolWindow
+    public partial class ItemProperties : DarkToolWindow
     {
         private readonly Editor _editor;
 
@@ -23,7 +23,7 @@ namespace TombEditor.ToolWindows
         // Tracked selection
         private ObjectInstance _currentObject;
 
-        public LuaProperties()
+        public ItemProperties()
         {
             InitializeComponent();
 
@@ -79,7 +79,8 @@ namespace TombEditor.ToolWindows
             // Listen for wad/game version changes to update catalog
             if (obj is Editor.LoadedWadsChangedEvent ||
                 obj is Editor.GameVersionChangedEvent ||
-                obj is Editor.LevelChangedEvent)
+                obj is Editor.LevelChangedEvent ||
+                obj is Editor.InitEvent)
             {
                 UpdatePropertyGrid();
             }
@@ -93,7 +94,8 @@ namespace TombEditor.ToolWindows
             if (!_editor.Level.IsTombEngine)
             {
                 _viewModel.Clear();
-                _viewModel.Title = "Lua Properties";
+                _viewModel.Title = "Item Properties";
+                _viewModel.StatusMessage = "Not supported for this engine target.";
                 _currentObject = null;
                 return;
             }
@@ -106,6 +108,7 @@ namespace TombEditor.ToolWindows
 
                 _viewModel.Title = $"Properties: {moveable.ItemType.ToString()}";
                 _viewModel.Load(definitions, moveable.LuaProperties);
+                _viewModel.StatusMessage = "No properties defined for this moveable type.";
             }
             else if (selected is StaticInstance staticObj)
             {
@@ -115,12 +118,14 @@ namespace TombEditor.ToolWindows
 
                 _viewModel.Title = $"Properties: {staticObj.ItemType.ToString()}";
                 _viewModel.Load(definitions, staticObj.LuaProperties);
+                _viewModel.StatusMessage = "No properties defined for this static mesh slot.";
             }
             else
             {
                 _currentObject = null;
                 _viewModel.Clear();
-                _viewModel.Title = "Lua Properties";
+                _viewModel.Title = "Item Properties";
+                _viewModel.StatusMessage = "Select an object to edit properties.";
             }
         }
 

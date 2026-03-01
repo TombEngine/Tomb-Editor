@@ -995,7 +995,7 @@
 			butEditLuaProperties.ImageTransparentColor = System.Drawing.Color.Magenta;
 			butEditLuaProperties.Name = "butEditLuaProperties";
 			butEditLuaProperties.Size = new System.Drawing.Size(115, 24);
-			butEditLuaProperties.Text = "Lua Properties";
+			butEditLuaProperties.Text = "Item Properties";
 			butEditLuaProperties.Click += butEditLuaProperties_Click;
 			// 
 			// contextMenuMoveableItem

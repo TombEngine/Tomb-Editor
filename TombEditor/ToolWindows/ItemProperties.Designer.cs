@@ -1,6 +1,6 @@
 namespace TombEditor.ToolWindows
 {
-    partial class LuaProperties
+    partial class ItemProperties
     {
         /// <summary>
         /// Required designer variable.
@@ -17,11 +17,11 @@ namespace TombEditor.ToolWindows
         {
             this.SuspendLayout();
             // 
-            // LuaProperties
+            // ItemProperties
             // 
-            this.DockText = "Lua Properties";
-            this.Name = "LuaProperties";
-            this.SerializationKey = "LuaProperties";
+            this.DockText = "Item Properties";
+            this.Name = "ItemProperties";
+            this.SerializationKey = "ItemProperties";
             this.Size = new System.Drawing.Size(300, 400);
             this.ResumeLayout(false);
         }

@@ -354,8 +354,8 @@ namespace TombEditor
                         },
                         new DockGroupState
                         {
-                            Contents = new List<string> { "LuaProperties" },
-                            VisibleContent = "LuaProperties",
+                            Contents = new List<string> { "ItemProperties" },
+                            VisibleContent = "ItemProperties",
                             Order = 4,
                             Size = new Size(284,200)
                         }

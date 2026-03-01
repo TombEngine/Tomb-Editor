@@ -274,7 +274,7 @@
 
         <!-- Empty state message -->
         <TextBlock Grid.Row="0" Grid.RowSpan="2"
-                   Text="No properties defined for this object type."
+                   Text="{Binding StatusMessage}"
                    Foreground="{DynamicResource Brush_Border_High}"
                    HorizontalAlignment="Center" VerticalAlignment="Center"
                    Margin="8"
