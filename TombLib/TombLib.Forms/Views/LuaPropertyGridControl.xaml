@@ -196,11 +196,12 @@
             </Grid>
         </DataTemplate>
 
-        <!-- Enum editor: ComboBox with named entries; value stored as 1-based integer -->
+        <!-- Enum editor: ComboBox with named entries; value stored as 0-based integer -->
         <DataTemplate x:Key="EnumTemplate" DataType="{x:Type vm:LuaPropertyRowViewModel}">
             <ComboBox ItemsSource="{Binding EnumValues}"
                       SelectedIndex="{Binding EnumIndex, Mode=TwoWay}"
-                      HorizontalAlignment="Stretch" />
+                      HorizontalAlignment="Stretch"
+                      PreviewMouseWheel="ComboBox_PreviewMouseWheel" />
         </DataTemplate>
 
         <!-- Template selector for the value column -->

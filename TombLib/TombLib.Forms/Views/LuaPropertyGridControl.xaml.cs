@@ -85,6 +85,21 @@ namespace TombLib.Forms.Views
         }
 
         /// <summary>
+        /// Handles mousewheel on ComboBox to scroll through values on hover,
+        /// similar to the WinForms DarkComboBox behavior.
+        /// </summary>
+        private void ComboBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (sender is ComboBox comboBox && comboBox.Items.Count > 0)
+            {
+                int newIndex = comboBox.SelectedIndex + (e.Delta > 0 ? -1 : 1);
+                newIndex = Math.Max(0, Math.Min(newIndex, comboBox.Items.Count - 1));
+                comboBox.SelectedIndex = newIndex;
+                e.Handled = true;
+            }
+        }
+
+        /// <summary>
         /// Handles double-click on the property name label.
         /// Resets the property value to its default.
         /// </summary>
