@@ -1054,7 +1054,7 @@
 			itemPropertiesMoveableToolStripMenuItem.Image = Properties.Resources.edit_16;
 			itemPropertiesMoveableToolStripMenuItem.Name = "itemPropertiesMoveableToolStripMenuItem";
 			itemPropertiesMoveableToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
-			itemPropertiesMoveableToolStripMenuItem.Text = "Item properties...";
+			itemPropertiesMoveableToolStripMenuItem.Text = "Edit properties...";
 			itemPropertiesMoveableToolStripMenuItem.Click += butEditLuaProperties_Click;
 			// 
 			// toolStripMenuItem6
@@ -1119,7 +1119,7 @@
 			itemPropertiesStaticToolStripMenuItem.Image = Properties.Resources.edit_16;
 			itemPropertiesStaticToolStripMenuItem.Name = "itemPropertiesStaticToolStripMenuItem";
 			itemPropertiesStaticToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
-			itemPropertiesStaticToolStripMenuItem.Text = "Item properties...";
+			itemPropertiesStaticToolStripMenuItem.Text = "Edit properties...";
 			itemPropertiesStaticToolStripMenuItem.Click += butEditLuaProperties_Click;
 			// 
 			// toolStripMenuItem4
