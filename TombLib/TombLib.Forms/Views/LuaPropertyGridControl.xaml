@@ -240,6 +240,30 @@
             <Setter Property="Margin" Value="2,1" />
             <Setter Property="MinHeight" Value="24" />
         </Style>
+
+        <!-- System-styled tooltip (overrides DarkUI.WPF implicit ToolTip style) -->
+        <Style x:Key="SystemToolTipStyle" TargetType="ToolTip">
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.InfoTextColor}}" />
+			<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.InfoTextBrushKey}}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.WindowFrameBrushKey}}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="4,2" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToolTip">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                TextElement.Foreground="{TemplateBinding Foreground}">
+                            <TextBlock Text="{TemplateBinding Content}"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       TextWrapping="Wrap" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <Grid>
@@ -273,7 +297,11 @@
                                 <ItemsControl ItemsSource="{Binding}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate DataType="{x:Type vm:LuaPropertyRowViewModel}">
-                                            <Grid Margin="2" ToolTip="{Binding ToolTip}">
+                                            <Grid Margin="2">
+                                                <Grid.ToolTip>
+                                                    <ToolTip Style="{StaticResource SystemToolTipStyle}"
+                                                             Content="{Binding ToolTip}" />
+                                                </Grid.ToolTip>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="0.4*" MinWidth="80" />
                                                     <ColumnDefinition Width="0.6*" MinWidth="100" />
