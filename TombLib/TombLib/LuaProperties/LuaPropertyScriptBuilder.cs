@@ -117,7 +117,7 @@ namespace TombLib.LuaProperties
             int propertyCount = 0;
             var sb = new StringBuilder();
 
-            sb.AppendLine("-- Auto-generated property assignments (Tomb Editor)");
+            sb.AppendLine("-- Auto-generated property assignment script");
             sb.AppendLine();
             sb.AppendLine("-- Level 1: Global object type properties");
             sb.AppendLine();
