@@ -326,10 +326,51 @@ namespace TombLib.LuaProperties
             if (bool.TryParse(hasAlphaStr, out var hasAlpha))
                 definition.HasAlpha = hasAlpha;
 
+            // Optional: enum entries (only meaningful for Enum type)
+            if (propertyType == LuaPropertyType.Enum)
+            {
+                var entriesAttr = propNode.Attributes?["entries"]?.Value?.Trim() ?? string.Empty;
+                if (!string.IsNullOrEmpty(entriesAttr))
+                {
+                    definition.EnumValues = entriesAttr.Split(',')
+                        .Select(e => e.Trim())
+                        .Where(e => !string.IsNullOrEmpty(e))
+                        .ToList();
+                }
+                else
+                {
+                    foreach (XmlNode entryNode in propNode.SelectNodes("entry"))
+                    {
+                        var entryVal = (entryNode.Attributes?["value"]?.Value
+                                     ?? entryNode.Attributes?["name"]?.Value)?.Trim()
+                                     ?? string.Empty;
+                        if (!string.IsNullOrEmpty(entryVal))
+                            definition.EnumValues.Add(entryVal);
+                    }
+                }
+
+                if (definition.EnumValues.Count == 0)
+                    logger.Warn("Enum property '{0}' has no entries defined in {1}", definition.InternalName, filePath);
+            }
+
             // Optional: default value (accept both "defaultValue" and "default" attribute names)
             var defaultStr = (propNode.Attributes?["defaultValue"]?.Value
                           ?? propNode.Attributes?["default"]?.Value)?.Trim()
                           ?? string.Empty;
+
+            // For Enum: allow the default to be an entry name; convert to 0-based integer
+            if (propertyType == LuaPropertyType.Enum && !string.IsNullOrEmpty(defaultStr))
+            {
+                if (!int.TryParse(defaultStr, System.Globalization.NumberStyles.Integer,
+                                  System.Globalization.CultureInfo.InvariantCulture, out _))
+                {
+                    int nameIdx = definition.EnumValues.FindIndex(
+                        e => string.Equals(e, defaultStr, StringComparison.OrdinalIgnoreCase));
+                    defaultStr = nameIdx >= 0
+                        ? LuaValueParser.BoxInt(nameIdx)
+                        : string.Empty; // fall through to type default below
+                }
+            }
             if (!string.IsNullOrEmpty(defaultStr))
             {
                 if (LuaValueParser.ValidateBoxedValue(propertyType, defaultStr))

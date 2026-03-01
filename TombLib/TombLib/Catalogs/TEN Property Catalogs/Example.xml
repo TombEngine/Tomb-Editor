@@ -11,7 +11,7 @@
     - Range:   id="73-80"
     - Mixed:   id="0-5,73,100-105"
   
-  Supported types: Bool, Int, Float, String, Vec2, Vec3, Rotation, Color, Time
+  Supported types: Bool, Int, Float, String, Vec2, Vec3, Rotation, Color, Time, Enum
   
   Values use Lua literal syntax (e.g. "true", "42", "1.5"):
     - Bool:     "true" or "false"
@@ -23,13 +23,16 @@
     - Rotation: "0, 0, 0"     (three angles in degrees, clamped to 0-360)
     - Color:    "255, 0, 0"   (three 0-255 ints, or four with alpha)
     - Time:     "0, 0, 0, 0"  (hours, minutes, seconds, centiseconds)
+    - Enum:     "0"           (0-based index; use entry name as defaultValue for readability)
     
   Properties defined here appear in the WadTool property grid for global (Level 1) 
   editing and in TombEditor for per-instance (Level 2) editing.
+  
+  See README.md in this folder for a full attribute reference.
 -->
 <propertyCatalog>
   <!-- Example: Baddy1 (moveable ID 73 in TombEngine slot list) -->
-  <moveable id="73">
+  <moveable id="174">
     <property internalName="health"
               displayName="Health"
               type="Int"
@@ -50,6 +53,16 @@
               defaultValue="false"
               category="Combat"
               description="If true, the enemy cannot be killed." />
+
+    <!-- Enum via compact 'entries' attribute.
+         Values compile as 0-based integers: Normal=0, Aggressive=1, Passive=2 -->
+    <property internalName="behavior"
+              displayName="Behavior"
+              type="Enum"
+              entries="Normal, Aggressive, Passive"
+              defaultValue="Normal"
+              category="Combat"
+              description="Default AI behavior mode for this enemy." />
 
     <property internalName="tintColor"
               displayName="Tint Color"
@@ -74,5 +87,19 @@
               defaultValue="0, 10, 0"
               category="Animation"
               description="Maximum rotation offset in each axis for sway effect." />
+
+    <!-- Enum via child <entry> nodes (alternative to 'entries' attribute).
+         Values compile as 0-based integers: None=0, Low=1, Medium=2, High=3 -->
+    <property internalName="priority"
+              displayName="Priority"
+              type="Enum"
+              defaultValue="Medium"
+              category="Animation"
+              description="Processing priority for this static object's update tick.">
+      <entry value="None" />
+      <entry value="Low" />
+      <entry value="Medium" />
+      <entry value="High" />
+    </property>
   </static>
 </propertyCatalog>

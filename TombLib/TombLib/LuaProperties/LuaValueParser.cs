@@ -366,6 +366,10 @@ namespace TombLib.LuaProperties
                             return BoxTime(t[0], t[1], t[2], t[3]);
                         return BoxTime(0, 0, 0, 0);
 
+                    case LuaPropertyType.Enum:
+                        // Enum values are stored as 0-based integers.
+                        return BoxInt(value is int enumVal ? enumVal : 0);
+
                     default:
                         logger.Warn("BoxByType: Unknown property type {0}", type);
                         return string.Empty;
@@ -385,15 +389,16 @@ namespace TombLib.LuaProperties
         {
             switch (type)
             {
-                case LuaPropertyType.Bool: return BoxBool(false);
-                case LuaPropertyType.Int: return BoxInt(0);
-                case LuaPropertyType.Float: return BoxFloat(0);
-                case LuaPropertyType.String: return BoxString(string.Empty);
-                case LuaPropertyType.Vec2: return BoxVec2(0, 0);
-                case LuaPropertyType.Vec3: return BoxVec3(0, 0, 0);
+                case LuaPropertyType.Bool:     return BoxBool(false);
+                case LuaPropertyType.Int:      return BoxInt(0);
+                case LuaPropertyType.Float:    return BoxFloat(0);
+                case LuaPropertyType.String:   return BoxString(string.Empty);
+                case LuaPropertyType.Vec2:     return BoxVec2(0, 0);
+                case LuaPropertyType.Vec3:     return BoxVec3(0, 0, 0);
                 case LuaPropertyType.Rotation: return BoxRotation(0, 0, 0);
-                case LuaPropertyType.Color: return BoxColor(0, 0, 0);
-                case LuaPropertyType.Time: return BoxTime(0, 0, 0, 0);
+                case LuaPropertyType.Color:    return BoxColor(0, 0, 0);
+                case LuaPropertyType.Time:     return BoxTime(0, 0, 0, 0);
+                case LuaPropertyType.Enum:     return BoxInt(0);
                 default: return string.Empty;
             }
         }
@@ -440,6 +445,9 @@ namespace TombLib.LuaProperties
 
                     case LuaPropertyType.Time:
                         return boxedValue.StartsWith(LuaSyntax.TimeTypePrefix);
+
+                    case LuaPropertyType.Enum:
+                        return int.TryParse(boxedValue.Trim(), NumberStyles.Integer, Inv, out int enumIndex) && enumIndex >= 0;
 
                     default:
                         return false;

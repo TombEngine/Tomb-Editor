@@ -2,6 +2,7 @@
 // Manages the binding between a LuaPropertyDefinition and its current boxed value.
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TombLib.LuaProperties;
@@ -203,6 +204,27 @@ namespace TombLib.Forms.ViewModels
             set { var t = LuaValueParser.UnboxTime(_boxedValue); BoxedValue = LuaValueParser.BoxTime(t[0], t[1], t[2], value); }
         }
 
+        // --- Enum ---
+        /// <summary>
+        /// Ordered list of entry names for this Enum property (forwarded from the definition).
+        /// Index 0 maps to Lua integer value 0.
+        /// </summary>
+        public IReadOnlyList<string> EnumValues => Definition.EnumValues;
+
+        /// <summary>
+        /// 0-based selected index for ComboBox binding.
+        /// Stored directly as a 0-based integer in <see cref="BoxedValue"/>.
+        /// </summary>
+        public int EnumIndex
+        {
+            get
+            {
+                int idx = LuaValueParser.UnboxInt(_boxedValue);
+                return Math.Max(0, Math.Min(idx, Definition.EnumValues.Count - 1));
+            }
+            set => BoxedValue = LuaValueParser.BoxInt(Math.Max(0, value));
+        }
+
         #endregion
 
         public LuaPropertyRowViewModel(LuaPropertyDefinition definition, string initialBoxedValue = null)
@@ -270,6 +292,9 @@ namespace TombLib.Forms.ViewModels
                     OnPropertyChanged(nameof(TimeMinutes));
                     OnPropertyChanged(nameof(TimeSeconds));
                     OnPropertyChanged(nameof(TimeCentiseconds));
+                    break;
+                case LuaPropertyType.Enum:
+                    OnPropertyChanged(nameof(EnumIndex));
                     break;
             }
         }

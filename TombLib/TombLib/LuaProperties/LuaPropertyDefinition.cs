@@ -2,6 +2,8 @@
 // Used to describe what properties are available for a given object type and
 // to provide metadata for the property grid UI (name, description, type, default).
 
+using System.Collections.Generic;
+
 namespace TombLib.LuaProperties
 {
     /// <summary>
@@ -52,6 +54,13 @@ namespace TombLib.LuaProperties
         /// Controlled by the "hasAlpha" attribute in XML catalogs.
         /// </summary>
         public bool HasAlpha { get; set; } = false;
+
+        /// <summary>
+        /// For Enum properties: the ordered list of entry names.
+        /// Index 0 corresponds to Lua integer value 0, index 1 to 1, etc.
+        /// Populated from the <c>entries</c> XML attribute or child &lt;entry&gt; nodes.
+        /// </summary>
+        public List<string> EnumValues { get; set; } = new List<string>();
 
         /// <summary>
         /// Returns true if the definition has all required fields filled in.

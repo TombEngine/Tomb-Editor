@@ -196,6 +196,13 @@
             </Grid>
         </DataTemplate>
 
+        <!-- Enum editor: ComboBox with named entries; value stored as 1-based integer -->
+        <DataTemplate x:Key="EnumTemplate" DataType="{x:Type vm:LuaPropertyRowViewModel}">
+            <ComboBox ItemsSource="{Binding EnumValues}"
+                      SelectedIndex="{Binding EnumIndex, Mode=TwoWay}"
+                      HorizontalAlignment="Stretch" />
+        </DataTemplate>
+
         <!-- Template selector for the value column -->
         <local:LuaPropertyEditorTemplateSelector x:Key="EditorTemplateSelector"
             BoolTemplate="{StaticResource BoolTemplate}"
@@ -206,7 +213,8 @@
             Vec3Template="{StaticResource Vec3Template}"
             RotationTemplate="{StaticResource RotationTemplate}"
             ColorTemplate="{StaticResource ColorTemplate}"
-            TimeTemplate="{StaticResource TimeTemplate}" />
+            TimeTemplate="{StaticResource TimeTemplate}"
+            EnumTemplate="{StaticResource EnumTemplate}" />
 
         <!-- Style for category group header text -->
         <Style x:Key="CategoryHeaderTextStyle" TargetType="TextBlock">

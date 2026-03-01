@@ -23,6 +23,7 @@ namespace TombLib.Forms.Views
         public DataTemplate RotationTemplate { get; set; }
         public DataTemplate ColorTemplate { get; set; }
         public DataTemplate TimeTemplate { get; set; }
+        public DataTemplate EnumTemplate { get; set; }
 
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
@@ -30,15 +31,16 @@ namespace TombLib.Forms.Views
             {
                 switch (row.PropertyType)
                 {
-                    case LuaPropertyType.Bool: return BoolTemplate;
-                    case LuaPropertyType.Int: return IntTemplate;
-                    case LuaPropertyType.Float: return FloatTemplate;
-                    case LuaPropertyType.String: return StringTemplate;
-                    case LuaPropertyType.Vec2: return Vec2Template;
-                    case LuaPropertyType.Vec3: return Vec3Template;
+                    case LuaPropertyType.Bool:     return BoolTemplate;
+                    case LuaPropertyType.Int:      return IntTemplate;
+                    case LuaPropertyType.Float:    return FloatTemplate;
+                    case LuaPropertyType.String:   return StringTemplate;
+                    case LuaPropertyType.Vec2:     return Vec2Template;
+                    case LuaPropertyType.Vec3:     return Vec3Template;
                     case LuaPropertyType.Rotation: return RotationTemplate;
-                    case LuaPropertyType.Color: return ColorTemplate;
-                    case LuaPropertyType.Time: return TimeTemplate;
+                    case LuaPropertyType.Color:    return ColorTemplate;
+                    case LuaPropertyType.Time:     return TimeTemplate;
+                    case LuaPropertyType.Enum:     return EnumTemplate;
                 }
             }
 

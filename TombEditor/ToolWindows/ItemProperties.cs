@@ -125,7 +125,7 @@ namespace TombEditor.ToolWindows
                 _currentObject = null;
                 _viewModel.Clear();
                 _viewModel.Title = "Item Properties";
-                _viewModel.StatusMessage = "Select an object to edit properties.";
+                _viewModel.StatusMessage = "Select a valid object to edit properties.";
             }
         }
 
