@@ -619,8 +619,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
             _luaPropertyScript = LuaPropertyScriptBuilder.BuildFullPropertyScript(
                 globalMoveableProps, globalStaticProps,
                 instanceMoveableProps, instanceStaticProps);
-
-            ReportProgress(45, "Built Lua property script (" + _luaPropertyScript.Length + " chars)");
         }
 
         public bool CheckTombEngineVersion()
