@@ -65,6 +65,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         private readonly List<TombEngineItem> _items = new List<TombEngineItem>();
         private List<TombEngineAiItem> _aiItems = new List<TombEngineAiItem>();
+        private KeyValuePair<int, string> _luaPropertyScriptBlob = new KeyValuePair<int, string>();
 
         private TombEngineTexInfoManager _textureInfoManager;
 
@@ -545,21 +546,15 @@ namespace TombLib.LevelData.Compilers.TombEngine
             });
         }
 
-        /// <summary>
-        /// Collects all Level 1 (global/wad) and Level 2 (per-instance) Lua properties
-        /// and writes them to a Lua script file alongside the compiled level.
-        /// The script is placed in Scripts/Engine/ and named after the level file.
-        /// </summary>
-        private string _luaPropertyScript = string.Empty;
-
         private void BuildLuaPropertyScript()
         {
             var gameVersion = _level.Settings.GameVersion;
 
-            // Collect Level 1 properties: global per-object-type from wad2 files
             var globalMoveableProps = new Dictionary<string, LuaPropertyContainer>();
             var globalStaticProps = new Dictionary<uint, LuaPropertyContainer>();
 
+            // Level 1: Global properties.
+
             foreach (var wadRef in _level.Settings.Wads)
             {
                 if (wadRef.Wad == null)
@@ -567,34 +562,19 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                 foreach (var mov in wadRef.Wad.Moveables)
                 {
-                    if (mov.Value.LuaProperties == null || !mov.Value.LuaProperties.HasProperties)
+                    string slotName = TrCatalog.GetMoveableName(gameVersion, mov.Key.TypeId);
+                    if (string.IsNullOrEmpty(slotName))
                         continue;
 
-                    string slotName = TrCatalog.GetMoveableName(gameVersion, mov.Key.TypeId);
-                    if (!string.IsNullOrEmpty(slotName))
+                    // 1) Prefer properties from wad2.
+                    if (mov.Value.LuaProperties != null && mov.Value.LuaProperties.HasProperties)
+                    {
                         globalMoveableProps[slotName] = mov.Value.LuaProperties;
-                }
-
-                foreach (var stat in wadRef.Wad.Statics)
-                {
-                    if (stat.Value.LuaProperties == null || !stat.Value.LuaProperties.HasProperties)
                         continue;
+                    }
 
-                    globalStaticProps[stat.Key.TypeId] = stat.Value.LuaProperties;
-                }
-            }
-
-            // Fall back to XML catalog defaults for object types that don't have
-            // global properties in wad2 (e.g. older wad2 files without property data).
-            foreach (var wadRef in _level.Settings.Wads)
-            {
-                if (wadRef.Wad == null)
-                    continue;
-
-                foreach (var mov in wadRef.Wad.Moveables)
-                {
-                    string slotName = TrCatalog.GetMoveableName(gameVersion, mov.Key.TypeId);
-                    if (string.IsNullOrEmpty(slotName) || globalMoveableProps.ContainsKey(slotName))
+                    // 2) Fallback to catalog defaults (only if not already defined).
+                    if (globalMoveableProps.ContainsKey(slotName))
                         continue;
 
                     var definitions = LuaPropertyCatalog.GetDefinitions(LuaPropertyObjectKind.Moveable, mov.Key.TypeId);
@@ -604,26 +584,40 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     var container = new LuaPropertyContainer();
                     foreach (var def in definitions)
                         container.SetValue(def.InternalName, def.DefaultValue);
+
                     globalMoveableProps[slotName] = container;
                 }
 
                 foreach (var stat in wadRef.Wad.Statics)
                 {
-                    if (globalStaticProps.ContainsKey(stat.Key.TypeId))
+                    uint typeId = stat.Key.TypeId;
+
+                    // 1) Prefer properties from wad2.
+                    if (stat.Value.LuaProperties != null && stat.Value.LuaProperties.HasProperties)
+                    {
+                        globalStaticProps[typeId] = stat.Value.LuaProperties;
+                        continue;
+                    }
+
+                    // 2) Fallback to catalog defaults (only if not already defined).
+                    if (globalStaticProps.ContainsKey(typeId))
                         continue;
 
-                    var definitions = LuaPropertyCatalog.GetDefinitions(LuaPropertyObjectKind.Static, stat.Key.TypeId);
+                    var definitions = LuaPropertyCatalog.GetDefinitions(LuaPropertyObjectKind.Static, typeId);
+
                     if (definitions.Count == 0)
                         continue;
 
                     var container = new LuaPropertyContainer();
                     foreach (var def in definitions)
                         container.SetValue(def.InternalName, def.DefaultValue);
-                    globalStaticProps[stat.Key.TypeId] = container;
+
+                    globalStaticProps[typeId] = container;
                 }
             }
 
-            // Collect Level 2 properties: per-instance from rooms
+            // Level 2: Instance properties.
+
             var instanceMoveableProps = new Dictionary<string, LuaPropertyContainer>();
             var instanceStaticProps = new Dictionary<string, LuaPropertyContainer>();
 
@@ -631,31 +625,27 @@ namespace TombLib.LevelData.Compilers.TombEngine
             {
                 foreach (var obj in room.Objects)
                 {
-                    if (obj is MoveableInstance mov && mov.LuaProperties != null && mov.LuaProperties.HasProperties)
+                    if (obj is MoveableInstance mov && mov.LuaProperties?.HasProperties == true && !string.IsNullOrEmpty(mov.LuaName))
                     {
-                        if (!string.IsNullOrEmpty(mov.LuaName))
-                            instanceMoveableProps[mov.LuaName] = mov.LuaProperties;
+                        instanceMoveableProps[mov.LuaName] = mov.LuaProperties;
                     }
-                    else if (obj is StaticInstance stat && stat.LuaProperties != null && stat.LuaProperties.HasProperties)
+                    else if (obj is StaticInstance stat && stat.LuaProperties?.HasProperties == true && !string.IsNullOrEmpty(stat.LuaName))
                     {
-                        if (!string.IsNullOrEmpty(stat.LuaName))
-                            instanceStaticProps[stat.LuaName] = stat.LuaProperties;
+                        instanceStaticProps[stat.LuaName] = stat.LuaProperties;
                     }
                 }
             }
 
-            // Only build the script if there are any properties
             bool hasAnyProperties = globalMoveableProps.Count > 0 || globalStaticProps.Count > 0 ||
                                     instanceMoveableProps.Count > 0 || instanceStaticProps.Count > 0;
 
             if (!hasAnyProperties)
             {
-                _luaPropertyScript = string.Empty;
+                _luaPropertyScriptBlob = new KeyValuePair<int, string>();
                 return;
             }
 
-            // Generate the Lua script text (will be embedded in the level file)
-            _luaPropertyScript = LuaPropertyScriptBuilder.BuildFullPropertyScript(
+            _luaPropertyScriptBlob = LuaPropertyScriptBuilder.BuildFullPropertyScript(
                 globalMoveableProps, globalStaticProps,
                 instanceMoveableProps, instanceStaticProps);
         }

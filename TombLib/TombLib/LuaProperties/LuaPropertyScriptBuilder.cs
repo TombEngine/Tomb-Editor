@@ -108,15 +108,19 @@ namespace TombLib.LuaProperties
         /// <param name="globalStaticProperties">Level 1 static properties: slot ID → container.</param>
         /// <param name="instanceMoveableProperties">Level 2 moveable properties: lua name → container.</param>
         /// <param name="instanceStaticProperties">Level 2 static properties: lua name → container.</param>
-        public static string BuildFullPropertyScript(
+        public static KeyValuePair<int, string> BuildFullPropertyScript(
             Dictionary<string, LuaPropertyContainer> globalMoveableProperties,
-            Dictionary<uint, LuaPropertyContainer> globalStaticProperties,
+            Dictionary<uint, LuaPropertyContainer>   globalStaticProperties,
             Dictionary<string, LuaPropertyContainer> instanceMoveableProperties,
             Dictionary<string, LuaPropertyContainer> instanceStaticProperties)
         {
+            int propertyCount = 0;
             var sb = new StringBuilder();
+
             sb.AppendLine("-- Auto-generated property assignments (Tomb Editor)");
+            sb.AppendLine();
             sb.AppendLine("-- Level 1: Global object type properties");
+            sb.AppendLine();
 
             // Level 1: Global Moveable properties
             if (globalMoveableProperties != null)
@@ -126,6 +130,7 @@ namespace TombLib.LuaProperties
                     foreach (var prop in kvp.Value.GetAll())
                     {
                         sb.AppendLine(BuildGlobalMoveableProperty(kvp.Key, prop.Key, prop.Value));
+                        propertyCount++;
                     }
                 }
             }
@@ -138,12 +143,14 @@ namespace TombLib.LuaProperties
                     foreach (var prop in kvp.Value.GetAll())
                     {
                         sb.AppendLine(BuildGlobalStaticProperty(kvp.Key, prop.Key, prop.Value));
+                        propertyCount++;
                     }
                 }
             }
 
             sb.AppendLine();
             sb.AppendLine("-- Level 2: Instance properties");
+            sb.AppendLine();
 
             // Level 2: Instance Moveable properties
             if (instanceMoveableProperties != null)
@@ -156,6 +163,7 @@ namespace TombLib.LuaProperties
                     foreach (var prop in kvp.Value.GetAll())
                     {
                         sb.AppendLine(BuildInstanceMoveableProperty(kvp.Key, prop.Key, prop.Value));
+                        propertyCount++;
                     }
                 }
             }
@@ -171,11 +179,12 @@ namespace TombLib.LuaProperties
                     foreach (var prop in kvp.Value.GetAll())
                     {
                         sb.AppendLine(BuildInstanceStaticProperty(kvp.Key, prop.Key, prop.Value));
+                        propertyCount++;
                     }
                 }
             }
 
-            return sb.ToString();
+            return new KeyValuePair<int, string>(propertyCount, sb.ToString());
         }
     }
 }
