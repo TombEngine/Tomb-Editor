@@ -99,6 +99,7 @@
 			butEditSkeleton = new System.Windows.Forms.ToolStripButton();
 			butEditStaticModel = new System.Windows.Forms.ToolStripButton();
 			butEditSpriteSequence = new System.Windows.Forms.ToolStripButton();
+			butEditLuaProperties = new System.Windows.Forms.ToolStripButton();
 			contextMenuMoveableItem = new DarkUI.Controls.DarkContextMenu();
 			editAnimationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			editSkeletonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -933,7 +934,7 @@
 			darkToolStrip2.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			darkToolStrip2.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
 			darkToolStrip2.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-			darkToolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { butEditAnimations, butEditSkeleton, butEditStaticModel, butEditSpriteSequence });
+			darkToolStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { butEditAnimations, butEditSkeleton, butEditStaticModel, butEditSpriteSequence, butEditLuaProperties });
 			darkToolStrip2.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
 			darkToolStrip2.Location = new System.Drawing.Point(0, 631);
 			darkToolStrip2.Name = "darkToolStrip2";
@@ -985,6 +986,17 @@
 			butEditSpriteSequence.Size = new System.Drawing.Size(132, 24);
 			butEditSpriteSequence.Text = "Edit sprite sequence";
 			butEditSpriteSequence.Click += butEditSpriteSequence_Click;
+			// 
+			// butEditLuaProperties
+			// 
+			butEditLuaProperties.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+			butEditLuaProperties.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+			butEditLuaProperties.Image = Properties.Resources.edit_16;
+			butEditLuaProperties.ImageTransparentColor = System.Drawing.Color.Magenta;
+			butEditLuaProperties.Name = "butEditLuaProperties";
+			butEditLuaProperties.Size = new System.Drawing.Size(115, 24);
+			butEditLuaProperties.Text = "Lua Properties";
+			butEditLuaProperties.Click += butEditLuaProperties_Click;
 			// 
 			// contextMenuMoveableItem
 			// 
@@ -1209,6 +1221,7 @@
         private System.Windows.Forms.ToolStripButton butEditAnimations;
         private System.Windows.Forms.ToolStripButton butEditStaticModel;
         private System.Windows.Forms.ToolStripButton butEditSpriteSequence;
+        private System.Windows.Forms.ToolStripButton butEditLuaProperties;
         private DarkUI.Controls.DarkSectionPanel darkSectionPanel3;
         private DarkUI.Controls.DarkToolStrip darkToolStrip3;
         private System.Windows.Forms.ToolStripButton toolStripButton1;

@@ -176,12 +176,14 @@ namespace TombLib.LevelData.IO
         /**********/public static readonly ChunkId ObjectMovable4 = ChunkId.FromString("TeMov4");
         /**********/public static readonly ChunkId ObjectMovableTombEngine = ChunkId.FromString("TeMovTen");
         /**********/public static readonly ChunkId ObjectMovableTombEngine2 = ChunkId.FromString("TeMovTen2");
+        /**********/public static readonly ChunkId ObjectMovableTombEngine3 = ChunkId.FromString("TeMovTn3");
         /**********/public static readonly ChunkId ObjectItemLuaId = ChunkId.FromString("TeItLuaId"); // DEPRECATED
         /**********/public static readonly ChunkId ObjectStatic = ChunkId.FromString("TeSta");
         /**********/public static readonly ChunkId ObjectStatic2 = ChunkId.FromString("TeSta2");
         /**********/public static readonly ChunkId ObjectStatic3 = ChunkId.FromString("TeSta3");
         /**********/public static readonly ChunkId ObjectStaticTombEngine = ChunkId.FromString("TeStaTen");
         /**********/public static readonly ChunkId ObjectStaticTombEngine2 = ChunkId.FromString("TeStaTen2");
+        /**********/public static readonly ChunkId ObjectStaticTombEngine3 = ChunkId.FromString("TeStaTn3");
         /**********/public static readonly ChunkId ObjectCamera = ChunkId.FromString("TeCam");
         /**********/public static readonly ChunkId ObjectCamera2 = ChunkId.FromString("TeCam2");
         /**********/public static readonly ChunkId ObjectCamera3 = ChunkId.FromString("TeCam3");

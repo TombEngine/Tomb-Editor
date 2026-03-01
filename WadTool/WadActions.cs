@@ -965,6 +965,26 @@ namespace WadTool
             }
         }
 
+        public static void EditLuaProperties(WadToolClass tool, IWin32Window owner)
+        {
+            Wad2 wad = tool.GetWad(tool.MainSelection?.WadArea);
+            var wadObject = wad?.TryGet(tool.MainSelection?.Id);
+
+            if (wadObject == null || tool.MainSelection?.WadArea != WadArea.Destination)
+                return;
+
+            if (!(wadObject is WadMoveable) && !(wadObject is WadStatic))
+            {
+                tool.SendMessage("Lua properties are only available for moveables and statics.", PopupType.Info);
+                return;
+            }
+
+            using (var form = new FormLuaProperties(tool, wad, tool.MainSelection.Value.Id, wadObject))
+            {
+                form.ShowDialog(owner);
+            }
+        }
+
         public static void DeleteObjects(WadToolClass tool, IWin32Window owner, WadArea wadArea, List<IWadObjectId> ObjectIdsToDelete)
         {
             if (ObjectIdsToDelete.Count == 0)

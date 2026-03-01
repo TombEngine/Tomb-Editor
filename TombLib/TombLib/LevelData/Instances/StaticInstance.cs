@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using TombLib.LuaProperties;
 using TombLib.Wad;
 
 namespace TombLib.LevelData
@@ -53,5 +54,11 @@ namespace TombLib.LevelData
             set { _scale = value; }
         }
         private float _scale = 1.0f;
+
+        /// <summary>
+        /// Level 2 (per-instance) Lua property container. Stored in prj2 files.
+        /// Holds per-entity property overrides in boxed Lua format.
+        /// </summary>
+        public LuaPropertyContainer LuaProperties { get; set; } = new LuaPropertyContainer();
     }
 }

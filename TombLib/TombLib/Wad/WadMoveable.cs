@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TombLib.LevelData;
+using TombLib.LuaProperties;
 using TombLib.Utils;
 using TombLib.Wad.Catalog;
 
@@ -79,6 +80,12 @@ namespace TombLib.Wad
         //public WadBone Skeleton { get; set; } = new WadBone();
         public List<WadBone> Bones { get; } = new List<WadBone>();
 
+        /// <summary>
+        /// Level 1 (global) Lua property container. Stored in wad2 files.
+        /// Holds per-object-type property overrides in boxed Lua format.
+        /// </summary>
+        public LuaPropertyContainer LuaProperties { get; set; } = new LuaPropertyContainer();
+
         public WadMoveable(WadMoveableId id)
         {
             Id = id;
@@ -92,6 +99,7 @@ namespace TombLib.Wad
         {
             var mov = new WadMoveable(Id);
             mov.Skin = Skin?.Clone() ?? null;
+            mov.LuaProperties = LuaProperties.Clone();
             foreach (var mesh in Meshes)
                 mov.Meshes.Add(mesh.Clone());
             foreach (var bone in Bones)

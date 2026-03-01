@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using TombLib.LevelData.SectorEnums;
+using TombLib.LuaProperties;
 using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
@@ -142,6 +143,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
             _progressReporter.ReportInfo("\nWriting level file...\n");
 
+            BuildLuaPropertyScript();
             WriteLevelTombEngine();
 
             cancelToken.ThrowIfCancellationRequested();
@@ -541,6 +543,84 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                 File.Copy(src, dest, true);
             });
+        }
+
+        /// <summary>
+        /// Collects all Level 1 (global/wad) and Level 2 (per-instance) Lua properties
+        /// and writes them to a Lua script file alongside the compiled level.
+        /// The script is placed in Scripts/Engine/ and named after the level file.
+        /// </summary>
+        private string _luaPropertyScript = string.Empty;
+
+        private void BuildLuaPropertyScript()
+        {
+            var gameVersion = _level.Settings.GameVersion;
+
+            // Collect Level 1 properties: global per-object-type from wad2 files
+            var globalMoveableProps = new Dictionary<string, LuaPropertyContainer>();
+            var globalStaticProps = new Dictionary<uint, LuaPropertyContainer>();
+
+            foreach (var wadRef in _level.Settings.Wads)
+            {
+                if (wadRef.Wad == null)
+                    continue;
+
+                foreach (var mov in wadRef.Wad.Moveables)
+                {
+                    if (mov.Value.LuaProperties == null || !mov.Value.LuaProperties.HasProperties)
+                        continue;
+
+                    string slotName = TrCatalog.GetMoveableName(gameVersion, mov.Key.TypeId);
+                    if (!string.IsNullOrEmpty(slotName))
+                        globalMoveableProps[slotName] = mov.Value.LuaProperties;
+                }
+
+                foreach (var stat in wadRef.Wad.Statics)
+                {
+                    if (stat.Value.LuaProperties == null || !stat.Value.LuaProperties.HasProperties)
+                        continue;
+
+                    globalStaticProps[stat.Key.TypeId] = stat.Value.LuaProperties;
+                }
+            }
+
+            // Collect Level 2 properties: per-instance from rooms
+            var instanceMoveableProps = new Dictionary<string, LuaPropertyContainer>();
+            var instanceStaticProps = new Dictionary<string, LuaPropertyContainer>();
+
+            foreach (var room in _level.ExistingRooms)
+            {
+                foreach (var obj in room.Objects)
+                {
+                    if (obj is MoveableInstance mov && mov.LuaProperties != null && mov.LuaProperties.HasProperties)
+                    {
+                        if (!string.IsNullOrEmpty(mov.LuaName))
+                            instanceMoveableProps[mov.LuaName] = mov.LuaProperties;
+                    }
+                    else if (obj is StaticInstance stat && stat.LuaProperties != null && stat.LuaProperties.HasProperties)
+                    {
+                        if (!string.IsNullOrEmpty(stat.LuaName))
+                            instanceStaticProps[stat.LuaName] = stat.LuaProperties;
+                    }
+                }
+            }
+
+            // Only build the script if there are any properties
+            bool hasAnyProperties = globalMoveableProps.Count > 0 || globalStaticProps.Count > 0 ||
+                                    instanceMoveableProps.Count > 0 || instanceStaticProps.Count > 0;
+
+            if (!hasAnyProperties)
+            {
+                _luaPropertyScript = string.Empty;
+                return;
+            }
+
+            // Generate the Lua script text (will be embedded in the level file)
+            _luaPropertyScript = LuaPropertyScriptBuilder.BuildFullPropertyScript(
+                globalMoveableProps, globalStaticProps,
+                instanceMoveableProps, instanceStaticProps);
+
+            ReportProgress(45, "Built Lua property script (" + _luaPropertyScript.Length + " chars)");
         }
 
         public bool CheckTombEngineVersion()
