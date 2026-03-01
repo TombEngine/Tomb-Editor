@@ -175,8 +175,10 @@ public class NumericUpDown : Control
 
 	private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 	{
-		// Prevent character input, but allow the current culture's decimal separator
-		if (!double.TryParse(e.Text, out _) && e.Text != CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
+		// Allow digits, the current culture's decimal separator, and minus sign.
+		if (!double.TryParse(e.Text, out _)
+			&& e.Text != CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator
+			&& e.Text != CultureInfo.CurrentCulture.NumberFormat.NegativeSign)
 			e.Handled = true;
 	}
 
