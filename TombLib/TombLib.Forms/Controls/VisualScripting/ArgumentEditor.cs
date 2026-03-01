@@ -7,6 +7,7 @@ using System.Linq;
 using System.Windows.Forms;
 using TombLib.LevelData;
 using TombLib.LevelData.VisualScripting;
+using TombLib.LuaProperties;
 using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
@@ -366,24 +367,13 @@ namespace TombLib.Controls.VisualScripting
             {
                 case ArgumentType.Boolean:
                     {
-                        bool result;
-                        if (float.TryParse(source, out float parsedFloat))
-                            result = parsedFloat == 0.0f ? false : true;
-                        else if (!bool.TryParse(source, out result))
-                            result = false;
-
-                        cbBool.Checked = result;
-
+                        cbBool.Checked = LuaValueParser.UnboxBool(source);
                         BoxBoolValue();
                         break;
                     }
                 case ArgumentType.Numerical:
                     {
-                        float result;
-                        if (bool.TryParse(source, out bool parsedBool))
-                            result = parsedBool ? 1.0f : 0.0f;
-                        else if (!(float.TryParse(source, out result)))
-                            result = 0.0f;
+                        float result = LuaValueParser.UnboxFloat(source);
 
                         try { nudNumerical.Value = (decimal)Math.Round(result, nudNumerical.DecimalPlaces); }
                         catch { nudNumerical.Value = (decimal)result < nudNumerical.Minimum ? nudNumerical.Minimum : nudNumerical.Maximum; }
@@ -393,16 +383,12 @@ namespace TombLib.Controls.VisualScripting
                     }
                 case ArgumentType.Vector2:
                     {
-                        if (source.StartsWith(LuaSyntax.Vec2TypePrefix + LuaSyntax.BracketOpen) && source.EndsWith(LuaSyntax.BracketClose))
-                            source = source.Substring(LuaSyntax.Vec2TypePrefix.Length + 1, source.Length - LuaSyntax.Vec2TypePrefix.Length - 2);
-
-                        var floats = UnboxVectorValue(source);
+                        source = LuaValueParser.StripTypePrefix(source, LuaSyntax.Vec2TypePrefix);
+                        var floats = LuaValueParser.SplitAndParseFloats(source);
 
                         for (int i = 0; i < 2; i++)
                         {
-                            var currentFloat = 0.0f;
-                            if (floats.Length > i)
-                                currentFloat = floats[i];
+                            var currentFloat = floats.Length > i ? floats[i] : 0.0f;
 
                             try
                             {
@@ -427,16 +413,12 @@ namespace TombLib.Controls.VisualScripting
                     }
                 case ArgumentType.Vector3:
                     {
-                        if (source.StartsWith(LuaSyntax.Vec3TypePrefix + LuaSyntax.BracketOpen) && source.EndsWith(LuaSyntax.BracketClose))
-                            source = source.Substring(LuaSyntax.Vec3TypePrefix.Length + 1, source.Length - LuaSyntax.Vec3TypePrefix.Length - 2);
-
-                        var floats = UnboxVectorValue(source);
+                        source = LuaValueParser.StripTypePrefix(source, LuaSyntax.Vec3TypePrefix);
+                        var floats = LuaValueParser.SplitAndParseFloats(source);
 
                         for (int i = 0; i < 3; i++)
                         {
-                            var currentFloat = 0.0f;
-                            if (floats.Length > i)
-                                currentFloat = floats[i];
+                            var currentFloat = floats.Length > i ? floats[i] : 0.0f;
 
                             try
                             {
@@ -463,52 +445,38 @@ namespace TombLib.Controls.VisualScripting
                     }
                 case ArgumentType.Color:
                     {
-                        if (source.StartsWith(LuaSyntax.ColorTypePrefix + LuaSyntax.BracketOpen) && source.EndsWith(LuaSyntax.BracketClose))
-                            source = source.Substring(LuaSyntax.ColorTypePrefix.Length + 1, source.Length - LuaSyntax.ColorTypePrefix.Length - 2);
-
-                        var floats = UnboxVectorValue(source);
-                        var bytes = new byte[3] { 0, 0, 0 };
-
-                        for (int i = 0; i < 3; i++)
-                            if (floats.Length > i)
-                                bytes[i] = (byte)MathC.Clamp(floats[i], 0, 255);
-
-                        panelColor.BackColor = Color.FromArgb(255, bytes[0], bytes[1], bytes[2]);
+                        var color = LuaValueParser.UnboxColor(source);
+                        panelColor.BackColor = Color.FromArgb(255, color[0], color[1], color[2]);
 
                         BoxColorValue();
                         break;
                     }
                 case ArgumentType.Time:
                     {
-                        if (source.StartsWith(LuaSyntax.TimeTypePrefix + LuaSyntax.BracketOpen + LuaSyntax.TableOpen) && source.EndsWith(LuaSyntax.TableClose + LuaSyntax.BracketClose))
-                            source = source.Substring(LuaSyntax.TimeTypePrefix.Length + 2, source.Length - LuaSyntax.Vec3TypePrefix.Length - 4);
+                        var time = LuaValueParser.UnboxTime(source);
 
-                        var floats = UnboxVectorValue(source);
-
-                        for (int i = 0; i < 5; i++)
+                        for (int i = 0; i < 4; i++)
                         {
-                            var currentFloat = 0.0f;
-                            if (floats.Length > i)
-                                currentFloat = floats[i];
+                            var currentValue = time[i];
 
                             try
                             {
                                 switch (i)
                                 {
-                                    case 0: nudTimeHours.Value = (decimal)currentFloat; break;
-                                    case 1: nudTimeMinutes.Value = (decimal)currentFloat; break;
-                                    case 2: nudTimeSeconds.Value = (decimal)currentFloat; break;
-                                    case 3: nudTimeCents.Value = (decimal)currentFloat; break;
+                                    case 0: nudTimeHours.Value = currentValue; break;
+                                    case 1: nudTimeMinutes.Value = currentValue; break;
+                                    case 2: nudTimeSeconds.Value = currentValue; break;
+                                    case 3: nudTimeCents.Value = currentValue; break;
                                 }
                             }
                             catch
                             {
                                 switch (i)
                                 {
-                                    case 0: nudTimeHours.Value = (decimal)currentFloat < nudTimeHours.Minimum ? nudTimeHours.Minimum : nudTimeHours.Maximum; break;
-                                    case 1: nudTimeMinutes.Value = (decimal)currentFloat < nudTimeMinutes.Minimum ? nudTimeMinutes.Minimum : nudTimeMinutes.Maximum; break;
-                                    case 2: nudTimeSeconds.Value = (decimal)currentFloat < nudTimeSeconds.Minimum ? nudTimeSeconds.Minimum : nudTimeSeconds.Maximum; break;
-                                    case 3: nudTimeCents.Value = (decimal)currentFloat < nudTimeCents.Minimum ? nudTimeCents.Minimum : nudTimeCents.Maximum; break;
+                                    case 0: nudTimeHours.Value = currentValue < nudTimeHours.Minimum ? nudTimeHours.Minimum : nudTimeHours.Maximum; break;
+                                    case 1: nudTimeMinutes.Value = currentValue < nudTimeMinutes.Minimum ? nudTimeMinutes.Minimum : nudTimeMinutes.Maximum; break;
+                                    case 2: nudTimeSeconds.Value = currentValue < nudTimeSeconds.Minimum ? nudTimeSeconds.Minimum : nudTimeSeconds.Maximum; break;
+                                    case 3: nudTimeCents.Value = currentValue < nudTimeCents.Minimum ? nudTimeCents.Minimum : nudTimeCents.Maximum; break;
                                 }
                             }
                         }
@@ -518,7 +486,7 @@ namespace TombLib.Controls.VisualScripting
                     }
                 case ArgumentType.String:
                     {
-                        tbString.Text = TextExtensions.UnescapeQuotes(TextExtensions.Unquote(source));
+                        tbString.Text = LuaValueParser.UnboxString(source);
                         BoxStringValue();
                         break;
                     }
@@ -544,78 +512,45 @@ namespace TombLib.Controls.VisualScripting
             }
         }
 
-        private float[] UnboxVectorValue(string source)
-        {
-            return source.Split(new string[] { LuaSyntax.Separator }, StringSplitOptions.None).Select(x =>
-            {
-                float result;
-                if (float.TryParse(x.Trim(), out result))
-                    return result;
-                else
-                    return 0.0f;
-            }).ToArray();
-        }
-
         private void BoxBoolValue()
         {
-            _text = cbBool.Checked.ToString().ToLower();
+            _text = LuaValueParser.BoxBool(cbBool.Checked);
             OnValueChanged();
         }
 
         private void BoxVector2Value()
         {
-            var x = ((float)nudVector2X.Value).ToString();
-            var y = ((float)nudVector2Y.Value).ToString();
-            _text = LuaSyntax.Vec2TypePrefix + LuaSyntax.BracketOpen +
-                    x + LuaSyntax.Separator +
-                    y + LuaSyntax.BracketClose;
+            _text = LuaValueParser.BoxVec2((float)nudVector2X.Value, (float)nudVector2Y.Value);
             OnValueChanged();
         }
 
         private void BoxVector3Value()
         {
-            var x = ((float)nudVector3X.Value).ToString();
-            var y = ((float)nudVector3Y.Value).ToString();
-            var z = ((float)nudVector3Z.Value).ToString();
-            _text = LuaSyntax.Vec3TypePrefix + LuaSyntax.BracketOpen +
-                    x + LuaSyntax.Separator +
-                    y + LuaSyntax.Separator +
-                    z + LuaSyntax.BracketClose;
+            _text = LuaValueParser.BoxVec3((float)nudVector3X.Value, (float)nudVector3Y.Value, (float)nudVector3Z.Value);
             OnValueChanged();
         }
 
         private void BoxTimeValue()
         {
-            var h = ((int)nudTimeHours.Value).ToString();
-            var m = ((int)nudTimeMinutes.Value).ToString();
-            var s = ((int)nudTimeSeconds.Value).ToString();
-            var c = ((int)nudTimeCents.Value).ToString();
-            _text = LuaSyntax.TimeTypePrefix + LuaSyntax.BracketOpen + LuaSyntax.TableOpen +
-                    h + LuaSyntax.Separator +
-                    m + LuaSyntax.Separator +
-                    s + LuaSyntax.Separator +
-                    c + LuaSyntax.TableClose + LuaSyntax.BracketClose;
+            _text = LuaValueParser.BoxTime((int)nudTimeHours.Value, (int)nudTimeMinutes.Value, (int)nudTimeSeconds.Value, (int)nudTimeCents.Value);
             OnValueChanged();
         }
 
         private void BoxColorValue()
         {
-            _text = LuaSyntax.ColorTypePrefix + LuaSyntax.BracketOpen +
-                    panelColor.BackColor.R.ToString() + LuaSyntax.Separator +
-                    panelColor.BackColor.G.ToString() + LuaSyntax.Separator +
-                    panelColor.BackColor.B.ToString() + LuaSyntax.BracketClose;
+            _text = LuaValueParser.BoxColor(panelColor.BackColor.R, panelColor.BackColor.G, panelColor.BackColor.B);
             OnValueChanged();
         }
 
         private void BoxNumericalValue()
         {
-            _text = ((float)nudNumerical.Value).ToString();
+            _text = LuaValueParser.BoxFloat((float)nudNumerical.Value);
             OnValueChanged();
         }
 
         private void BoxStringValue()
         {
-            _text = TextExtensions.Quote(TextExtensions.EscapeQuotes(tbString.Text));
+            _text = LuaValueParser.BoxString(tbString.Text);
             OnValueChanged();
         }
 

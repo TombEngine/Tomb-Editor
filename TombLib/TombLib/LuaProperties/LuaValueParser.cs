@@ -467,7 +467,7 @@ namespace TombLib.LuaProperties
         /// Strips a type prefix and surrounding brackets from a Lua constructor string.
         /// E.g. "TEN.Vec3(1,2,3)" → "1,2,3"
         /// </summary>
-        internal static string StripTypePrefix(string source, string prefix)
+        public static string StripTypePrefix(string source, string prefix)
         {
             if (source.StartsWith(prefix + LuaSyntax.BracketOpen) && source.EndsWith(LuaSyntax.BracketClose))
                 return source.Substring(prefix.Length + 1, source.Length - prefix.Length - 2);
@@ -479,7 +479,7 @@ namespace TombLib.LuaProperties
         /// Splits a comma-separated value string into trimmed components.
         /// Reused by both ArgumentEditor and property grid system.
         /// </summary>
-        internal static float[] SplitAndParseFloats(string source)
+        public static float[] SplitAndParseFloats(string source)
         {
             return source.Split(new string[] { LuaSyntax.Separator }, StringSplitOptions.None)
                          .Select(x => ParseFloat(x.Trim()))
