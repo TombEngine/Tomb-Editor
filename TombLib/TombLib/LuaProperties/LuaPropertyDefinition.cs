@@ -47,6 +47,13 @@ namespace TombLib.LuaProperties
         public string DefaultValue { get; set; } = string.Empty;
 
         /// <summary>
+        /// For Color properties: whether the alpha channel is editable.
+        /// When false, the alpha field is hidden in the property grid.
+        /// Controlled by the "hasAlpha" attribute in XML catalogs.
+        /// </summary>
+        public bool HasAlpha { get; set; } = false;
+
+        /// <summary>
         /// Returns true if the definition has all required fields filled in.
         /// </summary>
         public bool IsValid =>

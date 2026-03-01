@@ -10,6 +10,7 @@
     xmlns:vm="clr-namespace:TombLib.Forms.ViewModels"
     d:DataContext="{d:DesignInstance Type=vm:LuaPropertyGridViewModel}"
     Background="{DynamicResource Brush_Background}"
+    Foreground="{DynamicResource Brush_Text}"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -22,10 +23,10 @@
 
         <!-- Shared style for component labels (X, Y, Z, etc.) -->
         <Style x:Key="FieldLabelStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource Brush_Border_High}" />
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="FontSize" Value="10" />
-            <Setter Property="Margin" Value="2,0" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Margin" Value="4,0,4,0" />
         </Style>
 
         <!-- Bool editor: checkbox (DarkUI.WPF implicit style) -->
@@ -59,7 +60,7 @@
                      HorizontalAlignment="Stretch" />
         </DataTemplate>
 
-        <!-- Vec2 editor: two float fields (X, Y) -->
+        <!-- Vec2 editor: two NumericUpDown fields (X, Y) -->
         <DataTemplate x:Key="Vec2Template" DataType="{x:Type vm:LuaPropertyRowViewModel}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -68,16 +69,22 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="X" Style="{StaticResource FieldLabelStyle}" />
-                <TextBox Grid.Column="1" Style="{StaticResource CompactNumericStyle}" Margin="0,0,2,0"
-                         Text="{Binding Vec2X, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:F2}}" />
+                <TextBlock Grid.Column="0" Text="X" Style="{StaticResource FieldLabelStyle}" Margin="0,0,4,0" />
+                <controls:NumericUpDown Grid.Column="1" Margin="0,0,2,0"
+                    FormatString="F2" Increment="0.1"
+                    Minimum="-999999" Maximum="999999"
+                    TextAlignment="Left"
+                    Value="{Binding Vec2X, Mode=TwoWay}" />
                 <TextBlock Grid.Column="2" Text="Y" Style="{StaticResource FieldLabelStyle}" />
-                <TextBox Grid.Column="3" Style="{StaticResource CompactNumericStyle}"
-                         Text="{Binding Vec2Y, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:F2}}" />
+                <controls:NumericUpDown Grid.Column="3"
+                    FormatString="F2" Increment="0.1"
+                    Minimum="-999999" Maximum="999999"
+                    TextAlignment="Left"
+                    Value="{Binding Vec2Y, Mode=TwoWay}" />
             </Grid>
         </DataTemplate>
 
-        <!-- Vec3 editor: three float fields (X, Y, Z) -->
+        <!-- Vec3 editor: three NumericUpDown fields (X, Y, Z) -->
         <DataTemplate x:Key="Vec3Template" DataType="{x:Type vm:LuaPropertyRowViewModel}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -88,19 +95,28 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="X" Style="{StaticResource FieldLabelStyle}" />
-                <TextBox Grid.Column="1" Style="{StaticResource CompactNumericStyle}" Margin="0,0,2,0"
-                         Text="{Binding Vec3X, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:F2}}" />
+                <TextBlock Grid.Column="0" Text="X" Style="{StaticResource FieldLabelStyle}" Margin="0,0,4,0" />
+                <controls:NumericUpDown Grid.Column="1" Margin="0,0,2,0"
+                    FormatString="F2" Increment="0.1"
+                    Minimum="-999999" Maximum="999999"
+                    TextAlignment="Left"
+                    Value="{Binding Vec3X, Mode=TwoWay}" />
                 <TextBlock Grid.Column="2" Text="Y" Style="{StaticResource FieldLabelStyle}" />
-                <TextBox Grid.Column="3" Style="{StaticResource CompactNumericStyle}" Margin="0,0,2,0"
-                         Text="{Binding Vec3Y, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:F2}}" />
+                <controls:NumericUpDown Grid.Column="3" Margin="0,0,2,0"
+                    FormatString="F2" Increment="0.1"
+                    Minimum="-999999" Maximum="999999"
+                    TextAlignment="Left"
+                    Value="{Binding Vec3Y, Mode=TwoWay}" />
                 <TextBlock Grid.Column="4" Text="Z" Style="{StaticResource FieldLabelStyle}" />
-                <TextBox Grid.Column="5" Style="{StaticResource CompactNumericStyle}"
-                         Text="{Binding Vec3Z, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:F2}}" />
+                <controls:NumericUpDown Grid.Column="5"
+                    FormatString="F2" Increment="0.1"
+                    Minimum="-999999" Maximum="999999"
+                    TextAlignment="Left"
+                    Value="{Binding Vec3Z, Mode=TwoWay}" />
             </Grid>
         </DataTemplate>
 
-        <!-- Rotation editor: three float fields (X, Y, Z), 0-360 -->
+        <!-- Rotation editor: three NumericUpDown fields (X, Y, Z), 0-360 -->
         <DataTemplate x:Key="RotationTemplate" DataType="{x:Type vm:LuaPropertyRowViewModel}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -111,15 +127,24 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="X" Style="{StaticResource FieldLabelStyle}" />
-                <TextBox Grid.Column="1" Style="{StaticResource CompactNumericStyle}" Margin="0,0,2,0"
-                         Text="{Binding RotationX, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:F1}}" />
+                <TextBlock Grid.Column="0" Text="X" Style="{StaticResource FieldLabelStyle}" Margin="0,0,4,0" />
+                <controls:NumericUpDown Grid.Column="1" Margin="0,0,2,0"
+                    FormatString="F1" Increment="1"
+                    Minimum="0" Maximum="360"
+                    TextAlignment="Left"
+                    Value="{Binding RotationX, Mode=TwoWay}" />
                 <TextBlock Grid.Column="2" Text="Y" Style="{StaticResource FieldLabelStyle}" />
-                <TextBox Grid.Column="3" Style="{StaticResource CompactNumericStyle}" Margin="0,0,2,0"
-                         Text="{Binding RotationY, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:F1}}" />
+                <controls:NumericUpDown Grid.Column="3" Margin="0,0,2,0"
+                    FormatString="F1" Increment="1"
+                    Minimum="0" Maximum="360"
+                    TextAlignment="Left"
+                    Value="{Binding RotationY, Mode=TwoWay}" />
                 <TextBlock Grid.Column="4" Text="Z" Style="{StaticResource FieldLabelStyle}" />
-                <TextBox Grid.Column="5" Style="{StaticResource CompactNumericStyle}"
-                         Text="{Binding RotationZ, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:F1}}" />
+                <controls:NumericUpDown Grid.Column="5"
+                    FormatString="F1" Increment="1"
+                    Minimum="0" Maximum="360"
+                    TextAlignment="Left"
+                    Value="{Binding RotationZ, Mode=TwoWay}" />
             </Grid>
         </DataTemplate>
 
@@ -129,18 +154,17 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
                 <controls:ColorPickerButton Grid.Column="0"
                     SelectedColor="{Binding WpfColor, Mode=OneWay}"
                     Click="ColorPicker_Click"
-                    Height="20" Margin="0,1" />
-                <TextBlock Grid.Column="1" Text="A" Style="{StaticResource FieldLabelStyle}" />
-                <controls:NumericUpDown Grid.Column="2"
+                    BorderThickness="{x:Static darkUI:Defaults.BorderThickness}" />
+                <controls:NumericUpDown Grid.Column="1" Width="56"
                     FormatString="F0" Increment="1"
                     Minimum="0" Maximum="255"
-                    TextAlignment="Left"
-                    Value="{Binding ColorA, Mode=TwoWay}" />
+                    TextAlignment="Left" Margin="2,0,0,0"
+                    Value="{Binding ColorA, Mode=TwoWay}"
+                    Visibility="{Binding HasAlpha, Converter={StaticResource BoolToVisConverter}}" />
             </Grid>
         </DataTemplate>
 
@@ -157,7 +181,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="H" Style="{StaticResource FieldLabelStyle}" />
+                <TextBlock Grid.Column="0" Text="H" Style="{StaticResource FieldLabelStyle}" Margin="0,0,4,0" />
                 <TextBox Grid.Column="1" Style="{StaticResource CompactNumericStyle}" Margin="0,0,2,0"
                          Text="{Binding TimeHours, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
                 <TextBlock Grid.Column="2" Text="M" Style="{StaticResource FieldLabelStyle}" />
@@ -184,12 +208,37 @@
             ColorTemplate="{StaticResource ColorTemplate}"
             TimeTemplate="{StaticResource TimeTemplate}" />
 
-        <!-- Style for category group headers -->
-        <Style x:Key="CategoryHeaderStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource Brush_Text_Highlight}" />
+        <!-- Style for category group header text -->
+        <Style x:Key="CategoryHeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Border_High}" />
             <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="FontSize" Value="11" />
-            <Setter Property="Margin" Value="4,6,4,2" />
+            <Setter Property="Padding" Value="6,3" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <!-- Style for category group header background (DarkSectionPanel-like) -->
+        <Style x:Key="CategoryHeaderStyle" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource Brush_Background_Alternative}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Brush_Border_Low}" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+        </Style>
+
+        <!-- Style for category group box border -->
+        <Style x:Key="CategoryGroupStyle" TargetType="Border">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="0" />
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="Padding" Value="2" />
+        </Style>
+
+        <!-- Uniform height for all property value editors -->
+        <Style x:Key="EditorRowStyle" TargetType="ContentControl">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="2,1" />
+            <Setter Property="MinHeight" Value="24" />
         </Style>
     </UserControl.Resources>
 
@@ -209,40 +258,44 @@
 
         <!-- Property grid content -->
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-            <ItemsControl ItemsSource="{Binding GroupedProperties}">
+            <ItemsControl ItemsSource="{Binding GroupedProperties}" Margin="0,0,0,4">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel>
-                            <!-- Category header (hidden for uncategorized group) -->
-                            <TextBlock Text="{Binding Key}" Style="{StaticResource CategoryHeaderStyle}"
-                                       Visibility="{Binding Key, Converter={StaticResource StringEmptyToVisConverter}}" />
+                        <Border Style="{StaticResource CategoryGroupStyle}">
+                            <StackPanel>
+                                <!-- Category header (hidden for uncategorized group) -->
+                                <Border Style="{StaticResource CategoryHeaderStyle}"
+                                        Visibility="{Binding Key, Converter={StaticResource StringEmptyToVisConverter}}">
+                                    <TextBlock Text="{Binding Key}" Style="{StaticResource CategoryHeaderTextStyle}" />
+                                </Border>
 
-                            <!-- Property rows within this category -->
-                            <ItemsControl ItemsSource="{Binding}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type vm:LuaPropertyRowViewModel}">
-                                        <Grid Margin="4,2" ToolTip="{Binding ToolTip}">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="0.4*" MinWidth="80" />
-                                                <ColumnDefinition Width="0.6*" MinWidth="100" />
-                                            </Grid.ColumnDefinitions>
+                                <!-- Property rows within this category -->
+                                <ItemsControl ItemsSource="{Binding}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type vm:LuaPropertyRowViewModel}">
+                                            <Grid Margin="2" ToolTip="{Binding ToolTip}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="0.4*" MinWidth="80" />
+                                                    <ColumnDefinition Width="0.6*" MinWidth="100" />
+                                                </Grid.ColumnDefinitions>
 
-                                            <!-- Name column (read-only) -->
-                                            <TextBlock Grid.Column="0" Text="{Binding DisplayName}"
-                                                       Foreground="{DynamicResource Brush_Text}"
-                                                       VerticalAlignment="Center"
-                                                       Padding="4,2" TextTrimming="CharacterEllipsis" />
+                                                <!-- Name column (double-click to reset) -->
+                                                <TextBlock Grid.Column="0" Text="{Binding DisplayName}"
+                                                           Foreground="{DynamicResource Brush_Text}"
+                                                           VerticalAlignment="Center"
+                                                           Padding="4,2" TextTrimming="CharacterEllipsis"
+                                                           MouseLeftButtonDown="PropertyName_MouseLeftButtonDown" />
 
-                                            <!-- Value column (editable via template selector) -->
-                                            <ContentControl Grid.Column="1" Content="{Binding}"
-                                                            ContentTemplateSelector="{StaticResource EditorTemplateSelector}"
-                                                            VerticalAlignment="Center"
-                                                            Margin="2,1" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
+                                                <!-- Value column (editable via template selector) -->
+                                                <ContentControl Grid.Column="1" Content="{Binding}"
+                                                                ContentTemplateSelector="{StaticResource EditorTemplateSelector}"
+                                                                Style="{StaticResource EditorRowStyle}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

@@ -3,7 +3,13 @@
   TEN Lua Property Catalog - Example
   
   This file defines custom Lua properties for moveable and static object types.
-  Each <moveable> or <static> element targets an object slot by its numeric type ID.
+  Each <moveable> or <static> element targets object slots by numeric type ID.
+  
+  Supported id formats:
+    - Single:  id="73"
+    - List:    id="73,74,75"
+    - Range:   id="73-80"
+    - Mixed:   id="0-5,73,100-105"
   
   Supported types: Bool, Int, Float, String, Vec2, Vec3, Rotation, Color, Time
   

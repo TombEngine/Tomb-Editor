@@ -351,6 +351,13 @@ namespace TombEditor
                             VisibleContent = "TriggerList",
                             Order = 3,
                             Size = new Size(284,174)
+                        },
+                        new DockGroupState
+                        {
+                            Contents = new List<string> { "LuaProperties" },
+                            VisibleContent = "LuaProperties",
+                            Order = 4,
+                            Size = new Size(284,200)
                         }
                     }
                 },

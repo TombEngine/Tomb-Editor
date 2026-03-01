@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using DarkUI.WPF.CustomControls;
 using TombLib.Controls;
 using TombLib.Forms.ViewModels;
@@ -80,6 +81,21 @@ namespace TombLib.Forms.Views
                     row.ColorG = colorDialog.Color.G;
                     row.ColorB = colorDialog.Color.B;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Handles double-click on the property name label.
+        /// Resets the property value to its default.
+        /// </summary>
+        private void PropertyName_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2 &&
+                sender is FrameworkElement element &&
+                element.DataContext is LuaPropertyRowViewModel row)
+            {
+                row.ResetToDefault();
+                e.Handled = true;
             }
         }
     }

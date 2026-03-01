@@ -2,6 +2,7 @@
 // Reads XML files from "Catalogs/TEN Property Catalogs" folder,
 // parses property definitions per object type (moveable/static by ID),
 // and validates all values against their declared types.
+// Supports multi-slot ID syntax: "0", "0,1,2", "0-5", "0-5,73,100-105".
 
 using System;
 using System.Collections.Generic;
@@ -172,37 +173,117 @@ namespace TombLib.LuaProperties
         /// <summary>
         /// Parses a single &lt;moveable&gt; or &lt;static&gt; XML node and extracts its
         /// child &lt;property&gt; definitions.
+        /// Supports multi-slot id formats: "0", "0,1,2", "0-5", "0-5,73,100-105".
         /// </summary>
         private static void ParseObjectNode(XmlNode objectNode, LuaPropertyObjectKind kind,
                                             string filePath, Dictionary<LuaPropertyObjectKey, List<LuaPropertyDefinition>> result)
         {
             var idAttr = objectNode.Attributes?["id"];
-            if (idAttr == null || !uint.TryParse(idAttr.Value, out uint typeId))
+            if (idAttr == null || string.IsNullOrWhiteSpace(idAttr.Value))
             {
-                logger.Warn("Property catalog entry missing or invalid 'id' attribute in {0}", filePath);
+                logger.Warn("Property catalog entry missing 'id' attribute in {0}", filePath);
                 return;
             }
 
-            var key = new LuaPropertyObjectKey(kind, typeId);
+            var typeIds = ParseIdList(idAttr.Value, filePath);
+            if (typeIds.Count == 0)
+            {
+                logger.Warn("Property catalog entry has no valid IDs in '{0}' in {1}", idAttr.Value, filePath);
+                return;
+            }
 
-            if (!result.ContainsKey(key))
-                result[key] = new List<LuaPropertyDefinition>();
-
+            // Parse properties once, then assign to all target IDs.
+            var definitions = new List<LuaPropertyDefinition>();
             foreach (XmlNode propNode in objectNode.SelectNodes("property"))
             {
                 var definition = ParsePropertyNode(propNode, filePath);
-                if (definition == null || !definition.IsValid)
+                if (definition != null && definition.IsValid)
+                    definitions.Add(definition);
+            }
+
+            foreach (uint typeId in typeIds)
+            {
+                var key = new LuaPropertyObjectKey(kind, typeId);
+
+                if (!result.ContainsKey(key))
+                    result[key] = new List<LuaPropertyDefinition>();
+
+                foreach (var definition in definitions)
+                {
+                    // If same internal name exists, replace it (latest file wins).
+                    var existingIndex = result[key].FindIndex(p =>
+                        string.Equals(p.InternalName, definition.InternalName, StringComparison.OrdinalIgnoreCase));
+
+                    if (existingIndex >= 0)
+                        result[key][existingIndex] = definition;
+                    else
+                        result[key].Add(definition);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Parses a comma-separated list of IDs and ranges into a flat list of uint values.
+        /// Supports: "5", "1,2,3", "0-10", "0-5,73,100-105".
+        /// </summary>
+        private static List<uint> ParseIdList(string idString, string filePath)
+        {
+            var ids = new List<uint>();
+
+            foreach (var segment in idString.Split(','))
+            {
+                var trimmed = segment.Trim();
+                if (string.IsNullOrEmpty(trimmed))
                     continue;
 
-                // If same internal name exists, replace it (latest file wins).
-                var existingIndex = result[key].FindIndex(p =>
-                    string.Equals(p.InternalName, definition.InternalName, StringComparison.OrdinalIgnoreCase));
+                var dashIndex = trimmed.IndexOf('-');
+                if (dashIndex > 0 && dashIndex < trimmed.Length - 1)
+                {
+                    // Range: "start-end"
+                    var startStr = trimmed.Substring(0, dashIndex).Trim();
+                    var endStr = trimmed.Substring(dashIndex + 1).Trim();
 
-                if (existingIndex >= 0)
-                    result[key][existingIndex] = definition;
+                    if (uint.TryParse(startStr, out uint rangeStart) && uint.TryParse(endStr, out uint rangeEnd))
+                    {
+                        if (rangeEnd < rangeStart)
+                        {
+                            logger.Warn("Invalid range '{0}' (end < start) in {1}", trimmed, filePath);
+                            continue;
+                        }
+
+                        if (rangeEnd - rangeStart > 1000)
+                        {
+                            logger.Warn("Range '{0}' is too large (>1000 entries) in {1}", trimmed, filePath);
+                            continue;
+                        }
+
+                        for (uint i = rangeStart; i <= rangeEnd; i++)
+                        {
+                            if (!ids.Contains(i))
+                                ids.Add(i);
+                        }
+                    }
+                    else
+                    {
+                        logger.Warn("Invalid range value '{0}' in {1}", trimmed, filePath);
+                    }
+                }
                 else
-                    result[key].Add(definition);
+                {
+                    // Single ID
+                    if (uint.TryParse(trimmed, out uint singleId))
+                    {
+                        if (!ids.Contains(singleId))
+                            ids.Add(singleId);
+                    }
+                    else
+                    {
+                        logger.Warn("Invalid ID value '{0}' in {1}", trimmed, filePath);
+                    }
+                }
             }
+
+            return ids;
         }
 
         /// <summary>
@@ -240,8 +321,15 @@ namespace TombLib.LuaProperties
             }
             definition.Type = propertyType;
 
-            // Optional: default value
-            var defaultStr = propNode.Attributes?["default"]?.Value?.Trim() ?? string.Empty;
+            // Optional: hasAlpha (only meaningful for Color properties)
+            var hasAlphaStr = propNode.Attributes?["hasAlpha"]?.Value?.Trim() ?? string.Empty;
+            if (bool.TryParse(hasAlphaStr, out var hasAlpha))
+                definition.HasAlpha = hasAlpha;
+
+            // Optional: default value (accept both "defaultValue" and "default" attribute names)
+            var defaultStr = (propNode.Attributes?["defaultValue"]?.Value
+                          ?? propNode.Attributes?["default"]?.Value)?.Trim()
+                          ?? string.Empty;
             if (!string.IsNullOrEmpty(defaultStr))
             {
                 if (LuaValueParser.ValidateBoxedValue(propertyType, defaultStr))

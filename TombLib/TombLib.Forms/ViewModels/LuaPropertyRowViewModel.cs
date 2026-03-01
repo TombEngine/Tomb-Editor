@@ -2,9 +2,8 @@
 // Manages the binding between a LuaPropertyDefinition and its current boxed value.
 
 using System;
-using System.ComponentModel;
 using System.Globalization;
-using System.Runtime.CompilerServices;
+using CommunityToolkit.Mvvm.ComponentModel;
 using TombLib.LuaProperties;
 
 namespace TombLib.Forms.ViewModels
@@ -13,7 +12,7 @@ namespace TombLib.Forms.ViewModels
     /// ViewModel for a single row in the Lua property grid.
     /// Wraps a <see cref="LuaPropertyDefinition"/> with an editable current value.
     /// </summary>
-    public class LuaPropertyRowViewModel : INotifyPropertyChanged
+    public partial class LuaPropertyRowViewModel : ObservableObject
     {
         private static readonly CultureInfo Inv = CultureInfo.InvariantCulture;
 
@@ -38,6 +37,11 @@ namespace TombLib.Forms.ViewModels
         /// Category grouping label. Empty string means uncategorized.
         /// </summary>
         public string Category => Definition.Category ?? string.Empty;
+
+        /// <summary>
+        /// For Color properties, whether the alpha channel editor is visible.
+        /// </summary>
+        public bool HasAlpha => Definition.HasAlpha;
 
         /// <summary>
         /// The Lua property type.
@@ -221,13 +225,6 @@ namespace TombLib.Forms.ViewModels
         public bool IsModified =>
             !string.Equals(_boxedValue, Definition.DefaultValue, StringComparison.Ordinal);
 
-        #region INotifyPropertyChanged
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged([CallerMemberName] string name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-
         /// <summary>
         /// Notifies all typed property bindings that the underlying value changed.
         /// </summary>
@@ -276,7 +273,5 @@ namespace TombLib.Forms.ViewModels
                     break;
             }
         }
-
-        #endregion
     }
 }

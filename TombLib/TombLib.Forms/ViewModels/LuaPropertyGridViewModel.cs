@@ -5,9 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using TombLib.LuaProperties;
 
 namespace TombLib.Forms.ViewModels
@@ -17,7 +17,7 @@ namespace TombLib.Forms.ViewModels
     /// Displays property definitions for a specific object type, populated
     /// with current values from a <see cref="LuaPropertyContainer"/>.
     /// </summary>
-    public class LuaPropertyGridViewModel : INotifyPropertyChanged
+    public partial class LuaPropertyGridViewModel : ObservableObject
     {
         /// <summary>
         /// All property rows, grouped by category.
@@ -48,11 +48,7 @@ namespace TombLib.Forms.ViewModels
         /// <summary>
         /// The display title for the property grid header.
         /// </summary>
-        public string Title
-        {
-            get => _title;
-            set { _title = value; OnPropertyChanged(); }
-        }
+        [ObservableProperty]
         private string _title = "Properties";
 
         /// <summary>
@@ -136,6 +132,7 @@ namespace TombLib.Forms.ViewModels
         /// <summary>
         /// Resets all properties to their default values.
         /// </summary>
+        [RelayCommand]
         public void ResetAll()
         {
             foreach (var row in Properties)
@@ -171,13 +168,5 @@ namespace TombLib.Forms.ViewModels
 
             PropertyValueChanged?.Invoke(sender, e);
         }
-
-        #region INotifyPropertyChanged
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-
-        #endregion
     }
 }
