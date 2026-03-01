@@ -81,29 +81,37 @@ namespace TombLib.Graphics.Dx11Toolkit
             }
 
             ID3D11ShaderResourceView* srv = null;
-            if (flags.HasFlag(TextureFlags.ShaderResource))
+            try
             {
-                ShaderResourceViewDesc srvDesc = default;
-                srvDesc.Format = silkFormat;
-
-                if (arraySize > 1)
+                if (flags.HasFlag(TextureFlags.ShaderResource))
                 {
-                    srvDesc.ViewDimension = D3DSrvDimension.D3DSrvDimensionTexture2Darray;
-                    srvDesc.Texture2DArray.ArraySize = (uint)arraySize;
-                    srvDesc.Texture2DArray.FirstArraySlice = 0;
-                    srvDesc.Texture2DArray.MipLevels = mipLevels == 0 ? unchecked((uint)-1) : (uint)mipLevels;
-                    srvDesc.Texture2DArray.MostDetailedMip = 0;
-                }
-                else
-                {
-                    srvDesc.ViewDimension = D3DSrvDimension.D3DSrvDimensionTexture2D;
-                    srvDesc.Texture2D.MipLevels = mipLevels == 0 ? unchecked((uint)-1) : (uint)mipLevels;
-                    srvDesc.Texture2D.MostDetailedMip = 0;
-                }
+                    ShaderResourceViewDesc srvDesc = default;
+                    srvDesc.Format = silkFormat;
 
-                int hr = device.NativeDevice->CreateShaderResourceView(
-                    (ID3D11Resource*)texture, &srvDesc, &srv);
-                Marshal.ThrowExceptionForHR(hr);
+                    if (arraySize > 1)
+                    {
+                        srvDesc.ViewDimension = D3DSrvDimension.D3DSrvDimensionTexture2Darray;
+                        srvDesc.Texture2DArray.ArraySize = (uint)arraySize;
+                        srvDesc.Texture2DArray.FirstArraySlice = 0;
+                        srvDesc.Texture2DArray.MipLevels = mipLevels == 0 ? unchecked((uint)-1) : (uint)mipLevels;
+                        srvDesc.Texture2DArray.MostDetailedMip = 0;
+                    }
+                    else
+                    {
+                        srvDesc.ViewDimension = D3DSrvDimension.D3DSrvDimensionTexture2D;
+                        srvDesc.Texture2D.MipLevels = mipLevels == 0 ? unchecked((uint)-1) : (uint)mipLevels;
+                        srvDesc.Texture2D.MostDetailedMip = 0;
+                    }
+
+                    int hr = device.NativeDevice->CreateShaderResourceView(
+                        (ID3D11Resource*)texture, &srvDesc, &srv);
+                    Marshal.ThrowExceptionForHR(hr);
+                }
+            }
+            catch
+            {
+                texture->Release();
+                throw;
             }
 
             return new Texture2D(texture, srv, width, height, mipLevels, arraySize, format);
