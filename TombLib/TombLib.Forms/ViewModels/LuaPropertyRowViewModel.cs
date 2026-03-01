@@ -227,25 +227,32 @@ namespace TombLib.Forms.ViewModels
 
         #endregion
 
-        public LuaPropertyRowViewModel(LuaPropertyDefinition definition, string initialBoxedValue = null)
+        /// <summary>
+        /// The effective default value for this property. This is the global (wad2) default
+        /// if one was provided, otherwise the XML catalog default.
+        /// </summary>
+        public string EffectiveDefault { get; }
+
+        public LuaPropertyRowViewModel(LuaPropertyDefinition definition, string initialBoxedValue = null, string globalDefault = null)
         {
             Definition = definition ?? throw new ArgumentNullException(nameof(definition));
-            _boxedValue = initialBoxedValue ?? definition.DefaultValue ?? LuaValueParser.GetDefaultBoxedValue(definition.Type);
+            EffectiveDefault = globalDefault ?? definition.DefaultValue ?? LuaValueParser.GetDefaultBoxedValue(definition.Type);
+            _boxedValue = initialBoxedValue ?? EffectiveDefault;
         }
 
         /// <summary>
-        /// Resets the value to the definition's default.
+        /// Resets the value to the effective default (wad2 global value, or XML catalog default).
         /// </summary>
         public void ResetToDefault()
         {
-            BoxedValue = Definition.DefaultValue ?? LuaValueParser.GetDefaultBoxedValue(Definition.Type);
+            BoxedValue = EffectiveDefault;
         }
 
         /// <summary>
-        /// Returns true if the current value differs from the default.
+        /// Returns true if the current value differs from the effective default.
         /// </summary>
         public bool IsModified =>
-            !string.Equals(_boxedValue, Definition.DefaultValue, StringComparison.Ordinal);
+            !string.Equals(_boxedValue, EffectiveDefault, StringComparison.Ordinal);
 
         /// <summary>
         /// Notifies all typed property bindings that the underlying value changed.

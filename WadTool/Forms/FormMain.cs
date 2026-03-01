@@ -556,7 +556,20 @@ namespace WadTool
 
         private void butEditLuaProperties_Click(object sender, EventArgs e)
         {
-            WadActions.EditLuaProperties(_tool, this);
+            // From toolbar or context menu: focus on selected item
+            var sel = _tool.MainSelection;
+            IWadObjectId focusId = null;
+            if (sel.HasValue && sel.Value.WadArea == WadArea.Destination &&
+                (sel.Value.Id is WadMoveableId || sel.Value.Id is WadStaticId))
+                focusId = sel.Value.Id;
+
+            WadActions.EditLuaProperties(_tool, this, focusId);
+        }
+
+        private void itemPropertiesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // From Tools menu: open without focusing on any specific item
+            WadActions.EditLuaProperties(_tool, this, null);
         }
 
         private void changeSlotToolStripMenuItem_Click(object sender, EventArgs e)

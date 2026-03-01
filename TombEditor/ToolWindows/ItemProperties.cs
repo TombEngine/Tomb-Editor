@@ -106,8 +106,12 @@ namespace TombEditor.ToolWindows
                 var typeId = moveable.WadObjectId.TypeId;
                 var definitions = LuaPropertyCatalog.GetDefinitions(LuaPropertyObjectKind.Moveable, typeId);
 
+                // Get wad2 global defaults for this moveable type (if available).
+                var wadMoveable = _editor.Level.Settings.WadTryGetMoveable(moveable.WadObjectId);
+                var globalDefaults = wadMoveable?.LuaProperties;
+
                 _viewModel.Title = $"Properties: {moveable.ItemType.ToString()}";
-                _viewModel.Load(definitions, moveable.LuaProperties);
+                _viewModel.Load(definitions, moveable.LuaProperties, globalDefaults);
                 _viewModel.StatusMessage = "No properties defined for this moveable type.";
             }
             else if (selected is StaticInstance staticObj)
@@ -116,8 +120,12 @@ namespace TombEditor.ToolWindows
                 var typeId = staticObj.WadObjectId.TypeId;
                 var definitions = LuaPropertyCatalog.GetDefinitions(LuaPropertyObjectKind.Static, typeId);
 
+                // Get wad2 global defaults for this static type (if available).
+                var wadStatic = _editor.Level.Settings.WadTryGetStatic(staticObj.WadObjectId);
+                var globalDefaults = wadStatic?.LuaProperties;
+
                 _viewModel.Title = $"Properties: {staticObj.ItemType.ToString()}";
-                _viewModel.Load(definitions, staticObj.LuaProperties);
+                _viewModel.Load(definitions, staticObj.LuaProperties, globalDefaults);
                 _viewModel.StatusMessage = "No properties defined for this static mesh slot.";
             }
             else

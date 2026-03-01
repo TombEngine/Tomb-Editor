@@ -1,12 +1,16 @@
+using DarkUI.Controls;
 using DarkUI.Forms;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using TombLib.Forms.ViewModels;
 using TombLib.Forms.Views;
 using TombLib.LuaProperties;
 using TombLib.Wad;
+using TombLib.Wad.Catalog;
 
 namespace WadTool
 {
@@ -14,61 +18,37 @@ namespace WadTool
     {
         private readonly WadToolClass _tool;
         private readonly Wad2 _wad;
-        private readonly IWadObject _wadObject;
-        private readonly IWadObjectId _objectId;
+
+        // Currently selected object
+        private IWadObjectId _currentObjectId;
+        private IWadObject _currentWadObject;
 
         // WPF hosting
         private readonly ElementHost _elementHost;
         private readonly LuaPropertyGridControl _wpfControl;
         private readonly LuaPropertyGridViewModel _viewModel;
 
-        // Original container for cancel/restore
-        private readonly LuaPropertyContainer _originalProperties;
+        // Original containers for cancel/restore (key = objectId)
+        private readonly Dictionary<IWadObjectId, LuaPropertyContainer> _originalProperties
+            = new Dictionary<IWadObjectId, LuaPropertyContainer>();
 
-        public FormLuaProperties(WadToolClass tool, Wad2 wad, IWadObjectId objectId, IWadObject wadObject)
+        // Track which objects were actually modified
+        private bool _anyChanges;
+
+        /// <summary>
+        /// Opens the property editor.
+        /// If <paramref name="initialObjectId"/> is non-null, it is pre-selected in the list.
+        /// </summary>
+        public FormLuaProperties(WadToolClass tool, Wad2 wad, IWadObjectId initialObjectId = null)
         {
             _tool = tool;
             _wad = wad;
-            _wadObject = wadObject;
-            _objectId = objectId;
 
-            InitializeForm();
-
-            // Determine kind and type ID
-            LuaPropertyObjectKind kind;
-            uint typeId;
-            string objectName;
-
-            if (wadObject is WadMoveable moveable)
-            {
-                kind = LuaPropertyObjectKind.Moveable;
-                typeId = ((WadMoveableId)objectId).TypeId;
-                objectName = TombLib.Wad.Catalog.TrCatalog.GetMoveableName(wad.GameVersion, typeId);
-            }
-            else if (wadObject is WadStatic staticObj)
-            {
-                kind = LuaPropertyObjectKind.Static;
-                typeId = ((WadStaticId)objectId).TypeId;
-                objectName = TombLib.Wad.Catalog.TrCatalog.GetStaticName(wad.GameVersion, typeId);
-            }
-            else
-            {
-                // Unsupported object type
-                return;
-            }
-
-            Text = $"Item Properties - {objectName} (Slot {typeId})";
-
-            // Save original state for undo on cancel
-            _originalProperties = GetContainer().Clone();
+            InitializeComponent();
+            PopulateObjectList();
 
             // Create WPF control + view model
             _viewModel = new LuaPropertyGridViewModel();
-            _viewModel.Title = objectName;
-
-            var definitions = LuaPropertyCatalog.GetDefinitions(kind, typeId);
-            _viewModel.Load(definitions, GetContainer());
-
             _wpfControl = new LuaPropertyGridControl();
             _wpfControl.ViewModel = _viewModel;
 
@@ -77,148 +57,176 @@ namespace WadTool
                 Dock = DockStyle.Fill,
                 Child = _wpfControl
             };
-
             panelContent.Controls.Add(_elementHost);
 
-            if (definitions.Count == 0)
+            // Select the requested object, or the first one
+            if (initialObjectId != null)
+                SelectObjectInList(initialObjectId);
+            else if (lstObjects.Items.Count > 0)
+                lstObjects.SelectItem(0);
+        }
+
+        #region Object list management
+
+        private void PopulateObjectList()
+        {
+            lstObjects.Items.Clear();
+            var gameVersion = _wad.GameVersion;
+
+            // Add moveables
+            foreach (var kvp in _wad.Moveables)
             {
-                lblNoProperties.Visible = true;
-                lblNoProperties.BringToFront();
+                string name = TrCatalog.GetMoveableName(gameVersion, kvp.Key.TypeId);
+                var item = new DarkListItem(name)
+                {
+                    Tag = kvp.Key
+                };
+                lstObjects.Items.Add(item);
+            }
+
+            // Add statics
+            foreach (var kvp in _wad.Statics)
+            {
+                string name = TrCatalog.GetStaticName(gameVersion, kvp.Key.TypeId);
+                var item = new DarkListItem(name)
+                {
+                    Tag = kvp.Key
+                };
+                lstObjects.Items.Add(item);
             }
         }
 
-        private LuaPropertyContainer GetContainer()
+        private void SelectObjectInList(IWadObjectId objectId)
         {
-            if (_wadObject is WadMoveable moveable)
+            for (int i = 0; i < lstObjects.Items.Count; i++)
+            {
+                if (lstObjects.Items[i].Tag is IWadObjectId id && id.Equals(objectId))
+                {
+                    lstObjects.SelectItem(i);
+                    lstObjects.EnsureVisible();
+                    return;
+                }
+            }
+
+            // Fallback: select first
+            if (lstObjects.Items.Count > 0)
+                lstObjects.SelectItem(0);
+        }
+
+        private void lstObjects_SelectedIndicesChanged(object sender, EventArgs e)
+        {
+            if (lstObjects.SelectedIndices.Count == 0)
+                return;
+
+            var selected = lstObjects.Items[lstObjects.SelectedIndices[0]];
+            if (selected.Tag is IWadObjectId objectId)
+                LoadObject(objectId);
+        }
+
+        #endregion
+
+        #region Property loading
+
+        private void LoadObject(IWadObjectId objectId)
+        {
+            var wadObject = _wad.TryGet(objectId);
+            if (wadObject == null)
+                return;
+
+            _currentObjectId = objectId;
+            _currentWadObject = wadObject;
+
+            // Snapshot original state for cancel/restore (only first time per object)
+            if (!_originalProperties.ContainsKey(objectId))
+            {
+                var container = GetContainer(wadObject);
+                _originalProperties[objectId] = container?.Clone() ?? new LuaPropertyContainer();
+            }
+
+            // Determine kind and type ID
+            LuaPropertyObjectKind kind;
+            uint typeId;
+            string objectName;
+
+            if (wadObject is WadMoveable)
+            {
+                kind = LuaPropertyObjectKind.Moveable;
+                typeId = ((WadMoveableId)objectId).TypeId;
+                objectName = TrCatalog.GetMoveableName(_wad.GameVersion, typeId);
+            }
+            else if (wadObject is WadStatic)
+            {
+                kind = LuaPropertyObjectKind.Static;
+                typeId = ((WadStaticId)objectId).TypeId;
+                objectName = TrCatalog.GetStaticName(_wad.GameVersion, typeId);
+            }
+            else
+                return;
+
+            _viewModel.Title = objectName;
+
+            var definitions = LuaPropertyCatalog.GetDefinitions(kind, typeId);
+            _viewModel.Load(definitions, GetContainer(wadObject));
+
+            if (definitions.Count == 0)
+                _viewModel.StatusMessage = "No item properties defined for this object type.";
+        }
+
+        private static LuaPropertyContainer GetContainer(IWadObject wadObject)
+        {
+            if (wadObject is WadMoveable moveable)
                 return moveable.LuaProperties;
-            if (_wadObject is WadStatic staticObj)
+            if (wadObject is WadStatic staticObj)
                 return staticObj.LuaProperties;
             return null;
         }
 
-        private void InitializeForm()
+        #endregion
+
+        #region Event handlers
+
+        private void panelButtons_Layout(object sender, LayoutEventArgs e)
         {
-            SuspendLayout();
-
-            // Form settings
-            Name = "FormLuaProperties";
-            Size = new Size(420, 520);
-            MinimumSize = new Size(350, 300);
-            StartPosition = FormStartPosition.CenterParent;
-            FormBorderStyle = FormBorderStyle.Sizable;
-            MaximizeBox = false;
-            MinimizeBox = false;
-            ShowIcon = false;
-            ShowInTaskbar = false;
-
-            // Bottom button panel
-            panelButtons = new Panel
-            {
-                Dock = DockStyle.Bottom,
-                Height = 40,
-                Padding = new Padding(6, 6, 6, 6)
-            };
-
-            butCancel = new DarkUI.Controls.DarkButton
-            {
-                Text = "Cancel",
-                DialogResult = DialogResult.Cancel,
-                Dock = DockStyle.Right,
-                Width = 80,
-                Padding = new Padding(0)
-            };
-            butCancel.Click += ButCancel_Click;
-
-            butOK = new DarkUI.Controls.DarkButton
-            {
-                Text = "OK",
-                Dock = DockStyle.Right,
-                Width = 80,
-                Padding = new Padding(0)
-            };
-            butOK.Click += ButOK_Click;
-
-            butReset = new DarkUI.Controls.DarkButton
-            {
-                Text = "Reset All",
-                Dock = DockStyle.Left,
-                Width = 80,
-                Padding = new Padding(0)
-            };
-            butReset.Click += ButReset_Click;
-
-            panelButtons.Controls.Add(butCancel);
-            panelButtons.Controls.Add(butOK);
-            panelButtons.Controls.Add(butReset);
-
-            // Content panel for the WPF control
-            panelContent = new Panel
-            {
-                Dock = DockStyle.Fill
-            };
-
-            // Label for when no properties exist
-            lblNoProperties = new DarkUI.Controls.DarkLabel
-            {
-                Text = "No item properties defined for this object type.\n\nAdd property definitions in:\nCatalogs/TEN Property Catalogs/",
-                Dock = DockStyle.Fill,
-                TextAlign = ContentAlignment.MiddleCenter,
-                Visible = false,
-                AutoSize = false
-            };
-            panelContent.Controls.Add(lblNoProperties);
-
-            Controls.Add(panelContent);
-            Controls.Add(panelButtons);
-
-            AcceptButton = butOK;
-            CancelButton = butCancel;
-
-            ResumeLayout(false);
+            int y = (panelButtons.Height - butOK.Height) / 2;
+            butCancel.Location = new Point(panelButtons.ClientSize.Width - panelButtons.Padding.Right - butCancel.Width, y);
+            butOK.Location = new Point(butCancel.Left - 6 - butOK.Width, y);
+            butReset.Location = new Point(panelButtons.Padding.Left, y);
         }
 
-        private void ButOK_Click(object sender, EventArgs e)
+        private void butOK_Click(object sender, EventArgs e)
         {
-            // Values are already written to the container via the ViewModel's live-write.
-            // Just mark the wad as changed and close.
+            // Values are already written to containers via the ViewModel's live-write.
             _tool.ToggleUnsavedChanges();
             DialogResult = DialogResult.OK;
             Close();
         }
 
-        private void ButCancel_Click(object sender, EventArgs e)
+        private void butCancel_Click(object sender, EventArgs e)
         {
-            // Restore original properties
-            var container = GetContainer();
-            if (container != null)
+            // Restore all original properties
+            foreach (var kvp in _originalProperties)
             {
-                container.Clear();
-                foreach (var kvp in _originalProperties.GetAll())
-                    container.SetValue(kvp.Key, kvp.Value);
+                var wadObject = _wad.TryGet(kvp.Key);
+                if (wadObject == null) continue;
+
+                var container = GetContainer(wadObject);
+                if (container != null)
+                {
+                    container.Clear();
+                    foreach (var prop in kvp.Value.GetAll())
+                        container.SetValue(prop.Key, prop.Value);
+                }
             }
 
             DialogResult = DialogResult.Cancel;
             Close();
         }
 
-        private void ButReset_Click(object sender, EventArgs e)
+        private void butReset_Click(object sender, EventArgs e)
         {
             _viewModel.ResetAll();
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-                _elementHost?.Dispose();
-            base.Dispose(disposing);
-        }
-
-        // Controls
-        private Panel panelButtons;
-        private Panel panelContent;
-        private DarkUI.Controls.DarkButton butOK;
-        private DarkUI.Controls.DarkButton butCancel;
-        private DarkUI.Controls.DarkButton butReset;
-        private DarkUI.Controls.DarkLabel lblNoProperties;
+        #endregion
     }
 }

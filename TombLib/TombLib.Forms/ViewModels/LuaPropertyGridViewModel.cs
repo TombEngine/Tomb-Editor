@@ -73,7 +73,10 @@ namespace TombLib.Forms.ViewModels
         /// </summary>
         /// <param name="definitions">Property definitions for this object type (from XML catalog).</param>
         /// <param name="container">Existing property container with saved values, or null.</param>
-        public void Load(List<LuaPropertyDefinition> definitions, LuaPropertyContainer container)
+        /// <param name="globalDefaults">Optional global defaults from the wad2 object type.
+        /// When provided, these values override XML catalog defaults for display and reset purposes.</param>
+        public void Load(List<LuaPropertyDefinition> definitions, LuaPropertyContainer container,
+                         LuaPropertyContainer globalDefaults = null)
         {
             Properties.Clear();
             _container = container;
@@ -91,12 +94,17 @@ namespace TombLib.Forms.ViewModels
                 if (!definition.IsValid)
                     continue;
 
-                // Get the current value from container, falling back to definition default.
+                // Resolve global default from wad2 (if available) for this property.
+                string wadDefault = globalDefaults?.GetValue(definition.InternalName);
+
+                // Get the current instance value from container, falling back to
+                // wad2 global default, then XML catalog default.
                 string currentValue = container?.GetValue(definition.InternalName)
+                                      ?? wadDefault
                                       ?? definition.DefaultValue
                                       ?? LuaValueParser.GetDefaultBoxedValue(definition.Type);
 
-                var row = new LuaPropertyRowViewModel(definition, currentValue);
+                var row = new LuaPropertyRowViewModel(definition, currentValue, wadDefault);
                 row.ValueChanged += OnRowValueChanged;
                 Properties.Add(row);
             }

@@ -965,21 +965,17 @@ namespace WadTool
             }
         }
 
-        public static void EditLuaProperties(WadToolClass tool, IWin32Window owner)
+        public static void EditLuaProperties(WadToolClass tool, IWin32Window owner, IWadObjectId focusObjectId = null)
         {
-            Wad2 wad = tool.GetWad(tool.MainSelection?.WadArea);
-            var wadObject = wad?.TryGet(tool.MainSelection?.Id);
+            Wad2 wad = tool.DestinationWad;
 
-            if (wadObject == null || tool.MainSelection?.WadArea != WadArea.Destination)
-                return;
-
-            if (!(wadObject is WadMoveable) && !(wadObject is WadStatic))
+            if (wad == null)
             {
-                tool.SendMessage("Item properties are only available for moveables and statics.", PopupType.Info);
+                tool.SendMessage("No destination wad is loaded.", PopupType.Info);
                 return;
             }
 
-            using (var form = new FormLuaProperties(tool, wad, tool.MainSelection.Value.Id, wadObject))
+            using (var form = new FormLuaProperties(tool, wad, focusObjectId))
             {
                 form.ShowDialog(owner);
             }
