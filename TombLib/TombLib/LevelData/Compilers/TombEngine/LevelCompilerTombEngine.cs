@@ -584,6 +584,45 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 }
             }
 
+            // Fall back to XML catalog defaults for object types that don't have
+            // global properties in wad2 (e.g. older wad2 files without property data).
+            foreach (var wadRef in _level.Settings.Wads)
+            {
+                if (wadRef.Wad == null)
+                    continue;
+
+                foreach (var mov in wadRef.Wad.Moveables)
+                {
+                    string slotName = TrCatalog.GetMoveableName(gameVersion, mov.Key.TypeId);
+                    if (string.IsNullOrEmpty(slotName) || globalMoveableProps.ContainsKey(slotName))
+                        continue;
+
+                    var definitions = LuaPropertyCatalog.GetDefinitions(LuaPropertyObjectKind.Moveable, mov.Key.TypeId);
+                    if (definitions.Count == 0)
+                        continue;
+
+                    var container = new LuaPropertyContainer();
+                    foreach (var def in definitions)
+                        container.SetValue(def.InternalName, def.DefaultValue);
+                    globalMoveableProps[slotName] = container;
+                }
+
+                foreach (var stat in wadRef.Wad.Statics)
+                {
+                    if (globalStaticProps.ContainsKey(stat.Key.TypeId))
+                        continue;
+
+                    var definitions = LuaPropertyCatalog.GetDefinitions(LuaPropertyObjectKind.Static, stat.Key.TypeId);
+                    if (definitions.Count == 0)
+                        continue;
+
+                    var container = new LuaPropertyContainer();
+                    foreach (var def in definitions)
+                        container.SetValue(def.InternalName, def.DefaultValue);
+                    globalStaticProps[stat.Key.TypeId] = container;
+                }
+            }
+
             // Collect Level 2 properties: per-instance from rooms
             var instanceMoveableProps = new Dictionary<string, LuaPropertyContainer>();
             var instanceStaticProps = new Dictionary<string, LuaPropertyContainer>();
