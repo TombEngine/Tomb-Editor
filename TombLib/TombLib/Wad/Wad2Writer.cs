@@ -525,7 +525,8 @@ namespace TombLib.Wad
 
             chunkIO.WriteChunkWithChildren(Wad2Chunks.LuaProperties, () =>
             {
-                foreach (var prop in container.GetAll().OrderBy(p => p.Key, StringComparer.OrdinalIgnoreCase))
+                var sortedProps = container.GetAll().OrderBy(p => p.Key).ToList();
+                foreach (var prop in sortedProps)
                 {
                     chunkIO.WriteChunkWithChildren(Wad2Chunks.LuaProperty, () =>
                     {
