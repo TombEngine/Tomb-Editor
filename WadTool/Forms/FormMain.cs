@@ -134,7 +134,6 @@ namespace WadTool
                     butEditSkeleton.Visible = false;
                     butEditStaticModel.Visible = false;
                     butEditSpriteSequence.Visible = false;
-                    butEditLuaProperties.Visible = false;
                 }
                 else
                 {
@@ -158,8 +157,6 @@ namespace WadTool
                     butEditSkeleton.Visible = (mainSelection.Value.Id is WadMoveableId);
                     butEditStaticModel.Visible = (mainSelection.Value.Id is WadStaticId);
                     butEditSpriteSequence.Visible = (mainSelection.Value.Id is WadSpriteSequenceId);
-                    butEditLuaProperties.Visible = (mainSelection.Value.Id is WadMoveableId || mainSelection.Value.Id is WadStaticId) &&
-                                                    mainSelection.Value.WadArea == WadArea.Destination;
 
                     panel3D.ResetCamera();
                     panel3D.Invalidate();
