@@ -965,7 +965,7 @@ namespace TombLib.LevelData.IO
                 return;
             }
 
-            var props = container.GetAll().ToList();
+            var props = container.GetAll().OrderBy(p => p.Key, StringComparer.OrdinalIgnoreCase).ToList();
             chunkIO.Raw.Write(props.Count);
 
             foreach (var prop in props)

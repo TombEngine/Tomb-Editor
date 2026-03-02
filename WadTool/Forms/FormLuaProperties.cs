@@ -57,6 +57,9 @@ namespace WadTool
             };
             panelContent.Controls.Add(_elementHost);
 
+            // Track actual property modifications
+            _viewModel.PropertyValueChanged += (s, ev) => _anyChanges = true;
+
             // Select the requested object, or the first one
             if (initialObjectId != null)
                 SelectObjectInList(initialObjectId);
@@ -186,7 +189,9 @@ namespace WadTool
         private void butOK_Click(object sender, EventArgs e)
         {
             // Values are already written to containers via the ViewModel's live-write.
-            _tool.ToggleUnsavedChanges();
+            if (_anyChanges)
+                _tool.ToggleUnsavedChanges();
+
             DialogResult = DialogResult.OK;
             Close();
         }

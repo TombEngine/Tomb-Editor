@@ -152,17 +152,35 @@ namespace TombLib.Forms.ViewModels
         public byte ColorR
         {
             get => LuaValueParser.UnboxColor(_boxedValue)[0];
-            set { var c = LuaValueParser.UnboxColor(_boxedValue); BoxedValue = LuaValueParser.BoxColor(value, c[1], c[2], c[3]); }
+            set
+            {
+                var c = LuaValueParser.UnboxColor(_boxedValue);
+                BoxedValue = HasAlpha
+                    ? LuaValueParser.BoxColor(value, c[1], c[2], c[3])
+                    : LuaValueParser.BoxColor(value, c[1], c[2]);
+            }
         }
         public byte ColorG
         {
             get => LuaValueParser.UnboxColor(_boxedValue)[1];
-            set { var c = LuaValueParser.UnboxColor(_boxedValue); BoxedValue = LuaValueParser.BoxColor(c[0], value, c[2], c[3]); }
+            set
+            {
+                var c = LuaValueParser.UnboxColor(_boxedValue);
+                BoxedValue = HasAlpha
+                    ? LuaValueParser.BoxColor(c[0], value, c[2], c[3])
+                    : LuaValueParser.BoxColor(c[0], value, c[2]);
+            }
         }
         public byte ColorB
         {
             get => LuaValueParser.UnboxColor(_boxedValue)[2];
-            set { var c = LuaValueParser.UnboxColor(_boxedValue); BoxedValue = LuaValueParser.BoxColor(c[0], c[1], value, c[3]); }
+            set
+            {
+                var c = LuaValueParser.UnboxColor(_boxedValue);
+                BoxedValue = HasAlpha
+                    ? LuaValueParser.BoxColor(c[0], c[1], value, c[3])
+                    : LuaValueParser.BoxColor(c[0], c[1], value);
+            }
         }
         public byte ColorA
         {
