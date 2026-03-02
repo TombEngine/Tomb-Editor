@@ -351,13 +351,6 @@ namespace TombEditor
                             VisibleContent = "TriggerList",
                             Order = 3,
                             Size = new Size(284,174)
-                        },
-                        new DockGroupState
-                        {
-                            Contents = new List<string> { "ItemProperties" },
-                            VisibleContent = "ItemProperties",
-                            Order = 4,
-                            Size = new Size(284,200)
                         }
                     }
                 },
@@ -369,7 +362,7 @@ namespace TombEditor
                     {
                         new DockGroupState
                         {
-                            Contents = new List<string> { "TexturePanel" },
+                            Contents = new List<string> { "TexturePanel", "ItemProperties" },
                             VisibleContent = "TexturePanel",
                             Order = 0,
                             Size = new Size(286,700)
