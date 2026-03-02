@@ -641,7 +641,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
             if (!hasAnyProperties)
             {
-                _luaPropertyScriptBlob = new KeyValuePair<int, string>();
+                _luaPropertyScriptBlob = new KeyValuePair<int, string>(0, string.Empty);
                 return;
             }
 

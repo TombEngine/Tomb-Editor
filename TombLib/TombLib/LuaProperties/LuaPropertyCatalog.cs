@@ -69,7 +69,6 @@ namespace TombLib.LuaProperties
 
         /// <summary>
         /// Gets all property definitions, loading from disk on first access.
-        /// Thread-safe via lazy initialization.
         /// </summary>
         public static Dictionary<LuaPropertyObjectKey, List<LuaPropertyDefinition>> Catalog
         {
