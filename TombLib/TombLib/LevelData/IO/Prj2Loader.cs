@@ -1249,7 +1249,8 @@ namespace TombLib.LevelData.IO
                     addObject(instance);
                     newObjects.TryAdd(objectID, instance);
                 }
-                else if (id3 == Prj2Chunks.ObjectMovableTombEngine2)
+                else if (id3 == Prj2Chunks.ObjectMovableTombEngine2 ||
+                         id3 == Prj2Chunks.ObjectMovableTombEngine3)
                 {
                     var instance = new MoveableInstance();
                     instance.Position = chunkIO.Raw.ReadVector3();
@@ -1264,25 +1265,10 @@ namespace TombLib.LevelData.IO
                     instance.CodeBits = chunkIO.Raw.ReadByte();
                     instance.Color = chunkIO.Raw.ReadVector3();
                     instance.LuaName = chunkIO.Raw.ReadStringUTF8();
-                    addObject(instance);
-                    newObjects.TryAdd(objectID, instance);
-                }
-                else if (id3 == Prj2Chunks.ObjectMovableTombEngine3)
-                {
-                    var instance = new MoveableInstance();
-                    instance.Position = chunkIO.Raw.ReadVector3();
-                    instance.RotationY = chunkIO.Raw.ReadSingle();
-                    instance.RotationX = chunkIO.Raw.ReadSingle();
-                    instance.Roll = chunkIO.Raw.ReadSingle();
-                    ReadOptionalLEB128Int(chunkIO.Raw);
-                    instance.WadObjectId = new WadMoveableId(chunkIO.Raw.ReadUInt32());
-                    instance.Ocb = chunkIO.Raw.ReadInt16();
-                    instance.Invisible = chunkIO.Raw.ReadBoolean();
-                    instance.ClearBody = chunkIO.Raw.ReadBoolean();
-                    instance.CodeBits = chunkIO.Raw.ReadByte();
-                    instance.Color = chunkIO.Raw.ReadVector3();
-                    instance.LuaName = chunkIO.Raw.ReadStringUTF8();
-                    ReadLuaProperties(chunkIO, instance.LuaProperties);
+
+                    if (id3 == Prj2Chunks.ObjectMovableTombEngine3)
+                        ReadLuaProperties(chunkIO, instance.LuaProperties);
+
                     addObject(instance);
                     newObjects.TryAdd(objectID, instance);
                 }
@@ -1325,7 +1311,8 @@ namespace TombLib.LevelData.IO
                     instance.LuaName = chunkIO.Raw.ReadStringUTF8();
                     addObject(instance);
                 }
-                else if (id3 == Prj2Chunks.ObjectStaticTombEngine2)
+                else if (id3 == Prj2Chunks.ObjectStaticTombEngine2 ||
+                         id3 == Prj2Chunks.ObjectStaticTombEngine3)
                 {
                     var instance = new StaticInstance();
                     newObjects.TryAdd(objectID, instance);
@@ -1339,23 +1326,10 @@ namespace TombLib.LevelData.IO
                     instance.Color = chunkIO.Raw.ReadVector3();
                     instance.Ocb = chunkIO.Raw.ReadInt16();
                     instance.LuaName = chunkIO.Raw.ReadStringUTF8();
-                    addObject(instance);
-                }
-                else if (id3 == Prj2Chunks.ObjectStaticTombEngine3)
-                {
-                    var instance = new StaticInstance();
-                    newObjects.TryAdd(objectID, instance);
-                    instance.Position = chunkIO.Raw.ReadVector3();
-                    instance.RotationY = chunkIO.Raw.ReadSingle();
-                    chunkIO.Raw.ReadSingle(); // Reserved: instance.RotationX
-                    chunkIO.Raw.ReadSingle(); // Reserved: instance.Roll
-                    instance.Scale = chunkIO.Raw.ReadSingle();
-                    ReadOptionalLEB128Int(chunkIO.Raw);
-                    instance.WadObjectId = new WadStaticId(chunkIO.Raw.ReadUInt32());
-                    instance.Color = chunkIO.Raw.ReadVector3();
-                    instance.Ocb = chunkIO.Raw.ReadInt16();
-                    instance.LuaName = chunkIO.Raw.ReadStringUTF8();
-                    ReadLuaProperties(chunkIO, instance.LuaProperties);
+
+                    if (id3 == Prj2Chunks.ObjectStaticTombEngine3)
+                        ReadLuaProperties(chunkIO, instance.LuaProperties);
+
                     addObject(instance);
                 }
                 else if (id3 == Prj2Chunks.ObjectCamera)
@@ -2053,10 +2027,6 @@ namespace TombLib.LevelData.IO
                 return (uint)read;
         }
 
-        /// <summary>
-        /// Reads LuaPropertyContainer data from a flat chunk.
-        /// Format: int32 count, then for each property: UTF8 name + UTF8 value.
-        /// </summary>
         private static void ReadLuaProperties(ChunkReader chunkIO, LuaPropertyContainer container)
         {
             int count = chunkIO.Raw.ReadInt32();

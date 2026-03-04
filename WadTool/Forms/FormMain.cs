@@ -553,7 +553,6 @@ namespace WadTool
 
         private void itemPropertiesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // From Tools menu: open without focusing on any specific item
             WadActions.EditLuaProperties(_tool, this, null);
         }
 

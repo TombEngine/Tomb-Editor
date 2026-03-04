@@ -1,12 +1,11 @@
-// Shared Lua value boxing/unboxing abstraction.
-// Extracted from ArgumentEditor to avoid duplicated parsing logic.
-// Used by both the visual scripting ArgumentEditor and the new property grid system.
-
 using System;
 using System.Globalization;
 using System.Linq;
 using NLog;
 using TombLib.Utils;
+
+// Shared Lua value boxing/unboxing abstraction.
+// Used by both the visual scripting ArgumentEditor and the property grid system.
 
 namespace TombLib.LuaProperties
 {
@@ -24,59 +23,37 @@ namespace TombLib.LuaProperties
 
         #region Boxing (C# values → Lua text)
 
-        /// <summary>
-        /// Boxes a boolean value to its Lua representation ("true"/"false").
-        /// </summary>
-        public static string BoxBool(bool value)
-            => value ? "true" : "false";
+        public static string BoxBool(bool value) => value ? "true" : "false";
 
-        /// <summary>
-        /// Boxes an integer value to its Lua representation.
-        /// </summary>
-        public static string BoxInt(int value)
-            => value.ToString(Inv);
+        public static string BoxInt(int value) => value.ToString(Inv);
 
-        /// <summary>
-        /// Boxes a float value to its Lua representation.
-        /// </summary>
-        public static string BoxFloat(float value)
-            => value.ToString(Inv);
+        public static string BoxFloat(float value) => value.ToString(Inv);
 
-        /// <summary>
-        /// Boxes a string value to its Lua representation (quoted with escaped inner quotes).
-        /// </summary>
-        public static string BoxString(string value)
-            => TextExtensions.Quote(TextExtensions.EscapeQuotes(value ?? string.Empty));
+        public static string BoxString(string value) => TextExtensions.Quote(TextExtensions.EscapeQuotes(value ?? string.Empty));
 
-        /// <summary>
-        /// Boxes a Vec2 value: TEN.Vec2(x, y)
-        /// </summary>
         public static string BoxVec2(float x, float y)
-            => LuaSyntax.Vec2TypePrefix + LuaSyntax.BracketOpen +
-               x.ToString(Inv) + LuaSyntax.Separator +
-               y.ToString(Inv) + LuaSyntax.BracketClose;
+        {
+            return LuaSyntax.Vec2TypePrefix + LuaSyntax.BracketOpen +
+                   x.ToString(Inv) + LuaSyntax.Separator +
+                   y.ToString(Inv) + LuaSyntax.BracketClose;
+        }
 
-        /// <summary>
-        /// Boxes a Vec3 value: TEN.Vec3(x, y, z)
-        /// </summary>
         public static string BoxVec3(float x, float y, float z)
-            => LuaSyntax.Vec3TypePrefix + LuaSyntax.BracketOpen +
-               x.ToString(Inv) + LuaSyntax.Separator +
-               y.ToString(Inv) + LuaSyntax.Separator +
-               z.ToString(Inv) + LuaSyntax.BracketClose;
+        {
+            return LuaSyntax.Vec3TypePrefix + LuaSyntax.BracketOpen +
+                   x.ToString(Inv) + LuaSyntax.Separator +
+                   y.ToString(Inv) + LuaSyntax.Separator +
+                   z.ToString(Inv) + LuaSyntax.BracketClose;
+        }
 
-        /// <summary>
-        /// Boxes a Rotation value: TEN.Rotation(x, y, z)
-        /// </summary>
         public static string BoxRotation(float x, float y, float z)
-            => LuaSyntax.RotationTypePrefix + LuaSyntax.BracketOpen +
-               x.ToString(Inv) + LuaSyntax.Separator +
-               y.ToString(Inv) + LuaSyntax.Separator +
-               z.ToString(Inv) + LuaSyntax.BracketClose;
+        {
+            return LuaSyntax.RotationTypePrefix + LuaSyntax.BracketOpen +
+                   x.ToString(Inv) + LuaSyntax.Separator +
+                   y.ToString(Inv) + LuaSyntax.Separator +
+                   z.ToString(Inv) + LuaSyntax.BracketClose;
+        }
 
-        /// <summary>
-        /// Boxes a Color value: TEN.Color(r, g, b) or TEN.Color(r, g, b, a)
-        /// </summary>
         public static string BoxColor(byte r, byte g, byte b, byte? a = null)
         {
             var result = LuaSyntax.ColorTypePrefix + LuaSyntax.BracketOpen +
@@ -91,25 +68,20 @@ namespace TombLib.LuaProperties
             return result;
         }
 
-        /// <summary>
-        /// Boxes a Time value: TEN.Time({h, m, s, cs})
-        /// </summary>
         public static string BoxTime(int hours, int minutes, int seconds, int centiseconds)
-            => LuaSyntax.TimeTypePrefix + LuaSyntax.BracketOpen + LuaSyntax.TableOpen +
-               hours.ToString(Inv) + LuaSyntax.Separator +
-               minutes.ToString(Inv) + LuaSyntax.Separator +
-               seconds.ToString(Inv) + LuaSyntax.Separator +
-               centiseconds.ToString(Inv) +
-               LuaSyntax.TableClose + LuaSyntax.BracketClose;
+        {
+            return LuaSyntax.TimeTypePrefix + LuaSyntax.BracketOpen + LuaSyntax.TableOpen +
+                   hours.ToString(Inv) + LuaSyntax.Separator +
+                   minutes.ToString(Inv) + LuaSyntax.Separator +
+                   seconds.ToString(Inv) + LuaSyntax.Separator +
+                   centiseconds.ToString(Inv) +
+                   LuaSyntax.TableClose + LuaSyntax.BracketClose;
+        }
 
         #endregion
 
         #region Unboxing (Lua text → C# values)
 
-        /// <summary>
-        /// Unboxes a boolean value from Lua text.
-        /// Supports "true", "false", and numeric strings (0 = false, non-zero = true).
-        /// </summary>
         public static bool UnboxBool(string source, bool defaultValue = false)
         {
             if (string.IsNullOrWhiteSpace(source))
@@ -126,9 +98,6 @@ namespace TombLib.LuaProperties
             return defaultValue;
         }
 
-        /// <summary>
-        /// Unboxes an integer value from Lua text.
-        /// </summary>
         public static int UnboxInt(string source, int defaultValue = 0)
         {
             if (string.IsNullOrWhiteSpace(source))
@@ -149,9 +118,6 @@ namespace TombLib.LuaProperties
             return defaultValue;
         }
 
-        /// <summary>
-        /// Unboxes a float value from Lua text.
-        /// </summary>
         public static float UnboxFloat(string source, float defaultValue = 0.0f)
         {
             if (string.IsNullOrWhiteSpace(source))
@@ -168,9 +134,6 @@ namespace TombLib.LuaProperties
             return defaultValue;
         }
 
-        /// <summary>
-        /// Unboxes a string value from Lua text (removes surrounding quotes and unescapes).
-        /// </summary>
         public static string UnboxString(string source, string defaultValue = "")
         {
             if (source == null)
@@ -179,9 +142,6 @@ namespace TombLib.LuaProperties
             return TextExtensions.UnescapeQuotes(TextExtensions.Unquote(source));
         }
 
-        /// <summary>
-        /// Unboxes a Vec2 value from Lua text: TEN.Vec2(x, y) → float[2].
-        /// </summary>
         public static float[] UnboxVec2(string source)
         {
             var defaults = new float[] { 0, 0 };
@@ -204,9 +164,6 @@ namespace TombLib.LuaProperties
             };
         }
 
-        /// <summary>
-        /// Unboxes a Vec3 value from Lua text: TEN.Vec3(x, y, z) → float[3].
-        /// </summary>
         public static float[] UnboxVec3(string source)
         {
             var defaults = new float[] { 0, 0, 0 };
@@ -230,10 +187,6 @@ namespace TombLib.LuaProperties
             };
         }
 
-        /// <summary>
-        /// Unboxes a Rotation value from Lua text: TEN.Rotation(x, y, z) → float[3].
-        /// Values are clamped to 0–360 range.
-        /// </summary>
         public static float[] UnboxRotation(string source)
         {
             var defaults = new float[] { 0, 0, 0 };
@@ -257,9 +210,6 @@ namespace TombLib.LuaProperties
             };
         }
 
-        /// <summary>
-        /// Unboxes a Color value from Lua text: TEN.Color(r, g, b[, a]) → byte[3 or 4].
-        /// </summary>
         public static byte[] UnboxColor(string source)
         {
             var defaults = new byte[] { 0, 0, 0, 255 };
@@ -283,16 +233,12 @@ namespace TombLib.LuaProperties
             return new byte[] { r, g, b, a };
         }
 
-        /// <summary>
-        /// Unboxes a Time value from Lua text: TEN.Time({h, m, s, cs}) → int[4].
-        /// </summary>
         public static int[] UnboxTime(string source)
         {
             var defaults = new int[] { 0, 0, 0, 0 };
             if (string.IsNullOrWhiteSpace(source))
                 return defaults;
 
-            // Strip TEN.Time( ... ) wrapper and { } table braces
             source = StripTypePrefix(source, LuaSyntax.TimeTypePrefix);
             source = source.Replace(LuaSyntax.TableOpen, "").Replace(LuaSyntax.TableClose, "");
 
@@ -356,9 +302,7 @@ namespace TombLib.LuaProperties
 
                     case LuaPropertyType.Color:
                         if (value is byte[] c && c.Length >= 3)
-                            return c.Length > 3 && c[3] != 255
-                                ? BoxColor(c[0], c[1], c[2], c[3])
-                                : BoxColor(c[0], c[1], c[2]);
+                            return c.Length > 3 && c[3] != 255 ? BoxColor(c[0], c[1], c[2], c[3]) : BoxColor(c[0], c[1], c[2]);
                         return BoxColor(0, 0, 0);
 
                     case LuaPropertyType.Time:
@@ -367,8 +311,7 @@ namespace TombLib.LuaProperties
                         return BoxTime(0, 0, 0, 0);
 
                     case LuaPropertyType.Enum:
-                        // Enum values are stored as 0-based integers.
-                        return BoxInt(value is int enumVal ? enumVal : 0);
+                        return BoxInt(value is int enumVal ? enumVal : 0); // Enum values are stored as 0-based integers.
 
                     default:
                         logger.Warn("BoxByType: Unknown property type {0}", type);
@@ -497,6 +440,7 @@ namespace TombLib.LuaProperties
         {
             if (float.TryParse(source, NumberStyles.Float, Inv, out float result))
                 return result;
+
             return 0.0f;
         }
 
@@ -504,7 +448,8 @@ namespace TombLib.LuaProperties
         {
             // Normalize to 0-360 range.
             value = value % 360.0f;
-            if (value < 0) value += 360.0f;
+            if (value < 0)
+                value += 360.0f;
             return value;
         }
 

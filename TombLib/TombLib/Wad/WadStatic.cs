@@ -57,10 +57,6 @@ namespace TombLib.Wad
         public bool Shatter { get; set; } = false;
         public int ShatterSoundID { get; set; } = -1;
 
-        /// <summary>
-        /// Level 1 (global) Lua property container. Stored in wad2 files.
-        /// Holds per-object-type property overrides in boxed Lua format.
-        /// </summary>
         public LuaPropertyContainer LuaProperties { get; set; } = new LuaPropertyContainer();
 
         public string ToString(TRVersion.Game gameVersion) => Id.ToString(gameVersion.Native());

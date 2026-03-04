@@ -1,10 +1,10 @@
-// DataTemplateSelector that picks the correct editor template
-// based on the Lua property type (Bool, Int, Float, String, Vec2, Vec3, etc.).
-// Used by LuaPropertyGridControl to dynamically render the value column.
-
 using System.Windows;
 using System.Windows.Controls;
 using TombLib.LuaProperties;
+
+// DataTemplateSelector that picks the correct editor template
+// based on the Lua property type (bool, int, float, string, Vec2, Vec3, etc.).
+// Used by LuaPropertyGridControl to dynamically render the value column.
 
 namespace TombLib.Forms.Views
 {

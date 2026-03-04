@@ -1,15 +1,14 @@
-// XML catalog loader for Lua property definitions.
-// Reads XML files from "Catalogs/TEN Property Catalogs" folder,
-// parses property definitions per object type (moveable/static by ID),
-// and validates all values against their declared types.
-// Supports multi-slot ID syntax: "0", "0,1,2", "0-5", "0-5,73,100-105".
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
 using NLog;
+
+// XML catalog loader for Lua property definitions.
+// Reads XML files from "Catalogs/TEN Property Catalogs" folder, parses property definitions
+// per object type (moveable/static by ID), and validates all values against their declared types.
+// Supports multi-slot ID syntax: "0", "0,1,2", "0-5", "0-5, 73, 100-105".
 
 namespace TombLib.LuaProperties
 {
@@ -59,8 +58,7 @@ namespace TombLib.LuaProperties
         /// <summary>
         /// Path to the property catalog folder relative to program directory.
         /// </summary>
-        public static string PropertyCatalogPath =>
-            Path.Combine(DefaultPaths.CatalogsDirectory, "TEN Property Catalogs");
+        public static string PropertyCatalogPath => Path.Combine(DefaultPaths.CatalogsDirectory, "TEN Property Catalogs");
 
         /// <summary>
         /// Cached property definitions keyed by object type.
@@ -76,6 +74,7 @@ namespace TombLib.LuaProperties
             {
                 if (_catalog == null)
                     _catalog = LoadCatalog(PropertyCatalogPath);
+
                 return _catalog;
             }
         }
@@ -95,8 +94,10 @@ namespace TombLib.LuaProperties
         public static List<LuaPropertyDefinition> GetDefinitions(LuaPropertyObjectKind kind, uint typeId)
         {
             var key = new LuaPropertyObjectKey(kind, typeId);
+
             if (Catalog.TryGetValue(key, out var definitions))
                 return definitions;
+
             return new List<LuaPropertyDefinition>();
         }
 
@@ -114,9 +115,7 @@ namespace TombLib.LuaProperties
                 return result;
             }
 
-            var xmlFiles = Directory.GetFiles(path, "*.xml", SearchOption.AllDirectories)
-                                    .OrderBy(f => f)
-                                    .ToList();
+            var xmlFiles = Directory.GetFiles(path, "*.xml", SearchOption.AllDirectories).OrderBy(f => f).ToList();
 
             if (xmlFiles.Count == 0)
             {
@@ -156,26 +155,21 @@ namespace TombLib.LuaProperties
                 return;
             }
 
-            // Process <moveable> entries
+            // Process <moveable> entries.
             foreach (XmlNode moveableNode in root.SelectNodes("//moveable"))
-            {
                 ParseObjectNode(moveableNode, LuaPropertyObjectKind.Moveable, filePath, result);
-            }
 
-            // Process <static> entries
+            // Process <static> entries.
             foreach (XmlNode staticNode in root.SelectNodes("//static"))
-            {
                 ParseObjectNode(staticNode, LuaPropertyObjectKind.Static, filePath, result);
-            }
         }
 
         /// <summary>
         /// Parses a single &lt;moveable&gt; or &lt;static&gt; XML node and extracts its
         /// child &lt;property&gt; definitions.
-        /// Supports multi-slot id formats: "0", "0,1,2", "0-5", "0-5,73,100-105".
+        /// Supports multi-slot id formats: "0", "0,1,2", "0-5", "0-5, 73, 100-105".
         /// </summary>
-        private static void ParseObjectNode(XmlNode objectNode, LuaPropertyObjectKind kind,
-                                            string filePath, Dictionary<LuaPropertyObjectKey, List<LuaPropertyDefinition>> result)
+        private static void ParseObjectNode(XmlNode objectNode, LuaPropertyObjectKind kind, string filePath, Dictionary<LuaPropertyObjectKey, List<LuaPropertyDefinition>> result)
         {
             var idAttr = objectNode.Attributes?["id"];
             if (idAttr == null || string.IsNullOrWhiteSpace(idAttr.Value))
@@ -238,7 +232,7 @@ namespace TombLib.LuaProperties
                 var dashIndex = trimmed.IndexOf('-');
                 if (dashIndex > 0 && dashIndex < trimmed.Length - 1)
                 {
-                    // Range: "start-end"
+                    // Range: "start-end".
                     var startStr = trimmed.Substring(0, dashIndex).Trim();
                     var endStr = trimmed.Substring(dashIndex + 1).Trim();
 
@@ -269,7 +263,7 @@ namespace TombLib.LuaProperties
                 }
                 else
                 {
-                    // Single ID
+                    // Single ID.
                     if (uint.TryParse(trimmed, out uint singleId))
                     {
                         if (!ids.Contains(singleId))
@@ -293,7 +287,7 @@ namespace TombLib.LuaProperties
         {
             var definition = new LuaPropertyDefinition();
 
-            // Required: internalName
+            // Required: internalName.
             definition.InternalName = propNode.Attributes?["internalName"]?.Value?.Trim() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(definition.InternalName))
             {
@@ -301,31 +295,30 @@ namespace TombLib.LuaProperties
                 return null;
             }
 
-            // Required: displayName
+            // Required: displayName.
             definition.DisplayName = propNode.Attributes?["displayName"]?.Value?.Trim() ?? definition.InternalName;
 
-            // Optional: description
+            // Optional: description.
             definition.Description = propNode.Attributes?["description"]?.Value?.Trim() ?? string.Empty;
 
             // Optional: category
             definition.Category = propNode.Attributes?["category"]?.Value?.Trim() ?? string.Empty;
 
-            // Required: type
+            // Required: type.
             var typeStr = propNode.Attributes?["type"]?.Value?.Trim() ?? string.Empty;
             if (!TryParsePropertyType(typeStr, out var propertyType))
             {
-                logger.Warn("Property '{0}' has invalid type '{1}' in {2}, defaulting to Float",
-                    definition.InternalName, typeStr, filePath);
+                logger.Warn("Property '{0}' has invalid type '{1}' in {2}, defaulting to float", definition.InternalName, typeStr, filePath);
                 propertyType = LuaPropertyType.Float;
             }
             definition.Type = propertyType;
 
-            // Optional: hasAlpha (only meaningful for Color properties)
+            // Optional: hasAlpha (only meaningful for Color properties).
             var hasAlphaStr = propNode.Attributes?["hasAlpha"]?.Value?.Trim() ?? string.Empty;
             if (bool.TryParse(hasAlphaStr, out var hasAlpha))
                 definition.HasAlpha = hasAlpha;
 
-            // Optional: enum entries (only meaningful for Enum type)
+            // Optional: enum entries (only meaningful for Enum type).
             if (propertyType == LuaPropertyType.Enum)
             {
                 var entriesAttr = propNode.Attributes?["entries"]?.Value?.Trim() ?? string.Empty;
@@ -343,6 +336,7 @@ namespace TombLib.LuaProperties
                         var entryVal = (entryNode.Attributes?["value"]?.Value
                                      ?? entryNode.Attributes?["name"]?.Value)?.Trim()
                                      ?? string.Empty;
+
                         if (!string.IsNullOrEmpty(entryVal))
                             definition.EnumValues.Add(entryVal);
                     }
@@ -352,24 +346,21 @@ namespace TombLib.LuaProperties
                     logger.Warn("Enum property '{0}' has no entries defined in {1}", definition.InternalName, filePath);
             }
 
-            // Optional: default value (accept both "defaultValue" and "default" attribute names)
+            // Optional: default value (accept both "defaultValue" and "default" attribute names).
             var defaultStr = (propNode.Attributes?["defaultValue"]?.Value
                           ?? propNode.Attributes?["default"]?.Value)?.Trim()
                           ?? string.Empty;
 
-            // For Enum: allow the default to be an entry name; convert to 0-based integer
+            // For enum: allow the default to be an entry name; convert to 0-based integer.
             if (propertyType == LuaPropertyType.Enum && !string.IsNullOrEmpty(defaultStr))
             {
-                if (!int.TryParse(defaultStr, System.Globalization.NumberStyles.Integer,
-                                  System.Globalization.CultureInfo.InvariantCulture, out _))
+                if (!int.TryParse(defaultStr, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out _))
                 {
-                    int nameIdx = definition.EnumValues.FindIndex(
-                        e => string.Equals(e, defaultStr, StringComparison.OrdinalIgnoreCase));
-                    defaultStr = nameIdx >= 0
-                        ? LuaValueParser.BoxInt(nameIdx)
-                        : string.Empty; // fall through to type default below
+                    int nameIdx = definition.EnumValues.FindIndex(e => string.Equals(e, defaultStr, StringComparison.OrdinalIgnoreCase));
+                    defaultStr = nameIdx >= 0 ? LuaValueParser.BoxInt(nameIdx) : string.Empty; // Fall through to type default below.
                 }
             }
+
             if (!string.IsNullOrEmpty(defaultStr))
             {
                 if (LuaValueParser.ValidateBoxedValue(propertyType, defaultStr))
@@ -378,9 +369,9 @@ namespace TombLib.LuaProperties
                 }
                 else
                 {
+                    definition.DefaultValue = LuaValueParser.GetDefaultBoxedValue(propertyType);
                     logger.Warn("Property '{0}' has mismatched default value '{1}' for type {2} in {3}, using type default",
                         definition.InternalName, defaultStr, propertyType, filePath);
-                    definition.DefaultValue = LuaValueParser.GetDefaultBoxedValue(propertyType);
                 }
             }
             else
@@ -404,9 +395,10 @@ namespace TombLib.LuaProperties
             {
                 case "boolean": result = LuaPropertyType.Bool; return true;
                 case "integer": result = LuaPropertyType.Int; return true;
-                case "number": result = LuaPropertyType.Float; return true;
+                case "number":  result = LuaPropertyType.Float; return true;
                 case "vector2": result = LuaPropertyType.Vec2; return true;
                 case "vector3": result = LuaPropertyType.Vec3; return true;
+
                 default: return false;
             }
         }

@@ -1,8 +1,8 @@
+using System.Collections.Generic;
+
 // Represents a single property definition loaded from an XML property catalog.
 // Used to describe what properties are available for a given object type and
 // to provide metadata for the property grid UI (name, description, type, default).
-
-using System.Collections.Generic;
 
 namespace TombLib.LuaProperties
 {
@@ -65,11 +65,8 @@ namespace TombLib.LuaProperties
         /// <summary>
         /// Returns true if the definition has all required fields filled in.
         /// </summary>
-        public bool IsValid =>
-            !string.IsNullOrWhiteSpace(InternalName) &&
-            !string.IsNullOrWhiteSpace(DisplayName);
+        public bool IsValid => !string.IsNullOrWhiteSpace(InternalName) && !string.IsNullOrWhiteSpace(DisplayName);
 
-        public override string ToString()
-            => $"{DisplayName} ({InternalName}: {Type})";
+        public override string ToString() => $"{DisplayName} ({InternalName}: {Type})";
     }
 }

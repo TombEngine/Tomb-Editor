@@ -79,11 +79,6 @@ namespace TombLib.Wad
         public List<WadAnimation> Animations { get; } = new List<WadAnimation>();
         //public WadBone Skeleton { get; set; } = new WadBone();
         public List<WadBone> Bones { get; } = new List<WadBone>();
-
-        /// <summary>
-        /// Level 1 (global) Lua property container. Stored in wad2 files.
-        /// Holds per-object-type property overrides in boxed Lua format.
-        /// </summary>
         public LuaPropertyContainer LuaProperties { get; set; } = new LuaPropertyContainer();
 
         public WadMoveable(WadMoveableId id)

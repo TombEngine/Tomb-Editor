@@ -1,12 +1,11 @@
-// Property container that holds Lua property values in boxed (Lua text) format.
-// Used for both Level 1 (global per-object-type, stored in wad2 files)
-// and Level 2 (per-instance, stored in prj2 files).
-// Values are stored in their boxed Lua representation so they can be written
-// directly to Lua script blobs during level compilation.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
+// Property container that holds Lua property values in boxed (Lua text) format.
+// Used for both Level 1 (global per-object-type, stored in wad2 files) and Level 2
+// (per-instance, stored in prj2 files). Values are stored in their boxed Lua representatio
+// so they can be written directly to Lua script blobs during level compilation.
 
 namespace TombLib.LuaProperties
 {
@@ -108,8 +107,10 @@ namespace TombLib.LuaProperties
         public LuaPropertyContainer Clone()
         {
             var clone = new LuaPropertyContainer();
+
             foreach (var kvp in _properties)
                 clone._properties[kvp.Key] = kvp.Value;
+
             return clone;
         }
     }

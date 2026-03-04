@@ -1,7 +1,3 @@
-// Code-behind for LuaPropertyGridControl.
-// Handles color picker interaction (opens RealtimeColorDialog via WinForms interop)
-// and provides value converters used in the XAML.
-
 using System;
 using System.Globalization;
 using System.Windows;
@@ -12,13 +8,12 @@ using DarkUI.WPF.CustomControls;
 using TombLib.Controls;
 using TombLib.Forms.ViewModels;
 
+// Code-behind for LuaPropertyGridControl.
+// Handles color picker interaction (opens RealtimeColorDialog via WinForms interop)
+// and provides value converters used in the XAML.
+
 namespace TombLib.Forms.Views
 {
-    /// <summary>
-    /// WPF property grid control for editing TombEngine Lua properties.
-    /// Hostable inside WinForms DarkForm/DarkToolWindow via ElementHost.
-    /// Uses DarkUI.WPF styled controls (NumericUpDown, ColorPickerButton, etc.).
-    /// </summary>
     public partial class LuaPropertyGridControl : UserControl
     {
         public LuaPropertyGridControl()
@@ -30,23 +25,15 @@ namespace TombLib.Forms.Views
             InitializeComponent();
         }
 
-        /// <summary>
-        /// Gets or sets the ViewModel. Sets DataContext.
-        /// </summary>
         public LuaPropertyGridViewModel ViewModel
         {
             get => DataContext as LuaPropertyGridViewModel;
             set => DataContext = value;
         }
 
-        /// <summary>
-        /// Handles the color picker click on the ColorPickerButton.
-        /// Opens the RealtimeColorDialog (WinForms) and updates the property value.
-        /// </summary>
         private void ColorPicker_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is not ColorPickerButton button ||
-                button.DataContext is not LuaPropertyRowViewModel row)
+            if (sender is not ColorPickerButton button || button.DataContext is not LuaPropertyRowViewModel row)
                 return;
 
             // Get current color from ViewModel.
@@ -84,10 +71,6 @@ namespace TombLib.Forms.Views
             }
         }
 
-        /// <summary>
-        /// Handles mousewheel on ComboBox to scroll through values on hover,
-        /// similar to the WinForms DarkComboBox behavior.
-        /// </summary>
         private void ComboBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             if (sender is ComboBox comboBox && comboBox.Items.Count > 0)
@@ -99,15 +82,10 @@ namespace TombLib.Forms.Views
             }
         }
 
-        /// <summary>
-        /// Handles double-click on the property name label.
-        /// Resets the property value to its default.
-        /// </summary>
         private void PropertyName_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ClickCount == 2 &&
-                sender is FrameworkElement element &&
-                element.DataContext is LuaPropertyRowViewModel row)
+            // Reset property to default when double-clicked on property label.
+            if (e.ClickCount == 2 && sender is FrameworkElement element && element.DataContext is LuaPropertyRowViewModel row)
             {
                 row.ResetToDefault();
                 e.Handled = true;
@@ -115,15 +93,13 @@ namespace TombLib.Forms.Views
         }
     }
 
-    /// <summary>
-    /// Converter: collapses element when string is null or empty.
-    /// Used for category headers — hides header when category is empty.
-    /// </summary>
     internal class StringEmptyToCollapsedConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var str = value as string;
+
+            // Collapses element when string is null or empty. Used for category headers — hides header when category is empty.
             return string.IsNullOrEmpty(str) ? Visibility.Collapsed : Visibility.Visible;
         }
 

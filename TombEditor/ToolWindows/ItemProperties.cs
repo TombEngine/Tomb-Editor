@@ -1,13 +1,11 @@
 using DarkUI.Docking;
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Windows.Forms.Integration;
 using TombLib.Forms.ViewModels;
 using TombLib.Forms.Views;
 using TombLib.LevelData;
 using TombLib.LuaProperties;
-using TombLib.Wad;
 
 namespace TombEditor.ToolWindows
 {
@@ -29,14 +27,14 @@ namespace TombEditor.ToolWindows
 
             _editor = Editor.Instance;
 
-            // Create WPF control + view model
+            // Create WPF control + view model.
             _viewModel = new LuaPropertyGridViewModel();
             _viewModel.PropertyValueChanged += OnPropertyValueChanged;
 
             _wpfControl = new LuaPropertyGridControl();
             _wpfControl.ViewModel = _viewModel;
 
-            // ElementHost bridges WPF into the DarkToolWindow
+            // ElementHost bridges WPF into the DarkToolWindow.
             _elementHost = new ElementHost
             {
                 Dock = DockStyle.Fill,
@@ -62,21 +60,21 @@ namespace TombEditor.ToolWindows
 
         private void EditorEventRaised(IEditorEvent obj)
         {
-            // Respond to selection changes
+            // Respond to selection changes.
             if (obj is Editor.SelectedObjectChangedEvent ||
                 obj is Editor.SelectedRoomChangedEvent)
             {
                 UpdatePropertyGrid();
             }
 
-            // Respond to object property changes (e.g. if OCB or slot changed externally)
-            if (obj is Editor.ObjectChangedEvent oce)
+            // Respond to object property changes (e.g. if OCB or slot changed externally).
+            if (obj is Editor.ObjectChangedEvent objEvent)
             {
-                if (oce.Object == _currentObject)
+                if (objEvent.Object == _currentObject)
                     UpdatePropertyGrid();
             }
 
-            // Listen for wad/game version changes to update catalog
+            // Listen for wad/game version changes to update catalog.
             if (obj is Editor.LoadedWadsChangedEvent ||
                 obj is Editor.GameVersionChangedEvent ||
                 obj is Editor.LevelChangedEvent ||
@@ -90,7 +88,7 @@ namespace TombEditor.ToolWindows
         {
             var selected = _editor.SelectedObject;
 
-            // Only show for TombEngine levels
+            // Only show for TombEngine levels.
             if (!_editor.Level.IsTombEngine)
             {
                 _viewModel.Clear();
@@ -137,16 +135,10 @@ namespace TombEditor.ToolWindows
             }
         }
 
-        /// <summary>
-        /// When a property value changes in the WPF grid, notify the editor
-        /// that the object has been modified so undo/save state is updated.
-        /// </summary>
         private void OnPropertyValueChanged(object sender, EventArgs e)
         {
             if (_currentObject != null)
-            {
                 _editor.ObjectChange(_currentObject, ObjectChangeType.Change);
-            }
         }
     }
 }

@@ -953,10 +953,6 @@ namespace TombLib.LevelData.IO
             });
         }
 
-        /// <summary>
-        /// Writes LuaPropertyContainer data inline in a flat chunk.
-        /// Format: int32 count, then for each property: UTF8 name + UTF8 value.
-        /// </summary>
         private static void WriteLuaProperties(ChunkWriter chunkIO, LuaPropertyContainer container)
         {
             if (container == null || !container.HasProperties)

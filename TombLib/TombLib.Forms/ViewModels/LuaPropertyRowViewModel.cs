@@ -1,11 +1,10 @@
-// ViewModel for a single property row in the Lua property grid.
-// Manages the binding between a LuaPropertyDefinition and its current boxed value.
-
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using TombLib.LuaProperties;
+
+// ViewModel for a single property row in the Lua property grid.
+// Manages the binding between a LuaPropertyDefinition and its current boxed value.
 
 namespace TombLib.Forms.ViewModels
 {
@@ -15,8 +14,6 @@ namespace TombLib.Forms.ViewModels
     /// </summary>
     public partial class LuaPropertyRowViewModel : ObservableObject
     {
-        private static readonly CultureInfo Inv = CultureInfo.InvariantCulture;
-
         /// <summary>
         /// The property definition (read-only metadata).
         /// </summary>
@@ -30,9 +27,7 @@ namespace TombLib.Forms.ViewModels
         /// <summary>
         /// Tooltip text for the property row.
         /// </summary>
-        public string ToolTip => string.IsNullOrEmpty(Definition.Description)
-            ? Definition.InternalName
-            : Definition.Description;
+        public string ToolTip => string.IsNullOrEmpty(Definition.Description) ? Definition.DisplayName : Definition.Description;
 
         /// <summary>
         /// Category grouping label. Empty string means uncategorized.
@@ -58,8 +53,11 @@ namespace TombLib.Forms.ViewModels
             get => _boxedValue;
             set
             {
-                if (_boxedValue == value) return;
+                if (_boxedValue == value)
+                    return;
+
                 _boxedValue = value ?? LuaValueParser.GetDefaultBoxedValue(Definition.Type);
+
                 OnPropertyChanged();
                 RefreshTypedProperties();
                 ValueChanged?.Invoke(this, EventArgs.Empty);
@@ -74,35 +72,30 @@ namespace TombLib.Forms.ViewModels
 
         #region Type-specific property accessors (for data binding)
 
-        // --- Bool ---
         public bool BoolValue
         {
             get => LuaValueParser.UnboxBool(_boxedValue);
             set => BoxedValue = LuaValueParser.BoxBool(value);
         }
 
-        // --- Int ---
         public int IntValue
         {
             get => LuaValueParser.UnboxInt(_boxedValue);
             set => BoxedValue = LuaValueParser.BoxInt(value);
         }
 
-        // --- Float ---
         public float FloatValue
         {
             get => LuaValueParser.UnboxFloat(_boxedValue);
             set => BoxedValue = LuaValueParser.BoxFloat(value);
         }
 
-        // --- String ---
         public string StringValue
         {
             get => LuaValueParser.UnboxString(_boxedValue);
             set => BoxedValue = LuaValueParser.BoxString(value);
         }
 
-        // --- Vec2 ---
         public float Vec2X
         {
             get => LuaValueParser.UnboxVec2(_boxedValue)[0];
@@ -114,7 +107,6 @@ namespace TombLib.Forms.ViewModels
             set { var v = LuaValueParser.UnboxVec2(_boxedValue); BoxedValue = LuaValueParser.BoxVec2(v[0], value); }
         }
 
-        // --- Vec3 ---
         public float Vec3X
         {
             get => LuaValueParser.UnboxVec3(_boxedValue)[0];
@@ -131,7 +123,6 @@ namespace TombLib.Forms.ViewModels
             set { var v = LuaValueParser.UnboxVec3(_boxedValue); BoxedValue = LuaValueParser.BoxVec3(v[0], v[1], value); }
         }
 
-        // --- Rotation ---
         public float RotationX
         {
             get => LuaValueParser.UnboxRotation(_boxedValue)[0];
@@ -148,16 +139,13 @@ namespace TombLib.Forms.ViewModels
             set { var v = LuaValueParser.UnboxRotation(_boxedValue); BoxedValue = LuaValueParser.BoxRotation(v[0], v[1], value); }
         }
 
-        // --- Color ---
         public byte ColorR
         {
             get => LuaValueParser.UnboxColor(_boxedValue)[0];
             set
             {
                 var c = LuaValueParser.UnboxColor(_boxedValue);
-                BoxedValue = HasAlpha
-                    ? LuaValueParser.BoxColor(value, c[1], c[2], c[3])
-                    : LuaValueParser.BoxColor(value, c[1], c[2]);
+                BoxedValue = HasAlpha ? LuaValueParser.BoxColor(value, c[1], c[2], c[3]) : LuaValueParser.BoxColor(value, c[1], c[2]);
             }
         }
         public byte ColorG
@@ -166,9 +154,7 @@ namespace TombLib.Forms.ViewModels
             set
             {
                 var c = LuaValueParser.UnboxColor(_boxedValue);
-                BoxedValue = HasAlpha
-                    ? LuaValueParser.BoxColor(c[0], value, c[2], c[3])
-                    : LuaValueParser.BoxColor(c[0], value, c[2]);
+                BoxedValue = HasAlpha ? LuaValueParser.BoxColor(c[0], value, c[2], c[3]) : LuaValueParser.BoxColor(c[0], value, c[2]);
             }
         }
         public byte ColorB
@@ -177,9 +163,7 @@ namespace TombLib.Forms.ViewModels
             set
             {
                 var c = LuaValueParser.UnboxColor(_boxedValue);
-                BoxedValue = HasAlpha
-                    ? LuaValueParser.BoxColor(c[0], c[1], value, c[3])
-                    : LuaValueParser.BoxColor(c[0], c[1], value);
+                BoxedValue = HasAlpha ? LuaValueParser.BoxColor(c[0], c[1], value, c[3]) : LuaValueParser.BoxColor(c[0], c[1], value);
             }
         }
         public byte ColorA
@@ -188,9 +172,7 @@ namespace TombLib.Forms.ViewModels
             set { var c = LuaValueParser.UnboxColor(_boxedValue); BoxedValue = LuaValueParser.BoxColor(c[0], c[1], c[2], value); }
         }
 
-        /// <summary>
-        /// WPF-bindable color brush for the color picker preview.
-        /// </summary>
+        // WPF-bindable color brush for the color picker preview.
         public System.Windows.Media.Color WpfColor
         {
             get
@@ -200,7 +182,6 @@ namespace TombLib.Forms.ViewModels
             }
         }
 
-        // --- Time ---
         public int TimeHours
         {
             get => LuaValueParser.UnboxTime(_boxedValue)[0];
@@ -222,17 +203,7 @@ namespace TombLib.Forms.ViewModels
             set { var t = LuaValueParser.UnboxTime(_boxedValue); BoxedValue = LuaValueParser.BoxTime(t[0], t[1], t[2], value); }
         }
 
-        // --- Enum ---
-        /// <summary>
-        /// Ordered list of entry names for this Enum property (forwarded from the definition).
-        /// Index 0 maps to Lua integer value 0.
-        /// </summary>
         public IReadOnlyList<string> EnumValues => Definition.EnumValues;
-
-        /// <summary>
-        /// 0-based selected index for ComboBox binding.
-        /// Stored directly as a 0-based integer in <see cref="BoxedValue"/>.
-        /// </summary>
         public int EnumIndex
         {
             get
@@ -269,8 +240,7 @@ namespace TombLib.Forms.ViewModels
         /// <summary>
         /// Returns true if the current value differs from the effective default.
         /// </summary>
-        public bool IsModified =>
-            !string.Equals(_boxedValue, EffectiveDefault, StringComparison.Ordinal);
+        public bool IsModified => !string.Equals(_boxedValue, EffectiveDefault, StringComparison.Ordinal);
 
         /// <summary>
         /// Notifies all typed property bindings that the underlying value changed.

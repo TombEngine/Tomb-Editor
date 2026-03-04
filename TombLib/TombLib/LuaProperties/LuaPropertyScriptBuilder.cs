@@ -1,15 +1,16 @@
-// Generates Lua API call strings for property assignment during level compilation.
-// Produces calls to TombEngine's property API:
-//   Objects.SetMoveableProperty(ObjID.XXX, "propName", value)  -- Level 1 (global)
-//   Objects.SetStaticProperty(slotID, "propName", value)       -- Level 1 (global)
-//   GetMoveableByName("luaName"):SetProperty("propName", value)        -- Level 2 (instance)
-//   GetStaticByName("luaName"):SetProperty("propName", value)          -- Level 2 (instance)
-//
-// Both layers are written; the engine handles override resolution internally.
-
 using System.Collections.Generic;
 using System.Text;
 using TombLib.Utils;
+
+// Generates Lua API call strings for property assignment during level compilation.
+// Produces calls to TombEngine's property API:
+//
+//   Objects.SetMoveableProperty(ObjID.XXX, "propName", value)   -- Level 1 (global)
+//   Objects.SetStaticProperty(slotID, "propName", value)        -- Level 1 (global)
+//   GetMoveableByName("luaName"):SetProperty("propName", value) -- Level 2 (instance)
+//   GetStaticByName("luaName"):SetProperty("propName", value)   -- Level 2 (instance)
+//
+// Both layers are written; the engine handles override resolution internally.
 
 namespace TombLib.LuaProperties
 {

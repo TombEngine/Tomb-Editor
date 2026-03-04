@@ -17,26 +17,21 @@ namespace WadTool
         private readonly WadToolClass _tool;
         private readonly Wad2 _wad;
 
-        // Currently selected object
+        // Currently selected object.
         private IWadObjectId _currentObjectId;
         private IWadObject _currentWadObject;
 
-        // WPF hosting
+        // WPF hosting.
         private readonly ElementHost _elementHost;
         private readonly LuaPropertyGridControl _wpfControl;
         private readonly LuaPropertyGridViewModel _viewModel;
 
         // Original containers for cancel/restore (key = objectId)
-        private readonly Dictionary<IWadObjectId, LuaPropertyContainer> _originalProperties
-            = new Dictionary<IWadObjectId, LuaPropertyContainer>();
+        private readonly Dictionary<IWadObjectId, LuaPropertyContainer> _originalProperties = new Dictionary<IWadObjectId, LuaPropertyContainer>();
 
         // Track which objects were actually modified
         private bool _anyChanges;
 
-        /// <summary>
-        /// Opens the property editor.
-        /// If <paramref name="initialObjectId"/> is non-null, it is pre-selected in the list.
-        /// </summary>
         public FormLuaProperties(WadToolClass tool, Wad2 wad, IWadObjectId initialObjectId = null)
         {
             _tool = tool;
@@ -55,6 +50,7 @@ namespace WadTool
                 Dock = DockStyle.Fill,
                 Child = _wpfControl
             };
+
             panelContent.Controls.Add(_elementHost);
 
             // Track actual property modifications
@@ -202,7 +198,8 @@ namespace WadTool
             foreach (var kvp in _originalProperties)
             {
                 var wadObject = _wad.TryGet(kvp.Key);
-                if (wadObject == null) continue;
+                if (wadObject == null)
+                    continue;
 
                 var container = GetContainer(wadObject);
                 if (container != null)

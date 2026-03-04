@@ -514,10 +514,6 @@ namespace TombLib.Wad
             });
         }
 
-        /// <summary>
-        /// Writes a Lua property container as a child chunk within a moveable or static chunk.
-        /// Properties are stored as name/value string pairs in boxed Lua format.
-        /// </summary>
         private static void WriteLuaProperties(ChunkWriter chunkIO, LuaProperties.LuaPropertyContainer container)
         {
             if (container == null || !container.HasProperties)

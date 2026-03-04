@@ -37,13 +37,17 @@ namespace TombLib.Forms.ViewModels
         /// Uncategorized properties (empty category) come first.
         /// </summary>
         public IEnumerable<IGrouping<string, LuaPropertyRowViewModel>> GroupedProperties =>
-            Properties.GroupBy(p => p.Category)
-                      .OrderBy(g => string.IsNullOrEmpty(g.Key) ? "" : g.Key);
+            Properties.GroupBy(p => p.Category).OrderBy(g => string.IsNullOrEmpty(g.Key) ? "" : g.Key);
 
         /// <summary>
         /// True if no properties are currently loaded.
         /// </summary>
         public bool IsEmpty => Properties.Count == 0;
+
+        /// <summary>
+        /// Fired when any property value changes. The sender is the modified row ViewModel.
+        /// </summary>
+        public event EventHandler PropertyValueChanged;
 
         /// <summary>
         /// Status message displayed when the property grid is empty.
@@ -58,11 +62,6 @@ namespace TombLib.Forms.ViewModels
         private string _title = "Properties";
 
         /// <summary>
-        /// Fired when any property value changes. The sender is the modified row ViewModel.
-        /// </summary>
-        public event EventHandler PropertyValueChanged;
-
-        /// <summary>
         /// The currently bound property container (set during Load).
         /// </summary>
         private LuaPropertyContainer _container;
@@ -75,8 +74,7 @@ namespace TombLib.Forms.ViewModels
         /// <param name="container">Existing property container with saved values, or null.</param>
         /// <param name="globalDefaults">Optional global defaults from the wad2 object type.
         /// When provided, these values override XML catalog defaults for display and reset purposes.</param>
-        public void Load(List<LuaPropertyDefinition> definitions, LuaPropertyContainer container,
-                         LuaPropertyContainer globalDefaults = null)
+        public void Load(List<LuaPropertyDefinition> definitions, LuaPropertyContainer container, LuaPropertyContainer globalDefaults = null)
         {
             Properties.Clear();
             _container = container;
