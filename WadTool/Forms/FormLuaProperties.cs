@@ -14,33 +14,32 @@ namespace WadTool
 {
     public partial class FormLuaProperties : DarkForm
     {
+        // Object management.
         private readonly WadToolClass _tool;
         private readonly Wad2 _wad;
-
-        // Currently selected object.
         private IWadObjectId _currentObjectId;
-        private IWadObject _currentWadObject;
 
         // WPF hosting.
         private readonly ElementHost _elementHost;
         private readonly LuaPropertyGridControl _wpfControl;
         private readonly LuaPropertyGridViewModel _viewModel;
 
-        // Original containers for cancel/restore (key = objectId)
+        // Original containers for cancel/restore (key = objectId).
         private readonly Dictionary<IWadObjectId, LuaPropertyContainer> _originalProperties = new Dictionary<IWadObjectId, LuaPropertyContainer>();
 
-        // Track which objects were actually modified
+        // Track which objects were actually modified.
         private bool _anyChanges;
 
         public FormLuaProperties(WadToolClass tool, Wad2 wad, IWadObjectId initialObjectId = null)
         {
             _tool = tool;
             _wad = wad;
+            _currentObjectId = initialObjectId;
 
             InitializeComponent();
             PopulateObjectList();
 
-            // Create WPF control + view model
+            // Create WPF control + view model.
             _viewModel = new LuaPropertyGridViewModel();
             _wpfControl = new LuaPropertyGridControl();
             _wpfControl.ViewModel = _viewModel;
@@ -53,15 +52,24 @@ namespace WadTool
 
             panelContent.Controls.Add(_elementHost);
 
-            // Track actual property modifications
+            // Track actual property modifications.
             _viewModel.PropertyValueChanged += (s, ev) => _anyChanges = true;
+        }
+
+        #region Init
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
 
             // Select the requested object, or the first one
-            if (initialObjectId != null)
-                SelectObjectInList(initialObjectId);
+            if (_currentObjectId != null)
+                SelectObjectInList(_currentObjectId);
             else if (lstObjects.Items.Count > 0)
                 lstObjects.SelectItem(0);
         }
+
+        #endregion
 
         #region Object list management
 
@@ -131,7 +139,6 @@ namespace WadTool
                 return;
 
             _currentObjectId = objectId;
-            _currentWadObject = wadObject;
 
             // Snapshot original state for cancel/restore (only first time per object)
             if (!_originalProperties.ContainsKey(objectId))

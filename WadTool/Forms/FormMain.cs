@@ -713,5 +713,10 @@ namespace WadTool
                 form.ShowDialog();
             }
         }
+
+        private void editPropertiesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            WadActions.EditLuaProperties(_tool, this, _tool.DestinationWad?.TryGet(_tool.MainSelection?.Id).Id);
+        }
     }
 }

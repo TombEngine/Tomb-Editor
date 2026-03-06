@@ -967,18 +967,14 @@ namespace WadTool
 
         public static void EditLuaProperties(WadToolClass tool, IWin32Window owner, IWadObjectId focusObjectId = null)
         {
-            Wad2 wad = tool.DestinationWad;
-
-            if (wad == null)
+            if (tool.DestinationWad == null)
             {
                 tool.SendMessage("No destination wad is loaded.", PopupType.Info);
                 return;
             }
 
-            using (var form = new FormLuaProperties(tool, wad, focusObjectId))
-            {
+            using (var form = new FormLuaProperties(tool, tool.DestinationWad, focusObjectId))
                 form.ShowDialog(owner);
-            }
         }
 
         public static void DeleteObjects(WadToolClass tool, IWin32Window owner, WadArea wadArea, List<IWadObjectId> ObjectIdsToDelete)
