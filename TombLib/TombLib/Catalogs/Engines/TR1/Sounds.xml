@@ -147,11 +147,11 @@
     <sound id="153" name="METAL_DOOR_OPEN" ten="469" />
     <sound id="154" name="ALTAR_LOOP" ten="461" />
     <sound id="155" name="LOW_HUM" ten="155" />
-    <sound id="156" name="COWBOY_DEATH" ten="156" />
-    <sound id="157" name="BLACK_GOON_DEATH" ten="157" />
+    <sound id="156" name="COWBOY_DEATH" ten="1147" />
+    <sound id="157" name="BLACK_GOON_DEATH" ten="468" />
     <sound id="158" name="LARSON_DEATH" ten="158" />
     <sound id="159" name="PIERRE_DEATH" ten="471" />
-    <sound id="160" name="NATLA_DEATH" ten="160" />
+    <sound id="160" name="NATLA_DEATH" ten="1148" />
     <sound id="161" name="TRAPDOOR_OPEN" ten="161" />
     <sound id="162" name="TRAPDOOR_CLOSE" ten="162" />
     <sound id="163" name="ATLANTEAN_EGG" ten="431" />

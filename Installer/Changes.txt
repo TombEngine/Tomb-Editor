@@ -28,6 +28,7 @@ WadTool:
 TombIDE:
  * Updated TR1X and TR2X presets to TRX 1.2.2.
  * Updated PLAY.exe to fix TEN console window not showing in `-debug` mode.
+ * Updated FLEP.
  * Updated "Ready to Play" archive creation dialog.
 
 TEN nodes:
