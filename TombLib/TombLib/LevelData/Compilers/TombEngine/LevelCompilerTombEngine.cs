@@ -625,11 +625,13 @@ namespace TombLib.LevelData.Compilers.TombEngine
             {
                 foreach (var obj in room.Objects)
                 {
-                    if (obj is MoveableInstance mov && mov.LuaProperties?.HasProperties == true && !string.IsNullOrEmpty(mov.LuaName))
+                    if (obj is MoveableInstance mov && _level.Settings.WadTryGetMoveable(mov.WadObjectId) != null &&
+                        mov.LuaProperties?.HasProperties == true && !string.IsNullOrEmpty(mov.LuaName))
                     {
                         instanceMovProps[mov.LuaName] = mov.LuaProperties;
                     }
-                    else if (obj is StaticInstance stat && stat.LuaProperties?.HasProperties == true && !string.IsNullOrEmpty(stat.LuaName))
+                    else if (obj is StaticInstance stat && _level.Settings.WadTryGetStatic(stat.WadObjectId) != null &&
+                        stat.LuaProperties?.HasProperties == true && !string.IsNullOrEmpty(stat.LuaName))
                     {
                         instanceStaticProps[stat.LuaName] = stat.LuaProperties;
                     }

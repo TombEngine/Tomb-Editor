@@ -239,7 +239,8 @@ Properties operate at three levels that the editor resolves at runtime:
 | **Level 2 — Wad**      | All instances of an object type share one value | WadTool (stored in `.wad2`) |
 | **Level 3 — Instance** | A single placed object overrides the global value | Tomb Editor (stored in `.prj2`) |
 
-The compiled Lua script emitted per-level contains calls for two layers rather than three, because Level 1 and Level 2 collapse into one:
+The compiled Lua script blob is embedded into a level file, executed on level startup, and contains calls for
+two layers rather than three, because Level 1 and Level 2 collapse into one:
 
 ```lua
 -- Level 1+2: type-wide defaults applied in global-to-wad order (if wad property is available)
