@@ -229,16 +229,17 @@ Compiles to a Lua integer: the first entry is `0`, the second is `1`, and so on.
 
 ---
 
-## Two-Level Property System
+## Three-Level Property System
 
-Properties operate at two levels that the engine resolves at runtime:
+Properties operate at three levels that the editor resolves at runtime:
 
 | Level | Scope | Where edited |
 |-------|-------|--------------|
-| **Level 1 — Global** | All instances of an object type share one value | WadTool (stored in `.wad2`) |
+| **Level 1 — Global**   | A given object type refers to a default property value in the catalog | Any text editor (stored in .xml) |
+| **Level 1 — Wad**      | All instances of an object type share one value | WadTool (stored in `.wad2`) |
 | **Level 2 — Instance** | A single placed object overrides the global value | Tomb Editor (stored in `.prj2`) |
 
-The compiled Lua script emitted per-level contains calls for both layers:
+The compiled Lua script emitted per-level contains calls for two layers rather than three, because Level 1 and Level 2 collapse into one:
 
 ```lua
 -- Level 1: type-wide defaults
