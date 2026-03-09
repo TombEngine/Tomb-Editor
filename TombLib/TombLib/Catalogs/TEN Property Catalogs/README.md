@@ -236,16 +236,16 @@ Properties operate at three levels that the editor resolves at runtime:
 | Level | Scope | Where edited |
 |-------|-------|--------------|
 | **Level 1 — Global**   | A given object type refers to a default property value in the catalog | Any text editor (stored in .xml) |
-| **Level 1 — Wad**      | All instances of an object type share one value | WadTool (stored in `.wad2`) |
-| **Level 2 — Instance** | A single placed object overrides the global value | Tomb Editor (stored in `.prj2`) |
+| **Level 2 — Wad**      | All instances of an object type share one value | WadTool (stored in `.wad2`) |
+| **Level 3 — Instance** | A single placed object overrides the global value | Tomb Editor (stored in `.prj2`) |
 
 The compiled Lua script emitted per-level contains calls for two layers rather than three, because Level 1 and Level 2 collapse into one:
 
 ```lua
--- Level 1: type-wide defaults
+-- Level 1+2: type-wide defaults applied in global-to-wad order (if wad property is available)
 TEN.Objects.SetMoveableProperty(TEN.Objects.ObjID.BADDY1, "behavior", 1)
 
--- Level 2: per-instance override (only when explicitly changed)
+-- Level 3: per-instance override (only when explicitly changed)
 TEN.Objects.GetMoveableByName("baddy_boss"):SetProperty("behavior", 2)
 ```
 
