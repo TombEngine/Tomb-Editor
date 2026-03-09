@@ -98,6 +98,7 @@ namespace TombEditor.ToolWindows
                         case LightType.Sun:
                             HasDirection = true;
                             CanCastShadows = true;
+                            CanCastDynamicShadows = isTEN;
                             CanIlluminateGeometry = true;
                             break;
                     }

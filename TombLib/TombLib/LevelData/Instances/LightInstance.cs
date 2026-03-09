@@ -29,7 +29,7 @@ namespace TombLib.LevelData
         public bool IsUsedForImportedGeometry { get; set; } = true;
         public bool CastDynamicShadows { get; set; } = false;
 
-        public bool CanCastDynamicShadows => CastDynamicShadows && (Type == LightType.Spot || Type == LightType.Point);
+        public bool CanCastDynamicShadows => CastDynamicShadows && (Type == LightType.Spot || Type == LightType.Point || Type == LightType.Sun);
 
         private float _rotationX;
         private float _rotationY;
