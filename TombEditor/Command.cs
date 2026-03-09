@@ -819,7 +819,8 @@ namespace TombEditor
                     }
                 }
 
-                EditorActions.DeleteRooms(args.Editor.SelectedRooms, args.Window);
+                if (args.Editor.Mode == EditorMode.Map2D)
+                    EditorActions.DeleteRooms(args.Editor.SelectedRooms, args.Window);
             });
 
             AddCommand("DeleteMissingObjects", "Delete missing objects", CommandType.Edit, delegate (CommandArgs args)
