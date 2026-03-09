@@ -1,9 +1,10 @@
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using NLog;
+using TombLib.Utils;
 
 // XML catalog loader for Lua property definitions.
 // Reads XML files from "Catalogs/TEN Property Catalogs" folder, parses property definitions
@@ -299,7 +300,7 @@ namespace TombLib.LuaProperties
             definition.DisplayName = propNode.Attributes?["displayName"]?.Value?.Trim() ?? definition.InternalName;
 
             // Optional: description.
-            definition.Description = propNode.Attributes?["description"]?.Value?.Trim() ?? string.Empty;
+            definition.Description = TextExtensions.SingleLineToMultiLine(propNode.Attributes?["description"]?.Value?.Trim() ?? string.Empty);
 
             // Optional: category
             definition.Category = propNode.Attributes?["category"]?.Value?.Trim() ?? string.Empty;
