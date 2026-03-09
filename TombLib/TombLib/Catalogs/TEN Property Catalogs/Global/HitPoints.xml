@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+		<propertyCatalog>
+			  <!-- HP 5: Big Rat (116) -->
+			  <moveable id="116">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="5" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 6: Wolf (100) -->
+			  <moveable id="100">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="6" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 20: Bear (101) -->
+			  <moveable id="101">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="20" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 22: Ape (102) -->
+			  <moveable id="102">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="22" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 50: Winged Mummy (220) -->
+			  <moveable id="220">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="50" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 120: Centaur Mutant (221) -->
+			  <moveable id="221">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="120" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 125: Skateboard Kid (297) -->
+			  <moveable id="297">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="125" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 150: Cowboy (239) -->
+			  <moveable id="239">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="150" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 200: Kold (219) -->
+			  <moveable id="219">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="200" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 400: Natla (223) -->
+			  <moveable id="223">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="400" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 500: Giant Mutant (225) -->
+			  <moveable id="225">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="500" category="Combat" description="Starting hit points." />
+			  </moveable>
+			  
+			  <!-- HP 8: Cobra (110), Monkey (111) -->
+			  <moveable id="110-111">
+				<property
+				  internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="8" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 10: Compsognathus (113) -->
+			  <moveable id="113">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="10" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+				<!-- HP 15: Civvy (247) -->
+			  <moveable id="247">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="15" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 20: Scuba Diver (151), Winston (298) -->
+			  <moveable id="151,298">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="20" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 24: Tiger (106), Wasp Mutant (294) -->
+			  <moveable id="106,294">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="24" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 28: Tribesman w/ Axe (170), Tribesman w/ Darts (171), MP w/ Stick (172), MP w/ Gun (173), Twin Auto Gun (295) -->
+			  <moveable id="170-173,295">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="28" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 36: Flamethrower Baddy (169), Lizard (249) -->
+			  <moveable id="169,249">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="36" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 50: Seal Mutant (299) -->
+			  <moveable id="299">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="50" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 100: Raptor (108), Shiva (244), Tony Boss (250) -->
+			  <moveable id="108,244,250">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="100" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 130: Claw Mutant (293) -->
+			  <moveable id="293">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="130" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 200: Puna Boss (252) -->
+			  <moveable id="252">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="200" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 300: Sophia Leigh Boss (253) -->
+			  <moveable id="253">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="300" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+			  <!-- HP 800: Tyrannosaur (109) -->
+			  <moveable id="109">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="800" category="Combat" description="Starting hit points." />
+			  </moveable>
+			  
+			   <!-- HP 5: Small Spider (103), Rat (115) -->
+			  <moveable id="103,115">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="5" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 12: Barracuda (155) -->
+			  <moveable id="155">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="12" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 15: Crow (105) -->
+			  <moveable id="105">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="15" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 20: Eagle (107), Worker Machinegun (157), Worker Flamethrower (159) -->
+			  <moveable id="107,157,159">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="20" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 25: Goon Silencer 1-3 (152-154), Worker Shotgun (156) -->
+			  <moveable id="152-154,156">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="25" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 30: Shark (129), Yeti (229) -->
+			  <moveable id="129,229">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="30" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 40: Big Spider (104) -->
+			  <moveable id="104">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="40" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 45: Mercenary Uzi (164) -->
+			  <moveable id="164">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="45" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 50: Mercenary Autopistols 1-2 (165-166), Monk 1-2 (160-161) -->
+			  <moveable id="160-161,165-166">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="50" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 60: Knifethrower (162) -->
+			  <moveable id="162">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="60" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 80: Sword Guardian (242) -->
+			  <moveable id="242">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="80" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 100: Spear Guardian (240), Snowmobile Gun (167) -->
+			  <moveable id="167,240">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="100" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 150: Worker Dual Revolver (158) -->
+			  <moveable id="158">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="150" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 200: Birdmonster (230) -->
+			  <moveable id="230">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="200" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 300: Dragon Front (232) -->
+			  <moveable id="232">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="300" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 5: Bat (118) -->
+			  <moveable id="118">
+				<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="5" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 8: Small Scorpion (123), Hammerhead (137) -->
+			  <moveable id="123,137">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="8" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 15: Von Croy (181), Skeleton (255), Mummy (256), Knight Templar (264) -->
+			  <moveable id="181,255-256,264">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="15" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 18: Dog (131) -->
+			  <moveable id="131">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="18" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 25: Baddy 1-2 (174-175), Horseman (259) -->
+			  <moveable id="174-175,259">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="25" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 30: Baboon Normal (124), Baboon Inv (125), Baboon Silent (126), Big Beetle (266), Sentry Gun (343) -->
+			  <moveable id="124-126,266,343">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="30" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 36: Crocodile (117) -->
+			  <moveable id="117">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="36" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 40: Wild Boar (120), SAS Cairo (176), Troops (182), Enemy Jeep (257) -->
+			  <moveable id="120,176,182,257">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="40" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 60: Harpy (121) -->
+			  <moveable id="121">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="60" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 80: Big Scorpion (122), Ahmet (265) -->
+			  <moveable id="122,265">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="80" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 200: Demigod 1-3 (260-262) -->
+			  <moveable id="260-262">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="200" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 500: Seth (263) -->
+			  <moveable id="263">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="500" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 1000: Sphinx (119), Lara Double (272) -->
+			  <moveable id="119,272">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="1000" category="Combat" description="Starting hit points." />
+			  </moveable>
+		  
+			<!-- HP 10: Reaper (280) -->
+			  <moveable id="280">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="10" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 12: Imp (283) -->
+			  <moveable id="283">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="12" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 18: Doberman (136) -->
+			  <moveable id="136">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="18" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 20: Gladiator (194) -->
+			  <moveable id="194">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="20" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 24: Huskie (130), Swat (184), Swat Plus (185), Guard 1 (186), Guard Laser (187), Mafia (190), Guard 2 (192), Guard 3 (193), Scientist (276) -->
+			  <moveable id="130,184-187,190,192-193,276">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="24" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 26: Mafia 2 (191) -->
+			  <moveable id="191">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="26" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 30: Hydra (274) -->
+			  <moveable id="274">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="30" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 35: Sniper (196), Chef (197) -->
+			  <moveable id="196-197">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="35" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 40: SAS (183), Lion (135) -->
+			  <moveable id="135,183">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="40" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 50: Cyborg (195) -->
+			  <moveable id="195">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="50" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 60: Larson (188), Pierre (189) -->
+			  <moveable id="188-189">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="60" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 100: Brown Beast (281), Attack Sub (282), Lagoon Witch (289) -->
+			  <moveable id="281-282,289">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="100" category="Combat" description="Starting hit points." />
+			  </moveable>
+
+		  <!-- HP 300: Roman God 1-2 (287-288) -->
+			  <moveable id="287-288">
+					<property internalName="hitpoints" displayName="Hit Points" type="Int" defaultValue="300" category="Combat" description="Starting hit points." />
+			  </moveable>
+	</propertyCatalog>
