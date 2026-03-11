@@ -292,7 +292,7 @@ namespace TombLib.LevelData
         {
             bool result = false;
 
-            if (Room.Position != _lastRoomPosition)
+            if (Room != null && Room.Position != _lastRoomPosition)
             {
                 result = true;
                 _lastRoomPosition = Room.Position;

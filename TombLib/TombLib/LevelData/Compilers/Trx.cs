@@ -96,13 +96,15 @@ public partial class LevelCompilerClassicTR
 
     private TrxClimbEntry GetClimbEntry(Room teRoom, ushort x, ushort z)
     {
-        if (_level.Settings.GameVersion != TRVersion.Game.TR1X)
+        var teSector = teRoom.Sectors[x, z];
+        var hasLadder = (teSector.Flags & SectorFlags.ClimbAny) != 0;
+        var hasMonkey = (teSector.Flags & SectorFlags.Monkey) != 0;
+        if (!hasLadder && !hasMonkey)
         {
             return null;
         }
 
-        var teSector = teRoom.Sectors[x, z];
-        if ((teSector.Flags & SectorFlags.ClimbAny) == SectorFlags.None)
+        if (_level.Settings.GameVersion == TRVersion.Game.TR2X && !hasMonkey)
         {
             return null;
         }

@@ -17,7 +17,7 @@ namespace TombIDE.ProjectMaster.Services.EngineUpdate;
 /// </summary>
 public sealed class TRXUpdateService : IEngineUpdateService
 {
-	private static readonly Version MinAutoUpdateVersion = new(1, 2, 0);
+	private static readonly Version MinAutoUpdateVersion = new(1, 3, 1);
 
 	private readonly IFileExtractionService _fileExtractionService;
 	private readonly TRVersion.Game _gameVersion;
@@ -46,7 +46,7 @@ public sealed class TRXUpdateService : IEngineUpdateService
 	{
 		if (currentVersion < MinAutoUpdateVersion)
 		{
-			blockReason = "Cannot Auto-Update engine. TRX 1.2 introduced breaking changes, which require manual migration.";
+			blockReason = "Cannot Auto-Update engine. TRX 1.3 introduced breaking changes, which require manual migration.";
 			return false;
 		}
 

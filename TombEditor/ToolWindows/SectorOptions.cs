@@ -80,7 +80,7 @@ namespace TombEditor.ToolWindows
                 butClimbNegativeZ.Enabled = climbingSupported;
                 butClimbPositiveX.Enabled = climbingSupported;
                 butClimbPositiveZ.Enabled = climbingSupported;
-                butMonkey.Enabled = isTR345;
+                butMonkey.Enabled = _editor.Level.Settings.GameVersion.SupportsMonkeySwing();
                 butFlagBeetle.Enabled = isTR345;
                 butFlagTriggerTriggerer.Enabled = isTR345;
 

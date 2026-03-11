@@ -10,6 +10,7 @@ Tomb Editor:
  * Added support for triangular geometry in TR1X and TR2X levels.
  * Added a texture depth option (8/16/32-bit) for TR1X and TR2X levels.
  * Added support for TR1X and TR2X levels to use more sound slots (maximum 1000 samples in total per level).
+ * Added support for monkeyswing in TR1X and TR2X levels.
  * Added support for no caustics room flag in TEN.
  * Changed TR2X levels to embed sound effects rather than using main.sfx.
  * Fixed node parameter corruption after changing node background color.
@@ -28,7 +29,7 @@ WadTool:
 
 TombIDE:
  * Updated "Ready to Play" archive creation dialog.
- * Updated TR1X and TR2X presets to TRX 1.2.2.
+ * Updated TR1X and TR2X presets to TRX 1.3.1.
  * Updated PLAY.exe to fix TEN console window not showing in `-debug` mode.
  * Updated FLEP.
 

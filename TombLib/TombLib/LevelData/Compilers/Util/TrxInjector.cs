@@ -204,6 +204,7 @@ public class TrxClimbEntry : TrxSectorEdit
         direction |= Convert.ToInt32(Flags.HasFlag(SectorFlags.ClimbPositiveX)) << 1;
         direction |= Convert.ToInt32(Flags.HasFlag(SectorFlags.ClimbNegativeZ)) << 2;
         direction |= Convert.ToInt32(Flags.HasFlag(SectorFlags.ClimbNegativeX)) << 3;
+        direction |= Convert.ToInt32(Flags.HasFlag(SectorFlags.Monkey)) << 4;
         writer.Write(direction);
     }
 }
