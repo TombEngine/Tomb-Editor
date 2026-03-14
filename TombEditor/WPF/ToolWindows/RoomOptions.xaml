@@ -13,6 +13,7 @@
 	d:DesignHeight="215"
 	d:DesignWidth="295"
 	Background="{DynamicResource Brush_Background}"
+	RenderOptions.BitmapScalingMode="NearestNeighbor"
 	mc:Ignorable="d">
 
 	<Grid Margin="{x:Static darkUI:Defaults.SmallThickness}">
@@ -115,7 +116,10 @@
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 
-					<CheckBox Content="{tombLib:Localize Skybox}" IsChecked="{Binding Skybox}" IsEnabled="{Binding SupportsHorizon}" />
+					<CheckBox
+						Content="{tombLib:Localize Skybox}"
+						IsChecked="{Binding Skybox}"
+						IsEnabled="{Binding SupportsHorizon}" />
 					<CheckBox
 						Grid.Row="1"
 						Content="{tombLib:Localize Wind}"

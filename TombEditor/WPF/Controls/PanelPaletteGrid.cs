@@ -2,6 +2,7 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Input;
@@ -9,6 +10,7 @@ using System.Windows.Media;
 using TombLib;
 using TombLib.LevelData;
 using TombLib.Utils;
+using static TombEditor.WPF.WPFUtils;
 
 namespace TombEditor.WPF.Controls
 {
@@ -24,7 +26,7 @@ namespace TombEditor.WPF.Controls
         private static readonly Pen SelectionPen = CreateFrozenPen(Colors.White, 1.0);
 
         private readonly Editor _editor;
-        private List<ColorC> _palette = new List<ColorC>();
+        private List<ColorC> _palette = [];
         private int _selectedIndex = -1;
         private Size _oldPaletteSize;
 
@@ -32,17 +34,12 @@ namespace TombEditor.WPF.Controls
 
         public Color SelectedColor => GetColorAtIndex(_selectedIndex);
 
-        public ColorC SelectedColorC
-        {
-            get
-            {
-                if (_selectedIndex < 0 || _selectedIndex >= _palette.Count)
-                    return new ColorC(128, 128, 128);
-                return _palette[_selectedIndex];
-            }
-        }
+        public ColorC SelectedColorC =>
+            _selectedIndex >= 0 && _selectedIndex < _palette.Count
+                ? _palette[_selectedIndex]
+                : new ColorC(128, 128, 128);
 
-        public List<ColorC> Palette => new List<ColorC>(_palette);
+        public List<ColorC> Palette => [.._palette];
 
         private int ColumnCount => (int)(ActualWidth / CellWidth);
         private int RowCount => (int)(ActualHeight / CellHeight);
@@ -51,6 +48,9 @@ namespace TombEditor.WPF.Controls
         {
             ClipToBounds = true;
             Focusable = true;
+            SnapsToDevicePixels = true;
+            UseLayoutRounding = true;
+            RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
 
             if (DesignerProperties.GetIsInDesignMode(this))
                 return;
@@ -63,10 +63,7 @@ namespace TombEditor.WPF.Controls
             if (palette.Count < 1)
                 return;
 
-            _palette.Clear();
-            foreach (var c in palette)
-                _palette.Add(new ColorC(c.R, c.G, c.B));
-
+            _palette = [..palette.Select(c => new ColorC(c.R, c.G, c.B))];
             PickColor();
             InvalidateVisual();
         }
@@ -312,7 +309,10 @@ namespace TombEditor.WPF.Controls
         {
             double totalWidth = columns * CellWidth;
             double totalHeight = rows * CellHeight;
-            dc.DrawRectangle(null, BorderPen, new Rect(0, 0, totalWidth, totalHeight));
+
+            // Inset by half the pen thickness so the stroke doesn't get clipped by bounds.
+            const double half = 0.5;
+            dc.DrawRectangle(null, BorderPen, new Rect(half, half, totalWidth - 1.0, totalHeight - 1.0));
         }
 
         private void DrawSelectionRect(DrawingContext dc, int columns, int rows)
@@ -356,20 +356,5 @@ namespace TombEditor.WPF.Controls
                 (ActualHeight - text.Height) / 2.0));
         }
 
-        private static Pen CreateFrozenPen(Color color, double thickness)
-        {
-            var brush = new SolidColorBrush(color);
-            brush.Freeze();
-            var pen = new Pen(brush, thickness);
-            pen.Freeze();
-            return pen;
-        }
-
-        private static SolidColorBrush CreateFrozenBrush(Color color)
-        {
-            var brush = new SolidColorBrush(color);
-            brush.Freeze();
-            return brush;
-        }
     }
 }

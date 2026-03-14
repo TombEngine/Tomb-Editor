@@ -10,6 +10,7 @@
 	d:DesignHeight="120"
 	d:DesignWidth="375"
 	Background="{DynamicResource Brush_Background}"
+	RenderOptions.BitmapScalingMode="NearestNeighbor"
 	mc:Ignorable="d">
 
 	<controls:SpacedGrid Margin="{x:Static darkUI:Defaults.SmallThickness}" ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">

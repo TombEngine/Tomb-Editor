@@ -49,6 +49,22 @@ namespace TombEditor.WPF
 				return 1.0f;
 		}
 
+		public static Pen CreateFrozenPen(Color color, double thickness)
+		{
+			var brush = new SolidColorBrush(color);
+			brush.Freeze();
+			var pen = new Pen(brush, thickness);
+			pen.Freeze();
+			return pen;
+		}
+
+		public static SolidColorBrush CreateFrozenBrush(Color color)
+		{
+			var brush = new SolidColorBrush(color);
+			brush.Freeze();
+			return brush;
+		}
+
 		public static IEnumerable<Control> AllSubControls(DependencyObject depObj)
 		{
 			if (depObj == null)

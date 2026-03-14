@@ -11,6 +11,7 @@ using TombLib;
 using TombLib.LevelData;
 using TombLib.Rendering;
 using TombLib.Utils;
+using static TombEditor.WPF.WPFUtils;
 
 namespace TombEditor.WPF.Controls
 {
@@ -50,6 +51,9 @@ namespace TombEditor.WPF.Controls
         {
             ClipToBounds = true;
             Focusable = true;
+            SnapsToDevicePixels = true;
+            UseLayoutRounding = true;
+            RenderOptions.SetEdgeMode(this, EdgeMode.Aliased);
 
             if (DesignerProperties.GetIsInDesignMode(this))
                 return;
@@ -353,19 +357,25 @@ namespace TombEditor.WPF.Controls
 
         private void DrawGridLines(DrawingContext dc, Rect totalArea, VectorInt2 gridDimensions, double gridStep)
         {
-            for (int x = 0; x <= gridDimensions.X; ++x)
+            for (int x = 1; x < gridDimensions.X; ++x)
             {
-                var pen = (x == 0 || x == gridDimensions.X) ? BorderPen : GridPen;
                 double xPos = totalArea.X + x * gridStep;
-                dc.DrawLine(pen, new Point(xPos, totalArea.Y), new Point(xPos, totalArea.Y + gridStep * gridDimensions.Y));
+                dc.DrawLine(GridPen, new Point(xPos, totalArea.Y), new Point(xPos, totalArea.Y + gridStep * gridDimensions.Y));
             }
 
-            for (int y = 0; y <= gridDimensions.Y; ++y)
+            for (int y = 1; y < gridDimensions.Y; ++y)
             {
-                var pen = (y == 0 || y == gridDimensions.Y) ? BorderPen : GridPen;
                 double yPos = totalArea.Y + y * gridStep;
-                dc.DrawLine(pen, new Point(totalArea.X, yPos), new Point(totalArea.X + gridStep * gridDimensions.X, yPos));
+                dc.DrawLine(GridPen, new Point(totalArea.X, yPos), new Point(totalArea.X + gridStep * gridDimensions.X, yPos));
             }
+
+            // Draw outer border inset by half the pen thickness so the stroke doesn't get clipped.
+            const double half = 0.5;
+            dc.DrawRectangle(null, BorderPen, new Rect(
+                totalArea.X + half,
+                totalArea.Y + half,
+                totalArea.Width - 1.0,
+                totalArea.Height - 1.0));
         }
 
         private void DrawSelection(DrawingContext dc)
@@ -376,8 +386,7 @@ namespace TombEditor.WPF.Controls
                 dc.DrawRectangle(null, selectionPen, ToVisualCoord(_editor.SelectedSectors.Area));
             }
 
-            var instance = _editor.SelectedObject as SectorBasedObjectInstance;
-            if (instance != null && instance.Room == Room)
+            if (_editor.SelectedObject is SectorBasedObjectInstance instance && instance.Room == Room)
             {
                 var pen = instance is PortalInstance ? SelectedPortalPen : SelectedTriggerPen;
                 dc.DrawRectangle(null, pen, ToVisualCoord(instance.Area));
@@ -443,18 +452,25 @@ namespace TombEditor.WPF.Controls
 
         private void DrawHatch(DrawingContext dc, Rect sectorArea, Vector4 color)
         {
-            // Simulate a hatch pattern using diagonal lines.
-            var pen = CreateFrozenPen(color.ToWPFColor(), 1.0);
-            double spacing = 6.0;
+            // Simulate WideUpwardDiagonal hatch pattern with diagonal lines.
+            double penThickness = 3.5;
+            double spacing = 8.0;
+
+            var pen = CreateFrozenPen(color.ToWPFColor(), penThickness);
 
             dc.PushClip(new RectangleGeometry(sectorArea));
 
+            double startOffset = -sectorArea.Height / 2.0;
             double totalRange = sectorArea.Width + sectorArea.Height;
-            for (double offset = 0; offset < totalRange; offset += spacing)
+            double margin = penThickness / 2.0 + 0.5; // Half pen width + small margin
+
+            // Start from negative offset to ensure corners are covered.
+            // Extend lines beyond the rect to account for pen width; clipping will cut them off.
+            for (double offset = startOffset; offset < totalRange; offset += spacing)
             {
                 dc.DrawLine(pen,
-                    new Point(sectorArea.X + offset, sectorArea.Bottom),
-                    new Point(sectorArea.X + offset - sectorArea.Height, sectorArea.Top));
+                    new Point(sectorArea.X - sectorArea.Height + offset - margin, sectorArea.Bottom + margin),
+                    new Point(sectorArea.X + offset + margin, sectorArea.Top - margin));
             }
 
             dc.Pop();
@@ -463,52 +479,43 @@ namespace TombEditor.WPF.Controls
         private static void DrawEdge(DrawingContext dc, Rect sectorArea, SectorColoringShape shape, Brush brush)
         {
             double w = OutlineSectorColoringInfoWidth;
-            Rect edgeRect;
 
-            if (shape == SectorColoringShape.EdgeZp)
-                edgeRect = new Rect(sectorArea.X, sectorArea.Y, sectorArea.Width, w);
-            else if (shape == SectorColoringShape.EdgeZn)
-                edgeRect = new Rect(sectorArea.X, sectorArea.Bottom - w, sectorArea.Width, w);
-            else if (shape == SectorColoringShape.EdgeXp)
-                edgeRect = new Rect(sectorArea.Right - w, sectorArea.Y, w, sectorArea.Height);
-            else
-                edgeRect = new Rect(sectorArea.X, sectorArea.Y, w, sectorArea.Height);
+            var edgeRect = shape switch
+            {
+                SectorColoringShape.EdgeZp => new Rect(sectorArea.X, sectorArea.Y, sectorArea.Width, w),
+                SectorColoringShape.EdgeZn => new Rect(sectorArea.X, sectorArea.Bottom - w, sectorArea.Width, w),
+                SectorColoringShape.EdgeXp => new Rect(sectorArea.Right - w, sectorArea.Y, w, sectorArea.Height),
+                _ => new Rect(sectorArea.X, sectorArea.Y, w, sectorArea.Height)
+            };
 
             dc.DrawRectangle(brush, null, edgeRect);
         }
 
         private static void DrawTriangle(DrawingContext dc, Rect sectorArea, SectorColoringShape shape, Brush brush)
         {
+            var (p0, p1, p2) = shape switch
+            {
+                SectorColoringShape.TriangleXnZn => (
+                    new Point(sectorArea.Left, sectorArea.Top),
+                    new Point(sectorArea.Left, sectorArea.Bottom),
+                    new Point(sectorArea.Right, sectorArea.Bottom)),
+                SectorColoringShape.TriangleXnZp => (
+                    new Point(sectorArea.Left, sectorArea.Bottom),
+                    new Point(sectorArea.Left, sectorArea.Top),
+                    new Point(sectorArea.Right, sectorArea.Top)),
+                SectorColoringShape.TriangleXpZn => (
+                    new Point(sectorArea.Left, sectorArea.Bottom),
+                    new Point(sectorArea.Right, sectorArea.Top),
+                    new Point(sectorArea.Right, sectorArea.Bottom)),
+                _ => (
+                    new Point(sectorArea.Left, sectorArea.Top),
+                    new Point(sectorArea.Right, sectorArea.Top),
+                    new Point(sectorArea.Right, sectorArea.Bottom))
+            };
+
             var geometry = new StreamGeometry();
             using (var ctx = geometry.Open())
             {
-                Point p0, p1, p2;
-
-                if (shape == SectorColoringShape.TriangleXnZn)
-                {
-                    p0 = new Point(sectorArea.Left, sectorArea.Top);
-                    p1 = new Point(sectorArea.Left, sectorArea.Bottom);
-                    p2 = new Point(sectorArea.Right, sectorArea.Bottom);
-                }
-                else if (shape == SectorColoringShape.TriangleXnZp)
-                {
-                    p0 = new Point(sectorArea.Left, sectorArea.Bottom);
-                    p1 = new Point(sectorArea.Left, sectorArea.Top);
-                    p2 = new Point(sectorArea.Right, sectorArea.Top);
-                }
-                else if (shape == SectorColoringShape.TriangleXpZn)
-                {
-                    p0 = new Point(sectorArea.Left, sectorArea.Bottom);
-                    p1 = new Point(sectorArea.Right, sectorArea.Top);
-                    p2 = new Point(sectorArea.Right, sectorArea.Bottom);
-                }
-                else
-                {
-                    p0 = new Point(sectorArea.Left, sectorArea.Top);
-                    p1 = new Point(sectorArea.Right, sectorArea.Top);
-                    p2 = new Point(sectorArea.Right, sectorArea.Bottom);
-                }
-
                 ctx.BeginFigure(p0, true, true);
                 ctx.LineTo(p1, false, false);
                 ctx.LineTo(p2, false, false);
@@ -536,20 +543,5 @@ namespace TombEditor.WPF.Controls
                 (ActualHeight - text.Height) / 2.0));
         }
 
-        private static Pen CreateFrozenPen(Color color, double thickness)
-        {
-            var brush = new SolidColorBrush(color);
-            brush.Freeze();
-            var pen = new Pen(brush, thickness);
-            pen.Freeze();
-            return pen;
-        }
-
-        private static SolidColorBrush CreateFrozenBrush(Color color)
-        {
-            var brush = new SolidColorBrush(color);
-            brush.Freeze();
-            return brush;
-        }
     }
 }

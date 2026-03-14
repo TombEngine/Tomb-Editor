@@ -17,6 +17,7 @@
 	d:DesignHeight="256"
 	d:DesignWidth="285"
 	Background="{DynamicResource Brush_Background}"
+	RenderOptions.BitmapScalingMode="NearestNeighbor"
 	mc:Ignorable="d">
 
 	<UserControl.Resources>
