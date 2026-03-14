@@ -20,7 +20,7 @@
         private void InitializeComponent()
         {
             _elementHost = new System.Windows.Forms.Integration.ElementHost();
-            _toolBoxView = new Views.ToolBoxView();
+            _toolBoxView = new Views.ToolBox();
             SuspendLayout();
             // 
             // _elementHost
@@ -45,6 +45,6 @@
         #endregion
 
         private System.Windows.Forms.Integration.ElementHost _elementHost;
-        private Views.ToolBoxView _toolBoxView;
+        private Views.ToolBox _toolBoxView;
     }
 }

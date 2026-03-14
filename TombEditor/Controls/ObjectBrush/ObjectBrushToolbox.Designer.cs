@@ -20,7 +20,7 @@ namespace TombEditor.Controls.ObjectBrush
         private void InitializeComponent()
         {
             _elementHost = new System.Windows.Forms.Integration.ElementHost();
-            _toolboxView = new Views.ObjectBrushToolboxView();
+            _toolboxView = new Views.ObjectBrushToolBox();
             SuspendLayout();
             // 
             // _elementHost
@@ -41,6 +41,6 @@ namespace TombEditor.Controls.ObjectBrush
         #endregion
 
         private System.Windows.Forms.Integration.ElementHost _elementHost;
-        private Views.ObjectBrushToolboxView _toolboxView;
+        private Views.ObjectBrushToolBox _toolboxView;
     }
 }

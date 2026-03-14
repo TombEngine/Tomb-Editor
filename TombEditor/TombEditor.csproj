@@ -75,10 +75,6 @@
       <Link>GlobalPaths.cs</Link>
     </Compile>
     <Compile Remove="EditorCommands.cs" />
-    <Compile Remove="WPF\ViewModels\MainViewViewModel.cs" />
-    <Compile Remove="WPF\ViewModels\MainWindowViewModel.cs" />
-    <Compile Remove="WPF\ViewModels\OptionsViewModel.cs" />
-    <Compile Remove="WPF\ViewModels\ViewModelBase.cs" />
     <Compile Update="Controls\RichTextLabel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -157,6 +153,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="WPF\Controls\" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>

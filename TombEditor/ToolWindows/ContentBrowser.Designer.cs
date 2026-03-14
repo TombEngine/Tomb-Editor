@@ -9,7 +9,7 @@ namespace TombEditor.ToolWindows
             this.components = new System.ComponentModel.Container();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.elementHost = new System.Windows.Forms.Integration.ElementHost();
-            this.contentBrowserView = new Views.ContentBrowserView();
+            this.contentBrowserView = new Views.ContentBrowser();
             this.SuspendLayout();
             // 
             // elementHost
@@ -36,6 +36,6 @@ namespace TombEditor.ToolWindows
 
         private System.Windows.Forms.ToolTip toolTip;
         private System.Windows.Forms.Integration.ElementHost elementHost;
-        private Views.ContentBrowserView contentBrowserView;
+        private Views.ContentBrowser contentBrowserView;
     }
 }
