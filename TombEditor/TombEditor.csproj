@@ -120,16 +120,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="TE.ico" />
-    <Compile Remove="WPF\Views\**" />
-    <EmbeddedResource Remove="WPF\Views\**" />
-    <None Remove="WPF\Views\**" />
-    <Page Remove="WPF\Views\**" />
-    <None Remove="Resources\icons_actions\*.png" />
-    <None Remove="Resources\icons_general\*.png" />
-    <None Remove="Resources\icons_objects\*.png" />
-    <None Remove="Resources\icons_sectortype\*.png" />
-    <None Remove="Resources\icons_texture\*.png" />
-    <None Remove="Resources\icons_toolbox\*.png" />
     <Resource Include="Resources\icons_actions\*.png" />
     <Resource Include="Resources\icons_general\*.png" />
     <Resource Include="Resources\icons_objects\*.png" />
@@ -153,9 +143,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="WPF\Controls\" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
