@@ -1,0 +1,193 @@
+﻿<Window
+	x:Class="TombEditor.WPF.Views.FlybyCameraWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkCtrl="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:local="clr-namespace:TombEditor.WPF"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	
+	xmlns:xceed="http://schemas.xceed.com/wpf/xaml/toolkit"
+	Title="{tombLib:Localize FlybyCameraTitle}"
+	Width="450"
+	Height="373"
+	ResizeMode="NoResize"
+	Style="{DynamicResource CustomWindowStyle}"
+	WindowStyle="ToolWindow"
+	mc:Ignorable="d">
+	<controls:SpacedGrid Margin="{x:Static darkUI:Defaults.SmallThickness}">
+		<controls:SpacedGrid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</controls:SpacedGrid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="40*" />
+			<ColumnDefinition Width="60*" />
+		</Grid.ColumnDefinitions>
+		<controls:SpacedGrid Grid.Column="0">
+			<controls:SpacedGrid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</controls:SpacedGrid.RowDefinitions>
+			<controls:SpacedGrid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<Label Width="80" Content="{tombLib:Localize Sequence}" />
+				<xceed:IntegerUpDown
+					Grid.Column="1"
+					Width="70"
+					HorizontalAlignment="Left" />
+			</controls:SpacedGrid>
+			<controls:SpacedGrid Grid.Row="1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<Label Width="80" Content="{tombLib:Localize Number}" />
+				<xceed:IntegerUpDown
+					Grid.Column="1"
+					Width="70"
+					HorizontalAlignment="Left" />
+			</controls:SpacedGrid>
+			<controls:SpacedGrid Grid.Row="2">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<Label Width="80" Content="{tombLib:Localize Timer}" />
+				<xceed:IntegerUpDown
+					Grid.Column="1"
+					Width="70"
+					HorizontalAlignment="Left" />
+			</controls:SpacedGrid>
+			<controls:SpacedGrid Grid.Row="3">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<Label Width="80" Content="{tombLib:Localize Speed}" />
+				<xceed:DecimalUpDown
+					Grid.Column="1"
+					Width="70"
+					HorizontalAlignment="Left"
+					FormatString="F2"
+					Increment="0.01" />
+			</controls:SpacedGrid>
+			<controls:SpacedGrid Grid.Row="4">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<Label Width="80" Content="{tombLib:Localize FOV}" />
+				<xceed:DecimalUpDown
+					Grid.Column="1"
+					Width="70"
+					HorizontalAlignment="Left"
+					FormatString="F2"
+					Increment="0.01" />
+			</controls:SpacedGrid>
+			<controls:SpacedGrid Grid.Row="5">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<Label Width="80" Content="{tombLib:Localize Roll}" />
+				<xceed:DecimalUpDown
+					Grid.Column="1"
+					Width="70"
+					HorizontalAlignment="Left"
+					FormatString="F2"
+					Increment="0.01" />
+			</controls:SpacedGrid>
+			<controls:SpacedGrid Grid.Row="6">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<Label Width="80" Content="{tombLib:Localize RotationX}" />
+				<xceed:DecimalUpDown
+					Grid.Column="1"
+					Width="70"
+					HorizontalAlignment="Left"
+					FormatString="F2"
+					Increment="0.01" />
+			</controls:SpacedGrid>
+			<controls:SpacedGrid Grid.Row="7">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+				<Label Width="80" Content="{tombLib:Localize RotationY}" />
+				<xceed:DecimalUpDown
+					Grid.Column="1"
+					Width="70"
+					HorizontalAlignment="Left"
+					FormatString="F2"
+					Increment="0.01" />
+			</controls:SpacedGrid>
+
+
+		</controls:SpacedGrid>
+		<controls:SpacedGrid Grid.Column="1">
+			<controls:SpacedGrid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+			</controls:SpacedGrid.RowDefinitions>
+			<CheckBox Content="{tombLib:Localize cbBit0}" />
+			<CheckBox Grid.Row="1" Content="{tombLib:Localize cbBit1}" />
+			<CheckBox Grid.Row="2" Content="{tombLib:Localize cbBit2}" />
+			<CheckBox Grid.Row="3" Content="{tombLib:Localize cbBit3}" />
+			<CheckBox Grid.Row="4" Content="{tombLib:Localize cbBit4}" />
+			<CheckBox Grid.Row="5" Content="{tombLib:Localize cbBit5}" />
+			<CheckBox Grid.Row="6" Content="{tombLib:Localize cbBit6}" />
+			<CheckBox Grid.Row="7" Content="{tombLib:Localize cbBit7}" />
+			<CheckBox Grid.Row="8" Content="{tombLib:Localize cbBit8}" />
+			<CheckBox Grid.Row="9" Content="{tombLib:Localize cbBit9}" />
+			<CheckBox Grid.Row="10" Content="{tombLib:Localize cbBit10}" />
+			<CheckBox Grid.Row="11" Content="{tombLib:Localize cbBit11}" />
+			<CheckBox Grid.Row="12" Content="{tombLib:Localize Unused}" />
+			<CheckBox Grid.Row="13" Content="{tombLib:Localize Unused}" />
+			<CheckBox Grid.Row="14" Content="{tombLib:Localize cbBit14}" />
+			<CheckBox Grid.Row="15" Content="{tombLib:Localize Unused}" />
+		</controls:SpacedGrid>
+		<controls:SpacedGrid
+			Grid.Row="1"
+			Grid.ColumnSpan="2"
+			HorizontalAlignment="Right">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<Button Width="80" Content="{tombLib:Localize OK}" />
+			<Button
+				Grid.Column="1"
+				Width="80"
+				Content="{tombLib:Localize Cancel}"
+				IsDefault="True" />
+		</controls:SpacedGrid>
+	</controls:SpacedGrid>
+</Window>

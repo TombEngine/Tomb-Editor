@@ -1,0 +1,94 @@
+﻿<Window
+	x:Class="TombEditor.WPF.Views.KeyboardLayoutWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkCtrl="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:local="clr-namespace:TombEditor.WPF"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	
+	Title="{tombLib:Localize KeyboardLayoutTitle}"
+	Width="624"
+	Height="450"
+	Style="{DynamicResource CustomWindowStyle}"
+	mc:Ignorable="d">
+	<controls:SpacedGrid Margin="{x:Static darkUI:Defaults.SmallThickness}">
+		<controls:SpacedGrid.RowDefinitions>
+			<RowDefinition Height="auto" />
+			<RowDefinition />
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
+		</controls:SpacedGrid.RowDefinitions>
+		<controls:SpacedGrid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+			<Label Grid.Column="0" Content="{tombLib:Localize SearchCommand}" />
+			<darkCtrl:SearchableComboBox Grid.Column="1" />
+		</controls:SpacedGrid>
+		<DataGrid
+			Grid.Row="1"
+			ScrollViewer.HorizontalScrollBarVisibility="Auto"
+			ScrollViewer.VerticalScrollBarVisibility="Auto">
+			<DataGrid.Columns>
+				<DataGridTextColumn Header="{tombLib:Localize TypeCommand}" />
+				<DataGridTextColumn Header="{tombLib:Localize Command}" />
+				<DataGridTemplateColumn
+					MinWidth="50"
+					MaxWidth="50"
+					Header="">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button
+								Width="50"
+								Style="{DynamicResource ButtonWithIconOnly}"
+								ToolTip="{tombLib:Localize AddCommand}">
+								<Image Source="/TombEditor;component/Resources/icons_general/general_plus_math-16.png" />
+							</Button>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTemplateColumn
+					MinWidth="50"
+					MaxWidth="50"
+					Header="">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<Button
+								Width="50"
+								Style="{DynamicResource ButtonWithIconOnly}"
+								ToolTip="{tombLib:Localize DeleteCommand}">
+								<Image Source="/TombEditor;component/Resources/icons_general/general_trash-16.png" />
+							</Button>
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTextColumn Header="{tombLib:Localize Hotkeys}" />
+			</DataGrid.Columns>
+		</DataGrid>
+		<Label Grid.Row="2" Content="Conflicts" />
+		<controls:SpacedGrid Grid.Row="3">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<Button Content="{tombLib:Localize SetToDefault}" />
+			<Button
+				Grid.Column="1"
+				Background="DarkGreen"
+				Content="{tombLib:Localize CancelPush}" />
+			<Button
+				Grid.Column="2"
+				Width="90"
+				Content="{tombLib:Localize OK}" />
+			<Button
+				Grid.Column="3"
+				Width="90"
+				Content="{tombLib:Localize Cancel}" />
+		</controls:SpacedGrid>
+	</controls:SpacedGrid>
+</Window>

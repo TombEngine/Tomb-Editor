@@ -53,6 +53,14 @@ namespace TombEditor
         public Editor Editor;
         public IWin32Window Window;
         public Keys KeyData = Keys.None;
+
+        public CommandArgs() { }
+
+        public CommandArgs(IWin32Window window, Editor editor)
+        {
+            Window = window;
+            Editor = editor;
+        }
     }
 
     public static class CommandHandler
@@ -67,6 +75,13 @@ namespace TombEditor
             if (command == null)
                 throw new KeyNotFoundException("Command with name '" + name + "' not found.");
             return command;
+        }
+
+        public static System.Windows.Input.ICommand GetCommand(string name, CommandArgs args)
+        {
+            var command = GetCommand(name);
+            return new CommunityToolkit.Mvvm.Input.RelayCommand(
+                () => command.Execute?.Invoke(args));
         }
 
         public static void ExecuteHotkey(CommandArgs args)

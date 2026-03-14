@@ -1,0 +1,89 @@
+﻿<Window
+	x:Class="TombEditor.WPF.Views.ImportPrjWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:local="clr-namespace:TombEditor.WPF"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	
+	Title="{tombLib:Localize ImportPrjTitle}"
+	Width="480"
+	Height="290"
+	MinWidth="480"
+	MinHeight="290"
+	MaxWidth="480"
+	MaxHeight="290"
+	ResizeMode="NoResize"
+	Style="{DynamicResource CustomWindowStyle}"
+	mc:Ignorable="d">
+	<controls:SpacedGrid Margin="{x:Static darkUI:Defaults.SmallThickness}">
+		<controls:SpacedGrid.RowDefinitions>
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
+			<RowDefinition Height="auto" />
+		</controls:SpacedGrid.RowDefinitions>
+		<GroupBox Header="{tombLib:Localize ImportSettings}">
+			<controls:SpacedGrid>
+				<controls:SpacedGrid.RowDefinitions>
+					<RowDefinition Height="auto" />
+					<RowDefinition Height="auto" />
+					<RowDefinition Height="auto" />
+					<RowDefinition Height="auto" />
+				</controls:SpacedGrid.RowDefinitions>
+				<CheckBox Content="{tombLib:Localize T4Larson}" />
+				<TextBlock
+					Grid.Row="1"
+					Text="{tombLib:Localize T4LarsonDescr}"
+					TextWrapping="Wrap" />
+				<CheckBox Grid.Row="2" Content="{tombLib:Localize UseHalfPixelCorrection}" />
+				<TextBlock
+					Grid.Row="3"
+					Text="{tombLib:Localize UseHalfPixelCorrectionDescr}"
+					TextWrapping="Wrap" />
+			</controls:SpacedGrid>
+		</GroupBox>
+		<GroupBox Grid.Row="1" Header="{tombLib:Localize BaseSound}">
+			<controls:SpacedGrid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="auto" />
+				</Grid.ColumnDefinitions>
+				<controls:SpacedGrid.RowDefinitions>
+					<RowDefinition Height="auto" />
+					<RowDefinition Height="auto" />
+				</controls:SpacedGrid.RowDefinitions>
+				<TextBox />
+				<Button
+					Grid.Column="1"
+					Style="{DynamicResource ButtonWithIconOnly}"
+					ToolTip="Generate and merge into copy of current animation">
+					<StackPanel Orientation="Horizontal">
+						<Image Margin="0,0,2,0" Source="/TombEditor;component/Resources/icons_general/general_Open-16.png" />
+						<TextBlock Text="{tombLib:Localize BrowseP}" />
+					</StackPanel>
+				</Button>
+				<TextBlock
+					Grid.Row="1"
+					Grid.ColumnSpan="2"
+					Text="{tombLib:Localize SoundCatalog}"
+					TextWrapping="Wrap" />
+			</controls:SpacedGrid>
+		</GroupBox>
+		<controls:SpacedGrid Grid.Row="2" HorizontalAlignment="Right">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="auto" />
+				<ColumnDefinition Width="auto" />
+			</Grid.ColumnDefinitions>
+			<Button
+				Grid.Column="0"
+				Width="90"
+				Content="{tombLib:Localize OK}" />
+			<Button
+				Grid.Column="1"
+				Width="90"
+				Content="{tombLib:Localize Cancel}"
+				IsDefault="True" />
+		</controls:SpacedGrid>
+	</controls:SpacedGrid>
+</Window>
