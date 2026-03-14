@@ -1,11 +1,8 @@
 {
-    "ContentBrowserView": {
+    "ContentBrowser": {
         "SearchPlaceholder": "Search assets...",
         "EmptyStateMessage": "Click here to load a new WAD file.",
-        "Size": "Size"
-    },
-
-    "ContentBrowser": {
+        "Size": "Size",
         "FilterAll": "All",
         "FilterMoveables": "Moveables",
         "FilterStatics": "Statics",
@@ -20,7 +17,7 @@
         "ItemCount": "{0} items"
     },
 
-    "ObjectBrushToolboxView": {
+    "ObjectBrushToolbox": {
         "Radius": "Radius:",
         "Density": "Density:",
         "Rotation": "Rotation:",
@@ -33,11 +30,7 @@
         "PlaceInAdjacentRooms": "Place in adjacent rooms"
     },
 
-    "ToolBox": {
-        "GridPaint": "Grid Paint ({0})"
-    },
-
-    "ToolBoxView": {
+    "Toolbox": {
         "CircleBrushShape": "Circle Brush Shape",
         "SquareBrushShape": "Square Brush Shape",
         "Selection": "Selection",
@@ -63,7 +56,8 @@
         "Invisibility": "Invisibility",
         "PortalDigger": "Portal Digger",
         "FixTextureCoordinates": "Fix Texture Coordinates",
-        "ShowTextures": "Show Textures"
+        "ShowTextures": "Show Textures",
+        "GridPaint": "Grid Paint ({0})"
     },
 
     "MainWindow": {

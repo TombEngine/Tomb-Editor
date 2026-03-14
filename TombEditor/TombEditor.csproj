@@ -78,7 +78,7 @@
     <Compile Update="Controls\RichTextLabel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Update="Controls\ToolBox.cs">
+    <Compile Update="Features\Panel3D\ToolPalette\Toolbox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\ImportedGeometryManager.cs">

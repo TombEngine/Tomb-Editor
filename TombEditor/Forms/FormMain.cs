@@ -14,6 +14,18 @@ using TombLib.Forms;
 using TombLib.LevelData;
 using TombLib.Utils;
 using TombEditor.ToolWindows;
+using TombEditor.Features.Panel3D.ObjectBrush;
+using TombEditor.Features.Panel3D.ToolPalette;
+using TombEditor.Features.DockableViews.ObjectList;
+using TombEditor.Features.DockableViews.TexturePanel;
+using TombEditor.Features.DockableViews.PalettePanel;
+using TombEditor.Features.DockableViews.LightingPanel;
+using TombEditor.Features.DockableViews.SectorOptionsPanel;
+using TombEditor.Features.DockableViews.ContentBrowser;
+using TombEditor.Features.DockableViews.ImportedGeometryBrowser;
+using TombEditor.Features.DockableViews.ItemBrowser;
+using TombEditor.Features.DockableViews.RoomOptionsPanel;
+using TombEditor.Features.DockableViews.TriggerList;
 
 namespace TombEditor.Forms
 {
@@ -42,7 +54,7 @@ namespace TombEditor.Forms
 
         // Floating tool boxes are placed on 3D view at runtime
         private readonly ToolPaletteFloating ToolBox = new ToolPaletteFloating();
-        private readonly Controls.ObjectBrush.ObjectBrushToolbox ObjectBrushSettings = new Controls.ObjectBrush.ObjectBrushToolbox();
+        private readonly ObjectBrushToolbox ObjectBrushSettings = new ObjectBrushToolbox();
 
         public FormMain(Editor editor)
         {

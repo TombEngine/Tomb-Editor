@@ -1,3 +1,5 @@
+using DarkUI.Controls;
+using DarkUI.Forms;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -7,20 +9,28 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Windows.Forms;
-using DarkUI.Controls;
-using DarkUI.Forms;
+using TombEditor.Controls;
+using TombEditor.Features.DockableViews.ContentBrowser;
+using TombEditor.Features.DockableViews.ImportedGeometryBrowser;
+using TombEditor.Features.DockableViews.ItemBrowser;
+using TombEditor.Features.DockableViews.LightingPanel;
+using TombEditor.Features.DockableViews.ObjectList;
+using TombEditor.Features.DockableViews.PalettePanel;
+using TombEditor.Features.DockableViews.RoomOptionsPanel;
+using TombEditor.Features.DockableViews.SectorOptionsPanel;
+using TombEditor.Features.DockableViews.TexturePanel;
+using TombEditor.Features.DockableViews.TriggerList;
+using TombEditor.Features.Panel3D.ToolPalette;
 using TombEditor.Forms;
-using TombEditor.ToolWindows;
 using TombLib;
 using TombLib.Controls;
 using TombLib.Forms;
 using TombLib.LevelData;
-using TombLib.Wad;
-using TombLib.Wad.Catalog;
-using TombLib.Utils;
 using TombLib.LevelData.SectorEnums;
 using TombLib.LevelData.SectorEnums.Extensions;
-using TombEditor.Controls;
+using TombLib.Utils;
+using TombLib.Wad;
+using TombLib.Wad.Catalog;
 
 namespace TombEditor
 {
@@ -1810,7 +1820,7 @@ namespace TombEditor
                 args.Editor.ConfigurationChange();
             });
 
-            AddCommand("DrawWhiteTextureLightingOnly", "Draw untextured in Lighting Mode", CommandType.View, delegate (CommandArgs args) 
+            AddCommand("DrawWhiteTextureLightingOnly", "Draw untextured in Lighting Mode", CommandType.View, delegate (CommandArgs args)
             {
                 args.Editor.Configuration.Rendering3D_ShowLightingWhiteTextureOnly = !args.Editor.Configuration.Rendering3D_ShowLightingWhiteTextureOnly;
                 args.Editor.ConfigurationChange();
@@ -2259,7 +2269,7 @@ namespace TombEditor
                 args.Editor.ActivateDefaultControl(nameof(FormMain));
             });
 
-            AddCommand("DeleteAllLights", "Delete lights in selected rooms", CommandType.Edit, delegate (CommandArgs args) 
+            AddCommand("DeleteAllLights", "Delete lights in selected rooms", CommandType.Edit, delegate (CommandArgs args)
             {
                 if (DarkMessageBox.Show(args.Window, "Do you want to delete all lights in level? This action can't be undone.",
                                    "Delete all lights", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
@@ -2278,7 +2288,7 @@ namespace TombEditor
 				}
 			});
 
-			AddCommand("GetObjectStatistics", "Copy object statistics into clipboard", CommandType.Objects, delegate (CommandArgs args) 
+			AddCommand("GetObjectStatistics", "Copy object statistics into clipboard", CommandType.Objects, delegate (CommandArgs args)
             {
 				SortedDictionary<WadMoveableId,uint> moveablesCount = new SortedDictionary<WadMoveableId, uint>();
 				SortedDictionary<WadStaticId,uint> staticsCount = new SortedDictionary<WadStaticId, uint>();
