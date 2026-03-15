@@ -25,7 +25,7 @@ namespace TombEditor.Controls
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public EventType? EventType
+        public EventType EventType
         {
             get { return nodeEditor.CurrentEventType; }
             set { nodeEditor.CurrentEventType = value; }

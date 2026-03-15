@@ -75,7 +75,7 @@ namespace TombLib.Controls.VisualScripting
 
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public EventType? CurrentEventType { get; set; }
+        public EventType CurrentEventType { get; set; }
 
         // Precache lists of objects to avoid polling every time user changes function
         // in a node list. By default it is set to nothing, but must be replaced externally
