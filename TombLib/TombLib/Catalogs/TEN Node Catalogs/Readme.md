@@ -40,6 +40,14 @@ Comment metadata entry reference (metadata block is indicated by a keyword which
    new line.
    
  - **!Section "SECTION"** - this will define where the node will be found inside Tomb Editor.
+ 
+ - **!Supported "TYPE" "TYPE" "..." - defines supported event types for a given node. Each event type should be
+   enclosed in quotes. If event is not supported by a node, it will display a warning message when misplaced.
+   Possible event types are: **OnVolumeEnter, OnVolumeInside, OnVolumeLeave, OnLoop, OnLoadGame, OnSaveGame, 
+   OnLevelStart, OnLevelEnd, OnUseItem, OnFreeze**.
+   
+ - **!Unsupported "TYPE" "TYPE" "..." - defines unsupported event types for a given node. Acts in an opposite way
+   to `!Supported`. Possible event types are equal to `!Supported`.
 
  - **!Arguments "ARGDESC1" "ARGDESC2" "ARGDESC..."** - infinite amount of args, with **ARGDESC** parameters
    separated by commas as follows:
