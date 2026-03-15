@@ -31,6 +31,7 @@ namespace TombEditor.Forms
             new RoomOptions(),
             new ItemBrowser(),
             new ImportedGeometryBrowser(),
+            new ContentBrowser(),
             new SectorOptions(),
             new Lighting(),
             new Palette(),
@@ -41,6 +42,7 @@ namespace TombEditor.Forms
 
         // Floating tool boxes are placed on 3D view at runtime
         private readonly ToolPaletteFloating ToolBox = new ToolPaletteFloating();
+        private readonly Controls.ObjectBrush.ObjectBrushToolbox ObjectBrushSettings = new Controls.ObjectBrush.ObjectBrushToolbox();
 
         public FormMain(Editor editor)
         {
@@ -70,7 +72,6 @@ namespace TombEditor.Forms
 
             // Restore window settings and prepare UI
             Configuration.LoadWindowProperties(this, _editor.Configuration);
-            LoadWindowLayout(_editor.Configuration);
             GenerateMenusRecursive(menuStrip.Items);
             UpdateUIColours();
             UpdateControls();
@@ -184,6 +185,23 @@ namespace TombEditor.Forms
                 gridWallsIn3SquaresToolStripMenuItem.Enabled = validSectorSelection;
                 gridWallsIn5SquaresToolStripMenuItem.Enabled = validSectorSelection;
                 splitSectorObjectOnSelectionToolStripMenuItem.Enabled = _editor.SelectedObject is SectorBasedObjectInstance && validSectorSelection;
+            }
+
+            // Show/hide object brush settings toolbox based on active mode.
+            if (obj is Editor.ToolChangedEvent || obj is Editor.ModeChangedEvent || obj is Editor.InitEvent)
+            {
+                bool showBrushToolbox = _editor.Mode == EditorMode.ObjectPlacement;
+
+                if (showBrushToolbox && ObjectBrushSettings.Parent == null)
+                {
+                    GetWindow<MainView>().AddToolbox(ObjectBrushSettings);
+                    ObjectBrushSettings.Location = _editor.Configuration.Rendering3D_ObjectBrushToolboxPosition;
+                }
+                else if (!showBrushToolbox && ObjectBrushSettings.Parent != null)
+                {
+                    _editor.Configuration.Rendering3D_ObjectBrushToolboxPosition = ObjectBrushSettings.Location;
+                    GetWindow<MainView>().RemoveToolbox(ObjectBrushSettings);
+                }
             }
 
             // Update autosave status
@@ -490,6 +508,7 @@ namespace TombEditor.Forms
 
             floatingToolStripMenuItem.Checked = configuration.Rendering3D_ToolboxVisible;
             ToolBox.Location = configuration.Rendering3D_ToolboxPosition;
+            ObjectBrushSettings.Location = configuration.Rendering3D_ObjectBrushToolboxPosition;
         }
 
         private void SaveWindowLayout(Configuration configuration)
@@ -498,6 +517,9 @@ namespace TombEditor.Forms
 
             configuration.Rendering3D_ToolboxVisible = floatingToolStripMenuItem.Checked;
             configuration.Rendering3D_ToolboxPosition = ToolBox.Location;
+
+            if (ObjectBrushSettings.Parent != null)
+                configuration.Rendering3D_ObjectBrushToolboxPosition = ObjectBrushSettings.Location;
         }
 
         protected override bool ProcessDialogKey(Keys keyData)
@@ -559,6 +581,7 @@ namespace TombEditor.Forms
             roomOptionsToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<RoomOptions>());
             itemBrowserToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<ItemBrowser>());
             importedGeometryBrowserToolstripMenuItem.Checked = dockArea.ContainsContent(GetWindow<ImportedGeometryBrowser>());
+            contentBrowserToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<ContentBrowser>());
             triggerListToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<TriggerList>());
             objectListToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<ObjectList>());
             lightingToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<Lighting>());
@@ -599,6 +622,12 @@ namespace TombEditor.Forms
         {
             base.OnActivated(e);
             _editor.Focus();
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+            LoadWindowLayout(_editor.Configuration);
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

@@ -35,13 +35,10 @@ namespace TombLib.Scripting.Tomb1Main
 		private readonly ITextAnalysisService _textAnalysisService;
 		private readonly IAutocompleteManager _autocompleteManager;
 
-		public Tomb1MainEditor(Version engineVersion) : this(engineVersion, false)
-		{ }
-
-		public Tomb1MainEditor(Version engineVersion, bool isTR2) : base(engineVersion)
+		public Tomb1MainEditor(Version engineVersion) : base(engineVersion)
 		{
 			// Initialize schema services based on game version
-			string schemaFileName = isTR2 ? "tr2.gameflow.schema.json" : "tr1.gameflow.schema.json";
+			string schemaFileName = "gameflow.schema.json";
 			string schemaPath = Path.Combine(DefaultPaths.ResourcesDirectory, "TRX", schemaFileName);
 
 			_schemaService = new GameflowSchemaService(schemaPath);

@@ -30,6 +30,13 @@
     <StartupObject>TombEditor.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Page Update="Properties\DesignTimeResources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+      <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="CustomTabControl">
       <HintPath>..\Libs\CustomTabControl.dll</HintPath>
     </Reference>
@@ -118,6 +125,7 @@
     <Compile Update="ToolWindows\ToolPaletteFloating.cs" />
     <Compile Update="ToolWindows\TriggerList.cs" />
     <Compile Update="ToolWindows\RoomOptions.cs" />
+    <Compile Update="ToolWindows\ContentBrowser.cs" />
     <Compile Update="ToolWindows\ItemBrowser.cs" />
     <Compile Update="ToolWindows\SectorOptions.cs" />
     <Compile Update="Controls\Panel2DMap.cs">
@@ -131,14 +139,25 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DarkUI\DarkUI\DarkUI.csproj" />
+    <ProjectReference Include="..\DarkUI\DarkUI.WPF\DarkUI.WPF.csproj" />
     <ProjectReference Include="..\TombLib\TombLib.Forms\TombLib.Forms.csproj" />
     <ProjectReference Include="..\TombLib\TombLib.Rendering\TombLib.Rendering.csproj" />
+    <ProjectReference Include="..\TombLib\TombLib.WPF\TombLib.WPF.csproj" />
     <ProjectReference Include="..\TombLib\TombLib\TombLib.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="TE.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\icons_toolbox\*.png" />
+    <Resource Include="Resources\icons_objects\objects_volume-sphere-16.png" />
+    <Resource Include="Resources\icons_objects\objects_volume-box-16.png" />
+    <Resource Include="Resources\icons_actions\actions_TextureMode-16.png" />
+    <Resource Include="Resources\icons_actions\actions_StarOutlined-16.png" />
+    <Resource Include="Resources\icons_actions\actions_StarFilled-16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="NLog" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>

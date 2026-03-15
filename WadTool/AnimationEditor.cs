@@ -46,9 +46,11 @@ namespace WadTool
 
         // Internal state, used for transform functions
         private List<Vector3> _backupRot = new List<Vector3>();
+        private List<Quaternion> _backupQuat = new List<Quaternion>();
         private List<Vector3> _backupPos = new List<Vector3>();
         private Vector3 _initialPos;
         private Vector3 _initialRot;
+        private Quaternion _initialQuat;
 
         // Helpers
         public bool SelectionIsEmpty => Selection.X == -1 || Selection.Y == -1;
@@ -202,20 +204,30 @@ namespace WadTool
             return true;
         }
 
-        public void UpdateTransform(int meshIndex, Vector3 newRot, Vector3 newPos)
-        {
-            if (CurrentAnim == null || CurrentKeyFrame == null) return;
+        private delegate Quaternion RotationStrategy(int index, float weight, bool evolve);
 
-            // Backup everything and push undo on first occurence of editing
-            if (!MadeChanges || _backupPos.Count == 0 || _backupRot.Count == 0)
+        private void UpdateTransform(int meshIndex, Vector3 newPos, RotationStrategy rotStrategy)
+        {
+            if (CurrentAnim == null || CurrentKeyFrame == null)
+                return;
+
+            // Backup everything and push undo on first occurrence of editing
+            if (!MadeChanges || _backupPos.Count == 0 || _backupQuat.Count == 0)
             {
                 _initialPos = CurrentKeyFrame.Translations[0];
                 _initialRot = CurrentKeyFrame.Rotations[meshIndex];
+                _initialQuat = CurrentKeyFrame.Quaternions[meshIndex];
 
                 _backupPos.Clear();
                 _backupRot.Clear();
+                _backupQuat.Clear();
 
-                ActiveFrames.ForEach(f => { _backupRot.Add(f.Rotations[meshIndex]); _backupPos.Add(f.Translations[0]); });
+                ActiveFrames.ForEach(f =>
+                {
+                    _backupRot.Add(f.Rotations[meshIndex]);
+                    _backupQuat.Add(f.Quaternions[meshIndex]);
+                    _backupPos.Add(f.Translations[0]);
+                });
 
                 Tool.UndoManager.PushAnimationChanged(this, CurrentAnim);
                 MadeChanges = true;
@@ -223,7 +235,6 @@ namespace WadTool
 
             // Calculate deltas for other frames processing
             var deltaPos = newPos - _initialPos;
-            var deltaRot = newRot - _initialRot;
 
             // Define animation properties
             bool evolve  = TransformMode != AnimTransformMode.Simple && ActiveFrames.Count > 1;
@@ -244,51 +255,76 @@ namespace WadTool
                 // Single-pass smoothstep doesn't look organic on fast animations, hence we're using 2-pass smootherstep here.
                 float weight = smooth ? (float)MathC.SmoothStep(0, 1, MathC.SmoothStep(0, 1, bias)) : bias;
 
-                // Apply deltas to backed-up transforms
-                var currPos = _backupPos[index] + deltaPos;
-                var currRot = _backupRot[index] + deltaRot;
-
-                var translationVector = currPos;
+                var translation = _backupPos[index] + deltaPos;
 
                 if (evolve)
-                    translationVector = Vector3.Lerp(_backupPos[index], translationVector, weight);
+                    translation = Vector3.Lerp(_backupPos[index], translation, weight);
 
-                // Foolproof stuff in case user hardly messes with transform during playback...
-                if (float.IsNaN(translationVector.X)) translationVector.X = _backupPos[index].X;
-                if (float.IsNaN(translationVector.Y)) translationVector.Y = _backupPos[index].Y;
-                if (float.IsNaN(translationVector.Z)) translationVector.Z = _backupPos[index].Z;
+                if (float.IsNaN(translation.X)) translation.X = _backupPos[index].X;
+                if (float.IsNaN(translation.Y)) translation.Y = _backupPos[index].Y;
+                if (float.IsNaN(translation.Z)) translation.Z = _backupPos[index].Z;
 
-                keyframe.Translations[0] = translationVector;
-                keyframe.TranslationsMatrices[0] = Matrix4x4.CreateTranslation(translationVector);
+                keyframe.Translations[0] = translation;
+                keyframe.TranslationsMatrices[0] = Matrix4x4.CreateTranslation(translation);
 
-                var rotVector = currRot;
-                Quaternion finalQuat;
-                if (evolve)
-                {
-                    // Calculate source and destination quats and decide on direction based on dot product.
-                    var srcQuat = Quaternion.CreateFromYawPitchRoll(_backupRot[index].Y, _backupRot[index].X, _backupRot[index].Z);
-                    var destQuat = Quaternion.CreateFromYawPitchRoll(currRot.Y, currRot.X, currRot.Z);
-                    if (Quaternion.Dot(srcQuat, destQuat) < 0) Quaternion.Negate(srcQuat);
-                    finalQuat = Quaternion.Lerp(srcQuat, destQuat, weight);
-                }
-                else
-                    finalQuat = Quaternion.CreateFromYawPitchRoll(rotVector.Y, rotVector.X, rotVector.Z);
+                var finalQuat = rotStrategy(index, weight, evolve);
+                finalQuat = Quaternion.Normalize(finalQuat);
 
-                // We're not converting quat to rotations because we have to check-up for NaNs
-                var rotationVector = MathC.QuaternionToEuler(finalQuat);
+                var euler = MathC.QuaternionToEuler(finalQuat);
+                if (float.IsNaN(euler.X)) euler.X = _backupRot[index].X;
+                if (float.IsNaN(euler.Y)) euler.Y = _backupRot[index].Y;
+                if (float.IsNaN(euler.Z)) euler.Z = _backupRot[index].Z;
 
-                // Foolproof stuff in case user hardly messes with transform during playback...
-                if (float.IsNaN(rotationVector.X)) rotationVector.X = _backupRot[index].X;
-                if (float.IsNaN(rotationVector.Y)) rotationVector.Y = _backupRot[index].Y;
-                if (float.IsNaN(rotationVector.Z)) rotationVector.Z = _backupRot[index].Z;
-
-                // NaNs filtered out, now we can put actual data.
-                keyframe.Quaternions[meshIndex] = Quaternion.CreateFromYawPitchRoll(rotationVector.Y, rotationVector.X, rotationVector.Z);
-                keyframe.Rotations[meshIndex] = rotationVector;
+                keyframe.Quaternions[meshIndex] = finalQuat;
+                keyframe.Rotations[meshIndex] = euler;
 
                 index++;
-                currentStep++; if (currentStep > frameCount) currentStep = frameCount;
+                currentStep++;
+
+                if (currentStep > frameCount)
+                    currentStep = frameCount;
             }
+        }
+
+        public void UpdateTransform(int meshIndex, Vector3 newRot, Vector3 newPos)
+        {
+            Quaternion EulerStrategy(int index, float weight, bool evolve)
+            {
+                var deltaRot = newRot - _initialRot;
+                var currRot = _backupRot[index] + deltaRot;
+
+                if (!evolve)
+                    return Quaternion.CreateFromYawPitchRoll(currRot.Y, currRot.X, currRot.Z);
+
+                var src = Quaternion.CreateFromYawPitchRoll(_backupRot[index].Y, _backupRot[index].X, _backupRot[index].Z);
+                var dst = Quaternion.CreateFromYawPitchRoll(currRot.Y, currRot.X, currRot.Z);
+
+                if (Quaternion.Dot(src, dst) < 0)
+                    src = Quaternion.Negate(src);
+
+                return Quaternion.Lerp(src, dst, weight);
+            }
+
+            UpdateTransform(meshIndex, newPos, EulerStrategy);
+        }
+
+        public void UpdateTransform(int meshIndex, Quaternion targetQuat, Vector3 newPos)
+        {
+            Quaternion QuatStrategy(int index, float weight, bool evolve)
+            {
+                var deltaQuat = Quaternion.Inverse(_initialQuat) * targetQuat;
+                var destQuat = _backupQuat[index] * deltaQuat;
+
+                if (!evolve)
+                    return destQuat;
+
+                if (Quaternion.Dot(_backupQuat[index], destQuat) < 0)
+                    destQuat = Quaternion.Negate(destQuat);
+
+                return Quaternion.Slerp(_backupQuat[index], destQuat, weight);
+            }
+
+            UpdateTransform(meshIndex, newPos, QuatStrategy);
         }
 
         public void ReplaceAnimCommands(WadAnimCommand oldCommand, WadAnimCommand newCommand) => 

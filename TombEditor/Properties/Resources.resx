@@ -124,6 +124,18 @@
   <data name="toolbox_GroupRamp_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_toolbox\toolbox_GroupRamp-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="toolbox_ObjectSelection_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_toolbox\toolbox_ObjectSelection-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="toolbox_Deselection_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_toolbox\toolbox_Deselection-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="toolbox_Ruler_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_toolbox\toolbox_Ruler-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="toolbox_ObjectPlacement_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_toolbox\toolbox_ObjectPlacement-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="general_redo_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_general\general_redo-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -561,5 +573,11 @@
   </data>
   <data name="actions_play_fast_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icons_actions\actions_play_fast-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="actions_StarOutlined_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_actions\actions_StarOutlined-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="actions_StarFilled_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\icons_actions\actions_StarFilled-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

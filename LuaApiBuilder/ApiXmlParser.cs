@@ -126,7 +126,9 @@ public static class ApiXmlParser
 				Name = field.Element("name")?.Value ?? string.Empty,
 				Type = field.Element("type")?.Value ?? string.Empty,
 				Summary = field.Element("summary")?.Value ?? string.Empty,
-				Description = field.Element("description")?.Value ?? string.Empty
+				Description = field.Element("description")?.Value ?? string.Empty,
+				Optional = bool.TryParse(field.Element("optional")?.Value, out var fieldOptional) && fieldOptional,
+				DefaultValue = field.Element("defaultValue")?.Value ?? string.Empty
 			};
 
 			if (string.IsNullOrWhiteSpace(apiField.Type))

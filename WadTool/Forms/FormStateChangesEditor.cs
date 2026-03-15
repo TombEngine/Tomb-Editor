@@ -31,7 +31,7 @@ namespace WadTool
             public ushort NextFrame { get; set; }
             public ushort BlendFrameCount { get; set; }
             public ushort BlendEndFrame { get; set; }
-            public BezierCurve2 BlendCurve { get; set; }
+            public BezierCurve2 BlendCurve { get; set; } = BezierCurve2.Linear.Clone();
 
             public WadStateChangeRow(string stateName, ushort stateId, ushort lowFrame, ushort highFrame, ushort nextAnimation,
                                      ushort nextFrameLow, ushort nextFrameHigh, ushort blendFrameCount, BezierCurve2 blendCurve)
@@ -62,8 +62,8 @@ namespace WadTool
             dgvControls.DataGridView = dgvStateChanges;
             dgvControls.Enabled = true;
 
-            // Hide TEN controls
-            if (editor.Wad.GameVersion != TombLib.LevelData.TRVersion.Game.TombEngine)
+            // TODO: Enable when animation blending is finished.
+            if (true) // if (editor.Wad.GameVersion != TombLib.LevelData.TRVersion.Game.TombEngine)
             {
                 blendingGroup.Visible = false;
                 stateChangeGroup.Width = blendingGroup.Left + blendingGroup.Width - stateChangeGroup.Left;

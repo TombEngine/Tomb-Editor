@@ -145,20 +145,23 @@ namespace TombLib.Utils
         public static List<string> BlendModeUserNames(LevelSettings settings)
         {
             int blendCount;
+            bool enableExtraModes = settings.GameEnableExtraBlendingModes ?? false;
 
             // For TR4, TRNG and TombEngine we can add all types (if extra blending modes are enabled)
             if (settings.GameVersion == TRVersion.Game.TombEngine)
             {
                 blendCount = 7;
             }
-            else if (((settings.GameEnableExtraBlendingModes ?? false) && settings.GameVersion.Native() == TRVersion.Game.TR4))
+            else if (enableExtraModes && settings.GameVersion.Native() == TRVersion.Game.TR4)
             {
                 blendCount = 6;
             }
             else
             {
-                // Additive blending is for TR3-5 only
-                if (settings.GameVersion.Native() >= TRVersion.Game.TR3)
+                // Additive blending is for TR3-5 only and TRX. Extra modes is however
+                // enabled in WadTool context for TR1-2. For non-TRX versions of those
+                // games, modes will be normalised on compilation in TE.
+                if (settings.GameVersion >= TRVersion.Game.TR3 || enableExtraModes)
                     blendCount = 2;
                 else
                     blendCount = 1; // Type 0 exists everywhere

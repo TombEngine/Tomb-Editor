@@ -86,7 +86,7 @@ namespace TombEditor
         private PositionBasedObjectInstance UndoObject;
         private bool Created;
 
-        public AddRemoveObjectUndoInstance(EditorUndoManager parent, PositionBasedObjectInstance obj, bool created) : base(parent, obj.Room)
+        public AddRemoveObjectUndoInstance(EditorUndoManager parent, PositionBasedObjectInstance obj, bool created, Room room = null) : base(parent, room ?? obj.Room)
         {
             Created = created;
             UndoObject = obj;

@@ -9137,16 +9137,20 @@
 		</WadSoundInfo>
 		<WadSoundInfo>
 			<Id>468</Id>
-			<Name>TR1_Empty</Name>
+			<Name>TR1_Kold_Death</Name>
 			<Volume>100</Volume>
-			<RangeInSectors>10</RangeInSectors>
+			<RangeInSectors>8</RangeInSectors>
 			<Chance>100</Chance>
 			<PitchFactor>0</PitchFactor>
 			<DisablePanning>false</DisablePanning>
 			<RandomizePitch>false</RandomizePitch>
 			<RandomizeVolume>false</RandomizeVolume>
-			<LoopBehaviour>None</LoopBehaviour>
-			<Samples />
+			<LoopBehaviour>OneShotWait</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>TR1_Kold_Death_01.wav</FileName>
+				</WadSample>
+			</Samples>
 			<Global>false</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
@@ -22413,6 +22417,63 @@
 			<Indexed>true</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
+			<Id>1147</Id>
+			<Name>TR1_Cowboy_Death</Name>
+			<Volume>100</Volume>
+			<RangeInSectors>8</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>false</RandomizePitch>
+			<RandomizeVolume>false</RandomizeVolume>
+			<LoopBehaviour>OneShotWait</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>TR1_Cowboy_Death_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>false</Global>
+			<Indexed>false</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
+			<Id>1148</Id>
+			<Name>TR1_Natla_Death</Name>
+			<Volume>100</Volume>
+			<RangeInSectors>8</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>false</RandomizePitch>
+			<RandomizeVolume>false</RandomizeVolume>
+			<LoopBehaviour>OneShotWait</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>TR1_Natla_Death_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>false</Global>
+			<Indexed>false</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
+			<Id>1149</Id>
+			<Name>TR1_Natla_Speech</Name>
+			<Volume>100</Volume>
+			<RangeInSectors>10</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>false</RandomizePitch>
+			<RandomizeVolume>false</RandomizeVolume>
+			<LoopBehaviour>OneShotWait</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>TR1_Natla_Speech_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>false</Global>
+			<Indexed>false</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
 			<Id>1150</Id>
 			<Name>TEN_Custom_Footstep_1</Name>
 			<Volume>100</Volume>
@@ -23108,6 +23169,82 @@
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
+			<Indexed>false</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
+			<Id>1196</Id>
+			<Name>TR1_Larson_Speech</Name>
+			<Volume>100</Volume>
+			<RangeInSectors>8</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>false</RandomizePitch>
+			<RandomizeVolume>false</RandomizeVolume>
+			<LoopBehaviour>OneShotWait</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>TR1_Larson_Speech_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>false</Global>
+			<Indexed>false</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
+			<Id>1197</Id>
+			<Name>TR1_Kold_Speech</Name>
+			<Volume>100</Volume>
+			<RangeInSectors>8</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>false</RandomizePitch>
+			<RandomizeVolume>false</RandomizeVolume>
+			<LoopBehaviour>OneShotWait</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>TR1_Kold_Speech_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>false</Global>
+			<Indexed>false</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
+			<Id>1198</Id>
+			<Name>TR1_Cowboy_Speech</Name>
+			<Volume>100</Volume>
+			<RangeInSectors>8</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>false</RandomizePitch>
+			<RandomizeVolume>false</RandomizeVolume>
+			<LoopBehaviour>OneShotWait</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>TR1_Cowboy_Speech_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>false</Global>
+			<Indexed>false</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
+			<Id>1199</Id>
+			<Name>TR1_SkateboardKid_Speech</Name>
+			<Volume>100</Volume>
+			<RangeInSectors>8</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>false</RandomizePitch>
+			<RandomizeVolume>false</RandomizeVolume>
+			<LoopBehaviour>OneShotWait</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>TR1_SkateboardKid_Speech_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>false</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 	</SoundInfos>

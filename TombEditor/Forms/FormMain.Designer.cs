@@ -197,6 +197,7 @@ namespace TombEditor.Forms
 			roomOptionsToolStripMenuItem = new ToolStripMenuItem();
 			itemBrowserToolStripMenuItem = new ToolStripMenuItem();
 			importedGeometryBrowserToolstripMenuItem = new ToolStripMenuItem();
+			contentBrowserToolStripMenuItem = new ToolStripMenuItem();
 			triggerListToolStripMenuItem = new ToolStripMenuItem();
 			lightingToolStripMenuItem = new ToolStripMenuItem();
 			paletteToolStripMenuItem = new ToolStripMenuItem();
@@ -1866,7 +1867,7 @@ namespace TombEditor.Forms
 			// windowToolStripMenuItem
 			// 
 			windowToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
-			windowToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { restoreDefaultLayoutToolStripMenuItem, toolStripMenuSeparator14, sectorOptionsToolStripMenuItem, roomOptionsToolStripMenuItem, itemBrowserToolStripMenuItem, importedGeometryBrowserToolstripMenuItem, triggerListToolStripMenuItem, lightingToolStripMenuItem, paletteToolStripMenuItem, texturePanelToolStripMenuItem, objectListToolStripMenuItem, statisticsToolStripMenuItem, dockableToolStripMenuItem, floatingToolStripMenuItem });
+			windowToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { restoreDefaultLayoutToolStripMenuItem, toolStripMenuSeparator14, sectorOptionsToolStripMenuItem, roomOptionsToolStripMenuItem, itemBrowserToolStripMenuItem, importedGeometryBrowserToolstripMenuItem, contentBrowserToolStripMenuItem, triggerListToolStripMenuItem, lightingToolStripMenuItem, paletteToolStripMenuItem, texturePanelToolStripMenuItem, objectListToolStripMenuItem, statisticsToolStripMenuItem, dockableToolStripMenuItem, floatingToolStripMenuItem });
 			windowToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
 			windowToolStripMenuItem.Name = "windowToolStripMenuItem";
 			windowToolStripMenuItem.Size = new System.Drawing.Size(63, 25);
@@ -1924,6 +1925,15 @@ namespace TombEditor.Forms
 			importedGeometryBrowserToolstripMenuItem.Size = new System.Drawing.Size(246, 22);
 			importedGeometryBrowserToolstripMenuItem.Tag = "ShowImportedGeometryBrowser";
 			importedGeometryBrowserToolstripMenuItem.Text = "ShowImportedGeometryBrowser";
+			// 
+			// contentBrowserToolStripMenuItem
+			// 
+			contentBrowserToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+			contentBrowserToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+			contentBrowserToolStripMenuItem.Name = "contentBrowserToolStripMenuItem";
+			contentBrowserToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
+			contentBrowserToolStripMenuItem.Tag = "ShowContentBrowser";
+			contentBrowserToolStripMenuItem.Text = "ShowContentBrowser";
 			// 
 			// triggerListToolStripMenuItem
 			// 
@@ -2416,6 +2426,7 @@ namespace TombEditor.Forms
         private ToolStripSeparator toolStripSeparator8;
         private ToolStripMenuItem ShowRealTintForObjectsToolStripMenuItem;
         private ToolStripMenuItem importedGeometryBrowserToolstripMenuItem;
+        private ToolStripMenuItem contentBrowserToolStripMenuItem;
         private ToolStripMenuItem addSpriteToolStripMenuItem;
         private ToolStripMenuItem toolStripMenuItem9;
         private ToolStripMenuItem addMemoToolStripMenuItem;

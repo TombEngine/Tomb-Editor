@@ -563,6 +563,42 @@ namespace TombLib.LevelData.Compilers.TombEngine
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct TombEngineFlybyCamera
+    {
+        public int X;
+        public int Y;
+        public int Z;
+        public int DirectionX;
+        public int DirectionY;
+        public int DirectionZ;
+
+        public int Sequence;
+        public int Index;
+
+        public ushort FOV;
+        public short  Roll;
+        public ushort Timer;
+        public ushort Speed;
+        public ushort Flags;
+
+        public int Room;
+
+        public class ComparerFlyBy : IComparer<TombEngineFlybyCamera>
+        {
+            public int Compare(TombEngineFlybyCamera x, TombEngineFlybyCamera y)
+            {
+                if (x.Sequence != y.Sequence)
+                    return x.Sequence > y.Sequence ? 1 : -1;
+
+                if (x.Index == y.Index)
+                    return 0;
+
+                return x.Index > y.Index ? 1 : -1;
+            }
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TombEngineCamera
     {
         public int X;

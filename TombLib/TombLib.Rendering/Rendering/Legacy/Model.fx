@@ -16,15 +16,24 @@ struct PixelInputType
     float4 Position : SV_POSITION;
     float3 UVW : TEXCOORD0;
     float4 Color : COLOR;
+    float3 WorldPosition : WORLDPOSITION;
 };
 
 float4x4 ModelViewProjection;
+float4x4 WorldMatrix;
 float4x4 Bones[MAX_BONES];
 float4 Color;
 bool AlphaTest;
 bool StaticLighting;
 bool ColoredVertices;
 bool Skinned;
+int BrushShape; // 0=none, 1=circle, 2=square
+float BrushRotation; // Degrees, for rotation indicator line
+float4 BrushCenter; // xyz = world center, w = radius
+float4 BrushColor;
+float BrushLineWidth;
+
+#include "BrushOverlay.hlsli"
 
 Texture2DArray Texture;
 sampler TextureSampler;
@@ -39,7 +48,7 @@ PixelInputType VS(VertexInputType input)
     {
         float totalWeight = dot(input.BoneWeight, 1.0);
         float4x4 blendedMatrix = (float4x4)0;
-		
+
         int4 boneIndex = int4(
             clamp((int)input.BoneIndex.x, 0, MAX_BONES - 1),
             clamp((int)input.BoneIndex.y, 0, MAX_BONES - 1),
@@ -66,8 +75,13 @@ PixelInputType VS(VertexInputType input)
         }
 
         world = mul(blendedMatrix, ModelViewProjection);
+        output.WorldPosition = mul(float4(input.Position, 1.0f), mul(blendedMatrix, WorldMatrix)).xyz;
     }
-	
+    else
+    {
+        output.WorldPosition = mul(float4(input.Position, 1.0f), WorldMatrix).xyz;
+    }
+
     output.Position = mul(float4(input.Position, 1.0f), world);
     output.UVW = input.UVW;
 	output.Color = float4(input.Color, 1.0f);
@@ -100,6 +114,8 @@ float4 PS(PixelInputType input) : SV_TARGET
 
 	if (AlphaTest == true && pixel.w <= 0.01f)
 		discard;
+
+    ApplyBrushOverlay(pixel.xyz, pixel.w, false, input.Position, input.WorldPosition, BrushLineWidth);
 
     return pixel;
 }

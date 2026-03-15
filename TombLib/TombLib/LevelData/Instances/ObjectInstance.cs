@@ -292,7 +292,7 @@ namespace TombLib.LevelData
         {
             bool result = false;
 
-            if (Room.Position != _lastRoomPosition)
+            if (Room != null && Room.Position != _lastRoomPosition)
             {
                 result = true;
                 _lastRoomPosition = Room.Position;
@@ -442,36 +442,42 @@ namespace TombLib.LevelData
 
         public void AllocateNewLuaName()
         {
-            var objects = Room.Level.GetAllObjects().Where(o => o is IHasLuaName);
-            int numObjects = objects.Count();
+            var existingNames = Room.Level.GetAllLuaNames();
+            AllocateNewLuaName(existingNames);
+        }
 
+        // Batch-friendly overload that reuses a pre-built name set.
+        // Adds the newly assigned name to the set for subsequent calls.
+
+        public void AllocateNewLuaName(HashSet<string> existingNames)
+        {
+            string prefix;
+            if (this is MoveableInstance moveable)
+                prefix = moveable.WadObjectId.ShortName(TRVersion.Game.TombEngine).ToLower() + "_";
+            else if (this is StaticInstance)
+                prefix = "static_mesh_";
+            else if (this is SinkInstance)
+                prefix = "sink_";
+            else if (this is SoundSourceInstance)
+                prefix = "sound_source_";
+            else if (this is CameraInstance)
+                prefix = "camera_";
+            else if (this is VolumeInstance)
+                prefix = "volume_";
+            else
+                return;
+
+            int counter = existingNames.Count;
             while (true)
             {
-                string luaId = "";
-                if (this is MoveableInstance)
-                    luaId = (this as MoveableInstance).WadObjectId.ShortName(TRVersion.Game.TombEngine).ToLower() + "_" + numObjects;
-                else if (this is StaticInstance)
-                    luaId = "static_mesh_" + numObjects;
-                else if (this is SinkInstance)
-                    luaId = "sink_" + numObjects;
-                else if (this is SoundSourceInstance)
-                    luaId = "sound_source_" + numObjects;
-                else if (this is CameraInstance)
-                    luaId = "camera_" + numObjects;
-                else if (this is VolumeInstance)
-                    luaId = "volume_" + numObjects;
-                else
-                    return;
-
-                if (objects.Where(o => o is IHasLuaName && (o as IHasLuaName).LuaName == luaId).Count() == 0)
+                string luaId = prefix + counter;
+                if (!existingNames.Contains(luaId))
                 {
                     LuaName = luaId;
+                    existingNames.Add(luaId);
                     return;
                 }
-                else
-                {
-                    numObjects++;
-                }
+                counter++;
             }
         }
 

@@ -413,9 +413,17 @@ namespace TombIDE
 			progressBar.Maximum = 1;
 
 			string enginePresetPath = Path.Combine(DefaultPaths.PresetsDirectory, "TR2X.zip");
+			string soundsArchivePath = Path.Combine(DefaultPaths.TemplatesDirectory, "Sounds", "TR2.zip");
 
 			using (var engineArchive = new ZipArchive(File.OpenRead(enginePresetPath)))
-				ExtractEntries(engineArchive.Entries, targetProject);
+			using (var soundsArchive = new ZipArchive(File.OpenRead(soundsArchivePath)))
+			{
+				var allFiles = new List<ZipArchiveEntry>();
+				allFiles.AddRange(engineArchive.Entries);
+				allFiles.AddRange(soundsArchive.Entries);
+
+				ExtractEntries(allFiles, targetProject);
+			}
 
 			string engineRootDirectory = targetProject.GetEngineRootDirectoryPath();
 			string musicDir = Path.Combine(engineRootDirectory, "music");

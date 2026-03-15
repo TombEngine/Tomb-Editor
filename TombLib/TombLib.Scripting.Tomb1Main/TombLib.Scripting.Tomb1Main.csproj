@@ -50,10 +50,7 @@
     <None Update="Configs\TextEditors\ColorSchemes\Tomb1Main\VS15.t1msch">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\TRX\tr1.gameflow.schema.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\TRX\tr2.gameflow.schema.json">
+    <None Update="Resources\TRX\gameflow.schema.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

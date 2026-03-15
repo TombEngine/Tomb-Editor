@@ -1061,6 +1061,17 @@ custom menu creation, photo mode or time freeze.</description>
 		</function>
 		<function>
 			<module>Flow</module>
+			<name>GetSaveHeaders</name>
+			<summary>Get the header of all savegames</summary>
+			<returns>
+				<return>
+					<type>SaveData</type>
+					<description>A table with save data headers.</description>
+				</return>
+			</returns>
+		</function>
+		<function>
+			<module>Flow</module>
 			<name>GetSecretCount</name>
 			<summary>Returns the player's current per-game secret count.</summary>
 			<returns>
@@ -1118,6 +1129,18 @@ custom menu creation, photo mode or time freeze.</description>
 					<description>Total number of secrets in the game.</description>
 				</parameter>
 			</parameters>
+		</function>
+		<function>
+			<module>Flow</module>
+			<name>GetGlobalGameTime</name>
+			<summary>Get global game session time.</summary>
+			<description>Represents a global session time elapsed since the game launch. Does not correspond to time values in level or game statistics.</description>
+			<returns>
+				<return>
+					<type>Time</type>
+					<description>Global game session time elapsed since the game launch.</description>
+				</return>
+			</returns>
 		</function>
 		<function>
 			<module>Flow</module>
@@ -1396,6 +1419,42 @@ custom menu creation, photo mode or time freeze.</description>
 			</parameters>
 		</function>
 		<function>
+			<module>Input</module>
+			<name>GetActionBinding</name>
+			<summary>Returns the name of the key that has been assigned to specified ActionID.</summary>
+			<parameters>
+				<parameter>
+					<name>actionID</name>
+					<type>Input.ActionID</type>
+					<description>Action ID to get binding key name for.</description>
+				</parameter>
+			</parameters>
+			<returns>
+				<return>
+					<type>string</type>
+					<description>Name of keyboard key that has been assigned to the ActionID.</description>
+				</return>
+			</returns>
+		</function>
+		<function>
+			<module>Input</module>
+			<name>GetActionTimeActive</name>
+			<summary>Returns the time for which a key has been held.</summary>
+			<parameters>
+				<parameter>
+					<name>actionID</name>
+					<type>Input.ActionID</type>
+					<description>Action ID to clear.</description>
+				</parameter>
+			</parameters>
+			<returns>
+				<return>
+					<type>int</type>
+					<description>Time in game frames for which the specified key has been held.</description>
+				</return>
+			</returns>
+		</function>
+		<function>
 			<module>Inventory</module>
 			<name>GiveItem</name>
 			<summary>Add an item to the player's inventory.</summary>
@@ -1477,8 +1536,22 @@ custom menu creation, photo mode or time freeze.</description>
 		</function>
 		<function>
 			<module>Inventory</module>
+			<name>UseItem</name>
+			<summary>Try to use an item.</summary>
+			<description>For equippable or consumable items, standard game conditions will apply - for example, firearms can't be used underwater, and keys or puzzle items
+ can only be used in close proximity to a corresponding key or puzzle hole.</description>
+			<parameters>
+				<parameter>
+					<name>objectID</name>
+					<type>Objects.ObjID</type>
+					<description>Object ID to use. Must be present in the inventory.</description>
+				</parameter>
+			</parameters>
+		</function>
+		<function>
+			<module>Inventory</module>
 			<name>GetUsedItem</name>
-			<summary>Get last item used in the player's inventory.</summary>
+			<summary>Get last item that was used in the player's inventory.</summary>
 			<description>This value will be valid only for a single frame after exiting inventory, after which Lara says "No".
  Therefore, this function must be preferably used either in OnLoop or OnUseItem events.</description>
 			<returns>
@@ -1491,14 +1564,13 @@ custom menu creation, photo mode or time freeze.</description>
 		<function>
 			<module>Inventory</module>
 			<name>SetUsedItem</name>
-			<summary>Set last item used in the player's inventory.</summary>
-			<description>You will be able to specify only objects which already exist in the inventory.
- Will only be valid for the next frame. If not processed by the game, Lara will say "No".</description>
+			<summary>Set last item that was used in the player's inventory.</summary>
+			<description>Will only be valid for the next frame. If not processed by the game, Lara will say "No".</description>
 			<parameters>
 				<parameter>
 					<name>objectID</name>
 					<type>Objects.ObjID</type>
-					<description>Object ID of the item to select from inventory.</description>
+					<description>Object ID of the item to select from inventory. Must be present in the inventory.</description>
 				</parameter>
 			</parameters>
 		</function>
@@ -1510,18 +1582,86 @@ custom menu creation, photo mode or time freeze.</description>
  For items without existing functionality, this function is needed to avoid Lara saying "No" after using it.</description>
 		</function>
 		<function>
+			<module>Inventory</module>
+			<name>GetFocusedItem</name>
+			<summary>Gets the item that is about to be focused in the inventory.</summary>
+			<description>Can be used to intercept inventory calls with a request to select a particular item.</description>
+			<returns>
+				<return>
+					<type>Objects.ObjID</type>
+					<description>objectID Object ID of the item set.</description>
+				</return>
+			</returns>
+		</function>
+		<function>
+			<module>Inventory</module>
+			<name>SetFocusedItem</name>
+			<summary>Opens the inventory and focuses on the specified item, if it is available.</summary>
+			<parameters>
+				<parameter>
+					<name>objectID</name>
+					<type>Objects.ObjID</type>
+					<description>Object ID of the item to set. Must be present in the inventory.</description>
+				</parameter>
+			</parameters>
+		</function>
+		<function>
+			<module>Inventory</module>
+			<name>ConvertObjectToInventoryItem</name>
+			<summary>Converts object ID to inventory item ID.</summary>
+			<description>To be used by custom inventory module.</description>
+			<parameters>
+				<parameter>
+					<name>objectID</name>
+					<type>Objects.ObjID</type>
+					<description>Object ID of the item to convert.</description>
+				</parameter>
+			</parameters>
+			<returns>
+				<return>
+					<type>int</type>
+					<description>Inventory item ID of the object.</description>
+				</return>
+			</returns>
+		</function>
+		<function>
+			<module>Inventory</module>
+			<name>ConvertInventoryItemToObject</name>
+			<summary>Converts inventory item ID to object ID.</summary>
+			<description>To be used by custom inventory module.</description>
+			<parameters>
+				<parameter>
+					<name>inventoryID</name>
+					<type>int</type>
+					<description>Inventory item ID to convert.</description>
+				</parameter>
+			</parameters>
+			<returns>
+				<return>
+					<type>Objects.ObjID</type>
+					<description>Object ID of the item.</description>
+				</return>
+			</returns>
+		</function>
+		<function>
+			<module>Inventory</module>
+			<name>ResetToDefault</name>
+			<summary>Resets inventory to a default state.</summary>
+			<description>Clears inventory item list and adds default set of items, including a compass, pistols, 3 flares, 3 small medipacks, and 1 large medipack.</description>
+		</function>
+		<function>
 			<module>Logic</module>
 			<name>AddCallback</name>
 			<summary>Register a function as a callback.</summary>
 			<parameters>
 				<parameter>
 					<name>point</name>
-					<type>CallbackPoint</type>
+					<type>Logic.CallbackPoint</type>
 					<description>When should the callback be called?</description>
 				</parameter>
 				<parameter>
 					<name>func</name>
-					<type>LevelFunc</type>
+					<type>function</type>
 					<description>The function to be called (must be in the `LevelFuncs` hierarchy). Will receive, as an argument, the time in seconds since the last frame.</description>
 				</parameter>
 			</parameters>
@@ -1534,13 +1674,13 @@ custom menu creation, photo mode or time freeze.</description>
 			<parameters>
 				<parameter>
 					<name>point</name>
-					<type>CallbackPoint</type>
+					<type>Logic.CallbackPoint</type>
 					<description>The callback point the function was registered with. See @{AddCallback}</description>
 				</parameter>
 				<parameter>
 					<name>func</name>
-					<type>LevelFunc</type>
-					<description>The function to remove; must be in the LevelFuncs hierarchy.</description>
+					<type>function</type>
+					<description>The function to remove; must be in the `LevelFuncs` hierarchy.</description>
 				</parameter>
 			</parameters>
 		</function>
@@ -1556,7 +1696,7 @@ custom menu creation, photo mode or time freeze.</description>
 				</parameter>
 				<parameter>
 					<name>type</name>
-					<type>EventType</type>
+					<type>Logic.EventType</type>
 					<description>Event to execute.</description>
 				</parameter>
 				<parameter>
@@ -1580,7 +1720,7 @@ custom menu creation, photo mode or time freeze.</description>
 				</parameter>
 				<parameter>
 					<name>type</name>
-					<type>EventType</type>
+					<type>Logic.EventType</type>
 					<description>Event to enable.</description>
 				</parameter>
 			</parameters>
@@ -1597,7 +1737,7 @@ custom menu creation, photo mode or time freeze.</description>
 				</parameter>
 				<parameter>
 					<name>type</name>
-					<type>EventType</type>
+					<type>Logic.EventType</type>
 					<description>Event to disable.</description>
 				</parameter>
 			</parameters>
@@ -1784,6 +1924,24 @@ custom menu creation, photo mode or time freeze.</description>
 		</function>
 		<function>
 			<module>Objects</module>
+			<name>GetRoomByNumber</name>
+			<summary>Get a Room by its number.</summary>
+			<parameters>
+				<parameter>
+					<name>name</name>
+					<type>string</type>
+					<description>The unique number of the room returned by GetRoomNumber functions.</description>
+				</parameter>
+			</parameters>
+			<returns>
+				<return>
+					<type>Objects.Room</type>
+					<description>A non-owning Room referencing the room.</description>
+				</return>
+			</returns>
+		</function>
+		<function>
+			<module>Objects</module>
 			<name>GetRoomsByTag</name>
 			<summary>Get rooms by tag.</summary>
 			<parameters>
@@ -1815,6 +1973,24 @@ custom menu creation, photo mode or time freeze.</description>
 				<return>
 					<type>bool</type>
 					<description>True if name is in use and an object with a given name is present, false if not.</description>
+				</return>
+			</returns>
+		</function>
+		<function>
+			<module>Objects</module>
+			<name>GetSlotName</name>
+			<summary>Converts moveable Object ID to a string with internal slot name.</summary>
+			<parameters>
+				<parameter>
+					<name>objectID</name>
+					<type>Objects.ObjID</type>
+					<description>Moveable object ID.</description>
+				</parameter>
+			</parameters>
+			<returns>
+				<return>
+					<type>string</type>
+					<description>Internal slot name.</description>
 				</return>
 			</returns>
 		</function>
@@ -2092,8 +2268,8 @@ allocated even after timeout is reached, and can be shown again without re-initi
 		<function>
 			<module>Util</module>
 			<name>PercentToScreen</name>
-			<summary>Translate a pair display position coordinates to pixel coordinates.</summary>
-			<description>To be used with @{Strings.DisplayString:SetPosition} and @{Strings.DisplayString}.</description>
+			<summary>Translate a pair display position coordinates to pixel coordinates.&lt;br&gt;
+ To be used with `Strings.DisplayString` and `Strings.DisplayString:SetPosition`.</summary>
 			<parameters>
 				<parameter>
 					<name>x</name>
@@ -2119,9 +2295,28 @@ allocated even after timeout is reached, and can be shown again without re-initi
 		</function>
 		<function>
 			<module>Util</module>
+			<name>PercentToScreen</name>
+			<summary>Translate a Vec2 of display position coordinates to Vec2 pixel coordinates.&lt;br&gt;
+ To be used with `Strings.DisplayString` and `Strings.DisplayString:SetPosition`.</summary>
+			<parameters>
+				<parameter>
+					<name>percentPos</name>
+					<type>Vec2</type>
+					<description>Display position to translate to pixel coordinates.</description>
+				</parameter>
+			</parameters>
+			<returns>
+				<return>
+					<type>Vec2</type>
+					<description>Pixel coordinates.</description>
+				</return>
+			</returns>
+		</function>
+		<function>
+			<module>Util</module>
 			<name>ScreenToPercent</name>
 			<summary>Translate a pair of pixel coordinates to display position coordinates.</summary>
-			<description>To be used with @{Strings.DisplayString:GetPosition}.</description>
+			<description>To be used with `Strings.DisplayString:GetPosition`.</description>
 			<parameters>
 				<parameter>
 					<name>x</name>
@@ -2142,6 +2337,25 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				<return>
 					<type>float</type>
 					<description>y Y component of display position.</description>
+				</return>
+			</returns>
+		</function>
+		<function>
+			<module>Util</module>
+			<name>ScreenToPercent</name>
+			<summary>Translate a Vec2 of pixel coordinates to Vec2 display position coordinates.</summary>
+			<description>To be used with `Strings.DisplayString:GetPosition`.</description>
+			<parameters>
+				<parameter>
+					<name>screenPos</name>
+					<type>Vec2</type>
+					<description>Pixel coordinates to translate to display position.</description>
+				</parameter>
+			</parameters>
+			<returns>
+				<return>
+					<type>Vec2</type>
+					<description>Display position.</description>
 				</return>
 			</returns>
 		</function>
@@ -2184,7 +2398,8 @@ allocated even after timeout is reached, and can be shown again without re-initi
 		<function>
 			<module>Util</module>
 			<name>PrintLog</name>
-			<summary>Write messages within the Log file</summary>
+			<summary>Write messages within the Log file.&lt;br&gt;
+ For native Lua handling of errors, see &lt;a href="https://www.lua.org/pil/8.3.html"&gt;Error management&lt;/a&gt; and &lt;a href="https://www.lua.org/manual/5.4/manual.html#pdf-debug.traceback"&gt;debug.traceback&lt;/a&gt;</summary>
 			<parameters>
 				<parameter>
 					<name>Message</name>
@@ -2236,7 +2451,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 		<function>
 			<module>View</module>
 			<name>SetCineBars</name>
-			<summary>Move black cinematic bars in from the top and bottom of the game window.</summary>
+			<summary>Animate black cinematic bars in from the top and bottom of the game window.</summary>
 			<parameters>
 				<parameter>
 					<name>height</name>
@@ -2249,8 +2464,8 @@ allocated even after timeout is reached, and can be shown again without re-initi
 					<name>speed</name>
 					<type>float</type>
 					<optional>true</optional>
-					<defaultValue>30</defaultValue>
-					<description>Coverage percent per second.</description>
+					<defaultValue>1</defaultValue>
+					<description>Speed in units per second. A value of 1 will make the animation take one second.</description>
 				</parameter>
 			</parameters>
 		</function>
@@ -2576,7 +2791,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 			<returns>
 				<return>
 					<type>CustomBar</type>
-					<description>The custombar in its hidden state</description>
+					<description>The custom bar in its hidden state</description>
 				</return>
 			</returns>
 		</function>
@@ -3539,7 +3754,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 					<name>...</name>
 					<type>...</type>
 					<description>A variable number of pairs of arguments, each pair consisting of:&lt;br&gt;
- - a time in seconds (positive values are accepted and with only 1 tenth of a second [__0.1__]),&lt;br&gt;
+ - a time in seconds that can be rounded internally to the nearest game frame (1/30 of a second),&lt;br&gt;
  - followed by the function defined in the *LevelFuncs* table to call once the time has elapsed,&lt;br&gt;
  - followed by another duration in seconds, another function name, etc.
 
@@ -3550,6 +3765,10 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				<return>
 					<type>EventSequence</type>
 					<description>The inactive sequence.</description>
+				</return>
+				<return>
+					<type>nil</type>
+					<description>If there was an error creating the sequence.</description>
 				</return>
 			</returns>
 		</function>
@@ -3566,8 +3785,12 @@ allocated even after timeout is reached, and can be shown again without re-initi
 			</parameters>
 			<returns>
 				<return>
-					<type>EventSequence|nil</type>
-					<description>The sequence if it exists, `nil` if it does not exist.</description>
+					<type>EventSequence</type>
+					<description>The sequence if it exists.</description>
+				</return>
+				<return>
+					<type>nil</type>
+					<description>If the sequence does not exist.</description>
 				</return>
 			</returns>
 		</function>
@@ -3611,6 +3834,13 @@ allocated even after timeout is reached, and can be shown again without re-initi
 		<function>
 			<module>EventSequence</module>
 			<caller>EventSequence</caller>
+			<name>Restart</name>
+			<summary>Restart the sequence from its first timer.</summary>
+			<description>If showing the remaining time on-screen, its color will be set to white.</description>
+		</function>
+		<function>
+			<module>EventSequence</module>
+			<caller>EventSequence</caller>
 			<name>SetPaused</name>
 			<summary>Pause or unpause the sequence.</summary>
 			<description>If showing the remaining time on-screen, its color will be set to yellow (paused) or white (unpaused).</description>
@@ -3626,7 +3856,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 			<module>EventSequence</module>
 			<caller>EventSequence</caller>
 			<name>Stop</name>
-			<summary>Stop the sequence.</summary>
+			<summary>Stop and reset the sequence to the first element.</summary>
 		</function>
 		<function>
 			<module>EventSequence</module>
@@ -3665,7 +3895,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				<parameter>
 					<name>totalTime</name>
 					<type>float</type>
-					<description>Duration of the timer, in seconds.&lt;br&gt;Values with only 1 tenth of a second (0.1) are accepted, example: 1.5 - 6.0 - 9.9 - 123.6. No negative values allowed!</description>
+					<description>Duration of the timer in seconds with 2 decimal places.&lt;br&gt;No negative values allowed. Values ​​are rounded to 2 decimal places and converted to 30 FPS game frames and rounded to the nearest frame.</description>
 				</parameter>
 				<parameter>
 					<name>loop</name>
@@ -3676,10 +3906,10 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				</parameter>
 				<parameter>
 					<name>timerFormat</name>
-					<type>?table|bool</type>
+					<type>table|bool</type>
 					<optional>true</optional>
 					<defaultValue>false</defaultValue>
-					<description>Sets the remaining time display. See &lt;a href="#timerFormat"&gt;Timer format&lt;/a&gt;.</description>
+					<description>Sets the remaining time display. See `timerFormat`.</description>
 				</parameter>
 				<parameter>
 					<name>func</name>
@@ -3699,6 +3929,10 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				<return>
 					<type>Timer</type>
 					<description>The timer in its paused state</description>
+				</return>
+				<return>
+					<type>nil</type>
+					<description>If an error occurred</description>
 				</return>
 			</returns>
 		</function>
@@ -3727,8 +3961,12 @@ allocated even after timeout is reached, and can be shown again without re-initi
 			</parameters>
 			<returns>
 				<return>
-					<type>?Timer|nil</type>
-					<description>The timer or nil if timer does not exist</description>
+					<type>Timer</type>
+					<description>The timer</description>
+				</return>
+				<return>
+					<type>nil</type>
+					<description>If the timer does not exist</description>
 				</return>
 			</returns>
 		</function>
@@ -3746,7 +3984,11 @@ allocated even after timeout is reached, and can be shown again without re-initi
 			<returns>
 				<return>
 					<type>bool</type>
-					<description>true if the timer exists, false if it does not exist</description>
+					<description>true if the timer exists</description>
+				</return>
+				<return>
+					<type>bool</type>
+					<description>false if an error occurred</description>
 				</return>
 			</returns>
 		</function>
@@ -3806,7 +4048,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 			<returns>
 				<return>
 					<type>float</type>
-					<description>The remaining time in seconds of timer.&lt;br&gt;Seconds have an accuracy of 0.1 tenths. Example: 1.5 - 6.0 - 9.9 - 123.6</description>
+					<description>The remaining time in seconds of timer. Accuracy is 1 game frame (1/30 of a second).</description>
 				</return>
 			</returns>
 		</function>
@@ -3820,8 +4062,8 @@ allocated even after timeout is reached, and can be shown again without re-initi
 					<name>timerFormat</name>
 					<type>table|bool</type>
 					<optional>true</optional>
-					<defaultValue>{minutes = true, seconds = true, deciseconds = true}</defaultValue>
-					<description>Sets the remaining time display. See &lt;a href="#timerFormat"&gt;Timer format&lt;/a&gt;.&lt;br&gt;</description>
+					<defaultValue>{minutes = true, seconds = true, centiseconds = true}</defaultValue>
+					<description>Sets the remaining time display. See `timerFormat`.&lt;br&gt;</description>
 				</parameter>
 			</parameters>
 			<returns>
@@ -3840,8 +4082,8 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				<parameter>
 					<name>remainingTime</name>
 					<type>float</type>
-					<description>The new time remaining for the timer in seconds.&lt;br&gt;
- Values with only 1 tenth of a second (0.1) are accepted, example: 1.5 - 6.0 - 9.9 - 123.6. No negative values allowed!</description>
+					<description>The new time remaining for the timer in seconds with 2 decimal places&lt;br&gt;
+ No negative values allowed. Values ​​are rounded to 2 decimal places and converted to 30 FPS game frames and rounded to the nearest frame.</description>
 				</parameter>
 			</parameters>
 		</function>
@@ -3858,16 +4100,16 @@ allocated even after timeout is reached, and can be shown again without re-initi
 					<description>The type of comparison.&lt;br&gt;
  0 : If the remaining time is equal to the value&lt;br&gt;
  1 : If the remaining time is different from the value&lt;br&gt;
- 2 : If the remaining time is less the value&lt;br&gt;
+ 2 : If the remaining time is less than the value&lt;br&gt;
  3 : If the remaining time is less or equal to the value&lt;br&gt;
- 4 : If the remaining time is greater the value&lt;br&gt;
+ 4 : If the remaining time is greater than the value&lt;br&gt;
  5 : If the remaining time is greater or equal to the value</description>
 				</parameter>
 				<parameter>
 					<name>seconds</name>
 					<type>float</type>
 					<description>The value in seconds to compare.&lt;br&gt;
- Values with only 1 tenth of a second (0.1) are accepted, example: 1.5 - 6.0 - 9.9 - 123.6. No negative values allowed!&lt;br&gt;
+ No negative values allowed. Values are converted to 30 FPS game frames and rounded to the nearest frame.&lt;br&gt;
  Please note: to have continuous control, the remaining time must be controlled within the *OnLoop* event and only when the Timer is active @{Timer.IsActive}.</description>
 				</parameter>
 			</parameters>
@@ -3900,8 +4142,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 			<returns>
 				<return>
 					<type>float</type>
-					<description>The timer's total time in seconds.&lt;br&gt;
- Seconds have an accuracy of 0.1 tenths. Example: 1.5 - 6.0 - 9.9 - 123.6</description>
+					<description>The timer's total time in seconds. Accuracy is 1 frame (1/30 second).</description>
 				</return>
 			</returns>
 		</function>
@@ -3916,8 +4157,8 @@ allocated even after timeout is reached, and can be shown again without re-initi
 					<name>timerFormat</name>
 					<type>table|bool</type>
 					<optional>true</optional>
-					<defaultValue>{minutes = true, seconds = true, deciseconds = true}</defaultValue>
-					<description>Sets the remaining time display. See &lt;a href="#timerFormat"&gt;Timer format&lt;/a&gt;.&lt;br&gt;</description>
+					<defaultValue>{minutes = true, seconds = true, centiseconds = true}</defaultValue>
+					<description>Sets the remaining time display. See `timerFormat`.&lt;br&gt;</description>
 				</parameter>
 			</parameters>
 			<returns>
@@ -3936,8 +4177,8 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				<parameter>
 					<name>totalTime</name>
 					<type>float</type>
-					<description>Timer's new total time in seconds.&lt;br&gt;
- Values with only 1 tenth of a second (0.1) are accepted, example: 1.5 - 6.0 - 9.9 - 123.6. No negative values allowed!</description>
+					<description>Timer's new total time in seconds with 2 decimal places.&lt;br&gt;
+ No negative values allowed. Values ​​are rounded to 2 decimal places and converted to 30 FPS game frames and rounded to the nearest frame.</description>
 				</parameter>
 			</parameters>
 		</function>
@@ -3963,7 +4204,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 					<name>seconds</name>
 					<type>float</type>
 					<description>the value in seconds to compare.&lt;br&gt;
- Values with only 1 tenth of a second (0.1) are accepted, example: 1.5 - 6.0 - 9.9 - 123.6. No negative values allowed!</description>
+ No negative values allowed. Values are converted to 30 FPS game frames and rounded to the nearest frame.</description>
 				</parameter>
 			</parameters>
 			<returns>
@@ -4144,14 +4385,12 @@ allocated even after timeout is reached, and can be shown again without re-initi
 			<module>Timer</module>
 			<caller>Timer</caller>
 			<name>IsTicking</name>
-			<summary>Checks if the timer has ticked (every 0.1 seconds).</summary>
-			<description>Returns `true` every 0.1 seconds when the timer is active and not paused.&lt;br&gt;
- TEN's engine runs on a 0.03-second internal tick, while this timer ticks every 0.1 seconds.&lt;br&gt;
- Use `IsTicking()` to ensure consistency and avoid unexpected behavior — for example, inside the `OnLoop` event.</description>
+			<summary>Checks if the timer has ticked.</summary>
+			<description>Returns `true` only if the timer is ticking, i.e., it is active and not paused.</description>
 			<returns>
 				<return>
-					<type>boolean</type>
-					<description>`true` if the timer ticked during this frame, `false` otherwise.</description>
+					<type>bool</type>
+					<description>`true` if the timer ticked, `false` otherwise.</description>
 				</return>
 			</returns>
 		</function>
@@ -4391,7 +4630,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 					<type>bool</type>
 					<optional>true</optional>
 					<defaultValue>true</defaultValue>
-					<description>(optional) If `true`, an error message will be printed if the parameters are invalid.</description>
+					<description>(optional) If `true`, an error message will be printed in console if the parameters are invalid.</description>
 				</parameter>
 			</parameters>
 			<returns>
@@ -4404,6 +4643,258 @@ allocated even after timeout is reached, and can be shown again without re-initi
 	</functions>
 	<classes>
 		<class>
+			<name>Collision.Ray</name>
+			<type>tenclass</type>
+			<summary>Casts a collision ray in the game world.</summary>
+			<description>Provides collision information for collided rooms, moveables, and statics.</description>
+			<members>
+				<method>
+					<name>Ray</name>
+					<summary>Create a ray at a specified world position, direction, and distance in a room.</summary>
+					<parameters>
+						<parameter>
+							<name>pos</name>
+							<type>Vec3</type>
+							<description>World position.</description>
+						</parameter>
+						<parameter>
+							<name>roomNumber</name>
+							<type>int</type>
+							<description>Origin room number.</description>
+						</parameter>
+						<parameter>
+							<name>direction</name>
+							<type>Vec3</type>
+							<description>Direction vector.</description>
+						</parameter>
+						<parameter>
+							<name>dist</name>
+							<type>float</type>
+							<description>Maximum distance the ray can travel.</description>
+						</parameter>
+						<parameter>
+							<name>hitMoveables</name>
+							<type>Collision.IntersectionType</type>
+							<optional>true</optional>
+							<defaultValue>Collision.IntersectionType.BOX</defaultValue>
+							<description>Collide with moveables. Disable when not needed or required to optimize performance.</description>
+						</parameter>
+						<parameter>
+							<name>hitStatics</name>
+							<type>Collision.IntersectionType</type>
+							<optional>true</optional>
+							<defaultValue>Collision.IntersectionType.BOX</defaultValue>
+							<description>Collide with static meshes. Disable when not needed or required to optimize performance.</description>
+						</parameter>
+						<parameter>
+							<name>penetrate</name>
+							<type>bool</type>
+							<optional>true</optional>
+							<defaultValue>false</defaultValue>
+							<description>Continue the ray test after the first hit. Enable this when you need to collect all collision information beyond the first occlusion point.</description>
+						</parameter>
+					</parameters>
+					<returns>
+						<return>
+							<type>Ray</type>
+							<description>A new ray object.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:GetRoom</name>
+					<summary>Get the room hit by the ray.</summary>
+					<returns>
+						<return>
+							<type>Objects.Room</type>
+							<description>Room object. _nil: no room was hit._</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:GetRoomPosition</name>
+					<summary>Get the position of the room geometry where the ray hit.</summary>
+					<returns>
+						<return>
+							<type>Vec3</type>
+							<description>Hit position. _nil: no room was hit._</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:GetRoomDistance</name>
+					<summary>Get the distance from the ray origin point to the room hit position.</summary>
+					<returns>
+						<return>
+							<type>float</type>
+							<description>Hit distance. _nil: no room was hit._</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:GetRoomNormal</name>
+					<summary>Get the surface normal of the room geometry where the ray hit.</summary>
+					<returns>
+						<return>
+							<type>Vec3</type>
+							<description>Surface normal. _nil: no room was hit, or no valid room geometry was hit._</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:GetMoveable</name>
+					<summary>Get the first moveable hit by the ray.</summary>
+					<description>Moveable hits will be detected only if `hitMoveables` setting was enabled while creating a ray.</description>
+					<returns>
+						<return>
+							<type>Objects.Moveable</type>
+							<description>Moveable object. _nil: no moveable was hit._</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:GetMoveables</name>
+					<summary>Gets all moveables hit by the ray.</summary>
+					<description>Multiple moveable hits will be detected only if `hitMoveables` and `penetrate` settings were enabled while creating a ray.</description>
+					<returns>
+						<return>
+							<type>table</type>
+							<description>Table of moveables hit by the ray. _nil: no moveables were hit._</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:GetMoveablePosition</name>
+					<summary>Get the position of the moveable where the ray hit.</summary>
+					<description>Valid position will be returned only if `hitMoveables` setting was enabled while creating a ray.</description>
+					<returns>
+						<return>
+							<type>Vec3</type>
+							<description>Hit position. _nil: no moveable was hit._</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:GetMoveableDistance</name>
+					<summary>Get the distance from the ray origin to the first moveable hit position.</summary>
+					<description>Valid distance will be returned only if `hitMoveables` setting was enabled while creating a ray.</description>
+					<returns>
+						<return>
+							<type>float</type>
+							<description>Hit distance. _nil: no moveable was hit._</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:GetStatic</name>
+					<summary>Get the first static mesh hit by the ray.</summary>
+					<description>Static mesh hits will be detected only if `hitStatics` setting was enabled while creating a ray.</description>
+					<returns>
+						<return>
+							<type>Objects.Static</type>
+							<description>Static mesh object. _nil: no static mesh was hit._</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:GetStatics</name>
+					<summary>Gets all statics hit by the ray.</summary>
+					<description>Multiple statics hits will be detected only if `hitStatics` and `penetrate` settings were enabled while creating a ray.</description>
+					<returns>
+						<return>
+							<type>table</type>
+							<description>Table of statics hit by the ray. _nil: no statics were hit._</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:GetStaticPosition</name>
+					<summary>Get the position of the first static mesh hit by the ray.</summary>
+					<description>Valid position will be returned only if `hitStatics` setting was enabled while creating a ray.</description>
+					<returns>
+						<return>
+							<type>Vec3</type>
+							<description>Hit position. _nil: no static mesh was hit._</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:GetStaticDistance</name>
+					<summary>Get the distance from the ray origin to the first static mesh hit position.</summary>
+					<description>Valid distance will be returned only if `hitStatics` setting was enabled while creating a ray.</description>
+					<returns>
+						<return>
+							<type>float</type>
+							<description>Hit distance. _nil: no static mesh was hit._</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:HitRoom</name>
+					<summary>Check if the ray hit a room.</summary>
+					<description>If a room name is provided, returns `true` only when the hit occurs with the relevant room geometry.</description>
+					<parameters>
+						<parameter>
+							<name>name</name>
+							<type>string</type>
+							<optional>true</optional>
+							<description>Name of the room to check for.</description>
+						</parameter>
+					</parameters>
+					<returns>
+						<return>
+							<type>bool</type>
+							<description>Room hit status. _true if a room was hit, false otherwise._</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:HitMoveable</name>
+					<summary>Check if the ray hit a moveable.</summary>
+					<description>Moveable hits will be detected only if `hitMoveables` setting was enabled while creating a ray.
+ If a moveable name is provided, returns `true` only when the hit occurs with the relevant moveable.</description>
+					<parameters>
+						<parameter>
+							<name>name</name>
+							<type>string</type>
+							<optional>true</optional>
+							<description>Name of the moveable to check for.</description>
+						</parameter>
+					</parameters>
+					<returns>
+						<return>
+							<type>bool</type>
+							<description>Moveable hit status. _true if a moveable was hit, false otherwise._</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:HitStatic</name>
+					<summary>Check if the ray hit a static mesh.</summary>
+					<description>Static mesh hits will be detected only if `hitStatics` setting was enabled while creating a ray.
+ If a static mesh name is provided, returns `true` only when the hit occurs with the relevant static mesh.</description>
+					<parameters>
+						<parameter>
+							<name>name</name>
+							<type>string</type>
+							<optional>true</optional>
+							<description>Name of the static mesh to check for.</description>
+						</parameter>
+					</parameters>
+					<returns>
+						<return>
+							<type>bool</type>
+							<description>Static mesh hit status. _true if a static mesh was hit, false otherwise._</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Ray:Preview</name>
+					<summary>Preview this ray in the Collision Stats debug page.</summary>
+				</method>
+			</members>
+		</class>
+		<class>
 			<name>Collision.Probe</name>
 			<type>tenclass</type>
 			<summary>Represents a collision probe in the game world.</summary>
@@ -4411,7 +4902,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 			<members>
 				<method>
 					<name>Probe</name>
-					<summary>Create a Probe at a specified world position in a room.</summary>
+					<summary>Create a probe at a specified world position in a room.</summary>
 					<parameters>
 						<parameter>
 							<name>pos</name>
@@ -4428,13 +4919,13 @@ allocated even after timeout is reached, and can be shown again without re-initi
 					<returns>
 						<return>
 							<type>Probe</type>
-							<description>A new Probe.</description>
+							<description>A new probe object.</description>
 						</return>
 					</returns>
 				</method>
 				<method>
 					<name>Probe</name>
-					<summary>Create a Probe that casts from an origin world position in a room in a given direction for a specified distance.</summary>
+					<summary>Create a probe that casts from an origin world position in a room in a given direction for a specified distance.</summary>
 					<description>Required to correctly traverse between rooms.</description>
 					<parameters>
 						<parameter>
@@ -4461,13 +4952,13 @@ allocated even after timeout is reached, and can be shown again without re-initi
 					<returns>
 						<return>
 							<type>Probe</type>
-							<description>A new Probe.</description>
+							<description>A new probe object.</description>
 						</return>
 					</returns>
 				</method>
 				<method>
 					<name>Probe</name>
-					<summary>Create a Probe that casts from an origin world position in a room in the direction of a given rotation for a specified distance.</summary>
+					<summary>Create a probe that casts from an origin world position in a room in the direction of a given rotation for a specified distance.</summary>
 					<description>Required to correctly traverse between rooms.</description>
 					<parameters>
 						<parameter>
@@ -4500,7 +4991,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				</method>
 				<method>
 					<name>Probe</name>
-					<summary>Create a Probe that casts from an origin world position, where a given relative offset is rotated according to a given rotation.</summary>
+					<summary>Create a probe that casts from an origin world position, where a given relative offset is rotated according to a given rotation.</summary>
 					<description>Required to correctly traverse between rooms.</description>
 					<parameters>
 						<parameter>
@@ -4533,7 +5024,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				</method>
 				<method>
 					<name>Probe:GetPosition</name>
-					<summary>Get the world position of this Probe.</summary>
+					<summary>Get the world position of this probe.</summary>
 					<returns>
 						<return>
 							<type>Vec3</type>
@@ -4543,7 +5034,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				</method>
 				<method>
 					<name>Probe:GetRoom</name>
-					<summary>Get the Room object of this Probe.</summary>
+					<summary>Get the room object of this probe.</summary>
 					<returns>
 						<return>
 							<type>Room</type>
@@ -4553,7 +5044,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				</method>
 				<method>
 					<name>Probe:GetRoomName</name>
-					<summary>Get the room name of this Probe.</summary>
+					<summary>Get the room name of this probe.</summary>
 					<returns>
 						<return>
 							<type>string</type>
@@ -4563,7 +5054,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				</method>
 				<method>
 					<name>Probe:GetRoomNumber</name>
-					<summary>Get the room number of this Probe.</summary>
+					<summary>Get the room number of this probe.</summary>
 					<returns>
 						<return>
 							<type>int</type>
@@ -4573,118 +5064,118 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				</method>
 				<method>
 					<name>Probe:GetFloorHeight</name>
-					<summary>Get the floor height at this Probe.</summary>
+					<summary>Get the floor height at this probe.</summary>
 					<returns>
 						<return>
 							<type>int</type>
-							<description>Floor height. __nil: no floor exists__</description>
+							<description>Floor height. _nil: no floor exists._</description>
 						</return>
 					</returns>
 				</method>
 				<method>
 					<name>Probe:GetCeilingHeight</name>
-					<summary>Get the ceiling height at this Probe.</summary>
+					<summary>Get the ceiling height at this probe.</summary>
 					<returns>
 						<return>
 							<type>int</type>
-							<description>Ceiling height. __nil: no ceiling exists__</description>
+							<description>Ceiling height. _nil: no ceiling exists._</description>
 						</return>
 					</returns>
 				</method>
 				<method>
 					<name>Probe:GetWaterSurfaceHeight</name>
-					<summary>Get the water surface height at this Probe.</summary>
+					<summary>Get the water surface height at this probe.</summary>
 					<returns>
 						<return>
 							<type>int</type>
-							<description>Water surface height. __nil: no water surface exists__</description>
+							<description>Water surface height. _nil: no water surface exists._</description>
 						</return>
 					</returns>
 				</method>
 				<method>
 					<name>Probe:GetFloorNormal</name>
-					<summary>Get the normal of the floor at this Probe.</summary>
+					<summary>Get the normal of the floor at this probe.</summary>
 					<returns>
 						<return>
 							<type>Vec3</type>
-							<description>Floor normal. __nil: no floor exists__</description>
+							<description>Floor normal. _nil: no floor exists._</description>
 						</return>
 					</returns>
 				</method>
 				<method>
 					<name>Probe:GetCeilingNormal</name>
-					<summary>Get the normal of the ceiling at this Probe.</summary>
+					<summary>Get the normal of the ceiling at this probe.</summary>
 					<returns>
 						<return>
 							<type>Vec3</type>
-							<description>Ceiling normal. __nil: no ceiling exists__</description>
+							<description>Ceiling normal. _nil: no ceiling exists._</description>
 						</return>
 					</returns>
 				</method>
 				<method>
 					<name>Probe:GetFloorMaterialType</name>
-					<summary>Get the material type of the floor at this Probe.</summary>
+					<summary>Get the material type of the floor at this probe.</summary>
 					<returns>
 						<return>
 							<type>Collision.MaterialType</type>
-							<description>Floor material type. __nil: no floor exists__</description>
+							<description>Floor material type. _nil: no floor exists._</description>
 						</return>
 					</returns>
 				</method>
 				<method>
 					<name>Probe:GetCeilingMaterialType</name>
-					<summary>Get the material type of the ceiling at this Probe.</summary>
+					<summary>Get the material type of the ceiling at this probe.</summary>
 					<returns>
 						<return>
 							<type>Collision.MaterialType</type>
-							<description>Ceiling material type. __nil: no ceiling exists__</description>
+							<description>Ceiling material type. _nil: no ceiling exists._</description>
 						</return>
 					</returns>
 				</method>
 				<method>
 					<name>Probe:IsSteepFloor</name>
-					<summary>Check if the floor at this Probe is steep.</summary>
+					<summary>Check if the floor at this probe is steep.</summary>
 					<returns>
 						<return>
 							<type>bool</type>
-							<description>Steep floor status. __true: is a steep floor, false: isn't a steep floor, nil: no floor exists__</description>
+							<description>Steep floor status. _true: is a steep floor, false: isn't a steep floor, nil: no floor exists._</description>
 						</return>
 					</returns>
 				</method>
 				<method>
 					<name>Probe:IsSteepCeiling</name>
-					<summary>Check if the ceiling at this Probe is steep.</summary>
+					<summary>Check if the ceiling at this probe is steep.</summary>
 					<returns>
 						<return>
 							<type>bool</type>
-							<description>Steep ceiling status. __true: is a steep ceiling, false: isn't a steep ceiling, nil: no ceiling exists__</description>
+							<description>Steep ceiling status. _true: is a steep ceiling, false: isn't a steep ceiling, nil: no ceiling exists._</description>
 						</return>
 					</returns>
 				</method>
 				<method>
 					<name>Probe:IsWall</name>
-					<summary>Check if the Probe is inside a wall.</summary>
+					<summary>Check if the probe is inside a wall.</summary>
 					<description>Can be used to determine if a wall and ceiling exist.</description>
 					<returns>
 						<return>
 							<type>bool</type>
-							<description>Wall status. __true: is a wall, false: isn't a wall__</description>
+							<description>Wall status. _true: is a wall, false: isn't a wall._</description>
 						</return>
 					</returns>
 				</method>
 				<method>
 					<name>Probe:IsInsideSolidGeometry</name>
-					<summary>Check if this Probe is inside solid geometry (below a floor, above a ceiling, inside a bridge, or inside a wall).</summary>
+					<summary>Check if this probe is inside solid geometry (below a floor, above a ceiling, inside a bridge, or inside a wall).</summary>
 					<returns>
 						<return>
 							<type>bool</type>
-							<description>Inside geometry status. __true: is inside, false: is outside__</description>
+							<description>Inside geometry status. _true: is inside, false: is outside._</description>
 						</return>
 					</returns>
 				</method>
 				<method>
 					<name>Probe:IsClimbableWall</name>
-					<summary>Check if there is a climbable wall in the given heading angle at this Probe.</summary>
+					<summary>Check if there is a climbable wall in the given heading angle at this probe.</summary>
 					<parameters>
 						<parameter>
 							<name>headingAngle</name>
@@ -4695,27 +5186,27 @@ allocated even after timeout is reached, and can be shown again without re-initi
 					<returns>
 						<return>
 							<type>bool</type>
-							<description>Climbable wall status. __true: is climbable wall, false: isn't climbable__</description>
+							<description>Climbable wall status. _true: wall is climbable , false: wall isn't climbable._</description>
 						</return>
 					</returns>
 				</method>
 				<method>
 					<name>Probe:IsMonkeySwing</name>
-					<summary>Check if there is a monkey swing sector at this Probe.</summary>
+					<summary>Check if there is a monkey swing sector at this probe.</summary>
 					<returns>
 						<return>
 							<type>bool</type>
-							<description>Monkey swing sector status. __true: is a monkey swing, false: isn't a monkey swing__</description>
+							<description>Monkey swing sector status. _true: is a monkey swing, false: isn't a monkey swing._</description>
 						</return>
 					</returns>
 				</method>
 				<method>
 					<name>Probe:IsDeath</name>
-					<summary>Check if there is a death sector at this Probe.</summary>
+					<summary>Check if there is a death sector at this probe.</summary>
 					<returns>
 						<return>
 							<type>bool</type>
-							<description>Death sector status. __true: is a death sector, false: isn't a death sector__</description>
+							<description>Death sector status. _true: is a death sector, false: isn't a death sector._</description>
 						</return>
 					</returns>
 				</method>
@@ -5467,7 +5958,8 @@ This setting does not affect ability to use weapons or flares.</description>
 							<name>poison</name>
 							<type>int</type>
 							<optional>true</optional>
-							<description>New poison value. __default: 0, max: 128__</description>
+							<defaultValue>0</defaultValue>
+							<description>New poison value. _Default: 0, Maximum: 128._</description>
 						</parameter>
 					</parameters>
 				</method>
@@ -5488,7 +5980,9 @@ This setting does not affect ability to use weapons or flares.</description>
 						<parameter>
 							<name>air</name>
 							<type>int</type>
-							<description>New air value. __max: 1800__</description>
+							<optional>true</optional>
+							<defaultValue>1800</defaultValue>
+							<description>New air value. _Maximum: 1800._</description>
 						</parameter>
 					</parameters>
 				</method>
@@ -5509,7 +6003,9 @@ This setting does not affect ability to use weapons or flares.</description>
 						<parameter>
 							<name>wetness</name>
 							<type>int</type>
-							<description>New wetness value. __max: 255__</description>
+							<optional>true</optional>
+							<defaultValue>64</defaultValue>
+							<description>New wetness value. _Maximum: 255._</description>
 						</parameter>
 					</parameters>
 				</method>
@@ -5530,7 +6026,9 @@ This setting does not affect ability to use weapons or flares.</description>
 						<parameter>
 							<name>New</name>
 							<type>int</type>
-							<description>stamina value. __max: 120__</description>
+							<optional>true</optional>
+							<defaultValue>120</defaultValue>
+							<description>stamina value. _Maximum: 120._</description>
 						</parameter>
 					</parameters>
 				</method>
@@ -5584,6 +6082,17 @@ This setting does not affect ability to use weapons or flares.</description>
 					</returns>
 				</method>
 				<method>
+					<name>LaraObject:SetHandStatus</name>
+					<summary>Set the player's hand status.</summary>
+					<parameters>
+						<parameter>
+							<name>status</name>
+							<type>Objects.HandStatus</type>
+							<description>Status type to set.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
 					<name>LaraObject:GetWeaponType</name>
 					<summary>Get the player's weapon type.</summary>
 					<returns>
@@ -5612,14 +6121,68 @@ This setting does not affect ability to use weapons or flares.</description>
 					</parameters>
 				</method>
 				<method>
+					<name>LaraObject:GetLaserSight</name>
+					<summary>Get player lasersight status.</summary>
+					<parameters>
+						<parameter>
+							<name>weaponType</name>
+							<type>Objects.WeaponType</type>
+							<description>Player weapon type. Only works for HK, Revolver and Crossbow.</description>
+						</parameter>
+					</parameters>
+					<returns>
+						<return>
+							<type>bool</type>
+							<description>Returns true if lasersight is connected to specified weapon.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>LaraObject:SetLaserSight</name>
+					<summary>Set player lasersight status.</summary>
+					<parameters>
+						<parameter>
+							<name>weaponType</name>
+							<type>Objects.WeaponType</type>
+							<description>Player weapon type to attach lasersight to. Only works for HK, Revolver and Crossbow.</description>
+						</parameter>
+						<parameter>
+							<name>activate</name>
+							<type>bool</type>
+							<optional>true</optional>
+							<defaultValue>false</defaultValue>
+							<description>If `true`, also draw the weapons. If `false`, keep weapons holstered.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
 					<name>LaraObject:GetAmmoType</name>
 					<summary>Get player weapon ammo type.</summary>
+					<parameters>
+						<parameter>
+							<name>weaponType</name>
+							<type>Objects.WeaponType</type>
+							<optional>true</optional>
+							<description>Weapon to retrieve ammo type for. If omitted, the ammo type of the currently equipped weapon is returned.</description>
+						</parameter>
+					</parameters>
 					<returns>
 						<return>
 							<type>Objects.AmmoType</type>
 							<description>Player weapon ammo type.</description>
 						</return>
 					</returns>
+				</method>
+				<method>
+					<name>LaraObject:SetAmmoType</name>
+					<summary>Set player weapon ammo type.</summary>
+					<parameters>
+						<parameter>
+							<name>Player</name>
+							<type>Objects.AmmoType</type>
+							<description>weapon ammo type.</description>
+						</parameter>
+					</parameters>
 				</method>
 				<method>
 					<name>LaraObject:GetAmmoCount</name>
@@ -5630,6 +6193,27 @@ This setting does not affect ability to use weapons or flares.</description>
 							<description>Current ammo count (-1 if infinite).</description>
 						</return>
 					</returns>
+				</method>
+				<method>
+					<name>LaraObject:GetWeaponMode</name>
+					<summary>Get player HK weapon mode type.</summary>
+					<returns>
+						<return>
+							<type>Objects.WeaponMode</type>
+							<description>Player HK weapon mode type.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>LaraObject:SetWeaponMode</name>
+					<summary>Set player HK weapon mode type.</summary>
+					<parameters>
+						<parameter>
+							<name>weaponMode</name>
+							<type>Objects.WeaponMode</type>
+							<description>Player HK weapon mode type.</description>
+						</parameter>
+					</parameters>
 				</method>
 				<method>
 					<name>LaraObject:GetVehicle</name>
@@ -5670,6 +6254,51 @@ This setting does not affect ability to use weapons or flares.</description>
 							<description>True if lit, otherwise false (also false if there is no torch in hand).</description>
 						</return>
 					</returns>
+				</method>
+				<method>
+					<name>LaraObject:GetWaterStatus</name>
+					<summary>Get player water status.</summary>
+					<returns>
+						<return>
+							<type>Objects.WaterStatus</type>
+							<description>Current water status of player.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>LaraObject:GetWaterSkinStatus</name>
+					<summary>Get player water skin amount.</summary>
+					<parameters>
+						<parameter>
+							<name>flag</name>
+							<type>bool</type>
+							<description>use True get the amount for Big Waterskin. False for Small Waterskin.</description>
+						</parameter>
+					</parameters>
+					<returns>
+						<return>
+							<type>int</type>
+							<description>Current capacity of specified water skin. For Smallwater skin (0 = Waterskin not present; 1 = Waterskin Empty; 2 = Waterskin 1L; 3 = WaterSkin 2L; 4 = Waterskin 3L).
+ For Largewater skin (0 = Waterskin not present; 1 = Waterskin Empty; 2 = Waterskin 1L; 3 = WaterSkin 2L; 4 = Waterskin 3L; 5 = Waterskin 4L; 6 = Waterskin 5L)</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>LaraObject:SetWaterSkinStatus</name>
+					<summary>Set player water skin amount.</summary>
+					<parameters>
+						<parameter>
+							<name>amount</name>
+							<type>int</type>
+							<description>Current capacity of specified water skin. For Smallwater skin (0 = Waterskin not present; 1 = Waterskin Empty; 2 = Waterskin 1L; 3 = WaterSkin 2L; 4 = Waterskin 3L).
+ For Largewater skin (0 = Waterskin not present; 1 = Waterskin Empty; 2 = Waterskin 1L; 3 = WaterSkin 2L; 4 = Waterskin 3L; 5 = Waterskin 4L; 6 = Waterskin 5L)</description>
+						</parameter>
+						<parameter>
+							<name>flag</name>
+							<type>bool</type>
+							<description>use True get the amount for Big Waterskin. False for Small Waterskin.</description>
+						</parameter>
+					</parameters>
 				</method>
 				<method>
 					<name>LaraObject:Interact</name>
@@ -5728,6 +6357,18 @@ This setting does not affect ability to use weapons or flares.</description>
 							<optional>true</optional>
 							<defaultValue>Input.ActionID.ACTION</defaultValue>
 							<description>Input action ID to trigger the alignment.</description>
+						</parameter>
+						<parameter>
+							<name>objectID</name>
+							<type>Objects.ObjID</type>
+							<optional>true</optional>
+							<description>Object ID required in inventory for interaction.</description>
+						</parameter>
+						<parameter>
+							<name>interactionType</name>
+							<type>Objects.InteractionType</type>
+							<optional>true</optional>
+							<description>Interaction icon type to show.</description>
 						</parameter>
 					</parameters>
 				</method>
@@ -5886,7 +6527,7 @@ most can just be ignored (see usage).</description>
 						<parameter>
 							<name>function</name>
 							<type>function</type>
-							<description>Callback function in LevelFuncs hierarchy to call when moveable is shot.</description>
+							<description>Callback function in `LevelFuncs` hierarchy to call when moveable is shot.</description>
 						</parameter>
 					</parameters>
 				</method>
@@ -5899,7 +6540,7 @@ most can just be ignored (see usage).</description>
 						<parameter>
 							<name>function</name>
 							<type>function</type>
-							<description>Callback function in LevelFuncs hierarchy to call when moveable is killed.</description>
+							<description>Callback function in `LevelFuncs` hierarchy to call when moveable is killed.</description>
 						</parameter>
 					</parameters>
 				</method>
@@ -5910,7 +6551,7 @@ most can just be ignored (see usage).</description>
 						<parameter>
 							<name>function</name>
 							<type>function</type>
-							<description>Callback function to be called (must be in LevelFuncs hierarchy). This function can take two arguments; these will store the two @{Moveable}s taking part in the collision.</description>
+							<description>Callback function to be called (must be in `LevelFuncs` hierarchy). This function can take two arguments; these will store the two @{Moveable}s taking part in the collision.</description>
 						</parameter>
 					</parameters>
 				</method>
@@ -5922,7 +6563,7 @@ most can just be ignored (see usage).</description>
 						<parameter>
 							<name>function</name>
 							<type>function</type>
-							<description>Callback function to be called (must be in LevelFuncs hierarchy).</description>
+							<description>Callback function to be called (must be in `LevelFuncs` hierarchy).</description>
 						</parameter>
 					</parameters>
 				</method>
@@ -6765,8 +7406,21 @@ most can just be ignored (see usage).</description>
 				</method>
 				<method>
 					<name>Moveable:ShowInteractionHighlight</name>
-					<summary>Show interaction highlight for the object.</summary>
+					<summary>Show interaction highlight for the object for current game frame.</summary>
 					<description>Can be useful if you have scripted an interaction with it.</description>
+					<parameters>
+						<parameter>
+							<name>interactionType</name>
+							<type>Objects.InteractionType</type>
+							<optional>true</optional>
+							<description>Interaction icon type to show.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
+					<name>Moveable:HideInteractionHighlight</name>
+					<summary>Suppresses interaction highlight for the object for current game frame.</summary>
+					<description>Can be useful when you need to manually block interaction highlight for a particular object or in a particular area.</description>
 				</method>
 			</members>
 		</class>
@@ -7584,7 +8238,7 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 					<returns>
 						<return>
 							<type>table</type>
-							<description>A table of booleans representing @{Strings.DisplayStringOption} flags, indexed from 1:&lt;br&gt;1: TEN.Strings.DisplayStringOption.CENTER&lt;br&gt;2: TEN.Strings.DisplayStringOption.SHADOW&lt;br&gt;3: TEN.Strings.DisplayStringOption.RIGHT&lt;br&gt;4: TEN.Strings.DisplayStringOption.BLINK&lt;br&gt;5: TEN.Strings.DisplayStringOption.VERTICAL_CENTER&lt;br&gt;
+							<description>A table of booleans representing @{Strings.DisplayStringOption} flags, indexed from 1:&lt;br&gt;1: TEN.Strings.DisplayStringOption.CENTER&lt;br&gt;2: TEN.Strings.DisplayStringOption.SHADOW&lt;br&gt;3: TEN.Strings.DisplayStringOption.RIGHT&lt;br&gt;4: TEN.Strings.DisplayStringOption.BLINK&lt;br&gt;5: TEN.Strings.DisplayStringOption.VERTICAL_CENTER&lt;br&gt;6: TEN.Strings.DisplayStringOption.VERTICAL_BOTTOM&lt;br&gt;
  If a boolean value is true, the corresponding flag is assigned to the DisplayString, otherwise it is not assigned.</description>
 						</return>
 					</returns>
@@ -7620,16 +8274,22 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 						<parameter>
 							<name>R</name>
 							<type>int</type>
+							<optional>true</optional>
+							<defaultValue>128</defaultValue>
 							<description>Red component.</description>
 						</parameter>
 						<parameter>
 							<name>G</name>
 							<type>int</type>
+							<optional>true</optional>
+							<defaultValue>128</defaultValue>
 							<description>Green component.</description>
 						</parameter>
 						<parameter>
 							<name>B</name>
 							<type>int</type>
+							<optional>true</optional>
+							<defaultValue>128</defaultValue>
 							<description>Blue component.</description>
 						</parameter>
 						<parameter>
@@ -7704,6 +8364,23 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 							<name>z</name>
 							<type>float</type>
 							<description>Z angle component in degrees.</description>
+						</parameter>
+					</parameters>
+					<returns>
+						<return>
+							<type>Rotation</type>
+							<description>A new Rotation object.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Rotation</name>
+					<summary>Create a Rotation object from a direction vector.</summary>
+					<parameters>
+						<parameter>
+							<name>dir</name>
+							<type>Vec3</type>
+							<description>Normalized direction vector.</description>
 						</parameter>
 					</parameters>
 					<returns>
@@ -8260,17 +8937,46 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 				</method>
 				<method>
 					<name>Vec3:Translate</name>
-					<summary>Get a copy of this Vec3 translated by an offset, where the input relative offset Vec3 is rotated according to the input Rotation object.</summary>
+					<summary>Get a copy of this Vec3 translated by a relative offset rotated according to the input Rotation object.</summary>
 					<parameters>
 						<parameter>
 							<name>rot</name>
 							<type>Rotation</type>
-							<description>Rotation object rotating the input relative offset vector.</description>
+							<description>Rotation object rotating the relative input offset vector.</description>
 						</parameter>
 						<parameter>
 							<name>relOffset</name>
 							<type>Vec3</type>
 							<description>Relative offset vector before rotation.</description>
+						</parameter>
+					</parameters>
+					<returns>
+						<return>
+							<type>Vec3</type>
+							<description>Translated vector.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>Vec3:Translate</name>
+					<summary>Get a copy of this Vec3 translated by a relative offset in the direction of a heading angle, relative to a down axis.</summary>
+					<parameters>
+						<parameter>
+							<name>headingAngle</name>
+							<type>float</type>
+							<description>Angle of translation along the 2D plane defined by the down axis.</description>
+						</parameter>
+						<parameter>
+							<name>relOffset</name>
+							<type>Vec3</type>
+							<description>Relative offset vector.</description>
+						</parameter>
+						<parameter>
+							<name>axis</name>
+							<type>Vec3</type>
+							<optional>true</optional>
+							<defaultValue>Vec3(0, 1, 0)</defaultValue>
+							<description>Normalized direction vector representing the down axis.</description>
 						</parameter>
 					</parameters>
 					<returns>
@@ -8337,6 +9043,23 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 					</returns>
 				</method>
 				<method>
+					<name>Vec3:Direction</name>
+					<summary>Get the normalized direction vector from this Vec3 to the input Vec3.</summary>
+					<parameters>
+						<parameter>
+							<name>vector</name>
+							<type>Vec3</type>
+							<description>Input vector.</description>
+						</parameter>
+					</parameters>
+					<returns>
+						<return>
+							<type>Vec3</type>
+							<description>Direction vector.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
 					<name>Vec3:Dot</name>
 					<summary>Get the dot product of this Vec3 and the input Vec3.</summary>
 					<parameters>
@@ -8397,6 +9120,570 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 							<description>A string showing the X, Y, and Z components of the Vec3.</description>
 						</return>
 					</returns>
+				</method>
+			</members>
+		</class>
+		<class>
+			<name>View.DisplayAnchors</name>
+			<type>tenprimitive</type>
+			<summary>Represents the anchor points of a display element.</summary>
+			<members>
+				<field>
+					<name>TOP_LEFT</name>
+					<summary>(Vec2) Top-left anchor point in percent.</summary>
+				</field>
+				<field>
+					<name>TOP_CENTER</name>
+					<summary>(Vec2) Center-top anchor point in percent.</summary>
+				</field>
+				<field>
+					<name>TOP_RIGHT</name>
+					<summary>(Vec2) Top-right anchor point in percent.</summary>
+				</field>
+				<field>
+					<name>CENTER_LEFT</name>
+					<summary>(Vec2) Center-left anchor point in percent.</summary>
+				</field>
+				<field>
+					<name>CENTER</name>
+					<summary>(Vec2) Center anchor point in percent.</summary>
+				</field>
+				<field>
+					<name>CENTER_RIGHT</name>
+					<summary>(Vec2) Center-right anchor point in percent.</summary>
+				</field>
+				<field>
+					<name>BOTTOM_LEFT</name>
+					<summary>(Vec2) Bottom-left anchor point in percent.</summary>
+				</field>
+				<field>
+					<name>BOTTOM_CENTER</name>
+					<summary>(Vec2) Bottom-center anchor point in percent.</summary>
+				</field>
+				<field>
+					<name>BOTTOM_RIGHT</name>
+					<summary>(Vec2) Bottom-right anchor point in percent.</summary>
+				</field>
+				<method>
+					<name>__tostring</name>
+					<summary>Metafunction.</summary>
+					<description>Use tostring(anchors).</description>
+					<parameters>
+						<parameter>
+							<name>This</name>
+							<type>View.DisplayAnchors</type>
+							<description>DisplayAnchors.</description>
+						</parameter>
+					</parameters>
+					<returns>
+						<return>
+							<type>string</type>
+							<description>A string showing all anchor points.</description>
+						</return>
+					</returns>
+				</method>
+			</members>
+		</class>
+		<class>
+			<name>View.DisplayItem</name>
+			<type>tenclass</type>
+			<summary>Represents a display item.</summary>
+			<description>Display item is a 3D model of any object available in the level that can be drawn in 2D screen space.</description>
+			<members>
+				<method>
+					<name>DisplayItem.SetAmbientLight</name>
+					<summary>Set the ambient color for all display items.</summary>
+					<parameters>
+						<parameter>
+							<name>color</name>
+							<type>Color</type>
+							<description>New ambient color for all display items.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
+					<name>DisplayItem.SetCameraPosition</name>
+					<summary>Set the camera location.</summary>
+					<description>This single camera is used for all display items.</description>
+					<parameters>
+						<parameter>
+							<name>pos</name>
+							<type>Vec3</type>
+							<description>New camera position.</description>
+						</parameter>
+						<parameter>
+							<name>disableInterpolation</name>
+							<type>bool</type>
+							<optional>true</optional>
+							<defaultValue>false</defaultValue>
+							<description>Disable interpolation to allow snap movements.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
+					<name>DisplayItem.SetTargetPosition</name>
+					<summary>Set the camera target location.</summary>
+					<parameters>
+						<parameter>
+							<name>pos</name>
+							<type>Vec3</type>
+							<description>New target camera position.</description>
+						</parameter>
+						<parameter>
+							<name>disableInterpolation</name>
+							<type>bool</type>
+							<optional>true</optional>
+							<defaultValue>false</defaultValue>
+							<description>Disable interpolation to allow snap movements.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
+					<name>DisplayItem.SetFOV</name>
+					<summary>Set the field of view for all display items.</summary>
+					<parameters>
+						<parameter>
+							<name>fov</name>
+							<type>float</type>
+							<optional>true</optional>
+							<defaultValue>80</defaultValue>
+							<description>Field of view angle in degrees (clamped to [10, 170]).</description>
+						</parameter>
+						<parameter>
+							<name>disableInterpolation</name>
+							<type>bool</type>
+							<optional>true</optional>
+							<defaultValue>false</defaultValue>
+							<description>Disable interpolation to allow snap movements.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
+					<name>DisplayItem.GetAmbientLight</name>
+					<summary>Get the ambient color of all the display items.</summary>
+					<returns>
+						<return>
+							<type>Color</type>
+							<description>Ambient color.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem.GetCameraPosition</name>
+					<summary>Get the camera position.</summary>
+					<description>This single camera is used for all display items.</description>
+					<returns>
+						<return>
+							<type>Vec3</type>
+							<description>Camera position for all display items.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem.GetTargetPosition</name>
+					<summary>Get the position of the camera target.</summary>
+					<returns>
+						<return>
+							<type>Vec3</type>
+							<description>The camera target position for all of the display items.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem.GetFOV</name>
+					<summary>Get field of view angle for display items.</summary>
+					<returns>
+						<return>
+							<type>float</type>
+							<description>Current FOV angle in degrees.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem.ResetCamera</name>
+					<summary>Reset the camera position, camera target position, and field of view.</summary>
+				</method>
+				<method>
+					<name>DisplayItem</name>
+					<summary>Create a DisplayItem object.</summary>
+					<parameters>
+						<parameter>
+							<name>objectID</name>
+							<type>Objects.ObjID</type>
+							<description>Slot object ID.</description>
+						</parameter>
+						<parameter>
+							<name>pos</name>
+							<type>Vec3</type>
+							<optional>true</optional>
+							<defaultValue>Vec3(0, 0, 0)</defaultValue>
+							<description>Position in 3D display space.</description>
+						</parameter>
+						<parameter>
+							<name>rot</name>
+							<type>Rotation</type>
+							<optional>true</optional>
+							<defaultValue>Rotation(0, 0, 0)</defaultValue>
+							<description>Rotation on the XYZ axes.</description>
+						</parameter>
+						<parameter>
+							<name>scale</name>
+							<type>Vec3</type>
+							<optional>true</optional>
+							<defaultValue>Vec3(1, 1, 1)</defaultValue>
+							<description>Visual scale.</description>
+						</parameter>
+						<parameter>
+							<name>meshBits</name>
+							<type>int</type>
+							<optional>true</optional>
+							<description>Packed meshbits.</description>
+						</parameter>
+					</parameters>
+					<returns>
+						<return>
+							<type>DisplayItem</type>
+							<description>A new DisplayItem object.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem:SetObjectID</name>
+					<summary>Change the display item's object ID.</summary>
+					<parameters>
+						<parameter>
+							<name>objectID</name>
+							<type>Objects.ObjID</type>
+							<description>New slot object ID.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
+					<name>DisplayItem:SetPosition</name>
+					<summary>Set the display item's position.</summary>
+					<parameters>
+						<parameter>
+							<name>pos</name>
+							<type>Vec3</type>
+							<description>New position.</description>
+						</parameter>
+						<parameter>
+							<name>disableInterpolation</name>
+							<type>bool</type>
+							<optional>true</optional>
+							<defaultValue>false</defaultValue>
+							<description>Disable interpolation to allow snap movements.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
+					<name>DisplayItem:SetRotation</name>
+					<summary>Set the display item's rotation.</summary>
+					<parameters>
+						<parameter>
+							<name>rot</name>
+							<type>Rotation</type>
+							<description>New rotation.</description>
+						</parameter>
+						<parameter>
+							<name>disableInterpolation</name>
+							<type>bool</type>
+							<optional>true</optional>
+							<defaultValue>false</defaultValue>
+							<description>Disable interpolation to allow snap movements.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
+					<name>DisplayItem:SetScale</name>
+					<summary>Set the display item's scale.</summary>
+					<parameters>
+						<parameter>
+							<name>scale</name>
+							<type>Vec3</type>
+							<description>New scale.</description>
+						</parameter>
+						<parameter>
+							<name>disableInterpolation</name>
+							<type>bool</type>
+							<optional>true</optional>
+							<defaultValue>false</defaultValue>
+							<description>Disable interpolation to allow snap movements.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
+					<name>DisplayItem:SetColor</name>
+					<summary>Set the display item's color.</summary>
+					<parameters>
+						<parameter>
+							<name>color</name>
+							<type>Color</type>
+							<description>New color.</description>
+						</parameter>
+						<parameter>
+							<name>disableInterpolation</name>
+							<type>bool</type>
+							<optional>true</optional>
+							<defaultValue>false</defaultValue>
+							<description>Disable interpolation to allow snap color changes.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
+					<name>DisplayItem:SetMeshBits</name>
+					<summary>Set the packed mesh bits for the display item.</summary>
+					<description>Mesh bits represent the visibility of every mesh in a given display item. Can be used in advanced workflows, such
+ as drawing a revolver with or without a lasersight.</description>
+					<parameters>
+						<parameter>
+							<name>meshBits</name>
+							<type>int</type>
+							<description>Packed MeshBits to be set.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
+					<name>DisplayItem:SetMeshVisible</name>
+					<summary>Make the specified mesh of a display item visible or invisible.</summary>
+					<parameters>
+						<parameter>
+							<name>meshIndex</name>
+							<type>int</type>
+							<description>Mesh index.</description>
+						</parameter>
+						<parameter>
+							<name>isVisible</name>
+							<type>bool</type>
+							<description>True to set visible, false to set invisible.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
+					<name>DisplayItem:SetJointRotation</name>
+					<summary>Set the display item's joint rotation.</summary>
+					<parameters>
+						<parameter>
+							<name>meshIndex</name>
+							<type>int</type>
+							<description>Joint index..</description>
+						</parameter>
+						<parameter>
+							<name>rot</name>
+							<type>Rotation</type>
+							<description>New rotation.</description>
+						</parameter>
+						<parameter>
+							<name>disableInterpolation</name>
+							<type>bool</type>
+							<optional>true</optional>
+							<defaultValue>false</defaultValue>
+							<description>Disables interpolation to allow for snap movements.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
+					<name>DisplayItem:SetAnim</name>
+					<summary>Set the animation number of a display item.</summary>
+					<parameters>
+						<parameter>
+							<name>animNumber</name>
+							<type>int</type>
+							<description>Animation number to set.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
+					<name>DisplayItem:SetFrame</name>
+					<summary>Set the frame number of a display item's current animation.</summary>
+					<description>This will set the specified animation to the given frame.
+ The number of frames in an animation can be seen under the heading "End frame" in the WadTool animation editor.</description>
+					<parameters>
+						<parameter>
+							<name>frameNumber</name>
+							<type>int</type>
+							<description>Frame number to set.</description>
+						</parameter>
+					</parameters>
+				</method>
+				<method>
+					<name>DisplayItem:GetObjectID</name>
+					<summary>Retrieve the object ID from a display item.</summary>
+					<returns>
+						<return>
+							<type>Objects.ObjID</type>
+							<description>Slot object ID.</description>
+						</return>
+						<return>
+							<type>nil</type>
+							<description>If the display item does not exist.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem:GetPosition</name>
+					<summary>Get the display item's position.</summary>
+					<returns>
+						<return>
+							<type>Vec3</type>
+							<description>Position.</description>
+						</return>
+						<return>
+							<type>nil</type>
+							<description>If the display item does not exist.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem:GetRotation</name>
+					<summary>Get the display item's rotation.</summary>
+					<returns>
+						<return>
+							<type>Rotation</type>
+							<description>Rotation.</description>
+						</return>
+						<return>
+							<type>nil</type>
+							<description>If the display item does not exist.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem:GetScale</name>
+					<summary>Get the display item's scale.</summary>
+					<returns>
+						<return>
+							<type>float</type>
+							<description>Scale.</description>
+						</return>
+						<return>
+							<type>nil</type>
+							<description>If the display item does not exist.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem:GetColor</name>
+					<summary>Get the display item's color.</summary>
+					<returns>
+						<return>
+							<type>Color</type>
+							<description>Color.</description>
+						</return>
+						<return>
+							<type>nil</type>
+							<description>If the display item does not exist.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem:GetMeshVisible</name>
+					<summary>Get the visibility state of a specified mesh in the display item.</summary>
+					<parameters>
+						<parameter>
+							<name>index</name>
+							<type>int</type>
+							<description>Index of a mesh.</description>
+						</parameter>
+					</parameters>
+					<returns>
+						<return>
+							<type>bool</type>
+							<description>Visibility status.</description>
+						</return>
+						<return>
+							<type>bool</type>
+							<description>False if the display item does not exist.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem:GetJointRotation</name>
+					<summary>Get the display item's joint rotation.</summary>
+					<parameters>
+						<parameter>
+							<name>meshIndex</name>
+							<type>int</type>
+							<description>Index of the joint to check.</description>
+						</parameter>
+					</parameters>
+					<returns>
+						<return>
+							<type>Rotation</type>
+							<description>Joint rotation.</description>
+						</return>
+						<return>
+							<type>nil</type>
+							<description>If the display item does not exist.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem:GetAnim</name>
+					<summary>Get the current animation number of a display item.</summary>
+					<description>This corresponds to the number shown in the item's animation list in WadTool.</description>
+					<returns>
+						<return>
+							<type>int</type>
+							<description>Active animation number.</description>
+						</return>
+						<return>
+							<type>nil</type>
+							<description>If the display item does not exist.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem:GetFrame</name>
+					<summary>Get the current frame number of the active animation of a display item.</summary>
+					<returns>
+						<return>
+							<type>int</type>
+							<description>Current frame number of the active animation.</description>
+						</return>
+						<return>
+							<type>nil</type>
+							<description>If the display item does not exist.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem:GetEndFrame</name>
+					<summary>Get the end frame number of the display item's active animation.</summary>
+					<description>This is the "End Frame" set in WadTool for the animation.()</description>
+					<returns>
+						<return>
+							<type>int</type>
+							<description>End frame number of the active animation.</description>
+						</return>
+						<return>
+							<type>nil</type>
+							<description>If the display item does not exist.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem:GetBounds</name>
+					<summary>Get the projected 2D bounding box of the display item.</summary>
+					<description>Projects the display item into display space and returns two Vec2 values.</description>
+					<returns>
+						<return>
+							<type>Vec2</type>
+							<description>center Projected center position in display space in percent.</description>
+						</return>
+						<return>
+							<type>Vec2</type>
+							<description>size The projected width/height in display space in percent.</description>
+						</return>
+						<return>
+							<type>nil</type>
+							<description>If the display item does not exist or has no bounds.</description>
+						</return>
+					</returns>
+				</method>
+				<method>
+					<name>DisplayItem:Draw</name>
+					<summary>Draw the display item in display space for the current frame.</summary>
 				</method>
 			</members>
 		</class>
@@ -8544,6 +9831,43 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 					</returns>
 				</method>
 				<method>
+					<name>DisplaySprite:GetAnchors</name>
+					<summary>Get the anchors of the display sprite.</summary>
+					<description>Anchors are the vertices of the display sprite, which can be used to position other objects relative to it.</description>
+					<parameters>
+						<parameter>
+							<name>alignMode</name>
+							<type>View.AlignMode</type>
+							<optional>true</optional>
+							<defaultValue>DisplaySpriteAlignMode.Center</defaultValue>
+							<description>Alignment mode.</description>
+						</parameter>
+						<parameter>
+							<name>scaleMode</name>
+							<type>View.ScaleMode</type>
+							<optional>true</optional>
+							<defaultValue>DisplaySpriteScaleMode.Fit</defaultValue>
+							<description>Scaling mode.</description>
+						</parameter>
+					</parameters>
+					<returns>
+						<return>
+							<type>View.DisplayAnchors</type>
+							<description> An object containing the anchor points of the display sprite.&lt;br&gt;
+ The object contains the following fields:&lt;br&gt;
+ - `TOP_LEFT`&lt;br&gt;
+ - `TOP_CENTER`&lt;br&gt;
+ - `TOP_RIGHT`&lt;br&gt;
+ - `CENTER_LEFT`&lt;br&gt;
+ - `CENTER`&lt;br&gt;
+ - `CENTER_RIGHT`&lt;br&gt;
+ - `BOTTOM_RIGHT`&lt;br&gt;
+ - `BOTTOM_CENTER`&lt;br&gt;
+ - `BOTTOM_LEFT`&lt;br&gt;</description>
+						</return>
+					</returns>
+				</method>
+				<method>
 					<name>DisplaySprite:SetObjectID</name>
 					<summary>Set the sprite sequence object ID used by the display sprite.</summary>
 					<parameters>
@@ -8593,7 +9917,7 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 					<parameters>
 						<parameter>
 							<name>scale</name>
-							<type>float</type>
+							<type>Vec2</type>
 							<description>New horizontal and vertical scale in percent.</description>
 						</parameter>
 					</parameters>
@@ -8654,43 +9978,61 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 			<members>
 				<field>
 					<name>crawlExtended</name>
-					<summary>(bool) Extended crawl moveset.</summary>
+					<type>bool</type>
+					<summary>Extended crawl moveset.</summary>
 					<description>When enabled, player will be able to traverse across one-click steps in crawlspaces.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
 				</field>
 				<field>
 					<name>crouchRoll</name>
-					<summary>(bool) Crouch roll.</summary>
+					<type>bool</type>
+					<summary>Crouch roll.</summary>
 					<description>When enabled, player can perform crawlspace roll by pressing sprint key.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
 				</field>
 				<field>
 					<name>crawlspaceSwandive</name>
-					<summary>(bool) Crawlspace dive.</summary>
+					<type>bool</type>
+					<summary>Crawlspace dive.</summary>
 					<description>When enabled, player will be able to swandive into crawlspaces.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
 				</field>
 				<field>
 					<name>overhangClimb</name>
-					<summary>(bool) Overhang climbing.</summary>
-					<description>Enables overhang climbing feature. Currently does not work.</description>
+					<type>bool</type>
+					<description>Enables overhang climbing feature. Currently does not work. Overhang climbing.</description>
 				</field>
 				<field>
 					<name>slideExtended</name>
-					<summary>(bool) Extended slide mechanics.</summary>
-					<description>If enabled, player will be able to change slide direction with controls. Currently does not work.</description>
+					<type>bool</type>
+					<description>If enabled, player will be able to change slide direction with controls. Currently does not work. Extended slide mechanics.</description>
 				</field>
 				<field>
 					<name>sprintJump</name>
-					<summary>(bool) Sprint jump.</summary>
+					<type>bool</type>
+					<summary>Sprint jump.</summary>
 					<description>If enabled, player will be able to perform extremely long jump when sprinting.</description>
+					<optional>true</optional>
+					<defaultValue>false</defaultValue>
 				</field>
 				<field>
 					<name>ledgeJumps</name>
-					<summary>(bool) Ledge jumps.</summary>
+					<type>bool</type>
+					<summary>Ledge jumps.</summary>
 					<description>If this setting is enabled, player will be able to jump upwards while hanging on the ledge.</description>
+					<optional>true</optional>
+					<defaultValue>false</defaultValue>
 				</field>
 				<field>
 					<name>poseTimeout</name>
-					<summary>(int) Pose timeout.</summary>
+					<type>int</type>
+					<summary>Pose timeout.</summary>
 					<description>If this setting is larger than 0, idle standing pose animation will be performed after given timeout (in seconds).</description>
+					<optional>true</optional>
+					<defaultValue>20</defaultValue>
 				</field>
 			</members>
 		</class>
@@ -8702,53 +10044,83 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 			<members>
 				<field>
 					<name>color</name>
-					<summary>(Color) Flare color.</summary>
+					<type>Color</type>
+					<summary>Flare color.</summary>
 					<description>Flare color. Used for sparks and lensflare coloring as well.</description>
+					<optional>true</optional>
+					<defaultValue>TEN.Color(128, 64, 0)</defaultValue>
 				</field>
 				<field>
 					<name>offset</name>
-					<summary>(Vec3) Muzzle offset.</summary>
+					<type>Vec3</type>
+					<summary>Muzzle offset.</summary>
 					<description>A relative muzzle offset where light and particle effects originate from.</description>
+					<optional>true</optional>
+					<defaultValue>Vec3(0, 0, 41)</defaultValue>
 				</field>
 				<field>
 					<name>range</name>
-					<summary>(int) Light range.</summary>
+					<type>int</type>
+					<summary>Light range.</summary>
 					<description>Flare light radius or range. Represented in "clicks" equal to 256 world units.</description>
+					<optional>true</optional>
+					<defaultValue>9</defaultValue>
 				</field>
 				<field>
 					<name>timeout</name>
-					<summary>(int) Burn timeout.</summary>
+					<type>int</type>
+					<summary>Burn timeout.</summary>
 					<description>Flare burn timeout. Flare will stop working after given timeout (specified in seconds).</description>
+					<optional>true</optional>
+					<defaultValue>60</defaultValue>
 				</field>
 				<field>
 					<name>pickupCount</name>
-					<summary>(int) Default flare pickup count.</summary>
+					<type>int</type>
+					<summary>Default flare pickup count.</summary>
 					<description>Specifies amount of flares that you get when you pick up a box of flares.</description>
+					<optional>true</optional>
+					<defaultValue>12</defaultValue>
 				</field>
 				<field>
 					<name>lensflareBrightness</name>
-					<summary>(float) Lens flare brightness.</summary>
+					<type>float</type>
+					<summary>Lens flare brightness.</summary>
 					<description>Brightness multiplier. Specifies how bright lens flare is in relation to light (on a range from 0 to 1).</description>
+					<optional>true</optional>
+					<defaultValue>0.5</defaultValue>
 				</field>
 				<field>
 					<name>sparks</name>
-					<summary>(bool) Toggle spark effect.</summary>
+					<type>bool</type>
+					<summary>Toggle spark effect.</summary>
 					<description>Spark effect. Determines whether flare generates sparks when burning.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
 				</field>
 				<field>
 					<name>smoke</name>
-					<summary>(bool) Toggle smoke effect.</summary>
+					<type>bool</type>
+					<summary>Toggle smoke effect.</summary>
 					<description>Smoke effect. Determines whether flare generates smoke when burning.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
 				</field>
 				<field>
 					<name>muzzleGlow</name>
-					<summary>(bool) Toggle muzzle glow effect.</summary>
+					<type>bool</type>
+					<summary>Toggle muzzle glow effect.</summary>
 					<description>Glow effect. Determines whether flare generates glow when burning.</description>
+					<optional>true</optional>
+					<defaultValue>false</defaultValue>
 				</field>
 				<field>
 					<name>flicker</name>
-					<summary>(bool) Toggle flicker effect.</summary>
+					<type>bool</type>
+					<summary>Toggle flicker effect.</summary>
 					<description>Light and lensflare flickering. When turned off, flare light will be constant.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
 				</field>
 			</members>
 		</class>
@@ -8760,17 +10132,22 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 			<members>
 				<field>
 					<name>rootMesh</name>
-					<summary>(int) Root mesh to which hair object will attach to.</summary>
+					<type>int</type>
+					<summary>Root mesh to which hair object will attach to.</summary>
 					<description>Index of a root mesh to which hair will attach. Root mesh may be different for each hair object.</description>
+					<optional>true</optional>
+					<defaultValue>14</defaultValue>
 				</field>
 				<field>
 					<name>offset</name>
-					<summary>(Vec3) Relative braid offset to a headmesh. Not used with skinned hair mesh.</summary>
+					<type>Vec3</type>
+					<summary>Relative braid offset to a headmesh. Not used with skinned hair mesh.</summary>
 					<description>Specifies how braid is positioned in relation to a headmesh.</description>
 				</field>
 				<field>
 					<name>indices</name>
-					<summary>(table) Braid connection indices. Not used with skinned hair mesh.</summary>
+					<type>table</type>
+					<summary>Braid connection indices. Not used with skinned hair mesh.</summary>
 					<description>A list of headmesh's vertex connection indices. Each index corresponds to nearest braid rootmesh vertex. Amount of indices is unlimited.</description>
 				</field>
 			</members>
@@ -8779,87 +10156,199 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 			<name>Flow.WeaponSettings</name>
 			<type>tenclass</type>
 			<ctor>false</ctor>
-			<description>This is a table of weapon settings, with several parameters available for every weapon. Access particular weapon's settings by using @{Objects.WeaponType} as an index for this table, e.g. `settings.Weapons[Flow.WeaponType.PISTOLS]`.</description>
+			<description>This is a table of weapon settings, with several parameters available for every weapon. Access particular weapon's settings by using @{Objects.WeaponType} as an index for this table, e.g. `settings.Weapons[Flow.WeaponType.PISTOLS]`.  Default values for these settings are different for different weapons. Refer to *settings.lua* file to see them.</description>
 			<members>
 				<field>
 					<name>accuracy</name>
-					<summary>(float) Shooting accuracy.</summary>
+					<type>float</type>
+					<summary>Shooting accuracy.</summary>
 					<description>Determines accuracy range in angles (smaller angles mean higher accuracy). Applicable only for firearms.</description>
 				</field>
 				<field>
 					<name>targetingDistance</name>
-					<summary>(float) Targeting distance.</summary>
+					<type>float</type>
+					<summary>Targeting distance.</summary>
 					<description>Specifies maximum targeting distance in world units (1 block = 1024 world units) for a given weapon.</description>
 				</field>
 				<field>
 					<name>interval</name>
-					<summary>(float) Shooting interval.</summary>
+					<type>float</type>
+					<summary>Shooting interval.</summary>
 					<description>Specifies an interval (in frames), after which Lara is able to shoot again. Not applicable for backholster weapons.</description>
 				</field>
 				<field>
 					<name>damage</name>
-					<summary>(int) Damage.</summary>
+					<type>int</type>
+					<summary>Damage.</summary>
 					<description>Amount of hit points taken for every hit.</description>
 				</field>
 				<field>
 					<name>alternateDamage</name>
-					<summary>(int) Alternate damage.</summary>
+					<type>int</type>
+					<summary>Alternate damage.</summary>
 					<description>For crossbow, specifies damage for explosive ammo.</description>
 				</field>
 				<field>
 					<name>waterLevel</name>
-					<summary>(int) Water level.</summary>
+					<type>int</type>
+					<summary>Water level.</summary>
 					<description>Specifies water depth, at which Lara will put weapons back into holsters, indicating it's not possible to use it in water.</description>
 				</field>
 				<field>
 					<name>pickupCount</name>
-					<summary>(int) Default ammo pickup count.</summary>
+					<type>int</type>
+					<summary>Default ammo pickup count.</summary>
 					<description>Amount of ammo which is given with every ammo pickup for this weapon.</description>
 				</field>
 				<field>
 					<name>flashColor</name>
-					<summary>(Color) Gunflash color.</summary>
+					<type>Color</type>
+					<summary>Gunflash color.</summary>
 					<description>specifies the color of the gunflash.</description>
 				</field>
 				<field>
 					<name>flashRange</name>
-					<summary>(int) Gunflash range.</summary>
+					<type>int</type>
+					<summary>Gunflash range.</summary>
 					<description>specifies the range of the gunflash.</description>
 				</field>
 				<field>
 					<name>flashDuration</name>
-					<summary>(int) Gunflash duration.</summary>
+					<type>int</type>
+					<summary>Gunflash duration.</summary>
 					<description>specifies the duration of a gunflash effect.</description>
 				</field>
 				<field>
 					<name>smoke</name>
-					<summary>(bool) Gun smoke.</summary>
+					<type>bool</type>
+					<summary>Gun smoke.</summary>
 					<description>if set to true, indicates that weapon emits gun smoke.</description>
 				</field>
 				<field>
 					<name>shell</name>
-					<summary>(bool) Gun shell.</summary>
+					<type>bool</type>
+					<summary>Gun shell.</summary>
 					<description>If set to true, indicates that weapon emits gun shell. Applicable only for firearms.</description>
 				</field>
 				<field>
 					<name>muzzleFlash</name>
-					<summary>(bool) Display muzzle flash.</summary>
+					<type>bool</type>
+					<summary>Display muzzle flash.</summary>
 					<description>specifies whether muzzle flash should be displayed or not.</description>
 				</field>
 				<field>
 					<name>muzzleGlow</name>
-					<summary>(bool) Display muzzle glow.</summary>
+					<type>bool</type>
+					<summary>Display muzzle glow.</summary>
 					<description>specifies whether muzzle glow should be displayed or not.</description>
 				</field>
 				<field>
 					<name>colorizeMuzzleFlash</name>
-					<summary>(bool) Colorize muzzle flash.</summary>
+					<type>bool</type>
+					<summary>Colorize muzzle flash.</summary>
 					<description>specifies whether muzzle flash should be tinted with the same color as gunflash color.</description>
 				</field>
 				<field>
 					<name>muzzleOffset</name>
-					<summary>(Vec3) Muzzle offset.</summary>
+					<type>Vec3</type>
+					<summary>Muzzle offset.</summary>
 					<description>specifies offset for spawning muzzle gunflash effects.</description>
+				</field>
+			</members>
+		</class>
+		<class>
+			<name>Flow.UISettings</name>
+			<type>tenclass</type>
+			<ctor>false</ctor>
+			<description>System-wide user interface settings.</description>
+			<members>
+				<field>
+					<name>headerTextColor</name>
+					<type>Color</type>
+					<summary>Header text color.</summary>
+					<description>A color used for displaying header text in system menus.</description>
+					<optional>true</optional>
+					<defaultValue>TEN.Color(216, 117, 49)</defaultValue>
+				</field>
+				<field>
+					<name>optionTextColor</name>
+					<type>Color</type>
+					<summary>Option text color.</summary>
+					<description>A color used for displaying option text in system menus.</description>
+					<optional>true</optional>
+					<defaultValue>TEN.Color(240, 220, 32)</defaultValue>
+				</field>
+				<field>
+					<name>plainTextColor</name>
+					<type>Color</type>
+					<summary>Plain text color.</summary>
+					<description>A color used for displaying plain text in system menus.</description>
+					<optional>true</optional>
+					<defaultValue>TEN.Color(255, 255, 255)</defaultValue>
+				</field>
+				<field>
+					<name>disabledTextColor</name>
+					<type>Color</type>
+					<summary>Disabled text color.</summary>
+					<description>A color used for displaying any header text in menus.</description>
+					<optional>true</optional>
+					<defaultValue>TEN.Color(128, 128, 128)</defaultValue>
+				</field>
+				<field>
+					<name>shadowTextColor</name>
+					<type>Color</type>
+					<summary>Shadow text color.</summary>
+					<description>A color used for drawing a shadow under any rendered text.</description>
+					<optional>true</optional>
+					<defaultValue>TEN.Color(0, 0, 0)</defaultValue>
+				</field>
+				<field>
+					<name>titleLogoPosition</name>
+					<type>Vec2</type>
+					<summary>Title logo center point position.</summary>
+					<description>Center point of a title level logo position.</description>
+					<optional>true</optional>
+					<defaultValue>TEN.Vec2(50, 20)</defaultValue>
+				</field>
+				<field>
+					<name>titleLogoScale</name>
+					<type>float</type>
+					<summary>Title logo scale.</summary>
+					<description>Title level logo scale.</description>
+					<optional>true</optional>
+					<defaultValue>0.38</defaultValue>
+				</field>
+				<field>
+					<name>titleLogoColor</name>
+					<type>Color</type>
+					<summary>Title logo color.</summary>
+					<description>Title level logo color.</description>
+					<optional>true</optional>
+					<defaultValue>TEN.Color(255, 255, 255)</defaultValue>
+				</field>
+				<field>
+					<name>titleMenuPosition</name>
+					<type>Vec2</type>
+					<summary>Title menu position.</summary>
+					<description>Title level menu position. Horizontal coordinate represents an alignment baseline, while vertical coordinate represents a first menu entry's vertical position.</description>
+					<optional>true</optional>
+					<defaultValue>TEN.Vec2(50, 66)</defaultValue>
+				</field>
+				<field>
+					<name>titleMenuScale</name>
+					<type>float</type>
+					<summary>Title menu scale.</summary>
+					<description>Title level menu scale.</description>
+					<optional>true</optional>
+					<defaultValue>1.0</defaultValue>
+				</field>
+				<field>
+					<name>titleMenuAlignment</name>
+					<type>Strings.DisplayStringOption</type>
+					<summary>Title menu alignment.</summary>
+					<description>Specifies menu alignment. Can be set to @{Strings.DisplayStringOption.CENTER} or @{Strings.DisplayStringOption.RIGHT}. If set to `nil`, or set to any other value, menu will be aligned to the left side of the screen.</description>
+					<optional>true</optional>
+					<defaultValue>Strings.DisplayStringOption.CENTER</defaultValue>
 				</field>
 			</members>
 		</class>
@@ -8871,17 +10360,27 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 			<members>
 				<field>
 					<name>errorMode</name>
+					<type>Flow.ErrorMode</type>
 					<summary>How should the application respond to script errors?</summary>
+					<description>Error mode to use.</description>
+					<optional>true</optional>
+					<defaultValue>Flow.ErrorMode.WARN</defaultValue>
 				</field>
 				<field>
 					<name>multithreaded</name>
-					<summary>(bool) Use multithreading in certain calculations. &lt;br&gt;</summary>
-					<description>When set to `true`, some performance-critical calculations will be performed in parallel, which can give a significant performance boost. Don't disable unless you have problems with launching or using TombEngine.</description>
+					<type>bool</type>
+					<summary>Use multithreading in certain calculations. &lt;br&gt;</summary>
+					<description>Determines whether to use multithreading or not. When set to `true`, some performance-critical calculations will be performed in parallel, which can give a significant performance boost. Don't disable unless you have problems with launching or using TombEngine.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
 				</field>
 				<field>
 					<name>fastReload</name>
-					<summary>(bool) Can the game utilize the fast reload feature? &lt;br&gt;</summary>
-					<description>When set to `true`, the game will attempt to perform fast savegame reloading if current level is the same as the level loaded from the savegame. It will not work if the level timestamp or checksum has changed (i.e. level was updated). If set to `false`, this functionality is turned off.</description>
+					<type>bool</type>
+					<summary>Can the game utilize the fast reload feature? &lt;br&gt;</summary>
+					<description>Toggles fast reload on or off. When set to `true`, the game will attempt to perform fast savegame reloading if current level is the same as the level loaded from the savegame. It will not work if the level timestamp or checksum has changed (i.e. level was updated). If set to `false`, this functionality is turned off.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
 				</field>
 			</members>
 		</class>
@@ -8892,9 +10391,20 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 			<description>These settings are used to enable or disable certain graphics features.</description>
 			<members>
 				<field>
+					<name>ambientOcclusion</name>
+					<type>bool</type>
+					<summary>Enable ambient occlusion.</summary>
+					<description>If disabled, ambient occlusion setting will be forced to off, and corresponding menu entry in the Display Settings dialog will be grayed out.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
+				</field>
+				<field>
 					<name>skinning</name>
-					<summary>(bool) Enable skinning.</summary>
+					<type>bool</type>
+					<summary>Enable skinning.</summary>
 					<description>If enabled, skinning will be used for animated objects with skinned mesh. Disable to force classic TR workflow.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
 				</field>
 			</members>
 		</class>
@@ -8906,13 +10416,19 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 			<members>
 				<field>
 					<name>gravity</name>
-					<summary>(float) Global world gravity.</summary>
+					<type>float</type>
+					<summary>Global world gravity.</summary>
 					<description>Specifies global gravity. Mostly affects Lara and several other objects.</description>
+					<optional>true</optional>
+					<defaultValue>6.0</defaultValue>
 				</field>
 				<field>
 					<name>swimVelocity</name>
-					<summary>(float) Swim velocity.</summary>
+					<type>float</type>
+					<summary>Swim velocity.</summary>
 					<description>Specifies swim velocity for Lara. Affects both surface and underwater.</description>
+					<optional>true</optional>
+					<defaultValue>50.0</defaultValue>
 				</field>
 			</members>
 		</class>
@@ -8924,23 +10440,35 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 			<members>
 				<field>
 					<name>statusBars</name>
-					<summary>(bool) Toggle in-game status bars visibility.</summary>
+					<type>bool</type>
+					<summary>Toggle in-game status bars visibility.</summary>
 					<description>If disabled, all status bars (health, air, stamina) will be hidden.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
 				</field>
 				<field>
 					<name>loadingBar</name>
-					<summary>(bool) Toggle loading bar visibility.</summary>
+					<type>bool</type>
+					<summary>Toggle loading bar visibility.</summary>
 					<description>If disabled, loading bar will be invisible in game.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
 				</field>
 				<field>
 					<name>speedometer</name>
-					<summary>(bool) Toggle speedometer visibility.</summary>
+					<type>bool</type>
+					<summary>Toggle speedometer visibility.</summary>
 					<description>If disabled, speedometer will be invisible in game.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
 				</field>
 				<field>
 					<name>pickupNotifier</name>
-					<summary>(bool) Toggle pickup notifier visibility.</summary>
+					<type>bool</type>
+					<summary>Toggle pickup notifier visibility.</summary>
 					<description>If disabled, pickup notifier will be invisible in game.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
 				</field>
 			</members>
 		</class>
@@ -8952,18 +10480,131 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 			<members>
 				<field>
 					<name>binocularLightColor</name>
-					<summary>(Color) Determines highlight color in binocular mode.</summary>
+					<type>Color</type>
+					<summary>Determines highlight color in binocular mode.</summary>
 					<description>Color of highlight, when player presses action. Zero color means there will be no highlight.</description>
+					<optional>true</optional>
+					<defaultValue>TEN.Color(192, 192, 96)</defaultValue>
 				</field>
 				<field>
 					<name>lasersightLightColor</name>
-					<summary>(Color) Determines highlight color in lasersight mode.</summary>
+					<type>Color</type>
+					<summary>Determines highlight color in lasersight mode.</summary>
 					<description>Lasersight highlight color. Zero color means there will be no highlight.</description>
+					<optional>true</optional>
+					<defaultValue>TEN.Color(255, 0, 0)</defaultValue>
 				</field>
 				<field>
 					<name>objectCollision</name>
-					<summary>(bool) Specify whether camera can collide with objects.</summary>
+					<type>bool</type>
+					<summary>Specify whether camera can collide with objects.</summary>
 					<description>When enabled, camera will collide with moveables and statics. Disable for TR4-like camera behaviour.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
+				</field>
+			</members>
+		</class>
+		<class>
+			<name>Flow.PathfindingSettings</name>
+			<type>tenclass</type>
+			<ctor>false</ctor>
+			<description>Features and enhancements that modify enemy behaviour during pathfinding and while tracking player and other enemies.</description>
+			<members>
+				<field>
+					<name>mode</name>
+					<type>Flow.PathfindingMode</type>
+					<summary>Pathfinding mode.</summary>
+					<description>The algorithm used for pathfinding. For more information, refer to @{Flow.PathfindingMode}.</description>
+					<optional>true</optional>
+					<defaultValue>Flow.PathfindingMode.ASTAR</defaultValue>
+				</field>
+				<field>
+					<name>searchDepth</name>
+					<type>int</type>
+					<summary>Pathfinding graph search depth.</summary>
+					<description>Specifies how deep the AI will search the pathfinding graph when calculating a path to the target.</description>
+					<optional>true</optional>
+					<defaultValue>5</defaultValue>
+				</field>
+				<field>
+					<name>escapeDistance</name>
+					<type>int</type>
+					<summary>Escape distance.</summary>
+					<description>If enemy is being attacked, it attempts to escape as far as possible from the attacker. This value specifies the distance the enemy will try to reach when escaping.</description>
+					<optional>true</optional>
+					<defaultValue>5</defaultValue>
+				</field>
+				<field>
+					<name>stalkDistance</name>
+					<type>int</type>
+					<summary>Stalk distance.</summary>
+					<description>Distance at which an enemy may start to track a target without attempting to attack.</description>
+					<optional>true</optional>
+					<defaultValue>3</defaultValue>
+				</field>
+				<field>
+					<name>predictionFactor</name>
+					<type>float</type>
+					<summary>Path prediction scale factor.</summary>
+					<description>Determines how far ahead enemy predicts the target's position based on its current velocity. A higher value makes enemies intercept the target earlier, while a lower value reduces anticipation. If set to 0, prediction will be disabled.</description>
+					<optional>true</optional>
+					<defaultValue>15.0</defaultValue>
+				</field>
+				<field>
+					<name>collisionPenaltyThreshold</name>
+					<type>float</type>
+					<summary>Collision penalty threshold.</summary>
+					<description>Specifies the timeout in seconds after which the enemy will be punished for collisions with illegal geometry and will be forced to ignore its current path to the target and recalculate it. If set to 0, collision penalties will be disabled.</description>
+					<optional>true</optional>
+					<defaultValue>1.0</defaultValue>
+				</field>
+				<field>
+					<name>collisionPenaltyCooldown</name>
+					<type>float</type>
+					<summary>Collision penalty cooldown.</summary>
+					<description>If a collision penalty was applied to an enemy, this value specifies the timeout in seconds during which the enemy will ignore the path to the target which previously caused a penalty.</description>
+					<optional>true</optional>
+					<defaultValue>6.0</defaultValue>
+				</field>
+				<field>
+					<name>moveableAvoidance</name>
+					<type>bool</type>
+					<summary>Moveable avoidance.</summary>
+					<description>Avoid collisions with moveables where possible. Enemy will attempt to turn away from the moveable if it's in the way. Applies only to moveables not placed near room geometry. Experimental feature, use with caution.</description>
+					<optional>true</optional>
+					<defaultValue>false</defaultValue>
+				</field>
+				<field>
+					<name>staticMeshAvoidance</name>
+					<type>bool</type>
+					<summary>Static mesh avoidance.</summary>
+					<description>Avoid collisions with static meshes where possible. Enemy will attempt to turn away from the static mesh if it's in the way. Applies only to static meshes not placed near room geometry. Experimental feature, use with caution.</description>
+					<optional>true</optional>
+					<defaultValue>false</defaultValue>
+				</field>
+				<field>
+					<name>verticalGeometryAvoidance</name>
+					<type>bool</type>
+					<summary>Vertical geometry avoidance for swimming and flying enemies.</summary>
+					<description>Avoid swimming or flying forward into illegal room geometry that can be avoided by moving upwards.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
+				</field>
+				<field>
+					<name>waterSurfaceAvoidance</name>
+					<type>bool</type>
+					<summary>Water surface avoidance for swimming and flying enemies.</summary>
+					<description>For flying enemies, prevents diving into the water and dying while attacking the player or other enemies from above. For swimming enemies, adds extra measures to avoid glitching out of the water.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
+				</field>
+				<field>
+					<name>verticalMovementSmoothing</name>
+					<type>bool</type>
+					<summary>Vertical movement smoothing for swimming and flying enemies.</summary>
+					<description>Smooths out vertical movement for swimming and flying enemies to prevent sudden unnatural jerks or changes in direction.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
 				</field>
 			</members>
 		</class>
@@ -8974,16 +10615,35 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 			<description>These settings are used to enable or disable certain gameplay features.</description>
 			<members>
 				<field>
+					<name>enableInventory</name>
+					<type>bool</type>
+					<summary>Enable or disable original linear inventory functionality. Can be used to completely disable inventory handling</summary>
+					<description>If false, inventory will not open. or to replace it with custom module, such as ring inventory.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
+				</field>
+				<field>
+					<name>killPoisonedEnemies</name>
+					<type>bool</type>
+					<summary>Kill enemies which were poisoned by a crossbow poisoned ammo or by any other means. If disabled, enemy hit points will</summary>
+					<description>If false, enemies won't be killed by poison. reach minimum but will never go to zero. This behaviour replicates original TR4 behaviour.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
+				</field>
+				<field>
 					<name>targetObjectOcclusion</name>
-					<summary>(bool) Enable target occlusion by moveables and static meshes.</summary>
+					<type>bool</type>
+					<summary>Enable target occlusion by moveables and static meshes.</summary>
 					<description>If enabled, player won't be able to target enemies through moveables and static meshes.</description>
+					<optional>true</optional>
+					<defaultValue>true</defaultValue>
 				</field>
 			</members>
 		</class>
 		<class>
 			<name>Flow.Settings</name>
 			<type>tenclass</type>
-			<description>Global engine settings which don't fall into particular category or can't be assigned to a specific object. Can be accessed using @{Flow.SetSettings} and @{Flow.GetSettings} functions.</description>
+			<description>Global engine settings which don't fall into particular category or can't be assigned to a specific object. Flow.Settings is composed of several sub-tables, and each section of the Flow.Settings documentation corresponds to one of these sub-tables. These configuration groups are located in *settings.lua* script file. It is possible to change settings on a per-level basis via @{Flow.GetSettings} and @{Flow.SetSettings} functions, but keep in mind that _settings.lua is reread every time the level is reloaded_. Therefore, you need to implement custom settings management in your level script if you want to override global settings.</description>
 			<members>
 				<field>
 					<name>Animations</name>
@@ -9028,6 +10688,12 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 					<description>These settings determine visibility of particular in-game HUD elements.</description>
 				</field>
 				<field>
+					<name>Pathfinding</name>
+					<type>Flow.PathfindingSettings</type>
+					<summary>Features and enhancements that modify enemy behaviour during pathfinding and while tracking player and other enemies.</summary>
+					<description>Features and enhancements that modify enemy behaviour during pathfinding and while tracking player and other enemies.</description>
+				</field>
+				<field>
 					<name>Physics</name>
 					<type>Flow.PhysicsSettings</type>
 					<summary>Here you will find various settings for game world physics.</summary>
@@ -9040,15 +10706,42 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 					<description>Global system settings that is not directly related to gameplay.</description>
 				</field>
 				<field>
+					<name>UI</name>
+					<type>Flow.UISettings</type>
+					<summary>System-wide user interface settings.</summary>
+					<description>System-wide user interface settings.</description>
+				</field>
+				<field>
 					<name>Weapons</name>
 					<type>{ [WeaponType]: WeaponSettings }</type>
-					<summary>This is a table of weapon settings, with several parameters available for every weapon. Access particular weapon's settings by using @{Objects.WeaponType} as an index for this table, e.g. `settings.Weapons[Flow.WeaponType.PISTOLS]`.</summary>
-					<description>This is a table of weapon settings, with several parameters available for every weapon. Access particular weapon's settings by using @{Objects.WeaponType} as an index for this table, e.g. `settings.Weapons[Flow.WeaponType.PISTOLS]`.</description>
+					<summary>This is a table of weapon settings, with several parameters available for every weapon. Access particular weapon's settings by using @{Objects.WeaponType} as an index for this table, e.g. `settings.Weapons[Flow.WeaponType.PISTOLS]`.  Default values for these settings are different for different weapons. Refer to *settings.lua* file to see them.</summary>
+					<description>This is a table of weapon settings, with several parameters available for every weapon. Access particular weapon's settings by using @{Objects.WeaponType} as an index for this table, e.g. `settings.Weapons[Flow.WeaponType.PISTOLS]`.  Default values for these settings are different for different weapons. Refer to *settings.lua* file to see them.</description>
 				</field>
 			</members>
 		</class>
 	</classes>
 	<enums>
+		<enum>
+			<name>Collision.IntersectionType</name>
+			<summary>Constants for the type of intersection checks.</summary>
+			<description>To be used with @{Collision.Ray} class.</description>
+			<values>
+				<value>
+					<name>NONE</name>
+					<summary>No intersection checks.</summary>
+				</value>
+				<value>
+					<name>BOX</name>
+					<summary>Bounding box intersection checks.</summary>
+				</value>
+				<value>
+					<name>BOX_AND_SPHERE</name>
+					<summary>Bounding box and sphere intersection checks.</summary>
+					<description>A check will succeed only when an overlap of a bounding box and a mesh sphere is detected.
+ This type of intersection check is useful for objects that use mesh sphere masking for collision detection.</description>
+				</value>
+			</values>
+		</enum>
 		<enum>
 			<name>Collision.MaterialType</name>
 			<summary>Constants for material types.</summary>
@@ -9380,7 +11073,9 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 				<value>
 					<name>EXAMINE</name>
 					<summary>Examine the item.</summary>
-					<description>Used only with examine objects.</description>
+					<description>Used only with examine objects.
+ To display a text for a given examine item, you should add a string to @{Flow.SetStrings} with a key 
+ being lowercased item ID with a "_text" suffix (e.g., `uzi_ammo_text` for an item with ID `UZI_AMMO`).</description>
 				</value>
 				<value>
 					<name>COMBINE</name>
@@ -9459,6 +11154,31 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 					<name>Divesuit</name>
 					<summary>Divesuit Lara.</summary>
 					<description>As seen in the underwater levels of TR5.</description>
+				</value>
+			</values>
+		</enum>
+		<enum>
+			<name>Flow.PathfindingMode</name>
+			<summary>Constants for pathfinding modes.</summary>
+			<description>To be used in @{Flow.Settings.Pathfinding.mode} setting.</description>
+			<values>
+				<value>
+					<name>BFS</name>
+					<summary>Breadth-first search or BFS (original Core algorithm).</summary>
+					<description>Fast but treats all boxes equally regardless of physical distance.
+ May produce suboptimal paths where 3 large boxes are preferred over 5 small ones.</description>
+				</value>
+				<value>
+					<name>DIJKSTRA</name>
+					<summary>Dijkstra's algorithm with distance weights.</summary>
+					<description>Finds the shortest physical path by using euclidean distance between box centers.
+ More accurate than BFS but explores in all directions uniformly.</description>
+				</value>
+				<value>
+					<name>ASTAR</name>
+					<summary>A* algorithm with distance weights and heuristic (default).</summary>
+					<description>Combines Dijkstra's accuracy with a heuristic that guides the search toward the creature.
+ Generally the fastest and most accurate option commonly used in games.</description>
 				</value>
 			</values>
 		</enum>
@@ -9936,6 +11656,140 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 			</values>
 		</enum>
 		<enum>
+			<name>Logic.CallbackPoint</name>
+			<summary>Points in the game flow where level scripts can hook into.</summary>
+			<values>
+				<value>
+					<name>PRE_START</name>
+					<summary>Will be called immediately before LevelFuncs.OnStart.</summary>
+				</value>
+				<value>
+					<name>POST_START</name>
+					<summary>Will be called immediately after LevelFuncs.OnStart.</summary>
+				</value>
+				<value>
+					<name>PRE_LOAD</name>
+					<summary>Will be called immediately before LevelFuncs.OnLoad.</summary>
+				</value>
+				<value>
+					<name>POST_LOAD</name>
+					<summary>Will be called immediately after LevelFuncs.OnLoad.</summary>
+				</value>
+				<value>
+					<name>PRE_LOOP</name>
+					<summary>Will be called in the beginning of game loop (LevelFuncs.OnLoop).</summary>
+				</value>
+				<value>
+					<name>POST_LOOP</name>
+					<summary>Will be called at the end of game loop (LevelFuncs.OnLoop).</summary>
+				</value>
+				<value>
+					<name>PRE_SAVE</name>
+					<summary>Will be called immediately before LevelFuncs.OnSave.</summary>
+				</value>
+				<value>
+					<name>POST_SAVE</name>
+					<summary>Will be called immediately after LevelFuncs.OnSave.</summary>
+				</value>
+				<value>
+					<name>PRE_END</name>
+					<summary>Will be called immediately before LevelFuncs.OnEnd.</summary>
+				</value>
+				<value>
+					<name>POST_END</name>
+					<summary>Will be called immediately after LevelFuncs.OnEnd.</summary>
+				</value>
+				<value>
+					<name>PRE_USE_ITEM</name>
+					<summary>Will be called immediately before LevelFuncs.OnUseItem.</summary>
+				</value>
+				<value>
+					<name>POST_USE_ITEM</name>
+					<summary>Will be called immediately after LevelFuncs.OnUseItem.</summary>
+				</value>
+				<value>
+					<name>PRE_FREEZE</name>
+					<summary>Will be called immediately before LevelFuncs.OnFreeze.</summary>
+				</value>
+				<value>
+					<name>POST_FREEZE</name>
+					<summary>Will be called immediately after LevelFuncs.OnFreeze.</summary>
+				</value>
+			</values>
+		</enum>
+		<enum>
+			<name>Logic.EventType</name>
+			<summary>Events that can be handled in level scripts.</summary>
+			<values>
+				<value>
+					<name>ENTER</name>
+					<summary>Triggered when an activator enters the volume.</summary>
+				</value>
+				<value>
+					<name>INSIDE</name>
+					<summary>Triggered while an activator is inside the volume.</summary>
+				</value>
+				<value>
+					<name>LEAVE</name>
+					<summary>Triggered when an activator leaves the volume.</summary>
+				</value>
+				<value>
+					<name>LOOP</name>
+					<summary>Triggered each game loop.</summary>
+				</value>
+				<value>
+					<name>LOAD</name>
+					<summary>Triggered when a saved game is loaded.</summary>
+				</value>
+				<value>
+					<name>SAVE</name>
+					<summary>Triggered when the game is saved.</summary>
+				</value>
+				<value>
+					<name>START</name>
+					<summary>Triggered when the level starts.</summary>
+				</value>
+				<value>
+					<name>END</name>
+					<summary>Triggered when the level ends.</summary>
+				</value>
+				<value>
+					<name>USE_ITEM</name>
+					<summary>Triggered when an item is used from inventory.</summary>
+				</value>
+				<value>
+					<name>FREEZE</name>
+					<summary>Triggered when any of the Freeze modes are activated.</summary>
+				</value>
+			</values>
+		</enum>
+		<enum>
+			<name>Logic.EndReason</name>
+			<summary>Reasons why a level ended.</summary>
+			<values>
+				<value>
+					<name>LEVEL_COMPLETE</name>
+					<summary>Will be called when the level is completed successfully.</summary>
+				</value>
+				<value>
+					<name>LOAD_GAME</name>
+					<summary>Will be called when the level ends due to loading a saved game.</summary>
+				</value>
+				<value>
+					<name>EXIT_TO_TITLE</name>
+					<summary>Will be called when the level ends due to exiting to the title screen.</summary>
+				</value>
+				<value>
+					<name>DEATH</name>
+					<summary>Will be called when the level ends due to the player's death.</summary>
+				</value>
+				<value>
+					<name>OTHER</name>
+					<summary>Will be called when the level ends for any other reason.</summary>
+				</value>
+			</values>
+		</enum>
+		<enum>
 			<name>Objects.AmmoType</name>
 			<summary>Constants for player weapon ammo types.</summary>
 			<description>To be used with @{Objects.LaraObject.GetAmmoType} function.</description>
@@ -10030,6 +11884,52 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 			</values>
 		</enum>
 		<enum>
+			<name>Objects.WaterStatus</name>
+			<summary>Constants for player water statuses.</summary>
+			<description>To be used with @{Objects.LaraObject.GetWaterStatus} function.</description>
+			<values>
+				<value>
+					<name>DRY</name>
+					<summary>Player is in a dry room.</summary>
+				</value>
+				<value>
+					<name>WADE</name>
+					<summary>Player is wading the water.</summary>
+				</value>
+				<value>
+					<name>TREADWATER</name>
+					<summary>Player is treading the water.</summary>
+				</value>
+				<value>
+					<name>UNDERWATER</name>
+					<summary>Player is underwater.</summary>
+				</value>
+				<value>
+					<name>FLYCHEAT</name>
+					<summary>Player is using flycheat.</summary>
+				</value>
+			</values>
+		</enum>
+		<enum>
+			<name>Objects.WeaponMode</name>
+			<summary>Constants for Weapon modes.</summary>
+			<description>To be used with @{Objects.LaraObject.SetWeaponMode} function. Currently only works for HK Weapon.</description>
+			<values>
+				<value>
+					<name>RAPID</name>
+					<summary>Rapid fire mode.</summary>
+				</value>
+				<value>
+					<name>BURST</name>
+					<summary>Burst fire mode.</summary>
+				</value>
+				<value>
+					<name>SNIPER</name>
+					<summary>Sniper mode.</summary>
+				</value>
+			</values>
+		</enum>
+		<enum>
 			<name>Objects.WeaponType</name>
 			<summary>Constants for weapon types.</summary>
 			<description>To be used with @{Objects.LaraObject.GetWeaponType} and @{Objects.LaraObject.SetWeaponType} functions.
@@ -10083,6 +11983,25 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 				<value>
 					<name>ROCKET_LAUNCHER</name>
 					<summary>Rocket launcher.</summary>
+				</value>
+			</values>
+		</enum>
+		<enum>
+			<name>Objects.InteractionType</name>
+			<summary>Constants for interaction type.</summary>
+			<description>To be used with @{Objects.Moveable.ShowInteractionHighlight} and @{Objects.LaraObject.Interact} functions.</description>
+			<values>
+				<value>
+					<name>PICKUP</name>
+					<summary>Show PICKUP interaction icon.</summary>
+				</value>
+				<value>
+					<name>USE</name>
+					<summary>Show USE interaction icon.</summary>
+				</value>
+				<value>
+					<name>TALK</name>
+					<summary>Show TALK interaction icon.</summary>
 				</value>
 			</values>
 		</enum>
@@ -14124,6 +16043,10 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 					<name>NOLENSFLARE</name>
 					<summary>No lens flare room flag.</summary>
 				</value>
+				<value>
+					<name>NOCAUSTICS</name>
+					<summary>No caustics room flag (valid only for water rooms).</summary>
+				</value>
 			</values>
 		</enum>
 		<enum>
@@ -14198,6 +16121,10 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 					<name>VERTICAL_CENTER</name>
 					<summary>Sets the vertical origin point of the multiline string to the center.</summary>
 				</value>
+				<value>
+					<name>VERTICAL_BOTTOM</name>
+					<summary>Sets the vertical origin point of the multiline string to the bottom.</summary>
+				</value>
 			</values>
 		</enum>
 		<enum>
@@ -14222,39 +16149,39 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 		<enum>
 			<name>View.AlignMode</name>
 			<summary>Constants for sprite align modes.</summary>
-			<description>To be used with @{Strings.DisplayString} class.</description>
+			<description>To be used with @{View.DisplaySprite} class.</description>
 			<values>
-				<value>
-					<name>CENTER</name>
-					<summary>Center alignment.</summary>
-				</value>
-				<value>
-					<name>CENTER_TOP</name>
-					<summary>Center top alignment.</summary>
-				</value>
-				<value>
-					<name>CENTER_BOTTOM</name>
-					<summary>Center bottom alignment.</summary>
-				</value>
-				<value>
-					<name>CENTER_LEFT</name>
-					<summary>Center left alignment.</summary>
-				</value>
-				<value>
-					<name>CENTER_RIGHT</name>
-					<summary>Center right alignment.</summary>
-				</value>
 				<value>
 					<name>TOP_LEFT</name>
 					<summary>Top left alignment.</summary>
+				</value>
+				<value>
+					<name>TOP_CENTER</name>
+					<summary>Center top alignment.</summary>
 				</value>
 				<value>
 					<name>TOP_RIGHT</name>
 					<summary>Top right alignment.</summary>
 				</value>
 				<value>
+					<name>CENTER_LEFT</name>
+					<summary>Center left alignment.</summary>
+				</value>
+				<value>
+					<name>CENTER</name>
+					<summary>Center alignment.</summary>
+				</value>
+				<value>
+					<name>CENTER_RIGHT</name>
+					<summary>Center right alignment.</summary>
+				</value>
+				<value>
 					<name>BOTTOM_LEFT</name>
 					<summary>Bottom left alignment.</summary>
+				</value>
+				<value>
+					<name>BOTTOM_CENTER</name>
+					<summary>Center bottom alignment.</summary>
 				</value>
 				<value>
 					<name>BOTTOM_RIGHT</name>

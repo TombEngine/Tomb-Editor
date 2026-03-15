@@ -175,7 +175,7 @@ namespace TombLib.LevelData.Compilers
 
                                     if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR4 && dec_jump)
                                         dec_overlaps[dec_numOverlaps] |= 0x800;
-                                    if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR3 && dec_monkey)
+                                    if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR4 && dec_monkey)
                                         dec_overlaps[dec_numOverlaps] |= 0x2000;
 
                                     dec_numOverlaps++;
@@ -216,7 +216,7 @@ namespace TombLib.LevelData.Compilers
 
                                         if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR4 && dec_jump)
                                             dec_overlaps[dec_numOverlaps] |= 0x800;
-                                        if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR3 && dec_monkey)
+                                        if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR4 && dec_monkey)
                                             dec_overlaps[dec_numOverlaps] |= 0x2000;
 
                                         dec_numOverlaps++;
@@ -273,6 +273,10 @@ namespace TombLib.LevelData.Compilers
             else
             {
                 if (dec_flipped) dec_boxes[boxIndex].Flag0x02 = true;
+
+                // Update room reference for water boxes to ensure correct water flag detection during zone building
+                if (box.Water)
+                    dec_boxes[boxIndex].Room = box.Room;
             }
 
             return boxIndex;

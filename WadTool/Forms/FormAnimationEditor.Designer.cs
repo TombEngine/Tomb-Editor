@@ -2255,7 +2255,7 @@ namespace WadTool
             // 
             nudRotX.DecimalPlaces = 4;
             nudRotX.IncrementAlternate = new decimal(new int[] { 50, 0, 0, 65536 });
-            nudRotX.Location = new System.Drawing.Point(46, 28);
+            nudRotX.Location = new System.Drawing.Point(128, 28);
             nudRotX.LoopValues = true;
             nudRotX.Maximum = new decimal(new int[] { 360, 0, 0, 0 });
             nudRotX.Name = "nudRotX";
@@ -2279,7 +2279,7 @@ namespace WadTool
             // 
             nudRotY.DecimalPlaces = 4;
             nudRotY.IncrementAlternate = new decimal(new int[] { 50, 0, 0, 65536 });
-            nudRotY.Location = new System.Drawing.Point(128, 28);
+            nudRotY.Location = new System.Drawing.Point(46, 28);
             nudRotY.LoopValues = true;
             nudRotY.Maximum = new decimal(new int[] { 360, 0, 0, 0 });
             nudRotY.Name = "nudRotY";

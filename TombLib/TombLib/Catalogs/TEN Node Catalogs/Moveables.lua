@@ -529,6 +529,7 @@ end
 -- !Section "Moveable parameters"
 -- !Arguments "NewLine, Moveables, 80"
 -- !Arguments "Enumeration, [ Visible  | Invisible ], 20, Visibility"
+
 LevelFuncs.Engine.Node.SetMoveableVisibility = function(moveableName, state)
 	local visibility = (state == 0) and true or false
 	TEN.Objects.GetMoveableByName(moveableName):SetVisible(visibility)
@@ -596,8 +597,8 @@ end
 
 -- !Name "Remove moveable effect"
 -- !Section "Moveable state"
--- !Description "Remove effect from moveable"
--- !Arguments "NewLine, Moveables, Select moveable to remove effect from."
+-- !Description "Remove effect from moveable."
+-- !Arguments "NewLine, Moveables, Moveable to remove effect from"
 
 LevelFuncs.Engine.Node.RemoveMoveableEffect = function(moveable)
 	TEN.Objects.GetMoveableByName(moveable):SetEffect(TEN.Effects.EffectID.NONE)
@@ -606,9 +607,9 @@ end
 -- !Name "Modify ItemFlag of a moveable"
 -- !Section "Moveable parameters"
 -- !Description "Modify ItemFlag for moveable. Used for extended customisation of certain moveables."
--- !Arguments "NewLine,Moveables, 70, Choose moveable"
+-- !Arguments "NewLine, Moveables, 70"
 -- !Arguments "Numerical, 13, [ 0 | 7 ], ItemFlag index to change"
--- !Arguments "Numerical, 17, [ -32768 | 32767 | 0 ], Value to store in moveable's ItemFlags
+-- !Arguments "Numerical, 17, [ -32768 | 32767 | 0 ], Value to store in moveable's ItemFlags"
 
 LevelFuncs.Engine.Node.ModifyItemFlag = function (moveable, itemFlagLocation, itemFlagValue)
 	TEN.Objects.GetMoveableByName(moveable):SetItemFlags(itemFlagValue,itemFlagLocation)
@@ -616,11 +617,11 @@ end
 
 -- !Name "If value stored in moveable's ItemFlag is..."
 -- !Section "Moveable parameters"
--- !Description "Checks current value contained inside a given ItemFlag"
+-- !Description "Checks current value contained inside a given ItemFlag."
 -- !Conditional "True"
--- !Arguments "NewLine,Moveables, 70, Choose moveable"
+-- !Arguments "NewLine, Moveables, 70"
 -- !Arguments "Numerical, 13, [ 0 | 7 ], ItemFlag index to check"
--- !Arguments "Numerical, 17, [ -32768 | 32767 | 0 ], Value stored in ItemFlag
+-- !Arguments "Numerical, 17, [ -32768 | 32767 | 0 ], Value stored in ItemFlag"
 
 LevelFuncs.Engine.Node.CheckItemFlag = function(moveable, itemFlagLocation, itemFlagValue)
     local itemFlag = TEN.Objects.GetMoveableByName(moveable):GetItemFlags(itemFlagLocation)
@@ -632,16 +633,26 @@ LevelFuncs.Engine.Node.CheckItemFlag = function(moveable, itemFlagLocation, item
     end
 end
 
--- !Name "Add interaction highlight to moveable"
--- !Section "Moveable parameters"
--- !Description "Adds an interaction highlight to the specified moveable"
--- !Arguments "NewLine,Moveables,70,Select moveable" "Enumeration, 30, [ Pickup | Talk | Use ], Interaction icon to use"
+-- !Name "Add interaction highlight to a moveable"
+-- !Section "Moveable state"
+-- !Description "Adds an interaction highlight to the specified moveable."
+-- !Arguments "NewLine, Moveables, 70" "Enumeration, 30, [ Pickup | Talk | Use ], Interaction icon to use"
 
-LevelFuncs.Engine.Node.AddInteractionHighlight = function(moveable,iconType)
+LevelFuncs.Engine.Node.AddInteractionHighlight = function(moveable, iconType)
 
 	local mov = GetMoveableByName(moveable)
 	local icon = LevelFuncs.Engine.Node.SetInteractionHighlightType(iconType)
 
-mov:ShowInteractionHighlight(icon)
+	mov:ShowInteractionHighlight(icon)
 end
-	
+
+-- !Name "Hide interaction highlight for a moveable"
+-- !Section "Moveable state"
+-- !Description "Hides an interaction highlight for the specified moveable."
+-- !Arguments "NewLine, Moveables"
+
+LevelFuncs.Engine.Node.HideInteractionHighlight = function(moveable)
+
+	local mov = GetMoveableByName(moveable)
+	mov:HideInteractionHighlight()
+end

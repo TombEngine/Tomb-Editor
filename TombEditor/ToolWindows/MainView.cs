@@ -147,9 +147,10 @@ namespace TombEditor.ToolWindows
                 but3D.Checked = mode == EditorMode.Geometry;
                 butLightingMode.Checked = mode == EditorMode.Lighting;
                 butFaceEdit.Checked = mode == EditorMode.FaceEdit;
+                butObjectPlacement.Checked = mode == EditorMode.ObjectPlacement;
 
                 panel2DMap.Visible = mode == EditorMode.Map2D;
-                panel3D.Visible = mode == EditorMode.FaceEdit || mode == EditorMode.Geometry || mode == EditorMode.Lighting;
+                panel3D.Visible = mode != EditorMode.Map2D;
             }
 
             // Update flipmap toolbar button

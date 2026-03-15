@@ -51,7 +51,7 @@ namespace TombLib.Controls
                      ControlStyles.ResizeRedraw |
                      ControlStyles.UserPaint, true);
 
-            tree.SelectedNodes.CollectionChanged += (s, e) => { if (!_changing) SelectedWadObjectIdsChanged?.Invoke(this, EventArgs.Empty); };
+            tree.SelectedNodesChanged += (s, e) => { if (!_changing) SelectedWadObjectIdsChanged?.Invoke(this, EventArgs.Empty); };
             tbNotes.TextChanged +=(s, e) => { MetadataChanged?.Invoke(this, EventArgs.Empty); };
 
             // Populate game version

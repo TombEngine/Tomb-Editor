@@ -1,8 +1,8 @@
 ﻿using ICSharpCode.AvalonEdit.Document;
-using Microsoft.Toolkit.HighPerformance;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using TombLib.Scripting.ClassicScript.Parsers;
 using TombLib.Scripting.ClassicScript.Resources;
@@ -226,7 +226,7 @@ namespace TombLib.Scripting.ClassicScript.Utils
 				nextLine = document.GetLineByNumber(i);
 				nextLineText = LineParser.EscapeComments(document.GetText(nextLine.Offset, nextLine.Length));
 
-				if ((nextLineText.Contains('>') && !Regex.IsMatch(nextLineText, Patterns.NextLineKey)) || nextLineText.Count('>') > 1)
+				if ((nextLineText.Contains('>') && !Regex.IsMatch(nextLineText, Patterns.NextLineKey)) || nextLineText.Count(c => c == '>') > 1)
 					return true;
 
 				i++;

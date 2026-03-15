@@ -1,1 +1,68 @@
-{}
+{
+    "ContentBrowserView": {
+        "SearchPlaceholder": "Search assets...",
+        "EmptyStateMessage": "Click here to load a new WAD file.",
+        "Size": "Size"
+    },
+
+    "ContentBrowser": {
+        "FilterAll": "All",
+        "FilterMoveables": "Moveables",
+        "FilterStatics": "Statics",
+        "FilterImportedGeometry": "Imported Geometry",
+        "FilterFavorites": "Favorites",
+        "CategoryMoveables": "Moveables",
+        "CategoryStatics": "Statics",
+        "CategoryImportedGeometry": "Imported Geometry",
+        "CategoryUnknown": "Unknown",
+        "WadSourceSingle": "From {0}",
+        "WadSourceMultiple": "From {0} (also in other WADs)",
+        "ItemCount": "{0} items"
+    },
+
+    "ObjectBrushToolboxView": {
+        "Radius": "Radius:",
+        "Density": "Density:",
+        "Rotation": "Rotation:",
+        "Orthogonal": "Orthogonal",
+        "RandomRotation": "Random rotation",
+        "FollowMouse": "Follow mouse",
+        "RandomScale": "Random scale:",
+        "FitToFloor": "Fit to floor",
+        "AlignToGrid": "Align to grid",
+        "PlaceInAdjacentRooms": "Place in adjacent rooms"
+    },
+
+    "ToolBox": {
+        "GridPaint": "Grid Paint ({0})"
+    },
+
+    "ToolBoxView": {
+        "CircleBrushShape": "Circle Brush Shape",
+        "SquareBrushShape": "Square Brush Shape",
+        "Selection": "Selection",
+        "ObjectSelection": "Object Selection",
+        "ObjectDeselection": "Object Deselection",
+        "Brush": "Brush",
+        "Shovel": "Shovel",
+        "Pencil": "Pencil",
+        "Line": "Line",
+        "Bulldozer": "Bulldozer",
+        "Smooth": "Smooth",
+        "Fill": "Fill",
+        "GroupTexturing": "Group Texturing",
+        "Eraser": "Eraser",
+        "Drag": "Drag",
+        "Ramp": "Ramp",
+        "QuarterPipe": "Quarter Pipe",
+        "HalfPipe": "Half Pipe",
+        "Bowl": "Bowl",
+        "Pyramid": "Pyramid",
+        "Terrain": "Terrain",
+        "TextureEraser": "Eraser",
+        "Invisibility": "Invisibility",
+        "PortalDigger": "Portal Digger",
+        "FixTextureCoordinates": "Fix Texture Coordinates",
+        "ShowTextures": "Show Textures"
+    }
+}

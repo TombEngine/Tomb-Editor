@@ -375,10 +375,12 @@ namespace TombLib.LevelData.Compilers
             int lastFloorDataFunction = -1;
 
             // Floor collision
-            BuildFloorDataCollision(floorShape, ceilingShape.Max, false, outFloorData, ref lastFloorDataFunction, room, pos);
+            BuildFloorDataCollision(floorShape, ceilingShape.Max, false, outFloorData, ref lastFloorDataFunction,
+                room, pos, _level.Settings.GameVersion.Native());
 
             // Ceiling collision
-            BuildFloorDataCollision(ceilingShape, floorShape.Min, true, outFloorData, ref lastFloorDataFunction, room, pos);
+            BuildFloorDataCollision(ceilingShape, floorShape.Min, true, outFloorData, ref lastFloorDataFunction,
+                room, pos, _level.Settings.GameVersion.Native());
 
             // If sector is Death
             if (sector.HasFlag(SectorFlags.DeathFire))
@@ -936,9 +938,10 @@ namespace TombLib.LevelData.Compilers
             return (ushort)Value;
         }
 
-        private void BuildFloorDataCollision(RoomSectorShape shape, int oppositeExtreme, bool isCeiling, List<ushort> outFloorData, ref int lastFloorDataFunction, Room reportRoom, VectorInt2 reportPos)
+        private void BuildFloorDataCollision(RoomSectorShape shape, int oppositeExtreme, bool isCeiling, List<ushort> outFloorData, ref int lastFloorDataFunction,
+            Room reportRoom, VectorInt2 reportPos, TRVersion.Game game)
         {
-            if (shape.IsSplit && _level.Settings.GameVersion.Native() >= TRVersion.Game.TR3)
+            if (shape.IsSplit && game.SupportsSplits())
             { // Build a triangulated slope
                 int bisectingIndex = shape.SplitDirectionIsXEqualsZ ? 1 : 0;
                 int portalIndex;

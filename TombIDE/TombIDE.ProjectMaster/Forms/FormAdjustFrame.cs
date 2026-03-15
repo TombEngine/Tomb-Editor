@@ -284,9 +284,9 @@ public partial class FormAdjustFrame : DarkForm
 		_config.Save(_configPath);
 
 		string launcherExecutable = _ide.Project.GetLauncherFilePath();
-		string originalFileName = FileVersionInfo.GetVersionInfo(launcherExecutable).OriginalFilename;
+		string? originalFileName = FileVersionInfo.GetVersionInfo(launcherExecutable).OriginalFilename;
 
-		if (!originalFileName.Equals("launch.exe", StringComparison.OrdinalIgnoreCase))
+		if (originalFileName?.Equals("launch.exe", StringComparison.OrdinalIgnoreCase) is not true)
 		{
 			DarkMessageBox.Show(this, "Project not supported.", string.Empty, MessageBoxButtons.OK, MessageBoxIcon.Error);
 			return;

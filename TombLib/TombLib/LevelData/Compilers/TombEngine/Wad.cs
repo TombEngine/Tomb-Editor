@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using TombLib.IO;
-using TombLib.Types;
 using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
@@ -62,7 +61,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 var poly = oldMesh.Polys[j];
 
                 // Check if we should merge object and room textures in same texture tiles.
-                TextureDestination destination = isStatic ? TextureDestination.Static : TextureDestination.Moveable;
+                var destination = isStatic ? TextureDestination.Static : TextureDestination.Moveable;
                 
                 var texture = poly.Texture;
                 texture.ClampToBounds();

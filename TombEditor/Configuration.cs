@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
-using System.Reflection;
 using TombLib;
 using TombLib.LevelData;
 using TombLib.LevelData.VisualScripting;
@@ -45,6 +44,10 @@ namespace TombEditor
         public bool RenderingItem_ShowMultipleWadsPrompt { get; set; } = true;
         public bool RenderingItem_Animate { get; set; } = false;
 
+        // Content Browser options
+
+        public float ContentBrowser_TileWidth { get; set; } = 88;
+
         // Main 3D window options
 
         public int Rendering3D_DrawRoomsMaxDepth { get; set; } = 6;
@@ -59,7 +62,8 @@ namespace TombEditor
         public float Rendering3D_LineWidth { get; set; } = 10.0f;
         public float Rendering3D_FieldOfView { get; set; } = 50.0f;
         public bool Rendering3D_ToolboxVisible { get; set; } = true;
-        public Point Rendering3D_ToolboxPosition { get; set; } = new Point(15, 45);
+        public Point Rendering3D_ToolboxPosition { get; set; } = new Point(15, 15);
+        public Point Rendering3D_ObjectBrushToolboxPosition { get; set; } = new Point(50, 15);
         public bool Rendering3D_DisablePickingForImportedGeometry { get; set; } = false;
         public bool Rendering3D_DisablePickingForHiddenRooms { get; set; } = false;
         public bool Rendering3D_ShowPortals { get; set; } = false;
@@ -155,6 +159,23 @@ namespace TombEditor
         public float Gizmo_ScaleCubeSize { get; set; } = 128.0f;
         public float Gizmo_LineThickness { get; set; } = 45.0f;
 
+        // Object brush options
+
+        public ObjectBrushShape ObjectBrush_Shape { get; set; } = ObjectBrushShape.Circle;
+        public float ObjectBrush_Radius { get; set; } = 512.0f;
+        public float ObjectBrush_Density { get; set; } = 1.0f;
+        public float ObjectBrush_Rotation { get; set; } = 0.0f;
+        public float ObjectBrush_ScaleMin { get; set; } = 0.8f;
+        public float ObjectBrush_ScaleMax { get; set; } = 1.2f;
+        public bool ObjectBrush_RandomizeRotation { get; set; } = true;
+        public bool ObjectBrush_FollowMouseDirection { get; set; } = false;
+        public bool ObjectBrush_Orthogonal { get; set; } = false;
+        public bool ObjectBrush_RandomizeScale { get; set; } = false;
+        public bool ObjectBrush_PlaceInAdjacentRooms { get; set; } = false;
+        public bool ObjectBrush_FitToGround { get; set; } = true;
+        public bool ObjectBrush_AlignToGrid { get; set; } = false;
+        public bool ObjectBrush_ShowTextures { get; set; } = true;
+
         // Autosave options
 
         public bool AutoSave_Enable { get; set; } = true;
@@ -186,7 +207,7 @@ namespace TombEditor
 
         public string[] UI_ToolbarButtons { get; set; } = new string[]
         {
-            "2D", "3D", "FaceEdit", "LightingMode", "DrawWhiteLighting", "|",
+            "2D", "3D", "FaceEdit", "ObjectPlacement", "LightingMode", "DrawWhiteLighting", "|",
             "Undo", "Redo", "|",
             "CenterCamera", "ToggleFlyMode", "|",
             "DrawPortals", "DrawAllRooms", "DrawHorizon",
@@ -204,6 +225,7 @@ namespace TombEditor
 
         public EditorTool UI_LastGeometryTool { get; set; } = new EditorTool();
         public EditorTool UI_LastTexturingTool { get; set; } = new EditorTool() { Tool = EditorToolType.Brush };
+        public EditorTool UI_LastObjectPlacementTool { get; set; } = new EditorTool() { Tool = EditorToolType.Brush };
 
         // Geometry IO Window
 
@@ -336,7 +358,7 @@ namespace TombEditor
                             Contents = new List<string> { "RoomOptions" },
                             VisibleContent = "RoomOptions",
                             Order = 1,
-                            Size = new Size(284,226)
+                            Size = new Size(284,236)
                         },
                         new DockGroupState
                         {
@@ -384,8 +406,8 @@ namespace TombEditor
                         },
                         new DockGroupState
                         {
-                            Contents = new List<string> { "Palette" },
-                            VisibleContent = "Palette",
+                            Contents = new List<string> { "ContentBrowser", "Palette" },
+                            VisibleContent = "ContentBrowser",
                             Order = 1,
                             Size = new Size(645,141)
                         }

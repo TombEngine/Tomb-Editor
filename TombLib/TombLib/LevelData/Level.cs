@@ -453,8 +453,16 @@ namespace TombLib.LevelData
             return result;
         }
 
+        public HashSet<string> GetAllLuaNames()
+        {
+            var result = new HashSet<string>(GetAllObjects().OfType<IHasLuaName>().Select(o => o.LuaName).Where(n => !string.IsNullOrEmpty(n)));
+            return result;
+        }
+
         public bool IsNG => Settings?.GameVersion == TRVersion.Game.TRNG;
 
         public bool IsTombEngine => Settings?.GameVersion == TRVersion.Game.TombEngine;
+
+        public bool IsTRX => Settings?.GameVersion.IsTRX() ?? false;
     }
 }

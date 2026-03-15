@@ -1,5 +1,4 @@
-﻿using BCnEncoder.Encoder;
-using BCnEncoder.Shared;
+﻿using DirectXTexNet;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -247,19 +246,31 @@ namespace TombLib.LevelData.Compilers.TombEngine
             }
         }
 
-        private byte[] GetCompressedTexture(ImageC i, CompressionFormat format)
+        private unsafe byte[] GetCompressedTexture(ImageC image, DXGI_FORMAT format)
         {
-            BcEncoder encoder = new BcEncoder();
+            byte[] pixelData = image.ToByteArray();
+            int slicePitch = image.Width * ImageC.PixelSize * image.Height;
 
-            encoder.OutputOptions.GenerateMipMaps = true;
-            encoder.OutputOptions.Quality = CompressionQuality.BestQuality;
-            encoder.OutputOptions.Format = format;
-            encoder.OutputOptions.FileFormat = OutputFileFormat.Dds;  
+            using var srcImage = TexHelper.Instance.Initialize2D(
+                DXGI_FORMAT.B8G8R8A8_UNORM, image.Width, image.Height, 1, 1, CP_FLAGS.NONE);
 
-            MemoryStream output = new MemoryStream();
-            encoder.EncodeToStream(i.ToByteArray(), i.Width, i.Height, PixelFormat.Bgra32, output);
+            fixed (byte* pData = pixelData)
+            {
+                var destImg = srcImage.GetImage(0);
+                Buffer.MemoryCopy(pData, (void*)destImg.Pixels, slicePitch, slicePitch);
+            }
 
-            return output.ToArray();    
+            using var mipChain = srcImage.GenerateMipMaps(
+                TEX_FILTER_FLAGS.DEFAULT, 0);
+
+            using var compressed = mipChain.Compress(
+                format, TEX_COMPRESS_FLAGS.PARALLEL, 0.5f);
+
+            using var ddsStream = compressed.SaveToDDSMemory(DDS_FLAGS.NONE);
+
+            byte[] result = new byte[ddsStream.Length];
+            ddsStream.Read(result, 0, result.Length);
+            return result;
         }
 
         void WriteTextureData(BinaryWriterEx writer)
@@ -278,17 +289,17 @@ namespace TombLib.LevelData.Compilers.TombEngine
 				writer.Write(atlas.Width);
 				writer.Write(atlas.Height);
 
-				WriteImageFast(writer, atlas, CompressionFormat.Bc3);
+				WriteImageFast(writer, atlas, DXGI_FORMAT.BC3_UNORM);
             }
 
             // Sky texture
             var sky = GetSkyTexture();
 			writer.Write(sky.Width);
 			writer.Write(sky.Height);
-			WriteImageFast(writer, sky, CompressionFormat.Bc3);
+			WriteImageFast(writer, sky, DXGI_FORMAT.BC3_UNORM);
 		}
 
-        void WriteImageFast(BinaryWriterEx writer, ImageC image, CompressionFormat compressionFormat)
+        void WriteImageFast(BinaryWriterEx writer, ImageC image, DXGI_FORMAT compressionFormat)
         {
 			var stream = writer.BaseStream;
 			long lenPos = stream.Position;
@@ -321,24 +332,24 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 writer.Write(atlas.ColorMap.Width);
                 writer.Write(atlas.ColorMap.Height);
 
-                WriteImageFast(writer, atlas.ColorMap, CompressionFormat.Bc3);
+                WriteImageFast(writer, atlas.ColorMap, DXGI_FORMAT.BC3_UNORM);
 
                 writer.Write(atlas.NormalMap is not null);
                 if (atlas.NormalMap is not null)
                 {
-                    WriteImageFast(writer, atlas.NormalMap.Value, CompressionFormat.Bc5);
+                    WriteImageFast(writer, atlas.NormalMap.Value, DXGI_FORMAT.BC5_UNORM);
                 }
 
                 writer.Write(atlas.ORSHMap is not null);
                 if (atlas.ORSHMap is not null)
                 {
-                    WriteImageFast(writer, atlas.ORSHMap.Value, CompressionFormat.Bc3);
+                    WriteImageFast(writer, atlas.ORSHMap.Value, DXGI_FORMAT.BC3_UNORM);
                 }
 
                 writer.Write(atlas.EmissiveMap is not null);
                 if (atlas.EmissiveMap is not null)
                 {
-                    WriteImageFast(writer, atlas.EmissiveMap.Value, CompressionFormat.Bc3);
+                    WriteImageFast(writer, atlas.EmissiveMap.Value, DXGI_FORMAT.BC3_UNORM);
                 }
             }
         }

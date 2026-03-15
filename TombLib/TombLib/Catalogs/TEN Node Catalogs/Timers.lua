@@ -1,9 +1,9 @@
 local Timer = require("Engine.Timer")
 local textOp = {[0] = "+", [1] = "-", [2] = "*", [3] = "/", [4] = "=", }
+local textCompareOp = {[0] = "equal to", [1] = "greater than", [2] = "less than", [3] = "greater than or equal to", [4] = "less than or equal to", [5] = "not equal to", }
 LevelVars.nodeTimers = {}
 
--- !Ignore
-LevelFuncs.Engine.Node.SetTimer = function (name, debug, alignment, effects, color, pColor, x, y, scale)
+local SetTimer = function (name, debug, alignment, effects, color, pColor, x, y, scale)
     Timer.Get(name):SetUnpausedColor(color)
     Timer.Get(name):SetPausedColor(pColor)
     Timer.Get(name):SetPosition(x,y)
@@ -12,17 +12,23 @@ LevelFuncs.Engine.Node.SetTimer = function (name, debug, alignment, effects, col
     LevelVars.nodeTimers[name] = {debug = debug}
 end
 
+local CreateStruct = function (name)
+    if not LevelVars.nodeTimers[name] then
+        LevelVars.nodeTimers[name] = {}
+    end
+end
+
 -- !Name "Create basic timer"
 -- !Conditional "False"
--- !Description "Creates a simple countdown.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Description "Creates a simple countdown.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
 -- !Section "Timer"
 -- !Arguments "NewLine, String, 57, [ NoMultiline ], Timer name"
--- !Arguments "Numerical, 30, [ 0 | 1000 | 1 | 0.1 | 1 ], The duration of the timer in seconds"
+-- !Arguments "Numerical, 30, [ 0 | 1000 | 2 | 0.1 | 1 ], The duration of the timer in seconds (internally rounded to the nearest game frame)"
 -- !Arguments "Boolean , 13, {false}, Loop"
 -- !Arguments "NewLine, Boolean, 25, {false}, Hours"
 -- !Arguments "Boolean, 25, {true}, Minutes"
 -- !Arguments "Boolean , 25, {true}, Seconds"
--- !Arguments "Boolean, 25, {true}, Deciseconds"
+-- !Arguments "Boolean, 25, {true}, Centiseconds"
 -- !Arguments "NewLine, Boolean , 47, {false}, Debug messages in console"
 -- !Arguments "Enumeration, 18, {1}, [ Left | Center | Right ], Horizontal alignment"
 -- !Arguments "Enumeration, 35, {1}, [ Flat | Shadow | Blinking | Shadow + Blinking ], Effects"
@@ -35,7 +41,7 @@ LevelFuncs.Engine.Node.CreateTimer = function(name, time, loop, hours, minutes, 
     if name ~= '' then
         local nodeTimerFormat = {hours = hours, minutes = minutes, seconds = seconds, deciseconds = deciseconds }
         Timer.Create(name, time, loop, nodeTimerFormat)
-        LevelFuncs.Engine.Node.SetTimer(name, debug, alignment, effects, color, pColor, x, y, scale)
+        SetTimer(name, debug, alignment, effects, color, pColor, x, y, scale)
         if LevelVars.nodeTimers[name].debug then
             TEN.Util.PrintLog("Timer '" .. name .. "' created successfully!", TEN.Util.LogLevel.INFO)
         end
@@ -46,15 +52,15 @@ end
 
 -- !Name "Create timer with function"
 -- !Conditional "False"
--- !Description "Creates a countdown which will execute a `LevelFuncs` lua function upon ending.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Description "Creates a countdown which will execute a `LevelFuncs` lua function upon ending.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
 -- !Section "Timer"
 -- !Arguments "NewLine, String, 57, [ NoMultiline ], Timer name"
--- !Arguments "Numerical, 30, [ 0 | 1000 | 1 | 0.1 | 1 ], The duration of the timer in seconds"
+-- !Arguments "Numerical, 30, [ 0 | 1000 | 2 | 0.1 | 1 ], The duration of the timer in seconds (internally rounded to the nearest game frame)"
 -- !Arguments "Boolean , 13, {false}, Loop"
 -- !Arguments "NewLine, Boolean, 25, {false}, Hours"
 -- !Arguments "Boolean, 25, {true}, Minutes"
 -- !Arguments "Boolean , 25, {true}, Seconds"
--- !Arguments "Boolean, 25, {true}, Deciseconds"
+-- !Arguments "Boolean, 25, {true}, Centiseconds"
 -- !Arguments "NewLine, Boolean , 47, {false}, Debug messages in console"
 -- !Arguments "Enumeration, 18, {1}, [ Left | Center | Right ], Horizontal alignment"
 -- !Arguments "Enumeration, 35, {1}, [ Flat | Shadow | Blinking | Shadow + Blinking ], Effects"
@@ -70,7 +76,7 @@ LevelFuncs.Engine.Node.CreateTimerWithFunction = function(name, time, loop, hour
         local nodeTimerFormat = {hours = hours, minutes = minutes, seconds = seconds, deciseconds = deciseconds }
         local argsTable = args ~= '' and table.unpack(LevelFuncs.Engine.Node.SplitString(args, ",")) or nil
         Timer.Create(name, time, loop, nodeTimerFormat, luaFunction, argsTable)
-        LevelFuncs.Engine.Node.SetTimer(name, debug, alignment, effects, color, pColor, x, y, scale)
+        SetTimer(name, debug, alignment, effects, color, pColor, x, y, scale)
         if LevelVars.nodeTimers[name].debug then
             TEN.Util.PrintLog("Timer with Function '" .. name .. "' created successfully!", TEN.Util.LogLevel.INFO)
         end
@@ -81,15 +87,15 @@ end
 
 -- !Name "Create timer with volume event set"
 -- !Conditional "False"
--- !Description "Creates a countdown that triggers a volume event set upon ending.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Description "Creates a countdown that triggers a volume event set upon ending.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
 -- !Section "Timer"
 -- !Arguments "NewLine, String, 57, [ NoMultiline ], Timer name"
--- !Arguments "Numerical, 30, [ 0 | 1000 | 1 | 0.1 | 1 ], The duration of the timer in seconds"
+-- !Arguments "Numerical, 30, [ 0 | 1000 | 2 | 0.1 | 1 ], The duration of the timer in seconds (internally rounded to the nearest game frame)"
 -- !Arguments "Boolean , 13, {false}, Loop"
 -- !Arguments "NewLine, Boolean, 25, {false}, Hours"
 -- !Arguments "Boolean, 25, {true}, Minutes"
 -- !Arguments "Boolean , 25, {true}, Seconds"
--- !Arguments "Boolean, 25, {true}, Deciseconds"
+-- !Arguments "Boolean, 25, {true}, Centiseconds"
 -- !Arguments "NewLine, Boolean , 47, {false}, Debug messages in console"
 -- !Arguments "Enumeration, 18, {1}, [ Left | Center | Right ], Horizontal alignment"
 -- !Arguments "Enumeration, 35, {1}, [ Flat | Shadow | Blinking | Shadow + Blinking ], Effects"
@@ -105,7 +111,7 @@ LevelFuncs.Engine.Node.CreateTimerWithEventSet = function(name, time, loop, hour
     if name ~= '' then
         local nodeTimerFormat = {hours = hours, minutes = minutes, seconds = seconds, deciseconds = deciseconds }
         Timer.Create(name, time, loop, nodeTimerFormat, LevelFuncs.Engine.Node.RunEventSet, setName, eventType, activator)
-        LevelFuncs.Engine.Node.SetTimer(name, debug, alignment, effects, color, pColor, x, y, scale)
+        SetTimer(name, debug, alignment, effects, color, pColor, x, y, scale)
         if LevelVars.nodeTimers[name].debug then
             TEN.Util.PrintLog("Timer with volume event set '" .. name .. "' created successfully", TEN.Util.LogLevel.INFO)
         end
@@ -116,15 +122,15 @@ end
 
 -- !Name "Create timer with global event set"
 -- !Conditional "False"
--- !Description "Creates a countdown that triggers a global event set upon ending.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Description "Creates a countdown that triggers a global event set upon ending.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
 -- !Section "Timer"
 -- !Arguments "NewLine, String, 57, [ NoMultiline ], Timer name"
--- !Arguments "Numerical, 30, [ 0 | 1000 | 1 | 0.1 | 1 ], The duration of the timer in seconds"
+-- !Arguments "Numerical, 30, [ 0 | 1000 | 2 | 0.1 | 1 ], The duration of the timer in seconds (internally rounded to the nearest game frame)"
 -- !Arguments "Boolean , 13, {false}, Loop"
 -- !Arguments "NewLine, Boolean, 25, {false}, Hours"
 -- !Arguments "Boolean, 25, {true}, Minutes"
 -- !Arguments "Boolean , 25, {true}, Seconds"
--- !Arguments "Boolean, 25, {true}, Deciseconds"
+-- !Arguments "Boolean, 25, {true}, Centiseconds"
 -- !Arguments "NewLine, Boolean , 47, {false}, Debug messages in console"
 -- !Arguments "Enumeration, 18, {1}, [ Left | Center | Right ], Horizontal alignment"
 -- !Arguments "Enumeration, 35, {1}, [ Flat | Shadow | Blinking | Shadow + Blinking ], Effects"
@@ -140,7 +146,7 @@ LevelFuncs.Engine.Node.CreateTimerWithGEventSet = function(name, time, loop, hou
     if name ~= '' then
         local nodeTimerFormat = {hours = hours, minutes = minutes, seconds = seconds, deciseconds = deciseconds }
         Timer.Create(name, time, loop, nodeTimerFormat, LevelFuncs.Engine.Node.RunGlobalEventSet, setName, eventType, activator)
-        LevelFuncs.Engine.Node.SetTimer(name, debug, alignment, effects, color, pColor, x, y, scale)
+        SetTimer(name, debug, alignment, effects, color, pColor, x, y, scale)
         if LevelVars.nodeTimers[name].debug then
             TEN.Util.PrintLog("Timer with global event set '" .. name .. "' created successfully", TEN.Util.LogLevel.INFO)
         end
@@ -151,7 +157,7 @@ end
 
 -- !Name "Start timer"
 -- !Conditional "False"
--- !Description "Begins or resumes a timer.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Description "Begins or resumes a timer.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
 -- !Section "Timer"
 -- !Arguments "NewLine, String, [ NoMultiline ], Timer name"
 -- !Arguments "NewLine, Boolean , Reset timer when expired"
@@ -163,6 +169,7 @@ LevelFuncs.Engine.Node.StartTimer = function(name, reset)
             else
                 Timer.Get(name):Start(reset)
             end
+            CreateStruct(name)
             if LevelVars.nodeTimers[name].debug then
                 TEN.Util.PrintLog("Timer '" .. name .. "' has started", TEN.Util.LogLevel.INFO)
             end
@@ -176,13 +183,14 @@ end
 
 -- !Name "Stop timer"
 -- !Conditional "False"
--- !Description "Stops a timer.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Description "Stops a timer.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
 -- !Section "Timer"
 -- !Arguments "NewLine, String, [ NoMultiline ], Timer name"
 LevelFuncs.Engine.Node.StopTimer = function(name)
     if name ~= '' then
         if Timer.IfExists(name) then
             Timer.Get(name):Stop()
+            CreateStruct(name)
             if LevelVars.nodeTimers[name].debug then
                 TEN.Util.PrintLog("Timer '" .. name .. "' has been stopped", TEN.Util.LogLevel.INFO)
             end
@@ -196,13 +204,14 @@ end
 
 -- !Name "Pause timer"
 -- !Conditional "False"
--- !Description "Pauses a timer.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Description "Pauses a timer.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
 -- !Section "Timer"
 -- !Arguments "NewLine, String, 100, [ NoMultiline ], Timer name"
 LevelFuncs.Engine.Node.SetPausedTimer = function(name)
     if name ~= '' then
         if Timer.IfExists(name) then
             Timer.Get(name):SetPaused(true)
+            CreateStruct(name)
             if LevelVars.nodeTimers[name].debug then
                 TEN.Util.PrintLog("Timer '" .. name .. "' has been paused", TEN.Util.LogLevel.INFO)
             end
@@ -216,11 +225,11 @@ end
 
 -- !Name "Modify remaining time"
 -- !Conditional "False"
--- !Description "Changes the remaining time value (in seconds) of a specific timer.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Description "Changes the remaining time value (in seconds) of a specific timer.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
 -- !Section "Timer"
 -- !Arguments "NewLine, String, 70, [ NoMultiline ], Timer name"
 -- !Arguments "Enumeration, 10, [ + | - | * | / | = ], {4}, Mathematical operation to perform"
--- !Arguments "Numerical, 20, [ 0 | 65535 | 1 | 0.1 | 1 ], New time remaining (in seconds)"
+-- !Arguments "Numerical, 20, [ 0 | 1000 | 2 | 0.1 | 1 ], New time remaining in seconds (internally rounded to the nearest game frame)"
 LevelFuncs.Engine.Node.SetRemainingTime = function(name, operator, remainingTime)
     if name ~= '' then
         if Timer.IfExists(name) then
@@ -230,6 +239,7 @@ LevelFuncs.Engine.Node.SetRemainingTime = function(name, operator, remainingTime
                 local value = Timer.Get(name):GetRemainingTimeInSeconds()
                 Timer.Get(name):SetRemainingTime(LevelFuncs.Engine.Node.ModifyValue(remainingTime, value, operator))
             end
+            CreateStruct(name)
             if LevelVars.nodeTimers[name].debug then
                 TEN.Util.PrintLog("Set remaining time of '" .. name .. "' timer " .. textOp[operator] .. remainingTime .. ". Remaining time : " .. Timer.Get(name):GetRemainingTimeInSeconds(), TEN.Util.LogLevel.INFO)
             end
@@ -243,11 +253,11 @@ end
 
 -- !Name "Modify total time"
 -- !Conditional "False"
--- !Description "Changes the total duration value (in seconds) of a specific timer.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Description "Changes the total duration value (in seconds) of a specific timer.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
 -- !Section "Timer"
 -- !Arguments "NewLine, String, 70, [ NoMultiline ], Timer name"
 -- !Arguments "Enumeration, 10, [ + | - | * | / | = ], {4}, Mathematical operation to perform"
--- !Arguments "Numerical, 20, [ 0 | 1000 | 1 | 0.1 | 1 ], New total time (in seconds)"
+-- !Arguments "Numerical, 20, [ 0 | 1000 | 2 | 0.1 | 1 ], New total time in seconds (internally rounded to the nearest game frame)"
 LevelFuncs.Engine.Node.SetTotalTime = function(name, operator, totalTime)
     if name ~= '' then
         if Timer.IfExists(name) then
@@ -257,6 +267,7 @@ LevelFuncs.Engine.Node.SetTotalTime = function(name, operator, totalTime)
                 local value = Timer.Get(name):GetTotalTimeInSeconds()
                 Timer.Get(name):SetTotalTime(LevelFuncs.Engine.Node.ModifyValue(totalTime, value, operator))
             end
+            CreateStruct(name)
             if LevelVars.nodeTimers[name].debug then
                 TEN.Util.PrintLog("Set total time of '" .. name .. "' timer " .. textOp[operator] .. totalTime .. ". Total time : " .. Timer.Get(name):GetTotalTimeInSeconds(), TEN.Util.LogLevel.INFO)
             end
@@ -270,7 +281,7 @@ end
 
 -- !Name "Set timer loop"
 -- !Conditional "False"
--- !Description "Sets an existing timer as looped or one shot.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Description "Sets an existing timer as looped or one shot.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
 -- !Section "Timer"
 -- !Arguments "NewLine, String, 67, [ NoMultiline ], Timer name"
 -- !Arguments "Enumeration, 33, [ One shot | Looped ], Set timer as"
@@ -279,6 +290,7 @@ LevelFuncs.Engine.Node.SetLooping = function(name, looping)
         if Timer.IfExists(name) then
             local state = (looping == 1) and true or false
             Timer.Get(name):SetLooping(state)
+            CreateStruct(name)
             if LevelVars.nodeTimers[name].debug then
                 TEN.Util.PrintLog("Timer '" .. name .. "' loop: " .. tostring(state), TEN.Util.LogLevel.INFO)
             end
@@ -292,15 +304,16 @@ end
 
 -- !Name "Set timer color"
 -- !Conditional "False"
--- !Description "Sets colours for timer.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Description "Sets colours for timer.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
 -- !Section "Timer"
 -- !Arguments "NewLine, String, 76, [ NoMultiline ], Timer name"
--- !Arguments "Color, 10, {TEN.Color(255, 255, 255)}, Timer's color
--- !Arguments "Numerical, 14, {1}, [ 0 | 1 | 2 | 0.1 ], Color transparency'"
+-- !Arguments "Color, 10, {TEN.Color(255, 255, 255)}, Timer's color"
+-- !Arguments "Numerical, 14, {1}, [ 0 | 1 | 2 | 0.1 ], Color transparency"
 LevelFuncs.Engine.Node.SetTimerColor = function (name, color, tColor)
     if name ~= '' then
         if Timer.IfExists(name) then
-            Timer.Get(name):SetUnpausedColor(TEN.Color(color.r, color.g, color.b, (255 * tColor)))
+            color.a = (255 * tColor)
+            Timer.Get(name):SetUnpausedColor(color)
         else
             TEN.Util.PrintLog("Timer '" .. name .. "' does not exist", TEN.Util.LogLevel.ERROR)
         end
@@ -311,7 +324,7 @@ end
 
 -- !Name "Set timer paused color"
 -- !Conditional "False"
--- !Description "Sets colours for timer.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Description "Sets colours for timer.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
 -- !Section "Timer"
 -- !Arguments "NewLine, String, 76, [ NoMultiline ], Timer name"
 -- !Arguments "Color, 10, {TEN.Color(255, 255, 0)}, Timer's paused color"
@@ -319,7 +332,8 @@ end
 LevelFuncs.Engine.Node.SetTimerPauseColor = function (name, pausedColor, tPausedColor)
     if name ~= '' then
         if Timer.IfExists(name) then
-            Timer.Get(name):SetPausedColor(TEN.Color(pausedColor.r, pausedColor.g, pausedColor.b, (255 * tPausedColor)))
+            pausedColor.a = (255 * tPausedColor)
+            Timer.Get(name):SetPausedColor(pausedColor)
         else
             TEN.Util.PrintLog("Timer '" .. name .. "' does not exist", TEN.Util.LogLevel.ERROR)
         end
@@ -330,7 +344,7 @@ end
 
 -- !Name "Modify timer position"
 -- !Conditional "False"
--- !Description "sets the position of the timer.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Description "sets the position of the timer.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
 -- !Section "Timer"
 -- !Arguments "NewLine, String, 100, [ NoMultiline ], Timer name"
 -- !Arguments "NewLine, Enumeration, 10, [ + | - | * | / | = ], {4}, Mathematical operation to perform for X"
@@ -364,7 +378,7 @@ end
 
 -- !Name "Modify timer scale"
 -- !Conditional "False"
--- !Description "Sets the scale of the timer.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Description "Sets the scale of the timer.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
 -- !Section "Timer"
 -- !Arguments "NewLine, String, 70, [ NoMultiline ], Timer name"
 -- !Arguments "Enumeration, 10, [ + | - | * | / | = ], {4}, Mathematical operation to perform"
@@ -396,9 +410,7 @@ end
 LevelFuncs.Engine.Node.GetRemainingTime = function(name)
     if name ~= '' then
         if Timer.IfExists(name) then
-            if Timer.Get(name):IsTicking() then
-                TEN.Util.PrintLog("Timer '" .. name .. "' remaining time: " .. tostring(Timer.Get(name):GetRemainingTimeInSeconds()), TEN.Util.LogLevel.INFO, true)
-            end
+            TEN.Util.PrintLog("Timer '" .. name .. "' remaining time: " .. tostring(Timer.Get(name):GetRemainingTimeInSeconds()), TEN.Util.LogLevel.INFO, true)
         else
             TEN.Util.PrintLog("Timer '" .. name .. "' does not exist", TEN.Util.LogLevel.ERROR)
         end
@@ -415,9 +427,7 @@ end
 LevelFuncs.Engine.Node.GetTotalTime = function(name)
     if name ~= '' then
         if Timer.IfExists(name) then
-            if Timer.Get(name):IsTicking() then
-                TEN.Util.PrintLog("Timer '" .. name .. "' total time: " .. Timer.Get(name):GetTotalTimeInSeconds(), TEN.Util.LogLevel.INFO, true)
-            end
+            TEN.Util.PrintLog("Timer '" .. name .. "' total time: " .. Timer.Get(name):GetTotalTimeInSeconds(), TEN.Util.LogLevel.INFO, true)
         else
             TEN.Util.PrintLog("Timer '" .. name .. "' does not exist", TEN.Util.LogLevel.ERROR)
         end
@@ -483,16 +493,19 @@ end
 -- !Section "Timer"
 -- !Arguments "NewLine, String, 50, [ NoMultiline ], Timer name"
 -- !Arguments "CompareOperator, 30"
--- !Arguments "Numerical, 20, [ 0 | 1000 | 1 | 0.1 | 1 ], Remaining time (in seconds)"
+-- !Arguments "Numerical, 20, [ 0 | 1000 | 2 | 0.1 | 1 ], Remaining time in seconds (internally rounded to the nearest game frame)"
 LevelFuncs.Engine.Node.IfRemainingTimeIs = function(name, operator, value)
     if name ~= '' then
         if Timer.IfExists(name) then
-            if Timer.Get(name):IsActive() and Timer.Get(name):IsTicking() then
-                local remainingTime = Timer.Get(name):GetRemainingTimeInSeconds()
-                local floatValue = value + 0.0
-                local result = Timer.Get(name):IfRemainingTimeIs(operator, floatValue)
+            local timer = Timer.Get(name)
+            if timer:IsActive() then
+                local result
+                result = timer:IfRemainingTimeIs(operator, value)
+                CreateStruct(name)
                 if LevelVars.nodeTimers[name].debug then
-                    TEN.Util.PrintLog("If the remaining time is "..  floatValue .. ". Remaining time: " .. remainingTime .. ". Result: " .. tostring(result), TEN.Util.LogLevel.INFO, true)
+                    local floatValue = value + 0.00
+                    local remainingTime = timer:GetRemainingTimeInSeconds()
+                    TEN.Util.PrintLog("If the remaining time (".. remainingTime ..") is " .. textCompareOp[operator] .. " " ..  floatValue .. ". Result: " .. tostring(result), TEN.Util.LogLevel.INFO, true)
                 end
                 return result
             end
@@ -510,11 +523,17 @@ end
 -- !Section "Timer"
 -- !Arguments "NewLine, String, 50, [ NoMultiline ], Timer name"
 -- !Arguments "CompareOperator, 30"
--- !Arguments "Numerical, 20, [ 0 | 1000 | 1 | 0.1 | 1 ], Total Time (in seconds)"
+-- !Arguments "Numerical, 20, [ 0 | 1000 | 2 | 0.1 | 1 ], Total time in seconds (internally rounded to the nearest game frame)"
 LevelFuncs.Engine.Node.IfTotalTimeIs = function(name, operator, time)
     if name ~= '' then
         if Timer.IfExists(name) then
-            return Timer.Get(name):IfTotalTimeIs(operator, (time + 0.0))
+            local result = Timer.Get(name):IfTotalTimeIs(operator, time)
+            CreateStruct(name)
+            if LevelVars.nodeTimers[name].debug then
+                local totalTime = Timer.Get(name):GetTotalTimeInSeconds()
+                TEN.Util.PrintLog("If the total time (".. totalTime ..") is " .. textCompareOp[operator] .. " " ..  (time + 0.0) .. ". Result: " .. tostring(result), TEN.Util.LogLevel.INFO, true)
+            end
+            return result
         else
             TEN.Util.PrintLog("Timer '" .. name .. "' does not exist", TEN.Util.LogLevel.ERROR)
         end

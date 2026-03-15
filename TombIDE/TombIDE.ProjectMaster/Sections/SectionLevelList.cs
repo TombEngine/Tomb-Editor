@@ -6,17 +6,18 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
+using TombIDE.ProjectMaster.Services.LevelCompile;
 using TombIDE.Shared;
 using TombIDE.Shared.NewStructure;
 using TombIDE.Shared.SharedClasses;
 using TombIDE.Shared.SharedForms;
-using TombLib.LevelData;
 
 namespace TombIDE.ProjectMaster
 {
 	public partial class SectionLevelList : UserControl
 	{
-		private IDE _ide;
+		private IDE _ide = null!;
+		private ILevelCompileService _levelCompileService = null!;
 
 		#region Initialization
 
@@ -25,9 +26,10 @@ namespace TombIDE.ProjectMaster
 			InitializeComponent();
 		}
 
-		public void Initialize(IDE ide)
+		public void Initialize(IDE ide, ILevelCompileService levelCompileService)
 		{
 			_ide = ide;
+			_levelCompileService = levelCompileService;
 			_ide.IDEEventRaised += OnIDEEventRaised;
 
 			FillLevelList(); // With levels taken from the .trproj file (current _ide.Project)
@@ -118,8 +120,8 @@ namespace TombIDE.ProjectMaster
 			ReserializeTRPROJ();
 		}
 
-		private void button_OpenInExplorer_Click(object sender, EventArgs e) =>
-			SharedMethods.OpenInExplorer(((ILevelProject)treeView.SelectedNodes[0].Tag).DirectoryPath);
+		private void button_OpenInExplorer_Click(object sender, EventArgs e)
+			=> SharedMethods.OpenInExplorer(((ILevelProject)treeView.SelectedNodes[0].Tag).DirectoryPath);
 
 		private void button_Refresh_Click(object sender, EventArgs e) => RefreshLevelList();
 
@@ -166,7 +168,7 @@ namespace TombIDE.ProjectMaster
 		{
 			using var form = new FormLevelSetup(_ide.Project);
 
-			if (form.ShowDialog(this) == DialogResult.OK)
+			if (form.ShowDialog(this) == DialogResult.OK && form.CreatedLevel is not null)
 				OnLevelAdded(form.CreatedLevel, form.GeneratedScriptLines);
 		}
 
@@ -393,29 +395,7 @@ namespace TombIDE.ProjectMaster
 			if (!IsValidLevel(_ide.SelectedLevel))
 				return;
 
-			var batchList = new BatchCompileList();
-
-			string prj2Path;
-
-			if (_ide.SelectedLevel.TargetPrj2FileName is null)
-				prj2Path = Path.Combine(_ide.SelectedLevel.DirectoryPath, _ide.SelectedLevel.GetMostRecentlyModifiedPrj2FileName());
-			else
-				prj2Path = Path.Combine(_ide.SelectedLevel.DirectoryPath, _ide.SelectedLevel.TargetPrj2FileName);
-
-			batchList.Files.Add(prj2Path);
-
-			string batchListFilePath = Path.Combine(Path.GetTempPath(), "tide_batch.xml");
-			BatchCompileList.SaveToXml(batchListFilePath, batchList);
-
-			var startInfo = new ProcessStartInfo
-			{
-				FileName = Path.Combine(DefaultPaths.ProgramDirectory, "TombEditor.exe"),
-				Arguments = "\"" + batchListFilePath + "\"",
-				WorkingDirectory = DefaultPaths.ProgramDirectory,
-				UseShellExecute = true
-			};
-
-			Process.Start(startInfo);
+			_levelCompileService.RebuildLevel(_ide.SelectedLevel);
 		}
 
 		private bool IsValidLevel(ILevelProject level)

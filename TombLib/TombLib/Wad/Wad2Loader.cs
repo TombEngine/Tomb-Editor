@@ -25,7 +25,14 @@ namespace TombLib.Wad
                 var xmlFile = Path.ChangeExtension(fileName, "xml");
                 if (File.Exists(xmlFile))
                 {
-                    result.Sounds = WadSounds.ReadFromFile(xmlFile);
+                    try
+                    {
+                        result.Sounds = WadSounds.ReadFromFile(xmlFile);
+                    }
+                    catch
+                    {
+                        // Xml file is not a sound catalog (possibly material xml).
+                    }
                 }
             }
 
@@ -133,15 +140,15 @@ namespace TombLib.Wad
                         {
                             set.UvRotate = chunkIO.ReadChunkInt(chunkSize3);
                         }
-						else if (id3 == Wad2Chunks.AnimatedTextureSetTenUvRotateDirection)
-						{
-							set.TenUvRotateDirection = chunkIO.ReadChunkFloat(chunkSize3);
-						}
-						else if (id3 == Wad2Chunks.AnimatedTextureSetTenUvRotateSpeed)
-						{
-							set.TenUvRotateSpeed = chunkIO.ReadChunkFloat(chunkSize3);
-						}
-						else if (id3 == Wad2Chunks.AnimatedTextureFrames)
+                        else if (id3 == Wad2Chunks.AnimatedTextureSetTenUvRotateDirection)
+                        {
+                            set.TenUvRotateDirection = chunkIO.ReadChunkFloat(chunkSize3);
+                        }
+                        else if (id3 == Wad2Chunks.AnimatedTextureSetTenUvRotateSpeed)
+                        {
+                            set.TenUvRotateSpeed = chunkIO.ReadChunkFloat(chunkSize3);
+                        }
+                        else if (id3 == Wad2Chunks.AnimatedTextureFrames)
                         {
                             var frames = new List<AnimatedTextureFrame>();
                             chunkIO.ReadChunks((id4, chunkSize4) =>
@@ -231,35 +238,37 @@ namespace TombLib.Wad
                         obsoleteIndex = chunkIO.ReadChunkLong(chunkSize2);
                     else if (id2 == Wad2Chunks.TextureName)
                         name = chunkIO.ReadChunkString(chunkSize2);
-					else if (id2 == Wad2Chunks.TextureRelativePath)
-						relativePath = chunkIO.ReadChunkString(chunkSize2);
-					else if (id2 == Wad2Chunks.TextureData)
+                    else if (id2 == Wad2Chunks.TextureRelativePath)
+                        relativePath = chunkIO.ReadChunkString(chunkSize2);
+                    else if (id2 == Wad2Chunks.TextureData)
                         textureData = chunkIO.ReadChunkArrayOfBytes(chunkSize2);
                     else
                         return false;
                     return true;
                 });
 
-				// NOTE: we'll always have data there, but it should be loaded 
-				// only if RelativePath is null or empty, meaning that this is 
-				// an embedded texture.
+                // NOTE: we'll always have data there, but it should be loaded 
+                // only if RelativePath is null or empty, meaning that this is 
+                // an embedded texture.
 
-				var texture = ImageC.Magenta;
-				string absolutePath = null;
+                var texture = ImageC.Magenta;
+                string absolutePath = null;
                 bool textureLoaded = false;
 
                 if (!string.IsNullOrEmpty(relativePath))
                 {
-                    absolutePath = Path.GetFullPath(PathC.IsTrulyAbsolutePath(name) ? name : Path.Combine(Path.GetDirectoryName(wad.FileName), name));
+                    bool absPathExists = PathC.IsTrulyAbsolutePath(name) && File.Exists(name);
+                    absolutePath = Path.GetFullPath(absPathExists ? name : Path.Combine(Path.GetDirectoryName(wad.FileName), relativePath));
+
                     try
                     {
                         texture = ImageC.FromFile(absolutePath);
-						textureLoaded = true;
-					}
+                        textureLoaded = true;
+                    }
                     catch (Exception ex)
                     {
-					}
-				}
+                    }
+                }
 
                 // At this point, if the texture is embedded or if external but an error occurred,
                 // we fallback using the data stored inside the Wad2 file.
@@ -271,11 +280,11 @@ namespace TombLib.Wad
                     textureLoaded = true;
                 }
 
-				texture.ReplaceColor(new ColorC(255, 0, 255, 255), new ColorC(0, 0, 0, 0));
-				texture.FileName = name;
+                texture.ReplaceColor(new ColorC(255, 0, 255, 255), new ColorC(0, 0, 0, 0));
+                texture.FileName = name;
 
-				var wadTexture = new WadTexture(texture);
-				wadTexture.AbsolutePath = absolutePath;
+                var wadTexture = new WadTexture(texture);
+                wadTexture.AbsolutePath = absolutePath;
                 textures.Add(obsoleteIndex++, wadTexture);
 
                 return true;

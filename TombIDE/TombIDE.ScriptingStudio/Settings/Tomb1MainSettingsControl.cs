@@ -43,7 +43,7 @@ namespace TombIDE.ScriptingStudio.Settings
 
 		private void InitializePreview()
 		{
-			editorPreview = new Tomb1MainEditor(new Version(0, 0), false)
+			editorPreview = new Tomb1MainEditor(new Version(0, 0))
 			{
 				Text =
 					"\"levels\": [\n" +

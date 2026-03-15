@@ -8,7 +8,7 @@ namespace TombLib.Types
     {
         private const int CONTROL_POINT_COUNT = 4;
 
-        private readonly Vector2[] _controlPoints = new Vector2[CONTROL_POINT_COUNT];
+        private Vector2[] _controlPoints = new Vector2[CONTROL_POINT_COUNT];
 
         public Vector2 Start
         {
@@ -59,9 +59,13 @@ namespace TombLib.Types
         }
 
         public static readonly BezierCurve2 Linear = new BezierCurve2(Vector2.Zero, Vector2.One, Vector2.Zero, Vector2.One);
-        public static readonly BezierCurve2 EaseIn = new BezierCurve2(Vector2.Zero, Vector2.One, new Vector2(0.25f, 0.0f), Vector2.One);
-        public static readonly BezierCurve2 EaseOut = new BezierCurve2(Vector2.Zero, Vector2.One, Vector2.Zero, new Vector2(0.75f, 1.0f));
-        public static readonly BezierCurve2 EaseInOut = new BezierCurve2(Vector2.Zero, Vector2.One, new Vector2(0.25f, 0.0f), new Vector2(0.75f, 1.0f));
+        public static readonly BezierCurve2 EaseIn = new BezierCurve2(Vector2.Zero, Vector2.One, new Vector2(0.5f, 0.0f), Vector2.One);
+        public static readonly BezierCurve2 EaseOut = new BezierCurve2(Vector2.Zero, Vector2.One, Vector2.Zero, new Vector2(0.5f, 1.0f));
+        public static readonly BezierCurve2 EaseInOut = new BezierCurve2(Vector2.Zero, Vector2.One, new Vector2(0.5f, 0.0f), new Vector2(0.5f, 1.0f));
+
+        public BezierCurve2()
+        {
+        }
 
         public BezierCurve2(Vector2 start, Vector2 end, Vector2 startHandle, Vector2 endHandle)
         {

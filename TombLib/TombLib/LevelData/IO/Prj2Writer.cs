@@ -173,6 +173,7 @@ namespace TombLib.LevelData.IO
                 chunkIO.WriteChunkBool(Prj2Chunks.Dither16BitTextures, settings.Dither16BitTextures);
                 chunkIO.WriteChunkBool(Prj2Chunks.AgressiveTexturePacking, settings.AgressiveTexturePacking);
                 chunkIO.WriteChunkBool(Prj2Chunks.TextureCompression, settings.CompressTextures);
+                chunkIO.WriteChunkInt(Prj2Chunks.TrxTextureBitDepth, (int)settings.TrxTextureBitDepth);
                 chunkIO.WriteChunkBool(Prj2Chunks.AgressiveFloordataPacking, settings.AgressiveFloordataPacking);
                 chunkIO.WriteChunkVector3(Prj2Chunks.DefaultAmbientLight, settings.DefaultAmbientLight);
                 chunkIO.WriteChunkInt(Prj2Chunks.DefaultLightQuality, (long)settings.DefaultLightQuality);
@@ -391,6 +392,15 @@ namespace TombLib.LevelData.IO
                         chunkIO.Raw.Write(color.B);
                     }
                 }
+                if (settings.Favorites.Count > 0)
+                {
+                    using (var chunkFavorites = chunkIO.WriteChunk(Prj2Chunks.Favorites, long.MaxValue))
+                    {
+                        foreach (string favorite in settings.Favorites)
+                            chunkIO.WriteChunkString(Prj2Chunks.Favorite, favorite);
+                        chunkIO.WriteChunkEnd();
+                    }
+                }
                 chunkIO.WriteChunkEnd();
             }
 
@@ -506,6 +516,7 @@ namespace TombLib.LevelData.IO
                         // Write room properties
                         chunkIO.WriteChunkVector3(Prj2Chunks.RoomAmbientLight, room.Properties.AmbientLight);
                         chunkIO.WriteChunkBool(Prj2Chunks.RoomFlagCold, room.Properties.FlagCold);
+                        chunkIO.WriteChunkBool(Prj2Chunks.RoomFlagNoCaustics, room.Properties.FlagNoCaustics);
                         chunkIO.WriteChunkBool(Prj2Chunks.RoomFlagDamage, room.Properties.FlagDamage);
                         chunkIO.WriteChunkBool(Prj2Chunks.RoomFlagHorizon, room.Properties.FlagHorizon);
                         chunkIO.WriteChunkBool(Prj2Chunks.RoomFlagOutside, room.Properties.FlagOutside);

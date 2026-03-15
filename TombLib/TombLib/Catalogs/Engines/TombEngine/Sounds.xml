@@ -1,7 +1,6 @@
 <sounds max="8192">
 
 		<!-- TR4 Sounds -->
-		
 			<sound id="0" name="TR4_LARA_FOOTSTEPS" ten="0" />
 			<sound id="1" name="TR4_LARA_CLIMB2" ten="1" />
 			<sound id="2" name="TR4_LARA_NO_ENGLISH" ten="2" />
@@ -473,7 +472,7 @@
 			<sound id="465" name="TR1_NM_CONVEYOR_BELT" ten="465" />
 			<sound id="466" name="TR1_NM_HUT_LOWERED" ten="466" />
 			<sound id="467" name="TR1_NM_HUT_HIT_GROUND" ten="467" />
-			<sound id="468" name="TR1_EMPTY" ten="468" />
+			<sound id="468" name="TR1_KOLD_DEATH" ten="468" />
 			<sound id="469" name="TR1_METAL_DOOR_OPEN" ten="469" />
 			<sound id="470" name="TR1_METAL_DOOR_CLOSE" ten="470" />
 			<sound id="471" name="TR1_PIERRE_DEATH" ten="471" />
@@ -481,6 +480,14 @@
 			<sound id="473" name="TR1_PIERRE_MAGNUM_FIRE" ten="473" />
 			<sound id="1143" name="TR1_SLAMDOOR_OPEN" ten="1143" />
 			<sound id="1144" name="TR1_SLAMDOOR_CLOSE" ten="1144" />
+			<sound id="1147" name="TR1_COWBOY_DEATH" ten="1147" />
+			<sound id="1148" name="TR1_NATLA_DEATH" ten="1148" />
+			<sound id="1149" name="TR1_NATLA_SPEECH" ten="1149" />
+			<sound id="1196" name="TR1_LARSON_SPEECH" ten="1196" />
+			<sound id="1197" name="TR1_KOLD_SPEECH" ten="1197" />
+			<sound id="1198" name="TR1_COWBOY_SPEECH" ten="1198" />
+			<sound id="1199" name="TR1_SKATEBOARDKID_SPEECH" ten="1199" />
+			
 			
 		<!-- TR2 Sounds -->	
 		

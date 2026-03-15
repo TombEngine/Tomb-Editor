@@ -170,6 +170,9 @@
             this.panelTr5LaraType = new System.Windows.Forms.Panel();
             this.comboLaraType = new DarkUI.Controls.DarkComboBox();
             this.lblLaraType = new DarkUI.Controls.DarkLabel();
+            this.tabTrx = new System.Windows.Forms.TabPage();
+            this.comboTrxTextureDepth = new DarkUI.Controls.DarkComboBox();
+            this.lblTrxTextureDepth = new DarkUI.Controls.DarkLabel();
             this.panel6 = new System.Windows.Forms.Panel();
             this.levelFilePathBut = new DarkUI.Controls.DarkButton();
             this.darkLabel6 = new DarkUI.Controls.DarkLabel();
@@ -224,6 +227,7 @@
             this.tabMisc.SuspendLayout();
             this.panelTr5Weather.SuspendLayout();
             this.panelTr5LaraType.SuspendLayout();
+            this.tabTrx.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel12.SuspendLayout();
             this.tabPaths.SuspendLayout();
@@ -2012,6 +2016,37 @@
             this.lblLaraType.TabIndex = 3;
             this.lblLaraType.Text = "TR5 Lara type:";
             // 
+            // tabTrx
+            // 
+            this.tabTrx.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.tabTrx.Controls.Add(this.comboTrxTextureDepth);
+            this.tabTrx.Controls.Add(this.lblTrxTextureDepth);
+            this.tabTrx.Location = new System.Drawing.Point(4, 22);
+            this.tabTrx.Name = "tabTrx";
+            this.tabTrx.Size = new System.Drawing.Size(778, 505);
+            this.tabTrx.TabIndex = 11;
+            this.tabTrx.Text = "TRX";
+            // 
+            // comboTrxTextureDepth
+            // 
+            this.comboTrxTextureDepth.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboTrxTextureDepth.FormattingEnabled = true;
+            this.comboTrxTextureDepth.Location = new System.Drawing.Point(129, 10);
+            this.comboTrxTextureDepth.Name = "comboTrxTextureDepth";
+            this.comboTrxTextureDepth.Size = new System.Drawing.Size(81, 23);
+            this.comboTrxTextureDepth.TabIndex = 4;
+            this.comboTrxTextureDepth.SelectedIndexChanged += new System.EventHandler(this.comboTrxTextureDepth_SelectedIndexChanged);
+            // 
+            // lblTrxTextureDepth
+            // 
+            this.lblTrxTextureDepth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.lblTrxTextureDepth.Location = new System.Drawing.Point(0, 15);
+            this.lblTrxTextureDepth.Name = "lblTrxTextureDepth";
+            this.lblTrxTextureDepth.Size = new System.Drawing.Size(123, 17);
+            this.lblTrxTextureDepth.TabIndex = 3;
+            this.lblTrxTextureDepth.Text = "Texture depth:";
+            // 
             // panel6
             // 
             this.panel6.Controls.Add(this.levelFilePathBut);
@@ -2304,6 +2339,7 @@
             this.tabMisc.ResumeLayout(false);
             this.panelTr5Weather.ResumeLayout(false);
             this.panelTr5LaraType.ResumeLayout(false);
+            this.tabTrx.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
             this.panel12.ResumeLayout(false);
@@ -2393,6 +2429,9 @@
         private DarkUI.Controls.DarkTextBox levelFilePathTxt;
         private DarkUI.Controls.DarkDataGridView textureFileDataGridView;
         private DarkUI.Controls.DarkLabel darkLabel4;
+        private System.Windows.Forms.TabPage tabTrx;
+        private DarkUI.Controls.DarkComboBox comboTrxTextureDepth;
+        private DarkUI.Controls.DarkLabel lblTrxTextureDepth;
         private TombLib.Controls.DarkDataGridViewControls textureFileDataGridViewControls;
         private System.Windows.Forms.DataGridViewTextBoxColumn objectFileDataGridViewPathColumn;
         private DarkUI.Controls.DarkDataGridViewButtonColumn objectFileDataGridViewSearchColumn;

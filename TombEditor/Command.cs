@@ -180,6 +180,11 @@ namespace TombEditor
                 args.Editor.Mode = EditorMode.Lighting;
             });
 
+            AddCommand("SwitchObjectPlacementMode", "Switch to Object Placement mode", CommandType.General, delegate (CommandArgs args)
+            {
+                args.Editor.Mode = EditorMode.ObjectPlacement;
+            });
+
             AddCommand("ResetCamera", "Reset camera position", CommandType.View, delegate (CommandArgs args)
             {
                 args.Editor.ResetCamera();
@@ -819,7 +824,8 @@ namespace TombEditor
                     }
                 }
 
-                EditorActions.DeleteRooms(args.Editor.SelectedRooms, args.Window);
+                if (args.Editor.Mode == EditorMode.Map2D)
+                    EditorActions.DeleteRooms(args.Editor.SelectedRooms, args.Window);
             });
 
             AddCommand("DeleteMissingObjects", "Delete missing objects", CommandType.Edit, delegate (CommandArgs args)
@@ -1174,7 +1180,7 @@ namespace TombEditor
 
             AddCommand("AddImportedGeometry", "Add imported geometry", CommandType.Objects, delegate (CommandArgs args)
             {
-                args.Editor.Action = new EditorActionPlace(false, (l, r) => new ImportedGeometryInstance() { Model = args.Editor.ChosenImportedGeometry });
+                args.Editor.Action = new EditorActionPlace(false, (l, r) => new ImportedGeometryInstance() { Model = args.Editor.ChosenItems.OfType<ImportedGeometry>().FirstOrDefault() });
             });
 
             AddCommand("AddBoxVolumeInSelectedArea", "Add box volume in selected area", CommandType.Objects, delegate (CommandArgs args)
@@ -1679,6 +1685,7 @@ namespace TombEditor
             AddCommand("ShowRoomOptions", "Show room options", CommandType.Windows, (CommandArgs args) => args.Editor.ToggleToolWindow(typeof(RoomOptions)));
             AddCommand("ShowItemBrowser", "Show item browser", CommandType.Windows, (CommandArgs args) => args.Editor.ToggleToolWindow(typeof(ItemBrowser)));
             AddCommand("ShowImportedGeometryBrowser", "Show imported geometry browser", CommandType.Windows, (CommandArgs args) => args.Editor.ToggleToolWindow(typeof(ImportedGeometryBrowser)));
+            AddCommand("ShowContentBrowser", "Show content browser", CommandType.Windows, (CommandArgs args) => args.Editor.ToggleToolWindow(typeof(ContentBrowser)));
             AddCommand("ShowSectorOptions", "Show sector options", CommandType.Windows, (CommandArgs args) => args.Editor.ToggleToolWindow(typeof(SectorOptions)));
             AddCommand("ShowLighting", "Show lighting", CommandType.Windows, (CommandArgs args) => args.Editor.ToggleToolWindow(typeof(Lighting)));
             AddCommand("ShowPalette", "Show palette", CommandType.Windows, (CommandArgs args) => args.Editor.ToggleToolWindow(typeof(Palette)));
@@ -1965,7 +1972,7 @@ namespace TombEditor
             {
                 if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
                     return;
-                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion.Native() >= TRVersion.Game.TR3, "Monkeyswing"))
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion.SupportsMonkeySwing(), "Monkeyswing"))
                     return;
                 EditorActions.ToggleSectorFlag(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorFlags.Monkey);
             });
@@ -2111,6 +2118,18 @@ namespace TombEditor
                 if (args.Editor.SelectedRoom != null)
                 {
                     args.Editor.SelectedRoom.Properties.FlagCold = !args.Editor.SelectedRoom.Properties.FlagCold;
+                    args.Editor.RoomPropertiesChange(args.Editor.SelectedRoom);
+                }
+            });
+
+            AddCommand("SetRoomNoCaustics", "Disable caustics in water rooms", CommandType.Rooms, delegate (CommandArgs args)
+            {
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion == TRVersion.Game.TombEngine, "No caustics"))
+                    return;
+
+                if (args.Editor.SelectedRoom != null)
+                {
+                    args.Editor.SelectedRoom.Properties.FlagNoCaustics = !args.Editor.SelectedRoom.Properties.FlagNoCaustics;
                     args.Editor.RoomPropertiesChange(args.Editor.SelectedRoom);
                 }
             });

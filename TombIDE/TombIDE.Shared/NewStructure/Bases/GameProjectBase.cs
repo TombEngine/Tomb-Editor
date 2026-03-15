@@ -141,7 +141,7 @@ namespace TombIDE.Shared.NewStructure
 			return result.ToArray();
 		}
 
-		public virtual LevelProject[] GetAllValidLevelProjects()
+		public virtual ILevelProject[] GetAllValidLevelProjects()
 		{
 			var result = new List<LevelProject>();
 
@@ -238,7 +238,7 @@ namespace TombIDE.Shared.NewStructure
 					LaunchFilePath = GetLauncherFilePath()
 				};
 
-				foreach (LevelProject levelProject in GetAllValidLevelProjects())
+				foreach (ILevelProject levelProject in GetAllValidLevelProjects())
 				{
 					levelProject.Save();
 
@@ -274,7 +274,7 @@ namespace TombIDE.Shared.NewStructure
 			else
 				throw new NotSupportedException("The target .trproj version is not supported.");
 
-			foreach (LevelProject level in GetAllValidLevelProjects())
+			foreach (ILevelProject level in GetAllValidLevelProjects())
 				level.Save();
 		}
 

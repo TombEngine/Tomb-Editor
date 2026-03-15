@@ -61,6 +61,10 @@ namespace TombLib.Controls.VisualScripting
 
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool LockNodeChanges { get; set; } = false;
+
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public bool Resizing { get; private set; } = false;
 
         // Loaded lists of action and condition functions.
@@ -1108,8 +1112,14 @@ namespace TombLib.Controls.VisualScripting
 
                 // Update colors
                 foreach (var n in nodeList)
+                {
+                    LockNodeChanges = true;
+
                     if (n.BackColor != n.Node.Color.ToWinFormsColor())
                         n.BackColor = n.Node.Color.ToWinFormsColor();
+
+                    LockNodeChanges = false;
+                }
 
                 // Draw node links antialiased
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;

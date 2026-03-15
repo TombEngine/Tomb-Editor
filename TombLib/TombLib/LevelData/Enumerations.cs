@@ -47,7 +47,7 @@ namespace TombLib.LevelData
         // Checks for features supported by the game version
 
         public static bool UsesMainSfx(this Game ver)
-            => ver.Native() is Game.TR2 or Game.TR3;
+            => ver is Game.TR2 or Game.TR3;
 
         public static bool Supports16BitDithering(this Game ver)
             => ver.Native() is > Game.TR1 and < Game.TombEngine;
@@ -63,6 +63,18 @@ namespace TombLib.LevelData
 
         public static bool SupportsClimbing(this Game ver)
             => ver != Game.TR1;
+
+        public static bool SupportsMonkeySwing(this Game ver)
+            => ver >= Game.TR3;
+
+        public static bool SupportsLockedCameras(this Game ver)
+            => ver >= Game.TR4;
+
+        public static bool SupportsSplits(this Game ver)
+            => ver >= Game.TR3;
+
+        public static bool IsTRX(this Game ver)
+            => ver == Game.TR1X || ver == Game.TR2X;
     }
 
     // Only for TR5+
@@ -80,6 +92,15 @@ namespace TombLib.LevelData
         Normal = 0,
         Rain = 1,
         Snow = 2
+    }
+
+    // Only for TRX
+    public enum TrxTextureBitDepth : byte
+    {
+        Default,
+        Bit8,
+        Bit16,
+        Bit32,
     }
 
     // Only for TEN

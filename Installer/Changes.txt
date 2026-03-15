@@ -1,9 +1,45 @@
-Version 1.10.2
-==============
+Version 1.11
+============
+
+Tomb Editor:
+ * Added support for locked cameras in TRX.
+ * Added support for drawing the skybox in the editor for TR1X levels.
+ * Added support for skybox and wind room flags in TR1X levels.
+ * Added support for quicksand rooms in TR1X and TR2X levels.
+ * Added support for additive blending in TR1X and TR2X levels.
+ * Added support for triangular geometry in TR1X and TR2X levels.
+ * Added a texture depth option (8/16/32-bit) for TR1X and TR2X levels.
+ * Added support for TR1X and TR2X levels to use more sound slots (maximum 1000 samples in total per level).
+ * Added support for monkeyswing in TR1X and TR2X levels.
+ * Added support for no caustics room flag in TEN.
+ * Changed TR2X levels to embed sound effects rather than using main.sfx.
+ * Fixed node parameter corruption after changing node background color.
+ * Fixed unintended room deletion in 3D mode when no objects are selected.
+ * Fixed enemy monkeyswing pathfinding being added to TR3 levels.
+
+WadTool:
+ * Added indication of missing external texture file.
+ * Automatically correct hair mesh connections when importing TR4 outfits to TEN wad.
+ * Rearranged animation editor UI in preparation for animation blending feature.
+ * Fixed gizmo behaviour in animation editor.
+ * Fixed Y/P numerical rotation controls being reversed.
+ * Fixed misplaced backholster meshes for classic engines.
+ * Fixed external textures not loading when wad was moved to another directory.
+ * Fixed exception while loading wads with material xml files placed in the same folder as wad.
+ * Fixed exception while exporting meshes with degenerate textures.
+
+TombIDE:
+ * Updated "Ready to Play" archive creation dialog.
+ * Updated TR1X and TR2X presets to TRX 1.3.1.
+ * Updated PLAY.exe to fix TEN console window not showing in `-debug` mode.
+ * Updated FLEP.
 
 TEN nodes:
  * Added nodes to check the color of a moveable or static mesh.
- * Added node to add an interaction highlight to a moveable"
+ * Added nodes to show or hide interaction highlight for a moveable.
+ * Added nodes to use inventory item, set inventory item count and to reset inventory to default.
+ * Added a node to clear all input keys.
+ * Fixed crash with keypad nodes on certain system configurations.
 
 Version 1.10.1
 ==============

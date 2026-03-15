@@ -67,7 +67,6 @@ namespace TombLib.Graphics
         private static readonly Vector4 _xAxisColor = new Vector4(1.0f, 0.0f, 0.0f, 1.0f);
         private static readonly Vector4 _yAxisColor = new Vector4(0.0f, 1.0f, 0.0f, 1.0f);
         private static readonly Vector4 _zAxisColor = new Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-        private static readonly Vector4 _centerColor = new Vector4(1.0f, 1.0f, 0.0f, 1.0f);
         private static readonly Vector4 _hoveredAddition = new Vector4(0.6f, 0.6f, 0.6f, 1.0f);
         private static readonly float _arrowHeadOffsetMultiplier = 1.13f;
 
@@ -78,6 +77,10 @@ namespace TombLib.Graphics
         private float _rotationLastMouseRadius;
         private float _rotationPickAngle;
         private float _rotationPickAngleOffset;
+
+        private Matrix4x4 _frozenRotateMatrixY;
+        private Matrix4x4 _frozenRotateMatrixX;
+        private Matrix4x4 _frozenRotateMatrixZ;
 
         private GizmoMode _hoveredMode;
 
@@ -232,7 +235,7 @@ namespace TombLib.Graphics
                     break;
                 case GizmoMode.RotateY:
                     {
-                        Plane rotationPlane = MathC.CreatePlaneAtPoint(Position, MathC.HomogenousTransform(Vector3.UnitY, RotateMatrixY));
+                        Plane rotationPlane = MathC.CreatePlaneAtPoint(Position, MathC.HomogenousTransform(Vector3.UnitY, _frozenRotateMatrixY));
                         Vector3 rotationIntersection;
                         if (Collision.RayIntersectsPlane(ray, rotationPlane, out rotationIntersection))
                         {
@@ -249,7 +252,7 @@ namespace TombLib.Graphics
                     break;
                 case GizmoMode.RotateX:
                     {
-                        Plane rotationPlane = MathC.CreatePlaneAtPoint(Position, MathC.HomogenousTransform(Vector3.UnitX, RotateMatrixX));
+                        Plane rotationPlane = MathC.CreatePlaneAtPoint(Position, MathC.HomogenousTransform(Vector3.UnitX, _frozenRotateMatrixX));
                         Vector3 rotationIntersection;
                         if (Collision.RayIntersectsPlane(ray, rotationPlane, out rotationIntersection))
                         {
@@ -266,7 +269,7 @@ namespace TombLib.Graphics
                     break;
                 case GizmoMode.RotateZ:
                     {
-                        Plane rotationPlane = MathC.CreatePlaneAtPoint(Position, MathC.HomogenousTransform(Vector3.UnitZ, RotateMatrixZ));
+                        Plane rotationPlane = MathC.CreatePlaneAtPoint(Position, MathC.HomogenousTransform(Vector3.UnitZ, _frozenRotateMatrixZ));
                         Vector3 rotationIntersection;
                         if (Collision.RayIntersectsPlane(ray, rotationPlane, out rotationIntersection))
                         {
@@ -441,6 +444,10 @@ namespace TombLib.Graphics
                  pickingResult.Mode == GizmoMode.RotateZ ? RotationZ : 0.0f) - pickingResult.RotationPickAngle);
             _rotationLastMouseAngle = SimplifyAngle(pickingResult.RotationPickAngle);
             _rotationLastMouseRadius = pickingResult.Distance;
+
+            _frozenRotateMatrixY = RotateMatrixY;
+            _frozenRotateMatrixX = RotateMatrixX;
+            _frozenRotateMatrixZ = RotateMatrixZ;
         }
 
         /// <returns>If the parent should be redrawn</returns>
@@ -476,6 +483,10 @@ namespace TombLib.Graphics
             var solidEffect = _effect;
             GizmoMode highlight = _mode == GizmoMode.None ? _hoveredMode : _mode;
 
+            var drawRotateMatrixY = _mode == GizmoMode.RotateY ? _frozenRotateMatrixY : RotateMatrixY;
+            var drawRotateMatrixX = _mode == GizmoMode.RotateX ? _frozenRotateMatrixX : RotateMatrixX;
+            var drawRotateMatrixZ = _mode == GizmoMode.RotateZ ? _frozenRotateMatrixZ : RotateMatrixZ;
+
             // Rotation
             if (SupportRotationX | SupportRotationY | SupportRotationZ)
             {
@@ -493,7 +504,7 @@ namespace TombLib.Graphics
                 if (SupportRotationY)
                 {
                     var model = Matrix4x4.CreateScale(Size * 2.0f) *
-                        RotateMatrixY *
+                        drawRotateMatrixY *
                         Matrix4x4.CreateTranslation(Position);
                     solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
                     solidEffect.Parameters["Color"].SetValue(_yAxisColor + (highlight == GizmoMode.RotateY ? _hoveredAddition : new Vector4()));
@@ -506,7 +517,7 @@ namespace TombLib.Graphics
                 {
                     var model = Matrix4x4.CreateScale(Size * 2.0f) *
                         Matrix4x4.CreateRotationZ((float)Math.PI / 2.0f) *
-                        RotateMatrixX *
+                        drawRotateMatrixX *
                         Matrix4x4.CreateTranslation(Position);
                     solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
                     solidEffect.Parameters["Color"].SetValue(_xAxisColor + (highlight == GizmoMode.RotateX ? _hoveredAddition : new Vector4()));
@@ -519,7 +530,7 @@ namespace TombLib.Graphics
                 {
                     var model = Matrix4x4.CreateScale(Size * 2.0f) *
                         Matrix4x4.CreateRotationX((float)Math.PI / 2.0f) *
-                        RotateMatrixZ *
+                        drawRotateMatrixZ *
                         Matrix4x4.CreateTranslation(Position);
                     solidEffect.Parameters["ModelViewProjection"].SetValue((model * viewProjection).ToSharpDX());
                     solidEffect.Parameters["Color"].SetValue(_zAxisColor + (highlight == GizmoMode.RotateZ ? _hoveredAddition : new Vector4()));
@@ -720,23 +731,23 @@ namespace TombLib.Graphics
                     {
                         case GizmoMode.RotateY:
                             startAngle = _rotationPickAngle;
-                            endAngle = RotationY - _rotationPickAngleOffset;
+                            endAngle = _rotationLastMouseAngle;
                             lastMouseAngle = _rotationLastMouseAngle;
-                            baseMatrix = RotateMatrixY;
+                            baseMatrix = _frozenRotateMatrixY;
                             color = _yAxisColor;
                             break;
                         case GizmoMode.RotateX:
                             startAngle = -((float)Math.PI * 0.5f) - _rotationPickAngle;
-                            endAngle = -((float)Math.PI * 0.5f) - (RotationX - _rotationPickAngleOffset);
+                            endAngle = -((float)Math.PI * 0.5f) - _rotationLastMouseAngle;
                             lastMouseAngle = -((float)Math.PI * 0.5f) - _rotationLastMouseAngle;
-                            baseMatrix = Matrix4x4.CreateRotationZ((float)Math.PI / 2.0f) * RotateMatrixX;
+                            baseMatrix = Matrix4x4.CreateRotationZ((float)Math.PI / 2.0f) * _frozenRotateMatrixX;
                             color = _xAxisColor;
                             break;
                         case GizmoMode.RotateZ:
                             startAngle = (float)Math.PI + _rotationPickAngle;
-                            endAngle = (float)Math.PI + RotationZ - _rotationPickAngleOffset;
+                            endAngle = (float)Math.PI + _rotationLastMouseAngle;
                             lastMouseAngle = (float)Math.PI + _rotationLastMouseAngle;
-                            baseMatrix = Matrix4x4.CreateRotationX((float)Math.PI / 2.0f) * RotateMatrixZ;
+                            baseMatrix = Matrix4x4.CreateRotationX((float)Math.PI / 2.0f) * _frozenRotateMatrixZ;
                             color = _zAxisColor;
                             break;
                         default:

@@ -2335,6 +2335,41 @@ namespace TombEditor
                     AllocateScriptIds(obj);
         }
 
+        // Batch-optimized version that allocates script IDs in bulk.
+        public static void AllocateScriptIds(IEnumerable<PositionBasedObjectInstance> instances)
+        {
+            if (_editor.Level.IsTombEngine)
+            {
+                var existingNames = _editor.Level.GetAllLuaNames();
+                foreach (var instance in instances)
+                    AllocateScriptIdsWithCache(instance, existingNames);
+            }
+            else
+            {
+                foreach (var instance in instances)
+                    AllocateScriptIds(instance);
+            }
+        }
+
+        private static void AllocateScriptIdsWithCache(PositionBasedObjectInstance instance, HashSet<string> luaNameCache)
+        {
+            if (instance is IHasScriptID && (_editor.Level.Settings.GameVersion == TRVersion.Game.TR4 || _editor.Level.IsNG))
+            {
+                var si = instance as IHasScriptID;
+                if (si.ScriptId == null)
+                    si.AllocateNewScriptId();
+            }
+            else if (instance is PositionAndScriptBasedObjectInstance scriptObj && _editor.Level.IsTombEngine)
+            {
+                if (string.IsNullOrEmpty(scriptObj.LuaName))
+                    scriptObj.AllocateNewLuaName(luaNameCache);
+            }
+
+            if (instance is ObjectGroup group)
+                foreach (var obj in group)
+                    AllocateScriptIdsWithCache(obj, luaNameCache);
+        }
+
         public static void PlaceLight(LightType type)
         {
             var color = (type == LightType.FogBulb && _editor.Level.Settings.GameVersion.Native() <= TRVersion.Game.TR4) ?
@@ -5003,10 +5038,16 @@ namespace TombEditor
 
         public static ItemType? GetCurrentItemWithMessage()
         {
-            ItemType? result = _editor.ChosenItem;
-            if (result == null)
-                _editor.SendMessage("Select an item first.", PopupType.Error);
-            return result;
+            foreach (var obj in _editor.ChosenItems)
+            {
+                if (obj is WadMoveable m)
+                    return new ItemType(m.Id);
+                if (obj is WadStatic s)
+                    return new ItemType(s.Id);
+            }
+
+            _editor.SendMessage("Select an item first.", PopupType.Error);
+            return null;
         }
 
         public static void FindItem()

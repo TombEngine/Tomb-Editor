@@ -251,6 +251,7 @@ namespace TombEditor
             this["SwitchGeometryMode"] = new SortedSet<Hotkey> { Keys.F2 };
             this["SwitchFaceEditMode"] = new SortedSet<Hotkey> { Keys.F3 };
             this["SwitchLightingMode"] = new SortedSet<Hotkey> { Keys.F4 };
+            this["SwitchObjectPlacementMode"] = new SortedSet<Hotkey> { Keys.F7 };
             this["ResetCamera"] = new SortedSet<Hotkey> { Keys.F6 };
             this["AddTrigger"] = new SortedSet<Hotkey> { Keys.T };
             this["AddTriggerWithBookmark"] = new SortedSet<Hotkey> { Keys.T | Keys.Shift };

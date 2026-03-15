@@ -55,7 +55,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
         private List<tr_sprite_sequence> _spriteSequences = new List<tr_sprite_sequence>();
         private readonly List<TombEngineCamera> _cameras = new List<TombEngineCamera>();
         private readonly List<TombEngineSink> _sinks = new List<TombEngineSink>();
-        private readonly List<tr4_flyby_camera> _flyByCameras = new List<tr4_flyby_camera>();
+        private readonly List<TombEngineFlybyCamera> _flyByCameras = new List<TombEngineFlybyCamera>();
         private readonly List<TombEngineSoundSource> _soundSources = new List<TombEngineSoundSource>();
         private List<TombEngineBox> _boxes = new List<TombEngineBox>();
         private List<TombEngineOverlap> _overlaps = new List<TombEngineOverlap>();
@@ -295,7 +295,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 Vector3 direction = instance.GetDirection();
                 Vector3 position = instance.Room.WorldPos + instance.Position;
                 ushort rollTo65536 = (ushort)(65536 - Math.Round(Math.Max(0, Math.Min(ushort.MaxValue, instance.Roll * (65536.0 / 360.0)))));
-                _flyByCameras.Add(new tr4_flyby_camera
+                _flyByCameras.Add(new TombEngineFlybyCamera
                 {
                     X = (int)Math.Round(position.X),
                     Y = (int)Math.Round(-position.Y),
@@ -305,15 +305,15 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     Roll = unchecked((short)rollTo65536),
                     Timer = (ushort)instance.Timer,
                     Speed = (ushort)Math.Round(Math.Max(0, Math.Min(ushort.MaxValue, instance.Speed * 655.0f))),
-                    Sequence = (byte)instance.Sequence,
-                    Index = (byte)instance.Number,
+                    Sequence = instance.Sequence,
+                    Index = instance.Number,
                     Flags = instance.Flags,
                     DirectionX = (int) Math.Round(position.X + Level.SectorSizeUnit * direction.X),
                     DirectionY = (int)-Math.Round(position.Y + Level.SectorSizeUnit * direction.Y),
                     DirectionZ = (int) Math.Round(position.Z + Level.SectorSizeUnit * direction.Z),
                 });
             }
-            _flyByCameras.Sort(new tr4_flyby_camera.ComparerFlyBy());
+            _flyByCameras.Sort(new TombEngineFlybyCamera.ComparerFlyBy());
 
             // Check camera duplicates
             int lastSeq   = -1;
