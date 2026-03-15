@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using TombLib.LevelData;
 
 namespace TombLib.LevelData.VisualScripting
 {
@@ -78,6 +79,19 @@ namespace TombLib.LevelData.VisualScripting
         public bool Conditional { get; set; }
         public string Signature { get; set; }
         public List<ArgumentLayout> Arguments { get; private set; } = new List<ArgumentLayout>();
+        public List<EventType> SupportedEvents { get; private set; } = new List<EventType>();
+        public List<EventType> UnsupportedEvents { get; private set; } = new List<EventType>();
+
+        public bool IsUnsupported(EventType eventType)
+        {
+            if (SupportedEvents.Count > 0 && !SupportedEvents.Contains(eventType))
+                return true;
+
+            if (UnsupportedEvents.Count > 0 && UnsupportedEvents.Contains(eventType))
+                return true;
+
+            return false;
+        }
 
         public override string ToString() => Name;
         public override int GetHashCode() => (Name + Conditional.ToString() + Description + Signature + Arguments.Count.ToString()).GetHashCode();
