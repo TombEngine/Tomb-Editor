@@ -385,8 +385,6 @@ public partial class ContentBrowserViewModel : ObservableObject
 
 		if (allCategories.Count > 0)
 		{
-			FilterOptions.Add(FilterOption.CreateSplitter());
-
 			foreach (var cat in allCategories)
 				FilterOptions.Add(FilterOption.CreateCategoryFilter(cat));
 		}

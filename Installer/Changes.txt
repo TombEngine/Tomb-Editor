@@ -15,6 +15,7 @@ Tomb Editor:
  * Changed TR2X levels to embed sound effects rather than using main.sfx.
  * Fixed node parameter corruption after changing node background color.
  * Fixed unintended room deletion in 3D mode when no objects are selected.
+ * Fixed enemy monkeyswing pathfinding being added to TR3 levels.
 
 WadTool:
  * Added indication of missing external texture file.

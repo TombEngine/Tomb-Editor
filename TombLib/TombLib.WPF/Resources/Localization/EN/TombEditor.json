@@ -21,7 +21,7 @@
         "Radius": "Radius:",
         "Density": "Density:",
         "Rotation": "Rotation:",
-        "Flip": "Flip",
+        "Orthogonal": "Orthogonal",
         "RandomRotation": "Random rotation",
         "FollowMouse": "Follow mouse",
         "RandomScale": "Random scale:",

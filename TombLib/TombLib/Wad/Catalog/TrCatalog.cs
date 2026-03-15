@@ -178,7 +178,7 @@ namespace TombLib.Wad.Catalog
             if (!game.Statics.TryGetValue(id, out entry))
                 return "Static #" + id;
 
-            return game.Statics[id].Names.LastOrDefault();
+            return entry.Names.LastOrDefault();
         }
 
         public static string GetStaticCategory(TRVersion.Game version, uint id)
@@ -191,7 +191,7 @@ namespace TombLib.Wad.Catalog
             if (!game.Statics.TryGetValue(id, out entry))
                 return string.Empty;
 
-            return game.Statics[id].Category;
+            return entry.Category;
         }
 
         public static bool IsStaticShatterable(TRVersion.Game version, uint id)

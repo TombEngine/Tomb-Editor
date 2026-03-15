@@ -3754,7 +3754,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 					<name>...</name>
 					<type>...</type>
 					<description>A variable number of pairs of arguments, each pair consisting of:&lt;br&gt;
- - a time in seconds (positive values are accepted and with only 1 tenth of a second [__0.1__]),&lt;br&gt;
+ - a time in seconds that can be rounded internally to the nearest game frame (1/30 of a second),&lt;br&gt;
  - followed by the function defined in the *LevelFuncs* table to call once the time has elapsed,&lt;br&gt;
  - followed by another duration in seconds, another function name, etc.
 
@@ -3834,6 +3834,13 @@ allocated even after timeout is reached, and can be shown again without re-initi
 		<function>
 			<module>EventSequence</module>
 			<caller>EventSequence</caller>
+			<name>Restart</name>
+			<summary>Restart the sequence from its first timer.</summary>
+			<description>If showing the remaining time on-screen, its color will be set to white.</description>
+		</function>
+		<function>
+			<module>EventSequence</module>
+			<caller>EventSequence</caller>
 			<name>SetPaused</name>
 			<summary>Pause or unpause the sequence.</summary>
 			<description>If showing the remaining time on-screen, its color will be set to yellow (paused) or white (unpaused).</description>
@@ -3849,7 +3856,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 			<module>EventSequence</module>
 			<caller>EventSequence</caller>
 			<name>Stop</name>
-			<summary>Stop the sequence.</summary>
+			<summary>Stop and reset the sequence to the first element.</summary>
 		</function>
 		<function>
 			<module>EventSequence</module>
@@ -3888,7 +3895,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				<parameter>
 					<name>totalTime</name>
 					<type>float</type>
-					<description>Duration of the timer, in seconds.&lt;br&gt;Values with only 1 tenth of a second (0.1) are accepted, example: 1.5 - 6.0 - 9.9 - 123.6. No negative values allowed!</description>
+					<description>Duration of the timer in seconds with 2 decimal places.&lt;br&gt;No negative values allowed. Values ​​are rounded to 2 decimal places and converted to 30 FPS game frames and rounded to the nearest frame.</description>
 				</parameter>
 				<parameter>
 					<name>loop</name>
@@ -4041,7 +4048,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 			<returns>
 				<return>
 					<type>float</type>
-					<description>The remaining time in seconds of timer.&lt;br&gt;Seconds have an accuracy of 0.1 tenths. Example: 1.5 - 6.0 - 9.9 - 123.6</description>
+					<description>The remaining time in seconds of timer. Accuracy is 1 game frame (1/30 of a second).</description>
 				</return>
 			</returns>
 		</function>
@@ -4055,7 +4062,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 					<name>timerFormat</name>
 					<type>table|bool</type>
 					<optional>true</optional>
-					<defaultValue>{minutes = true, seconds = true, deciseconds = true}</defaultValue>
+					<defaultValue>{minutes = true, seconds = true, centiseconds = true}</defaultValue>
 					<description>Sets the remaining time display. See `timerFormat`.&lt;br&gt;</description>
 				</parameter>
 			</parameters>
@@ -4075,8 +4082,8 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				<parameter>
 					<name>remainingTime</name>
 					<type>float</type>
-					<description>The new time remaining for the timer in seconds.&lt;br&gt;
- Values with only 1 tenth of a second (0.1) are accepted, example: 1.5 - 6.0 - 9.9 - 123.6. No negative values allowed!</description>
+					<description>The new time remaining for the timer in seconds with 2 decimal places&lt;br&gt;
+ No negative values allowed. Values ​​are rounded to 2 decimal places and converted to 30 FPS game frames and rounded to the nearest frame.</description>
 				</parameter>
 			</parameters>
 		</function>
@@ -4093,16 +4100,16 @@ allocated even after timeout is reached, and can be shown again without re-initi
 					<description>The type of comparison.&lt;br&gt;
  0 : If the remaining time is equal to the value&lt;br&gt;
  1 : If the remaining time is different from the value&lt;br&gt;
- 2 : If the remaining time is less the value&lt;br&gt;
+ 2 : If the remaining time is less than the value&lt;br&gt;
  3 : If the remaining time is less or equal to the value&lt;br&gt;
- 4 : If the remaining time is greater the value&lt;br&gt;
+ 4 : If the remaining time is greater than the value&lt;br&gt;
  5 : If the remaining time is greater or equal to the value</description>
 				</parameter>
 				<parameter>
 					<name>seconds</name>
 					<type>float</type>
 					<description>The value in seconds to compare.&lt;br&gt;
- Values with only 1 tenth of a second (0.1) are accepted, example: 1.5 - 6.0 - 9.9 - 123.6. No negative values allowed!&lt;br&gt;
+ No negative values allowed. Values are converted to 30 FPS game frames and rounded to the nearest frame.&lt;br&gt;
  Please note: to have continuous control, the remaining time must be controlled within the *OnLoop* event and only when the Timer is active @{Timer.IsActive}.</description>
 				</parameter>
 			</parameters>
@@ -4135,8 +4142,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 			<returns>
 				<return>
 					<type>float</type>
-					<description>The timer's total time in seconds.&lt;br&gt;
- Seconds have an accuracy of 0.1 tenths. Example: 1.5 - 6.0 - 9.9 - 123.6</description>
+					<description>The timer's total time in seconds. Accuracy is 1 frame (1/30 second).</description>
 				</return>
 			</returns>
 		</function>
@@ -4151,7 +4157,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 					<name>timerFormat</name>
 					<type>table|bool</type>
 					<optional>true</optional>
-					<defaultValue>{minutes = true, seconds = true, deciseconds = true}</defaultValue>
+					<defaultValue>{minutes = true, seconds = true, centiseconds = true}</defaultValue>
 					<description>Sets the remaining time display. See `timerFormat`.&lt;br&gt;</description>
 				</parameter>
 			</parameters>
@@ -4171,8 +4177,8 @@ allocated even after timeout is reached, and can be shown again without re-initi
 				<parameter>
 					<name>totalTime</name>
 					<type>float</type>
-					<description>Timer's new total time in seconds.&lt;br&gt;
- Values with only 1 tenth of a second (0.1) are accepted, example: 1.5 - 6.0 - 9.9 - 123.6. No negative values allowed!</description>
+					<description>Timer's new total time in seconds with 2 decimal places.&lt;br&gt;
+ No negative values allowed. Values ​​are rounded to 2 decimal places and converted to 30 FPS game frames and rounded to the nearest frame.</description>
 				</parameter>
 			</parameters>
 		</function>
@@ -4198,7 +4204,7 @@ allocated even after timeout is reached, and can be shown again without re-initi
 					<name>seconds</name>
 					<type>float</type>
 					<description>the value in seconds to compare.&lt;br&gt;
- Values with only 1 tenth of a second (0.1) are accepted, example: 1.5 - 6.0 - 9.9 - 123.6. No negative values allowed!</description>
+ No negative values allowed. Values are converted to 30 FPS game frames and rounded to the nearest frame.</description>
 				</parameter>
 			</parameters>
 			<returns>
@@ -4379,14 +4385,12 @@ allocated even after timeout is reached, and can be shown again without re-initi
 			<module>Timer</module>
 			<caller>Timer</caller>
 			<name>IsTicking</name>
-			<summary>Checks if the timer has ticked (every 0.1 seconds).</summary>
-			<description>Returns `true` every 0.1 seconds when the timer is active and not paused.&lt;br&gt;
- TEN's engine runs on a 0.03-second internal tick, while this timer ticks every 0.1 seconds.&lt;br&gt;
- Use `IsTicking()` to ensure consistency and avoid unexpected behavior — for example, inside the `OnLoop` event.</description>
+			<summary>Checks if the timer has ticked.</summary>
+			<description>Returns `true` only if the timer is ticking, i.e., it is active and not paused.</description>
 			<returns>
 				<return>
-					<type>boolean</type>
-					<description>`true` if the timer ticked during this frame, `false` otherwise.</description>
+					<type>bool</type>
+					<description>`true` if the timer ticked, `false` otherwise.</description>
 				</return>
 			</returns>
 		</function>
@@ -10308,11 +10312,11 @@ No word wrapping will occur if this parameter is default or omitted.</descriptio
 				</field>
 				<field>
 					<name>titleLogoScale</name>
-					<type>Vec2</type>
+					<type>float</type>
 					<summary>Title logo scale.</summary>
 					<description>Title level logo scale.</description>
 					<optional>true</optional>
-					<defaultValue>TEN.Vec2(1, 1)</defaultValue>
+					<defaultValue>0.38</defaultValue>
 				</field>
 				<field>
 					<name>titleLogoColor</name>
