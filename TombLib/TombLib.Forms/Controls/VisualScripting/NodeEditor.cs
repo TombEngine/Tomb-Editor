@@ -27,6 +27,10 @@ namespace TombLib.Controls.VisualScripting
     {
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public EventType CurrentEventType { get; set; }
+
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Vector2 ViewPosition { get; set; } = new Vector2(60.0f, 60.0f);
 
         [Browsable(false)]
@@ -72,10 +76,6 @@ namespace TombLib.Controls.VisualScripting
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public List<NodeFunction> NodeFunctions { get; private set; } = new List<NodeFunction>();
-
-        [Browsable(false)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public EventType CurrentEventType { get; set; }
 
         // Precache lists of objects to avoid polling every time user changes function
         // in a node list. By default it is set to nothing, but must be replaced externally
@@ -891,14 +891,14 @@ namespace TombLib.Controls.VisualScripting
 
         private bool IsNodeUnsupported(TriggerNode node)
         {
-            if (!CurrentEventType.HasValue || string.IsNullOrEmpty(node.Function))
+            if (string.IsNullOrEmpty(node.Function))
                 return false;
 
             var func = NodeFunctions.FirstOrDefault(f => f.Signature == node.Function);
             if (func == null)
                 return false;
 
-            return func.IsUnsupported(CurrentEventType.Value);
+            return func.IsUnsupported(CurrentEventType);
         }
 
         private void DrawHeader(PaintEventArgs e, VisibleNodeBase node)
