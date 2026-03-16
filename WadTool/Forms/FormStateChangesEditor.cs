@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using TombLib.Graphics;
@@ -12,6 +11,7 @@ using TombLib.LevelData;
 using TombLib.Types;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
+using WadTool.Controls;
 
 namespace WadTool
 {
@@ -224,41 +224,15 @@ namespace WadTool
             _initializing = false;
         }
 
-        private static void DrawBlendCurvePreview(Graphics g, Rectangle rect, BezierCurve2 curve)
-        {
-            int padding = 2;
-            int x = rect.X + padding;
-            int y = rect.Y + padding;
-            int w = rect.Width - padding * 2;
-            int h = rect.Height - padding * 2;
-
-            if (w <= 0 || h <= 0)
-                return;
-
-            using (var pen = new Pen(Colors.LightText, 1.0f))
-            {
-                pen.StartCap = LineCap.Round;
-                pen.EndCap = LineCap.Round;
-
-                int steps = Math.Max(w / 2, 8);
-                var points = new PointF[steps + 1];
-                for (int i = 0; i <= steps; i++)
-                {
-                    float alpha = (float)i / steps;
-                    var p = curve.GetPoint(alpha);
-                    points[i] = new PointF(x + p.X * w, y + (1.0f - p.Y) * h);
-                }
-
-                g.SmoothingMode = SmoothingMode.AntiAlias;
-                g.DrawLines(pen, points);
-            }
-        }
-
         private void ShowBlendCurveEditor(int rowIndex)
         {
             var item = ((IEnumerable<WadStateChangeRow>)dgvStateChanges.DataSource).ElementAt(rowIndex);
 
-            using (var form = new FormBlendCurveEditor(item.BlendCurve))
+            // Position popup near the clicked cell.
+            var cellRect = dgvStateChanges.GetCellDisplayRectangle(columnBlendCurve.Index, rowIndex, true);
+            var screenPos = dgvStateChanges.PointToScreen(new Point(cellRect.Left, cellRect.Bottom));
+
+            using (var form = new FormBlendCurveEditor(item.BlendCurve, screenPos))
             {
                 if (form.ShowDialog(this) == DialogResult.OK)
                 {
@@ -302,7 +276,7 @@ namespace WadTool
 
             // Paint background and borders normally, then draw custom curve preview.
             e.PaintBackground(e.ClipBounds, true);
-            DrawBlendCurvePreview(e.Graphics, e.CellBounds, item.BlendCurve);
+            BezierCurveEditor.DrawPreview(e.Graphics, e.CellBounds, item.BlendCurve);
             e.Handled = true;
         }
 

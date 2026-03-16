@@ -25,7 +25,7 @@ namespace WadTool
             columnNextFrame = new System.Windows.Forms.DataGridViewTextBoxColumn();
             columnNextFrameHigh = new System.Windows.Forms.DataGridViewTextBoxColumn();
             columnBlendFrameCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            columnBlendCurve = new System.Windows.Forms.DataGridViewButtonColumn();
+            columnBlendCurve = new DarkUI.Controls.DarkDataGridViewButtonColumn();
             btCancel = new DarkUI.Controls.DarkButton();
             btOk = new DarkUI.Controls.DarkButton();
             butPlayStateChange = new DarkUI.Controls.DarkButton();
@@ -135,7 +135,6 @@ namespace WadTool
             columnBlendCurve.HeaderText = "Blend curve";
             columnBlendCurve.Name = "columnBlendCurve";
             columnBlendCurve.Text = "";
-            columnBlendCurve.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             //
             // btCancel
             //
@@ -261,7 +260,7 @@ namespace WadTool
         private System.Windows.Forms.DataGridViewTextBoxColumn columnNextFrame;
         private System.Windows.Forms.DataGridViewTextBoxColumn columnNextFrameHigh;
         private System.Windows.Forms.DataGridViewTextBoxColumn columnBlendFrameCount;
-        private System.Windows.Forms.DataGridViewButtonColumn columnBlendCurve;
+        private DarkUI.Controls.DarkDataGridViewButtonColumn columnBlendCurve;
         private DarkUI.Controls.DarkButton butApply;
         private DarkUI.Controls.DarkGroupBox stateChangeGroup;
     }
