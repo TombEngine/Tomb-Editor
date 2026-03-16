@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <WadSounds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 	<SoundInfos>
 		<WadSoundInfo>
@@ -7539,7 +7539,7 @@
 					<FileName>TR1_Bear_Takehit_01.wav</FileName>
 				</WadSample>
 			</Samples>
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -7751,7 +7751,7 @@
 					<FileName>TR1_Wolf_Hurt_01.wav</FileName>
 				</WadSample>
 			</Samples>
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -7956,7 +7956,7 @@
 					<FileName>TR1_Lion_Hurt_01.wav</FileName>
 				</WadSample>
 			</Samples>
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -8218,7 +8218,7 @@
 					<FileName>TR1_Rat_Chirp_01.wav</FileName>
 				</WadSample>
 			</Samples>
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -8657,7 +8657,7 @@
 					<FileName>TR1_Giant_Mutant_Hit_01.wav</FileName>
 				</WadSample>
 			</Samples>
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -8790,7 +8790,7 @@
 					<FileName>TR1_Skateboardkid_Hit_01.wav</FileName>
 				</WadSample>
 			</Samples>
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
