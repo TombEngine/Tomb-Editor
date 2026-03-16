@@ -228,11 +228,7 @@ namespace WadTool
         {
             var item = ((IEnumerable<WadStateChangeRow>)dgvStateChanges.DataSource).ElementAt(rowIndex);
 
-            // Position popup near the clicked cell.
-            var cellRect = dgvStateChanges.GetCellDisplayRectangle(columnBlendCurve.Index, rowIndex, true);
-            var screenPos = dgvStateChanges.PointToScreen(new Point(cellRect.Left, cellRect.Bottom));
-
-            using (var form = new FormBlendCurveEditor(item.BlendCurve, screenPos))
+            using (var form = new FormBlendCurveEditor(item.BlendCurve))
             {
                 if (form.ShowDialog(this) == DialogResult.OK)
                 {

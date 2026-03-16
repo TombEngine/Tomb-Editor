@@ -1,7 +1,4 @@
 using System;
-using System.Drawing;
-using System.Windows.Forms;
-using DarkUI.Config;
 using TombLib.Types;
 
 namespace WadTool
@@ -10,34 +7,12 @@ namespace WadTool
     {
         public BezierCurve2 ResultCurve { get; private set; }
 
-        public FormBlendCurveEditor(BezierCurve2 curve, Point screenPosition)
+        public FormBlendCurveEditor(BezierCurve2 curve)
         {
             InitializeComponent();
 
             ResultCurve = curve.Clone();
             bezierCurveEditor.Value = ResultCurve;
-
-            // Clamp position to screen bounds with 4px padding.
-            var screen = Screen.FromPoint(screenPosition).WorkingArea;
-            int x = Math.Min(screenPosition.X, screen.Right - Width);
-            int y = Math.Min(screenPosition.Y, screen.Bottom - Height);
-            x = Math.Max(x, screen.Left);
-            y = Math.Max(y, screen.Top);
-            Location = new Point(x, y);
-        }
-
-        protected override void OnDeactivate(EventArgs e)
-        {
-            base.OnDeactivate(e);
-            DialogResult = DialogResult.OK;
-            Close();
-        }
-
-        protected override void OnPaintBackground(PaintEventArgs e)
-        {
-            base.OnPaintBackground(e);
-            using (var pen = new Pen(Colors.GreySelection, 1))
-                e.Graphics.DrawRectangle(pen, 0, 0, ClientSize.Width - 1, ClientSize.Height - 1);
         }
 
         private void cbBlendPreset_SelectedIndexChanged(object sender, EventArgs e)
