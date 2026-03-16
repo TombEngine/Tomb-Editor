@@ -168,7 +168,7 @@ namespace WadTool
             if (dgvStateChanges.SelectedRows.Count > 0)
             {
                 var item = ((IEnumerable<WadStateChangeRow>)dgvStateChanges.DataSource).ElementAt(dgvStateChanges.SelectedRows[0].Index);
-                _editor.Tool.ChangeState(item.NextAnimation, item.NextFrame, item.LowFrame, item.HighFrame);
+                _editor.Tool.ChangeState(item.NextAnimation, item.NextFrame, item.LowFrame, item.HighFrame, item.BlendFrameCount, item.BlendCurve);
 
                 lblStateChangeAnnouncement.Text = "Pending state change to anim #" + item.NextAnimation;
             }

@@ -4,6 +4,7 @@ using TombLib;
 using TombLib.Forms;
 using TombLib.Graphics;
 using TombLib.LevelData;
+using TombLib.Types;
 using TombLib.Wad;
 
 namespace WadTool
@@ -281,10 +282,19 @@ namespace WadTool
             public int NextAnimation { get; internal set; }
             public int NextFrame { get; internal set; }
             public VectorInt2 FrameRange { get; internal set; }
+            public int BlendFrameCount { get; internal set; }
+            public BezierCurve2 BlendCurve { get; internal set; }
         }
-        public void ChangeState(int nextAnim, int nextFrame, int frameLow, int frameHigh)
+        public void ChangeState(int nextAnim, int nextFrame, int frameLow, int frameHigh, int blendFrameCount = 0, BezierCurve2 blendCurve = null)
         {
-            RaiseEvent(new AnimationEditorStateChangeEvent { NextAnimation = nextAnim, NextFrame = nextFrame, FrameRange = new VectorInt2(frameLow, frameHigh) } );
+            RaiseEvent(new AnimationEditorStateChangeEvent
+            {
+                NextAnimation = nextAnim,
+                NextFrame = nextFrame,
+                FrameRange = new VectorInt2(frameLow, frameHigh),
+                BlendFrameCount = blendFrameCount,
+                BlendCurve = blendCurve
+            });
         }
 
         // Animation editor playback toggle

@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
 using TombLib;
@@ -54,6 +53,9 @@ namespace WadTool.Controls
             set { _selectedMesh = value; Invalidate(); }
         }
         private ObjectMesh _selectedMesh;
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool DisablePicking { get; set; }
 
         // General state
         private AnimationEditor _editor;
@@ -357,10 +359,10 @@ namespace WadTool.Controls
 
             if (e.Button == MouseButtons.Left)
             {
-                var ray = Ray.GetPickRay(Camera, ClientSize, e.X, e.Y);
-
-                if (_editor.ValidAnimationAndFrames)
+                if (_editor.ValidAnimationAndFrames && !DisablePicking)
                 {
+                    var ray = Ray.GetPickRay(Camera, ClientSize, e.X, e.Y);
+
                     // Try to do gizmo picking
                     if (Configuration.AnimationEditor_ShowGizmo)
                     {
