@@ -773,6 +773,17 @@ namespace TombLib.Wad
                                 animation.StartLateralVelocity = velocities.Z;
                                 animation.EndLateralVelocity = velocities.W;
                             }
+                            else if (id3 == Wad2Chunks.AnimationRootMotion)
+                            {
+                                int flags = chunkIO.ReadChunkInt(chunkSize3);
+                                animation.RootMotion = new WadAnimRootMotionSettings
+                                {
+                                    PositionX = (flags & 1) != 0,
+                                    PositionY = (flags & 2) != 0,
+                                    PositionZ = (flags & 4) != 0,
+                                    Rotation  = (flags & 8) != 0
+                                };
+                            }
                             else if (id3 == Wad2Chunks.KeyFrame)
                             {
                                 var keyframe = new WadKeyFrame();

@@ -1348,6 +1348,7 @@ namespace WadTool
             cbRootPosZ.Size = new System.Drawing.Size(32, 17);
             cbRootPosZ.TabIndex = 101;
             cbRootPosZ.Text = "Z";
+            cbRootPosZ.CheckedChanged += cbRootPosZ_CheckedChanged;
             // 
             // darkLabel11
             // 
@@ -1368,6 +1369,7 @@ namespace WadTool
             cbRootRotation.Size = new System.Drawing.Size(71, 17);
             cbRootRotation.TabIndex = 102;
             cbRootRotation.Text = "Rotation";
+            cbRootRotation.CheckedChanged += cbRootRotation_CheckedChanged;
             // 
             // cbRootPosX
             // 
@@ -1389,6 +1391,7 @@ namespace WadTool
             cbRootPosY.Size = new System.Drawing.Size(31, 17);
             cbRootPosY.TabIndex = 100;
             cbRootPosY.Text = "Y";
+            cbRootPosY.CheckedChanged += cbRootPosY_CheckedChanged;
             // 
             // dgvBoundingMeshList
             // 

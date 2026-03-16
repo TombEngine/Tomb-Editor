@@ -700,60 +700,15 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 writer.Write(fixedMotionCurveZ.StartHandle);
                 writer.Write(fixedMotionCurveZ.EndHandle);
 
-                // Write dummy frame if no key frames exist.
-                if (animation.KeyFrames.Count == 0)
-                {
-                    var defaultKeyFrame = new TombEngineKeyFrame();
-                    defaultKeyFrame.BoneOrientations = new List<Quaternion>(Enumerable.Repeat(Quaternion.Identity, NumMeshes));
+                writer.Write(animation.RootMotion.PositionX);
+                writer.Write(animation.RootMotion.PositionY);
+                writer.Write(animation.RootMotion.PositionZ);
+                writer.Write(animation.RootMotion.Rotation);
 
-                    writer.Write(1);
-                    defaultKeyFrame.Write(writer);
-                }
-                // Write baked frames.
-                else
-                {
-                    // Write key frame.
-                    writer.Write(animation.KeyFrames.Count * animation.Interpolation);
-
-                    float alphaStep = 1.0f / (float)animation.Interpolation;
-                    for (int i = 0; i < animation.KeyFrames.Count; i++)
-                    {
-                        var currentKeyframe = animation.KeyFrames[i];
-                        currentKeyframe.Write(writer);
-
-                        if (i == (animation.KeyFrames.Count - 1))
-                            break;
-
-                        var nextKeyframe = animation.KeyFrames[i + 1];
-
-                        // Write interpolated frames.
-                        for (int j = 1; j < animation.Interpolation; j++)
-                        {
-                            float alpha = alphaStep * j;
-
-                            var center = Vector3.Lerp(currentKeyframe.BoundingBox.Center, nextKeyframe.BoundingBox.Center, alpha);
-                            var extents = Vector3.Lerp(currentKeyframe.BoundingBox.Extents, nextKeyframe.BoundingBox.Extents, alpha);
-
-                            var rootPos = Vector3.Lerp(currentKeyframe.RootOffset, nextKeyframe.RootOffset, alpha);
-
-                            var boneOrients = new List<Quaternion>(currentKeyframe.BoneOrientations.Count);
-                            for (int k = 0; k < boneOrients.Count; k++)
-                                boneOrients[k] = Quaternion.Slerp(currentKeyframe.BoneOrientations[k], nextKeyframe.BoneOrientations[k], alpha);
-
-                            var frame = new TombEngineKeyFrame();
-                            frame.BoundingBox = new TombEngineBoundingBox();
-                            frame.BoundingBox.X1 = (short)(center.X - extents.X);
-                            frame.BoundingBox.X2 = (short)(center.X + extents.X);
-                            frame.BoundingBox.Y1 = (short)(center.Y - extents.Y);
-                            frame.BoundingBox.Y2 = (short)(center.Y + extents.Y);
-                            frame.BoundingBox.Z1 = (short)(center.Z + extents.Z);
-                            frame.BoundingBox.Z2 = (short)(center.Z - extents.Z);
-                            frame.RootOffset = rootPos;
-                            frame.BoneOrientations = boneOrients;
-                            frame.Write(writer);
-                        }
-                    }
-                }
+                // Write pre-baked frames.
+                writer.Write(animation.InterpolatedFrames.Count);
+                foreach (var frame in animation.InterpolatedFrames)
+                    frame.Write(writer);
 
                 writer.Write(animation.StateChanges.Count);
                 foreach (var stateChange in animation.StateChanges)
@@ -815,10 +770,12 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public Vector3 VelocityStart;
         public Vector3 VelocityEnd;
         public List<TombEngineKeyFrame> KeyFrames;
+        public List<TombEngineKeyFrame> InterpolatedFrames;
         public List<TombEngineStateChange> StateChanges;
         public int NumAnimCommands;
         public List<object> CommandData;
         public int Flags;
+        public WadAnimRootMotionSettings RootMotion;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

@@ -95,8 +95,8 @@ namespace WadTool
                 _editor.Tool.Configuration.AnimationEditor_SoundPreviewType = SoundPreviewType.Land;
 
             // TODO: Unlock when anim blending is finished.
-            sectionBlending.Visible = false; //isTEN;
-            panelRootMotion.Visible = false; //isTEN;
+            sectionBlending.Visible = isTEN;
+            panelRootMotion.Visible = isTEN;
 
             // Update UI
             UpdateUIControls();
@@ -502,6 +502,11 @@ namespace WadTool
                     nudBlendFrameCount.Value = (decimal)node.WadAnimation.BlendFrameCount;
                     bezierCurveEditor.Value = node.WadAnimation.BlendCurve;
                     cbBlendPreset.SelectedIndex = -1;
+
+                    cbRootPosX.Checked = node.WadAnimation.RootMotion.PositionX;
+                    cbRootPosY.Checked = node.WadAnimation.RootMotion.PositionY;
+                    cbRootPosZ.Checked = node.WadAnimation.RootMotion.PositionZ;
+                    cbRootRotation.Checked = node.WadAnimation.RootMotion.Rotation;
 
                     tbStateId.Text = node.WadAnimation.StateId.ToString();
                     UpdateStateChange();
@@ -2836,9 +2841,30 @@ namespace WadTool
             UpdateUIControls();
         }
 
-        private void cbRootPosX_CheckedChanged(object sender, EventArgs e)
+        private void cbRootPosX_CheckedChanged(object sender, EventArgs e) => UpdateRootMotionSetting(sender);
+        private void cbRootPosY_CheckedChanged(object sender, EventArgs e) => UpdateRootMotionSetting(sender);
+        private void cbRootPosZ_CheckedChanged(object sender, EventArgs e) => UpdateRootMotionSetting(sender);
+        private void cbRootRotation_CheckedChanged(object sender, EventArgs e) => UpdateRootMotionSetting(sender);
+
+        private void UpdateRootMotionSetting(object sender)
         {
-            // TODO: Where to put these flags?
+            if (!_allowUpdate || _editor.CurrentAnim == null)
+                return;
+
+            if (!_editor.MadeChanges)
+            {
+                _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
+                _editor.MadeChanges = true;
+            }
+
+            var rm = _editor.CurrentAnim.WadAnimation.RootMotion;
+            rm.PositionX = cbRootPosX.Checked;
+            rm.PositionY = cbRootPosY.Checked;
+            rm.PositionZ = cbRootPosZ.Checked;
+            rm.Rotation = cbRootRotation.Checked;
+            _editor.CurrentAnim.WadAnimation.RootMotion = rm;
+
+            Saved = false;
         }
 
         private void cbBlendPreset_SelectedIndexChanged(object sender, EventArgs e)
