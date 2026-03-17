@@ -1,10 +1,12 @@
 ﻿using System.Drawing;
+using System.Numerics;
 using System.Windows.Forms;
 using TombLib.Controls;
 using TombLib.Graphics;
 using TombLib.LevelData;
 using TombLib.Rendering;
 using TombLib;
+using TombLib.Wad;
 using TombLib.LevelData.SectorEnums;
 using TombLib.LevelData.SectorEnums.Extensions;
 
@@ -15,7 +17,8 @@ namespace TombEditor.Controls.Panel3D
         private void OnMouseButtonDownLeft(Point location)
         {
             // Do picking on the scene
-            PickingResult newPicking = DoPicking(GetRay(location.X, location.Y), _editor.Configuration.Rendering3D_SelectObjectsInAnyRoom);
+            bool skipObjectPicking = _editor.Mode == EditorMode.ObjectPlacement && _editor.Tool.Tool != EditorToolType.Selection && !ModifierKeys.HasFlag(Keys.Alt);
+            var newPicking = DoPicking(GetRay(location.X, location.Y), _editor.Configuration.Rendering3D_SelectObjectsInAnyRoom, skipObjectPicking);
 
             if (newPicking is PickingResultSector)
             {
@@ -55,7 +58,9 @@ namespace TombEditor.Controls.Panel3D
                 VectorInt2 pos = newSectorPicking.Pos;
 
                 // Handle face selection
-                if ((_editor.Tool.Tool == EditorToolType.Selection || _editor.Tool.Tool == EditorToolType.Group || _editor.Tool.Tool >= EditorToolType.Drag) &&
+                if ((_editor.Tool.Tool == EditorToolType.Selection || _editor.Tool.Tool == EditorToolType.Group ||
+                    (_editor.Tool.Tool >= EditorToolType.Drag && _editor.Tool.Tool != EditorToolType.Eraser)) &&
+                    (_editor.Mode != EditorMode.ObjectPlacement || _editor.Tool.Tool == EditorToolType.Selection) &&
                     (ModifierKeys == Keys.None || ModifierKeys == Keys.Control))
                 {
                     if (!_editor.SelectedSectors.Valid || !_editor.SelectedSectors.Area.Contains(pos))
@@ -151,6 +156,7 @@ namespace TombEditor.Controls.Panel3D
 
                     case EditorMode.Lighting:
                     case EditorMode.FaceEdit:
+
                         // Disable texturing in lighting mode, if option is set
                         if (_editor.Mode == EditorMode.Lighting &&
                             !_editor.Configuration.Rendering3D_AllowTexturingInLightingMode)
@@ -222,6 +228,11 @@ namespace TombEditor.Controls.Panel3D
 
                         }
                         break;
+
+                    case EditorMode.ObjectPlacement:
+                        if (_editor.Tool.Tool != EditorToolType.Selection)
+                            HandleObjectPlacementMouseDown(location);
+                        break;
                 }
             }
             else if (newPicking is PickingResultGizmo)
@@ -248,10 +259,16 @@ namespace TombEditor.Controls.Panel3D
 
                 if (ModifierKeys.HasFlag(Keys.Alt)) // Pick item or imported geo without selection
                 {
-                    if (obj is ItemInstance)
-                        _editor.ChosenItem = ((ItemInstance)obj).ItemType;
-                    else if (obj is ImportedGeometryInstance)
-                        _editor.ChosenImportedGeometry = ((ImportedGeometryInstance)obj).Model;
+                    if (obj is ItemInstance itemInstance)
+                    {
+                        var wadObj = itemInstance.ItemType.ToIWadObject(_editor.Level.Settings);
+                        if (wadObj != null)
+                            _editor.ChosenItems = new[] { wadObj };
+                    }
+                    else if (obj is ImportedGeometryInstance geoInstance)
+                    {
+                        _editor.ChosenItems = new IWadObject[] { geoInstance.Model };
+                    }
                 }
                 else if (_editor.SelectedObject != obj)
                 {

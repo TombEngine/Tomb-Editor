@@ -205,6 +205,7 @@ namespace TombLib.LevelData
         public List<EventSet> GlobalEventSets { get; set; } = new List<EventSet>();
         public List<EventSet> VolumeEventSets { get; set; } = new List<EventSet>();
         public List<ColorC> Palette { get; set; } = LoadPalette(ResourcesC.ResourcesC.palette);
+        public HashSet<string> Favorites { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         // Light options
         public Vector3 DefaultAmbientLight { get; set; } = new Vector3(0.25f, 0.25f, 0.25f);

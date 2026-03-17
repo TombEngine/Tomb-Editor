@@ -186,7 +186,7 @@ namespace TombLib.Controls
                 return new SelectionPrecisionType(TileSelectionSize, true);
         }
 
-        protected virtual float MaxTextureSize { get; } = 256;
+        protected virtual float MaxTextureSize { get; } = 1024;
 
         private Vector2 Quantize(Vector2 texCoord, bool endX, bool endY, bool singleVertexMovement = false)
         {

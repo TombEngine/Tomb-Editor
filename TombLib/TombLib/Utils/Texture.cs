@@ -363,34 +363,28 @@ namespace TombLib.Utils
         public bool TextureIsTriangle => TexCoord2 == TexCoord3;
         public bool TextureIsDegenerate => (!TextureIsTriangle && QuadArea == 0) || (TextureIsTriangle && TriangleArea == 0);
 
-        public bool TriangleCoordsOutOfBounds
+        public bool AreTriangleCoordsOutOfBounds(float maxCoordSpan)
         {
-            get
-            {
-                if (TextureIsInvisible || TextureIsUnavailable)
-                    return false;
+            if (TextureIsInvisible || TextureIsUnavailable)
+                return false;
 
-                Vector2 max = Vector2.Max(Vector2.Max(TexCoord0, TexCoord1), TexCoord2);
-                Vector2 min = Vector2.Min(Vector2.Min(TexCoord0, TexCoord1), TexCoord2);
+            Vector2 max = Vector2.Max(Vector2.Max(TexCoord0, TexCoord1), TexCoord2);
+            Vector2 min = Vector2.Min(Vector2.Min(TexCoord0, TexCoord1), TexCoord2);
 
-                return min.X < 0.0f || min.Y < 0.0f || max.X > Texture.Image.Width || max.Y > Texture.Image.Height ||
-                       max.X - min.X > 256.0f || max.Y - min.Y > 256.0f;
-            }
+            return min.X < 0.0f || min.Y < 0.0f || max.X > Texture.Image.Width || max.Y > Texture.Image.Height ||
+                   max.X - min.X > maxCoordSpan || max.Y - min.Y > maxCoordSpan;
         }
 
-        public bool QuadCoordsOutOfBounds
+        public bool AreQuadCoordsOutOfBounds(float maxCoordSpan)
         {
-            get
-            {
-                if (TextureIsInvisible || TextureIsUnavailable)
-                    return false;
+            if (TextureIsInvisible || TextureIsUnavailable)
+                return false;
 
-                Vector2 max = Vector2.Max(Vector2.Max(TexCoord0, TexCoord1), Vector2.Max(TexCoord2, TexCoord3));
-                Vector2 min = Vector2.Min(Vector2.Min(TexCoord0, TexCoord1), Vector2.Min(TexCoord2, TexCoord3));
+            Vector2 max = Vector2.Max(Vector2.Max(TexCoord0, TexCoord1), Vector2.Max(TexCoord2, TexCoord3));
+            Vector2 min = Vector2.Min(Vector2.Min(TexCoord0, TexCoord1), Vector2.Min(TexCoord2, TexCoord3));
 
-                return min.X < 0.0f || min.Y < 0.0f || max.X > Texture.Image.Width || max.Y > Texture.Image.Height ||
-                       max.X - min.X > 256.0f || max.Y - min.Y > 256.0f;
-            }
+            return min.X < 0.0f || min.Y < 0.0f || max.X > Texture.Image.Width || max.Y > Texture.Image.Height ||
+                   max.X - min.X > maxCoordSpan || max.Y - min.Y > maxCoordSpan;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]

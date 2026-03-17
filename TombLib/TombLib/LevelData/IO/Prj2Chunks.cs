@@ -248,5 +248,7 @@ namespace TombLib.LevelData.IO
         /****/public static readonly ChunkId AutoMergeStaticMeshEntry3 = ChunkId.FromString("TeMergeStaticsEntry3");
         /**/public static readonly ChunkId EmbeddedSoundInfoWad = ChunkId.FromString("TeEmbeddedSoundInfoWad"); // DEPRECATED
         /**/public static readonly ChunkId Palette = ChunkId.FromString("TePalette");
+        /**/public static readonly ChunkId Favorites = ChunkId.FromString("TeFavorites");
+        /****/public static readonly ChunkId Favorite = ChunkId.FromString("TeFavorite");
     }
 }

@@ -377,7 +377,7 @@ namespace TombLib.LevelData
                             sector.SetFaceTexture(face, TextureArea.None);
                         }
                     }
-                room.BuildGeometry();
+                room.Rebuild(relight: true, highQualityLighting: true);
             });
 
             foreach (AnimatedTextureSet set in Settings.AnimatedTextureSets)
@@ -450,6 +450,12 @@ namespace TombLib.LevelData
         {
             var result = new List<PositionBasedObjectInstance>();
             ExistingRooms.ForEach(r => result.AddRange(r.Objects));
+            return result;
+        }
+
+        public HashSet<string> GetAllLuaNames()
+        {
+            var result = new HashSet<string>(GetAllObjects().OfType<IHasLuaName>().Select(o => o.LuaName).Where(n => !string.IsNullOrEmpty(n)));
             return result;
         }
 

@@ -772,7 +772,7 @@ namespace TombLib.LevelData.Compilers.Util
             if (_dataHasBeenLaidOut)
                 throw new InvalidOperationException("Data has been already laid out for this TexInfoManager. Reinitialize it if you want to restart texture collection.");
 
-            if ((isForTriangle && texture.TriangleCoordsOutOfBounds) || (!isForTriangle && texture.QuadCoordsOutOfBounds))
+            if ((isForTriangle && texture.AreTriangleCoordsOutOfBounds(256.0f)) || (!isForTriangle && texture.AreQuadCoordsOutOfBounds(256.0f)))
             {
                 _progressReporter.ReportWarn("Texture (" + texture.TexCoord0 + ", " + texture.TexCoord1 + ", " + 
                     texture.TexCoord2 + ", " + texture.TexCoord3 + ") is out of bounds and will be ignored.");

@@ -39,6 +39,7 @@ struct PixelInputType
 	int BlendMode : BLENDMODE;
     float2 EditorUv : EDITORUV;
 	int EditorSectorTexture : EDITORSECTORTEXTURE;
+	float3 WorldPosition : WORLDPOSITION;
 };
 
 PixelInputType main(VertexInputType input)
@@ -74,6 +75,7 @@ PixelInputType main(VertexInputType input)
 		(int)((input.EditorUv >> 2) << 30) >> 30); // Sign extend;
 	output.EditorSectorTexture = input.EditorUv;
 	output.Overlay = input.Overlay;
+	output.WorldPosition = input.Position.xyz;
     return output;
 }
 

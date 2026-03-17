@@ -4,8 +4,22 @@ using TombLib.LevelData.SectorEnums.Extensions;
 
 namespace TombLib.LevelData.SectorGeometry;
 
+/// <summary>
+/// Provides legacy (PRJ-era) wall geometry calculations that only support a single extra floor split (ED)
+/// and a single extra ceiling split (RF). Used during PRJ-to-PRJ2 file conversion.
+/// <para>
+/// Unlike <see cref="SectorWallData.GetVerticalFloorPartFaces"/>, this class does not iterate over
+/// multiple extra splits and uses simplified clamping logic matching the original editor behavior.
+/// </para>
+/// </summary>
 public static class LegacyWallGeometry
 {
+	/// <summary>
+	/// Returns the vertical floor part faces using legacy logic.
+	/// Supports at most one extra floor split (ED) at index 0 of <see cref="SectorWallData.ExtraFloorSplits"/>.
+	/// </summary>
+	/// <param name="wallData">The wall data to generate faces from.</param>
+	/// <param name="isAnyWall">Whether the sector is classified as any type of wall.</param>
 	public static IReadOnlyList<SectorFaceData> GetVerticalFloorPartFaces(SectorWallData wallData, bool isAnyWall)
 	{
 		var result = new List<SectorFaceData>();
@@ -78,6 +92,12 @@ public static class LegacyWallGeometry
 		return result;
 	}
 
+	/// <summary>
+	/// Returns the vertical ceiling part faces using legacy logic.
+	/// Supports at most one extra ceiling split (RF) at index 0 of <see cref="SectorWallData.ExtraCeilingSplits"/>.
+	/// </summary>
+	/// <param name="wallData">The wall data to generate faces from.</param>
+	/// <param name="isAnyWall">Whether the sector is classified as any type of wall.</param>
 	public static IReadOnlyList<SectorFaceData> GetVerticalCeilingPartFaces(SectorWallData wallData, bool isAnyWall)
 	{
 		var result = new List<SectorFaceData>();
@@ -150,6 +170,11 @@ public static class LegacyWallGeometry
 		return result;
 	}
 
+	/// <summary>
+	/// Returns the vertical middle wall face using legacy clamping logic.
+	/// QA is clamped above the floor and WS is clamped below the ceiling.
+	/// </summary>
+	/// <param name="wallData">The wall data to generate the middle face from.</param>
 	public static SectorFaceData? GetVerticalMiddlePartFace(SectorWallData wallData)
 	{
 		int yQaA = wallData.QA.StartY,

@@ -141,6 +141,9 @@
     <EmbeddedResource Include="Rendering\ServiceObjectTextures\ghost_block.png" />
     <EmbeddedResource Include="Rendering\ServiceObjectTextures\unknown.png" />
     <EmbeddedResource Include="Rendering\ServiceObjectTextures\camera.png" />
+    <Content Include="Rendering\Legacy\BrushOverlay.hlsli">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Rendering\Legacy\Model.fx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

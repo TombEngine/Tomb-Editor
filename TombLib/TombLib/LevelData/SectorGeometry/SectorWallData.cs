@@ -238,36 +238,38 @@ public readonly struct SectorWallData
 	}
 
 	/// <summary>
-	/// Returns the vertical middle face of the wall, if it can be rendered.
+	/// Returns the vertical middle face of the wall (between the floor and ceiling portions), if it can be rendered.
+	/// <para>
+	/// When <see cref="CanOverdraw"/> is <see langword="false"/>, the QA and WS split heights are clamped
+	/// to prevent the face from extending into the floor void (below <see cref="Start"/>/<see cref="End"/> MinY)
+	/// or ceiling void (above MaxY). If either endpoint of a split crosses its boundary, both endpoints
+	/// are snapped to the boundary to prevent crossover geometry artifacts.
+	/// </para>
 	/// </summary>
+	/// <returns>The middle face data, or <see langword="null"/> if the face has zero or negative area.</returns>
 	public readonly SectorFaceData? GetVerticalMiddleFace()
 	{
-		int yStartA = QA.StartY,
-			yStartB = QA.EndY,
-			yEndA = WS.StartY,
-			yEndB = WS.EndY;
+		int yStartA, yStartB, yEndA, yEndB;
 
-		if (!CanOverdraw)
+		if (CanOverdraw)
 		{
-			int qaStartY = QA.StartY, qaEndY = QA.EndY,
-				wsStartY = WS.StartY, wsEndY = WS.EndY;
+			// When overdraw is allowed, use raw QA/WS values without clamping
+			yStartA = QA.StartY;
+			yStartB = QA.EndY;
+			yEndA = WS.StartY;
+			yEndB = WS.EndY;
+		}
+		else
+		{
+			// If either QA endpoint dips below the floor, snap both to the floor
+			bool isQaCrossover = QA.StartY < Start.MinY || QA.EndY < End.MinY;
+			yStartA = isQaCrossover ? Start.MinY : QA.StartY;
+			yStartB = isQaCrossover ? End.MinY : QA.EndY;
 
-			if (qaStartY < Start.MinY || qaEndY < End.MinY)
-			{
-				qaStartY = Start.MinY;
-				qaEndY = End.MinY;
-			}
-
-			if (wsStartY > Start.MaxY || wsEndY > End.MaxY)
-			{
-				wsStartY = Start.MaxY;
-				wsEndY = End.MaxY;
-			}
-
-			yStartA = qaStartY <= Start.MinY ? Start.MinY : qaStartY;
-			yStartB = qaEndY <= End.MinY ? End.MinY : qaEndY;
-			yEndA = wsStartY >= Start.MaxY ? Start.MaxY : wsStartY;
-			yEndB = wsEndY >= End.MaxY ? End.MaxY : wsEndY;
+			// If either WS endpoint rises above the ceiling, snap both to the ceiling
+			bool isWsCrossover = WS.StartY > Start.MaxY || WS.EndY > End.MaxY;
+			yEndA = isWsCrossover ? Start.MaxY : WS.StartY;
+			yEndB = isWsCrossover ? End.MaxY : WS.EndY;
 		}
 
 		SectorFace sectorFace = SectorFaceExtensions.GetMiddleFace(Direction);

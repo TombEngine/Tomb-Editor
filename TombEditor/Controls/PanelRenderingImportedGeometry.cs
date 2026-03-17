@@ -40,14 +40,15 @@ namespace TombEditor.Controls
                 Invalidate();
             }
 
-            // Update currently viewed item
-            if (obj is Editor.ChosenImportedGeometryChangedEvent)
+            // Update currently viewed item.
+            if (obj is Editor.ChosenItemsChangedEvent itemsChanged)
             {
-                Editor.ChosenImportedGeometryChangedEvent e = (Editor.ChosenImportedGeometryChangedEvent)obj;
-                if (e.Current != null)
+                if (itemsChanged.Current?.Any(o => o is ImportedGeometry) == true)
+                {
                     ResetCamera();
-                Invalidate();
-                Update(); // Magic fix for room view leaking into item view
+                    Invalidate();
+                    Update(); // Magic fix for room view leaking into item view
+                }
             }
 
             if (obj is Editor.LoadedImportedGeometriesChangedEvent ||

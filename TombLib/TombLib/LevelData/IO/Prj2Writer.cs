@@ -393,6 +393,15 @@ namespace TombLib.LevelData.IO
                         chunkIO.Raw.Write(color.B);
                     }
                 }
+                if (settings.Favorites.Count > 0)
+                {
+                    using (var chunkFavorites = chunkIO.WriteChunk(Prj2Chunks.Favorites, long.MaxValue))
+                    {
+                        foreach (string favorite in settings.Favorites)
+                            chunkIO.WriteChunkString(Prj2Chunks.Favorite, favorite);
+                        chunkIO.WriteChunkEnd();
+                    }
+                }
                 chunkIO.WriteChunkEnd();
             }
 

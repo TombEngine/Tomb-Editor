@@ -1,8 +1,8 @@
 ﻿using DarkUI.Docking;
 using System;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
+using TombLib.Controls;
 using TombLib.LevelData;
 using TombLib.Rendering;
 using TombLib.Wad;
@@ -13,6 +13,7 @@ namespace TombEditor.ToolWindows
     public partial class ItemBrowser : DarkToolWindow
     {
         private readonly Editor _editor;
+        private bool _suppressEditorSync = false;
 
         public ItemBrowser()
         {
@@ -61,14 +62,15 @@ namespace TombEditor.ToolWindows
 
                 if (comboItems.Items.Count > 0)
                 {
-                    // Check if any reloaded wads still have current selected item present. If they do, re-select it
-                    // to preserve item list position. If item is not present, just reset selection to first item in the list.
+                    // Check if any reloaded wads still have the currently chosen item. If so, re-select it
+                    // to preserve list position. Otherwise, reset selection to the first item in the list.
 
-                    if (_editor.ChosenItem.HasValue &&
-                        _editor.Level.Settings.Wads.Any(w => w.Wad != null && ((!_editor.ChosenItem.Value.IsStatic && w.Wad.Moveables.Any(w2 => w2.Key == _editor.ChosenItem.Value.MoveableId)) ||
-                                                                               ( _editor.ChosenItem.Value.IsStatic && w.Wad.Statics.Any  (w2 => w2.Key == _editor.ChosenItem.Value.StaticId)))))
+                    var chosenWadObject = _editor.GetFirstWadObject();
+
+                    if (chosenWadObject != null && comboItems.Items.Contains(chosenWadObject))
                     {
-                        ChoseItem(_editor.ChosenItem.Value);
+                        comboItems.SelectedItem = panelItem.CurrentObject = chosenWadObject;
+                        panelItem.ResetCamera();
                     }
                     else
                     {
@@ -91,17 +93,21 @@ namespace TombEditor.ToolWindows
                 }
             }
 
-            // Update selection of items combo box
-            if (obj is Editor.ChosenItemChangedEvent)
+            // Update selection of items combo box.
+            if (obj is Editor.ChosenItemsChangedEvent)
             {
-                var e = (Editor.ChosenItemChangedEvent)obj;
-                if (!e.Current.HasValue)
-                    comboItems.SelectedItem = panelItem.CurrentObject = null;
-                else
-                    ChoseItem(e.Current.Value);
+                _suppressEditorSync = true;
+                var wadObject = _editor.GetFirstWadObject();
+                if (wadObject != null)
+                {
+                    comboItems.SelectedItem = panelItem.CurrentObject = wadObject;
+                    MakeActive();
+                    panelItem.ResetCamera();
+                }
+                _suppressEditorSync = false;
             }
 
-            if (obj is Editor.ChosenItemChangedEvent ||
+            if (obj is Editor.ChosenItemsChangedEvent ||
                 obj is Editor.GameVersionChangedEvent ||
                 obj is Editor.LevelChangedEvent ||
                 obj is Editor.LoadedWadsChangedEvent ||
@@ -132,61 +138,33 @@ namespace TombEditor.ToolWindows
                 panelItem.AnimatePreview = _editor.Configuration.RenderingItem_Animate;
                 lblFromWad.Visible = _editor.Configuration.RenderingItem_ShowMultipleWadsPrompt;
             }
-
-        }
-
-        private void ChoseItem(ItemType item)
-        {
-            if (item == null)
-                return;
-
-            if (item.IsStatic)
-            {
-                comboItems.SelectedItem = panelItem.CurrentObject = _editor.Level.Settings.WadTryGetStatic(item.StaticId);
-            }
-            else
-            {
-                if (!_editor.Configuration.RenderingItem_HideInternalObjects ||
-                    !TrCatalog.IsHidden(_editor.Level.Settings.GameVersion, item.MoveableId.TypeId))
-                {
-                    comboItems.SelectedItem = panelItem.CurrentObject = _editor.Level.Settings.WadTryGetMoveable(item.MoveableId);
-                }
-            }
-
-            MakeActive();
-            panelItem.ResetCamera();
         }
 
         private void FindLaraSkin()
         {
-            if (comboItems.Items.Count == 0 || comboItems.SelectedIndex < 0 || !(comboItems.SelectedItem is WadMoveable))
+            if (comboItems.Items.Count == 0 || comboItems.SelectedIndex < 0 || !(comboItems.SelectedItem is WadMoveable item))
                 return;
 
-            var item = comboItems.SelectedItem as WadMoveable;
-            var skinId = new WadMoveableId(TrCatalog.GetMoveableSkin(_editor.Level.Settings.GameVersion, item.Id.TypeId));
-            var skin = _editor.Level.Settings.WadTryGetMoveable(skinId);
-
-            if (skin != null && skin != item)
-                panelItem.CurrentObject = item.ReplaceDummyMeshes(skin);
-            else
-                panelItem.CurrentObject = item;
-
+            panelItem.CurrentObject = WadObjectRenderHelper.GetRenderObject(item, _editor.Level.Settings);
             panelItem.ResetCamera();
         }
 
         private void comboItems_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboItems.SelectedItem == null)
-                _editor.ChosenItem = null;
-            else if (comboItems.SelectedItem is WadMoveable)
-                _editor.ChosenItem = new ItemType(((WadMoveable)comboItems.SelectedItem).Id, _editor?.Level?.Settings);
-            else if (comboItems.SelectedItem is WadStatic)
-                _editor.ChosenItem = new ItemType(((WadStatic)comboItems.SelectedItem).Id, _editor?.Level?.Settings);
+            if (!_suppressEditorSync && comboItems.SelectedItem is IWadObject wadObject)
+                _editor.ChosenItems = new[] { wadObject };
 
-            if (_editor.ChosenItem != null)
+            var itemType = comboItems.SelectedItem switch
+            {
+                WadMoveable m => (ItemType?)new ItemType(m.Id, _editor?.Level?.Settings),
+                WadStatic s   => (ItemType?)new ItemType(s.Id, _editor?.Level?.Settings),
+                _             => null
+            };
+
+            if (itemType != null)
             {
                 bool multiple;
-                var wad = _editor.Level.Settings.WadTryGetWad(_editor.ChosenItem.Value, out multiple);
+                var wad = _editor.Level.Settings.WadTryGetWad(itemType.Value, out multiple);
 
                 if (wad != null)
                 {

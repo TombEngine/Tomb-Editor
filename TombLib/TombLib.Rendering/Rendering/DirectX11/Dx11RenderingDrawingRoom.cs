@@ -31,6 +31,7 @@ namespace TombLib.Rendering.DirectX11
             Vector2 textureScaling = new Vector2(16777216.0f) / new Vector2(TextureAllocator.Size.X, TextureAllocator.Size.Y);
 
             RoomGeometry roomGeometry = description.Room.RoomGeometry;
+            float maxTexCoordSpan = description.Room.Level?.IsTombEngine == true ? 1024.0f : 256.0f;
 
             // Create buffer
             Vector3 worldPos = description.Room.WorldPos + description.Offset;
@@ -135,8 +136,8 @@ namespace TombLib.Rendering.DirectX11
                                 uvwAndBlendModes[i * 3 + 1] = Dx11RenderingDevice.CompressUvw(position, textureScaling, Vector2.Abs(roomGeometry.VertexEditorUVs[i * 3 + 1]) * (image.Size - VectorInt2.One) + new Vector2(0.5f), (uint)texture.BlendMode);
                                 uvwAndBlendModes[i * 3 + 2] = Dx11RenderingDevice.CompressUvw(position, textureScaling, Vector2.Abs(roomGeometry.VertexEditorUVs[i * 3 + 2]) * (image.Size - VectorInt2.One) + new Vector2(0.5f), (uint)texture.BlendMode);
                             }
-                            else if (texture.TriangleCoordsOutOfBounds)
-                            { // Texture is available but coordinates are ouf of bounds
+                            else if (texture.AreTriangleCoordsOutOfBounds(maxTexCoordSpan))
+                            { // Texture is available but coordinates are out of bounds
                                 ImageC image = Dx11RenderingDevice.TextureCoordOutOfBounds;
                                 VectorInt3 position = TextureAllocator.Get(image);
                                 uvwAndBlendModes[i * 3 + 0] = Dx11RenderingDevice.CompressUvw(position, textureScaling, Vector2.Abs(roomGeometry.VertexEditorUVs[i * 3 + 0]) * (image.Size - VectorInt2.One) + new Vector2(0.5f), (uint)texture.BlendMode);

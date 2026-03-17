@@ -136,7 +136,7 @@ namespace TombLib.Rendering
 
         public VectorInt3 GetForTriangle(TextureArea texture)
         {
-            const int MaxDirectImageArea = 256 * 256;   // @FIXME: why the hell it was 196 * 196 before?
+            const int MaxDirectImageArea = 1024 * 1024;
 
             // @FIXME: MaxDirectImageArea GREATER comparison against image size area made no sense,
             // so I changed it to LESS-OR-EQUAL. Addressed to TRTomb. -- Lwmte

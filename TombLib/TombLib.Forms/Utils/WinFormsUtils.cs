@@ -129,6 +129,20 @@ namespace TombLib.Utils
             var activeControl = GetFocusedControl(form);
             var activeControlType = activeControl?.GetType().Name;
 
+            if (activeControl is ElementHost &&
+                (keyData.HasFlag(Keys.Control | Keys.A) ||
+                 keyData.HasFlag(Keys.Control | Keys.X) ||
+                 keyData.HasFlag(Keys.Control | Keys.C) ||
+                 keyData.HasFlag(Keys.Control | Keys.V) ||
+                (!keyData.HasFlag(Keys.Control) && !keyData.HasFlag(Keys.Alt))))
+            {
+                var wpfFocused = System.Windows.Input.Keyboard.FocusedElement;
+
+                if (wpfFocused is System.Windows.Controls.TextBox ||
+                    wpfFocused is System.Windows.Controls.Primitives.TextBoxBase)
+                    return true;
+            }
+
 			if (activeControl is ElementHost &&
 				(keyData.HasFlag(Keys.Control | Keys.A) ||
 				 keyData.HasFlag(Keys.Control | Keys.X) ||

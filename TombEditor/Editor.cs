@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using TombLib;
@@ -11,6 +12,7 @@ using TombLib.LevelData;
 using TombLib.LevelData.IO;
 using TombLib.Rendering;
 using TombLib.Utils;
+using TombLib.Wad;
 using TombLib.Wad.Catalog;
 
 namespace TombEditor
@@ -90,8 +92,7 @@ namespace TombEditor
                 // Reset state that was related to the old level
                 _levelSettingsWatcher?.StopReloading();
                 SelectedObject = null;
-                ChosenItem = null;
-                ChosenImportedGeometry = null;
+                ChosenItems = Array.Empty<IWadObject>();
                 SelectedSectors = SectorSelection.None;
                 Action = null;
                 SelectedTexture = TextureArea.None;
@@ -152,42 +153,41 @@ namespace TombEditor
             }
         }
 
-        public class ChosenItemChangedEvent : IEditorPropertyChangedEvent
+        public class ChosenItemsChangedEvent : IEditorPropertyChangedEvent
         {
-            public ItemType? Previous { get; internal set; }
-            public ItemType? Current { get; internal set; }
+            public IReadOnlyList<IWadObject> Previous { get; internal set; }
+            public IReadOnlyList<IWadObject> Current { get; internal set; }
         }
-        private ItemType? _chosenItem;
-        public ItemType? ChosenItem
+
+        private IWadObject[] _chosenItems = Array.Empty<IWadObject>();
+        public IReadOnlyList<IWadObject> ChosenItems
         {
-            get { return _chosenItem; }
+            get { return _chosenItems; }
             set
             {
-                if (value == _chosenItem)
+                var arr = value?.ToArray() ?? Array.Empty<IWadObject>();
+                if (_chosenItems.SequenceEqual(arr))
                     return;
-                var previous = _chosenItem;
-                _chosenItem = value;
-                RaiseEvent(new ChosenItemChangedEvent { Previous = previous, Current = value });
+
+                var previous = _chosenItems;
+                _chosenItems = arr;
+
+                RaiseEvent(new ChosenItemsChangedEvent { Previous = previous, Current = arr });
             }
         }
 
-        public class ChosenImportedGeometryChangedEvent : IEditorPropertyChangedEvent
+        public IWadObject GetFirstWadObject()
         {
-            public ImportedGeometry Previous { get; internal set; }
-            public ImportedGeometry Current { get; internal set; }
-        }
-        private ImportedGeometry _chosenImportedGeometry = null;
-        public ImportedGeometry ChosenImportedGeometry
-        {
-            get { return _chosenImportedGeometry; }
-            set
+            if (ChosenItems == null || ChosenItems.Count == 0)
+                return null;
+
+            foreach (var obj in ChosenItems)
             {
-                if (value == _chosenImportedGeometry)
-                    return;
-                var previous = _chosenImportedGeometry;
-                _chosenImportedGeometry = value;
-                RaiseEvent(new ChosenImportedGeometryChangedEvent { Previous = previous, Current = value });
+                if (obj is WadMoveable || obj is WadStatic)
+                    return obj;
             }
+
+            return null;
         }
 
         public class ModeChangedEvent : IEditorPropertyChangedEvent
@@ -229,6 +229,15 @@ namespace TombEditor
         }
         private EditorTool _lastGeometryTool = new EditorTool();
         private EditorTool _lastFaceEditTool = new EditorTool();
+        private EditorTool _lastObjectPlacementTool = new EditorTool();
+
+        // Raised when brush settings (radius, density, rotation, etc.) change in the toolbox.
+        // Only Panel3D needs to respond, so this avoids the heavier ConfigurationChangedEvent.
+        public class ObjectBrushSettingsChangedEvent : IEditorEvent { }
+        public void ObjectBrushSettingsChange()
+        {
+            RaiseEvent(new ObjectBrushSettingsChangedEvent());
+        }
 
         public LastSelectionType LastSelection = LastSelectionType.None;
 
@@ -1019,6 +1028,7 @@ namespace TombEditor
                 // Update tools
                 _lastFaceEditTool = Configuration.UI_LastTexturingTool;
                 _lastGeometryTool = Configuration.UI_LastGeometryTool;
+                _lastObjectPlacementTool = Configuration.UI_LastObjectPlacementTool;
 
                 if (Mode == EditorMode.Geometry)
                     Tool = Configuration.UI_LastGeometryTool;
@@ -1074,8 +1084,17 @@ namespace TombEditor
 
                 if (@event.Current == EditorMode.Geometry)
                     Tool = _lastGeometryTool;
+                else if (@event.Current == EditorMode.ObjectPlacement)
+                    Tool = _lastObjectPlacementTool;
                 else
                     Tool = _lastFaceEditTool;
+
+                // If the mode switched to lighting mode, relight all rooms which have `PendingRelight` set to true
+                if (@event.Current == EditorMode.Lighting)
+                {
+                    Parallel.ForEach(Level.Rooms.Where(room => room?.PendingRelight == true),
+                        room => room.RebuildLighting(Configuration.Rendering3D_HighQualityLightPreview));
+                }
             }
 
             // Backup last used tool for next mode
@@ -1087,6 +1106,11 @@ namespace TombEditor
                     _lastGeometryTool = @event.Current;
                     Configuration.UI_LastGeometryTool = _lastGeometryTool;
                 }    
+                else if (Mode == EditorMode.ObjectPlacement)
+                {
+                    _lastObjectPlacementTool = @event.Current;
+                    Configuration.UI_LastObjectPlacementTool = _lastObjectPlacementTool;
+                }
                 else
                 {
                     _lastFaceEditTool = @event.Current;
@@ -1449,5 +1473,7 @@ namespace TombEditor
             => Level.Settings.GameVersion is TRVersion.Game.TombEngine || Configuration.Editor_EnableStepHeightControlsForUnsupportedEngines;
 
         public int IncrementReference => IsPreciseGeometryAllowed ? Configuration.Editor_StepHeight : Level.FullClickHeight;
+
+        public bool ShouldRelight => Mode is EditorMode.Lighting;
     }
 }

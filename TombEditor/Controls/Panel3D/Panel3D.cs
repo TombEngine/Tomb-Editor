@@ -303,6 +303,9 @@ namespace TombEditor.Controls.Panel3D
                 obj is SectorColoringManager.ChangeSectorColoringInfoEvent)
                 _renderingCachedRooms.Clear();
 
+            if (obj is Editor.ObjectBrushSettingsChangedEvent)
+                Invalidate();
+
             // Update drawing
             if (_editor.Mode != EditorMode.Map2D)
                 if (obj is IEditorObjectChangedEvent ||
@@ -314,6 +317,7 @@ namespace TombEditor.Controls.Panel3D
                     obj is Editor.HighlightedSectorChangedEvent ||
                     obj is Editor.SelectedRoomChangedEvent ||
                     obj is Editor.ModeChangedEvent ||
+                    obj is Editor.ToolChangedEvent ||
                     obj is Editor.LoadedWadsChangedEvent ||
                     obj is Editor.LoadedTexturesChangedEvent ||
                     obj is Editor.LoadedImportedGeometriesChangedEvent ||
@@ -396,7 +400,7 @@ namespace TombEditor.Controls.Panel3D
         protected override void OnMouseWheel(MouseEventArgs e)
         {
             base.OnMouseWheel(e);
-            OnMouseWheelScroll(e.Delta);
+            OnMouseWheelScroll(e.Delta, e.Location);
         }
 
         protected override void OnMouseDown(MouseEventArgs e)

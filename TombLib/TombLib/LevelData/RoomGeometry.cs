@@ -12,14 +12,14 @@ namespace TombLib.LevelData
     {
         // EditorUV Map:
         //                      | +Y
-        //   ################## | #################
-        //   ###   Triangle   # | #               #
-        //   #  ###    Split  # | #               #
-        //   #     ###        # | #      Quad     #
-        //   #        ###     # | #      Face     #
-        //   #           ###  # | #               #
-        //   #              ### | #               #
-        //   ################## | #################    +x
+        //   ################## | ##################
+        //   ###   Triangle   # | #                #
+        //   #  ###    Split  # | #                #
+        //   #     ###        # | #      Quad      #
+        //   #        ###     # | #      Face      #
+        //   #           ###  # | #                #
+        //   #              ### | #                #
+        //   ################## | ##################    +x
         // ---------------------0---------------------------
         //   ################## | ##################
         //   ###   Triangle   # | ###   Triangle   #
@@ -32,7 +32,8 @@ namespace TombLib.LevelData
         //                      |
 
         // Quads are reformed by 2 triangles.
-        public int DoubleSidedTriangleCount { get; private set; } = 0;
+        public int DoubleSidedTriangleCount { get; private set; }
+
         public List<Vector3> VertexPositions { get; } = new List<Vector3>(); // one for each vertex
         public List<Vector2> VertexEditorUVs { get; } = new List<Vector2>(); // one for each vertex (ushort to save (GPU) memory and bandwidth)
         public List<Vector3> VertexColors { get; } = new List<Vector3>(); // one for each vertex
@@ -44,7 +45,53 @@ namespace TombLib.LevelData
         public SortedList<SectorFaceIdentity, VertexRange> VertexRangeLookup { get; } = new SortedList<SectorFaceIdentity, VertexRange>();
 
         // useLegacyCode is used for converting legacy .PRJ files to .PRJ2 files
-        public void Build(Room room, bool highQualityLighting, bool useLegacyCode = false)
+        public void Build(Room room, bool useLegacyCode = false)
+        {
+            ClearGeometryData();
+
+            int xMax = room.NumXSectors - 1;
+            int zMax = room.NumZSectors - 1;
+            Sector[,] sectors = room.Sectors;
+
+            // Build face polygons
+            for (int x = 0; x <= xMax; x++) // Outer X loop order matches VertexRangeKey sorting.
+            {
+                for (int z = 0; z <= zMax; z++)
+                {
+                    if (IsCornerSector(x, z, xMax, zMax))
+                        continue;
+
+                    Sector sector = sectors[x, z];
+
+                    // Inner vertical faces for each cardinal direction
+                    TryAddInnerVerticalFace(room, sectors, x, z, xMax, zMax, FaceDirection.PositiveZ, useLegacyCode);
+                    TryAddInnerVerticalFace(room, sectors, x, z, xMax, zMax, FaceDirection.NegativeZ, useLegacyCode);
+                    TryAddInnerVerticalFace(room, sectors, x, z, xMax, zMax, FaceDirection.PositiveX, useLegacyCode);
+                    TryAddInnerVerticalFace(room, sectors, x, z, xMax, zMax, FaceDirection.NegativeX, useLegacyCode);
+
+                    // Diagonal floor/ceiling faces
+                    TryAddDiagonalFaces(room, sector, x, z, useLegacyCode);
+
+                    // Border wall faces for each cardinal direction
+                    TryAddBorderWallFace(room, sectors, x, z, xMax, zMax, FaceDirection.PositiveZ, useLegacyCode);
+                    TryAddBorderWallFace(room, sectors, x, z, xMax, zMax, FaceDirection.NegativeZ, useLegacyCode);
+                    TryAddBorderWallFace(room, sectors, x, z, xMax, zMax, FaceDirection.PositiveX, useLegacyCode);
+                    TryAddBorderWallFace(room, sectors, x, z, xMax, zMax, FaceDirection.NegativeX, useLegacyCode);
+
+                    // Floor and ceiling polygons
+                    AddFloorAndCeilingFaces(room, sector, x, z);
+                }
+            }
+
+            GroupSharedVertices();
+
+            // Build color array
+            VertexColors.Resize(VertexPositions.Count, room.Properties.AmbientLight);
+        }
+
+        #region Build Helpers
+
+        private void ClearGeometryData()
         {
             VertexPositions.Clear();
             VertexEditorUVs.Clear();
@@ -54,277 +101,320 @@ namespace TombLib.LevelData
             SharedVertices.Clear();
             VertexRangeLookup.Clear();
             DoubleSidedTriangleCount = 0;
+        }
 
-            const int xMin = 0;
-            const int zMin = 0;
-            int xMax = room.NumXSectors - 1;
-            int zMax = room.NumZSectors - 1;
-            Sector[,] sectors = room.Sectors;
+        private static bool IsCornerSector(int x, int z, int xMax, int zMax)
+            => (x == 0 || x == xMax) && (z == 0 || z == zMax);
 
-            // Build face polygons
-            for (int x = xMin; x <= xMax; x++) // This is in order to VertexRangeKey sorting.
+        /// <summary>
+        /// Tries to add vertical faces at an inner (non-border) sector for the given cardinal direction.
+        /// Skips if the sector is out of bounds or if the neighbor completely blocks the face.
+        /// </summary>
+        private void TryAddInnerVerticalFace(Room room, Sector[,] sectors, int x, int z,
+            int xMax, int zMax, FaceDirection direction, bool useLegacyCode)
+        {
+            if (!IsInBoundsForInnerFace(x, z, xMax, zMax, direction))
+                return;
+
+            var (nx, nz) = GetNeighborPosition(x, z, direction);
+
+            if (IsNeighborBlockingFace(sectors[nx, nz], direction))
+                return;
+
+            bool hasMiddle = ShouldCurrentSectorHaveMiddle(sectors[x, z], direction);
+
+            AddVerticalFaces(room, x, z, direction,
+                hasFloorPart: true, hasCeilingPart: true, hasMiddlePart: hasMiddle, useLegacyCode);
+        }
+
+        /// <summary>
+        /// Adds diagonal floor/ceiling vertical faces if the sector has a diagonal split.
+        /// </summary>
+        private void TryAddDiagonalFaces(Room room, Sector sector, int x, int z, bool useLegacyCode)
+        {
+            if (sector.Floor.DiagonalSplit != DiagonalSplit.None)
             {
-                for (int z = zMin; z <= zMax; z++)
-                {
-                    // If x, z is one of the four corner then nothing has to be done
-                    if (x == 0 && z == 0 || x == 0 && z == room.NumZSectors - 1 ||
-                        x == room.NumXSectors - 1 && z == room.NumZSectors - 1 || x == room.NumXSectors - 1 && z == 0)
-                        continue;
+                bool isWall = sector.Type == SectorType.Wall;
 
-                    // Vertical polygons
-
-                    // +Z direction
-                    if (x > 0 && x < room.NumXSectors - 1 && z > 0 && z < room.NumZSectors - 2 &&
-                        !(sectors[x, z + 1].Type == SectorType.Wall &&
-                         (sectors[x, z + 1].Floor.DiagonalSplit == DiagonalSplit.None || sectors[x, z + 1].Floor.DiagonalSplit == DiagonalSplit.XpZn || sectors[x, z + 1].Floor.DiagonalSplit == DiagonalSplit.XnZn)))
-                    {
-                        if ((sectors[x, z].Type == SectorType.Wall || (sectors[x, z].WallPortal?.HasTexturedFaces ?? false)) &&
-                            !(sectors[x, z].Floor.DiagonalSplit == DiagonalSplit.XpZn || sectors[x, z].Floor.DiagonalSplit == DiagonalSplit.XnZn))
-                            AddVerticalFaces(room, x, z, FaceDirection.PositiveZ, true, true, true, useLegacyCode);
-                        else
-                            AddVerticalFaces(room, x, z, FaceDirection.PositiveZ, true, true, false, useLegacyCode);
-                    }
-
-
-                    // -Z direction
-                    if (x > 0 && x < room.NumXSectors - 1 && z > 1 && z < room.NumZSectors - 1 &&
-                        !(sectors[x, z - 1].Type == SectorType.Wall &&
-                         (sectors[x, z - 1].Floor.DiagonalSplit == DiagonalSplit.None || sectors[x, z - 1].Floor.DiagonalSplit == DiagonalSplit.XpZp || sectors[x, z - 1].Floor.DiagonalSplit == DiagonalSplit.XnZp)))
-                    {
-                        if ((sectors[x, z].Type == SectorType.Wall ||
-                            (sectors[x, z].WallPortal?.HasTexturedFaces ?? false)) &&
-                            !(sectors[x, z].Floor.DiagonalSplit == DiagonalSplit.XpZp || sectors[x, z].Floor.DiagonalSplit == DiagonalSplit.XnZp))
-                            AddVerticalFaces(room, x, z, FaceDirection.NegativeZ, true, true, true, useLegacyCode);
-                        else
-                            AddVerticalFaces(room, x, z, FaceDirection.NegativeZ, true, true, false, useLegacyCode);
-                    }
-
-                    // +X direction
-                    if (z > 0 && z < room.NumZSectors - 1 && x > 0 && x < room.NumXSectors - 2 &&
-                        !(sectors[x + 1, z].Type == SectorType.Wall &&
-                        (sectors[x + 1, z].Floor.DiagonalSplit == DiagonalSplit.None || sectors[x + 1, z].Floor.DiagonalSplit == DiagonalSplit.XnZn || sectors[x + 1, z].Floor.DiagonalSplit == DiagonalSplit.XnZp)))
-                    {
-                        if ((sectors[x, z].Type == SectorType.Wall || (sectors[x, z].WallPortal?.HasTexturedFaces ?? false)) &&
-                            !(sectors[x, z].Floor.DiagonalSplit == DiagonalSplit.XnZn || sectors[x, z].Floor.DiagonalSplit == DiagonalSplit.XnZp))
-                            AddVerticalFaces(room, x, z, FaceDirection.PositiveX, true, true, true, useLegacyCode);
-                        else
-                            AddVerticalFaces(room, x, z, FaceDirection.PositiveX, true, true, false, useLegacyCode);
-                    }
-
-                    // -X direction
-                    if (z > 0 && z < room.NumZSectors - 1 && x > 1 && x < room.NumXSectors - 1 &&
-                        !(sectors[x - 1, z].Type == SectorType.Wall &&
-                        (sectors[x - 1, z].Floor.DiagonalSplit == DiagonalSplit.None || sectors[x - 1, z].Floor.DiagonalSplit == DiagonalSplit.XpZn || sectors[x - 1, z].Floor.DiagonalSplit == DiagonalSplit.XpZp)))
-                    {
-                        if ((sectors[x, z].Type == SectorType.Wall || (sectors[x, z].WallPortal?.HasTexturedFaces ?? false)) &&
-                            !(sectors[x, z].Floor.DiagonalSplit == DiagonalSplit.XpZn || sectors[x, z].Floor.DiagonalSplit == DiagonalSplit.XpZp))
-                            AddVerticalFaces(room, x, z, FaceDirection.NegativeX, true, true, true, useLegacyCode);
-                        else
-                            AddVerticalFaces(room, x, z, FaceDirection.NegativeX, true, true, false, useLegacyCode);
-                    }
-
-                    // Diagonal faces
-                    if (sectors[x, z].Floor.DiagonalSplit != DiagonalSplit.None)
-                    {
-                        if (sectors[x, z].Type == SectorType.Wall)
-                        {
-                            AddVerticalFaces(room, x, z, FaceDirection.DiagonalFloor, true, true, true, useLegacyCode);
-                        }
-                        else
-                        {
-                            AddVerticalFaces(room, x, z, FaceDirection.DiagonalFloor, true, false, false, useLegacyCode);
-                        }
-                    }
-
-                    if (sectors[x, z].Ceiling.DiagonalSplit != DiagonalSplit.None)
-                    {
-                        if (sectors[x, z].Type != SectorType.Wall)
-                        {
-                            AddVerticalFaces(room, x, z, FaceDirection.DiagonalCeiling, false, true, false, useLegacyCode);
-                        }
-                    }
-
-                    // +Z directed border wall
-                    if (z == 0 && x != 0 && x != room.NumXSectors - 1 &&
-                        !(sectors[x, 1].Type == SectorType.Wall &&
-                         (sectors[x, 1].Floor.DiagonalSplit == DiagonalSplit.None || sectors[x, 1].Floor.DiagonalSplit == DiagonalSplit.XpZn || sectors[x, 1].Floor.DiagonalSplit == DiagonalSplit.XnZn)))
-                    {
-                        bool addMiddle = false;
-
-                        if (sectors[x, z].WallPortal != null)
-                        {
-                            var portal = sectors[x, z].WallPortal;
-                            var adjoiningRoom = portal.AdjoiningRoom;
-                            if (room.Alternated && room.AlternateBaseRoom != null)
-                            {
-                                if (adjoiningRoom.Alternated && adjoiningRoom.AlternateRoom != null)
-                                    adjoiningRoom = adjoiningRoom.AlternateRoom;
-                            }
-
-                            int facingX = x + (room.Position.X - adjoiningRoom.Position.X);
-                            var sector = adjoiningRoom.GetSectorTry(facingX, adjoiningRoom.NumZSectors - 2) ?? Sector.Empty;
-                            if (sector.Type == SectorType.Wall &&
-                                (sector.Floor.DiagonalSplit == DiagonalSplit.None ||
-                                 sector.Floor.DiagonalSplit == DiagonalSplit.XnZp ||
-                                 sector.Floor.DiagonalSplit == DiagonalSplit.XpZp))
-                            {
-                                addMiddle = true;
-                            }
-                        }
-
-
-                        if (addMiddle || sectors[x, z].Type == SectorType.BorderWall && sectors[x, z].WallPortal == null || (sectors[x, z].WallPortal?.HasTexturedFaces ?? false))
-                            AddVerticalFaces(room, x, z, FaceDirection.PositiveZ, true, true, true, useLegacyCode);
-                        else
-                            AddVerticalFaces(room, x, z, FaceDirection.PositiveZ, true, true, false, useLegacyCode);
-                    }
-
-                    // -Z directed border wall
-                    if (z == room.NumZSectors - 1 && x != 0 && x != room.NumXSectors - 1 &&
-                        !(sectors[x, room.NumZSectors - 2].Type == SectorType.Wall &&
-                         (sectors[x, room.NumZSectors - 2].Floor.DiagonalSplit == DiagonalSplit.None || sectors[x, room.NumZSectors - 2].Floor.DiagonalSplit == DiagonalSplit.XpZp || sectors[x, room.NumZSectors - 2].Floor.DiagonalSplit == DiagonalSplit.XnZp)))
-                    {
-                        bool addMiddle = false;
-
-                        if (sectors[x, z].WallPortal != null)
-                        {
-                            var portal = sectors[x, z].WallPortal;
-                            var adjoiningRoom = portal.AdjoiningRoom;
-                            if (room.Alternated && room.AlternateBaseRoom != null)
-                            {
-                                if (adjoiningRoom.Alternated && adjoiningRoom.AlternateRoom != null)
-                                    adjoiningRoom = adjoiningRoom.AlternateRoom;
-                            }
-
-                            int facingX = x + (room.Position.X - adjoiningRoom.Position.X);
-                            var sector = adjoiningRoom.GetSectorTry(facingX, 1) ?? Sector.Empty;
-                            if (sector.Type == SectorType.Wall &&
-                                (sector.Floor.DiagonalSplit == DiagonalSplit.None ||
-                                 sector.Floor.DiagonalSplit == DiagonalSplit.XnZn ||
-                                 sector.Floor.DiagonalSplit == DiagonalSplit.XpZn))
-                            {
-                                addMiddle = true;
-                            }
-                        }
-
-                        if (addMiddle || sectors[x, z].Type == SectorType.BorderWall && sectors[x, z].WallPortal == null || (sectors[x, z].WallPortal?.HasTexturedFaces ?? false))
-                            AddVerticalFaces(room, x, z, FaceDirection.NegativeZ, true, true, true, useLegacyCode);
-                        else
-                            AddVerticalFaces(room, x, z, FaceDirection.NegativeZ, true, true, false, useLegacyCode);
-                    }
-
-                    // -X directed border wall
-                    if (x == 0 && z != 0 && z != room.NumZSectors - 1 &&
-                        !(sectors[1, z].Type == SectorType.Wall &&
-                         (sectors[1, z].Floor.DiagonalSplit == DiagonalSplit.None || sectors[1, z].Floor.DiagonalSplit == DiagonalSplit.XnZn || sectors[1, z].Floor.DiagonalSplit == DiagonalSplit.XnZp)))
-                    {
-                        bool addMiddle = false;
-
-                        if (sectors[x, z].WallPortal != null)
-                        {
-                            var portal = sectors[x, z].WallPortal;
-                            var adjoiningRoom = portal.AdjoiningRoom;
-                            if (room.Alternated && room.AlternateBaseRoom != null)
-                            {
-                                if (adjoiningRoom.Alternated && adjoiningRoom.AlternateRoom != null)
-                                    adjoiningRoom = adjoiningRoom.AlternateRoom;
-                            }
-
-                            int facingZ = z + (room.Position.Z - adjoiningRoom.Position.Z);
-                            var sector = adjoiningRoom.GetSectorTry(adjoiningRoom.NumXSectors - 2, facingZ) ?? Sector.Empty;
-                            if (sector.Type == SectorType.Wall &&
-                                (sector.Floor.DiagonalSplit == DiagonalSplit.None ||
-                                 sector.Floor.DiagonalSplit == DiagonalSplit.XpZn ||
-                                 sector.Floor.DiagonalSplit == DiagonalSplit.XpZp))
-                            {
-                                addMiddle = true;
-                            }
-                        }
-
-                        if (addMiddle || sectors[x, z].Type == SectorType.BorderWall && sectors[x, z].WallPortal == null || (sectors[x, z].WallPortal?.HasTexturedFaces ?? false))
-                            AddVerticalFaces(room, x, z, FaceDirection.PositiveX, true, true, true, useLegacyCode);
-                        else
-                            AddVerticalFaces(room, x, z, FaceDirection.PositiveX, true, true, false, useLegacyCode);
-                    }
-
-                    // +X directed border wall
-                    if (x == room.NumXSectors - 1 && z != 0 && z != room.NumZSectors - 1 &&
-                        !(sectors[room.NumXSectors - 2, z].Type == SectorType.Wall &&
-                         (sectors[room.NumXSectors - 2, z].Floor.DiagonalSplit == DiagonalSplit.None || sectors[room.NumXSectors - 2, z].Floor.DiagonalSplit == DiagonalSplit.XpZn || sectors[room.NumXSectors - 2, z].Floor.DiagonalSplit == DiagonalSplit.XpZp)))
-                    {
-                        bool addMiddle = false;
-
-                        if (sectors[x, z].WallPortal != null)
-                        {
-                            var portal = sectors[x, z].WallPortal;
-                            var adjoiningRoom = portal.AdjoiningRoom;
-                            if (room.Alternated && room.AlternateBaseRoom != null)
-                            {
-                                if (adjoiningRoom.Alternated && adjoiningRoom.AlternateRoom != null)
-                                    adjoiningRoom = adjoiningRoom.AlternateRoom;
-                            }
-
-                            int facingZ = z + (room.Position.Z - adjoiningRoom.Position.Z);
-                            var sector = adjoiningRoom.GetSectorTry(1, facingZ) ?? Sector.Empty;
-                            if (sector.Type == SectorType.Wall &&
-                                (sector.Floor.DiagonalSplit == DiagonalSplit.None ||
-                                 sector.Floor.DiagonalSplit == DiagonalSplit.XnZn ||
-                                 sector.Floor.DiagonalSplit == DiagonalSplit.XnZp))
-                            {
-                                addMiddle = true;
-                            }
-                        }
-
-                        if (addMiddle || sectors[x, z].Type == SectorType.BorderWall && sectors[x, z].WallPortal == null || (sectors[x, z].WallPortal?.HasTexturedFaces ?? false))
-                            AddVerticalFaces(room, x, z, FaceDirection.NegativeX, true, true, true, useLegacyCode);
-                        else
-                            AddVerticalFaces(room, x, z, FaceDirection.NegativeX, true, true, false, useLegacyCode);
-                    }
-
-                    // Floor polygons
-                    Room.RoomConnectionInfo floorPortalInfo = room.GetFloorRoomConnectionInfo(new VectorInt2(x, z));
-                    BuildFloorOrCeilingFace(room, x, z, sectors[x, z].Floor.XnZp, sectors[x, z].Floor.XpZp, sectors[x, z].Floor.XpZn, sectors[x, z].Floor.XnZn, sectors[x, z].Floor.DiagonalSplit, sectors[x, z].Floor.SplitDirectionIsXEqualsZ,
-                        SectorFace.Floor, SectorFace.Floor_Triangle2, floorPortalInfo.VisualType);
-
-                    // Ceiling polygons
-                    int ceilingStartVertex = VertexPositions.Count;
-
-                    Room.RoomConnectionInfo ceilingPortalInfo = room.GetCeilingRoomConnectionInfo(new VectorInt2(x, z));
-                    BuildFloorOrCeilingFace(room, x, z, sectors[x, z].Ceiling.XnZp, sectors[x, z].Ceiling.XpZp, sectors[x, z].Ceiling.XpZn, sectors[x, z].Ceiling.XnZn, sectors[x, z].Ceiling.DiagonalSplit, sectors[x, z].Ceiling.SplitDirectionIsXEqualsZ,
-                        SectorFace.Ceiling, SectorFace.Ceiling_Triangle2, ceilingPortalInfo.VisualType);
-
-                    // Change vertices order for ceiling polygons
-                    for (int i = ceilingStartVertex; i < VertexPositions.Count; i += 3)
-                    {
-                        var tempPosition = VertexPositions[i + 2];
-                        VertexPositions[i + 2] = VertexPositions[i];
-                        VertexPositions[i] = tempPosition;
-                        var tempEditorUV = VertexEditorUVs[i + 2];
-                        VertexEditorUVs[i + 2] = VertexEditorUVs[i];
-                        VertexEditorUVs[i] = tempEditorUV;
-                        TextureArea textureArea = TriangleTextureAreas[i / 3];
-                        Swap.Do(ref textureArea.TexCoord0, ref textureArea.TexCoord2);
-                        TriangleTextureAreas[i / 3] = textureArea;
-                    }
-                }
+                AddVerticalFaces(room, x, z, FaceDirection.DiagonalFloor,
+                    hasFloorPart: true, hasCeilingPart: isWall, hasMiddlePart: isWall, useLegacyCode);
             }
 
-            // Group shared vertices
+            if (sector.Ceiling.DiagonalSplit != DiagonalSplit.None && sector.Type != SectorType.Wall)
+            {
+                AddVerticalFaces(room, x, z, FaceDirection.DiagonalCeiling,
+                    hasFloorPart: false, hasCeilingPart: true, hasMiddlePart: false, useLegacyCode);
+            }
+        }
+
+        /// <summary>
+        /// Tries to add vertical faces at a border sector for the given cardinal direction.
+        /// Border walls may require portal lookup to determine if the middle face is needed.
+        /// </summary>
+        private void TryAddBorderWallFace(Room room, Sector[,] sectors, int x, int z,
+            int xMax, int zMax, FaceDirection direction, bool useLegacyCode)
+        {
+            if (!IsOnBorderForDirection(x, z, xMax, zMax, direction))
+                return;
+
+            var (innerX, innerZ) = GetInnerNeighborForBorder(x, z, xMax, zMax, direction);
+
+            if (IsNeighborBlockingFace(sectors[innerX, innerZ], direction))
+                return;
+
+            bool hasMiddle = ShouldBorderWallHaveMiddle(room, sectors[x, z], x, z, direction);
+
+            AddVerticalFaces(room, x, z, direction,
+                hasFloorPart: true, hasCeilingPart: true, hasMiddlePart: hasMiddle, useLegacyCode);
+        }
+
+        /// <summary>
+        /// Builds floor and ceiling face polygons for the given sector, including ceiling winding reversal.
+        /// </summary>
+        private void AddFloorAndCeilingFaces(Room room, Sector sector, int x, int z)
+        {
+            // Floor polygons
+            Room.RoomConnectionInfo floorPortalInfo = room.GetFloorRoomConnectionInfo(new VectorInt2(x, z));
+
+            BuildFloorOrCeilingFace(room, x, z,
+                sector.Floor.XnZp, sector.Floor.XpZp, sector.Floor.XpZn, sector.Floor.XnZn,
+                sector.Floor.DiagonalSplit, sector.Floor.SplitDirectionIsXEqualsZ,
+                SectorFace.Floor, SectorFace.Floor_Triangle2, floorPortalInfo.VisualType);
+
+            // Ceiling polygons (vertices need reversed winding)
+            int ceilingStartVertex = VertexPositions.Count;
+
+            Room.RoomConnectionInfo ceilingPortalInfo = room.GetCeilingRoomConnectionInfo(new VectorInt2(x, z));
+
+            BuildFloorOrCeilingFace(room, x, z,
+                sector.Ceiling.XnZp, sector.Ceiling.XpZp, sector.Ceiling.XpZn, sector.Ceiling.XnZn,
+                sector.Ceiling.DiagonalSplit, sector.Ceiling.SplitDirectionIsXEqualsZ,
+                SectorFace.Ceiling, SectorFace.Ceiling_Triangle2, ceilingPortalInfo.VisualType);
+
+            ReverseCeilingWinding(ceilingStartVertex);
+        }
+
+        /// <summary>
+        /// Reverses the winding order of ceiling triangles so they face downward.
+        /// Swaps the first and third vertices of each triangle.
+        /// </summary>
+        private void ReverseCeilingWinding(int startVertex)
+        {
+            for (int i = startVertex; i < VertexPositions.Count; i += 3)
+            {
+                (VertexPositions[i], VertexPositions[i + 2]) = (VertexPositions[i + 2], VertexPositions[i]);
+                (VertexEditorUVs[i], VertexEditorUVs[i + 2]) = (VertexEditorUVs[i + 2], VertexEditorUVs[i]);
+
+                TextureArea textureArea = TriangleTextureAreas[i / 3];
+                Swap.Do(ref textureArea.TexCoord0, ref textureArea.TexCoord2);
+                TriangleTextureAreas[i / 3] = textureArea;
+            }
+        }
+
+        private void GroupSharedVertices()
+        {
             for (int i = 0; i < VertexPositions.Count; ++i)
             {
                 Vector3 position = VertexPositions[i];
-                List<int> list;
-                if (!SharedVertices.TryGetValue(position, out list))
+
+                if (!SharedVertices.TryGetValue(position, out List<int> list))
                     SharedVertices.Add(position, list = new List<int>());
+
                 list.Add(i);
             }
-
-            // Build color array
-            VertexColors.Resize(VertexPositions.Count, room.Properties.AmbientLight);
-
-            // Lighting
-            Relight(room, highQualityLighting);
         }
+
+        #endregion Build Helpers
+
+        #region Direction & Geometry Helpers
+
+        /// <summary>
+        /// Returns the pair of diagonal splits that face toward the given direction.
+        /// A wall sector with one of these splits (or <see cref="DiagonalSplit.None"/>) blocks faces from this direction.
+        /// </summary>
+        private static (DiagonalSplit Split1, DiagonalSplit Split2) GetBlockingDiagonalSplits(FaceDirection direction)
+        {
+            return direction switch
+            {
+                FaceDirection.PositiveZ => (DiagonalSplit.XpZn, DiagonalSplit.XnZn),
+                FaceDirection.NegativeZ => (DiagonalSplit.XpZp, DiagonalSplit.XnZp),
+                FaceDirection.PositiveX => (DiagonalSplit.XnZn, DiagonalSplit.XnZp),
+                FaceDirection.NegativeX => (DiagonalSplit.XpZn, DiagonalSplit.XpZp),
+                _ => throw new ArgumentException("Invalid cardinal direction.", nameof(direction))
+            };
+        }
+
+        /// <summary>
+        /// Checks whether a neighboring sector is a wall that completely blocks the face from the given direction.
+        /// A wall blocks when it has no diagonal split, or its split faces into the given direction.
+        /// </summary>
+        private static bool IsNeighborBlockingFace(Sector neighbor, FaceDirection direction)
+        {
+            if (neighbor.Type != SectorType.Wall)
+                return false;
+
+            DiagonalSplit ds = neighbor.Floor.DiagonalSplit;
+
+            if (ds == DiagonalSplit.None)
+                return true;
+
+            var (split1, split2) = GetBlockingDiagonalSplits(direction);
+
+            return ds == split1 || ds == split2;
+        }
+
+        /// <summary>
+        /// Determines if the current sector should have a middle wall part for the given direction.
+        /// Middle parts appear on wall sectors and portals with textured faces, unless the sector's
+        /// diagonal split faces the same direction (making a middle face unnecessary).
+        /// </summary>
+        private static bool ShouldCurrentSectorHaveMiddle(Sector sector, FaceDirection direction)
+        {
+            bool isWallOrTexturedPortal = sector.Type == SectorType.Wall
+                || (sector.WallPortal?.HasTexturedFaces ?? false);
+
+            if (!isWallOrTexturedPortal)
+                return false;
+
+            var (split1, split2) = GetBlockingDiagonalSplits(direction);
+            DiagonalSplit ds = sector.Floor.DiagonalSplit;
+
+            return ds != split1 && ds != split2;
+        }
+
+        /// <summary>
+        /// Checks whether the sector at (x, z) is within valid bounds for an inner (non-border) vertical face
+        /// in the given direction. The perpendicular axis must be in the inner range, and the along-axis
+        /// must have room for a valid inner neighbor.
+        /// </summary>
+        private static bool IsInBoundsForInnerFace(int x, int z, int xMax, int zMax, FaceDirection direction)
+        {
+            return direction switch
+            {
+                FaceDirection.PositiveZ => x > 0 && x < xMax && z > 0 && z < zMax - 1,
+                FaceDirection.NegativeZ => x > 0 && x < xMax && z > 1 && z < zMax,
+                FaceDirection.PositiveX => z > 0 && z < zMax && x > 0 && x < xMax - 1,
+                FaceDirection.NegativeX => z > 0 && z < zMax && x > 1 && x < xMax,
+                _ => false
+            };
+        }
+
+        private static (int X, int Z) GetNeighborPosition(int x, int z, FaceDirection direction)
+        {
+            return direction switch
+            {
+                FaceDirection.PositiveZ => (x, z + 1),
+                FaceDirection.NegativeZ => (x, z - 1),
+                FaceDirection.PositiveX => (x + 1, z),
+                FaceDirection.NegativeX => (x - 1, z),
+                _ => throw new ArgumentException("Invalid cardinal direction.", nameof(direction))
+            };
+        }
+
+        private static FaceDirection GetOppositeDirection(FaceDirection direction)
+        {
+            return direction switch
+            {
+                FaceDirection.PositiveZ => FaceDirection.NegativeZ,
+                FaceDirection.NegativeZ => FaceDirection.PositiveZ,
+                FaceDirection.PositiveX => FaceDirection.NegativeX,
+                FaceDirection.NegativeX => FaceDirection.PositiveX,
+                _ => throw new ArgumentException("Invalid cardinal direction.", nameof(direction))
+            };
+        }
+
+        /// <summary>
+        /// Checks whether (x, z) is on the room border that corresponds to the given face direction.
+        /// Border at z=0 faces +Z (inward), border at x=0 faces +X (inward), etc.
+        /// </summary>
+        private static bool IsOnBorderForDirection(int x, int z, int xMax, int zMax, FaceDirection direction)
+        {
+            return direction switch
+            {
+                FaceDirection.PositiveZ => z == 0 && x > 0 && x < xMax,
+                FaceDirection.NegativeZ => z == zMax && x > 0 && x < xMax,
+                FaceDirection.PositiveX => x == 0 && z > 0 && z < zMax,
+                FaceDirection.NegativeX => x == xMax && z > 0 && z < zMax,
+                _ => false
+            };
+        }
+
+        /// <summary>
+        /// Gets the position of the first inner (non-border) sector adjacent to the border
+        /// in the given direction. For +Z border (z=0), this is (x, 1), etc.
+        /// </summary>
+        private static (int X, int Z) GetInnerNeighborForBorder(int x, int z, int xMax, int zMax, FaceDirection direction)
+        {
+            return direction switch
+            {
+                FaceDirection.PositiveZ => (x, 1),
+                FaceDirection.NegativeZ => (x, zMax - 1),
+                FaceDirection.PositiveX => (1, z),
+                FaceDirection.NegativeX => (xMax - 1, z),
+                _ => throw new ArgumentException("Invalid cardinal direction.", nameof(direction))
+            };
+        }
+
+        /// <summary>
+        /// Determines if a border wall should have a middle face, considering:
+        /// 1. Border walls without portals always have middle faces.
+        /// 2. Portals with textured faces show the middle.
+        /// 3. Portals where the adjoining room's facing sector is a blocking wall.
+        /// </summary>
+        private static bool ShouldBorderWallHaveMiddle(Room room, Sector sector, int x, int z, FaceDirection direction)
+        {
+            if (sector.Type == SectorType.BorderWall && sector.WallPortal is null)
+                return true;
+
+            if (sector.WallPortal?.HasTexturedFaces ?? false)
+                return true;
+
+            if (sector.WallPortal is not null)
+            {
+                Room adjoiningRoom = ResolveAdjoiningRoom(room, sector.WallPortal);
+                Sector facingSector = GetAdjoiningFacingSector(room, adjoiningRoom, x, z, direction);
+                return IsNeighborBlockingFace(facingSector, GetOppositeDirection(direction));
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Resolves the actual adjoining room, accounting for alternated (flipped) room pairs.
+        /// </summary>
+        private static Room ResolveAdjoiningRoom(Room room, PortalInstance portal)
+        {
+            Room adjoiningRoom = portal.AdjoiningRoom;
+
+            if (room.Alternated && room.AlternateBaseRoom is not null &&
+                adjoiningRoom.Alternated && adjoiningRoom.AlternateRoom is not null)
+            {
+                adjoiningRoom = adjoiningRoom.AlternateRoom;
+            }
+
+            return adjoiningRoom;
+        }
+
+        /// <summary>
+        /// Gets the sector in the adjoining room that faces back toward our room's border sector.
+        /// The facing sector is at the opposite border edge of the adjoining room.
+        /// </summary>
+        private static Sector GetAdjoiningFacingSector(Room room, Room adjoiningRoom, int x, int z, FaceDirection direction)
+        {
+            int facingX = x + (room.Position.X - adjoiningRoom.Position.X);
+            int facingZ = z + (room.Position.Z - adjoiningRoom.Position.Z);
+
+            return direction switch
+            {
+                FaceDirection.PositiveZ => adjoiningRoom.GetSectorTry(facingX, adjoiningRoom.NumZSectors - 2) ?? Sector.Empty,
+                FaceDirection.NegativeZ => adjoiningRoom.GetSectorTry(facingX, 1) ?? Sector.Empty,
+                FaceDirection.PositiveX => adjoiningRoom.GetSectorTry(adjoiningRoom.NumXSectors - 2, facingZ) ?? Sector.Empty,
+                FaceDirection.NegativeX => adjoiningRoom.GetSectorTry(1, facingZ) ?? Sector.Empty,
+                _ => throw new ArgumentException("Invalid cardinal direction.", nameof(direction))
+            };
+        }
+
+        #endregion Direction & Geometry Helpers
 
         public void UpdateFaceTexture(int x, int z, SectorFace face, TextureArea texture, bool wasDoubleSided)
         {
@@ -378,252 +468,300 @@ namespace TombLib.LevelData
             PositiveZ, NegativeZ, PositiveX, NegativeX, DiagonalFloor, DiagonalCeiling, DiagonalWall
         }
 
-        private void BuildFloorOrCeilingFace(Room room, int x, int z, int h0, int h1, int h2, int h3, DiagonalSplit splitType, bool diagonalSplitXEqualsY,
-                                             SectorFace face1, SectorFace face2, Room.RoomConnectionType portalMode)
+        private void BuildFloorOrCeilingFace(Room room, int x, int z, int h0, int h1, int h2, int h3,
+            DiagonalSplit splitType, bool diagonalSplitXEqualsY,
+            SectorFace face1, SectorFace face2, Room.RoomConnectionType portalMode)
         {
-            SectorType sectorType = room.Sectors[x, z].Type;
-
-            // Exit function if the sector is a complete wall or portal
-            if (portalMode == Room.RoomConnectionType.FullPortal)
-                return;
-
-            switch (sectorType)
-            {
-                case SectorType.BorderWall:
-                    return;
-                case SectorType.Wall:
-                    if (splitType == DiagonalSplit.None)
-                        return;
-                    break;
-            }
-
-            // Process relevant sectors for portals
-            switch (portalMode)
-            {
-                case Room.RoomConnectionType.FullPortal:
-                    return;
-                case Room.RoomConnectionType.TriangularPortalXnZp:
-                case Room.RoomConnectionType.TriangularPortalXpZn:
-                    if (SectorSurface.IsQuad2(h0, h1, h2, h3))
-                        diagonalSplitXEqualsY = true;
-                    break;
-                case Room.RoomConnectionType.TriangularPortalXpZp:
-                case Room.RoomConnectionType.TriangularPortalXnZn:
-                    if (SectorSurface.IsQuad2(h0, h1, h2, h3))
-                        diagonalSplitXEqualsY = false;
-                    break;
-            }
-
-            //
-            // 1----2    Split 0: 231 413
-            // | \  |    Split 1: 124 342
-            // |  \ |
-            // 4----3
-            //
-
-            //
-            // 1----2    Split 0: 231 413
-            // |  / |    Split 1: 124 342
-            // | /  |
-            // 4----3
-            //
-
             Sector sector = room.Sectors[x, z];
 
-            TextureArea defaultTexture = room.Level.Settings.DefaultTexture;
-            bool shouldApplyDefaultTexture1 = sector.GetFaceTexture(face1) == TextureArea.None && defaultTexture != TextureArea.None,
-                 shouldApplyDefaultTexture2 = sector.GetFaceTexture(face2) == TextureArea.None && defaultTexture != TextureArea.None;
+            if (!ShouldBuildHorizontalFace(sector.Type, splitType, portalMode))
+                return;
 
-            if (shouldApplyDefaultTexture1)
-                sector.SetFaceTexture(face1, defaultTexture);
+            // Adjust split direction based on triangular portal orientation
+            diagonalSplitXEqualsY = AdjustSplitDirectionForPortal(h0, h1, h2, h3, diagonalSplitXEqualsY, portalMode);
 
-            if (shouldApplyDefaultTexture2)
-                sector.SetFaceTexture(face2, defaultTexture);
+            // Apply default textures if needed
+            ApplyDefaultTextureIfNone(sector, face1, room.Level.Settings.DefaultTexture);
+            ApplyDefaultTextureIfNone(sector, face2, room.Level.Settings.DefaultTexture);
 
-            TextureArea
-                face1Texture = sector.GetFaceTexture(face1),
-                face2Texture = sector.GetFaceTexture(face2);
+            TextureArea face1Texture = sector.GetFaceTexture(face1);
+            TextureArea face2Texture = sector.GetFaceTexture(face2);
 
-            // Build sector
+            // Precompute corner world-space coordinates
+            //
+            // XnZp(h0) --- XpZp(h1)
+            //    |     \ /     |
+            // XnZn(h3) --- XpZn(h2)
+            //
+            float xBase = x * Level.SectorSizeUnit;
+            float xNext = (x + 1) * Level.SectorSizeUnit;
+            float zBase = z * Level.SectorSizeUnit;
+            float zNext = (z + 1) * Level.SectorSizeUnit;
+
             if (splitType != DiagonalSplit.None)
             {
-                switch (splitType)
-                {
-                    case DiagonalSplit.XpZn:
-                        if (portalMode != Room.RoomConnectionType.TriangularPortalXnZp)
-                        {
-                            AddTriangle(x, z, face1,
-                                new Vector3(x * Level.SectorSizeUnit, h0, z * Level.SectorSizeUnit),
-                                new Vector3(x * Level.SectorSizeUnit, h0, (z + 1) * Level.SectorSizeUnit),
-                                new Vector3((x + 1) * Level.SectorSizeUnit, h0, (z + 1) * Level.SectorSizeUnit),
-                                face1Texture, new Vector2(0, 1), new Vector2(0, 0), new Vector2(1, 0), true);
-                        }
-
-                        if (portalMode != Room.RoomConnectionType.TriangularPortalXpZn && sectorType != SectorType.Wall)
-                        {
-                            AddTriangle(x, z, face2,
-                                new Vector3((x + 1) * Level.SectorSizeUnit, h1, (z + 1) * Level.SectorSizeUnit),
-                                new Vector3((x + 1) * Level.SectorSizeUnit, h2, z * Level.SectorSizeUnit),
-                                new Vector3(x * Level.SectorSizeUnit, h3, z * Level.SectorSizeUnit),
-                                face2Texture, new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1), true);
-                        }
-
-                        break;
-
-                    case DiagonalSplit.XnZn:
-                        if (portalMode != Room.RoomConnectionType.TriangularPortalXpZp)
-                        {
-                            AddTriangle(x, z, face1,
-                                new Vector3(x * Level.SectorSizeUnit, h1, (z + 1) * Level.SectorSizeUnit),
-                                new Vector3((x + 1) * Level.SectorSizeUnit, h1, (z + 1) * Level.SectorSizeUnit),
-                                new Vector3((x + 1) * Level.SectorSizeUnit, h1, z * Level.SectorSizeUnit),
-                                face1Texture, new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), false);
-                        }
-
-                        if (portalMode != Room.RoomConnectionType.TriangularPortalXnZn && sectorType != SectorType.Wall)
-                        {
-                            AddTriangle(x, z, face2,
-                                new Vector3((x + 1) * Level.SectorSizeUnit, h2, z * Level.SectorSizeUnit),
-                                new Vector3(x * Level.SectorSizeUnit, h3, z * Level.SectorSizeUnit),
-                                new Vector3(x * Level.SectorSizeUnit, h0, (z + 1) * Level.SectorSizeUnit),
-                                face2Texture, new Vector2(1, 1), new Vector2(0, 1), new Vector2(0, 0), false);
-                        }
-
-                        break;
-
-                    case DiagonalSplit.XnZp:
-                        if (portalMode != Room.RoomConnectionType.TriangularPortalXpZn)
-                        {
-                            AddTriangle(x, z, face2,
-                                new Vector3((x + 1) * Level.SectorSizeUnit, h2, (z + 1) * Level.SectorSizeUnit),
-                                new Vector3((x + 1) * Level.SectorSizeUnit, h2, z * Level.SectorSizeUnit),
-                                new Vector3(x * Level.SectorSizeUnit, h2, z * Level.SectorSizeUnit),
-                                face2Texture, new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1), true);
-                        }
-
-                        if (portalMode != Room.RoomConnectionType.TriangularPortalXnZp && sectorType != SectorType.Wall)
-                        {
-                            AddTriangle(x, z, face1,
-                                new Vector3(x * Level.SectorSizeUnit, h3, z * Level.SectorSizeUnit),
-                                new Vector3(x * Level.SectorSizeUnit, h0, (z + 1) * Level.SectorSizeUnit),
-                                new Vector3((x + 1) * Level.SectorSizeUnit, h1, (z + 1) * Level.SectorSizeUnit),
-                                face1Texture, new Vector2(0, 1), new Vector2(0, 0), new Vector2(1, 0), true);
-                        }
-
-                        break;
-
-                    case DiagonalSplit.XpZp:
-                        if (portalMode != Room.RoomConnectionType.TriangularPortalXnZn)
-                        {
-                            AddTriangle(x, z, face2,
-                                new Vector3((x + 1) * Level.SectorSizeUnit, h3, z * Level.SectorSizeUnit),
-                                new Vector3(x * Level.SectorSizeUnit, h3, z * Level.SectorSizeUnit),
-                                new Vector3(x * Level.SectorSizeUnit, h3, (z + 1) * Level.SectorSizeUnit),
-                                face2Texture, new Vector2(1, 1), new Vector2(0, 1), new Vector2(0, 0), false);
-                        }
-
-
-                        if (portalMode != Room.RoomConnectionType.TriangularPortalXpZp && sectorType != SectorType.Wall)
-                        {
-                            AddTriangle(x, z, face1,
-                                new Vector3(x * Level.SectorSizeUnit, h0, (z + 1) * Level.SectorSizeUnit),
-                                new Vector3((x + 1) * Level.SectorSizeUnit, h1, (z + 1) * Level.SectorSizeUnit),
-                                new Vector3((x + 1) * Level.SectorSizeUnit, h2, z * Level.SectorSizeUnit),
-                                face1Texture, new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), false);
-                        }
-
-                        break;
-
-                    default:
-                        throw new NotSupportedException("Unknown FloorDiagonalSplit");
-                }
+                BuildDiagonalSplitFace(x, z, sector.Type, splitType, portalMode,
+                    face1, face2, face1Texture, face2Texture,
+                    xBase, xNext, zBase, zNext, h0, h1, h2, h3);
             }
             else if (SectorSurface.IsQuad2(h0, h1, h2, h3) && portalMode == Room.RoomConnectionType.NoPortal)
             {
+                // Flat quad - no triangle split needed
                 AddQuad(x, z, face1,
-                    new Vector3(x * Level.SectorSizeUnit, h0, (z + 1) * Level.SectorSizeUnit),
-                    new Vector3((x + 1) * Level.SectorSizeUnit, h1, (z + 1) * Level.SectorSizeUnit),
-                    new Vector3((x + 1) * Level.SectorSizeUnit, h2, z * Level.SectorSizeUnit),
-                    new Vector3(x * Level.SectorSizeUnit, h3, z * Level.SectorSizeUnit),
-                    face1Texture, new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1));
+                    new Vector3(xBase, h0, zNext), new Vector3(xNext, h1, zNext),
+                    new Vector3(xNext, h2, zBase), new Vector3(xBase, h3, zBase),
+                    face1Texture,
+                    new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1));
             }
-            else if (diagonalSplitXEqualsY || portalMode == Room.RoomConnectionType.TriangularPortalXnZp || portalMode == Room.RoomConnectionType.TriangularPortalXpZn)
+            else
             {
+                // Non-flat quad: split into 2 triangles
+                BuildSplitQuadFace(x, z, portalMode, diagonalSplitXEqualsY,
+                    face1, face2, face1Texture, face2Texture,
+                    xBase, xNext, zBase, zNext, h0, h1, h2, h3);
+            }
+        }
+
+        private static bool ShouldBuildHorizontalFace(SectorType sectorType, DiagonalSplit splitType, Room.RoomConnectionType portalMode)
+        {
+            if (portalMode == Room.RoomConnectionType.FullPortal)
+                return false;
+
+            if (sectorType == SectorType.BorderWall)
+                return false;
+
+            if (sectorType == SectorType.Wall && splitType == DiagonalSplit.None)
+                return false;
+
+            return true;
+        }
+
+        private static bool AdjustSplitDirectionForPortal(int h0, int h1, int h2, int h3,
+            bool splitXEqualsY, Room.RoomConnectionType portalMode)
+        {
+            if (!SectorSurface.IsQuad2(h0, h1, h2, h3))
+                return splitXEqualsY;
+
+            return portalMode switch
+            {
+                Room.RoomConnectionType.TriangularPortalXnZp or
+                Room.RoomConnectionType.TriangularPortalXpZn => true,
+
+                Room.RoomConnectionType.TriangularPortalXpZp or
+                Room.RoomConnectionType.TriangularPortalXnZn => false,
+
+                _ => splitXEqualsY
+            };
+        }
+
+        private static void ApplyDefaultTextureIfNone(Sector sector, SectorFace face, TextureArea defaultTexture)
+        {
+            if (defaultTexture != TextureArea.None && sector.GetFaceTexture(face) == TextureArea.None)
+                sector.SetFaceTexture(face, defaultTexture);
+        }
+
+        /// <summary>
+        /// Builds triangles for a diagonally split floor/ceiling sector.
+        /// One triangle is "flat" (all vertices at the same height from the opposite corner)
+        /// and the other is "sloped" (vertices at their individual heights).
+        /// </summary>
+        private void BuildDiagonalSplitFace(int x, int z, SectorType sectorType, DiagonalSplit splitType,
+            Room.RoomConnectionType portalMode, SectorFace face1, SectorFace face2,
+            TextureArea face1Texture, TextureArea face2Texture,
+            float xBase, float xNext, float zBase, float zNext,
+            int h0, int h1, int h2, int h3)
+        {
+            bool isWall = sectorType == SectorType.Wall;
+
+            switch (splitType)
+            {
+                case DiagonalSplit.XpZn:
+                    // Flat triangle (face1): all vertices at h0 (opposite corner XnZp)
+                    if (portalMode != Room.RoomConnectionType.TriangularPortalXnZp)
+                    {
+                        AddTriangle(x, z, face1,
+                            new Vector3(xBase, h0, zBase), new Vector3(xBase, h0, zNext), new Vector3(xNext, h0, zNext),
+                            face1Texture, new Vector2(0, 1), new Vector2(0, 0), new Vector2(1, 0), isXEqualYDiagonal: true);
+                    }
+
+                    // Sloped triangle (face2): individual corner heights
+                    if (portalMode != Room.RoomConnectionType.TriangularPortalXpZn && !isWall)
+                    {
+                        AddTriangle(x, z, face2,
+                            new Vector3(xNext, h1, zNext), new Vector3(xNext, h2, zBase), new Vector3(xBase, h3, zBase),
+                            face2Texture, new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1), isXEqualYDiagonal: true);
+                    }
+
+                    break;
+
+                case DiagonalSplit.XnZn:
+                    // Flat triangle (face1): all vertices at h1 (opposite corner XpZp)
+                    if (portalMode != Room.RoomConnectionType.TriangularPortalXpZp)
+                    {
+                        AddTriangle(x, z, face1,
+                            new Vector3(xBase, h1, zNext), new Vector3(xNext, h1, zNext), new Vector3(xNext, h1, zBase),
+                            face1Texture, new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), isXEqualYDiagonal: false);
+                    }
+
+                    // Sloped triangle (face2)
+                    if (portalMode != Room.RoomConnectionType.TriangularPortalXnZn && !isWall)
+                    {
+                        AddTriangle(x, z, face2,
+                            new Vector3(xNext, h2, zBase), new Vector3(xBase, h3, zBase), new Vector3(xBase, h0, zNext),
+                            face2Texture, new Vector2(1, 1), new Vector2(0, 1), new Vector2(0, 0), isXEqualYDiagonal: false);
+                    }
+
+                    break;
+
+                case DiagonalSplit.XnZp:
+                    // Flat triangle (face2): all vertices at h2 (opposite corner XpZn)
+                    if (portalMode != Room.RoomConnectionType.TriangularPortalXpZn)
+                    {
+                        AddTriangle(x, z, face2,
+                            new Vector3(xNext, h2, zNext), new Vector3(xNext, h2, zBase), new Vector3(xBase, h2, zBase),
+                            face2Texture, new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1), isXEqualYDiagonal: true);
+                    }
+
+                    // Sloped triangle (face1)
+                    if (portalMode != Room.RoomConnectionType.TriangularPortalXnZp && !isWall)
+                    {
+                        AddTriangle(x, z, face1,
+                            new Vector3(xBase, h3, zBase), new Vector3(xBase, h0, zNext), new Vector3(xNext, h1, zNext),
+                            face1Texture, new Vector2(0, 1), new Vector2(0, 0), new Vector2(1, 0), isXEqualYDiagonal: true);
+                    }
+
+                    break;
+
+                case DiagonalSplit.XpZp:
+                    // Flat triangle (face2): all vertices at h3 (opposite corner XnZn)
+                    if (portalMode != Room.RoomConnectionType.TriangularPortalXnZn)
+                    {
+                        AddTriangle(x, z, face2,
+                            new Vector3(xNext, h3, zBase), new Vector3(xBase, h3, zBase), new Vector3(xBase, h3, zNext),
+                            face2Texture, new Vector2(1, 1), new Vector2(0, 1), new Vector2(0, 0), isXEqualYDiagonal: false);
+                    }
+
+                    // Sloped triangle (face1)
+                    if (portalMode != Room.RoomConnectionType.TriangularPortalXpZp && !isWall)
+                    {
+                        AddTriangle(x, z, face1,
+                            new Vector3(xBase, h0, zNext), new Vector3(xNext, h1, zNext), new Vector3(xNext, h2, zBase),
+                            face1Texture, new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), isXEqualYDiagonal: false);
+                    }
+
+                    break;
+
+                default:
+                    throw new NotSupportedException("Unknown DiagonalSplit type.");
+            }
+        }
+
+        /// <summary>
+        /// Builds two triangles for a non-flat quad face (no diagonal wall split).
+        /// The split direction determines if the diagonal goes along X=Z or X=-Z.
+        /// </summary>
+        private void BuildSplitQuadFace(int x, int z, Room.RoomConnectionType portalMode, bool splitXEqualsY,
+            SectorFace face1, SectorFace face2, TextureArea face1Texture, TextureArea face2Texture,
+            float xBase, float xNext, float zBase, float zNext,
+            int h0, int h1, int h2, int h3)
+        {
+            Vector3 pXnZp = new(xBase, h0, zNext);
+            Vector3 pXpZp = new(xNext, h1, zNext);
+            Vector3 pXpZn = new(xNext, h2, zBase);
+            Vector3 pXnZn = new(xBase, h3, zBase);
+
+            if (splitXEqualsY
+                || portalMode == Room.RoomConnectionType.TriangularPortalXnZp
+                || portalMode == Room.RoomConnectionType.TriangularPortalXpZn)
+            {
+                // Split along XnZn-XpZp diagonal (X = Z direction)
                 if (portalMode != Room.RoomConnectionType.TriangularPortalXnZp)
                 {
-                    AddTriangle(x, z, face2,
-                        new Vector3(x * Level.SectorSizeUnit, h3, z * Level.SectorSizeUnit),
-                        new Vector3(x * Level.SectorSizeUnit, h0, (z + 1) * Level.SectorSizeUnit),
-                        new Vector3((x + 1) * Level.SectorSizeUnit, h1, (z + 1) * Level.SectorSizeUnit),
-                        face2Texture, new Vector2(0, 1), new Vector2(0, 0), new Vector2(1, 0), true);
+                    AddTriangle(x, z, face2, pXnZn, pXnZp, pXpZp,
+                        face2Texture, new Vector2(0, 1), new Vector2(0, 0), new Vector2(1, 0),
+                        isXEqualYDiagonal: true);
                 }
 
                 if (portalMode != Room.RoomConnectionType.TriangularPortalXpZn)
                 {
-                    AddTriangle(x, z, face1,
-                        new Vector3((x + 1) * Level.SectorSizeUnit, h1, (z + 1) * Level.SectorSizeUnit),
-                        new Vector3((x + 1) * Level.SectorSizeUnit, h2, z * Level.SectorSizeUnit),
-                        new Vector3(x * Level.SectorSizeUnit, h3, z * Level.SectorSizeUnit),
-                        face1Texture, new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1), true);
+                    AddTriangle(x, z, face1, pXpZp, pXpZn, pXnZn,
+                        face1Texture, new Vector2(1, 0), new Vector2(1, 1), new Vector2(0, 1),
+                        isXEqualYDiagonal: true);
                 }
             }
             else
             {
+                // Split along XnZp-XpZn diagonal (X = -Z direction)
                 if (portalMode != Room.RoomConnectionType.TriangularPortalXpZp)
                 {
-                    AddTriangle(x, z, face1,
-                        new Vector3(x * Level.SectorSizeUnit, h0, (z + 1) * Level.SectorSizeUnit),
-                        new Vector3((x + 1) * Level.SectorSizeUnit, h1, (z + 1) * Level.SectorSizeUnit),
-                        new Vector3((x + 1) * Level.SectorSizeUnit, h2, z * Level.SectorSizeUnit),
-                        face1Texture, new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1), false);
+                    AddTriangle(x, z, face1, pXnZp, pXpZp, pXpZn,
+                        face1Texture, new Vector2(0, 0), new Vector2(1, 0), new Vector2(1, 1),
+                        isXEqualYDiagonal: false);
                 }
 
                 if (portalMode != Room.RoomConnectionType.TriangularPortalXnZn)
                 {
-                    AddTriangle(x, z, face2,
-                        new Vector3((x + 1) * Level.SectorSizeUnit, h2, z * Level.SectorSizeUnit),
-                        new Vector3(x * Level.SectorSizeUnit, h3, z * Level.SectorSizeUnit),
-                        new Vector3(x * Level.SectorSizeUnit, h0, (z + 1) * Level.SectorSizeUnit),
-                        face2Texture, new Vector2(1, 1), new Vector2(0, 1), new Vector2(0, 0), false);
+                    AddTriangle(x, z, face2, pXpZn, pXnZn, pXnZp,
+                        face2Texture, new Vector2(1, 1), new Vector2(0, 1), new Vector2(0, 0),
+                        isXEqualYDiagonal: false);
                 }
             }
         }
 
-        private void AddVerticalFaces(Room room, int x, int z, FaceDirection faceDirection, bool hasFloorPart, bool hasCeilingPart, bool hasMiddlePart, bool useLegacyCode = false)
+        /// <summary>
+        /// Builds and adds vertical wall face polygons (floor part, ceiling part, and/or middle part)
+        /// for a single sector edge in the given <paramref name="faceDirection"/>.
+        /// <para>
+        /// The wall data is retrieved from the room based on the direction, then each requested
+        /// wall section (floor, ceiling, middle) is decomposed into triangles/quads and appended
+        /// to the geometry buffers via <see cref="AddFace"/>.
+        /// </para>
+        /// </summary>
+        /// <param name="room">The room containing the sector.</param>
+        /// <param name="x">Sector X coordinate.</param>
+        /// <param name="z">Sector Z coordinate.</param>
+        /// <param name="faceDirection">The wall direction (cardinal or diagonal).</param>
+        /// <param name="hasFloorPart">Whether to generate the floor portion of the wall (QA + extra floor splits).</param>
+        /// <param name="hasCeilingPart">Whether to generate the ceiling portion of the wall (WS + extra ceiling splits).</param>
+        /// <param name="hasMiddlePart">Whether to generate the middle wall face between floor and ceiling portions.</param>
+        /// <param name="useLegacyCode">When <see langword="true"/>, uses legacy PRJ wall geometry logic
+        /// and skips wall data normalization.</param>
+        private void AddVerticalFaces(Room room, int x, int z, FaceDirection faceDirection,
+            bool hasFloorPart, bool hasCeilingPart, bool hasMiddlePart, bool useLegacyCode = false)
         {
-            bool shouldNormalizeWallData = !useLegacyCode;
+            bool normalize = !useLegacyCode;
 
             SectorWallData wallData = faceDirection switch
             {
-                FaceDirection.PositiveZ => room.GetPositiveZWallData(x, z, normalize: shouldNormalizeWallData),
-                FaceDirection.NegativeZ => room.GetNegativeZWallData(x, z, normalize: shouldNormalizeWallData),
-                FaceDirection.PositiveX => room.GetPositiveXWallData(x, z, normalize: shouldNormalizeWallData),
-                FaceDirection.NegativeX => room.GetNegativeXWallData(x, z, normalize: shouldNormalizeWallData),
-                FaceDirection.DiagonalFloor => room.GetDiagonalWallData(x, z, isDiagonalCeiling: false, normalize: shouldNormalizeWallData),
-                FaceDirection.DiagonalCeiling => room.GetDiagonalWallData(x, z, isDiagonalCeiling: true, normalize: shouldNormalizeWallData),
-                _ => throw new NotSupportedException("Unsupported face direction.")
+                FaceDirection.PositiveZ => room.GetPositiveZWallData(x, z, normalize),
+                FaceDirection.NegativeZ => room.GetNegativeZWallData(x, z, normalize),
+                FaceDirection.PositiveX => room.GetPositiveXWallData(x, z, normalize),
+                FaceDirection.NegativeX => room.GetNegativeXWallData(x, z, normalize),
+                FaceDirection.DiagonalFloor => room.GetDiagonalWallData(x, z, isDiagonalCeiling: false, normalize),
+                FaceDirection.DiagonalCeiling => room.GetDiagonalWallData(x, z, isDiagonalCeiling: true, normalize),
+                _ => throw new NotSupportedException($"Face direction '{faceDirection}' is not supported for vertical faces.")
             };
 
             Sector sector = room.Sectors[x, z];
 
             if (hasFloorPart)
             {
-                IReadOnlyList<SectorFaceData> verticalFloorPartFaces = useLegacyCode
+                IReadOnlyList<SectorFaceData> floorFaces = useLegacyCode
                     ? LegacyWallGeometry.GetVerticalFloorPartFaces(wallData, sector.IsAnyWall)
                     : wallData.GetVerticalFloorPartFaces(sector.Floor.DiagonalSplit);
 
-                for (int i = 0; i < verticalFloorPartFaces.Count; i++)
-                    AddFace(room, x, z, verticalFloorPartFaces[i]);
+                for (int i = 0; i < floorFaces.Count; i++)
+                    AddFace(room, x, z, floorFaces[i]);
             }
 
             if (hasCeilingPart)
             {
-                IReadOnlyList<SectorFaceData> verticalCeilingPartFaces = useLegacyCode
+                IReadOnlyList<SectorFaceData> ceilingFaces = useLegacyCode
                     ? LegacyWallGeometry.GetVerticalCeilingPartFaces(wallData, sector.IsAnyWall)
                     : wallData.GetVerticalCeilingPartFaces(sector.Ceiling.DiagonalSplit);
 
-                for (int i = 0; i < verticalCeilingPartFaces.Count; i++)
-                    AddFace(room, x, z, verticalCeilingPartFaces[i]);
+                for (int i = 0; i < ceilingFaces.Count; i++)
+                    AddFace(room, x, z, ceilingFaces[i]);
             }
 
             if (hasMiddlePart)
@@ -637,6 +775,10 @@ namespace TombLib.LevelData
             }
         }
 
+        /// <summary>
+        /// Adds a single vertical wall face (triangle or quad) to the geometry buffers.
+        /// Applies the default texture if the face has no texture assigned.
+        /// </summary>
         private void AddFace(Room room, int x, int z, SectorFaceData face)
         {
             Sector sector = room.Sectors[x, z];
@@ -660,6 +802,7 @@ namespace TombLib.LevelData
         {
             if (texture.DoubleSided)
                 DoubleSidedTriangleCount += 2;
+
             VertexRangeLookup.Add(new SectorFaceIdentity(x, z, face), new VertexRange(VertexPositions.Count, 6));
 
             VertexPositions.Add(p1);
@@ -694,8 +837,9 @@ namespace TombLib.LevelData
         private void AddTriangle(int x, int z, SectorFace face, Vector3 p0, Vector3 p1, Vector3 p2, TextureArea texture, Vector2 editorUV0, Vector2 editorUV1, Vector2 editorUV2, bool isXEqualYDiagonal)
         {
             if (texture.DoubleSided)
-                DoubleSidedTriangleCount += 1;
-            Vector2 editorUvFactor = new Vector2(isXEqualYDiagonal ? -1.0f : 1.0f, -1.0f);
+                DoubleSidedTriangleCount++;
+
+            var editorUvFactor = new Vector2(isXEqualYDiagonal ? -1.0f : 1.0f, -1.0f);
             VertexRangeLookup.Add(new SectorFaceIdentity(x, z, face), new VertexRange(VertexPositions.Count, 3));
 
             VertexPositions.Add(p0);
@@ -712,12 +856,14 @@ namespace TombLib.LevelData
 
         private static bool RayTraceCheckFloorCeiling(Room room, int x, int y, int z, int xLight, int zLight)
         {
-            int currentX = x / (int)Level.SectorSizeUnit - (x > xLight ? 1 : 0);
-            int currentZ = z / (int)Level.SectorSizeUnit - (z > zLight ? 1 : 0);
+            int currentX = (x / (int)Level.SectorSizeUnit) - (x > xLight ? 1 : 0);
+            int currentZ = (z / (int)Level.SectorSizeUnit) - (z > zLight ? 1 : 0);
 
             if (currentX < 0 || currentX >= room.NumXSectors ||
                 currentZ < 0 || currentZ >= room.NumZSectors)
+            {
                 return false;
+            }
 
             Sector sector = room.Sectors[currentX, currentZ];
             int floorMin = Clicks.FromWorld(sector.Floor.Min);
@@ -769,8 +915,8 @@ namespace TombLib.LevelData
 
             int fracX = (((minX >> 10) + 1) << 10) - minX;
             int currentX = ((minX >> 10) + 1) << 10;
-            int currentZ = deltaZ * fracX / (deltaX + 1) + zPoint;
-            int currentY = deltaY * fracX / (deltaX + 1) + yPoint;
+            int currentZ = (deltaZ * fracX / (deltaX + 1)) + zPoint;
+            int currentY = (deltaY * fracX / (deltaX + 1)) + yPoint;
 
             if (currentX > maxX)
                 return true;
@@ -874,8 +1020,8 @@ namespace TombLib.LevelData
 
             int fracZ = (((minZ >> 10) + 1) << 10) - minZ;
             int currentZ = ((minZ >> 10) + 1) << 10;
-            int currentX = deltaX * fracZ / (deltaZ + 1) + xPoint;
-            int currentY = deltaY * fracZ / (deltaZ + 1) + yPoint;
+            int currentX = (deltaX * fracZ / (deltaZ + 1)) + xPoint;
+            int currentY = (deltaY * fracZ / (deltaZ + 1)) + yPoint;
 
             if (currentZ > maxZ)
                 return true;
@@ -947,286 +1093,252 @@ namespace TombLib.LevelData
 
         private static int GetLightSampleCount(LightInstance light, LightQuality defaultQuality = LightQuality.Low)
         {
-            int numSamples = 1;
-            LightQuality finalQuality = light.Quality == LightQuality.Default ? defaultQuality : light.Quality;
+            LightQuality quality = light.Quality == LightQuality.Default ? defaultQuality : light.Quality;
 
-            switch (finalQuality)
+            return quality switch
             {
-                case LightQuality.Low:
-                    numSamples = 1;
-                    break;
-                case LightQuality.Medium:
-                    numSamples = 3;
-                    break;
-                case LightQuality.High:
-                    numSamples = 5;
-                    break;
-            }
-            return numSamples;
+                LightQuality.Medium => 3,
+                LightQuality.High => 5,
+                _ => 1
+            };
         }
 
         private static float GetSampleSumFromLightTracing(int numSamples, Room room, Vector3 position, LightInstance light)
         {
-//             object lockingObject = new object();
-//             float sampleSum = 0;
-//             Parallel.For((int)(-numSamples / 2.0f), (int)(numSamples / 2.0f) + 1, (x) =>
-//             {
-//                 Parallel.For((int)(-numSamples / 2.0f), (int)(numSamples / 2.0f) + 1, (y) =>
-//                 {
-//                     Parallel.For((int)(-numSamples / 2.0f), (int)(numSamples / 2.0f) + 1, (z) =>
-//                     {
-//                         Vector3 samplePos = new Vector3(x * 256, y * 256, z * 256);
-//                         if (!LightRayTrace(room, position, light.Position + samplePos))
-//                             lock (lockingObject)
-//                             {
-//                                 sampleSum += 1.0f;
-//                             }
-//                     });
-//                 });
-//             });
-            if (numSamples == 1) {
-                if (light.IsObstructedByRoomGeometry) {
-                    if (!LightRayTrace(room, position, light.Position))
-                        return 1;
-                    else
-                        return 0;
+            // Fast path for single-sample case
+            if (numSamples == 1)
+            {
+                if (!light.IsObstructedByRoomGeometry)
+                    return 1.0f;
+
+                return LightRayTrace(room, position, light.Position) ? 0.0f : 1.0f;
+            }
+
+            // Multi-sample: grid of XZ offsets around the light position (Y fixed at 0)
+            int halfSamples = numSamples / 2;
+            float sampleSum = 0.0f;
+
+            for (int sx = -halfSamples; sx <= halfSamples; sx++)
+            {
+                for (int sz = -halfSamples; sz <= halfSamples; sz++)
+                {
+                    if (!light.IsObstructedByRoomGeometry)
+                    {
+                        sampleSum++;
+                        continue;
+                    }
+
+                    var sampleOffset = new Vector3(sx * 256, 0, sz * 256);
+
+                    if (!LightRayTrace(room, position, light.Position + sampleOffset))
+                        sampleSum++;
                 }
             }
-            float sampleSum = 0.0f;
-            for (int x = (int)(-numSamples / 2.0f); x <= (int)(numSamples / 2.0f); x++)
-                for (int y = 0; y <= 0; y++)
-                    for (int z = (int)(-numSamples / 2.0f); z <= (int)(numSamples / 2.0f); z++)
-                    {
-                        Vector3 samplePos = new Vector3(x * 256, y * 256, z * 256);
-                        if (light.IsObstructedByRoomGeometry)
-                        {
-                            if (!LightRayTrace(room, position, light.Position + samplePos))
-                                sampleSum += 1.0f;
-                        }
-                        else
-                            sampleSum += 1.0f;
 
-                    }
-            sampleSum /= (numSamples * 1 * numSamples);
-            return sampleSum;
+            return sampleSum / (numSamples * numSamples);
         }
 
         public static float GetRaytraceResult(Room room, LightInstance light, Vector3 position, bool highQuality)
         {
-            float result = 1.0f;
-            if (light.Type != LightType.Effect && light.Type != LightType.FogBulb)
-            {
-                int numSamples;
-                if (highQuality)
-                    numSamples = GetLightSampleCount(light, room.Level.Settings.DefaultLightQuality);
-                else
-                    numSamples = 1;
-                result = GetSampleSumFromLightTracing(numSamples, room, position, light);
+            if (light.Type is LightType.Effect or LightType.FogBulb)
+                return 1.0f;
 
-                if (result < 0.000001f)
-                    return 0;
-            }
-            return result;
+            int numSamples = highQuality
+                ? GetLightSampleCount(light, room.Level.Settings.DefaultLightQuality)
+                : 1;
+
+            float result = GetSampleSumFromLightTracing(numSamples, room, position, light);
+            return result < 0.000001f ? 0.0f : result;
         }
 
         public static Vector3 CalculateLightForVertex(Room room, LightInstance light, Vector3 position,
-                                                      Vector3 normal, bool legacyPointLightModel, bool highQuality)
+            Vector3 normal, bool legacyPointLightModel, bool highQuality)
         {
             if (!light.Enabled)
                 return Vector3.Zero;
 
-            Vector3 lightDirection;
-            Vector3 lightVector;
-            float distance;
-
-            switch (light.Type)
+            return light.Type switch
             {
-                case LightType.Point:
-                case LightType.Shadow:
+                LightType.Point or LightType.Shadow => CalculatePointLight(room, light, position, normal, legacyPointLightModel, highQuality),
+                LightType.Effect => CalculateEffectLight(light, position),
+                LightType.Sun => CalculateSunLight(room, light, position, normal, highQuality),
+                LightType.Spot => CalculateSpotLight(room, light, position, normal, highQuality),
+                _ => Vector3.Zero
+            };
+        }
 
-                    // Get the light vector
-                    lightVector = position - light.Position;
+        private const float IntensityScale = 8192.0f;
+        private const float ColorNormalization = 1.0f / 64.0f;
+        private const float DistanceMargin = 64.0f;
 
-                    // Get the distance between light and vertex
-                    distance = lightVector.Length();
+        private static Vector3 CalculatePointLight(Room room, LightInstance light, Vector3 position,
+            Vector3 normal, bool legacyPointLightModel, bool highQuality)
+        {
+            Vector3 lightVector = position - light.Position;
+            float distance = lightVector.Length();
+            float outerRadius = light.OuterRange * Level.SectorSizeUnit;
 
-                    // Normalize the light vector
-                    lightVector = Vector3.Normalize(lightVector);
+            if (distance + DistanceMargin > outerRadius)
+                return Vector3.Zero;
 
-                    if (distance + 64.0f <= light.OuterRange * Level.SectorSizeUnit)
-                    {
-                        // If distance is greater than light out radius, then skip this light
-                        if (distance > light.OuterRange * Level.SectorSizeUnit)
-                            return Vector3.Zero;
+            lightVector = Vector3.Normalize(lightVector);
 
-                        // Calculate light diffuse value
-                        int diffuse = (int)(light.Intensity * 8192);
+            // Distance-based attenuation: 1.0 at inner range, fading to 0.0 at outer range
+            float innerRadius = light.InnerRange * Level.SectorSizeUnit;
+            float rangeDelta = outerRadius - innerRadius;
+            float attenuation = rangeDelta > 0 ? Math.Clamp((outerRadius - distance) / rangeDelta, 0.0f, 1.0f) : 1.0f;
 
-                        // Calculate the attenuation
-                        float attenuaton = (light.OuterRange * Level.SectorSizeUnit - distance) / (light.OuterRange * Level.SectorSizeUnit - light.InnerRange * Level.SectorSizeUnit);
-                        if (attenuaton > 1.0f)
-                            attenuaton = 1.0f;
-                        if (attenuaton <= 0.0f)
-                            return Vector3.Zero;
+            if (attenuation <= 0.0f)
+                return Vector3.Zero;
 
-                        // Calculate the length squared of the normal vector
-                        float dotN = Vector3.Dot((legacyPointLightModel ? normal : -lightVector), normal);
-                        if (dotN <= 0)
-                            return Vector3.Zero;
+            // Diffuse factor: dot product of surface normal with light direction
+            Vector3 effectiveDirection = legacyPointLightModel ? normal : -lightVector;
+            float dotN = Vector3.Dot(effectiveDirection, normal);
 
-                        // Get raytrace result
-                        var raytraceResult = GetRaytraceResult(room, light, position, highQuality);
+            if (dotN <= 0)
+                return Vector3.Zero;
 
-                        // Calculate final light color
-                        float diffuseIntensity = dotN * attenuaton * raytraceResult;
-                        diffuseIntensity = Math.Max(0, diffuseIntensity);
-                        float finalIntensity = diffuseIntensity * diffuse;
-                        return finalIntensity * light.Color * (1.0f / 64.0f);
-                    }
-                    break;
+            float raytraceResult = GetRaytraceResult(room, light, position, highQuality);
+            int diffuse = (int)(light.Intensity * IntensityScale);
+            float finalIntensity = Math.Max(0, dotN * attenuation * raytraceResult) * diffuse;
 
-                case LightType.Effect:
-                    if (Math.Abs(Vector3.Distance(position, light.Position)) + 64.0f <= light.OuterRange * Level.SectorSizeUnit)
-                    {
-                        int x1 = (int)(Math.Floor(light.Position.X / Level.SectorSizeUnit)   * Level.SectorSizeUnit);
-                        int z1 = (int)(Math.Floor(light.Position.Z / Level.SectorSizeUnit)   * Level.SectorSizeUnit);
-                        int x2 = (int)(Math.Ceiling(light.Position.X / Level.SectorSizeUnit) * Level.SectorSizeUnit);
-                        int z2 = (int)(Math.Ceiling(light.Position.Z / Level.SectorSizeUnit) * Level.SectorSizeUnit);
+            return finalIntensity * light.Color * ColorNormalization;
+        }
 
-                        // TODO: winroomedit was supporting effect lights placed on vertical faces and effects light was applied to owning face
-                        if ((position.X == x1 && position.Z == z1 || position.X == x1 && position.Z == z2 || position.X == x2 && position.Z == z1 ||
-                             position.X == x2 && position.Z == z2) && position.Y <= light.Position.Y)
-                        {
-                            float finalIntensity = light.Intensity * 8192 * 0.25f;
-                            return finalIntensity * light.Color * (1.0f / 64.0f);
-                        }
-                    }
-                    break;
+        private static Vector3 CalculateEffectLight(LightInstance light, Vector3 position)
+        {
+            float distance = Math.Abs(Vector3.Distance(position, light.Position));
 
-                case LightType.Sun:
-                    {
-                        // Calculate the light direction
-                        lightDirection = light.GetDirection();
+            if (distance + DistanceMargin > light.OuterRange * Level.SectorSizeUnit)
+                return Vector3.Zero;
 
-                        // Calculate diffuse lighting
-                        float diffuse = -Vector3.Dot(lightDirection, normal);
-                        if (diffuse <= 0)
-                            return Vector3.Zero;
-                        if (diffuse > 1.0f)
-                            diffuse = 1.0f;
+            // Effect lights only apply to vertices at the sector corners surrounding the light
+            // TODO: winroomedit was supporting effect lights placed on vertical faces
+            int x1 = (int)(Math.Floor(light.Position.X / Level.SectorSizeUnit) * Level.SectorSizeUnit);
+            int z1 = (int)(Math.Floor(light.Position.Z / Level.SectorSizeUnit) * Level.SectorSizeUnit);
+            int x2 = (int)(Math.Ceiling(light.Position.X / Level.SectorSizeUnit) * Level.SectorSizeUnit);
+            int z2 = (int)(Math.Ceiling(light.Position.Z / Level.SectorSizeUnit) * Level.SectorSizeUnit);
 
-                        // Get raytrace result
-                        var raytraceResult = GetRaytraceResult(room, light, position, highQuality);
+            bool isAtCorner = (position.X == x1 || position.X == x2)
+                           && (position.Z == z1 || position.Z == z2);
 
-                        // Calculate final light color
-                        float finalIntensity = diffuse * light.Intensity * 8192.0f * raytraceResult;
-                        if (finalIntensity < 0)
-                            return Vector3.Zero;
-                        return finalIntensity * light.Color * (1.0f / 64.0f);
-                    }
+            if (!isAtCorner || position.Y > light.Position.Y)
+                return Vector3.Zero;
 
-                case LightType.Spot:
-                    if (Math.Abs(Vector3.Distance(position, light.Position)) + 64.0f <= light.OuterRange * Level.SectorSizeUnit)
-                    {
-                        // Calculate the ray from light to vertex
-                        lightVector = Vector3.Normalize(position - light.Position);
+            float finalIntensity = light.Intensity * IntensityScale * 0.25f;
+            return finalIntensity * light.Color * ColorNormalization;
+        }
 
-                        // Get the distance between light and vertex
-                        distance = Math.Abs((position - light.Position).Length());
+        private static Vector3 CalculateSunLight(Room room, LightInstance light, Vector3 position,
+            Vector3 normal, bool highQuality)
+        {
+            Vector3 lightDirection = light.GetDirection();
+            float diffuse = Math.Clamp(-Vector3.Dot(lightDirection, normal), 0.0f, 1.0f);
 
-                        // If distance is greater than light length, then skip this light
-                        if (distance > light.OuterRange * Level.SectorSizeUnit)
-                            return Vector3.Zero;
+            if (diffuse <= 0)
+                return Vector3.Zero;
 
-                        // Calculate the light direction
-                        lightDirection = light.GetDirection();
+            float raytraceResult = GetRaytraceResult(room, light, position, highQuality);
+            float finalIntensity = diffuse * light.Intensity * IntensityScale * raytraceResult;
 
-                        // Calculate the cosines values for In, Out
-                        double d = Vector3.Dot(lightVector, lightDirection);
-                        double cosI2 = Math.Cos(light.InnerAngle * (Math.PI / 180));
-                        double cosO2 = Math.Cos(light.OuterAngle * (Math.PI / 180));
+            if (finalIntensity < 0)
+                return Vector3.Zero;
 
-                        if (d < cosO2)
-                            return Vector3.Zero;
+            return finalIntensity * light.Color * ColorNormalization;
+        }
 
-                        // Calculate light diffuse value
-                        float factor = (float)(1.0f - (d - cosI2) / (cosO2 - cosI2));
-                        if (factor > 1.0f)
-                            factor = 1.0f;
-                        if (factor <= 0.0f)
-                            return Vector3.Zero;
+        private static Vector3 CalculateSpotLight(Room room, LightInstance light, Vector3 position,
+            Vector3 normal, bool highQuality)
+        {
+            float outerRadius = light.OuterRange * Level.SectorSizeUnit;
+            float distance = (position - light.Position).Length();
 
-                        float attenuation = 1.0f;
-                        if (distance >= light.InnerRange * Level.SectorSizeUnit)
-                            attenuation = 1.0f - (distance - light.InnerRange * Level.SectorSizeUnit) / (light.OuterRange * Level.SectorSizeUnit - light.InnerRange * Level.SectorSizeUnit);
+            if (distance + DistanceMargin > outerRadius)
+                return Vector3.Zero;
 
-                        if (attenuation > 1.0f)
-                            attenuation = 1.0f;
-                        if (attenuation < 0.0f)
-                            return Vector3.Zero;
+            Vector3 lightVector = Vector3.Normalize(position - light.Position);
+            Vector3 lightDirection = light.GetDirection();
 
-                        float dot1 = -Vector3.Dot(lightDirection, normal);
-                        if (dot1 < 0.0f)
-                            return Vector3.Zero;
-                        if (dot1 > 1.0f)
-                            dot1 = 1.0f;
+            // Cone angle check
+            double cosAngle = Vector3.Dot(lightVector, lightDirection);
+            double cosInner = Math.Cos(light.InnerAngle * (Math.PI / 180));
+            double cosOuter = Math.Cos(light.OuterAngle * (Math.PI / 180));
 
-                        // Get raytrace result
-                        var raytraceResult = GetRaytraceResult(room, light, position, highQuality);
+            if (cosAngle < cosOuter)
+                return Vector3.Zero;
 
-                        float finalIntensity = attenuation * dot1 * factor * light.Intensity * 8192.0f * raytraceResult;
-                        return finalIntensity * light.Color * (1.0f / 64.0f);
-                    }
-                    break;
-            }
+            // Cone angular attenuation: 1.0 inside inner cone, fading to 0.0 at outer cone
+            double coneDelta = cosOuter - cosInner;
+            float coneFactor = coneDelta != 0 ? Math.Clamp((float)(1.0 - ((cosAngle - cosInner) / coneDelta)), 0.0f, 1.0f) : 1.0f;
 
-            return Vector3.Zero;
+            if (coneFactor <= 0.0f)
+                return Vector3.Zero;
+
+            // Distance attenuation
+            float innerRadius = light.InnerRange * Level.SectorSizeUnit;
+            float rangeDelta = outerRadius - innerRadius;
+            float distAttenuation = 1.0f;
+
+            if (distance >= innerRadius && rangeDelta > 0)
+                distAttenuation = Math.Clamp(1.0f - ((distance - innerRadius) / rangeDelta), 0.0f, 1.0f);
+
+            if (distAttenuation <= 0.0f)
+                return Vector3.Zero;
+
+            // Surface facing factor
+            float surfaceDot = Math.Clamp(-Vector3.Dot(lightDirection, normal), 0.0f, 1.0f);
+
+            if (surfaceDot <= 0.0f)
+                return Vector3.Zero;
+
+            float raytraceResult = GetRaytraceResult(room, light, position, highQuality);
+            float finalIntensity = distAttenuation * surfaceDot * coneFactor * light.Intensity * IntensityScale * raytraceResult;
+
+            return finalIntensity * light.Color * ColorNormalization;
         }
 
         public void Relight(Room room, bool highQuality = false)
         {
-            // Collect lights
-            List<LightInstance> lights = new List<LightInstance>();
+            // Pre-filter to only statically used lights (avoids per-vertex checks)
+            var lights = new List<LightInstance>();
+
             foreach (var instance in room.Objects)
             {
-                LightInstance light = instance as LightInstance;
-                if (light != null)
+                if (instance is LightInstance light && light.IsStaticallyUsed)
                     lights.Add(light);
             }
 
-            // Calculate lighting
+            // Calculate per-vertex lighting
             for (int i = 0; i < VertexPositions.Count; i += 3)
             {
-                var normal = Vector3.Cross(
+                Vector3 normal = Vector3.Normalize(Vector3.Cross(
                     VertexPositions[i + 1] - VertexPositions[i],
-                    VertexPositions[i + 2] - VertexPositions[i]);
-                normal = Vector3.Normalize(normal);
+                    VertexPositions[i + 2] - VertexPositions[i]));
 
                 for (int j = 0; j < 3; ++j)
                 {
-                    var position = VertexPositions[i + j];
+                    Vector3 position = VertexPositions[i + j];
                     Vector3 color = room.Properties.AmbientLight * 128;
 
-                    foreach (var light in lights) // No Linq here because it's slow
-                    {
-                        if (light.IsStaticallyUsed)
-                            color += CalculateLightForVertex(room, light, position, normal, true, highQuality);
-                    }
+                    foreach (var light in lights)
+                        color += CalculateLightForVertex(room, light, position, normal, true, highQuality);
 
-                    // Apply color
-                    VertexColors[i + j] = Vector3.Max(color, new Vector3()) * (1.0f / 128.0f);
+                    VertexColors[i + j] = Vector3.Max(color, Vector3.Zero) * (1.0f / 128.0f);
                 }
             }
 
-            // Calculate light average for shared vertices
+            // Average colors across shared vertices for smooth lighting
             foreach (var pair in SharedVertices)
             {
-                Vector3 faceColorSum = new Vector3();
-                foreach (var vertexIndex in pair.Value)
-                    faceColorSum += VertexColors[vertexIndex];
-                faceColorSum /= pair.Value.Count;
-                foreach (var vertexIndex in pair.Value)
-                    VertexColors[vertexIndex] = faceColorSum;
+                Vector3 averageColor = Vector3.Zero;
+
+                foreach (int vertexIndex in pair.Value)
+                    averageColor += VertexColors[vertexIndex];
+
+                averageColor /= pair.Value.Count;
+
+                foreach (int vertexIndex in pair.Value)
+                    VertexColors[vertexIndex] = averageColor;
             }
         }
 
@@ -1240,28 +1352,37 @@ namespace TombLib.LevelData
 
         public IntersectionInfo? RayIntersectsGeometry(Ray ray)
         {
-            IntersectionInfo result = new IntersectionInfo { Distance = float.NaN };
+            var result = new IntersectionInfo { Distance = float.NaN };
+
             foreach (var entry in VertexRangeLookup)
+            {
                 for (int i = 0; i < entry.Value.Count; i += 3)
                 {
-                    var p0 = VertexPositions[entry.Value.Start + i];
-                    var p1 = VertexPositions[entry.Value.Start + i + 1];
-                    var p2 = VertexPositions[entry.Value.Start + i + 2];
+                    Vector3 p0 = VertexPositions[entry.Value.Start + i];
+                    Vector3 p1 = VertexPositions[entry.Value.Start + i + 1];
+                    Vector3 p2 = VertexPositions[entry.Value.Start + i + 2];
 
-                    Vector3 position;
-                    if (Collision.RayIntersectsTriangle(ray, p0, p1, p2, true, out position))
+                    if (!Collision.RayIntersectsTriangle(ray, p0, p1, p2, true, out Vector3 hitPosition))
+                        continue;
+
+                    float distance = (hitPosition - ray.Position).Length();
+                    Vector3 normal = Vector3.Cross(p1 - p0, p2 - p0);
+
+                    // Only consider front-facing triangles that are closer than current best
+                    if (Vector3.Dot(ray.Direction, normal) <= 0 && !(distance > result.Distance))
                     {
-                        float distance = (position - ray.Position).Length();
-                        var normal = Vector3.Cross(p1 - p0, p2 - p0);
-                        if (Vector3.Dot(ray.Direction, normal) <= 0)
-                            if (!(distance > result.Distance))
-                                result = new IntersectionInfo() { Distance = distance, Face = entry.Key.Face, Pos = entry.Key.Position, VerticalCoord = position.Y };
+                        result = new IntersectionInfo
+                        {
+                            Distance = distance,
+                            Face = entry.Key.Face,
+                            Pos = entry.Key.Position,
+                            VerticalCoord = hitPosition.Y
+                        };
                     }
                 }
+            }
 
-            if (float.IsNaN(result.Distance))
-                return null;
-            return result;
+            return float.IsNaN(result.Distance) ? null : result;
         }
     }
 
@@ -1270,6 +1391,10 @@ namespace TombLib.LevelData
         public int Start;
         public int Count;
 
-        public VertexRange(int start, int count) { Start = start; Count = count; }
+        public VertexRange(int start, int count)
+        {
+            Start = start;
+            Count = count;
+        }
     }
 }
