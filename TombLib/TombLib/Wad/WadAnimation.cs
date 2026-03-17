@@ -8,7 +8,7 @@ namespace TombLib.Wad
         public bool PositionX { get; set; }
         public bool PositionY { get; set; }
         public bool PositionZ { get; set; }
-        public bool Rotation { get; set; }
+        public bool RotationY { get; set; }
 
         public int GetBitmask()
         {
@@ -16,7 +16,7 @@ namespace TombLib.Wad
             if (PositionX) bitmask |= 1 << 0;
             if (PositionY) bitmask |= 1 << 1;
             if (PositionZ) bitmask |= 1 << 2;
-            if (Rotation)  bitmask |= (1 << 3 | 1 << 4 | 1 << 5);
+            if (RotationY) bitmask |= 1 << 3;
 
             return bitmask;
         }

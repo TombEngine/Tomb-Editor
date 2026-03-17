@@ -98,7 +98,6 @@ namespace WadTool
             if (!isTEN && _editor.Tool.Configuration.AnimationEditor_SoundPreviewType > SoundPreviewType.Water)
                 _editor.Tool.Configuration.AnimationEditor_SoundPreviewType = SoundPreviewType.Land;
 
-            // TODO: Unlock when anim blending is finished.
             sectionBlending.Visible = isTEN;
             panelRootMotion.Visible = isTEN;
 
@@ -511,7 +510,7 @@ namespace WadTool
                     cbRootPosX.Checked = node.WadAnimation.RootMotion.PositionX;
                     cbRootPosY.Checked = node.WadAnimation.RootMotion.PositionY;
                     cbRootPosZ.Checked = node.WadAnimation.RootMotion.PositionZ;
-                    cbRootRotation.Checked = node.WadAnimation.RootMotion.Rotation;
+                    cbRootRotation.Checked = node.WadAnimation.RootMotion.RotationY;
 
                     tbStateId.Text = node.WadAnimation.StateId.ToString();
                     UpdateStateChange();
@@ -2885,12 +2884,12 @@ namespace WadTool
                 _editor.MadeChanges = true;
             }
 
-            var rm = _editor.CurrentAnim.WadAnimation.RootMotion;
-            rm.PositionX = cbRootPosX.Checked;
-            rm.PositionY = cbRootPosY.Checked;
-            rm.PositionZ = cbRootPosZ.Checked;
-            rm.Rotation = cbRootRotation.Checked;
-            _editor.CurrentAnim.WadAnimation.RootMotion = rm;
+            var rootMotion = _editor.CurrentAnim.WadAnimation.RootMotion;
+            rootMotion.PositionX = cbRootPosX.Checked;
+            rootMotion.PositionY = cbRootPosY.Checked;
+            rootMotion.PositionZ = cbRootPosZ.Checked;
+            rootMotion.RotationY = cbRootRotation.Checked;
+            _editor.CurrentAnim.WadAnimation.RootMotion = rootMotion;
 
             Saved = false;
         }

@@ -82,7 +82,7 @@ namespace WadTool
 
             if (smoothAnimation && keyFrameIndex < maxKfIndex)
             {
-                float targetK = (float)frameCount / (float)frameRate - (float)keyFrameIndex;
+                float targetK = ((float)frameCount / (float)frameRate) - (float)keyFrameIndex;
                 targetK = Math.Min(targetK, 1.0f);
 
                 var nextFrame = targetAnim.DirectXAnimation.KeyFrames[keyFrameIndex + 1];
@@ -103,6 +103,7 @@ namespace WadTool
                 Clear();
                 return false;
             }
+
             return true;
         }
 

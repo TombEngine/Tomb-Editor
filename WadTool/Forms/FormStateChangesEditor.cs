@@ -31,21 +31,21 @@ namespace WadTool
             public ushort LowFrame { get; set; }
             public ushort HighFrame { get; set; }
             public ushort NextAnimation { get; set; }
-            public ushort NextFrame { get; set; }
+            public ushort NextLowFrame { get; set; }
+            public ushort NextHighFrame { get; set; }
             public ushort BlendFrameCount { get; set; }
-            public ushort BlendEndFrame { get; set; }
             public BezierCurve2 BlendCurve { get; set; } = BezierCurve2.Linear.Clone();
 
             public WadStateChangeRow(string stateName, ushort stateId, ushort lowFrame, ushort highFrame, ushort nextAnimation,
-                                     ushort nextFrameLow, ushort nextFrameHigh, ushort blendFrameCount, BezierCurve2 blendCurve)
+                                     ushort nextLowFrame, ushort nextHighFrame, ushort blendFrameCount, BezierCurve2 blendCurve)
             {
                 StateName = stateName;
                 StateId = stateId;
                 LowFrame = lowFrame;
                 HighFrame = highFrame;
                 NextAnimation = nextAnimation;
-                NextFrame = nextFrameLow;
-                BlendEndFrame = nextFrameHigh;
+                NextLowFrame = nextLowFrame;
+                NextHighFrame = nextHighFrame;
                 BlendFrameCount = blendFrameCount;
                 BlendCurve = blendCurve.Clone();
             }
@@ -168,7 +168,7 @@ namespace WadTool
             if (dgvStateChanges.SelectedRows.Count > 0)
             {
                 var item = ((IEnumerable<WadStateChangeRow>)dgvStateChanges.DataSource).ElementAt(dgvStateChanges.SelectedRows[0].Index);
-                _editor.Tool.ChangeState(item.NextAnimation, item.NextFrame, item.LowFrame, item.HighFrame, item.BlendFrameCount, item.BlendCurve);
+                _editor.Tool.ChangeState(item.NextAnimation, item.NextLowFrame, item.LowFrame, item.HighFrame, item.BlendFrameCount, item.BlendCurve);
 
                 lblStateChangeAnnouncement.Text = "Pending state change to anim #" + item.NextAnimation;
             }
@@ -189,8 +189,8 @@ namespace WadTool
                 var sc = tempDictionary[row.StateId];
                 sc.StateId = row.StateId;
 
-                var newDispatch = new WadAnimDispatch(row.LowFrame, row.HighFrame, row.NextAnimation, row.NextFrame);
-                newDispatch.NextFrameHigh = row.BlendEndFrame;
+                var newDispatch = new WadAnimDispatch(row.LowFrame, row.HighFrame, row.NextAnimation, row.NextLowFrame);
+                newDispatch.NextFrameHigh = row.NextHighFrame;
                 newDispatch.BlendFrameCount = row.BlendFrameCount;
                 newDispatch.BlendCurve = row.BlendCurve;
 

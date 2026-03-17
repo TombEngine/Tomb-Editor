@@ -440,11 +440,11 @@ namespace TombLib.Wad
                                                                                       animation.EndLateralVelocity));
 
                                 // Root motion settings
-                                var rm = animation.RootMotion;
-                                int rootMotionFlags = (rm.PositionX ? 1 : 0) |
-                                                      (rm.PositionY ? 2 : 0) |
-                                                      (rm.PositionZ ? 4 : 0) |
-                                                      (rm.Rotation  ? 8 : 0);
+                                var rootMotion = animation.RootMotion;
+                                int rootMotionFlags = (rootMotion.PositionX ? (1 << 0) : 0) |
+                                                      (rootMotion.PositionY ? (1 << 1) : 0) |
+                                                      (rootMotion.PositionZ ? (1 << 2) : 0) |
+                                                      (rootMotion.RotationY ? (1 << 3) : 0);
                                 chunkIO.WriteChunkInt(Wad2Chunks.AnimationRootMotion, rootMotionFlags);
                             });
                         }
