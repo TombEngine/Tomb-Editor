@@ -193,8 +193,8 @@ namespace TombEditor.Controls.Panel3D
         {
             if (state)
             {
-                // Don't start if fly mode is active
-                if (_editor.FlyMode)
+                // Don't start if fly mode is active or we're already in preview mode
+                if (_editor.FlyMode || _editor.CameraPreviewMode)
                     return;
 
                 // Stop any in-progress camera animation so it doesn't interfere with preview.
@@ -302,12 +302,6 @@ namespace TombEditor.Controls.Panel3D
 
             // Update the preview and get the current frame
             var frame = _flybyPreview.Update();
-
-            if (frame.Finished)
-            {
-                ToggleCameraPreview(false);
-                return;
-            }
 
             // Apply the frame state to the camera
             Camera.Position = frame.Position;

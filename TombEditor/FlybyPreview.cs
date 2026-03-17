@@ -21,7 +21,6 @@ namespace TombEditor
             public float RotationX; // Pitch in radians  (FreeCamera convention: positive = look down)
             public float Roll;      // Roll in radians
             public float Fov;       // FOV in radians
-            public bool Finished;
         }
 
         private const float DegToRad = (float)(Math.PI / 180.0);
@@ -134,7 +133,7 @@ namespace TombEditor
         public FrameState Update()
         {
             if (IsFinished || _numCameras < 2)
-                return new FrameState { Finished = true };
+                return default;
 
             float deltaTime = ComputeDeltaTime();
 
