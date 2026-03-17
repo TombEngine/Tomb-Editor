@@ -141,7 +141,7 @@ namespace WadTool
             btCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btCancel.Checked = false;
             btCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            btCancel.Location = new System.Drawing.Point(721, 336);
+            btCancel.Location = new System.Drawing.Point(761, 336);
             btCancel.Name = "btCancel";
             btCancel.Size = new System.Drawing.Size(81, 23);
             btCancel.TabIndex = 50;
@@ -152,7 +152,7 @@ namespace WadTool
             //
             btOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             btOk.Checked = false;
-            btOk.Location = new System.Drawing.Point(634, 336);
+            btOk.Location = new System.Drawing.Point(674, 336);
             btOk.Name = "btOk";
             btOk.Size = new System.Drawing.Size(81, 23);
             btOk.TabIndex = 51;
@@ -198,7 +198,7 @@ namespace WadTool
             //
             butApply.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             butApply.Checked = false;
-            butApply.Location = new System.Drawing.Point(548, 336);
+            butApply.Location = new System.Drawing.Point(588, 336);
             butApply.Name = "butApply";
             butApply.Size = new System.Drawing.Size(80, 23);
             butApply.TabIndex = 102;
