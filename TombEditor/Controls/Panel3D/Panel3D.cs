@@ -106,6 +106,11 @@ namespace TombEditor.Controls.Panel3D
         private Frustum _frustum;
         private Matrix4x4 _viewProjection;
 
+        // Flyby preview state
+        private FlybyPreview _flybyPreview;
+        private readonly Timer _flybyPreviewTimer;
+        private Camera _flybyPreviewOldCamera;
+
         // Mouse interaction state
         private Point _lastMousePosition;
         private Point _startMousePosition;
@@ -201,6 +206,9 @@ namespace TombEditor.Controls.Panel3D
                 _flyModeTimer = new Timer { Interval = 1 };
                 _flyModeTimer.Tick += FlyModeTimer_Tick;
 
+                _flybyPreviewTimer = new Timer { Interval = 16 }; // ~60fps
+                _flybyPreviewTimer.Tick += FlybyPreviewTimer_Tick;
+
                 _renderingCachedRooms = new Cache<Room, RenderingDrawingRoom>(1024, CacheRoom);
             }
 
@@ -225,6 +233,7 @@ namespace TombEditor.Controls.Panel3D
                 _littleSphere?.Dispose();
                 _movementTimer?.Dispose();
                 _flyModeTimer?.Dispose();
+                _flybyPreviewTimer?.Dispose();
                 _rasterizerStateDepthBias?.Dispose();
                 _currentContextMenu?.Dispose();
                 _wadRenderer?.Dispose();
@@ -349,9 +358,18 @@ namespace TombEditor.Controls.Panel3D
             if (obj is Editor.ToggleFlyModeEvent)
                 ToggleFlyMode(((Editor.ToggleFlyModeEvent)obj).FlyModeState);
 
+            // Toggle camera preview
+            if (obj is Editor.ToggleCameraPreviewEvent previewEvt)
+                ToggleCameraPreview(previewEvt.PreviewState, previewEvt.FlybySequence, previewEvt.SpeedMultiplier, previewEvt.CameraInstance);
+
             // Stop camera animation if level is changing
             if (obj is Editor.LevelChangedEvent)
+            {
                 _movementTimer.Stop(true);
+
+                if (_editor.CameraPreviewMode)
+                    ToggleCameraPreview(false);
+            }
 
             // Move camera to sector
             if (obj is Editor.MoveCameraToSectorEvent)
@@ -380,6 +398,15 @@ namespace TombEditor.Controls.Panel3D
         protected override void OnPreviewKeyDown(PreviewKeyDownEventArgs e)
         {
             base.OnPreviewKeyDown(e);
+
+            // Block keyboard input during camera preview (except ESC)
+            if (_editor.CameraPreviewMode)
+            {
+                if (e.KeyCode == Keys.Escape)
+                    ToggleCameraPreview(false);
+
+                return;
+            }
 
             if ((ModifierKeys & (Keys.Control | Keys.Alt | Keys.Shift)) == Keys.None)
                 _movementTimer.Engage(e.KeyCode);

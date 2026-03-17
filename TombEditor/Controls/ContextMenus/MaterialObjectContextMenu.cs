@@ -41,6 +41,22 @@ namespace TombEditor.Controls.ContextMenus
                 }));
             }
 
+            if (targetObject is FlybyCameraInstance flybyTarget)
+            {
+                Items.Add(new ToolStripMenuItem("Preview flyby sequence", Properties.Resources.objects_movie_projector_16, (o, e) =>
+                {
+                    editor.ToggleCameraPreview(true, flybySequence: flybyTarget.Sequence);
+                }));
+            }
+
+            if (targetObject is CameraInstance cameraTarget)
+            {
+                Items.Add(new ToolStripMenuItem("Preview camera", Properties.Resources.objects_movie_projector_16, (o, e) =>
+                {
+                    editor.ToggleCameraPreview(true, camera: cameraTarget);
+                }));
+            }
+
             Items.Add(new ToolStripMenuItem("Copy", Properties.Resources.general_copy_link_16, (o, e) =>
             {
                 EditorActions.TryCopyObject(targetObject, owner);

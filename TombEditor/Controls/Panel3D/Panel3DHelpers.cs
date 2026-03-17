@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using TombLib;
 using TombLib.Graphics;
 using TombLib.LevelData;
+using TombLib.Utils;
 
 namespace TombEditor.Controls.Panel3D
 {
@@ -135,7 +134,7 @@ namespace TombEditor.Controls.Panel3D
                 if (isCut || isLast)
                 {
                     // Calculate the spline path for the current segment
-                    var pointList = Spline.Calculate(camList, camList.Count * _flybyPathSmoothness);
+                    var pointList = CatmullRomSpline.EvaluatePositions(camList, _flybyPathSmoothness);
 
                     // Add vertices for the current path segment
                     for (int j = 0; j < pointList.Count - 1; j++)

@@ -59,7 +59,14 @@ namespace TombEditor.Controls.Panel3D
         private void OnMouseButtonDown(MouseButtons button, Point location)
         {
             if (_editor.FlyMode)
-                return; // Selecting in FlyMode is not allowed
+                return;
+
+            // End camera preview on any mouse click
+            if (_editor.CameraPreviewMode)
+            {
+                ToggleCameraPreview(false);
+                return;
+            }
 
             _lastMousePosition = location;
             _doSectorSelection = false;
@@ -82,7 +89,7 @@ namespace TombEditor.Controls.Panel3D
 
         private void OnMouseMoved(MouseButtons button, Point location)
         {
-            if (_editor.FlyMode)
+            if (_editor.FlyMode || _editor.CameraPreviewMode)
                 return;
 
             // Reset internal bool for deselection
@@ -144,6 +151,9 @@ namespace TombEditor.Controls.Panel3D
 
         private void OnMouseWheelScroll(int delta, Point location)
         {
+            if (_editor.CameraPreviewMode)
+                return;
+
             if (_movementTimer.Animating)
                 return;
 

@@ -537,6 +537,10 @@ namespace TombEditor.Forms
             if (_editor.FlyMode && !_editor.Configuration.UI_Hotkeys["ToggleFlyMode"].Contains(keyData))
                 return base.ProcessCmdKey(ref msg, keyData);
 
+            // Disable all hotkeys in camera preview mode except PreviewCamera
+            if (_editor.CameraPreviewMode && !_editor.Configuration.UI_Hotkeys["PreviewCamera"].Contains(keyData))
+                return base.ProcessCmdKey(ref msg, keyData);
+
             // Don't process reserved camera keys
             if (WinFormsUtils.DirectionalCameraKeys.Contains(keyData))
                 return base.ProcessCmdKey(ref msg, keyData);
