@@ -51,7 +51,7 @@ namespace WadTool
             dgvStateChanges.Location = new System.Drawing.Point(7, 22);
             dgvStateChanges.Name = "dgvStateChanges";
             dgvStateChanges.RowHeadersWidth = 40;
-            dgvStateChanges.RowTemplate.Height = 16;
+            dgvStateChanges.RowTemplate.Height = 20;
             dgvStateChanges.ShowCellErrors = false;
             dgvStateChanges.Size = new System.Drawing.Size(789, 292);
             dgvStateChanges.TabIndex = 48;
