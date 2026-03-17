@@ -55,7 +55,7 @@ namespace TombIDE.Shared.NewStructure
 		List<string> GameLanguageNames { get; }
 
 		/// <summary>
-		/// .trproj file name = game's .exe file name (tomb4, PCTomb5, ...) + ".trproj"
+		/// Returns the full path to the project's .trproj file.
 		/// </summary>
 		string GetTrprojFilePath();
 
