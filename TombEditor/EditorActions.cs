@@ -683,6 +683,7 @@ namespace TombEditor
 						objectName = (o as MoveableInstance).WadObjectId.ShortName(_editor.Level.Settings.GameVersion).ToLower();
 
                     bool isSwitch = objectName.Contains("switch") || objectName.Contains("pulley");
+                    bool isHeavy = objectName.Contains("fusebox") || objectName.Contains("electrical switch box"); // TR3/TEN Fusebox
                     bool isHole = objectName.Contains("hole") &&
                         (objectName.Contains("key") || objectName.Contains("puzzle"));
                     bool isBridge = objectName.Contains("bridge") &&
@@ -696,6 +697,8 @@ namespace TombEditor
                         trigger.TriggerType = TriggerType.Switch;
                     else if (isBridge)
                         trigger.TriggerType = TriggerType.Dummy;
+                    else if (isHeavy)
+                        trigger.TriggerType = TriggerType.Heavy;
                     else
                         return false;
 

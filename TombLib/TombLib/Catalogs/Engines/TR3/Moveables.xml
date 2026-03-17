@@ -234,7 +234,7 @@
     <moveable id="287" name="Tyrannosaur" essential="false" ten="TYRANNOSAUR"/>
     <moveable id="288" name="Raptor" essential="false" ten="RAPTOR"/>
     <moveable id="291" name="Laser sweeper" essential="false" ten="MOVING_LASER" />
-    <moveable id="292" name="Electrified Field" essential="false" /> 
+    <moveable id="292" name="Electrified Field" essential="false" ten="ELECTRIC_FIELD" /> 
     <moveable id="295" name="Detonator switch box" essential="false"  />
     <moveable id="300" name="Gunflare / Gunflare (spiky)" hidden="true" ten="GUN_FLASH" />
     <moveable id="301" name="Spiky gunflare for MP5" hidden="true" ten="GUN_FLASH2" />
@@ -284,5 +284,5 @@
     <moveable id="366" name="Yellow shell casing" hidden="true" />
     <moveable id="367" name="Red shell casing" hidden="true" />
     <moveable id="370" name="Tinnos light shaft" essential="false" ten="WATERFALL1" />
-    <moveable id="373" name="Electrical switch box" essential="false" ten="SHOOT_SWITCH2" /> 
+    <moveable id="373" name="Electrical switch box" essential="false" ten="FUSEBOX" /> 
 </moveables>
