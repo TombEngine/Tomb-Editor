@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  TEN Lua Property Catalog - Example
+  
+  This file defines custom Lua properties for moveable and static object types.
+  Each <moveable> or <static> element targets object slots by numeric type ID.
+  
+  Supported id formats:
+    - Single:  id="73"
+    - List:    id="73,74,75"
+    - Range:   id="73-80"
+    - Mixed:   id="0-5,73,100-105"
+  
+  Supported types: Bool, Int, Float, String, Vec2, Vec3, Rotation, Color, Time, Enum
+  
+  Values use Lua literal syntax (e.g. "true", "42", "1.5"):
+    - Bool:     "true" or "false"
+    - Int:      "0", "100", "-5"
+    - Float:    "0.0", "3.14", "-1.5"
+    - String:   any text (quotes are added automatically)
+    - Vec2:     "0, 0"        (two comma-separated floats)
+    - Vec3:     "0, 0, 0"     (three comma-separated floats)
+    - Rotation: "0, 0, 0"     (three angles in degrees, clamped to 0-360)
+    - Color:    "255, 0, 0"   (three 0-255 ints, or four with alpha)
+    - Time:     "0, 0, 0, 0"  (hours, minutes, seconds, centiseconds)
+    - Enum:     "0"           (0-based index; use entry name as defaultValue for readability)
+    
+  Properties defined here appear in the WadTool property grid for global (Level 1) 
+  editing and in TombEditor for per-instance (Level 2) editing.
+  
+  See README.md in this folder for a full attribute reference.
+-->
+<propertyCatalog>
+  <!-- Example: Baddy1 (moveable ID 73 in TombEngine slot list) -->
+  <moveable id="174">
+    <property internalName="health"
+              displayName="Health"
+              type="Int"
+              defaultValue="100"
+              category="Combat"
+              description="Base health points for this enemy type." />
+
+    <property internalName="aggroRange"
+              displayName="Aggro Range"
+              type="Float"
+              defaultValue="5120.0"
+              category="Combat"
+              description="Distance in world units at which the enemy becomes aggressive." />
+
+    <property internalName="isImmortal"
+              displayName="Immortal"
+              type="Bool"
+              defaultValue="false"
+              category="Combat"
+              description="If true, the enemy cannot be killed." />
+
+    <!-- Enum via compact 'entries' attribute.
+         Values compile as 0-based integers: Normal=0, Aggressive=1, Passive=2 -->
+    <property internalName="behavior"
+              displayName="Behavior"
+              type="Enum"
+              entries="Normal, Aggressive, Passive"
+              defaultValue="Normal"
+              category="Combat"
+              description="Default AI behavior mode for this enemy." />
+
+    <property internalName="tintColor"
+              displayName="Tint Color"
+              type="Color"
+              defaultValue="255, 255, 255"
+              category="Appearance"
+              description="Color tint applied to this enemy model." />
+  </moveable>
+
+  <!-- Example: Static ID 0 (plant/decoration) -->
+  <static id="0">
+    <property internalName="swaySpeed"
+              displayName="Sway Speed"
+              type="Float"
+              defaultValue="1.0"
+              category="Animation"
+              description="Speed multiplier for wind sway animation." />
+
+    <property internalName="swayAmplitude"
+              displayName="Sway Amplitude"
+              type="Vec3"
+              defaultValue="0, 10, 0"
+              category="Animation"
+              description="Maximum rotation offset in each axis for sway effect." />
+
+    <!-- Enum via child <entry> nodes (alternative to 'entries' attribute).
+         Values compile as 0-based integers: None=0, Low=1, Medium=2, High=3 -->
+    <property internalName="priority"
+              displayName="Priority"
+              type="Enum"
+              defaultValue="Medium"
+              category="Animation"
+              description="Processing priority for this static object's update tick.">
+      <entry value="None" />
+      <entry value="Low" />
+      <entry value="Medium" />
+      <entry value="High" />
+    </property>
+  </static>
+</propertyCatalog>

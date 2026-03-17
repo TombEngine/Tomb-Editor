@@ -113,6 +113,10 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         set.Write(writer, _level.Settings.VolumeEventSets);
                 }
 
+                // Write Lua property script blob
+                writer.Write(_luaPropertyScriptBlob.Key);
+                writer.Write(_luaPropertyScriptBlob.Value ?? string.Empty);
+
                 dynamicDataBuffer = dynamicDataStream.ToArray();
             }
 

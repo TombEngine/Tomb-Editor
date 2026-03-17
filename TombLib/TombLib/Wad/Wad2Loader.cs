@@ -911,6 +911,32 @@ namespace TombLib.Wad
 
                         mov.Animations.Add(animation);
                     }
+                    else if (id2 == Wad2Chunks.LuaProperties)
+                    {
+                        chunkIO.ReadChunks((id3, chunkSize3) =>
+                        {
+                            if (id3 != Wad2Chunks.LuaProperty)
+                                return false;
+
+                            string name = null;
+                            string value = null;
+                            chunkIO.ReadChunks((id4, chunkSize4) =>
+                            {
+                                if (id4 == Wad2Chunks.LuaPropertyName)
+                                    name = chunkIO.ReadChunkString(chunkSize4);
+                                else if (id4 == Wad2Chunks.LuaPropertyValue)
+                                    value = chunkIO.ReadChunkString(chunkSize4);
+                                else
+                                    return false;
+                                return true;
+                            });
+
+                            if (!string.IsNullOrEmpty(name) && value != null)
+                                mov.LuaProperties.SetValue(name, value);
+
+                            return true;
+                        });
+                    }
                     else
                     {
                         return false;
@@ -1009,6 +1035,32 @@ namespace TombLib.Wad
                             return true;
                         });
                         s.Lights.Add(light);
+                    }
+                    else if (id2 == Wad2Chunks.LuaProperties)
+                    {
+                        chunkIO.ReadChunks((id3, chunkSize3) =>
+                        {
+                            if (id3 != Wad2Chunks.LuaProperty)
+                                return false;
+
+                            string name = null;
+                            string value = null;
+                            chunkIO.ReadChunks((id4, chunkSize4) =>
+                            {
+                                if (id4 == Wad2Chunks.LuaPropertyName)
+                                    name = chunkIO.ReadChunkString(chunkSize4);
+                                else if (id4 == Wad2Chunks.LuaPropertyValue)
+                                    value = chunkIO.ReadChunkString(chunkSize4);
+                                else
+                                    return false;
+                                return true;
+                            });
+
+                            if (!string.IsNullOrEmpty(name) && value != null)
+                                s.LuaProperties.SetValue(name, value);
+
+                            return true;
+                        });
                     }
                     else
                     {

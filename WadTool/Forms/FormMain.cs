@@ -551,6 +551,11 @@ namespace WadTool
             WadActions.EditObject(_tool, this, DeviceManager.DefaultDeviceManager);
         }
 
+        private void itemPropertiesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            WadActions.EditLuaProperties(_tool, this, null);
+        }
+
         private void changeSlotToolStripMenuItem_Click(object sender, EventArgs e)
         {
             butChangeSlot_Click(null, null);
@@ -707,6 +712,11 @@ namespace WadTool
             {
                 form.ShowDialog();
             }
+        }
+
+        private void editPropertiesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            WadActions.EditLuaProperties(_tool, this, _tool.DestinationWad?.TryGet(_tool.MainSelection?.Id).Id);
         }
     }
 }

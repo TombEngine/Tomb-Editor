@@ -384,7 +384,7 @@ namespace TombEditor
                     {
                         new DockGroupState
                         {
-                            Contents = new List<string> { "TexturePanel" },
+                            Contents = new List<string> { "TexturePanel", "ItemProperties" },
                             VisibleContent = "TexturePanel",
                             Order = 0,
                             Size = new Size(286,700)

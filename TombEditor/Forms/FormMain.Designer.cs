@@ -203,6 +203,7 @@ namespace TombEditor.Forms
 			paletteToolStripMenuItem = new ToolStripMenuItem();
 			texturePanelToolStripMenuItem = new ToolStripMenuItem();
 			objectListToolStripMenuItem = new ToolStripMenuItem();
+			luaPropertiesToolStripMenuItem = new ToolStripMenuItem();
 			statisticsToolStripMenuItem = new ToolStripMenuItem();
 			dockableToolStripMenuItem = new ToolStripMenuItem();
 			floatingToolStripMenuItem = new ToolStripMenuItem();
@@ -1867,7 +1868,7 @@ namespace TombEditor.Forms
 			// windowToolStripMenuItem
 			// 
 			windowToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
-			windowToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { restoreDefaultLayoutToolStripMenuItem, toolStripMenuSeparator14, sectorOptionsToolStripMenuItem, roomOptionsToolStripMenuItem, itemBrowserToolStripMenuItem, importedGeometryBrowserToolstripMenuItem, contentBrowserToolStripMenuItem, triggerListToolStripMenuItem, lightingToolStripMenuItem, paletteToolStripMenuItem, texturePanelToolStripMenuItem, objectListToolStripMenuItem, statisticsToolStripMenuItem, dockableToolStripMenuItem, floatingToolStripMenuItem });
+			windowToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { restoreDefaultLayoutToolStripMenuItem, toolStripMenuSeparator14, sectorOptionsToolStripMenuItem, roomOptionsToolStripMenuItem, itemBrowserToolStripMenuItem, importedGeometryBrowserToolstripMenuItem, contentBrowserToolStripMenuItem, triggerListToolStripMenuItem, lightingToolStripMenuItem, paletteToolStripMenuItem, texturePanelToolStripMenuItem, objectListToolStripMenuItem, luaPropertiesToolStripMenuItem, statisticsToolStripMenuItem, dockableToolStripMenuItem, floatingToolStripMenuItem });
 			windowToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
 			windowToolStripMenuItem.Name = "windowToolStripMenuItem";
 			windowToolStripMenuItem.Size = new System.Drawing.Size(63, 25);
@@ -1979,6 +1980,15 @@ namespace TombEditor.Forms
 			objectListToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
 			objectListToolStripMenuItem.Tag = "ShowObjectList";
 			objectListToolStripMenuItem.Text = "ShowObjectList";
+			// 
+			// luaPropertiesToolStripMenuItem
+			// 
+			luaPropertiesToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+			luaPropertiesToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+			luaPropertiesToolStripMenuItem.Name = "luaPropertiesToolStripMenuItem";
+			luaPropertiesToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
+			luaPropertiesToolStripMenuItem.Tag = "ShowItemProperties";
+			luaPropertiesToolStripMenuItem.Text = "ShowItemProperties";
 			// 
 			// statisticsToolStripMenuItem
 			// 
@@ -2445,6 +2455,7 @@ namespace TombEditor.Forms
         private ToolStripMenuItem butFindMenu;
         private ToolStripTextBox tbSearchMenu;
         private ToolStripMenuItem dockableToolStripMenuItem;
+        private ToolStripMenuItem luaPropertiesToolStripMenuItem;
         private ToolStripMenuItem floatingToolStripMenuItem;
         private ToolStripMenuItem editEventSetsToolStripMenuItem;
         private ToolStripMenuItem editGlobalEventSetsToolStripMenuItem;

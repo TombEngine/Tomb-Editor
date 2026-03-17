@@ -32,6 +32,7 @@ namespace TombLib.Utils
         public const string TimeTypePrefix = "TEN.Time";
         public const string Vec2TypePrefix = "TEN.Vec2";
         public const string Vec3TypePrefix = "TEN.Vec3";
+        public const string RotationTypePrefix = "TEN.Rotation";
         public const string ObjectIDPrefix = "TEN.Objects.ObjID";
         public const string ReservedFunctionPrefix = "__";
 

@@ -440,6 +440,9 @@ namespace TombLib.Wad
                                                                                       animation.EndLateralVelocity));
                             });
                         }
+
+                        // Write Lua properties (Level 1)
+                        WriteLuaProperties(chunkIO, m.LuaProperties);
                     });
                 }
             });
@@ -485,6 +488,9 @@ namespace TombLib.Wad
                             chunkIO.WriteChunkVector3(Wad2Chunks.MeshBoundingBoxMin, s.CollisionBox.Minimum);
                             chunkIO.WriteChunkVector3(Wad2Chunks.MeshBoundingBoxMax, s.CollisionBox.Maximum);
                         });
+
+                        // Write Lua properties (Level 1)
+                        WriteLuaProperties(chunkIO, s.LuaProperties);
                     });
                 }
             });
@@ -505,6 +511,25 @@ namespace TombLib.Wad
                 });
 
                 chunkIO.WriteChunkString(Wad2Chunks.UserNotes, wad.UserNotes);
+            });
+        }
+
+        private static void WriteLuaProperties(ChunkWriter chunkIO, LuaProperties.LuaPropertyContainer container)
+        {
+            if (container == null || !container.HasProperties)
+                return;
+
+            chunkIO.WriteChunkWithChildren(Wad2Chunks.LuaProperties, () =>
+            {
+                var sortedProps = container.GetAll().OrderBy(p => p.Key).ToList();
+                foreach (var prop in sortedProps)
+                {
+                    chunkIO.WriteChunkWithChildren(Wad2Chunks.LuaProperty, () =>
+                    {
+                        chunkIO.WriteChunkString(Wad2Chunks.LuaPropertyName, prop.Key);
+                        chunkIO.WriteChunkString(Wad2Chunks.LuaPropertyValue, prop.Value);
+                    });
+                }
             });
         }
     }
