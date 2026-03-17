@@ -394,9 +394,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
                             newStateChange.FrameLow = unchecked((int)(dispatch.InFrame));
                             newStateChange.FrameHigh = unchecked((int)(dispatch.OutFrame));
                             newStateChange.NextAnimation = checked((int)(dispatch.NextAnimation));
-                            newStateChange.NextFrameLow = (int)dispatch.NextFrameLow;
-                            newStateChange.NextFrameHigh = (int)dispatch.NextFrameHigh;
-                            newStateChange.BlendFrameCount = (int)dispatch.BlendFrameCount;
+                            newStateChange.NextLowFrame = (int)dispatch.NextLowFrame;
+                            newStateChange.NextHighFrame = (int)dispatch.NextHighFrame;
+                            newStateChange.BlendFrames = (int)dispatch.BlendFrames;
                             newStateChange.BlendCurve = dispatch.BlendCurve.Clone();
 
                             newAnimation.StateChanges.Add(newStateChange);

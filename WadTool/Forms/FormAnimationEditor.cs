@@ -242,7 +242,7 @@ namespace WadTool
                     _chainedPlaybackIncomingAnimation = e.NextAnimation;
                     _chainedPlaybackIncomingFrame = e.NextFrame;
                     _chainedPlaybackIncomingFrameRange = e.FrameRange;
-                    _blendState.SetPendingBlend(e.BlendFrameCount, e.BlendCurve);
+                    _blendState.SetPendingBlend(e.BlendFrames, e.BlendCurve);
                 }
             }
 
@@ -2320,7 +2320,7 @@ namespace WadTool
                     InFrame = (ushort)timeline.SelectionStartFrameIndex,
                     OutFrame = (ushort)timeline.SelectionEndFrameIndex,
                     NextAnimation = 0,
-                    NextFrameLow = 0
+                    NextLowFrame = 0
                 });
             }
 

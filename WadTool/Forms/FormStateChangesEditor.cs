@@ -33,11 +33,11 @@ namespace WadTool
             public ushort NextAnimation { get; set; }
             public ushort NextLowFrame { get; set; }
             public ushort NextHighFrame { get; set; }
-            public ushort BlendFrameCount { get; set; }
+            public ushort BlendFrames { get; set; }
             public BezierCurve2 BlendCurve { get; set; } = BezierCurve2.Linear.Clone();
 
             public WadStateChangeRow(string stateName, ushort stateId, ushort lowFrame, ushort highFrame, ushort nextAnimation,
-                                     ushort nextLowFrame, ushort nextHighFrame, ushort blendFrameCount, BezierCurve2 blendCurve)
+                                     ushort nextLowFrame, ushort nextHighFrame, ushort blendFrames, BezierCurve2 blendCurve)
             {
                 StateName = stateName;
                 StateId = stateId;
@@ -46,7 +46,7 @@ namespace WadTool
                 NextAnimation = nextAnimation;
                 NextLowFrame = nextLowFrame;
                 NextHighFrame = nextHighFrame;
-                BlendFrameCount = blendFrameCount;
+                BlendFrames = blendFrames;
                 BlendCurve = blendCurve.Clone();
             }
 
@@ -66,8 +66,8 @@ namespace WadTool
             dgvControls.Enabled = true;
 
             bool isTEN = _editor.Tool.DestinationWad.GameVersion == TRVersion.Game.TombEngine;
-            columnNextFrameHigh.Visible = isTEN;
-            columnBlendFrameCount.Visible = isTEN;
+            columnNextHighFrame.Visible = isTEN;
+            columnBlendFrames.Visible = isTEN;
             columnBlendCurve.Visible = isTEN;
 
             Initialize(animation, newStateChange);
@@ -95,7 +95,7 @@ namespace WadTool
             foreach (var sc in _animation.WadAnimation.StateChanges)
                 foreach (var d in sc.Dispatches)
                     rows.Add(new WadStateChangeRow(TrCatalog.GetStateName(_editor.Tool.DestinationWad.GameVersion, _editor.Moveable.Id.TypeId, sc.StateId),
-                                                   sc.StateId, d.InFrame, d.OutFrame, d.NextAnimation, d.NextFrameLow, d.NextFrameHigh, d.BlendFrameCount, d.BlendCurve));
+                                                   sc.StateId, d.InFrame, d.OutFrame, d.NextAnimation, d.NextLowFrame, d.NextHighFrame, d.BlendFrames, d.BlendCurve));
 
             if (newStateChange != null && newStateChange.Dispatches.Count == 1)
             {
@@ -104,9 +104,9 @@ namespace WadTool
                                                newStateChange.Dispatches[0].InFrame,
                                                newStateChange.Dispatches[0].OutFrame,
                                                newStateChange.Dispatches[0].NextAnimation,
-                                               newStateChange.Dispatches[0].NextFrameLow,
-                                               newStateChange.Dispatches[0].NextFrameHigh,
-                                               newStateChange.Dispatches[0].BlendFrameCount,
+                                               newStateChange.Dispatches[0].NextLowFrame,
+                                               newStateChange.Dispatches[0].NextHighFrame,
+                                               newStateChange.Dispatches[0].BlendFrames,
                                                newStateChange.Dispatches[0].BlendCurve));
                 _createdNew = true;
             }
@@ -168,7 +168,7 @@ namespace WadTool
             if (dgvStateChanges.SelectedRows.Count > 0)
             {
                 var item = ((IEnumerable<WadStateChangeRow>)dgvStateChanges.DataSource).ElementAt(dgvStateChanges.SelectedRows[0].Index);
-                _editor.Tool.ChangeState(item.NextAnimation, item.NextLowFrame, item.LowFrame, item.HighFrame, item.BlendFrameCount, item.BlendCurve);
+                _editor.Tool.ChangeState(item.NextAnimation, item.NextLowFrame, item.LowFrame, item.HighFrame, item.BlendFrames, item.BlendCurve);
 
                 lblStateChangeAnnouncement.Text = "Pending state change to anim #" + item.NextAnimation;
             }
@@ -190,8 +190,8 @@ namespace WadTool
                 sc.StateId = row.StateId;
 
                 var newDispatch = new WadAnimDispatch(row.LowFrame, row.HighFrame, row.NextAnimation, row.NextLowFrame);
-                newDispatch.NextFrameHigh = row.NextHighFrame;
-                newDispatch.BlendFrameCount = row.BlendFrameCount;
+                newDispatch.NextHighFrame = row.NextHighFrame;
+                newDispatch.BlendFrames = row.BlendFrames;
                 newDispatch.BlendCurve = row.BlendCurve;
 
                 sc.Dispatches.Add(newDispatch);
@@ -327,7 +327,7 @@ namespace WadTool
                     {
                         limit = (Int16)(_editor.Animations.Count - 1);
                     }
-                    else if (name == columnNextFrame.Name)
+                    else if (name == columnNextLowFrame.Name)
                     {
                         Int16 limitNew = 0;
                         if (Int16.TryParse(dgvStateChanges.Rows[e.RowIndex].Cells[4].Value.ToString(), out limitNew))

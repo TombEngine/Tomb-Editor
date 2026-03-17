@@ -712,9 +712,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     writer.Write(stateChange.FrameLow);
                     writer.Write(stateChange.FrameHigh);
                     writer.Write(stateChange.NextAnimation);
-                    writer.Write(stateChange.NextFrameLow);
-                    writer.Write(stateChange.NextFrameHigh);
-                    writer.Write(stateChange.BlendFrameCount);
+                    writer.Write(stateChange.NextLowFrame);
+                    writer.Write(stateChange.NextHighFrame);
+                    writer.Write(stateChange.BlendFrames);
                     writer.Write(stateChange.BlendCurve.Start);
                     writer.Write(stateChange.BlendCurve.End);
                     writer.Write(stateChange.BlendCurve.StartHandle);
@@ -746,9 +746,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public int FrameLow;
         public int FrameHigh;
         public int NextAnimation;
-        public int NextFrameLow;
-        public int NextFrameHigh;
-        public int BlendFrameCount;
+        public int NextLowFrame;
+        public int NextHighFrame;
+        public int BlendFrames;
         public BezierCurve2 BlendCurve;
     }
 

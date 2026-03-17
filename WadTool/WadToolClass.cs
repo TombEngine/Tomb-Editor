@@ -282,17 +282,17 @@ namespace WadTool
             public int NextAnimation { get; internal set; }
             public int NextFrame { get; internal set; }
             public VectorInt2 FrameRange { get; internal set; }
-            public int BlendFrameCount { get; internal set; }
+            public int BlendFrames { get; internal set; }
             public BezierCurve2 BlendCurve { get; internal set; }
         }
-        public void ChangeState(int nextAnim, int nextFrame, int frameLow, int frameHigh, int blendFrameCount = 0, BezierCurve2 blendCurve = null)
+        public void ChangeState(int nextAnim, int nextFrame, int frameLow, int frameHigh, int blendFrames = 0, BezierCurve2 blendCurve = null)
         {
             RaiseEvent(new AnimationEditorStateChangeEvent
             {
                 NextAnimation = nextAnim,
                 NextFrame = nextFrame,
                 FrameRange = new VectorInt2(frameLow, frameHigh),
-                BlendFrameCount = blendFrameCount,
+                BlendFrames = blendFrames,
                 BlendCurve = blendCurve
             });
         }

@@ -385,7 +385,7 @@ namespace TombLib.Wad.TrLevels
                         ad.InFrame = (ushort)(wadAd.Low - oldAnimation.FrameStart);
                         ad.OutFrame = (ushort)(wadAd.High - oldAnimation.FrameStart);
                         ad.NextAnimation = (ushort)((wadAd.NextAnimation - oldMoveable.Animation) % numAnimations);
-                        ad.NextFrameLow = (ushort)wadAd.NextFrame;
+                        ad.NextLowFrame = (ushort)wadAd.NextFrame;
 
                         sc.Dispatches.Add(ad);
                     }
@@ -575,7 +575,7 @@ namespace TombLib.Wad.TrLevels
                     {
                         WadAnimDispatch animDispatch = stateChange.Dispatches[J];
                         if (frameBases[newMoveable.Animations[animDispatch.NextAnimation]] != 0)
-                            animDispatch.NextFrameLow = (ushort)(animDispatch.NextFrameLow - frameBases[newMoveable.Animations[animDispatch.NextAnimation]]);
+                            animDispatch.NextLowFrame = (ushort)(animDispatch.NextLowFrame - frameBases[newMoveable.Animations[animDispatch.NextAnimation]]);
                         stateChange.Dispatches[J] = animDispatch;
                     }
                 }

@@ -22,9 +22,9 @@ namespace WadTool
             columnLowFrame = new System.Windows.Forms.DataGridViewTextBoxColumn();
             columnHighFrame = new System.Windows.Forms.DataGridViewTextBoxColumn();
             columnNextAnimation = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            columnNextFrame = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            columnNextFrameHigh = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            columnBlendFrameCount = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            columnNextLowFrame = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            columnNextHighFrame = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            columnBlendFrames = new System.Windows.Forms.DataGridViewTextBoxColumn();
             columnBlendCurve = new DarkUI.Controls.DarkDataGridViewButtonColumn();
             btCancel = new DarkUI.Controls.DarkButton();
             btOk = new DarkUI.Controls.DarkButton();
@@ -46,7 +46,7 @@ namespace WadTool
             dgvStateChanges.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             dgvStateChanges.AutoGenerateColumns = false;
             dgvStateChanges.ColumnHeadersHeight = 17;
-            dgvStateChanges.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { columnStateName, columnStateId, columnLowFrame, columnHighFrame, columnNextAnimation, columnNextFrame, columnNextFrameHigh, columnBlendFrameCount, columnBlendCurve });
+            dgvStateChanges.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { columnStateName, columnStateId, columnLowFrame, columnHighFrame, columnNextAnimation, columnNextLowFrame, columnNextHighFrame, columnBlendFrames, columnBlendCurve });
             dgvStateChanges.ForegroundColor = System.Drawing.Color.FromArgb(220, 220, 220);
             dgvStateChanges.Location = new System.Drawing.Point(7, 22);
             dgvStateChanges.Name = "dgvStateChanges";
@@ -104,29 +104,29 @@ namespace WadTool
             columnNextAnimation.HeaderText = "Next anim";
             columnNextAnimation.Name = "columnNextAnimation";
             //
-            // columnNextFrame
+            // columnNextLowFrame
             //
-            columnNextFrame.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            columnNextFrame.DataPropertyName = "NextFrame";
-            columnNextFrame.FillWeight = 50F;
-            columnNextFrame.HeaderText = "Next frame";
-            columnNextFrame.Name = "columnNextFrame";
+            columnNextLowFrame.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            columnNextLowFrame.DataPropertyName = "NextLowFrame";
+            columnNextLowFrame.FillWeight = 50F;
+            columnNextLowFrame.HeaderText = "Next low frame";
+            columnNextLowFrame.Name = "columnNextLowFrame";
             //
-            // columnNextFrameHigh
+            // columnNextHighFrame
             //
-            columnNextFrameHigh.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            columnNextFrameHigh.DataPropertyName = "BlendEndFrame";
-            columnNextFrameHigh.FillWeight = 50F;
-            columnNextFrameHigh.HeaderText = "Next frame high";
-            columnNextFrameHigh.Name = "columnNextFrameHigh";
+            columnNextHighFrame.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            columnNextHighFrame.DataPropertyName = "NextHighFrame";
+            columnNextHighFrame.FillWeight = 50F;
+            columnNextHighFrame.HeaderText = "Next high frame";
+            columnNextHighFrame.Name = "columnNextHighFrame";
             //
-            // columnBlendFrameCount
+            // columnBlendFrames
             //
-            columnBlendFrameCount.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            columnBlendFrameCount.DataPropertyName = "BlendFrameCount";
-            columnBlendFrameCount.FillWeight = 50F;
-            columnBlendFrameCount.HeaderText = "Blend frames";
-            columnBlendFrameCount.Name = "columnBlendFrameCount";
+            columnBlendFrames.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            columnBlendFrames.DataPropertyName = "BlendFrame";
+            columnBlendFrames.FillWeight = 50F;
+            columnBlendFrames.HeaderText = "Blend frames";
+            columnBlendFrames.Name = "columnBlendFrames";
             //
             // columnBlendCurve
             //
@@ -257,9 +257,9 @@ namespace WadTool
         private System.Windows.Forms.DataGridViewTextBoxColumn columnLowFrame;
         private System.Windows.Forms.DataGridViewTextBoxColumn columnHighFrame;
         private System.Windows.Forms.DataGridViewTextBoxColumn columnNextAnimation;
-        private System.Windows.Forms.DataGridViewTextBoxColumn columnNextFrame;
-        private System.Windows.Forms.DataGridViewTextBoxColumn columnNextFrameHigh;
-        private System.Windows.Forms.DataGridViewTextBoxColumn columnBlendFrameCount;
+        private System.Windows.Forms.DataGridViewTextBoxColumn columnNextLowFrame;
+        private System.Windows.Forms.DataGridViewTextBoxColumn columnNextHighFrame;
+        private System.Windows.Forms.DataGridViewTextBoxColumn columnBlendFrames;
         private DarkUI.Controls.DarkDataGridViewButtonColumn columnBlendCurve;
         private DarkUI.Controls.DarkButton butApply;
         private DarkUI.Controls.DarkGroupBox stateChangeGroup;
