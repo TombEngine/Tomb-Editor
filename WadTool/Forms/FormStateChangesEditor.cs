@@ -327,12 +327,6 @@ namespace WadTool
                     {
                         limit = (Int16)(_editor.Animations.Count - 1);
                     }
-                    else if (name == columnNextLowFrame.Name)
-                    {
-                        Int16 limitNew = 0;
-                        if (Int16.TryParse(dgvStateChanges.Rows[e.RowIndex].Cells[4].Value.ToString(), out limitNew))
-                            limit = (Int16)(_editor.GetRealNumberOfFrames(limitNew));
-                    }
                     else if (name == columnLowFrame.Name)
                     {
                         Int16 limitNew = 0;
@@ -343,6 +337,27 @@ namespace WadTool
                     {
                         limit = (Int16)(_editor.GetRealNumberOfFrames());
                     }
+                    else if (name == columnNextLowFrame.Name)
+                    {
+                        Int16 limitNew = 0;
+                        if (Int16.TryParse(dgvStateChanges.Rows[e.RowIndex].Cells[6].Value.ToString(), out limitNew))
+                            limit = limitNew == 0 ? (Int16)(_editor.GetRealNumberOfFrames(limitNew)) : limitNew;
+                    }
+                    else if (name == columnNextHighFrame.Name)
+                    {
+                        limit = (Int16)(_editor.GetRealNumberOfFrames());
+                    }
+                    // TODO: This should work but doesn't. Above version isn't ideal.
+                    /*else if (name == columnNextLowFrame.Name)
+                    {
+                        limit = (Int16)(_editor.GetRealNumberOfFrames());
+                    }
+                    else if (name == columnNextHighFrame.Name)
+                    {
+                        Int16 limitNew = 0;
+                        if (Int16.TryParse(dgvStateChanges.Rows[e.RowIndex].Cells[5].Value.ToString(), out limitNew))
+                            limit = Math.Max((Int16)(_editor.GetRealNumberOfFrames(limitNew)), limitNew);
+                    }*/
                 }
 
                 if (parsedValue > limit)
