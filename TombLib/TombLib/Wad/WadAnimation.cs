@@ -5,7 +5,6 @@ namespace TombLib.Wad
 {
     public struct WadAnimRootMotionSettings
     {
-        public bool PositionX { get; set; }
         public bool PositionY { get; set; }
         public bool PositionZ { get; set; }
         public bool RotationY { get; set; }
@@ -13,7 +12,6 @@ namespace TombLib.Wad
         public int GetBitmask()
         {
             int bitmask = 0;
-            if (PositionX) bitmask |= 1 << 0;
             if (PositionY) bitmask |= 1 << 1;
             if (PositionZ) bitmask |= 1 << 2;
             if (RotationY) bitmask |= 1 << 3;

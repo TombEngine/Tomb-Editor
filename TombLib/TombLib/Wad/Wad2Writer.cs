@@ -441,8 +441,7 @@ namespace TombLib.Wad
 
                                 // Root motion settings
                                 var rootMotion = animation.RootMotion;
-                                int rootMotionFlags = (rootMotion.PositionX ? (1 << 0) : 0) |
-                                                      (rootMotion.PositionY ? (1 << 1) : 0) |
+                                int rootMotionFlags = (rootMotion.PositionY ? (1 << 1) : 0) |
                                                       (rootMotion.PositionZ ? (1 << 2) : 0) |
                                                       (rootMotion.RotationY ? (1 << 3) : 0);
                                 chunkIO.WriteChunkInt(Wad2Chunks.AnimationRootMotion, rootMotionFlags);

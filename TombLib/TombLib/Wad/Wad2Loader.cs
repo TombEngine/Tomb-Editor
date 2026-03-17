@@ -778,10 +778,9 @@ namespace TombLib.Wad
                                 int flags = chunkIO.ReadChunkInt(chunkSize3);
                                 animation.RootMotion = new WadAnimRootMotionSettings
                                 {
-                                    PositionX = (flags & (1 << 0)) != 0,
                                     PositionY = (flags & (1 << 1)) != 0,
                                     PositionZ = (flags & (1 << 2)) != 0,
-                                    RotationY  = (flags & (1 << 3)) != 0
+                                    RotationY = (flags & (1 << 3)) != 0
                                 };
                             }
                             else if (id3 == Wad2Chunks.KeyFrame)

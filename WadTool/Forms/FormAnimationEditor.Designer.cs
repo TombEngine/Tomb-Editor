@@ -130,7 +130,6 @@ namespace WadTool
             cbRootPosZ = new DarkUI.Controls.DarkCheckBox();
             darkLabel11 = new DarkUI.Controls.DarkLabel();
             cbRootRotation = new DarkUI.Controls.DarkCheckBox();
-            cbRootPosX = new DarkUI.Controls.DarkCheckBox();
             cbRootPosY = new DarkUI.Controls.DarkCheckBox();
             darkLabel33 = new DarkUI.Controls.DarkLabel();
             darkLabel30 = new DarkUI.Controls.DarkLabel();
@@ -1369,7 +1368,6 @@ namespace WadTool
             panelRootMotion.Controls.Add(cbRootPosZ);
             panelRootMotion.Controls.Add(darkLabel11);
             panelRootMotion.Controls.Add(cbRootRotation);
-            panelRootMotion.Controls.Add(cbRootPosX);
             panelRootMotion.Controls.Add(cbRootPosY);
             panelRootMotion.Dock = System.Windows.Forms.DockStyle.Bottom;
             panelRootMotion.Location = new System.Drawing.Point(1, 353);
@@ -1381,7 +1379,7 @@ namespace WadTool
             // 
             cbRootPosZ.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             cbRootPosZ.AutoSize = true;
-            cbRootPosZ.Location = new System.Drawing.Point(168, 9);
+            cbRootPosZ.Location = new System.Drawing.Point(131, 9);
             cbRootPosZ.Name = "cbRootPosZ";
             cbRootPosZ.Size = new System.Drawing.Size(32, 17);
             cbRootPosZ.TabIndex = 101;
@@ -1402,31 +1400,20 @@ namespace WadTool
             // 
             cbRootRotation.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             cbRootRotation.AutoSize = true;
-            cbRootRotation.Location = new System.Drawing.Point(206, 9);
+            cbRootRotation.Location = new System.Drawing.Point(168, 9);
             cbRootRotation.Name = "cbRootRotation";
             cbRootRotation.Size = new System.Drawing.Size(71, 17);
             cbRootRotation.TabIndex = 102;
             cbRootRotation.Text = "Rotation";
             cbRootRotation.CheckedChanged += cbRootRotation_CheckedChanged;
             // 
-            // cbRootPosX
-            // 
-            cbRootPosX.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            cbRootPosX.AutoSize = true;
-            cbRootPosX.Location = new System.Drawing.Point(91, 9);
-            cbRootPosX.Name = "cbRootPosX";
-            cbRootPosX.Size = new System.Drawing.Size(32, 17);
-            cbRootPosX.TabIndex = 99;
-            cbRootPosX.Text = "X";
-            cbRootPosX.CheckedChanged += cbRootPosX_CheckedChanged;
-            // 
             // cbRootPosY
             // 
             cbRootPosY.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             cbRootPosY.AutoSize = true;
-            cbRootPosY.Location = new System.Drawing.Point(131, 9);
+            cbRootPosY.Location = new System.Drawing.Point(91, 9);
             cbRootPosY.Name = "cbRootPosY";
-            cbRootPosY.Size = new System.Drawing.Size(31, 17);
+            cbRootPosY.Size = new System.Drawing.Size(32, 17);
             cbRootPosY.TabIndex = 100;
             cbRootPosY.Text = "Y";
             cbRootPosY.CheckedChanged += cbRootPosY_CheckedChanged;
@@ -2799,7 +2786,6 @@ namespace WadTool
         private DarkUI.Controls.DarkLabel darkLabel11;
         private DarkUI.Controls.DarkCheckBox cbRootPosZ;
         private DarkUI.Controls.DarkNumericUpDown nudBlendFrameCount;
-        private DarkUI.Controls.DarkCheckBox cbRootPosX;
         private DarkUI.Controls.DarkLabel darkLabel12;
         private DarkUI.Controls.DarkCheckBox cbRootPosY;
         private DarkUI.Controls.DarkCheckBox cbRootRotation;
