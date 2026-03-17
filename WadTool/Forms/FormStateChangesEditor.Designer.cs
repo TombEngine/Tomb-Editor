@@ -125,7 +125,7 @@ namespace WadTool
             columnBlendFrameCount.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             columnBlendFrameCount.DataPropertyName = "BlendFrameCount";
             columnBlendFrameCount.FillWeight = 50F;
-            columnBlendFrameCount.HeaderText = "Frame count";
+            columnBlendFrameCount.HeaderText = "Blend frames";
             columnBlendFrameCount.Name = "columnBlendFrameCount";
             //
             // columnBlendCurve
