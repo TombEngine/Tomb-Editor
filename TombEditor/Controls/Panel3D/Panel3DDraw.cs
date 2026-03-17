@@ -1909,7 +1909,7 @@ namespace TombEditor.Controls.Panel3D
             }
 
             // New rendering setup
-            _viewProjection = (_editor.CameraPreviewMode && _flybyPreview != null && !_flybyPreview.IsFinished)
+            _viewProjection = (_editor.CameraPreviewMode && _flybyPreview != null)
                 ? BuildFlybyPreviewViewProjection(ClientSize.Width, ClientSize.Height)
                 : Camera.GetViewProjectionMatrix(ClientSize.Width, ClientSize.Height);
 
