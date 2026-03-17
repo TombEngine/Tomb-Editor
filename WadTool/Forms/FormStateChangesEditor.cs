@@ -270,8 +270,8 @@ namespace WadTool
             if (!(dgvStateChanges.Rows[e.RowIndex].DataBoundItem is WadStateChangeRow item))
                 return;
 
-            // Paint background and borders normally, then draw custom curve preview.
-            e.PaintBackground(e.ClipBounds, true);
+            // Paint all standard parts (background, borders, selection outline) then draw custom curve preview.
+            e.Paint(e.CellBounds, DataGridViewPaintParts.All);
             BezierCurveEditor.DrawPreview(e.Graphics, e.CellBounds, item.BlendCurve);
             e.Handled = true;
         }
