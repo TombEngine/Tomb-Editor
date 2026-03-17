@@ -123,7 +123,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         output += RoomGeometry.CalculateLightForVertex(room, light, position, normal, false, false);
                     }
 
-            return Vector3.Max(output, new Vector3()) * (1.0f / 128.0f);
+            // Normalize to 0...1 range
+            return Vector3.Max(output, new Vector3()) * (1.0f / 255.0f);
         }
 
         private TombEngineRoom BuildRoom(Room room)
@@ -167,7 +168,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 newRoom.AlternateKind = AlternateKind.BaseRoom;
 
             // Store ambient intensity
-            newRoom.AmbientLight = room.Properties.AmbientLight;
+            newRoom.AmbientLight = room.Properties.AmbientLight * 0.5f; // Normalize to 0...1 range
 
             // Room flags
             if (room.Properties.FlagHorizon)
@@ -474,12 +475,12 @@ namespace TombLib.LevelData.Compilers.TombEngine
                                 // Apply Shade factor
                                 color *= shade;
                                 // Apply Instance Color
-                                color *= staticMesh.Color;
+                                color *= staticMesh.Color * 0.5f; // Normalize to 0...1 range
                             }
                             else
                             {
                                 color = CalculateLightForCustomVertex(room, position, normal, false, staticMesh.Color * 128);
-                                //Apply Shade factor
+                                // Apply Shade factor
                                 color *= shade;
                             }
 
@@ -623,8 +624,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                                         }
                                         else
                                         {
-                                            var color = room.Properties.AmbientLight;
-                                            trVertex.Color = color;
+                                            trVertex.Color = room.Properties.AmbientLight * 0.5f; // Normalize to 0...1 range
                                         }
 
                                         // HACK: Find a vertex with same coordinates and merge with it.
@@ -904,10 +904,10 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         Scale = instance.Scale,
                         ObjectID = checked((ushort)instance.WadObjectId.TypeId),
                         Flags = (ushort)(0x0007), // FIXME: later let user choose if solid (0x0007) or soft (0x0005)!
-                        Color = new Vector4(instance.Color.X, instance.Color.Y, instance.Color.Z, 1.0f),
-                        HitPoints = 0,
+                        Color = new Vector4(instance.Color.X * 0.5f, instance.Color.Y * 0.5f, instance.Color.Z * 0.5f, 1.0f), // Normalize to 0...1 range
+						HitPoints = 0,
                         LuaName = instance.LuaName ?? string.Empty
-                    }) ;
+                    });
             }
 
             ConvertLights(room, newRoom);
@@ -921,7 +921,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
             var trVertex = new TombEngineVertex();
 
             trVertex.Position = new Vector3(Position.X, -(Position.Y + room.WorldPos.Y), Position.Z);
-            trVertex.Color = color;
+            trVertex.Color = color * 0.5f; // Normalize to 0...1 range
             trVertex.IsOnPortal = false;
             trVertex.IndexInPoly = index;
 
@@ -955,7 +955,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         (int)Math.Round(newRoom.Info.X + light.Position.X),
                         (int)-Math.Round(light.Position.Y + room.WorldPos.Y),
                         (int)Math.Round(newRoom.Info.Z + light.Position.Z)),
-                    Color = light.Color,
+                    Color = light.Color * 0.5f, // Normalize to 0...1 range
                     Intensity = light.Intensity
                 };
 
