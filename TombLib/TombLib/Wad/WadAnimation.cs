@@ -9,6 +9,17 @@ namespace TombLib.Wad
         public bool PositionY { get; set; }
         public bool PositionZ { get; set; }
         public bool Rotation { get; set; }
+
+        public int GetBitmask()
+        {
+            int bitmask = 0;
+            if (PositionX) bitmask |= 1 << 0;
+            if (PositionY) bitmask |= 1 << 1;
+            if (PositionZ) bitmask |= 1 << 2;
+            if (Rotation)  bitmask |= (1 << 3 | 1 << 4 | 1 << 5);
+
+            return bitmask;
+        }
     }
 
     public class WadAnimation

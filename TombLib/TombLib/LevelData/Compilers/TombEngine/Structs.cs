@@ -700,11 +700,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 writer.Write(fixedMotionCurveZ.StartHandle);
                 writer.Write(fixedMotionCurveZ.EndHandle);
 
-                writer.Write(animation.RootMotion.PositionX);
-                writer.Write(animation.RootMotion.PositionY);
-                writer.Write(animation.RootMotion.PositionZ);
-                writer.Write(animation.RootMotion.Rotation);
-
                 // Write pre-baked frames.
                 writer.Write(animation.InterpolatedFrames.Count);
                 foreach (var frame in animation.InterpolatedFrames)
@@ -739,7 +734,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     }
                 }
 
-                writer.Write(animation.Flags);
+                writer.Write(animation.RootMotion.GetBitmask());
             }
         }
     }
