@@ -302,8 +302,7 @@ namespace TombEditor
                 RotationY = yaw,
                 RotationX = pitch,
                 Roll = -roll * DegToRad,
-                Fov = fov * DegToRad,
-                Finished = IsFinished
+                Fov = fov * DegToRad
             };
         }
 
