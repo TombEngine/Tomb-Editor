@@ -988,6 +988,25 @@
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
+			<Id>77</Id>
+			<Name>TR2_BAZOOKA_FIRE</Name>
+			<Volume>90</Volume>
+			<RangeInSectors>20</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>true</RandomizePitch>
+			<RandomizeVolume>true</RandomizeVolume>
+			<LoopBehaviour>None</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>tr2_explosion1_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>true</Global>
+			<Indexed>false</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
 			<Id>78</Id>
 			<Name>TR2_M16_FIRE</Name>
 			<Volume>100</Volume>
@@ -1005,25 +1024,6 @@
 			</Samples>
 			<Global>true</Global>
 			<Indexed>true</Indexed>
-		</WadSoundInfo>
-		<WadSoundInfo>
-			<Id>105</Id>
-			<Name>TR2_EXPLOSION1</Name>
-			<Volume>90</Volume>
-			<RangeInSectors>20</RangeInSectors>
-			<Chance>100</Chance>
-			<PitchFactor>0</PitchFactor>
-			<DisablePanning>false</DisablePanning>
-			<RandomizePitch>true</RandomizePitch>
-			<RandomizeVolume>true</RandomizeVolume>
-			<LoopBehaviour>None</LoopBehaviour>
-			<Samples>
-				<WadSample>
-					<FileName>tr2_explosion1_01.wav</FileName>
-				</WadSample>
-			</Samples>
-			<Global>true</Global>
-			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
 			<Id>106</Id>
@@ -1368,25 +1368,6 @@
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
-			<Id>1040</Id>
-			<Name>TR2_VALVE_DOOR</Name>
-			<Volume>100</Volume>
-			<RangeInSectors>10</RangeInSectors>
-			<Chance>100</Chance>
-			<PitchFactor>0</PitchFactor>
-			<DisablePanning>false</DisablePanning>
-			<RandomizePitch>false</RandomizePitch>
-			<RandomizeVolume>false</RandomizeVolume>
-			<LoopBehaviour>None</LoopBehaviour>
-			<Samples>
-				<WadSample>
-					<FileName>tr2_valve_door_01.wav</FileName>
-				</WadSample>
-			</Samples>
-			<Global>true</Global>
-			<Indexed>true</Indexed>
-		</WadSoundInfo>
-		<WadSoundInfo>
 			<Id>378</Id>
 			<Name>TR2_LARA_FLARE_BURN</Name>
 			<Volume>45</Volume>
@@ -1399,7 +1380,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn012_s0.wav</FileName>
+					<FileName>tr2_lara_flare_burn_01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -1419,6 +1400,25 @@
 			<Samples>
 				<WadSample>
 					<FileName>TR2_LARA_FLARE_IGNITE_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>true</Global>
+			<Indexed>true</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
+			<Id>1040</Id>
+			<Name>TR2_VALVE_DOOR</Name>
+			<Volume>100</Volume>
+			<RangeInSectors>10</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>false</RandomizePitch>
+			<RandomizeVolume>false</RandomizeVolume>
+			<LoopBehaviour>None</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>tr2_valve_door_01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
