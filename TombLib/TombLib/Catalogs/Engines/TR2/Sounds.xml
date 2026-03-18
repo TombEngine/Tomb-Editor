@@ -70,7 +70,7 @@
     <sound id="70" name="ENEMY_GRUNT" ten="496" />
     <sound id="71" name="ENEMY_HIT1" ten="500" />
     <sound id="72" name="ENEMY_HIT2" ten="501" />
-    <sound id="73" name="ENEMY_DEATH1" ten="482" />
+    <sound id="73" name="ENEMY_DEATH1" ten="838" />
     <sound id="74" name="ENEMY_JUMP" ten="503" />
     <sound id="75" name="ENEMY_CLIMBUP" ten="480" />
     <sound id="76" name="ENEMY_CLIMBDOWN" ten="478" />
