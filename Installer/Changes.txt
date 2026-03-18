@@ -1,3 +1,9 @@
+Version 1.11.1
+============
+
+WadTool
+ * Added missing TR2 henchman death sound (ID 838) and appropiate TR2 -> TEN conversion.
+ 
 Version 1.11
 ============
 

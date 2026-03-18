@@ -860,7 +860,7 @@
 			<sound id="835" name="TR3_CLEANER_FUSEBOX" ten="835" />
 			<sound id="836" name="TR3_CLEANER_LOOP" ten="836" />
 			<sound id="837" name="TR3_CRICKET_LOOP" ten="837" />
-			<sound id="838" name="TR3_EMPTY1" ten="838" />
+			<sound id="838" name="TR2_ENEMY_DEATH4" ten="838" />
 			<sound id="839" name="TR3_DOORBELL" ten="839" />
 			<sound id="840" name="TR3_DRILL_BIT_1" ten="840" />
 			<sound id="841" name="TR3_GASMETER" ten="841" />

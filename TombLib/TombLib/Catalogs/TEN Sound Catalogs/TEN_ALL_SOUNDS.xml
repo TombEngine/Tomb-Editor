@@ -16458,18 +16458,22 @@
 		</WadSoundInfo>
 		<WadSoundInfo>
 			<Id>838</Id>
-			<Name>TR3_Empty1</Name>
+			<Name>TR2_Henchman_Death4</Name>
 			<Volume>100</Volume>
 			<RangeInSectors>10</RangeInSectors>
 			<Chance>100</Chance>
 			<PitchFactor>0</PitchFactor>
 			<DisablePanning>false</DisablePanning>
-			<RandomizePitch>false</RandomizePitch>
-			<RandomizeVolume>false</RandomizeVolume>
+			<RandomizePitch>true</RandomizePitch>
+			<RandomizeVolume>true</RandomizeVolume>
 			<LoopBehaviour>None</LoopBehaviour>
-			<Samples />
+			<Samples>
+				<WadSample>
+					<FileName>TR2_Henchman_Death4_01.wav</FileName>
+				</WadSample>
+			</Samples>
 			<Global>false</Global>
-			<Indexed>false</Indexed>
+			<Indexed>true</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
 			<Id>839</Id>
