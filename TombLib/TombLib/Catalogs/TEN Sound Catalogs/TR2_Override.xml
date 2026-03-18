@@ -251,6 +251,25 @@
 			<Indexed>true</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
+			<Id>21</Id>
+			<Name>TR2_LARA_FIRE_AUTOPISTOLS</Name>
+			<Volume>90</Volume>
+			<RangeInSectors>10</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>false</RandomizePitch>
+			<RandomizeVolume>false</RandomizeVolume>
+			<LoopBehaviour>None</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>tr2_lara_fire_autopistols_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>true</Global>
+			<Indexed>true</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
 			<Id>26</Id>
 			<Name>TR2_LARA_CLIMB3</Name>
 			<Volume>65</Volume>
@@ -988,6 +1007,44 @@
 			<Indexed>true</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
+			<Id>105</Id>
+			<Name>TR2_EXPLOSION1</Name>
+			<Volume>90</Volume>
+			<RangeInSectors>20</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>true</RandomizePitch>
+			<RandomizeVolume>true</RandomizeVolume>
+			<LoopBehaviour>None</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>tr2_explosion1_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>true</Global>
+			<Indexed>false</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
+			<Id>106</Id>
+			<Name>TR2_EXPLOSION2</Name>
+			<Volume>90</Volume>
+			<RangeInSectors>20</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>true</RandomizePitch>
+			<RandomizeVolume>true</RandomizeVolume>
+			<LoopBehaviour>None</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>TR2_EXPLOSION2_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>true</Global>
+			<Indexed>false</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
 			<Id>108</Id>
 			<Name>TR2_UI_ROTATE</Name>
 			<Volume>100</Volume>
@@ -1159,7 +1216,26 @@
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
-			<Id>124</Id>
+			<Id>117</Id>
+			<Name>TR2_LARA_CLIMB_WALL</Name>
+			<Volume>100</Volume>
+			<RangeInSectors>13</RangeInSectors>
+			<Chance>80</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>false</RandomizePitch>
+			<RandomizeVolume>true</RandomizeVolume>
+			<LoopBehaviour>None</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>TR2_LARA_CLIMB_WALL_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>true</Global>
+			<Indexed>false</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
+			<Id>123</Id>
 			<Name>TR2_LARA_GRENADEGUN_LOAD</Name>
 			<Volume>80</Volume>
 			<RangeInSectors>10</RangeInSectors>
@@ -1171,14 +1247,14 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>TR2_LARA_GRENADEGUN_LOCK_01.wav</FileName>
+					<FileName>TR2_Grenadegun_Load_01.wav</FileName>
 				</WadSample>
 			</Samples>
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>true</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
-			<Id>125</Id>
+			<Id>124</Id>
 			<Name>TR2_LARA_GRENADEGUN_LOCK</Name>
 			<Volume>80</Volume>
 			<RangeInSectors>10</RangeInSectors>
@@ -1190,14 +1266,14 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>TR2_LARA_GRENADEGUN_LOCK_01.wav</FileName>
+					<FileName>tr2_grenadegun_lock_01.wav</FileName>
 				</WadSample>
 			</Samples>
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>true</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
-			<Id>126</Id>
+			<Id>125</Id>
 			<Name>TR2_LARA_GRENADEGUN_FIRE</Name>
 			<Volume>100</Volume>
 			<RangeInSectors>10</RangeInSectors>
@@ -1212,7 +1288,7 @@
 					<FileName>TR2_LARA_GRENADEGUN_FIRE_01.wav</FileName>
 				</WadSample>
 			</Samples>
-			<Global>false</Global>
+			<Global>true</Global>
 			<Indexed>true</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
@@ -1305,44 +1381,6 @@
 			<Samples>
 				<WadSample>
 					<FileName>TR2_LARA_USE_OBJECT_01.wav</FileName>
-				</WadSample>
-			</Samples>
-			<Global>true</Global>
-			<Indexed>false</Indexed>
-		</WadSoundInfo>
-		<WadSoundInfo>
-			<Id>21</Id>
-			<Name>TR2_LARA_FIRE_AUTOPISTOLS</Name>
-			<Volume>90</Volume>
-			<RangeInSectors>10</RangeInSectors>
-			<Chance>100</Chance>
-			<PitchFactor>0</PitchFactor>
-			<DisablePanning>false</DisablePanning>
-			<RandomizePitch>false</RandomizePitch>
-			<RandomizeVolume>false</RandomizeVolume>
-			<LoopBehaviour>None</LoopBehaviour>
-			<Samples>
-				<WadSample>
-					<FileName>tr2_lara_fire_autopistols_01.wav</FileName>
-				</WadSample>
-			</Samples>
-			<Global>true</Global>
-			<Indexed>true</Indexed>
-		</WadSoundInfo>
-		<WadSoundInfo>
-			<Id>117</Id>
-			<Name>TR2_LARA_CLIMB_WALL</Name>
-			<Volume>100</Volume>
-			<RangeInSectors>13</RangeInSectors>
-			<Chance>80</Chance>
-			<PitchFactor>0</PitchFactor>
-			<DisablePanning>false</DisablePanning>
-			<RandomizePitch>false</RandomizePitch>
-			<RandomizeVolume>true</RandomizeVolume>
-			<LoopBehaviour>None</LoopBehaviour>
-			<Samples>
-				<WadSample>
-					<FileName>TR2_LARA_CLIMB_WALL_01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
