@@ -123,7 +123,7 @@ namespace WadTool
             // columnBlendFrames
             //
             columnBlendFrames.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            columnBlendFrames.DataPropertyName = "BlendFrame";
+            columnBlendFrames.DataPropertyName = "BlendFrames";
             columnBlendFrames.FillWeight = 50F;
             columnBlendFrames.HeaderText = "Blend frames";
             columnBlendFrames.Name = "columnBlendFrames";

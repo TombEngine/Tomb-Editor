@@ -3,7 +3,6 @@ using DarkUI.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using TombLib.Graphics;
@@ -340,24 +339,18 @@ namespace WadTool
                     else if (name == columnNextLowFrame.Name)
                     {
                         Int16 limitNew = 0;
+                        Int16 nextAnim = 0;
+                        Int16.TryParse(dgvStateChanges.Rows[e.RowIndex].Cells[4].Value.ToString(), out nextAnim);
+
                         if (Int16.TryParse(dgvStateChanges.Rows[e.RowIndex].Cells[6].Value.ToString(), out limitNew))
-                            limit = limitNew == 0 ? (Int16)(_editor.GetRealNumberOfFrames(limitNew)) : limitNew;
+                            limit = limitNew == 0 ? (Int16)(_editor.GetRealNumberOfFrames(nextAnim)) : limitNew;
                     }
                     else if (name == columnNextHighFrame.Name)
                     {
-                        limit = (Int16)(_editor.GetRealNumberOfFrames());
+                        Int16 nextAnim = 0;
+                        Int16.TryParse(dgvStateChanges.Rows[e.RowIndex].Cells[4].Value.ToString(), out nextAnim);
+                        limit = (Int16)(_editor.GetRealNumberOfFrames(nextAnim));
                     }
-                    // TODO: This should work but doesn't. Above version isn't ideal.
-                    /*else if (name == columnNextLowFrame.Name)
-                    {
-                        limit = (Int16)(_editor.GetRealNumberOfFrames());
-                    }
-                    else if (name == columnNextHighFrame.Name)
-                    {
-                        Int16 limitNew = 0;
-                        if (Int16.TryParse(dgvStateChanges.Rows[e.RowIndex].Cells[5].Value.ToString(), out limitNew))
-                            limit = Math.Max((Int16)(_editor.GetRealNumberOfFrames(limitNew)), limitNew);
-                    }*/
                 }
 
                 if (parsedValue > limit)
