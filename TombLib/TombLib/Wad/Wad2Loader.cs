@@ -773,6 +773,16 @@ namespace TombLib.Wad
                                 animation.StartLateralVelocity = velocities.Z;
                                 animation.EndLateralVelocity = velocities.W;
                             }
+                            else if (id3 == Wad2Chunks.AnimationRootMotion)
+                            {
+                                int flags = chunkIO.ReadChunkInt(chunkSize3);
+                                animation.RootMotion = new WadAnimRootMotionSettings
+                                {
+                                    PositionY = (flags & (1 << 1)) != 0,
+                                    PositionZ = (flags & (1 << 2)) != 0,
+                                    RotationY = (flags & (1 << 3)) != 0
+                                };
+                            }
                             else if (id3 == Wad2Chunks.KeyFrame)
                             {
                                 var keyframe = new WadKeyFrame();
@@ -824,12 +834,12 @@ namespace TombLib.Wad
                                         dispatch.InFrame = LEB128.ReadUShort(chunkIO.Raw);
                                         dispatch.OutFrame = LEB128.ReadUShort(chunkIO.Raw);
                                         dispatch.NextAnimation = LEB128.ReadUShort(chunkIO.Raw);
-                                        dispatch.NextFrameLow = LEB128.ReadUShort(chunkIO.Raw);
+                                        dispatch.NextLowFrame = LEB128.ReadUShort(chunkIO.Raw);
 
                                         if (id4 == Wad2Chunks.Dispatch2)
                                         {
-                                            dispatch.NextFrameHigh = LEB128.ReadUShort(chunkIO.Raw);
-                                            dispatch.BlendFrameCount = LEB128.ReadUShort(chunkIO.Raw);
+                                            dispatch.NextHighFrame = LEB128.ReadUShort(chunkIO.Raw);
+                                            dispatch.BlendFrames = LEB128.ReadUShort(chunkIO.Raw);
 
                                             chunkIO.ReadChunks((id5, chunkSize5) =>
                                             {

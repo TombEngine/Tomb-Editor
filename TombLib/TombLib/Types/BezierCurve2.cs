@@ -193,7 +193,6 @@ namespace TombLib.Types
                    first.EndHandle == second.EndHandle;
         }
 
-
         public static bool operator !=(BezierCurve2 first, BezierCurve2 second) => !(first == second);
     }
 }

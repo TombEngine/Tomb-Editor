@@ -667,7 +667,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
             foreach (var animation in Animations)
             {
                 writer.Write(animation.StateID);
-                writer.Write(animation.Interpolation);
                 writer.Write(animation.FrameEnd);
                 writer.Write(animation.NextAnimation);
                 writer.Write(animation.NextFrame);
@@ -701,22 +700,10 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 writer.Write(fixedMotionCurveZ.StartHandle);
                 writer.Write(fixedMotionCurveZ.EndHandle);
 
-                if (animation.KeyFrames.Count == 0)
-                {
-                    var defaultKeyFrame = new TombEngineKeyFrame();
-                    defaultKeyFrame.BoneOrientations = new List<Quaternion>(Enumerable.Repeat(Quaternion.Identity, NumMeshes));
-
-                    writer.Write(1);
-                    defaultKeyFrame.Write(writer);
-                }
-                else
-                {
-                    writer.Write(animation.KeyFrames.Count);
-                    foreach (var keyFrame in animation.KeyFrames)
-                    {
-                        keyFrame.Write(writer);
-                    }
-                }
+                // Write pre-baked frames.
+                writer.Write(animation.InterpolatedFrames.Count);
+                foreach (var frame in animation.InterpolatedFrames)
+                    frame.Write(writer);
 
                 writer.Write(animation.StateChanges.Count);
                 foreach (var stateChange in animation.StateChanges)
@@ -725,9 +712,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     writer.Write(stateChange.FrameLow);
                     writer.Write(stateChange.FrameHigh);
                     writer.Write(stateChange.NextAnimation);
-                    writer.Write(stateChange.NextFrameLow);
-                    writer.Write(stateChange.NextFrameHigh);
-                    writer.Write(stateChange.BlendFrameCount);
+                    writer.Write(stateChange.NextLowFrame);
+                    writer.Write(stateChange.NextHighFrame);
+                    writer.Write(stateChange.BlendFrames);
                     writer.Write(stateChange.BlendCurve.Start);
                     writer.Write(stateChange.BlendCurve.End);
                     writer.Write(stateChange.BlendCurve.StartHandle);
@@ -747,7 +734,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     }
                 }
 
-                writer.Write(animation.Flags);
+                writer.Write(animation.RootMotion.GetBitmask());
             }
         }
     }
@@ -759,9 +746,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public int FrameLow;
         public int FrameHigh;
         public int NextAnimation;
-        public int NextFrameLow;
-        public int NextFrameHigh;
-        public int BlendFrameCount;
+        public int NextLowFrame;
+        public int NextHighFrame;
+        public int BlendFrames;
         public BezierCurve2 BlendCurve;
     }
 
@@ -778,10 +765,11 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public Vector3 VelocityStart;
         public Vector3 VelocityEnd;
         public List<TombEngineKeyFrame> KeyFrames;
+        public List<TombEngineKeyFrame> InterpolatedFrames;
         public List<TombEngineStateChange> StateChanges;
         public int NumAnimCommands;
         public List<object> CommandData;
-        public int Flags;
+        public WadAnimRootMotionSettings RootMotion;
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -793,17 +781,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
         public void Write(BinaryWriterEx writer)
         {
-            var center = new Vector3(
-                BoundingBox.X1 + BoundingBox.X2,
-                BoundingBox.Y1 + BoundingBox.Y2,
-                BoundingBox.Z1 + BoundingBox.Z2) / 2;
-            var extents = new Vector3(
-                BoundingBox.X2 - BoundingBox.X1,
-                BoundingBox.Y2 - BoundingBox.Y1,
-                BoundingBox.Z2 - BoundingBox.Z1) / 2;
-
-            writer.Write(center);
-            writer.Write(extents);
+            writer.Write(BoundingBox.Center);
+            writer.Write(BoundingBox.Extents);
             writer.Write(RootOffset);
 
             writer.Write(BoneOrientations.Count);
@@ -820,6 +799,28 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public short Y2;
         public short Z1;
         public short Z2;
+
+        public Vector3 Center
+        {
+            get
+            {
+                return new Vector3(
+                    X1 + X2,
+                    Y1 + Y2,
+                    Z1 + Z2) / 2;
+            }
+        }
+
+        public Vector3 Extents
+        {
+            get
+            {
+                return new Vector3(
+                    X1 - X2,
+                    Y1 - Y2,
+                    Z1 - Z2) / 2;
+            }
+        }
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

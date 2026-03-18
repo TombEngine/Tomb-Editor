@@ -287,6 +287,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     newAnimation.VelocityStart = new Vector3(oldAnimation.StartLateralVelocity, 0, oldAnimation.StartVelocity);
                     newAnimation.VelocityEnd = new Vector3(oldAnimation.EndLateralVelocity, 0, oldAnimation.EndVelocity);
                     newAnimation.KeyFrames = new List<TombEngineKeyFrame>();
+                    newAnimation.InterpolatedFrames = new List<TombEngineKeyFrame>();
                     newAnimation.StateChanges = new List<TombEngineStateChange>();
                     newAnimation.NumAnimCommands = oldAnimation.AnimCommands.Count;
                     newAnimation.CommandData = new List<object>();
@@ -313,6 +314,12 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                         newAnimation.KeyFrames.Add(newFrame);
                     }
+
+                    // Bake interpolated frames from keyframes.
+                    BakeInterpolatedFrames(newAnimation, oldMoveable.Meshes.Count());
+
+                    // Pass root motion settings.
+                    newAnimation.RootMotion = oldAnimation.RootMotion;
 
                     // Add anim commands
                     foreach (var command in oldAnimation.AnimCommands)
@@ -387,9 +394,9 @@ namespace TombLib.LevelData.Compilers.TombEngine
                             newStateChange.FrameLow = unchecked((int)(dispatch.InFrame));
                             newStateChange.FrameHigh = unchecked((int)(dispatch.OutFrame));
                             newStateChange.NextAnimation = checked((int)(dispatch.NextAnimation));
-                            newStateChange.NextFrameLow = (int)dispatch.NextFrameLow;
-                            newStateChange.NextFrameHigh = (int)dispatch.NextFrameHigh;
-                            newStateChange.BlendFrameCount = (int)dispatch.BlendFrameCount;
+                            newStateChange.NextLowFrame = (int)dispatch.NextLowFrame;
+                            newStateChange.NextHighFrame = (int)dispatch.NextHighFrame;
+                            newStateChange.BlendFrames = (int)dispatch.BlendFrames;
                             newStateChange.BlendCurve = dispatch.BlendCurve.Clone();
 
                             newAnimation.StateChanges.Add(newStateChange);
@@ -538,6 +545,56 @@ namespace TombLib.LevelData.Compilers.TombEngine
                         n++;
                     }
                 }
+        }
+
+        private static void BakeInterpolatedFrames(TombEngineAnimation animation, int meshCount)
+        {
+            // Write dummy frame if no keyframes exist.
+            if (animation.KeyFrames.Count == 0)
+            {
+                var defaultKeyFrame = new TombEngineKeyFrame();
+                defaultKeyFrame.BoneOrientations = new List<Quaternion>(Enumerable.Repeat(Quaternion.Identity, meshCount));
+                animation.InterpolatedFrames.Add(defaultKeyFrame);
+                return;
+            }
+
+            float alphaStep = 1.0f / (float)animation.Interpolation;
+            for (int i = 0; i < animation.KeyFrames.Count; i++)
+            {
+                var currentKeyframe = animation.KeyFrames[i];
+                animation.InterpolatedFrames.Add(currentKeyframe);
+
+                if (i == (animation.KeyFrames.Count - 1))
+                    break;
+
+                var nextKeyframe = animation.KeyFrames[i + 1];
+
+                // Add interpolated frames between keyframes.
+                for (int j = 1; j < animation.Interpolation; j++)
+                {
+                    float alpha = alphaStep * j;
+
+                    var center = Vector3.Lerp(currentKeyframe.BoundingBox.Center, nextKeyframe.BoundingBox.Center, alpha);
+                    var extents = Vector3.Lerp(currentKeyframe.BoundingBox.Extents, nextKeyframe.BoundingBox.Extents, alpha);
+                    var rootPos = Vector3.Lerp(currentKeyframe.RootOffset, nextKeyframe.RootOffset, alpha);
+
+                    var boneOrients = new List<Quaternion>(currentKeyframe.BoneOrientations.Count);
+                    for (int k = 0; k < boneOrients.Count; k++)
+                        boneOrients[k] = Quaternion.Slerp(currentKeyframe.BoneOrientations[k], nextKeyframe.BoneOrientations[k], alpha);
+
+                    var frame = new TombEngineKeyFrame();
+                    frame.BoundingBox = new TombEngineBoundingBox();
+                    frame.BoundingBox.X1 = (short)(center.X - extents.X);
+                    frame.BoundingBox.X2 = (short)(center.X + extents.X);
+                    frame.BoundingBox.Y1 = (short)(center.Y - extents.Y);
+                    frame.BoundingBox.Y2 = (short)(center.Y + extents.Y);
+                    frame.BoundingBox.Z1 = (short)(center.Z + extents.Z);
+                    frame.BoundingBox.Z2 = (short)(center.Z - extents.Z);
+                    frame.RootOffset = rootPos;
+                    frame.BoneOrientations = boneOrients;
+                    animation.InterpolatedFrames.Add(frame);
+                }
+            }
         }
 
         public static short ToTrAngle(float angle)

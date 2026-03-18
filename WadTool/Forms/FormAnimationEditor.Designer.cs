@@ -71,11 +71,11 @@ namespace WadTool
             drawGizmoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             drawGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             drawCollisionBoxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            drawSkinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem(); // da develop
             toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             smoothAnimationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             scrollGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             restoreGridHeightToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            drawSkinToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             statusStrip = new DarkUI.Controls.DarkStatusStrip();
             statusFrame = new System.Windows.Forms.ToolStripStatusLabel();
             darkLabel22 = new DarkUI.Controls.DarkLabel();
@@ -123,15 +123,14 @@ namespace WadTool
             butAddNewAnimation = new DarkUI.Controls.DarkButton();
             panelRendering = new Controls.PanelRenderingAnimationEditor();
             darkSectionPanel2 = new DarkUI.Controls.DarkSectionPanel();
+            dgvBoundingMeshList = new DarkUI.Controls.DarkDataGridView();
+            dgvBoundingMeshListCheckboxes = new DarkUI.Controls.DarkDataGridViewCheckBoxColumn();
+            dgvBoundingMeshListMeshes = new System.Windows.Forms.DataGridViewTextBoxColumn();
             panelRootMotion = new DarkUI.Controls.DarkPanel();
             cbRootPosZ = new DarkUI.Controls.DarkCheckBox();
             darkLabel11 = new DarkUI.Controls.DarkLabel();
             cbRootRotation = new DarkUI.Controls.DarkCheckBox();
-            cbRootPosX = new DarkUI.Controls.DarkCheckBox();
             cbRootPosY = new DarkUI.Controls.DarkCheckBox();
-            dgvBoundingMeshList = new DarkUI.Controls.DarkDataGridView();
-            dgvBoundingMeshListCheckboxes = new DarkUI.Controls.DarkDataGridViewCheckBoxColumn();
-            dgvBoundingMeshListMeshes = new System.Windows.Forms.DataGridViewTextBoxColumn();
             darkLabel33 = new DarkUI.Controls.DarkLabel();
             darkLabel30 = new DarkUI.Controls.DarkLabel();
             darkLabel34 = new DarkUI.Controls.DarkLabel();
@@ -211,7 +210,6 @@ namespace WadTool
             bezierCurveEditor = new Controls.BezierCurveEditor();
             darkLabel36 = new DarkUI.Controls.DarkLabel();
             cbBlendPreset = new DarkUI.Controls.DarkComboBox();
-            darkLabel13 = new DarkUI.Controls.DarkLabel();
             nudBlendFrameCount = new DarkUI.Controls.DarkNumericUpDown();
             darkLabel12 = new DarkUI.Controls.DarkLabel();
             bcAnimation = new Controls.BezierCurveEditor();
@@ -231,8 +229,8 @@ namespace WadTool
             topBar.SuspendLayout();
             darkSectionPanel1.SuspendLayout();
             darkSectionPanel2.SuspendLayout();
-            panelRootMotion.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvBoundingMeshList).BeginInit();
+            panelRootMotion.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudBBoxMaxY).BeginInit();
             ((System.ComponentModel.ISupportInitialize)nudBBoxMaxZ).BeginInit();
             ((System.ComponentModel.ISupportInitialize)nudBBoxMaxX).BeginInit();
@@ -292,7 +290,6 @@ namespace WadTool
             fileeToolStripMenuItem.Name = "fileeToolStripMenuItem";
             fileeToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             fileeToolStripMenuItem.Text = "Edit";
-
             // 
             // undoToolStripMenuItem
             // 
@@ -801,6 +798,11 @@ namespace WadTool
             restoreGridHeightToolStripMenuItem.Text = "Restore grid height";
             restoreGridHeightToolStripMenuItem.Click += restoreGridHeightToolStripMenuItem_Click;
             // 
+            // drawSkinToolStripMenuItem
+            // 
+            drawSkinToolStripMenuItem.Name = "drawSkinToolStripMenuItem";
+            drawSkinToolStripMenuItem.Size = new System.Drawing.Size(32, 19);
+            // 
             // statusStrip
             // 
             statusStrip.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
@@ -1233,7 +1235,7 @@ namespace WadTool
             lstAnimations.MouseWheelScrollSpeedV = 0.2F;
             lstAnimations.MultiSelect = true;
             lstAnimations.Name = "lstAnimations";
-            lstAnimations.Size = new System.Drawing.Size(271, 187);
+            lstAnimations.Size = new System.Drawing.Size(271, 216);
             lstAnimations.TabIndex = 3;
             lstAnimations.SelectedIndicesChanged += lstAnimations_SelectedIndicesChanged;
             lstAnimations.Click += lstAnimations_Click;
@@ -1252,7 +1254,7 @@ namespace WadTool
             darkSectionPanel1.MinimumSize = new System.Drawing.Size(280, 120);
             darkSectionPanel1.Name = "darkSectionPanel1";
             darkSectionPanel1.SectionHeader = "Animation List";
-            darkSectionPanel1.Size = new System.Drawing.Size(280, 272);
+            darkSectionPanel1.Size = new System.Drawing.Size(280, 301);
             darkSectionPanel1.TabIndex = 9;
             // 
             // butShowAll
@@ -1272,7 +1274,7 @@ namespace WadTool
             butDeleteAnimation.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             butDeleteAnimation.Checked = false;
             butDeleteAnimation.Image = (System.Drawing.Image)resources.GetObject("butDeleteAnimation.Image");
-            butDeleteAnimation.Location = new System.Drawing.Point(252, 244);
+            butDeleteAnimation.Location = new System.Drawing.Point(252, 273);
             butDeleteAnimation.Name = "butDeleteAnimation";
             butDeleteAnimation.Size = new System.Drawing.Size(23, 24);
             butDeleteAnimation.TabIndex = 5;
@@ -1296,7 +1298,7 @@ namespace WadTool
             butAddNewAnimation.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             butAddNewAnimation.Checked = false;
             butAddNewAnimation.Image = (System.Drawing.Image)resources.GetObject("butAddNewAnimation.Image");
-            butAddNewAnimation.Location = new System.Drawing.Point(225, 244);
+            butAddNewAnimation.Location = new System.Drawing.Point(225, 273);
             butAddNewAnimation.Name = "butAddNewAnimation";
             butAddNewAnimation.Size = new System.Drawing.Size(23, 24);
             butAddNewAnimation.TabIndex = 4;
@@ -1325,70 +1327,6 @@ namespace WadTool
             darkSectionPanel2.SectionHeader = "Skeleton";
             darkSectionPanel2.Size = new System.Drawing.Size(280, 386);
             darkSectionPanel2.TabIndex = 6;
-            // 
-            // panelRootMotion
-            // 
-            panelRootMotion.Controls.Add(cbRootPosZ);
-            panelRootMotion.Controls.Add(darkLabel11);
-            panelRootMotion.Controls.Add(cbRootRotation);
-            panelRootMotion.Controls.Add(cbRootPosX);
-            panelRootMotion.Controls.Add(cbRootPosY);
-            panelRootMotion.Dock = System.Windows.Forms.DockStyle.Bottom;
-            panelRootMotion.Location = new System.Drawing.Point(1, 353);
-            panelRootMotion.Name = "panelRootMotion";
-            panelRootMotion.Size = new System.Drawing.Size(278, 32);
-            panelRootMotion.TabIndex = 26;
-            // 
-            // cbRootPosZ
-            // 
-            cbRootPosZ.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            cbRootPosZ.AutoSize = true;
-            cbRootPosZ.Location = new System.Drawing.Point(168, 9);
-            cbRootPosZ.Name = "cbRootPosZ";
-            cbRootPosZ.Size = new System.Drawing.Size(32, 17);
-            cbRootPosZ.TabIndex = 101;
-            cbRootPosZ.Text = "Z";
-            // 
-            // darkLabel11
-            // 
-            darkLabel11.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            darkLabel11.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            darkLabel11.Location = new System.Drawing.Point(4, 10);
-            darkLabel11.Name = "darkLabel11";
-            darkLabel11.Size = new System.Drawing.Size(76, 13);
-            darkLabel11.TabIndex = 106;
-            darkLabel11.Text = "Root motion:";
-            // 
-            // cbRootRotation
-            // 
-            cbRootRotation.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            cbRootRotation.AutoSize = true;
-            cbRootRotation.Location = new System.Drawing.Point(206, 9);
-            cbRootRotation.Name = "cbRootRotation";
-            cbRootRotation.Size = new System.Drawing.Size(71, 17);
-            cbRootRotation.TabIndex = 102;
-            cbRootRotation.Text = "Rotation";
-            // 
-            // cbRootPosX
-            // 
-            cbRootPosX.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            cbRootPosX.AutoSize = true;
-            cbRootPosX.Location = new System.Drawing.Point(91, 9);
-            cbRootPosX.Name = "cbRootPosX";
-            cbRootPosX.Size = new System.Drawing.Size(32, 17);
-            cbRootPosX.TabIndex = 99;
-            cbRootPosX.Text = "X";
-            cbRootPosX.CheckedChanged += cbRootPosX_CheckedChanged;
-            // 
-            // cbRootPosY
-            // 
-            cbRootPosY.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            cbRootPosY.AutoSize = true;
-            cbRootPosY.Location = new System.Drawing.Point(131, 9);
-            cbRootPosY.Name = "cbRootPosY";
-            cbRootPosY.Size = new System.Drawing.Size(31, 17);
-            cbRootPosY.TabIndex = 100;
-            cbRootPosY.Text = "Y";
             // 
             // dgvBoundingMeshList
             // 
@@ -1424,6 +1362,61 @@ namespace WadTool
             dgvBoundingMeshListMeshes.Name = "dgvBoundingMeshListMeshes";
             dgvBoundingMeshListMeshes.ReadOnly = true;
             dgvBoundingMeshListMeshes.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // panelRootMotion
+            // 
+            panelRootMotion.Controls.Add(cbRootPosZ);
+            panelRootMotion.Controls.Add(darkLabel11);
+            panelRootMotion.Controls.Add(cbRootRotation);
+            panelRootMotion.Controls.Add(cbRootPosY);
+            panelRootMotion.Dock = System.Windows.Forms.DockStyle.Bottom;
+            panelRootMotion.Location = new System.Drawing.Point(1, 353);
+            panelRootMotion.Name = "panelRootMotion";
+            panelRootMotion.Size = new System.Drawing.Size(278, 32);
+            panelRootMotion.TabIndex = 26;
+            // 
+            // cbRootPosZ
+            // 
+            cbRootPosZ.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            cbRootPosZ.AutoSize = true;
+            cbRootPosZ.Location = new System.Drawing.Point(131, 9);
+            cbRootPosZ.Name = "cbRootPosZ";
+            cbRootPosZ.Size = new System.Drawing.Size(32, 17);
+            cbRootPosZ.TabIndex = 101;
+            cbRootPosZ.Text = "Z";
+            cbRootPosZ.CheckedChanged += cbRootPosZ_CheckedChanged;
+            // 
+            // darkLabel11
+            // 
+            darkLabel11.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            darkLabel11.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel11.Location = new System.Drawing.Point(4, 10);
+            darkLabel11.Name = "darkLabel11";
+            darkLabel11.Size = new System.Drawing.Size(76, 13);
+            darkLabel11.TabIndex = 106;
+            darkLabel11.Text = "Root motion:";
+            // 
+            // cbRootRotation
+            // 
+            cbRootRotation.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            cbRootRotation.AutoSize = true;
+            cbRootRotation.Location = new System.Drawing.Point(168, 9);
+            cbRootRotation.Name = "cbRootRotation";
+            cbRootRotation.Size = new System.Drawing.Size(71, 17);
+            cbRootRotation.TabIndex = 102;
+            cbRootRotation.Text = "Rotation";
+            cbRootRotation.CheckedChanged += cbRootRotation_CheckedChanged;
+            // 
+            // cbRootPosY
+            // 
+            cbRootPosY.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            cbRootPosY.AutoSize = true;
+            cbRootPosY.Location = new System.Drawing.Point(91, 9);
+            cbRootPosY.Name = "cbRootPosY";
+            cbRootPosY.Size = new System.Drawing.Size(32, 17);
+            cbRootPosY.TabIndex = 100;
+            cbRootPosY.Text = "Y";
+            cbRootPosY.CheckedChanged += cbRootPosY_CheckedChanged;
             // 
             // darkLabel33
             // 
@@ -1892,7 +1885,7 @@ namespace WadTool
             darkSectionPanel4.Controls.Add(darkLabel6);
             darkSectionPanel4.Controls.Add(darkLabel7);
             darkSectionPanel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            darkSectionPanel4.Location = new System.Drawing.Point(0, 272);
+            darkSectionPanel4.Location = new System.Drawing.Point(0, 301);
             darkSectionPanel4.MaximumSize = new System.Drawing.Size(280, 238);
             darkSectionPanel4.Name = "darkSectionPanel4";
             darkSectionPanel4.SectionHeader = "Current Animation";
@@ -2370,22 +2363,22 @@ namespace WadTool
             sectionBlending.Controls.Add(bezierCurveEditor);
             sectionBlending.Controls.Add(darkLabel36);
             sectionBlending.Controls.Add(cbBlendPreset);
-            sectionBlending.Controls.Add(darkLabel13);
             sectionBlending.Controls.Add(nudBlendFrameCount);
             sectionBlending.Controls.Add(darkLabel12);
             sectionBlending.Controls.Add(bcAnimation);
             sectionBlending.Dock = System.Windows.Forms.DockStyle.Bottom;
-            sectionBlending.Location = new System.Drawing.Point(0, 469);
+            sectionBlending.Location = new System.Drawing.Point(0, 498);
             sectionBlending.Name = "sectionBlending";
             sectionBlending.SectionHeader = "Animation Blending";
-            sectionBlending.Size = new System.Drawing.Size(280, 203);
+            sectionBlending.Size = new System.Drawing.Size(280, 174);
             sectionBlending.TabIndex = 128;
             // 
             // bezierCurveEditor
             // 
+            bezierCurveEditor.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             bezierCurveEditor.Location = new System.Drawing.Point(6, 57);
             bezierCurveEditor.Name = "bezierCurveEditor";
-            bezierCurveEditor.Size = new System.Drawing.Size(269, 113);
+            bezierCurveEditor.Size = new System.Drawing.Size(269, 85);
             bezierCurveEditor.TabIndex = 110;
             toolTip1.SetToolTip(bezierCurveEditor, "Specify blending curve by dragging handles");
             bezierCurveEditor.ValueChanged += bezierCurveEditor_ValueChanged;
@@ -2395,7 +2388,7 @@ namespace WadTool
             darkLabel36.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             darkLabel36.AutoSize = true;
             darkLabel36.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            darkLabel36.Location = new System.Drawing.Point(3, 179);
+            darkLabel36.Location = new System.Drawing.Point(3, 150);
             darkLabel36.Name = "darkLabel36";
             darkLabel36.Size = new System.Drawing.Size(41, 13);
             darkLabel36.TabIndex = 109;
@@ -2406,31 +2399,22 @@ namespace WadTool
             cbBlendPreset.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             cbBlendPreset.FormattingEnabled = true;
             cbBlendPreset.Items.AddRange(new object[] { "Linear", "Ease In", "Ease Out", "Ease In and Out" });
-            cbBlendPreset.Location = new System.Drawing.Point(49, 175);
+            cbBlendPreset.Location = new System.Drawing.Point(49, 146);
             cbBlendPreset.Name = "cbBlendPreset";
             cbBlendPreset.Size = new System.Drawing.Size(225, 23);
             cbBlendPreset.TabIndex = 108;
             toolTip1.SetToolTip(cbBlendPreset, "Predefined curve preset");
             cbBlendPreset.SelectedIndexChanged += cbBlendPreset_SelectedIndexChanged;
             // 
-            // darkLabel13
-            // 
-            darkLabel13.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            darkLabel13.Location = new System.Drawing.Point(233, 32);
-            darkLabel13.Name = "darkLabel13";
-            darkLabel13.Size = new System.Drawing.Size(41, 13);
-            darkLabel13.TabIndex = 107;
-            darkLabel13.Text = "frames";
-            // 
             // nudBlendFrameCount
             // 
             nudBlendFrameCount.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             nudBlendFrameCount.IncrementAlternate = new decimal(new int[] { 10, 0, 0, 65536 });
-            nudBlendFrameCount.Location = new System.Drawing.Point(170, 29);
+            nudBlendFrameCount.Location = new System.Drawing.Point(211, 30);
             nudBlendFrameCount.LoopValues = false;
             nudBlendFrameCount.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
             nudBlendFrameCount.Name = "nudBlendFrameCount";
-            nudBlendFrameCount.Size = new System.Drawing.Size(61, 22);
+            nudBlendFrameCount.Size = new System.Drawing.Size(64, 22);
             nudBlendFrameCount.TabIndex = 97;
             toolTip1.SetToolTip(nudBlendFrameCount, "Blending duration to the next animation in frames");
             nudBlendFrameCount.ValueChanged += nudBlendFrameCount_ValueChanged;
@@ -2442,7 +2426,7 @@ namespace WadTool
             darkLabel12.Name = "darkLabel12";
             darkLabel12.Size = new System.Drawing.Size(162, 13);
             darkLabel12.TabIndex = 98;
-            darkLabel12.Text = "Next anim blending duration:";
+            darkLabel12.Text = "Next anim blend frame count:";
             // 
             // bcAnimation
             // 
@@ -2569,9 +2553,9 @@ namespace WadTool
             darkSectionPanel1.ResumeLayout(false);
             darkSectionPanel1.PerformLayout();
             darkSectionPanel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvBoundingMeshList).EndInit();
             panelRootMotion.ResumeLayout(false);
             panelRootMotion.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvBoundingMeshList).EndInit();
             ((System.ComponentModel.ISupportInitialize)nudBBoxMaxY).EndInit();
             ((System.ComponentModel.ISupportInitialize)nudBBoxMaxZ).EndInit();
             ((System.ComponentModel.ISupportInitialize)nudBBoxMaxX).EndInit();
@@ -2802,12 +2786,10 @@ namespace WadTool
         private DarkUI.Controls.DarkLabel darkLabel11;
         private DarkUI.Controls.DarkCheckBox cbRootPosZ;
         private DarkUI.Controls.DarkNumericUpDown nudBlendFrameCount;
-        private DarkUI.Controls.DarkCheckBox cbRootPosX;
         private DarkUI.Controls.DarkLabel darkLabel12;
         private DarkUI.Controls.DarkCheckBox cbRootPosY;
         private DarkUI.Controls.DarkCheckBox cbRootRotation;
         private Controls.BezierCurveEditor bcAnimation;
-        private DarkUI.Controls.DarkLabel darkLabel13;
         private DarkUI.Controls.DarkLabel darkLabel14;
         private DarkUI.Controls.DarkLabel darkLabel15;
         private DarkUI.Controls.DarkLabel darkLabel33;

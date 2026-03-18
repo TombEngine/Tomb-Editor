@@ -67,10 +67,14 @@ namespace WadTool
         private int _chainedPlaybackInitialAnim;
         private int _chainedPlaybackInitialCursorPos;
         private VectorInt2 _chainedPlaybackInitialSelection;
+
         // State change vars
         private int _chainedPlaybackIncomingAnimation = -1;
         private int _chainedPlaybackIncomingFrame = -1;
         private VectorInt2 _chainedPlaybackIncomingFrameRange = -VectorInt2.One;
+
+        // Blend preview
+        private readonly AnimBlendPreviewState _blendState = new AnimBlendPreviewState();
 
         // Live update flag, used when transform is updated during playback or scrubbling
         private bool _allowUpdate = true;
@@ -94,9 +98,8 @@ namespace WadTool
             if (!isTEN && _editor.Tool.Configuration.AnimationEditor_SoundPreviewType > SoundPreviewType.Water)
                 _editor.Tool.Configuration.AnimationEditor_SoundPreviewType = SoundPreviewType.Land;
 
-            // TODO: Unlock when anim blending is finished.
-            sectionBlending.Visible = false; //isTEN;
-            panelRootMotion.Visible = false; //isTEN;
+            sectionBlending.Visible = isTEN;
+            panelRootMotion.Visible = isTEN;
 
             // Update UI
             UpdateUIControls();
@@ -239,6 +242,7 @@ namespace WadTool
                     _chainedPlaybackIncomingAnimation = e.NextAnimation;
                     _chainedPlaybackIncomingFrame = e.NextFrame;
                     _chainedPlaybackIncomingFrameRange = e.FrameRange;
+                    _blendState.SetPendingBlend(e.BlendFrames, e.BlendCurve);
                 }
             }
 
@@ -503,6 +507,10 @@ namespace WadTool
                     bezierCurveEditor.Value = node.WadAnimation.BlendCurve;
                     cbBlendPreset.SelectedIndex = -1;
 
+                    cbRootPosY.Checked = node.WadAnimation.RootMotion.PositionY;
+                    cbRootPosZ.Checked = node.WadAnimation.RootMotion.PositionZ;
+                    cbRootRotation.Checked = node.WadAnimation.RootMotion.RotationY;
+
                     tbStateId.Text = node.WadAnimation.StateId.ToString();
                     UpdateStateChange();
                 }
@@ -733,6 +741,10 @@ namespace WadTool
         public void UpdateTransform()
         {
             if (!_allowUpdate || _editor.CurrentKeyFrame == null) return;
+
+            // Block modifications during blend preview.
+            if (_blendState.IsActive && _editor.Tool.Configuration.AnimationEditor_ChainPlayback)
+                return;
 
             var meshIndex = panelRendering.SelectedMesh == null ? 0 : panelRendering.Model.Meshes.IndexOf(panelRendering.SelectedMesh);
 
@@ -1826,6 +1838,10 @@ namespace WadTool
                 }
 
                 butTransportPlay.Image = Properties.Resources.transport_play_24;
+
+                // Clear blend preview state.
+                _blendState.Clear();
+                panelRendering.DisablePicking = false;
             }
 
             // Reset grid position and refresh view
@@ -2303,7 +2319,7 @@ namespace WadTool
                     InFrame = (ushort)timeline.SelectionStartFrameIndex,
                     OutFrame = (ushort)timeline.SelectionEndFrameIndex,
                     NextAnimation = 0,
-                    NextFrameLow = 0
+                    NextLowFrame = 0
                 });
             }
 
@@ -2350,6 +2366,7 @@ namespace WadTool
                 {
                     popup.ShowError(panelRendering, "Pending state change to animation #" + _chainedPlaybackIncomingAnimation + " had incorrect data and was ignored.");
                     _chainedPlaybackIncomingAnimation = -1;
+                    _blendState.ClearPendingBlend();
                 }
             }
 
@@ -2358,6 +2375,10 @@ namespace WadTool
                 // Chain playback handling
                 if (_editor.Tool.Configuration.AnimationEditor_ChainPlayback)
                 {
+                    // Begin blend preview before switching animations.
+                    bool blendStarted = _blendState.TryBegin(_editor.CurrentAnim, _frameCount, _editor.Tool.Configuration.AnimationEditor_SmoothAnimation);
+                    panelRendering.DisablePicking = blendStarted;
+
                     // Clear state change anim, as we don't need it anymore
                     _chainedPlaybackIncomingAnimation = -1;
 
@@ -2494,6 +2515,16 @@ namespace WadTool
                 float k = (float)_frameCount / (float)(_editor.CurrentAnim.WadAnimation.FrameRate == 0 ? 1 : _editor.CurrentAnim.WadAnimation.FrameRate);
                 k = _frameCount == realFrameNumber - 1 ? 1.0f : k - (float)Math.Floor(k);
                 SelectFrame(k);
+            }
+
+            // Apply blend preview if active.
+            if (_blendState.IsActive)
+            {
+                _blendState.BuildPose(panelRendering.Model, _editor.CurrentAnim, _frameCount, _editor.Tool.Configuration.AnimationEditor_SmoothAnimation);
+                panelRendering.Invalidate();
+
+                if (!_blendState.Advance())
+                    panelRendering.DisablePicking = false;
             }
 
             UpdateStatusLabel();
@@ -2836,9 +2867,28 @@ namespace WadTool
             UpdateUIControls();
         }
 
-        private void cbRootPosX_CheckedChanged(object sender, EventArgs e)
+        private void cbRootPosY_CheckedChanged(object sender, EventArgs e) => UpdateRootMotionSetting(sender);
+        private void cbRootPosZ_CheckedChanged(object sender, EventArgs e) => UpdateRootMotionSetting(sender);
+        private void cbRootRotation_CheckedChanged(object sender, EventArgs e) => UpdateRootMotionSetting(sender);
+
+        private void UpdateRootMotionSetting(object sender)
         {
-            // TODO: Where to put these flags?
+            if (!_allowUpdate || _editor.CurrentAnim == null)
+                return;
+
+            if (!_editor.MadeChanges)
+            {
+                _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
+                _editor.MadeChanges = true;
+            }
+
+            var rootMotion = _editor.CurrentAnim.WadAnimation.RootMotion;
+            rootMotion.PositionY = cbRootPosY.Checked;
+            rootMotion.PositionZ = cbRootPosZ.Checked;
+            rootMotion.RotationY = cbRootRotation.Checked;
+            _editor.CurrentAnim.WadAnimation.RootMotion = rootMotion;
+
+            Saved = false;
         }
 
         private void cbBlendPreset_SelectedIndexChanged(object sender, EventArgs e)

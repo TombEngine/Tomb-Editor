@@ -1,4 +1,4 @@
-﻿using DarkUI.Config;
+using DarkUI.Config;
 using DarkUI.Extensions;
 using System;
 using System.Collections.Generic;
@@ -6,9 +6,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using TombLib.Graphics;
+using TombLib.LevelData;
 using TombLib.Types;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
+using WadTool.Controls;
 
 namespace WadTool
 {
@@ -28,22 +30,22 @@ namespace WadTool
             public ushort LowFrame { get; set; }
             public ushort HighFrame { get; set; }
             public ushort NextAnimation { get; set; }
-            public ushort NextFrame { get; set; }
-            public ushort BlendFrameCount { get; set; }
-            public ushort BlendEndFrame { get; set; }
+            public ushort NextLowFrame { get; set; }
+            public ushort NextHighFrame { get; set; }
+            public ushort BlendFrames { get; set; }
             public BezierCurve2 BlendCurve { get; set; } = BezierCurve2.Linear.Clone();
 
             public WadStateChangeRow(string stateName, ushort stateId, ushort lowFrame, ushort highFrame, ushort nextAnimation,
-                                     ushort nextFrameLow, ushort nextFrameHigh, ushort blendFrameCount, BezierCurve2 blendCurve)
+                                     ushort nextLowFrame, ushort nextHighFrame, ushort blendFrames, BezierCurve2 blendCurve)
             {
                 StateName = stateName;
                 StateId = stateId;
                 LowFrame = lowFrame;
                 HighFrame = highFrame;
                 NextAnimation = nextAnimation;
-                NextFrame = nextFrameLow;
-                BlendEndFrame = nextFrameHigh;
-                BlendFrameCount = blendFrameCount;
+                NextLowFrame = nextLowFrame;
+                NextHighFrame = nextHighFrame;
+                BlendFrames = blendFrames;
                 BlendCurve = blendCurve.Clone();
             }
 
@@ -62,12 +64,10 @@ namespace WadTool
             dgvControls.DataGridView = dgvStateChanges;
             dgvControls.Enabled = true;
 
-            // TODO: Enable when animation blending is finished.
-            if (true) // if (editor.Wad.GameVersion != TombLib.LevelData.TRVersion.Game.TombEngine)
-            {
-                blendingGroup.Visible = false;
-                stateChangeGroup.Width = blendingGroup.Left + blendingGroup.Width - stateChangeGroup.Left;
-            }
+            bool isTEN = _editor.Tool.DestinationWad.GameVersion == TRVersion.Game.TombEngine;
+            columnNextHighFrame.Visible = isTEN;
+            columnBlendFrames.Visible = isTEN;
+            columnBlendCurve.Visible = isTEN;
 
             Initialize(animation, newStateChange);
             _editor.Tool.EditorEventRaised += Tool_EditorEventRaised;
@@ -94,7 +94,7 @@ namespace WadTool
             foreach (var sc in _animation.WadAnimation.StateChanges)
                 foreach (var d in sc.Dispatches)
                     rows.Add(new WadStateChangeRow(TrCatalog.GetStateName(_editor.Tool.DestinationWad.GameVersion, _editor.Moveable.Id.TypeId, sc.StateId),
-                                                   sc.StateId, d.InFrame, d.OutFrame, d.NextAnimation, d.NextFrameLow, d.NextFrameHigh, d.BlendFrameCount, d.BlendCurve));
+                                                   sc.StateId, d.InFrame, d.OutFrame, d.NextAnimation, d.NextLowFrame, d.NextHighFrame, d.BlendFrames, d.BlendCurve));
 
             if (newStateChange != null && newStateChange.Dispatches.Count == 1)
             {
@@ -103,9 +103,9 @@ namespace WadTool
                                                newStateChange.Dispatches[0].InFrame,
                                                newStateChange.Dispatches[0].OutFrame,
                                                newStateChange.Dispatches[0].NextAnimation,
-                                               newStateChange.Dispatches[0].NextFrameLow,
-                                               newStateChange.Dispatches[0].NextFrameHigh,
-                                               newStateChange.Dispatches[0].BlendFrameCount,
+                                               newStateChange.Dispatches[0].NextLowFrame,
+                                               newStateChange.Dispatches[0].NextHighFrame,
+                                               newStateChange.Dispatches[0].BlendFrames,
                                                newStateChange.Dispatches[0].BlendCurve));
                 _createdNew = true;
             }
@@ -167,7 +167,7 @@ namespace WadTool
             if (dgvStateChanges.SelectedRows.Count > 0)
             {
                 var item = ((IEnumerable<WadStateChangeRow>)dgvStateChanges.DataSource).ElementAt(dgvStateChanges.SelectedRows[0].Index);
-                _editor.Tool.ChangeState(item.NextAnimation, item.NextFrame, item.LowFrame, item.HighFrame);
+                _editor.Tool.ChangeState(item.NextAnimation, item.NextLowFrame, item.LowFrame, item.HighFrame, item.BlendFrames, item.BlendCurve);
 
                 lblStateChangeAnnouncement.Text = "Pending state change to anim #" + item.NextAnimation;
             }
@@ -188,9 +188,9 @@ namespace WadTool
                 var sc = tempDictionary[row.StateId];
                 sc.StateId = row.StateId;
 
-                var newDispatch = new WadAnimDispatch(row.LowFrame, row.HighFrame, row.NextAnimation, row.NextFrame);
-                newDispatch.NextFrameHigh = row.BlendEndFrame;
-                newDispatch.BlendFrameCount = row.BlendFrameCount;
+                var newDispatch = new WadAnimDispatch(row.LowFrame, row.HighFrame, row.NextAnimation, row.NextLowFrame);
+                newDispatch.NextHighFrame = row.NextHighFrame;
+                newDispatch.BlendFrames = row.BlendFrames;
                 newDispatch.BlendCurve = row.BlendCurve;
 
                 sc.Dispatches.Add(newDispatch);
@@ -223,6 +223,21 @@ namespace WadTool
             _initializing = false;
         }
 
+        private void ShowBlendCurveEditor(int rowIndex)
+        {
+            var item = ((IEnumerable<WadStateChangeRow>)dgvStateChanges.DataSource).ElementAt(rowIndex);
+
+            using (var form = new FormBlendCurveEditor(item.BlendCurve))
+            {
+                if (form.ShowDialog(this) == DialogResult.OK)
+                {
+                    item.BlendCurve = form.ResultCurve;
+                    dgvStateChanges.InvalidateRow(rowIndex);
+                    SaveChanges();
+                }
+            }
+        }
+
         private void dgvStateChanges_CellFormattingSafe(object sender, DarkUI.Controls.DarkDataGridViewSafeCellFormattingEventArgs e)
         {
             if (!(e.Row.DataBoundItem is WadStateChangeRow))
@@ -243,16 +258,55 @@ namespace WadTool
             }
         }
 
-        private void dgvStateChanges_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e) => ChangeState();
+        private void dgvStateChanges_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+                return;
+
+            if (dgvStateChanges.Columns[e.ColumnIndex] != columnBlendCurve)
+                return;
+
+            if (!(dgvStateChanges.Rows[e.RowIndex].DataBoundItem is WadStateChangeRow item))
+                return;
+
+            // Paint all standard parts (background, borders, selection outline) then draw custom curve preview.
+            e.Paint(e.CellBounds, DataGridViewPaintParts.All);
+            BezierCurveEditor.DrawPreview(e.Graphics, e.CellBounds, item.BlendCurve);
+            e.Handled = true;
+        }
+
+        private void dgvStateChanges_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+
+            if (dgvStateChanges.Columns[e.ColumnIndex] == columnBlendCurve)
+                ShowBlendCurveEditor(e.RowIndex);
+        }
+
+        private void dgvStateChanges_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.RowIndex < 0)
+                return;
+
+            if (dgvStateChanges.Columns[e.ColumnIndex] == columnBlendCurve)
+                return;
+
+            ChangeState();
+        }
 
         private void dgvStateChanges_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
             if (e.ColumnIndex == 0) return;
 
+            var column = dgvStateChanges.Columns[e.ColumnIndex];
+            if (column == columnBlendCurve)
+                return;
+
             try
             {
                 var cell = dgvStateChanges.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                var name = dgvStateChanges.Columns[e.ColumnIndex].Name;
+                var name = column.Name;
 
                 // For some reason, validating against UInt16 type results in unrecoverable DGV exception on
                 // wrong incoming values, so we're validating against Int16 and filtering out negative values afterwards.
@@ -272,12 +326,6 @@ namespace WadTool
                     {
                         limit = (Int16)(_editor.Animations.Count - 1);
                     }
-                    else if (name == columnNextFrame.Name)
-                    {
-                        Int16 limitNew = 0;
-                        if (Int16.TryParse(dgvStateChanges.Rows[e.RowIndex].Cells[4].Value.ToString(), out limitNew))
-                            limit = (Int16)(_editor.GetRealNumberOfFrames(limitNew));
-                    }
                     else if (name == columnLowFrame.Name)
                     {
                         Int16 limitNew = 0;
@@ -287,6 +335,21 @@ namespace WadTool
                     else if (name == columnHighFrame.Name)
                     {
                         limit = (Int16)(_editor.GetRealNumberOfFrames());
+                    }
+                    else if (name == columnNextLowFrame.Name)
+                    {
+                        Int16 limitNew = 0;
+                        Int16 nextAnim = 0;
+                        Int16.TryParse(dgvStateChanges.Rows[e.RowIndex].Cells[4].Value.ToString(), out nextAnim);
+
+                        if (Int16.TryParse(dgvStateChanges.Rows[e.RowIndex].Cells[6].Value.ToString(), out limitNew))
+                            limit = limitNew == 0 ? (Int16)(_editor.GetRealNumberOfFrames(nextAnim)) : limitNew;
+                    }
+                    else if (name == columnNextHighFrame.Name)
+                    {
+                        Int16 nextAnim = 0;
+                        Int16.TryParse(dgvStateChanges.Rows[e.RowIndex].Cells[4].Value.ToString(), out nextAnim);
+                        limit = (Int16)(_editor.GetRealNumberOfFrames(nextAnim));
                     }
                 }
 
@@ -322,74 +385,11 @@ namespace WadTool
         }
 
         private void butPlayStateChange_Click(object sender, EventArgs e) => ChangeState();
-        private void dgvStateChanges_CellEndEdit(object sender, System.Windows.Forms.DataGridViewCellEventArgs e) => SaveChanges();
-        private void dgvStateChanges_UserDeletedRow(object sender, System.Windows.Forms.DataGridViewRowEventArgs e) => SaveChanges();
+        private void dgvStateChanges_CellEndEdit(object sender, DataGridViewCellEventArgs e) => SaveChanges();
+        private void dgvStateChanges_UserDeletedRow(object sender, DataGridViewRowEventArgs e) => SaveChanges();
 
         private void dgvStateChanges_SelectionChanged(object sender, EventArgs e)
         {
-            bool selection = (dgvStateChanges.SelectedRows.Count > 0) && _editor.Wad.GameVersion == TombLib.LevelData.TRVersion.Game.TombEngine;
-
-            nudBlendEndFrame.Enabled   = selection;
-            nudBlendFrameCount.Enabled = selection;
-            bezierCurveEditor.Enabled  = selection;
-            cbBlendPreset.Enabled      = selection;
-
-            if (!selection)
-                return;
-
-            var item = ((IEnumerable<WadStateChangeRow>)dgvStateChanges.DataSource).ElementAt(dgvStateChanges.SelectedRows[0].Index);
-
-            nudBlendFrameCount.Value = (decimal)item.BlendFrameCount;
-            nudBlendEndFrame.Value = (decimal)item.BlendEndFrame;
-            bezierCurveEditor.Value = item.BlendCurve;
-            cbBlendPreset.SelectedIndex = -1;
-        }
-
-        private void nudBlendFrameCount_ValueChanged(object sender, EventArgs e)
-        {
-            if (dgvStateChanges.SelectedRows.Count <= 0)
-                return;
-
-            var item = ((IEnumerable<WadStateChangeRow>)dgvStateChanges.DataSource).ElementAt(dgvStateChanges.SelectedRows[0].Index);
-            item.BlendFrameCount = (ushort)nudBlendFrameCount.Value;
-        }
-
-        private void nudBlendEndFrame_ValueChanged(object sender, EventArgs e)
-        {
-            if (dgvStateChanges.SelectedRows.Count <= 0)
-                return;
-
-            var item = ((IEnumerable<WadStateChangeRow>)dgvStateChanges.DataSource).ElementAt(dgvStateChanges.SelectedRows[0].Index);
-            item.BlendEndFrame = (ushort)nudBlendEndFrame.Value;
-        }
-
-        private void cbBlendPreset_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            switch (cbBlendPreset.SelectedIndex)
-            {
-                case 0:
-                    bezierCurveEditor.Value.Set(BezierCurve2.Linear);
-                    break;
-
-                case 1:
-                    bezierCurveEditor.Value.Set(BezierCurve2.EaseIn);
-                    break;
-
-                case 2:
-                    bezierCurveEditor.Value.Set(BezierCurve2.EaseOut);
-                    break;
-
-                case 3:
-                    bezierCurveEditor.Value.Set(BezierCurve2.EaseInOut);
-                    break;
-            }
-
-            bezierCurveEditor.UpdateUI();
-        }
-
-        private void bezierCurveEditor_ValueChanged(object sender, EventArgs e)
-        {
-            cbBlendPreset.SelectedIndex = -1;
         }
     }
 }

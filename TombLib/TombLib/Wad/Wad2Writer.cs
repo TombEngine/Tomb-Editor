@@ -406,10 +406,10 @@ namespace TombLib.Wad
                                                 LEB128.Write(chunkIO.Raw, dispatch.InFrame);
                                                 LEB128.Write(chunkIO.Raw, dispatch.OutFrame);
                                                 LEB128.Write(chunkIO.Raw, dispatch.NextAnimation);
-                                                LEB128.Write(chunkIO.Raw, dispatch.NextFrameLow);
+                                                LEB128.Write(chunkIO.Raw, dispatch.NextLowFrame);
 
-                                                LEB128.Write(chunkIO.Raw, dispatch.NextFrameHigh);
-                                                LEB128.Write(chunkIO.Raw, dispatch.BlendFrameCount);
+                                                LEB128.Write(chunkIO.Raw, dispatch.NextHighFrame);
+                                                LEB128.Write(chunkIO.Raw, dispatch.BlendFrames);
 
                                                 chunkIO.WriteChunkVector2(Wad2Chunks.CurveStart, dispatch.BlendCurve.Start);
                                                 chunkIO.WriteChunkVector2(Wad2Chunks.CurveEnd, dispatch.BlendCurve.End);
@@ -438,6 +438,13 @@ namespace TombLib.Wad
                                                                                       animation.EndVelocity,
                                                                                       animation.StartLateralVelocity,
                                                                                       animation.EndLateralVelocity));
+
+                                // Root motion settings
+                                var rootMotion = animation.RootMotion;
+                                int rootMotionFlags = (rootMotion.PositionY ? (1 << 1) : 0) |
+                                                      (rootMotion.PositionZ ? (1 << 2) : 0) |
+                                                      (rootMotion.RotationY ? (1 << 3) : 0);
+                                chunkIO.WriteChunkInt(Wad2Chunks.AnimationRootMotion, rootMotionFlags);
                             });
                         }
                     });

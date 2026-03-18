@@ -3,6 +3,23 @@ using TombLib.Types;
 
 namespace TombLib.Wad
 {
+    public struct WadAnimRootMotionSettings
+    {
+        public bool PositionY { get; set; }
+        public bool PositionZ { get; set; }
+        public bool RotationY { get; set; }
+
+        public int GetBitmask()
+        {
+            int bitmask = 0;
+            if (PositionY) bitmask |= 1 << 1;
+            if (PositionZ) bitmask |= 1 << 2;
+            if (RotationY) bitmask |= 1 << 3;
+
+            return bitmask;
+        }
+    }
+
     public class WadAnimation
     {
         public byte FrameRate { get; set; } = 1;
@@ -23,6 +40,9 @@ namespace TombLib.Wad
         // New parameters for animation blending (TEN only).
         public ushort BlendFrameCount { get; set; }
         public BezierCurve2 BlendCurve { get; set; } = BezierCurve2.Linear.Clone();
+
+        // Root motion settings (TEN only).
+        public WadAnimRootMotionSettings RootMotion { get; set; }
 
         public List<WadKeyFrame> KeyFrames { get; private set; } = new List<WadKeyFrame>();
         public List<WadStateChange> StateChanges { get; private set; } = new List<WadStateChange>();
