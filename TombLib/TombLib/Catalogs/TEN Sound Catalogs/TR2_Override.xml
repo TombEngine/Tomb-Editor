@@ -1349,25 +1349,6 @@
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
-			<Id>285</Id>
-			<Name>TR2_LARA_FLARE_IGNITE</Name>
-			<Volume>80</Volume>
-			<RangeInSectors>20</RangeInSectors>
-			<Chance>100</Chance>
-			<PitchFactor>0</PitchFactor>
-			<DisablePanning>false</DisablePanning>
-			<RandomizePitch>false</RandomizePitch>
-			<RandomizeVolume>false</RandomizeVolume>
-			<LoopBehaviour>None</LoopBehaviour>
-			<Samples>
-				<WadSample>
-					<FileName>TR2_LARA_FLARE_IGNITE.wav</FileName>
-				</WadSample>
-			</Samples>
-			<Global>true</Global>
-			<Indexed>true</Indexed>
-		</WadSoundInfo>
-		<WadSoundInfo>
 			<Id>345</Id>
 			<Name>TR2_LARA_USE_OBJECT</Name>
 			<Volume>50</Volume>
@@ -1400,6 +1381,44 @@
 			<Samples>
 				<WadSample>
 					<FileName>tr2_valve_door_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>true</Global>
+			<Indexed>true</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
+			<Id>378</Id>
+			<Name>TR2_LARA_FLARE_BURN</Name>
+			<Volume>45</Volume>
+			<RangeInSectors>10</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>false</RandomizePitch>
+			<RandomizeVolume>false</RandomizeVolume>
+			<LoopBehaviour>Looped</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>sn012_s0.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>true</Global>
+			<Indexed>true</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
+			<Id>379</Id>
+			<Name>TR2_LARA_FLARE_IGNITE</Name>
+			<Volume>80</Volume>
+			<RangeInSectors>20</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>false</RandomizePitch>
+			<RandomizeVolume>false</RandomizeVolume>
+			<LoopBehaviour>None</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>TR2_LARA_FLARE_IGNITE_01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
