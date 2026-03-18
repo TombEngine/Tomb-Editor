@@ -769,7 +769,6 @@ namespace TombLib.LevelData.Compilers.TombEngine
         public List<TombEngineStateChange> StateChanges;
         public int NumAnimCommands;
         public List<object> CommandData;
-        public int Flags;
         public WadAnimRootMotionSettings RootMotion;
     }
 
