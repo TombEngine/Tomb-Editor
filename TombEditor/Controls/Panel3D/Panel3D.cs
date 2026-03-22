@@ -230,6 +230,7 @@ namespace TombEditor.Controls.Panel3D
                 _rasterizerStateDepthBias?.Dispose();
                 _currentContextMenu?.Dispose();
                 _wadRenderer?.Dispose();
+                _fontDefault?.Dispose();
             }
             base.Dispose(disposing);
         }

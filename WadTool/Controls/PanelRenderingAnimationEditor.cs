@@ -141,7 +141,6 @@ namespace WadTool.Controls
         {
             if (disposing)
             {
-                _fontTexture?.Dispose();
                 _fontDefault?.Dispose();
                 _gizmo?.Dispose();
                 _plane?.Dispose();

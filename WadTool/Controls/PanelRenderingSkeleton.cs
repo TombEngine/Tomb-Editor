@@ -114,7 +114,6 @@ namespace WadTool.Controls
         {
             if (disposing)
             {
-                _fontTexture?.Dispose();
                 _fontDefault?.Dispose();
                 _rasterizerWireframe?.Dispose();
                 _vertexBufferVisibility?.Dispose();
