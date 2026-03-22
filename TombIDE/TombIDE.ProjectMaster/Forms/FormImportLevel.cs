@@ -1,6 +1,4 @@
-﻿#nullable disable // For now
-
-using DarkUI.Controls;
+﻿using DarkUI.Controls;
 using DarkUI.Forms;
 using System;
 using System.Collections.Generic;
@@ -8,54 +6,79 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using TombIDE.ProjectMaster.Services.Level.Import;
+using TombIDE.Shared;
 using TombIDE.Shared.NewStructure;
-using TombIDE.Shared.NewStructure.Implementations;
 using TombIDE.Shared.SharedClasses;
-using TombLib.LevelData;
 
 namespace TombIDE.ProjectMaster
 {
-	public partial class FormImportLevel : DarkForm
+	public partial class FormImportLevel : DarkForm, IProgressReportingForm
 	{
-		public ILevelProject ImportedLevel { get; private set; }
-		public List<string> GeneratedScriptLines { get; private set; }
+		public ILevelProject? ImportedLevel { get; private set; }
+		public ScriptGenerationResult? GeneratedScript { get; private set; }
 
-		private IGameProject _targetProject;
+		private readonly IGameProject _targetProject;
+		private readonly ILevelImportService _importService;
+		private readonly string _sourcePrj2FilePath;
 
 		#region Initialization
 
-		public FormImportLevel(IGameProject targetProject, string prj2FilePath)
+		public FormImportLevel(IGameProject targetProject, string prj2FilePath, ILevelImportService importService)
 		{
 			_targetProject = targetProject;
+			_importService = importService;
+			_sourcePrj2FilePath = prj2FilePath;
 
 			InitializeComponent();
 
-			// Setup some information
-			textBox_Prj2Path.BackColor = Color.FromArgb(48, 48, 48); // Mark as uneditable
-			textBox_Prj2Path.Text = prj2FilePath;
-			textBox_Prj2Path.Tag = prj2FilePath; // Keep the full path in the Tag (because we are visually changing the text later)
+			ConfigureUI();
+		}
 
-			textBox_LevelName.Text = Path.GetFileNameWithoutExtension(prj2FilePath);
+		private void ConfigureUI()
+		{
+			// Setup path display
+			textBox_Prj2Path.BackColor = Color.FromArgb(48, 48, 48);
+			textBox_Prj2Path.Text = _sourcePrj2FilePath;
 
-			if (targetProject.GameVersion is TRVersion.Game.TR1 or TRVersion.Game.TR2X or TRVersion.Game.TombEngine)
+			textBox_LevelName.Text = Path.GetFileNameWithoutExtension(_sourcePrj2FilePath);
+
+			// Configure script generation visibility
+			if (!GameVersionHelper.IsScriptGenerationSupported(_targetProject))
 			{
 				checkBox_GenerateSection.Checked = checkBox_GenerateSection.Visible = false;
 				panel_ScriptSettings.Visible = false;
 				panel_04.Visible = false;
 			}
-			else if (targetProject.GameVersion is not TRVersion.Game.TR4 and not TRVersion.Game.TRNG)
+			else if (!GameVersionHelper.IsHorizonSettingAvailable(_targetProject))
 			{
 				checkBox_EnableHorizon.Visible = false;
 				panel_ScriptSettings.Height -= 30;
 			}
 
-			if (_targetProject.GameVersion == TRVersion.Game.TR2)
-				numeric_SoundID.Value = 33;
-			else if (_targetProject.GameVersion == TRVersion.Game.TR3)
-				numeric_SoundID.Value = 28;
+			// Set default ambient sound
+			int defaultSoundId = GameVersionHelper.GetDefaultAmbientSoundId(_targetProject);
+
+			if (defaultSoundId > 0)
+				numeric_SoundID.Value = defaultSoundId;
 		}
 
 		#endregion Initialization
+
+		#region ILevelImportProgress
+
+		void IProgressReportingForm.SetTotalProgress(int total)
+		{
+			progressBar.Visible = true;
+			progressBar.BringToFront();
+			progressBar.Maximum = total;
+			progressBar.Value = 0;
+		}
+
+		void IProgressReportingForm.IncrementProgress(int value)
+			=> progressBar.Increment(value);
+
+		#endregion ILevelImportProgress
 
 		#region Level importing methods
 
@@ -65,171 +88,89 @@ namespace TombIDE.ProjectMaster
 
 			try
 			{
-				string levelName = PathHelper.RemoveIllegalPathSymbols(textBox_LevelName.Text.Trim());
-				levelName = LevelHandling.RemoveIllegalNameSymbols(levelName);
+				var importMode = GetSelectedImportMode();
+				bool shouldUpdateSettings = false;
 
-				if (string.IsNullOrWhiteSpace(levelName))
-					throw new ArgumentException("You must enter a valid name for the level.");
+				// For KeepInPlace mode, ask the user if they want to update settings
+				if (importMode == LevelImportMode.KeepInPlace)
+				{
+					DialogResult dialogResult = DarkMessageBox.Show(this,
+						"Do you want to update the \"Game\" settings of all the .prj2 files in the\n" +
+						"specified folder to match the project settings?",
+						"Update settings?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-				if (radioButton_SelectedCopy.Checked && treeView.SelectedNodes.Count == 0)
-					throw new ArgumentException("You must select which .prj2 files you want to import.");
+					shouldUpdateSettings = dialogResult == DialogResult.Yes;
+				}
 
-				string dataFileName = textBox_CustomFileName.Text.Trim();
+				var options = new LevelImportOptions
+				{
+					LevelName = textBox_LevelName.Text,
+					SourcePrj2FilePath = _sourcePrj2FilePath,
+					DataFileName = textBox_CustomFileName.Text,
+					ImportMode = importMode,
+					SelectedFilePaths = GetSelectedFilePaths(),
+					GenerateScript = checkBox_GenerateSection.Checked,
+					AmbientSoundId = (int)numeric_SoundID.Value,
+					EnableHorizon = checkBox_EnableHorizon.Checked,
+					UpdatePrj2SettingsForExternalLevel = shouldUpdateSettings
+				};
 
-				if (string.IsNullOrWhiteSpace(dataFileName))
-					throw new ArgumentException("You must specify the custom DATA file name.");
+				LevelImportResult result = _importService.ImportLevel(_targetProject, options, this);
 
-				if (radioButton_SpecifiedCopy.Checked || radioButton_SelectedCopy.Checked)
-					ImportAndCopyFiles(levelName, dataFileName);
-				else if (radioButton_FolderKeep.Checked)
-					ImportButKeepFiles(levelName, dataFileName);
+				ImportedLevel = result.ImportedLevel;
+				GeneratedScript = result.GeneratedScript;
 			}
 			catch (Exception ex)
 			{
 				DarkMessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
 				button_Import.Enabled = true;
-
 				DialogResult = DialogResult.None;
 			}
 		}
 
-		private void ImportAndCopyFiles(string levelName, string dataFileName)
-		{
-			string fullSpecifiedPrj2FilePath = textBox_Prj2Path.Tag.ToString();
-
-			string levelFolderPath = Path.Combine(_targetProject.LevelsDirectoryPath, levelName); // A path inside the project's /Levels/ folder
-			string specificFileName = Path.GetFileName(fullSpecifiedPrj2FilePath); // The user-specified file name
-
-			// Create the level folder
-			if (!Directory.Exists(levelFolderPath))
-				Directory.CreateDirectory(levelFolderPath);
-
-			if (Directory.EnumerateFileSystemEntries(levelFolderPath).ToArray().Length > 0) // 99% this will never accidentally happen
-				throw new ArgumentException("A folder with the same name as the \"Level name\" already exists in\n" +
-					"the project's /Levels/ folder and it's not empty.");
-
-			if (radioButton_SpecifiedCopy.Checked)
-			{
-				// Only copy the specified file into the created level folder
-				string destPath = Path.Combine(levelFolderPath, specificFileName);
-				File.Copy(fullSpecifiedPrj2FilePath, destPath);
-			}
-			else if (radioButton_SelectedCopy.Checked)
-			{
-				// Check if the user-specified file was selected on the list, if not, then set the TargetPrj2FileName property to null
-				bool specificFileSelected = false;
-
-				// Copy all selected files into the created levelFolderPath
-				foreach (DarkTreeNode node in treeView.SelectedNodes)
-				{
-					if (node.Text == specificFileName)
-						specificFileSelected = true;
-
-					string nodePrj2Path = node.Tag.ToString(); // node.Tag is the full source path of the currently processed file
-					string destPath = Path.Combine(levelFolderPath, Path.GetFileName(nodePrj2Path));
-					File.Copy(nodePrj2Path, destPath);
-				}
-
-				if (!specificFileSelected) // If the user-specified file was not selected on the list
-					specificFileName = null;
-			}
-
-			CreateAndAddLevelToProject(levelName, levelFolderPath, dataFileName, specificFileName);
-		}
-
-		private void ImportButKeepFiles(string levelName, string dataFileName)
-		{
-			string fullSpecifiedPrj2FilePath = textBox_Prj2Path.Tag.ToString();
-
-			string levelFolderPath = Path.GetDirectoryName(fullSpecifiedPrj2FilePath);
-			string specificFile = Path.GetFileName(fullSpecifiedPrj2FilePath);
-
-			CreateAndAddLevelToProject(levelName, levelFolderPath, dataFileName, specificFile);
-		}
-
-		private void CreateAndAddLevelToProject(string levelName, string levelFolderPath, string dataFileName, string specificFileName)
-		{
-			// Create the LevelProject instance
-			var importedLevel = new LevelProject(levelName, levelFolderPath, specificFileName);
-
-			UpdateLevelSettings(importedLevel, dataFileName);
-
-			if (checkBox_GenerateSection.Checked)
-			{
-				int ambientSoundID = (int)numeric_SoundID.Value;
-				bool horizon = checkBox_EnableHorizon.Checked;
-
-				// // // //
-				GeneratedScriptLines = LevelHandling.GenerateScriptLines(levelName, dataFileName, _targetProject.GameVersion, ambientSoundID, horizon);
-				// // // //
-			}
-
-			importedLevel.Save();
-
-			// // // //
-			ImportedLevel = importedLevel;
-			// // // //
-		}
-
-		private void UpdateLevelSettings(ILevelProject importedLevel, string dataFileName)
+		private LevelImportMode GetSelectedImportMode()
 		{
 			if (radioButton_SpecifiedCopy.Checked)
-			{
-				string specifiedFileName = Path.GetFileName(textBox_Prj2Path.Tag.ToString());
-				string internalFilePath = Path.Combine(importedLevel.DirectoryPath, specifiedFileName);
-
-				LevelHandling.UpdatePrj2GameSettings(internalFilePath, _targetProject, dataFileName);
-			}
+				return LevelImportMode.CopySpecifiedFile;
 			else if (radioButton_SelectedCopy.Checked)
-			{
-				UpdateAllPrj2FilesInLevelDirectory(importedLevel, dataFileName);
-			}
-			else if (radioButton_FolderKeep.Checked)
-			{
-				DialogResult result = DarkMessageBox.Show(this, "Do you want to update the \"Game\" settings of all the .prj2 files in the\n" +
-					"specified folder to match the project settings?", "Update settings?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-				if (result == DialogResult.Yes)
-					UpdateAllPrj2FilesInLevelDirectory(importedLevel, dataFileName);
-			}
+				return LevelImportMode.CopySelectedFiles;
+			else
+				return LevelImportMode.KeepInPlace;
 		}
 
-		private void UpdateAllPrj2FilesInLevelDirectory(ILevelProject importedLevel, string dataFileName)
+		private IReadOnlyList<string> GetSelectedFilePaths()
 		{
-			string[] files = Directory.GetFiles(importedLevel.DirectoryPath, "*.prj2", SearchOption.TopDirectoryOnly);
+			if (!radioButton_SelectedCopy.Checked)
+				return [];
 
-			progressBar.Visible = true;
-			progressBar.BringToFront();
-			progressBar.Maximum = files.Length;
-
-			foreach (string file in files)
-			{
-				if (!Prj2Helper.IsBackupFile(file))
-					LevelHandling.UpdatePrj2GameSettings(file, _targetProject, dataFileName);
-
-				progressBar.Increment(1);
-			}
+			return treeView.SelectedNodes
+				.Cast<DarkTreeNode>()
+				.Select(node => node.Tag?.ToString() ?? string.Empty)
+				.Where(filePath => !string.IsNullOrEmpty(filePath))
+				.ToList();
 		}
 
 		#endregion Level importing methods
 
-		#region Other level importing events / methods
+		#region UI Event Handlers
 
 		private void textBox_LevelName_TextChanged(object sender, EventArgs e)
 		{
 			if (!checkBox_CustomFileName.Checked)
-				textBox_CustomFileName.Text = textBox_LevelName.Text.Trim().Replace(' ', '_');
+				textBox_CustomFileName.Text = LevelNameHelper.SuggestDataFileName(textBox_LevelName.Text);
 		}
 
 		private void checkBox_CustomFileName_CheckedChanged(object sender, EventArgs e)
 		{
 			if (checkBox_CustomFileName.Checked)
+			{
 				textBox_CustomFileName.Enabled = true;
+			}
 			else
 			{
 				textBox_CustomFileName.Enabled = false;
-				textBox_CustomFileName.Text = textBox_LevelName.Text.Trim().Replace(' ', '_');
+				textBox_CustomFileName.Text = LevelNameHelper.SuggestDataFileName(textBox_LevelName.Text);
 			}
 		}
 
@@ -237,7 +178,7 @@ namespace TombIDE.ProjectMaster
 		{
 			int cachedCaretPosition = textBox_CustomFileName.SelectionStart;
 
-			textBox_CustomFileName.Text = textBox_CustomFileName.Text.Replace(' ', '_');
+			textBox_CustomFileName.Text = LevelNameHelper.MakeValidVariableName(textBox_CustomFileName.Text);
 			textBox_CustomFileName.SelectionStart = cachedCaretPosition;
 		}
 
@@ -246,8 +187,9 @@ namespace TombIDE.ProjectMaster
 			if (!radioButton_SpecifiedCopy.Checked)
 				return;
 
-			textBox_Prj2Path.Text = textBox_Prj2Path.Tag.ToString(); // Switch back to the full path
-			textBox_Prj2Path.BackColor = Color.FromArgb(48, 48, 48); // Reset the BackColor
+			textBox_Prj2Path.Text = _sourcePrj2FilePath;
+			textBox_Prj2Path.BackColor = Color.FromArgb(48, 48, 48);
+
 			ClearAndDisableTreeView();
 		}
 
@@ -256,9 +198,12 @@ namespace TombIDE.ProjectMaster
 			if (!radioButton_SelectedCopy.Checked)
 				return;
 
-			textBox_Prj2Path.Text = Path.GetDirectoryName(textBox_Prj2Path.Tag.ToString()); // Switch to just the folder path
-			textBox_Prj2Path.BackColor = Color.FromArgb(64, 80, 96); // Change the BackColor to indicate the change
-			EnableAndFillTreeView();
+			string directoryPath = Path.GetDirectoryName(_sourcePrj2FilePath) ?? string.Empty;
+
+			textBox_Prj2Path.Text = directoryPath;
+			textBox_Prj2Path.BackColor = Color.FromArgb(64, 80, 96);
+
+			EnableAndFillTreeView(directoryPath);
 		}
 
 		private void radioButton_SpecificKeep_CheckedChanged(object sender, EventArgs e)
@@ -266,8 +211,11 @@ namespace TombIDE.ProjectMaster
 			if (!radioButton_FolderKeep.Checked)
 				return;
 
-			textBox_Prj2Path.Text = Path.GetDirectoryName(textBox_Prj2Path.Tag.ToString()); // Switch to just the folder path
-			textBox_Prj2Path.BackColor = Color.FromArgb(64, 80, 96); // Change the BackColor to indicate the change
+			string directoryPath = Path.GetDirectoryName(_sourcePrj2FilePath) ?? string.Empty;
+
+			textBox_Prj2Path.Text = directoryPath;
+			textBox_Prj2Path.BackColor = Color.FromArgb(64, 80, 96);
+
 			ClearAndDisableTreeView();
 		}
 
@@ -294,7 +242,7 @@ namespace TombIDE.ProjectMaster
 			button_DeselectAll.Enabled = false;
 		}
 
-		private void EnableAndFillTreeView()
+		private void EnableAndFillTreeView(string directoryPath)
 		{
 			treeView.Enabled = true;
 			button_SelectAll.Enabled = true;
@@ -302,11 +250,8 @@ namespace TombIDE.ProjectMaster
 
 			treeView.Nodes.Clear();
 
-			foreach (string file in Directory.GetFiles(textBox_Prj2Path.Text, "*.prj2", SearchOption.TopDirectoryOnly))
+			foreach (string file in Prj2Helper.GetValidFiles(directoryPath))
 			{
-				if (Prj2Helper.IsBackupFile(file))
-					continue;
-
 				var node = new DarkTreeNode
 				{
 					Text = Path.GetFileName(file),
@@ -317,7 +262,7 @@ namespace TombIDE.ProjectMaster
 			}
 		}
 
-		#endregion Other level importing events / methods
+		#endregion UI Event Handlers
 
 		#region Script section generating
 
@@ -337,8 +282,8 @@ namespace TombIDE.ProjectMaster
 			}
 		}
 
-		private void button_OpenAudioFolder_Click(object sender, EventArgs e) =>
-			SharedMethods.OpenInExplorer(Path.Combine(_targetProject.GetEngineRootDirectoryPath(), "audio"));
+		private void button_OpenAudioFolder_Click(object sender, EventArgs e)
+			=> SharedMethods.OpenInExplorer(Path.Combine(_targetProject.GetEngineRootDirectoryPath(), "audio"));
 
 		#endregion Script section generating
 	}

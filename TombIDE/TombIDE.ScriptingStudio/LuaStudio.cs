@@ -58,7 +58,7 @@ namespace TombIDE.ScriptingStudio
 		}
 
 		private bool IsSilentAction(IIDEEvent obj)
-			=> obj is IDE.ScriptEditor_AppendScriptLinesEvent
+			=> obj is IDE.ScriptEditor_AppendScriptEvent
 			|| obj is IDE.ScriptEditor_ScriptPresenceCheckEvent
 			|| obj is IDE.ScriptEditor_StringPresenceCheckEvent
 			|| obj is IDE.ScriptEditor_RenameLevelEvent;
@@ -77,9 +77,9 @@ namespace TombIDE.ScriptingStudio
 				bool wasLanguageFileAlreadyOpened = languageFileTab != null;
 				bool wasLanguageFileFileChanged = wasLanguageFileAlreadyOpened && EditorTabControl.GetEditorOfTab(languageFileTab).IsContentChanged;
 
-				if (obj is IDE.ScriptEditor_AppendScriptLinesEvent asle && asle.Lines.Count > 0)
+				if (obj is IDE.ScriptEditor_AppendScriptEvent asle && asle.Result.HasContent)
 				{
-					AppendScriptLines(asle.Lines,
+					AppendScript(asle.Result,
 						wasScriptFileAlreadyOpened, wasScriptFileFileChanged,
 						wasLanguageFileAlreadyOpened, wasLanguageFileFileChanged);
 
@@ -106,113 +106,118 @@ namespace TombIDE.ScriptingStudio
 			}
 		}
 
-		private void AppendScriptLines(List<string> inputLines,
+		private void AppendScript(ScriptGenerationResult result,
 			bool wasScriptFileAlreadyOpened, bool wasScriptFileFileChanged,
 			bool wasLanguageFileAlreadyOpened, bool wasLanguageFileFileChanged)
 		{
-			try // !!! This needs some heavy refactoring !!!
+			try
 			{
-				EditorTabControl.OpenFile(PathHelper.GetScriptFilePath(ScriptRootDirectoryPath, TombLib.LevelData.TRVersion.Game.TombEngine));
-
-				if (CurrentEditor is TextEditorBase editor)
+				if (result.GameFlowScript.Length > 0)
 				{
-					editor.AppendText(string.Join(Environment.NewLine, inputLines.Take(10)) + Environment.NewLine);
-					editor.ScrollToLine(editor.LineCount);
+					EditorTabControl.OpenFile(PathHelper.GetScriptFilePath(ScriptRootDirectoryPath, TombLib.LevelData.TRVersion.Game.TombEngine));
 
-					if (!wasScriptFileFileChanged)
-						EditorTabControl.SaveFile(EditorTabControl.SelectedTab);
+					if (CurrentEditor is TextEditorBase editor)
+					{
+						editor.AppendText(Environment.NewLine + result.GameFlowScript + Environment.NewLine);
+						editor.ScrollToLine(editor.LineCount);
 
-					if (!wasScriptFileAlreadyOpened)
-						EditorTabControl.TabPages.Remove(EditorTabControl.SelectedTab);
+						if (!wasScriptFileFileChanged)
+							EditorTabControl.SaveFile(EditorTabControl.SelectedTab);
+
+						if (!wasScriptFileAlreadyOpened)
+							EditorTabControl.TabPages.Remove(EditorTabControl.SelectedTab);
+					}
 				}
 
-				EditorTabControl.OpenFile(PathHelper.GetLanguageFilePath(ScriptRootDirectoryPath, TombLib.LevelData.TRVersion.Game.TombEngine), EditorType.Text);
-
-				if (CurrentEditor is TextEditorBase stringsEditor)
+				if (result.LanguageScript.Length > 0)
 				{
-					var regex = new Regex(@"TEN\.Flow\.SetStrings\((.*)\)", RegexOptions.IgnoreCase);
-					var collectionNameLine = stringsEditor.Document.Lines.FirstOrDefault(line => regex.IsMatch(stringsEditor.Document.GetText(line).Replace(" ", string.Empty)));
+					EditorTabControl.OpenFile(PathHelper.GetLanguageFilePath(ScriptRootDirectoryPath, TombLib.LevelData.TRVersion.Game.TombEngine), EditorType.Text);
 
-					if (collectionNameLine == null)
-						return;
-
-					string stringsVariableName = regex.Match(stringsEditor.Document.GetText(collectionNameLine)).Groups[1].Value;
-
-					regex = new Regex(@"local\s+" + Regex.Escape(stringsVariableName) + @"\s*=");
-					var stringsStartLine = stringsEditor.Document.Lines.FirstOrDefault(line => regex.IsMatch(stringsEditor.Document.GetText(line)));
-
-					if (stringsStartLine == null)
-						return;
-
-					var openingBrackets = new Stack<char>();
-					DocumentLine stopLine = null;
-
-					foreach (DocumentLine line in stringsEditor.Document.Lines)
+					if (CurrentEditor is TextEditorBase stringsEditor)
 					{
-						string lineText = stringsEditor.Document.GetText(line);
+						var regex = new Regex(@"TEN\.Flow\.SetStrings\((.*)\)", RegexOptions.IgnoreCase);
+						var collectionNameLine = stringsEditor.Document.Lines.FirstOrDefault(line => regex.IsMatch(stringsEditor.Document.GetText(line).Replace(" ", string.Empty)));
 
-						if (!lineText.Contains('{') && !lineText.Contains('}'))
-							continue;
+						if (collectionNameLine == null)
+							return;
 
-						foreach (char opener in lineText.Where(c => c == '{'))
-							openingBrackets.Push(opener);
+						string stringsVariableName = regex.Match(stringsEditor.Document.GetText(collectionNameLine)).Groups[1].Value;
 
-						foreach (char closer in lineText.Where(c => c == '}'))
-							openingBrackets.Pop();
+						regex = new Regex(@"local\s+" + Regex.Escape(stringsVariableName) + @"\s*=");
+						var stringsStartLine = stringsEditor.Document.Lines.FirstOrDefault(line => regex.IsMatch(stringsEditor.Document.GetText(line)));
 
-						if (openingBrackets.Count == 0)
+						if (stringsStartLine == null)
+							return;
+
+						var openingBrackets = new Stack<char>();
+						DocumentLine stopLine = null;
+
+						foreach (DocumentLine line in stringsEditor.Document.Lines)
 						{
-							stopLine = line;
-							break;
+							string lineText = stringsEditor.Document.GetText(line);
+
+							if (!lineText.Contains('{') && !lineText.Contains('}'))
+								continue;
+
+							foreach (char opener in lineText.Where(c => c == '{'))
+								openingBrackets.Push(opener);
+
+							foreach (char closer in lineText.Where(c => c == '}'))
+								openingBrackets.Pop();
+
+							if (openingBrackets.Count == 0)
+							{
+								stopLine = line;
+								break;
+							}
 						}
-					}
 
-					if (stopLine == null || !stringsEditor.Document.GetText(stopLine).Trim().Equals("}"))
-						return;
+						if (stopLine == null || !stringsEditor.Document.GetText(stopLine).Trim().Equals("}"))
+							return;
 
-					for (int i = stopLine.LineNumber - 1; i > 0; i--)
-					{
-						DocumentLine line = stringsEditor.Document.GetLineByNumber(i);
-						string lineText = stringsEditor.Document.GetText(line);
-
-						string cleanLine = Regex.Replace(lineText, "--.*$", string.Empty).TrimEnd();
-
-						if (cleanLine.EndsWith("}") || cleanLine.EndsWith("},"))
+						for (int i = stopLine.LineNumber - 1; i > 0; i--)
 						{
-							stringsEditor.Select(line.EndOffset, 0);
+							DocumentLine line = stringsEditor.Document.GetLineByNumber(i);
+							string lineText = stringsEditor.Document.GetText(line);
 
-							if (cleanLine.EndsWith("}"))
-								stringsEditor.SelectedText += ",";
+							string cleanLine = Regex.Replace(lineText, "--.*$", string.Empty).TrimEnd();
 
-							stringsEditor.SelectedText += Environment.NewLine;
+							if (cleanLine.EndsWith("}") || cleanLine.EndsWith("},"))
+							{
+								stringsEditor.Select(line.EndOffset, 0);
 
-							stringsEditor.SelectedText += string.Join(Environment.NewLine, inputLines.Skip(10));
-							stringsEditor.ResetSelectionAt(line.LineNumber + 1);
-							stringsEditor.ScrollToLine(line.LineNumber + 1);
+								if (cleanLine.EndsWith("}"))
+									stringsEditor.SelectedText += ",";
 
-							break;
+								stringsEditor.SelectedText += Environment.NewLine;
+
+								stringsEditor.SelectedText += result.LanguageScript;
+								stringsEditor.ResetSelectionAt(line.LineNumber + 1);
+								stringsEditor.ScrollToLine(line.LineNumber + 1);
+
+								break;
+							}
 						}
+
+						if (!wasLanguageFileFileChanged)
+							EditorTabControl.SaveFile(EditorTabControl.SelectedTab);
+
+						if (!wasLanguageFileAlreadyOpened)
+							EditorTabControl.TabPages.Remove(EditorTabControl.SelectedTab);
 					}
-
-					if (!wasLanguageFileFileChanged)
-						EditorTabControl.SaveFile(EditorTabControl.SelectedTab);
-
-					if (!wasLanguageFileAlreadyOpened)
-						EditorTabControl.TabPages.Remove(EditorTabControl.SelectedTab);
 				}
 
-				string dataName = inputLines[0].Trim().Remove(0, 3).Replace(" level", string.Empty);
-				string filePath = Path.Combine(ScriptRootDirectoryPath, "Levels", dataName + ".lua");
+				// Create any new script files specified by the generation result
+				foreach (GeneratedScriptFile file in result.FilesToCreate)
+				{
+					string filePath = Path.Combine(ScriptRootDirectoryPath, file.RelativePath);
+					string directory = Path.GetDirectoryName(filePath);
 
-				File.WriteAllText(filePath,
-					$"-- FILE: Levels\\{dataName}.lua\n\n" +
-					"LevelFuncs.OnLoad = function() end\n" +
-					"LevelFuncs.OnSave = function() end\n" +
-					"LevelFuncs.OnStart = function() end\n" +
-					"LevelFuncs.OnLoop = function() end\n" +
-					"LevelFuncs.OnEnd = function() end\n" +
-					"LevelFuncs.OnUseItem = function() end\n" +
-					"LevelFuncs.OnFreeze = function() end\n");
+					if (directory is not null && !Directory.Exists(directory))
+						Directory.CreateDirectory(directory);
+
+					File.WriteAllText(filePath, file.Content);
+				}
 			}
 			catch
 			{

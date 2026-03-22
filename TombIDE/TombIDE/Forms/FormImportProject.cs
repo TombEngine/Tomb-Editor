@@ -119,7 +119,7 @@ namespace TombIDE
 				if (Directory.Exists(levelsDirectoryPath))
 				{
 					// Check if the directory contains non-backup .prj2 files
-					List<string> prj2Files = LevelHandling.GetValidPrj2FilesFromDirectory(levelsDirectoryPath);
+					IReadOnlyList<string> prj2Files = Prj2Helper.GetValidFiles(levelsDirectoryPath, SearchOption.AllDirectories);
 
 					if (prj2Files.Count > 0)
 					{
