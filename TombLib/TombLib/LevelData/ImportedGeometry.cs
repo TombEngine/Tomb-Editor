@@ -37,7 +37,6 @@ namespace TombLib.LevelData
 
         private ImportedGeometryTexture(ImportedGeometryTexture other)
         {
-            DirectXTexture = other.DirectXTexture;
             AbsolutePath = other.AbsolutePath;
             Image = other.Image;
         }
