@@ -668,8 +668,9 @@ namespace TombEditor.Controls.Panel3D
                 if (!instance.Valid)
                     continue;
 
-                // Create a vertex array
-                SolidVertex[] vtxs = new SolidVertex[84]; // 78 with diagonal steps
+                // Reuse cached vertex array
+                SolidVertex[] vtxs = _ghostBlockVertices;
+                Array.Clear(vtxs, 0, vtxs.Length);
 
                 // Derive base sector colours
                 var p1c = new Vector4(baseColor.To3() * (selected ? 0.8f : 0.4f), selected ? 0.7f : 0.5f);

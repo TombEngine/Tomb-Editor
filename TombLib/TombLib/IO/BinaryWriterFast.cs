@@ -52,6 +52,8 @@ namespace TombLib.IO
             _ptr = null;
             _startPtr = null;
             _baseStream = null;
+
+            GC.SuppressFinalize(this);
         }
 
         public Stream BaseStream
