@@ -234,14 +234,6 @@ namespace TombLib.LevelData
             Info = info;
             LoadException = null;
             DirectXModel = null;
-
-            // Dispose GPU textures that are exclusive to this geometry and won't be reused.
-            foreach (var texture in Textures)
-            {
-                if (!absolutePathTextureLookup.ContainsKey(texture.AbsolutePath))
-                    texture.Dispose();
-            }
-
             Textures.Clear();
 
             try
