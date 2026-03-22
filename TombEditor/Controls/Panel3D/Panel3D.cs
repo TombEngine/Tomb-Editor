@@ -135,6 +135,8 @@ namespace TombEditor.Controls.Panel3D
         private Buffer<SolidVertex> _objectHeightLineVertexBuffer;
         private Buffer<SolidVertex> _flybyPathVertexBuffer;
         private Buffer<SolidVertex> _ghostBlockVertexBuffer;
+        private SolidVertex[] _ghostBlockVertices = new SolidVertex[84];
+        private float[] _roomsDistanceCache;
         private Buffer<SolidVertex> _boxVertexBuffer;
 
         // Flyby stuff

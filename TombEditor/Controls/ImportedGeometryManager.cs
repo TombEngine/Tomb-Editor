@@ -139,6 +139,7 @@ namespace TombEditor.Controls
 
         private readonly Color _correctColor;
         private readonly Color _wrongColor;
+        private ListChangedEventHandler _listChangedHandler;
 
         public ImportedGeometryManager()
         {
@@ -193,7 +194,7 @@ namespace TombEditor.Controls
             };
             dataGridView.DataSource = _dataGridViewDataSource;
             dataGridViewControls.DeleteRowCheckIfCancel = MessageUserAboutHimDeletingRows;
-            _dataGridViewDataSource.ListChanged += delegate (object sender, ListChangedEventArgs e)
+            _listChangedHandler = delegate (object sender, ListChangedEventArgs e)
                 {
                     switch (e.ListChangedType)
                     {
@@ -203,6 +204,7 @@ namespace TombEditor.Controls
                             break;
                     }
                 };
+            _dataGridViewDataSource.ListChanged += _listChangedHandler;
 
             Enabled = true;
 
@@ -214,6 +216,7 @@ namespace TombEditor.Controls
         {
             if (disposing)
             {
+                _dataGridViewDataSource.ListChanged -= _listChangedHandler;
                 components?.Dispose();
                 Editor.Instance.EditorEventRaised -= EditorEventRaised;
             }

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Buffers.Binary;
 using System.IO;
 using TombLib.Graphics;
 using TombLib.Utils;
+using Blake3Hasher = Blake3.Hasher;
 
 namespace TombLib.Wad
 {
@@ -20,14 +22,20 @@ namespace TombLib.Wad
         {
             Image = image;
 
-            using (var ms = new MemoryStream())
-            {
-                var writer = new BinaryWriter(ms);
-                writer.Write(Image.Size.X);
-                writer.Write(Image.Size.Y);
-                Image.WriteToStreamRaw(ms);
-                Hash = Hash.FromByteArray(ms.ToArray());
-            }
+            // Hash image dimensions and pixel data directly without intermediate copies.
+            using var hasher = Blake3Hasher.New();
+            Span<byte> header = stackalloc byte[8];
+            BinaryPrimitives.WriteInt32LittleEndian(header, Image.Size.X);
+            BinaryPrimitives.WriteInt32LittleEndian(header.Slice(4), Image.Size.Y);
+            hasher.Update(header);
+            hasher.Update(Image.ToByteArray());
+
+            Span<byte> digest = stackalloc byte[32];
+            hasher.Finalize(digest);
+
+            ulong low = BinaryPrimitives.ReadUInt64LittleEndian(digest.Slice(0, 8));
+            ulong high = BinaryPrimitives.ReadUInt64LittleEndian(digest.Slice(8, 8));
+            Hash = new Hash { HashLow = low, HashHigh = high };
         }
 
         public override Texture Clone() => this;

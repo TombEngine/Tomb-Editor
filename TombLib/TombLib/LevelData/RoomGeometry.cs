@@ -93,6 +93,10 @@ namespace TombLib.LevelData
 
         private void ClearGeometryData()
         {
+            // Preserve previous capacity to avoid repeated internal array resizing.
+            int prevVertexCount = VertexPositions.Count;
+            int prevTriangleCount = TriangleTextureAreas.Count;
+
             VertexPositions.Clear();
             VertexEditorUVs.Clear();
             VertexColors.Clear();
@@ -101,6 +105,19 @@ namespace TombLib.LevelData
             SharedVertices.Clear();
             VertexRangeLookup.Clear();
             DoubleSidedTriangleCount = 0;
+
+            if (prevVertexCount > 0)
+            {
+                VertexPositions.EnsureCapacity(prevVertexCount);
+                VertexEditorUVs.EnsureCapacity(prevVertexCount);
+                VertexColors.EnsureCapacity(prevVertexCount);
+            }
+
+            if (prevTriangleCount > 0)
+            {
+                TriangleTextureAreas.EnsureCapacity(prevTriangleCount);
+                TriangleSectorInfo.EnsureCapacity(prevTriangleCount);
+            }
         }
 
         private static bool IsCornerSector(int x, int z, int xMax, int zMax)
