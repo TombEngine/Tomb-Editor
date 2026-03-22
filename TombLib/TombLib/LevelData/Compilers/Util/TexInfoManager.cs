@@ -52,7 +52,9 @@ namespace TombLib.LevelData.Compilers.Util
 
         private List<ParentAnimatedTexture> _referenceAnimTextures = new List<ParentAnimatedTexture>();
         private List<ParentAnimatedTexture> _actualAnimTextures = new List<ParentAnimatedTexture>();
-        private HashSet<(Rectangle2 parentRect, Rectangle2 subRect)> _processedSubAreas = new HashSet<(Rectangle2, Rectangle2)>();
+
+        private record SubAreaKey(Texture Texture, Rectangle2 ParentRect, Rectangle2 SubRect);
+        private HashSet<SubAreaKey> _processedSubAreas = new HashSet<SubAreaKey>();
 
         // UVRotate count should be placed after anim texture data to identify how many first anim seqs
         // should be processed using UVRotate engine function
@@ -834,7 +836,8 @@ namespace TombLib.LevelData.Compilers.Util
             // Check if this is a sub-area of an animated texture (e.g. applied via group texturing tools).
             // In this case, the actual UV coordinates represent a portion of the full animation frame,
             // so we reconstruct the full frame from ParentArea and match against reference animations.
-            if (!texture.ParentArea.IsZero && _referenceAnimTextures.Count > 0)
+            if (!texture.ParentArea.IsZero && _referenceAnimTextures.Count > 0 &&
+                texture.ParentArea != texture.GetRect(isForTriangle))
             {
                 TextureArea fullTexture = texture;
                 fullTexture.TexCoord0 = new Vector2(texture.ParentArea.X0, texture.ParentArea.Y0);
@@ -888,10 +891,8 @@ namespace TombLib.LevelData.Compilers.Util
                         if (mfRect.Width == 0 || mfRect.Height == 0)
                             continue;
 
-                        // Skip if this sub-area was already processed
-                        var subAreaKey = (parentRect, subRect);
-
-                        if (!_processedSubAreas.Add(subAreaKey))
+                        // Skip if this sub-area was already processed for this texture
+                        if (!_processedSubAreas.Add(new SubAreaKey(texture.Texture, parentRect, subRect)))
                             continue;
 
                         float relX0 = (subRect.X0 - mfRect.X0) / mfRect.Width;
