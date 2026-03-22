@@ -1270,9 +1270,12 @@ namespace TombLib.LevelData.Compilers
                 texture.ParentArea != texture.GetRect(isForTriangle))
             {
                 TextureArea fullTexture = AnimatedTextureLookupUtility.CreateFullParentAreaTexture(texture);
+                int initialReferenceAnimTextureCount = _referenceAnimTextures.Count;
 
-                foreach (var refTex in _referenceAnimTextures)
+                for (int i = 0; i < initialReferenceAnimTextureCount; i++)
                 {
+                    var refTex = _referenceAnimTextures[i];
+
                     // UVRotate and Video animation types are incompatible with sub-area splitting
                     // because they rely on specific frame arrangement assumptions (vertical strip scrolling
                     // for UVRotate, sequential frame playback for Video) that break when coordinates
