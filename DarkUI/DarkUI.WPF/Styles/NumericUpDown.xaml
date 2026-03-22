@@ -16,6 +16,7 @@
 
 		<!--  Brushes  -->
 		<Setter Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+		<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
 
 		<!--  Thicknesses  -->
 		<Setter Property="BorderThickness" Value="{x:Static local:Defaults.BorderThickness}" />

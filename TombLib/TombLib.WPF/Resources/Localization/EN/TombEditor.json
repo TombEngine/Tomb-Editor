@@ -1,11 +1,8 @@
 {
-    "ContentBrowserView": {
+    "ContentBrowser": {
         "SearchPlaceholder": "Search assets...",
         "EmptyStateMessage": "Click here to load a new WAD file.",
-        "Size": "Size"
-    },
-
-    "ContentBrowser": {
+        "Size": "Size",
         "FilterAll": "All",
         "FilterMoveables": "Moveables",
         "FilterStatics": "Statics",
@@ -20,7 +17,7 @@
         "ItemCount": "{0} items"
     },
 
-    "ObjectBrushToolboxView": {
+    "ObjectBrushToolbox": {
         "Radius": "Radius:",
         "Density": "Density:",
         "Rotation": "Rotation:",
@@ -33,11 +30,7 @@
         "PlaceInAdjacentRooms": "Place in adjacent rooms"
     },
 
-    "ToolBox": {
-        "GridPaint": "Grid Paint ({0})"
-    },
-
-    "ToolBoxView": {
+    "Toolbox": {
         "CircleBrushShape": "Circle Brush Shape",
         "SquareBrushShape": "Square Brush Shape",
         "Selection": "Selection",
@@ -63,6 +56,495 @@
         "Invisibility": "Invisibility",
         "PortalDigger": "Portal Digger",
         "FixTextureCoordinates": "Fix Texture Coordinates",
-        "ShowTextures": "Show Textures"
+        "ShowTextures": "Show Textures",
+        "GridPaint": "Grid Paint ({0})"
+    },
+
+    "MainWindow": {
+        "FileMenu": {
+            "File": "File",
+            "NewLevel": "New level",
+            "OpenLevel": "Open existing level...",
+            "OpenRecent": "Open recent",
+            "SaveLevel": "Save level",
+            "SaveLevelAs": "Save level as...",
+            "ImportPrj": "Import TRLE level...",
+            "ConvertLevelToTombEngine": "Convert level to TombEngine...",
+            "BuildAndPlay": "Build level and play",
+            "BuildLevel": "Build level",
+            "QuitEditor": "Quit editor"
+        },
+
+        "EditMenu": {
+            "Edit": "Edit",
+            "Undo": "Undo",
+            "Redo": "Redo",
+            "Cut": "Cut",
+            "Copy": "Copy",
+            "Paste": "Paste",
+            "StampObject": "Stamp object",
+            "Delete": "Delete",
+            "SelectAll": "Select all",
+            "BookmarkObject": "Bookmark object",
+            "SelectBookmarkedObject": "Select bookmarked object",
+            "EditObject": "Edit object properties...",
+            "EditVolumeEventSets": "Edit volume event sets...",
+            "EditGlobalEventSets": "Edit global event sets...",
+            "Search": "Search...",
+            "SearchAndReplaceObjects": "Search and replace objects..."
+        },
+
+        "ViewMenu": {
+            "View": "View",
+            "ResetCamera": "Reset camera position",
+            "RelocateCamera": "Relocate camera",
+            "ToggleFlyMode": "Toggle fly mode",
+            "DrawWhiteTextureLightingOnly": "Draw untextured in lighting mode",
+            "ShowRealTintForObjects": "Show real tint for objects"
+        },
+
+        "RoomsMenu": {
+            "Rooms": "Rooms",
+            "NewRoom": "New room",
+            "NewRoomUp": "New room up",
+            "NewRoomDown": "New room down",
+            "NewRoomLeft": "New room left",
+            "NewRoomRight": "New room right",
+            "NewRoomFront": "New room front",
+            "NewRoomBack": "New room back",
+            "DuplicateRoom": "Duplicate rooms",
+            "CropRoom": "Crop room...",
+            "SplitRoom": "Split room",
+            "MergeRoomsHorizontally": "Merge rooms horizontally",
+            "DeleteRooms": "Delete rooms",
+            "MoveRooms": "Move rooms",
+            "MoveRoomUp": "Move rooms up",
+            "MoveRoomUp4Clicks": "Move rooms up (4 clicks)",
+            "MoveRoomDown": "Move rooms down",
+            "MoveRoomDown4Clicks": "Move rooms down (4 clicks)",
+            "MoveRoomLeft": "Move rooms left",
+            "MoveRoomRight": "Move rooms right",
+            "MoveRoomForward": "Move rooms forward",
+            "MoveRoomBack": "Move rooms back",
+            "TransformRooms": "Transform rooms",
+            "RotateRoomsClockwise": "Rotate rooms clockwise",
+            "RotateRoomsCounterClockwise": "Rotate rooms counter-clockwise",
+            "MirrorRoomsX": "Mirror rooms on X axis",
+            "MirrorRoomsZ": "Mirror rooms on Z axis",
+            "SelectRooms": "Select rooms",
+            "SelectWaterRooms": "Select water rooms",
+            "SelectSkyRooms": "Select sky rooms",
+            "SelectOutsideRooms": "Select outside rooms",
+            "SelectQuicksandRooms": "Select quicksand rooms",
+            "SelectConnectedRooms": "Select connected rooms",
+            "SelectRoomsByTags": "Select rooms by tags",
+            "ExportRooms": "Export rooms...",
+            "ImportRooms": "Import rooms...",
+            "ApplyRoomProperties": "Apply room properties..."
+        },
+
+        "ItemsMenu": {
+            "Items": "Items",
+            "AddWad": "Add wad...",
+            "RemoveWads": "Remove all wads",
+            "ReloadWads": "Reload all wads",
+            "ReloadSounds": "Reload all sound catalogs",
+            "AddItem": "Add item",
+            "AddCamera": "Add camera",
+            "AddFlybyCamera": "Add flyby camera",
+            "AddSprite": "Add sprite",
+            "AddSink": "Add sink",
+            "AddSoundSource": "Add sound source",
+            "AddImportedGeometry": "Add imported geometry",
+            "AddGhostBlock": "Add ghost block",
+            "AddMemo": "Add memo",
+            "AddPortal": "Add portal",
+            "AddTrigger": "Add trigger...",
+            "AddBoxVolume": "Add box volume",
+            "AddSphereVolume": "Add sphere volume",
+            "DeleteAllLights": "Delete all lights in selected rooms",
+            "DeleteAllObjects": "Delete all objects in selected rooms",
+            "DeleteAllTriggers": "Delete all triggers in selected rooms",
+            "DeleteMissingObjects": "Delete missing objects",
+            "LocateItem": "Locate item",
+            "MoveLara": "Move Lara here",
+            "SelectAllObjectsInArea": "Select all objects in selected area",
+            "SelectFloorBelowObject": "Select floor below current object",
+            "SplitSectorObjectOnSelection": "Split sector based object on selection",
+            "SetStaticMeshesColorToRoomLight": "Set room static meshes color to room light",
+            "SetStaticMeshesColor": "Set room static meshes color",
+            "MakeQuickItemGroup": "Make quick itemgroup",
+            "GetObjectStatistics": "Copy object statistics into clipboard",
+            "GenerateObjectNames": "Generate Lua names for unnamed objects"
+        },
+
+        "TexturesMenu": {
+            "Textures": "Textures",
+            "AddTexture": "Add texture...",
+            "RemoveTextures": "Remove all textures",
+            "UnloadTextures": "Unload all textures",
+            "ReloadTextures": "Reload all textures",
+            "ConvertTexturesToPNG": "Convert all textures to PNG",
+            "RemapTexture": "Remap texture...",
+            "TextureFloor": "Texture floor",
+            "TextureWalls": "Texture walls",
+            "TextureCeiling": "Texture ceiling",
+            "ClearAllTexturesInRoom": "Clear all textures in room",
+            "ClearAllTexturesInLevel": "Clear all textures in level",
+            "SearchTextures": "Search textures...",
+            "EditAnimationRanges": "Edit animation ranges..."
+        },
+
+        "TransformMenu": {
+            "Transform": "Transform",
+            "IncreaseStepHeight": "Increase step height",
+            "DecreaseStepHeight": "Decrease step height",
+            "SmoothRandomFloorUp": "Smooth random floor up",
+            "SmoothRandomFloorDown": "Smooth random floor down",
+            "SmoothRandomCeilingUp": "Smooth random ceiling up",
+            "SmoothRandomCeilingDown": "Smooth random ceiling down",
+            "SharpRandomFloorUp": "Sharp random floor up",
+            "SharpRandomFloorDown": "Sharp random floor down",
+            "SharpRandomCeilingUp": "Sharp random ceiling up",
+            "SharpRandomCeilingDown": "Sharp random ceiling down",
+            "AverageFloor": "Average floor",
+            "AverageCeiling": "Average ceiling",
+            "FlattenFloor": "Flatten floor",
+            "FlattenCeiling": "Flatten ceiling",
+            "ResetGeometry": "Reset all geometry",
+            "GridWallsIn3": "Grid walls in 3",
+            "GridWallsIn5": "Grid walls in 5",
+            "GridWallsIn3Squares": "Grid walls in 3 (squares)",
+            "GridWallsIn5Squares": "Grid walls in 5 (squares)"
+        },
+
+        "ToolsMenu": {
+            "Tools": "Tools",
+            "EditLevelSettings": "Level settings...",
+            "EditOptions": "Editor options...",
+            "EditKeyboardLayout": "Edit keyboard layout...",
+            "StartWadTool": "Start Wad Tool...",
+            "StartSoundTool": "Start Sound Tool..."
+        },
+
+        "WindowMenu": {
+            "Window": "Window",
+            "RestoreDefaultLayout": "Restore default layout",
+            "ShowSectorOptions": "Sector Options",
+            "ShowRoomOptions": "Room Options",
+            "ShowItemBrowser": "Item Browser",
+            "ShowImportedGeometryBrowser": "Imported Geometry Browser",
+            "ShowTriggerList": "Trigger List",
+            "ShowLighting": "Lighting",
+            "ShowPalette": "Palette",
+            "ShowTexturePanel": "Texture Panel",
+            "ShowObjectList": "Object List",
+            "ShowStatistics": "Statistics",
+            "ShowToolPalette": "Tool Palette",
+            "ShowToolPaletteFloating": "Tool Palette (floating)"
+        },
+
+        "HelpMenu": {
+            "Help": "Help",
+            "About": "About Tomb Editor..."
+        }
+    },
+
+    "SectorOptions": {
+        "SetFloor": "Set floor",
+        "SetCeiling": "Set ceiling",
+        "SetBox": "Set box sector property",
+        "SetNotWalkable": "Set non-walkable floor",
+        "SetMonkeyswing": "Set monkeyswing sector property",
+        "SetDeath": "Set death sector property",
+        "AddPortal": "Add portal",
+        "SetWall": "Set wall",
+        "SetTriggerTriggerer": "Set trigger triggerer / minecart left (TR3)",
+        "SetBeetleCheckpoint": "Set beetle checkpoint / minecart right (TR3)",
+        "SetClimbPositiveZ": "Climb on North sector side",
+        "SetClimbNegativeZ": "Climb on South sector side",
+        "SetClimbNegativeX": "Climb on West sector side",
+        "SetClimbPositiveX": "Climb on East sector side",
+        "AddGhostBlocksToSelection": "Add ghost blocks to selected area",
+        "ToggleForceFloorSolid": "Force solid floor",
+        "FloorStep": "Floor step",
+        "CeilingStep": "Ceiling step",
+        "DiagonalWall": "Diag wall"
+    },
+
+    "RoomOptions": {
+        "EmptyRoom": "--- Empty room ---",
+        "Tags": "Tags:",
+        "RoomType": "Room type",
+        "Flipmap": "Flipmap",
+        "Reverb": "Reverb",
+        "FlipmapNone": "None",
+        "Skybox": "Skybox",
+        "Wind": "Wind",
+        "Damage": "Damage",
+        "Cold": "Cold",
+        "NoPathfinding": "No pathfinding",
+        "NoLensflare": "No lensflare",
+        "NoCaustics": "No caustics",
+        "Ambient": "Ambient",
+        "PortalShade": "Portal shade",
+        "Effect": "Effect:"
+    },
+
+    "Lighting": {
+        "TypePoint": "Point",
+        "TypeShadow": "Shadow",
+        "TypeSpot": "Spot",
+        "TypeEffect": "Effect",
+        "TypeSun": "Sun",
+        "TypeFogBulb": "Fog bulb",
+        "DefaultQuality": "Default quality",
+        "Enabled": "Enabled",
+        "Obstruct": "Obstruct",
+        "Shadow": "Shadow",
+        "Static": "Static",
+        "Dynamic": "Dynamic",
+        "Imported": "Imported",
+        "Color": "Color",
+        "Intensity": "Intensity",
+        "InnerDistance": "In d",
+        "OuterDistance": "Out d",
+        "InnerAngle": "In \u03b1",
+        "OuterAngle": "Out \u03b1",
+        "DirectionY": "Dir Y",
+        "DirectionX": "Dir X"
+    },
+
+    "ItemBrowser": {
+        "LocateItem": "Locate item"
+    },
+
+    "ImportedGeometryBrowser": {
+        "LocateItem": "Locate item"
+    },
+
+    "TexturePanel": {
+        "Animations": "Animations",
+        "Sounds": "Sounds",
+        "Bumpmaps": "Bumpmaps",
+        "Materials": "Materials"
+    },
+
+    "AnimatedTexturesWindow": {
+        "AnimatedTexturesTitle": "Animated textures",
+        "AnimationSet": "Animation set:",
+        "EditSetButton": "Edit Animation set name",
+        "AddSetButton": "Add animation set",
+        "DeleteSetButton": "Delete animation set",
+        "Image": "Image",
+        "Texture": "Texture",
+        "Repeat": "Repeat",
+        "Area": "Area",
+        "Edge0": "Edge 0",
+        "Edge1": "Edge 1",
+        "Edge2": "Edge 2",
+        "Edge3": "Edge 3",
+        "EditFrameButton": "Replace frame with selected texture",
+        "AddFrameButton": "Add frame",
+        "DeleteFrameButton": "Delete frame",
+        "PrevFrame": "Select previous frame",
+        "NextFrame": "Select next frame",
+        "ProcAnimTool": "Procedural animation tool",
+        "Animator": "Animator:",
+        "ProgressPerc": "Progress %:",
+        "StretchHorizontal": "Stretch horizontal",
+        "StretchVertical": "Stretch vertical",
+        "Scale": "Scale",
+        "SkewHorizontalRL": "Skew horizontal \u2196",
+        "SkewHorizontalLR": "Skew horizontal \u2197",
+        "SkewVerticalRL": "Skew vertical \u2196",
+        "SkewVerticalLR": "Skew horizontal \u2197",
+        "Spin": "Spin",
+        "PanHorizontal": "Pan horizontal",
+        "PanVertical": "Pan vertical",
+        "Shake": "Shake",
+        "Symmetric": "Symmetric",
+        "Smooth": "Smooth",
+        "Setting": "Setting",
+        "Type": "Type:",
+        "DefaultUVRotate": "Default (from script)",
+        "Preview": "Preview"
+    },
+
+    "BumpMapsWindow": {
+        "BumpmapsTitle": "Bumpmaps",
+        "UseCustomFile": "Use custom file:",
+        "CustomMapPath": "path to custom file",
+        "BumpmapsNone": "None",
+        "BumpmapsLevel1": "Level 1",
+        "BumpmapsLevel2": "Level 2",
+        "BumpmapsLevel3": "Level 3",
+        "AssignBumpmap": "Assign bumpmap"
+    },
+
+    "CameraWindow": {
+        "CameraTitle": "Edit camera",
+        "CameraGlideTimer": "Glide timer:",
+        "CameraGlideOut": "Glide out",
+        "CameraMode": "Camera mode:",
+        "CameraDefault": "Default",
+        "CameraLocked": "Locked"
+    },
+
+    "ChooseRoomWindow": {
+        "ChooseRoomTitle": "Choose a room",
+        "ChooseRoomtitleLabel": "titleLabel"
+    },
+
+    "FindTexturesWindow": {
+        "FindTexturesTitle": "Search textures",
+        "FindTexturesGridColRoom": "Room",
+        "FindTexturesGridBlock": "Block",
+        "FindTexturesFind": "Find",
+        "UntexturedFaces": "Untextured faces",
+        "InvisibleFaces": "Invisible faces",
+        "TexturesMissing": "Textures missing or out of bounds",
+        "ExactMatch": "Exact match with selected texture",
+        "PartialMatch": "Partial match with selected texture",
+        "TextureSetOnly": "Texture set only",
+        "SelectedRooms": "Selected rooms only",
+        "NewSearch": "New search"
+    },
+
+    "FlybyCameraWindow": {
+        "FlybyCameraTitle": "Flyby Camera",
+        "Sequence": "Sequence:",
+        "Number": "Number:",
+        "Timer": "Timer:",
+        "Speed": "Speed:",
+        "FOV": "FOV:",
+        "Roll": "Roll:",
+        "RotationX": "Rotation X:",
+        "RotationY": "Rotation Y:",
+        "cbBit0": "Make a cut to flyby from Lara camera position",
+        "cbBit1": "Track entity position",
+        "cbBit1TR5": "Vignette",
+        "cbBit2": "Infinite loop",
+        "cbBit3": "Create tracking camera",
+        "cbBit4": "Focus on Lara's last head position",
+        "cbBit4TR5": "Hide Lara",
+        "cbBit5": "Focus on Lara's head",
+        "cbBit6": "Snap back to Lara at the end of sequence",
+        "cbBit7": "Jump to another camera in sequence (Timer field)",
+        "cbBit8": "Freeze camera (Timer field)",
+        "cbBit9": "Disable exit from sequence with 'Look At' key",
+        "cbBit10": "Cinematic mode",
+        "cbBit11": "Let Lara move in cinematic mode",
+        "cbBit12": "Make fade-in",
+        "cbBit13": "Make fade-out",
+        "cbBit14": "Activate heavy trigger"
+    },
+
+    "FootStepSoundsWindow": {
+        "TextureSoundsTitle": "Texture sounds",
+        "Mud": "Mud",
+        "Snow": "Snow",
+        "Sand": "Sand",
+        "Gravel": "Gravel",
+        "Ice": "Ice",
+        "Water": "Water",
+        "Stone": "Stone",
+        "Wood": "Wood",
+        "Metal": "Metal",
+        "Marble": "Marble",
+        "Grass": "Grass",
+        "Concrete": "Concrete",
+        "OldWood": "Old Wood",
+        "OldMetal": "Old Metal",
+        "Custom1": "Custom 1",
+        "Custom2": "Custom 2",
+        "Custom3": "Custom 3",
+        "Custom4": "Custom 4",
+        "Custom5": "Custom 5",
+        "Custom6": "Custom 6",
+        "Custom7": "Custom 7",
+        "Custom8": "Custom 8",
+        "AssignSound": "Assign sound"
+    },
+
+    "TriggerWindow": {
+        "TriggerTitle": "Trigger",
+        "TriggerType": "Trigger Type:",
+        "What": "What:",
+        "Param": "(#) Param:",
+        "WrongParameter": "Wrong parameter:",
+        "Locate": "Locate",
+        "Time": "(&) Time:",
+        "Extra": "(E) Extra:",
+        "OneShot": "One Shot",
+        "RawMode": "Raw mode (show numeric values"
+    },
+
+    "ImportedGeometryWindow": {
+        "ImportedGeometry": "Imported Geometry Settings",
+        "IGDescription1": "Select a model from the following list or add a new one by pressing plus button.",
+        "IGDescription2": "Double-click on entry or press 'Assign' to assign the loaded file to this imported geometry object."
+    },
+
+    "ImportedGeometryManager": {
+        "IGName": "Name",
+        "IGNameToolTip": "Name...",
+        "IGPath": "Path",
+        "IGPathToolTip": "Path...",
+        "BrowseToolTip": "Browse...",
+        "ScaleToolTip": "Scale...",
+        "MessageToolTip": "Message...",
+        "SwapXY": "X\u2194Y",
+        "SwapXYToolTip": "Swap X-Y axis",
+        "SwapXZ": "X\u2194Z",
+        "SwapXZToolTip": "Swap X-Z axis",
+        "SwapYZ": "Y\u2194Z",
+        "SwapYZToolTip": "Swap Y-Z axis",
+        "FlipX": "-X",
+        "FlipXToolTip": "Invert X axis",
+        "FlipY": "-Y",
+        "FlipYToolTip": "Invert Y axis",
+        "FlipZ": "-Z",
+        "FlipZToolTip": "Invert Z axis",
+        "MappedUV": "UV Map",
+        "MappedUVToolTip": "Use UV mapping",
+        "FlipUV_V": "UV: -V",
+        "FlipUV_VToolTip": "Invert V texture coordinate",
+        "InvertFaces": "Inv. F.",
+        "InvertFacesToolTip": "Invert faces"
+    },
+
+    "ImportPrjWindow": {
+        "ImportPrjTitle": "Import Prj",
+        "ImportSettings": "Import settings",
+        "BaseSound": "Base sound catalog (optional)",
+        "T4Larson": "Respect T4Larson's mousepatch flyby handling",
+        "T4LarsonDescr": "If you've used a patch which increased maximum amount of flyby sequences in winroomedit, use this option, otherwise flyby indices will be corrupted.",
+        "UseHalfPixelCorrection": "Use half-pixel UV correction",
+        "UseHalfPixelCorrectionDescr": "Legacy texture cropping to prevent border bleeding. Use only if you are about to turn off advanced texture padding in Level settings.",
+        "BrowseP": "Browse...",
+        "SoundCatalog": "Specifiy sound catalog (sounds.txt or xml file). If not specified, legacy SFX/SAM files provided with specified WAD will be used."
+    },
+
+    "KeyboardLayoutWindow": {
+        "KeyboardLayoutTitle": "Keyboard Layout",
+        "SearchCommand": "Search for command:",
+        "TypeCommand": "Type",
+        "Command": "Command",
+        "AddCommand": "Add Command",
+        "DeleteCommand": "Delete Command",
+        "Hotkeys": "Hotkeys",
+        "SetToDefault": "Set all to default",
+        "CancelPush": "Push keys! Click here to cancel!"
+    },
+
+    "Generic": {
+        "OK": "OK",
+        "Cancel": "Cancel",
+        "Close": "Close",
+        "Unused": "Unused",
+        "Frames": "Frames",
+        "Browse": "Browse",
+        "Message": "Message"
     }
 }

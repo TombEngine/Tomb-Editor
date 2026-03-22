@@ -79,6 +79,7 @@ public class LocalizeExtension : MarkupExtension, IMultiValueConverter
 
 	/// <summary>
 	/// Builds a full localization key from the target type and the provided key.
+	/// <para>The class name is used as-is for the component segment; known component suffixes (View, Window, Page, Dialog) are automatically trimmed by <see cref="Localizer"/> during the actual key lookup.</para>
 	/// </summary>
 	/// <param name="targetType">The type to extract namespace and class name from.</param>
 	/// <returns>The full localization key.</returns>
