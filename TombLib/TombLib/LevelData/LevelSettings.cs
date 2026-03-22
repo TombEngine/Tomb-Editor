@@ -755,23 +755,25 @@ namespace TombLib.LevelData
 
         public void ImportedGeometryUpdate(IEnumerable<ImportedGeometryUpdateInfo> geometriesToUpdate)
         {
-            Dictionary<string, Texture> absolutePathTextureLookup = new Dictionary<string, Texture>();
+            var updateList = geometriesToUpdate.ToList();
+            var geometriesBeingUpdated = new HashSet<ImportedGeometry>(updateList.Select(g => g.Key));
+            var absolutePathTextureLookup = new Dictionary<string, Texture>();
 
-            // Add other imported geometry textures to lookup
+            // Add textures from geometries not being updated, so shared textures are preserved
             foreach (ImportedGeometry importedGeometry in ImportedGeometries)
             {
+                if (geometriesBeingUpdated.Contains(importedGeometry))
+                    continue;
+
                 foreach (ImportedGeometryTexture importedGeometryTexture in importedGeometry.Textures)
                 {
                     if (!absolutePathTextureLookup.ContainsKey(importedGeometryTexture.AbsolutePath))
-                    {
                         absolutePathTextureLookup.Add(importedGeometryTexture.AbsolutePath, importedGeometryTexture);
-                    }
                 }
             }
 
             // TODO Ideally we could load these concurrently
-            // Load geometries
-            foreach (ImportedGeometryUpdateInfo geometryToUpdate in geometriesToUpdate)
+            foreach (ImportedGeometryUpdateInfo geometryToUpdate in updateList)
             {
                 geometryToUpdate.Key.Update(this, absolutePathTextureLookup, geometryToUpdate.Value);
             }
