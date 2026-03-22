@@ -52,6 +52,7 @@ namespace TombLib.LevelData.Compilers.Util
 
         private List<ParentAnimatedTexture> _referenceAnimTextures = new List<ParentAnimatedTexture>();
         private List<ParentAnimatedTexture> _actualAnimTextures = new List<ParentAnimatedTexture>();
+        private HashSet<(Rectangle2 parentRect, Rectangle2 subRect)> _processedSubAreas = new HashSet<(Rectangle2, Rectangle2)>();
 
         // UVRotate count should be placed after anim texture data to identify how many first anim seqs
         // should be processed using UVRotate engine function
@@ -865,11 +866,7 @@ namespace TombLib.LevelData.Compilers.Util
                             if (frame.Texture != texture.Texture)
                                 continue;
 
-                            var fRect = new Rectangle2(
-                                MathF.Min(frame.TexCoord0.X, MathF.Min(frame.TexCoord1.X, MathF.Min(frame.TexCoord2.X, frame.TexCoord3.X))),
-                                MathF.Min(frame.TexCoord0.Y, MathF.Min(frame.TexCoord1.Y, MathF.Min(frame.TexCoord2.Y, frame.TexCoord3.Y))),
-                                MathF.Max(frame.TexCoord0.X, MathF.Max(frame.TexCoord1.X, MathF.Max(frame.TexCoord2.X, frame.TexCoord3.X))),
-                                MathF.Max(frame.TexCoord0.Y, MathF.Max(frame.TexCoord1.Y, MathF.Max(frame.TexCoord2.Y, frame.TexCoord3.Y))));
+                            var fRect = Rectangle2.FromCoordinates(frame.TexCoord0, frame.TexCoord1, frame.TexCoord2, frame.TexCoord3);
 
                             if (MathC.WithinEpsilon(fRect.X0, parentRect.X0, _animTextureLookupMargin) &&
                                 MathC.WithinEpsilon(fRect.Y0, parentRect.Y0, _animTextureLookupMargin) &&
@@ -885,11 +882,17 @@ namespace TombLib.LevelData.Compilers.Util
                             continue;
 
                         // Calculate relative sub-area position within the matched frame
-                        var mfRect = new Rectangle2(
-                            MathF.Min(matchedFrame.TexCoord0.X, MathF.Min(matchedFrame.TexCoord1.X, MathF.Min(matchedFrame.TexCoord2.X, matchedFrame.TexCoord3.X))),
-                            MathF.Min(matchedFrame.TexCoord0.Y, MathF.Min(matchedFrame.TexCoord1.Y, MathF.Min(matchedFrame.TexCoord2.Y, matchedFrame.TexCoord3.Y))),
-                            MathF.Max(matchedFrame.TexCoord0.X, MathF.Max(matchedFrame.TexCoord1.X, MathF.Max(matchedFrame.TexCoord2.X, matchedFrame.TexCoord3.X))),
-                            MathF.Max(matchedFrame.TexCoord0.Y, MathF.Max(matchedFrame.TexCoord1.Y, MathF.Max(matchedFrame.TexCoord2.Y, matchedFrame.TexCoord3.Y))));
+                        var mfRect = Rectangle2.FromCoordinates(matchedFrame.TexCoord0, matchedFrame.TexCoord1, matchedFrame.TexCoord2, matchedFrame.TexCoord3);
+
+                        // Skip degenerate frames with zero-sized extents to avoid NaN/Infinity
+                        if (mfRect.Width == 0 || mfRect.Height == 0)
+                            continue;
+
+                        // Skip if this sub-area was already processed
+                        var subAreaKey = (parentRect, subRect);
+
+                        if (!_processedSubAreas.Add(subAreaKey))
+                            continue;
 
                         float relX0 = (subRect.X0 - mfRect.X0) / mfRect.Width;
                         float relY0 = (subRect.Y0 - mfRect.Y0) / mfRect.Height;
@@ -902,11 +905,7 @@ namespace TombLib.LevelData.Compilers.Util
 
                         foreach (var frame in origSet.Frames)
                         {
-                            var frameRect = new Rectangle2(
-                                MathF.Min(frame.TexCoord0.X, MathF.Min(frame.TexCoord1.X, MathF.Min(frame.TexCoord2.X, frame.TexCoord3.X))),
-                                MathF.Min(frame.TexCoord0.Y, MathF.Min(frame.TexCoord1.Y, MathF.Min(frame.TexCoord2.Y, frame.TexCoord3.Y))),
-                                MathF.Max(frame.TexCoord0.X, MathF.Max(frame.TexCoord1.X, MathF.Max(frame.TexCoord2.X, frame.TexCoord3.X))),
-                                MathF.Max(frame.TexCoord0.Y, MathF.Max(frame.TexCoord1.Y, MathF.Max(frame.TexCoord2.Y, frame.TexCoord3.Y))));
+                            var frameRect = Rectangle2.FromCoordinates(frame.TexCoord0, frame.TexCoord1, frame.TexCoord2, frame.TexCoord3);
 
                             float fw = frameRect.Width;
                             float fh = frameRect.Height;
