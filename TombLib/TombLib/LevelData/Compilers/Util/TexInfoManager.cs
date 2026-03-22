@@ -10,6 +10,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using TombLib.IO;
+using TombLib.LevelData.Compilers;
 using TombLib.Utils;
 using TombLib.Wad;
 
@@ -53,7 +54,6 @@ namespace TombLib.LevelData.Compilers.Util
         private List<ParentAnimatedTexture> _referenceAnimTextures = new List<ParentAnimatedTexture>();
         private List<ParentAnimatedTexture> _actualAnimTextures = new List<ParentAnimatedTexture>();
 
-        private record SubAreaKey(Texture Texture, Rectangle2 ParentRect, Rectangle2 SubRect);
         private HashSet<SubAreaKey> _processedSubAreas = new HashSet<SubAreaKey>();
 
         // UVRotate count should be placed after anim texture data to identify how many first anim seqs
@@ -571,7 +571,7 @@ namespace TombLib.LevelData.Compilers.Util
                 MaxTileSize = _minimumTileSize;
             }
 
-            GenerateAnimLookups(_level.Settings.AnimatedTextureSets);  // Generate anim texture lookup table
+            GenerateAnimLookups(_level.Settings.AnimatedTextureSets, true);  // Generate anim texture lookup table
             _generateTexInfos = true;    // Set manager ready state 
         }
 
@@ -839,12 +839,7 @@ namespace TombLib.LevelData.Compilers.Util
             if (!texture.ParentArea.IsZero && _referenceAnimTextures.Count > 0 &&
                 texture.ParentArea != texture.GetRect(isForTriangle))
             {
-                TextureArea fullTexture = texture;
-                fullTexture.TexCoord0 = new Vector2(texture.ParentArea.X0, texture.ParentArea.Y0);
-                fullTexture.TexCoord1 = new Vector2(texture.ParentArea.X0, texture.ParentArea.Y1);
-                fullTexture.TexCoord2 = new Vector2(texture.ParentArea.X1, texture.ParentArea.Y1);
-                fullTexture.TexCoord3 = new Vector2(texture.ParentArea.X1, texture.ParentArea.Y0);
-                fullTexture.ParentArea = Rectangle2.Zero;
+                TextureArea fullTexture = AnimatedTextureLookupUtility.CreateFullParentAreaTexture(texture);
 
                 foreach (var refTex in _referenceAnimTextures)
                 {
@@ -861,67 +856,15 @@ namespace TombLib.LevelData.Compilers.Util
                         var parentRect = texture.ParentArea;
                         var subRect = texture.GetRect(isForTriangle);
 
-                        // Find which frame in the set matches our ParentArea
-                        AnimatedTextureFrame matchedFrame = null;
-
-                        foreach (var frame in origSet.Frames)
-                        {
-                            if (frame.Texture != texture.Texture)
-                                continue;
-
-                            var fRect = Rectangle2.FromCoordinates(frame.TexCoord0, frame.TexCoord1, frame.TexCoord2, frame.TexCoord3);
-
-                            if (MathC.WithinEpsilon(fRect.X0, parentRect.X0, _animTextureLookupMargin) &&
-                                MathC.WithinEpsilon(fRect.Y0, parentRect.Y0, _animTextureLookupMargin) &&
-                                MathC.WithinEpsilon(fRect.X1, parentRect.X1, _animTextureLookupMargin) &&
-                                MathC.WithinEpsilon(fRect.Y1, parentRect.Y1, _animTextureLookupMargin))
-                            {
-                                matchedFrame = frame;
-                                break;
-                            }
-                        }
-
-                        if (matchedFrame == null)
-                            continue;
-
-                        // Calculate relative sub-area position within the matched frame
-                        var mfRect = Rectangle2.FromCoordinates(matchedFrame.TexCoord0, matchedFrame.TexCoord1, matchedFrame.TexCoord2, matchedFrame.TexCoord3);
-
-                        // Skip degenerate frames with zero-sized extents to avoid NaN/Infinity
-                        if (mfRect.Width == 0 || mfRect.Height == 0)
-                            continue;
-
                         // Skip if this sub-area was already processed for this texture
-                        if (!_processedSubAreas.Add(new SubAreaKey(texture.Texture, parentRect, subRect)))
+                        if (!_processedSubAreas.Add(new SubAreaKey(texture.Texture, isForRoom, parentRect, subRect, _animTextureLookupMargin)))
                             continue;
 
-                        float relX0 = (subRect.X0 - mfRect.X0) / mfRect.Width;
-                        float relY0 = (subRect.Y0 - mfRect.Y0) / mfRect.Height;
-                        float relX1 = (subRect.X1 - mfRect.X0) / mfRect.Width;
-                        float relY1 = (subRect.Y1 - mfRect.Y0) / mfRect.Height;
-
-                        // Create a synthetic AnimatedTextureSet with sub-area frames
-                        var subSet = origSet.Clone();
-                        subSet.Frames.Clear();
-
-                        foreach (var frame in origSet.Frames)
-                        {
-                            var frameRect = Rectangle2.FromCoordinates(frame.TexCoord0, frame.TexCoord1, frame.TexCoord2, frame.TexCoord3);
-
-                            float fw = frameRect.Width;
-                            float fh = frameRect.Height;
-
-                            var subFrame = frame.Clone();
-                            subFrame.TexCoord0 = new Vector2(frameRect.X0 + relX0 * fw, frameRect.Y0 + relY0 * fh);
-                            subFrame.TexCoord1 = new Vector2(frameRect.X0 + relX0 * fw, frameRect.Y0 + relY1 * fh);
-                            subFrame.TexCoord2 = new Vector2(frameRect.X0 + relX1 * fw, frameRect.Y0 + relY1 * fh);
-                            subFrame.TexCoord3 = new Vector2(frameRect.X0 + relX1 * fw, frameRect.Y0 + relY0 * fh);
-
-                            subSet.Frames.Add(subFrame);
-                        }
+                        if (!AnimatedTextureLookupUtility.TryCreateSubAreaAnimationSet(origSet, texture, parentRect, subRect, _animTextureLookupMargin, out var subSet))
+                            continue;
 
                         // Generate reference lookups for this sub-area animation set
-                        GenerateAnimLookups(new List<AnimatedTextureSet> { subSet });
+                        GenerateAnimLookups(new List<AnimatedTextureSet> { subSet }, isForRoom);
 
                         // Retry - the sub-area coordinates should now match the new reference lookups
                         return AddTexture(texture, isForRoom, isForTriangle, topmostAndUnpadded);
@@ -998,7 +941,7 @@ namespace TombLib.LevelData.Compilers.Util
 
         // Generates list of dummy lookup animated textures.
 
-        private void GenerateAnimLookups(List<AnimatedTextureSet> sets)
+        private void GenerateAnimLookups(List<AnimatedTextureSet> sets, bool isForRoom)
         {
             foreach (var set in sets)
             {
@@ -1065,7 +1008,7 @@ namespace TombLib.LevelData.Compilers.Util
                         // Make frame, including repeat versions
                         for (int i = 0; i < frame.Repeat; i++)
                         {
-                            AddTexture(newFrame, refAnim.CompiledAnimation, true, (triangleVariation > 0), set.AnimationType == AnimatedTextureAnimationType.UVRotate, index, set.IsUvRotate);
+                            AddTexture(newFrame, refAnim.CompiledAnimation, isForRoom, (triangleVariation > 0), set.AnimationType == AnimatedTextureAnimationType.UVRotate, index, set.IsUvRotate);
                             index++;
                         }
                     }
