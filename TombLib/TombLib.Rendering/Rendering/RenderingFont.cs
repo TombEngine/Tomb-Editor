@@ -315,7 +315,7 @@ namespace TombLib.Rendering
 
         public void Dispose()
         {
-            if (!_disposed)
+            if (_disposed)
                 return;
             _disposed = true;
 
@@ -325,6 +325,8 @@ namespace TombLib.Rendering
             Marshal.FreeHGlobal(_gdiGetCharacterPlacementOrder);
             Marshal.FreeHGlobal(_gdiGetCharacterPlacementDx);
             Marshal.FreeHGlobal(_gdiGetCharacterPlacementGlpyhs);
+
+            GC.SuppressFinalize(this);
         }
 
         ~RenderingFont()
