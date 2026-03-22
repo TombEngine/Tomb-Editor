@@ -429,6 +429,7 @@ namespace TombEditor.Forms
             }
 
             cbEvents.SelectedItem = newEventSet.LastUsedEvent;
+            triggerManager.EventType = newEventSet.LastUsedEvent;
             triggerManager.Event = newEventSet.Events[newEventSet.LastUsedEvent];
 
             tbName.Text = newEventSet.Name;
@@ -646,6 +647,7 @@ namespace TombEditor.Forms
             if (!_lockUI)
             {
                 SelectedSet.LastUsedEvent = (EventType)cbEvents.SelectedItem;
+                triggerManager.EventType = SelectedSet.LastUsedEvent;
                 triggerManager.Event = SelectedSet.Events[SelectedSet.LastUsedEvent];
             }
         }

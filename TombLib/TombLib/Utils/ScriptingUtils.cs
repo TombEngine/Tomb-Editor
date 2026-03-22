@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TombLib.LevelData;
 using TombLib.LevelData.VisualScripting;
 
 namespace TombLib.Utils
@@ -59,6 +60,8 @@ namespace TombLib.Utils
         private const string _nodeTypeId = _metadataPrefix + "condition";
         private const string _nodeArgumentId = _metadataPrefix + "arguments";
         private const string _nodeDescriptionId = _metadataPrefix + "description";
+        private const string _nodeSupportedId = _metadataPrefix + "supported";
+        private const string _nodeUnsupportedId = _metadataPrefix + "unsupported";
         private const string _nodeLayoutNewLine = "newline";
 
         public static string GameNodeScriptPath = Path.Combine("Scripts", "Engine", "NodeCatalogs");
@@ -154,6 +157,16 @@ namespace TombLib.Utils
 
                                  nodeFunction.Arguments.Add(argLayout);
                             }
+                            continue;
+                        }
+                        else if (comment.StartsWith(_nodeSupportedId, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            ParseEventTypeList(comment, _nodeSupportedId, nodeFunction.SupportedEvents);
+                            continue;
+                        }
+                        else if (comment.StartsWith(_nodeUnsupportedId, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            ParseEventTypeList(comment, _nodeUnsupportedId, nodeFunction.UnsupportedEvents);
                             continue;
                         }
                     }
@@ -255,6 +268,16 @@ namespace TombLib.Utils
             }
 
             return result.OrderBy(n => n.Section).ToList();
+        }
+
+        private static void ParseEventTypeList(string comment, string tagId, List<EventType> targetList)
+        {
+            var values = TextExtensions.ExtractValues(comment.Substring(tagId.Length, comment.Length - tagId.Length));
+            foreach (var v in values)
+            {
+                if (Enum.TryParse(v.Trim(), out EventType eventType))
+                    targetList.Add(eventType);
+            }
         }
 
         public static List<string> GetAllFunctionNames(string path, List<string> list = null, int depth = 0)

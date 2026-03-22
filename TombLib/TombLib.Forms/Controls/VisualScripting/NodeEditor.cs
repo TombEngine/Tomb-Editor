@@ -27,6 +27,10 @@ namespace TombLib.Controls.VisualScripting
     {
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public EventType CurrentEventType { get; set; }
+
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Vector2 ViewPosition { get; set; } = new Vector2(60.0f, 60.0f);
 
         [Browsable(false)]
@@ -885,20 +889,50 @@ namespace TombLib.Controls.VisualScripting
             e.Graphics.DrawImage(Properties.Resources.misc_Shadow, rect);
         }
 
+        private bool IsNodeUnsupported(TriggerNode node)
+        {
+            if (string.IsNullOrEmpty(node.Function))
+                return false;
+
+            var func = NodeFunctions.FirstOrDefault(f => f.Signature == node.Function);
+            if (func == null)
+                return false;
+
+            return func.IsUnsupported(CurrentEventType);
+        }
+
         private void DrawHeader(PaintEventArgs e, VisibleNodeBase node)
         {
             if (!node.Visible)
                 return;
 
-            var size = TextRenderer.MeasureText(node.Node.Name, Font);
+            const float LabelOpacity = 0.5f;
+
+            bool unsupported = IsNodeUnsupported(node.Node);
+            var headerText = unsupported ? "Not supported for this event type" : node.Node.Name;
+            int iconOffset = 0;
+            var size = TextRenderer.MeasureText(headerText, Font);
 
             var rect = node.ClientRectangle;
             rect.Height = size.Height;
             rect.Offset(node.Location);
             rect.Offset(0, -(int)(size.Height * 1.2f));
 
-            using (var b = new SolidBrush(Colors.LightText.ToFloat3Color().ToWinFormsColor(0.5f)))
-                e.Graphics.DrawString(node.Node.Name, Font, b, rect,
+            if (unsupported)
+            {
+                var matrix = new System.Drawing.Imaging.ColorMatrix { Matrix33 = LabelOpacity, Matrix22 = 0.0f };
+                var attributes = new System.Drawing.Imaging.ImageAttributes();
+                attributes.SetColorMatrix(matrix, System.Drawing.Imaging.ColorMatrixFlag.Default, System.Drawing.Imaging.ColorAdjustType.Bitmap);
+
+                var icon = Properties.Resources.general_Warning_16;
+                var iconRect = new Rectangle(rect.X, rect.Y + (rect.Height - icon.Height), icon.Width, icon.Height);
+                e.Graphics.DrawImage(icon, iconRect, 0, 0, icon.Width, icon.Height, GraphicsUnit.Pixel, attributes);
+                iconOffset = icon.Width + 2;
+            }
+
+            var textRect = new Rectangle(rect.X + iconOffset, rect.Y, rect.Width - iconOffset, rect.Height);
+            using (var b = new SolidBrush(Colors.LightText.ToFloat3Color().ToWinFormsColor(LabelOpacity)))
+                e.Graphics.DrawString(headerText, Font, b, textRect,
                         new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Center });
 
             var condNode = node as VisibleNodeCondition;
