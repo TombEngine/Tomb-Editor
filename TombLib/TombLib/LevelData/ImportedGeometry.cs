@@ -20,6 +20,8 @@ namespace TombLib.LevelData
     {
         public Texture2D DirectXTexture { get; private set; }
 
+        private bool _disposed;
+
         public ImportedGeometryTexture(string absolutePath)
         {
             AbsolutePath = absolutePath;
@@ -31,8 +33,12 @@ namespace TombLib.LevelData
             if (SynchronizationContext.Current == null)
                 DirectXTexture = TextureLoad.Load(ImportedGeometry.Device, Image);
             else
-                SynchronizationContext.Current.Post(unused => // Synchronize DirectX, we can't 'send' because that may deadlock with the level settings reloader
-                DirectXTexture = TextureLoad.Load(ImportedGeometry.Device, Image), null);
+                SynchronizationContext.Current.Post(unused => {
+                    if (_disposed)
+                        return;
+
+                    DirectXTexture = TextureLoad.Load(ImportedGeometry.Device, Image);
+                }, null);
         }
 
         private ImportedGeometryTexture(ImportedGeometryTexture other)
@@ -50,10 +56,14 @@ namespace TombLib.LevelData
             AbsolutePath = other.AbsolutePath;
             Image = other.Image;
             DirectXTexture = other.DirectXTexture;
+
+            _disposed = false;
         }
 
         public void Dispose()
         {
+            _disposed = true;
+
             DirectXTexture?.Dispose();
             DirectXTexture = null;
         }

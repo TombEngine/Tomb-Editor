@@ -320,18 +320,23 @@ namespace TombLib.Rendering
             _disposed = true;
 
             TextureAllocator?.Dispose();
-            GDI.DeleteObject(_gdiFont);
-            GDI.DeleteDC(_gdiHdc);
-            Marshal.FreeHGlobal(_gdiGetCharacterPlacementOrder);
-            Marshal.FreeHGlobal(_gdiGetCharacterPlacementDx);
-            Marshal.FreeHGlobal(_gdiGetCharacterPlacementGlpyhs);
+            ReleaseUnmanagedResources();
 
             GC.SuppressFinalize(this);
         }
 
         ~RenderingFont()
         {
-            Dispose();
+            ReleaseUnmanagedResources();
+        }
+
+        private void ReleaseUnmanagedResources()
+        {
+            GDI.DeleteObject(_gdiFont);
+            GDI.DeleteDC(_gdiHdc);
+            Marshal.FreeHGlobal(_gdiGetCharacterPlacementOrder);
+            Marshal.FreeHGlobal(_gdiGetCharacterPlacementDx);
+            Marshal.FreeHGlobal(_gdiGetCharacterPlacementGlpyhs);
         }
 
         private static class GDI
