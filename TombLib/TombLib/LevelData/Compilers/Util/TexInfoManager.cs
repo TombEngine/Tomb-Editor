@@ -10,6 +10,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using TombLib.IO;
+using TombLib.LevelData.Compilers;
 using TombLib.Utils;
 using TombLib.Wad;
 
@@ -52,6 +53,8 @@ namespace TombLib.LevelData.Compilers.Util
 
         private List<ParentAnimatedTexture> _referenceAnimTextures = new List<ParentAnimatedTexture>();
         private List<ParentAnimatedTexture> _actualAnimTextures = new List<ParentAnimatedTexture>();
+
+        private HashSet<SubAreaKey> _processedSubAreas = new HashSet<SubAreaKey>();
 
         // UVRotate count should be placed after anim texture data to identify how many first anim seqs
         // should be processed using UVRotate engine function
@@ -568,7 +571,7 @@ namespace TombLib.LevelData.Compilers.Util
                 MaxTileSize = _minimumTileSize;
             }
 
-            GenerateAnimLookups(_level.Settings.AnimatedTextureSets);  // Generate anim texture lookup table
+            GenerateAnimLookups(_level.Settings.AnimatedTextureSets, true);  // Generate anim texture lookup table
             _generateTexInfos = true;    // Set manager ready state 
         }
 
@@ -830,6 +833,49 @@ namespace TombLib.LevelData.Compilers.Util
                     }
                 }
 
+            // Check if this is a sub-area of an animated texture (e.g. applied via group texturing tools).
+            // In this case, the actual UV coordinates represent a portion of the full animation frame,
+            // so we reconstruct the full frame from ParentArea and match against reference animations.
+            if (!texture.ParentArea.IsZero && _referenceAnimTextures.Count > 0 &&
+                texture.ParentArea != texture.GetRect(isForTriangle))
+            {
+                TextureArea fullTexture = AnimatedTextureLookupUtility.CreateFullParentAreaTexture(texture);
+                int initialReferenceAnimTextureCount = _referenceAnimTextures.Count;
+
+                for (int i = 0; i < initialReferenceAnimTextureCount; i++)
+                {
+                    var refTex = _referenceAnimTextures[i];
+
+                    // UVRotate and Video animation types are incompatible with sub-area splitting
+                    // because they rely on specific frame arrangement assumptions (vertical strip scrolling
+                    // for UVRotate, sequential frame playback for Video) that break when coordinates
+                    // are transformed to sub-areas.
+                    if (refTex.Origin.IsUvRotate || refTex.Origin.AnimationType == AnimatedTextureAnimationType.Video)
+                        continue;
+
+                    if (GetTexInfo(fullTexture, refTex.CompiledAnimation, isForRoom, false, false, false, remapAnimatedTextures, _animTextureLookupMargin).HasValue)
+                    {
+                        var origSet = refTex.Origin;
+                        var parentRect = texture.ParentArea;
+                        var subRect = texture.GetRect(isForTriangle);
+
+                        // Skip if this sub-area was already processed for this texture
+                        if (!_processedSubAreas.Add(new SubAreaKey(texture.Texture, isForRoom, parentRect, subRect, _animTextureLookupMargin)))
+                            continue;
+
+                        if (!AnimatedTextureLookupUtility.TryCreateSubAreaAnimationSet(origSet, texture, parentRect, subRect, _animTextureLookupMargin, out var subSet))
+                            continue;
+
+                        // Generate reference lookups for this sub-area animation set while preserving
+                        // the original animated set identity for downstream exporters such as TRNG.
+                        GenerateAnimLookups(new List<AnimatedTextureSet> { subSet }, isForRoom, origSet);
+
+                        // Retry - the sub-area coordinates should now match the new reference lookups
+                        return AddTexture(texture, isForRoom, isForTriangle, topmostAndUnpadded);
+                    }
+                }
+            }
+
             // No animated textures identified, add texture as ordinary one
             return AddTexture(texture, _parentTextures, isForRoom, isForTriangle, topmostAndUnpadded);
         }
@@ -899,7 +945,7 @@ namespace TombLib.LevelData.Compilers.Util
 
         // Generates list of dummy lookup animated textures.
 
-        private void GenerateAnimLookups(List<AnimatedTextureSet> sets)
+        private void GenerateAnimLookups(List<AnimatedTextureSet> sets, bool isForRoom, AnimatedTextureSet exportOriginOverride = null)
         {
             foreach (var set in sets)
             {
@@ -918,7 +964,7 @@ namespace TombLib.LevelData.Compilers.Util
 
                 while (true)
                 {
-                    var refAnim = new ParentAnimatedTexture(set);
+                    var refAnim = new ParentAnimatedTexture(exportOriginOverride ?? set);
                     int index = 0;
 
                     foreach (var frame in set.Frames)
@@ -966,7 +1012,7 @@ namespace TombLib.LevelData.Compilers.Util
                         // Make frame, including repeat versions
                         for (int i = 0; i < frame.Repeat; i++)
                         {
-                            AddTexture(newFrame, refAnim.CompiledAnimation, true, (triangleVariation > 0), set.AnimationType == AnimatedTextureAnimationType.UVRotate, index, set.IsUvRotate);
+                            AddTexture(newFrame, refAnim.CompiledAnimation, isForRoom, (triangleVariation > 0), set.AnimationType == AnimatedTextureAnimationType.UVRotate, index, set.IsUvRotate);
                             index++;
                         }
                     }
