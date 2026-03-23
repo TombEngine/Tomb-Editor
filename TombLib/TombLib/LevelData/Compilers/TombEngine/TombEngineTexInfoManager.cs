@@ -1296,8 +1296,9 @@ namespace TombLib.LevelData.Compilers
                         if (!AnimatedTextureLookupUtility.TryCreateSubAreaAnimationSet(origSet, texture, parentRect, subRect, _animTextureLookupMargin, out var subSet))
                             continue;
 
-                        // Generate reference lookups for this sub-area animation set
-                        GenerateAnimLookups(new List<AnimatedTextureSet> { subSet }, destination);
+                        // Generate reference lookups for this sub-area animation set while preserving
+                        // the original animated set identity for downstream metadata consumers.
+                        GenerateAnimLookups(new List<AnimatedTextureSet> { subSet }, destination, origSet);
 
                         // Retry - the sub-area coordinates should now match the new reference lookups
                         return AddTexture(texture, destination, isForTriangle, blendMode);
@@ -1379,7 +1380,7 @@ namespace TombLib.LevelData.Compilers
 
         // Generates list of dummy lookup animated textures.
 
-        private void GenerateAnimLookups(List<AnimatedTextureSet> sets, TextureDestination destination)
+        private void GenerateAnimLookups(List<AnimatedTextureSet> sets, TextureDestination destination, AnimatedTextureSet exportOriginOverride = null)
         {
             foreach (var set in sets)
             {
@@ -1398,7 +1399,7 @@ namespace TombLib.LevelData.Compilers
 
                 while (true)
                 {
-                    var refAnim = new ParentAnimatedTexture(set);
+                    var refAnim = new ParentAnimatedTexture(exportOriginOverride ?? set);
                     int index = 0;
 
                     foreach (var frame in set.Frames)
