@@ -19,7 +19,7 @@ namespace TombLib.Scripting.TRX;
 /// </summary>
 public sealed partial class TRXEditor : TextEditorBase, INameBasedObjectNavigator
 {
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public override string DefaultFileExtension => ".json5";
 
 	// One-shot pending marker set while the user's Enter is being entered inside a bracket pair.
@@ -118,7 +118,7 @@ public sealed partial class TRXEditor : TextEditorBase, INameBasedObjectNavigato
 
 	// Public methods
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public override void UpdateSettings(TombLib.Scripting.UI.Bases.ConfigurationBase configuration)
 	{
 		if (configuration is not TRXEditorConfiguration config)
@@ -142,7 +142,7 @@ public sealed partial class TRXEditor : TextEditorBase, INameBasedObjectNavigato
 			cancellationToken);
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public void GoToObject(string objectName, TextDefinitionDiscriminator? identifyingObject = null)
 		=> GoToDefinition(_languageServices.DefinitionProvider, objectName, identifyingObject);
 }

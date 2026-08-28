@@ -17,7 +17,7 @@ public class TextCompletionControllerDisposalTests
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
-			var editor = new PlainTextEditor(new Version(1, 0));
+			var editor = new PlainTextEditor();
 			var controller = new TextCompletionController(editor);
 
 			int requestToken = controller.BeginRequest();
@@ -38,7 +38,7 @@ public class TextCompletionControllerDisposalTests
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
-			var editor = new PlainTextEditor(new Version(1, 0));
+			var editor = new PlainTextEditor();
 			var controller = new TextCompletionController(editor);
 
 			controller.BeginRequest();
@@ -57,7 +57,7 @@ public class TextCompletionControllerDisposalTests
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
-			var editor = new PlainTextEditor(new Version(1, 0));
+			var editor = new PlainTextEditor();
 			var controller = new TextCompletionController(editor);
 
 			controller.BeginRequest();
@@ -74,7 +74,7 @@ public class TextCompletionControllerDisposalTests
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
-			var editor = new PlainTextEditor(new Version(1, 0));
+			var editor = new PlainTextEditor();
 			var controller = new TextCompletionController(editor);
 
 			controller.Dispose();
@@ -102,7 +102,7 @@ public class TextCompletionControllerDisposalTests
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
-			var editor = new PlainTextEditor(new Version(1, 0));
+			var editor = new PlainTextEditor();
 			var controller = new TextCompletionController(editor);
 			controller.InitializeScheduling(() => Task.CompletedTask);
 
@@ -126,7 +126,7 @@ public class TextCompletionControllerDisposalTests
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
-			var editor = new PlainTextEditor(new Version(1, 0));
+			var editor = new PlainTextEditor();
 			var controller = new TextCompletionController(editor);
 
 			controller.InitializeScheduling(() => Task.CompletedTask);

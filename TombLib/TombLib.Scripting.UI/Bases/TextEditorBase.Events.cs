@@ -110,9 +110,9 @@ public abstract partial class TextEditorBase
 		}
 		catch (OperationCanceledException)
 		{ }
-		catch (Exception exception)
+		catch (Exception ex)
 		{
-			Log.Error(exception, "Language event hook failed.");
+			s_logger.Error(ex, "Language event hook failed.");
 		}
 	}
 

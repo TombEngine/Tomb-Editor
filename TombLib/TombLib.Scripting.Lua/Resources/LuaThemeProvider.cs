@@ -10,7 +10,7 @@ namespace TombLib.Scripting.Lua.Resources;
 /// </summary>
 public sealed class LuaThemeProvider : ITextEditorColorProvider
 {
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public IReadOnlyList<string> GetAvailableNames()
 	{
 		return LuaThemeRepository.GetAvailableThemes()
@@ -18,11 +18,11 @@ public sealed class LuaThemeProvider : ITextEditorColorProvider
 			.ToArray();
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string GetSelectedName(TextEditorConfigBase config)
 		=> TextEditorColorProviderGuard.GetConfig<LuaEditorConfiguration>(config, GetType().Name).SelectedThemeName;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public void SetSelectedName(TextEditorConfigBase config, string name)
 		=> TextEditorColorProviderGuard.GetConfig<LuaEditorConfiguration>(config, GetType().Name).SelectedThemeName = name;
 }

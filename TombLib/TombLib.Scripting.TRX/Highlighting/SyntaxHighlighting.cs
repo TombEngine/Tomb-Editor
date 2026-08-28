@@ -93,16 +93,16 @@ public sealed class SyntaxHighlighting : IHighlightingDefinition
 	/// </summary>
 	public string Name => "TRX Rules";
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public IEnumerable<HighlightingColor> NamedHighlightingColors => [];
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public IDictionary<string, string> Properties => new Dictionary<string, string>();
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public HighlightingColor? GetNamedColor(string name) => null;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public HighlightingRuleSet? GetNamedRuleSet(string name)
 		=> name == MainRuleSet.Name ? MainRuleSet : null;
 }

@@ -47,18 +47,18 @@ public sealed class IdeScriptingProjectContext : IScriptingProjectContext
 		_ide = ide ?? throw new ArgumentNullException(nameof(ide));
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public IGameProject Project
 		=> _ide.Project ?? throw new InvalidOperationException("The TombIDE project has not been initialized.");
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public ILevelProject? SelectedLevel => _ide.SelectedLevel;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string ScriptRootDirectoryPath
 		=> _ide.Project is null ? string.Empty : _ide.Project.GetScriptRootDirectory();
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string LevelsDirectoryPath
 		=> _ide.Project is null ? string.Empty : _ide.Project.LevelsDirectoryPath;
 }
@@ -95,9 +95,9 @@ public sealed class IdeScriptingLifecycleService : IScriptingLifecycleService
 		_ide = ide ?? throw new ArgumentNullException(nameof(ide));
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool CanClose() => _ide.CanClose();
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public void RequestClose() => _ide.RequestProgramClose();
 }

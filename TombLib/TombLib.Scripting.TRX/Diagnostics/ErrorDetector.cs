@@ -25,7 +25,7 @@ public sealed class ErrorDetector : ITextDiagnosticsProvider
 		_lineService = lineService;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public IReadOnlyList<TextEditorDiagnostic> GetDiagnostics(TextDiagnosticsRequest request)
 	{
 		ArgumentNullException.ThrowIfNull(request);

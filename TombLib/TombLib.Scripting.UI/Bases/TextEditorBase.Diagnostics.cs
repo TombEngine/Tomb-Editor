@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using TombLib.Scripting.Diagnostics;
 using TombLib.Scripting.UI.Rendering;
+using TombLib.Scripting.UI.Resources;
 
 namespace TombLib.Scripting.UI.Bases;
 
@@ -71,7 +72,7 @@ public abstract partial class TextEditorBase
 	public void ShowDiagnosticToolTip(TextEditorDiagnosticInfo diagnosticInfo)
 	{
 		TextEditorToolTipHelper.GetDiagnosticToolTipColors(diagnosticInfo.Severity, out SolidColorBrush border, out SolidColorBrush background);
-		ShowToolTip(diagnosticInfo.Message, border, background, ToolTipForeground);
+		ShowToolTip(diagnosticInfo.Message, border, background, TextEditorColorPalette.ToolTipForeground);
 	}
 
 	/// <summary>

@@ -16,7 +16,7 @@ namespace TombLib.Scripting.UI.Bases;
 
 public abstract partial class TextEditorBase
 {
-	// Language seam
+	#region Language seam
 
 	/// <summary>
 	/// Gets the completion controller that drives completion windows and decisions for this editor.
@@ -126,7 +126,9 @@ public abstract partial class TextEditorBase
 		_diagnosticsCoordinator.RunOnIdle(Text);
 	}
 
-	// Definition navigation
+	#endregion Language seam
+
+	#region Definition navigation
 
 	/// <summary>
 	/// Navigates to the definition of the given object name using the specified provider.
@@ -147,4 +149,6 @@ public abstract partial class TextEditorBase
 	/// <returns><see langword="true"/> if a definition was found and navigated to; otherwise <see langword="false"/>.</returns>
 	protected bool TryGoToDefinition(ITextDefinitionProvider definitionProvider, ITextHoverProvider hoverProvider, int offset)
 		=> _definitionNavigationService.TryGoToDefinition(this, definitionProvider, hoverProvider, offset);
+
+	#endregion Definition navigation
 }

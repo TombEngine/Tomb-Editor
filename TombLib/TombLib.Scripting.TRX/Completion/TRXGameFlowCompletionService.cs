@@ -24,7 +24,7 @@ public sealed class TRXGameFlowCompletionService : ITextCompletionProvider
 	/// <param name="schemaService">The schema service used to source the GameFlow schema.</param>
 	public TRXGameFlowCompletionService(ITRXGameFlowSchemaService schemaService) => _schemaService = schemaService;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public IReadOnlyList<TextCompletionItem> GetCompletionItems(TextCompletionContext context)
 	{
 		ArgumentNullException.ThrowIfNull(context);

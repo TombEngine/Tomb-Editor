@@ -30,46 +30,17 @@ namespace TombLib.Scripting.UI.Bases;
 /// </summary>
 public abstract partial class TextEditorBase : TextEditor, IEditorControl
 {
-	/// <summary>
-	/// Maximum width of editor tooltip text.
-	/// </summary>
-	public const double ToolTipTextMaxWidth = ToolTipDefaults.TextMaxWidth;
+	private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-	/// <summary>
-	/// Font size used for editor tooltip text.
-	/// </summary>
-	public static readonly double ToolTipTextFontSize = ToolTipDefaults.TextFontSize;
+	private static readonly TextEditorFormattingService s_formattingService = new();
 
-	/// <summary>
-	/// Default border brush used for editor tooltips.
-	/// </summary>
-	public static readonly SolidColorBrush DefaultToolTipBorder = TextEditorColorPalette.ToolTipBorder;
-
-	/// <summary>
-	/// Default background brush used for editor tooltips.
-	/// </summary>
-	public static readonly SolidColorBrush DefaultToolTipBackground = TextEditorColorPalette.ToolTipBackground;
-
-	/// <summary>
-	/// Foreground brush used for editor tooltip text.
-	/// </summary>
-	public static readonly SolidColorBrush ToolTipForeground = TextEditorColorPalette.ToolTipForeground;
-
-	private static readonly TextEditorFormattingService FormattingService = new();
-
-	private static readonly Logger Log = LogManager.GetCurrentClassLogger();
-
-	/// <summary>
-	/// Gets the editor type of this control.
-	/// </summary>
+	/// <inheritdoc/>
 	public EditorType EditorType => EditorType.Text;
 
 	/// <summary>
 	/// Gets the default file extension (including the leading dot) used for documents of this editor.
 	/// </summary>
 	public abstract string DefaultFileExtension { get; }
-
-	// Properties
 
 	/// <summary>
 	/// Gets or sets the file path of the current document.
@@ -84,7 +55,7 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 		}
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool IsSilentSession { get; set; }
 
 	/// <summary>
@@ -96,7 +67,7 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 		set => _contentPersistenceCoordinator.CreateBackupFiles = value;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string Content
 	{
 		get => Text;
@@ -327,19 +298,6 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 	/// </summary>
 	public bool AutoCloseSingleQuotes { get; set; } = TextEditorBaseDefaults.AutoCloseSingleQuotes;
 
-	/// <summary>
-	/// Gets or sets whether both double and single quotes are auto-closed.
-	/// </summary>
-	public bool AutoCloseQuotes
-	{
-		get => AutoCloseDoubleQuotes && AutoCloseSingleQuotes;
-		set
-		{
-			AutoCloseDoubleQuotes = value;
-			AutoCloseSingleQuotes = value;
-		}
-	}
-
 	// Fields
 
 	/// <summary>
@@ -376,8 +334,8 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 	/// <summary>
 	/// Initializes a new instance of the <see cref="TextEditorBase"/> class for the given engine version.
 	/// </summary>
-	/// <param name="engineVersion">The engine version the editor targets.</param>
-	public TextEditorBase(Version engineVersion)
+	/// <param name="engineVersion">The engine version the editor targets, or <see langword="null"/> when no engine version applies.</param>
+	public TextEditorBase(Version? engineVersion = null)
 	{
 		TextEditorServiceComposition services = TextEditorServiceComposition.Create(this);
 
@@ -401,7 +359,7 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 
 		BindEventMethods();
 
-		EngineVersion = engineVersion;
+		EngineVersion = engineVersion ?? new Version(0, 0);
 	}
 
 	private void SetNewDefaultSettings()

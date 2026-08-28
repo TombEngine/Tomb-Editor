@@ -26,11 +26,11 @@ public sealed class TRXEditorConfiguration : ColorSchemeConfigBase<ColorScheme>
 
 	// Color scheme
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	protected override string GetColorSchemeFilePath(string colorSchemeName)
 		=> Path.Combine(ScriptingPaths.Default.TRXColorConfigsDirectory, colorSchemeName + ScriptingDefaults.ColorSchemeFileExtension);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	protected override ColorScheme ReadColorSchemeFile(string colorSchemeFilePath)
 		=> JsonUtils.ReadJsonFile<ColorScheme>(colorSchemeFilePath);
 

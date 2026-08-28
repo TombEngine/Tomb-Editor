@@ -15,7 +15,7 @@ public class CompletionWindowToolTipAccessTests
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
-			var editor = new PlainTextEditor(new Version(1, 0));
+			var editor = new PlainTextEditor();
 			Window hostWindow = WPFTestHelper.ShowInHostWindow(editor);
 
 			try

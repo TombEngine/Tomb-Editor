@@ -64,19 +64,19 @@ public readonly struct TextRange : IEquatable<TextRange>
 		return source.Substring(Offset, Length);
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool Equals(TextRange other)
 		=> Offset == other.Offset && Length == other.Length;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public override bool Equals(object? obj)
 		=> obj is TextRange other && Equals(other);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public override int GetHashCode()
 		=> HashCode.Combine(Offset, Length);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public override string ToString() => $"[{Offset}..{EndOffset})";
 
 	/// <summary>

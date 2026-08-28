@@ -17,23 +17,23 @@ public sealed class GameFlowScriptLineService : IGameFlowScriptLineService
 	// Regex pattern for the GameFlow section-header syntax.
 	private static readonly Regex SectionHeaderRegex = new(Patterns.Sections, RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string RemoveComments(string lineText)
 		=> LineCommentHelper.RemoveLineComment(lineText, CommentDelimiter);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string EscapeComments(string lineText)
 		=> LineCommentHelper.MaskLineComment(lineText, CommentDelimiter);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool IsEmptyOrComments(string? lineText)
 		=> string.IsNullOrWhiteSpace(lineText) || lineText.TrimStart().StartsWith(CommentDelimiter, StringComparison.Ordinal);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool IsSectionHeaderLine(string lineText)
 		=> SectionHeaderRegex.IsMatch(lineText);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string? GetSectionHeaderText(string lineText)
 	{
 		Match match = SectionHeaderRegex.Match(lineText);

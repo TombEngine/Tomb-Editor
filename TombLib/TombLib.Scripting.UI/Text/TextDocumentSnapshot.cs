@@ -27,31 +27,31 @@ public sealed class TextDocumentSnapshot : ITextSnapshot
 		_snapshot = new StringTextSnapshot(document.Text, document.FileName);
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string? FileName => _snapshot.FileName;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public int TextLength => _snapshot.TextLength;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public int LineCount => _snapshot.LineCount;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public char GetCharAt(int offset)
 		=> _snapshot.GetCharAt(offset);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string GetText(int offset, int length)
 		=> _snapshot.GetText(offset, length);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public ITextLine GetLineByOffset(int offset)
 		=> _snapshot.GetLineByOffset(offset);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public ITextLine GetLineByNumber(int lineNumber)
 		=> _snapshot.GetLineByNumber(lineNumber);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public IEnumerable<ITextLine> Lines => _snapshot.Lines;
 }

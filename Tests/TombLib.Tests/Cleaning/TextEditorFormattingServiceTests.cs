@@ -17,7 +17,7 @@ public class TextEditorFormattingServiceTests
 		WPFTestHelper.RunInSta(() =>
 		{
 			string original = string.Join("\r\n", Enumerable.Range(1, 200).Select(i => "Line " + i + "   "));
-			var editor = new PlainTextEditor(new Version(1, 0))
+			var editor = new PlainTextEditor()
 			{
 				Text = original
 			};
@@ -66,7 +66,7 @@ public class TextEditorFormattingServiceTests
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
-			var editor = new PlainTextEditor(new Version(1, 0))
+			var editor = new PlainTextEditor()
 			{
 				Text = "No changes here"
 			};

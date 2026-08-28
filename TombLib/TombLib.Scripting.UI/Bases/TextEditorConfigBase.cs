@@ -1,5 +1,4 @@
 using System;
-using System.Xml.Serialization;
 using TombLib.Scripting.UI.Resources;
 
 namespace TombLib.Scripting.UI.Bases;
@@ -11,8 +10,6 @@ public abstract class TextEditorConfigBase : ConfigurationBase
 {
 	/// <inheritdoc/>
 	public abstract override string DefaultPath { get; }
-
-	// Properties
 
 	private double _fontSize = TextEditorBaseDefaults.FontSize;
 
@@ -95,20 +92,6 @@ public abstract class TextEditorConfigBase : ConfigurationBase
 	/// Gets or sets whether single quotes are auto-closed in the editor.
 	/// </summary>
 	public bool AutoCloseSingleQuotes { get; set; } = TextEditorBaseDefaults.AutoCloseSingleQuotes;
-
-	/// <summary>
-	/// Gets or sets whether both quote kinds are auto-closed in the editor.
-	/// </summary>
-	[XmlIgnore]
-	public bool AutoCloseQuotes
-	{
-		get => AutoCloseDoubleQuotes && AutoCloseSingleQuotes;
-		set
-		{
-			AutoCloseDoubleQuotes = value;
-			AutoCloseSingleQuotes = value;
-		}
-	}
 
 	/// <summary>
 	/// Gets or sets whether word wrapping is enabled in the editor.

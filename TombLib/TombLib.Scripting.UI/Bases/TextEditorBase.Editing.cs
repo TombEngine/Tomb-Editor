@@ -1,36 +1,33 @@
 using ICSharpCode.AvalonEdit.Document;
 using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using TombLib.Scripting.Text;
 using TombLib.Scripting.UI.Editing;
 using TombLib.Scripting.UI.Rendering;
+using TombLib.Scripting.UI.Resources;
 
 namespace TombLib.Scripting.UI.Bases;
 
 public abstract partial class TextEditorBase
 {
-	// Auto bracket closing
+	#region Auto bracket closing
 
 	private void HandleAutoClosing(TextCompositionEventArgs e)
 		=> _autoClosingService.HandleTextEntering(this, e, CreateAutoClosingOptions(), OnAutoClosingElementSkipped);
 
-	private TextAutoClosingOptions CreateAutoClosingOptions()
-	{
-		return new(
-			AutoCloseParentheses,
-			AutoCloseBraces,
-			AutoCloseBrackets,
-			AutoCloseDoubleQuotes,
-			AutoCloseSingleQuotes,
-			ParenthesesClosingString,
-			BracesClosingString,
-			BracketsClosingString,
-			QuotesClosingString,
-			"'");
-	}
+	private TextAutoClosingOptions CreateAutoClosingOptions() => new(
+		AutoCloseParentheses,
+		AutoCloseBraces,
+		AutoCloseBrackets,
+		AutoCloseDoubleQuotes,
+		AutoCloseSingleQuotes,
+		ParenthesesClosingString,
+		BracesClosingString,
+		BracketsClosingString,
+		QuotesClosingString,
+		"'"); // TODO: Add field that handles this one as well
 
 	/// <summary>
 	/// Called when an auto-closed element is skipped by the user.
@@ -39,36 +36,34 @@ public abstract partial class TextEditorBase
 	protected virtual void OnAutoClosingElementSkipped(string element)
 	{ }
 
-	// Multiline commenting
+	#endregion Auto bracket closing
+
+	#region Multiline commenting
 
 	/// <summary>
 	/// Comments out the currently selected lines.
 	/// </summary>
 	public void CommentOutLines()
-	{
-		ApplyLineCommentTransformation(TextLineCommentAction.Comment);
-	}
+		=> ApplyLineCommentTransformation(TextLineCommentAction.Comment);
 
 	/// <summary>
 	/// Uncomments the currently selected lines.
 	/// </summary>
 	public void UncommentLines()
-	{
-		ApplyLineCommentTransformation(TextLineCommentAction.Uncomment);
-	}
+		=> ApplyLineCommentTransformation(TextLineCommentAction.Uncomment);
 
 	/// <summary>
 	/// Toggles commenting on the currently selected lines.
 	/// </summary>
 	public void ToggleCommentLines()
-	{
-		ApplyLineCommentTransformation(TextLineCommentAction.Toggle);
-	}
+		=> ApplyLineCommentTransformation(TextLineCommentAction.Toggle);
 
 	private void ApplyLineCommentTransformation(TextLineCommentAction action)
 		=> _commentService.ApplyEdit(this, CommentPrefix, action);
 
-	// Bookmarks
+	#endregion Multiline commenting
+
+	#region Bookmarks
 
 	/// <summary>
 	/// Toggles a bookmark at the caret position.
@@ -110,18 +105,15 @@ public abstract partial class TextEditorBase
 	/// <param name="confirmClearBookmarks">The confirmation callback to invoke before clearing.</param>
 	public void ClearAllBookmarks(Func<bool> confirmClearBookmarks)
 	{
-		ArgumentNullException.ThrowIfNull(confirmClearBookmarks);
-
 		if (!confirmClearBookmarks())
 			return;
 
 		_bookmarkCoordinator.Clear();
 	}
 
-	internal IReadOnlyList<DocumentLine> GetBookmarkedLines()
-		=> _bookmarkCoordinator.GetBookmarkedLines();
+	#endregion Bookmarks
 
-	// Zoom
+	#region Zoom
 
 	/// <summary>
 	/// Gets or sets the current zoom percentage.
@@ -136,7 +128,9 @@ public abstract partial class TextEditorBase
 		}
 	}
 
-	// View operations
+	#endregion Zoom
+
+	#region View operations
 
 	/// <summary>
 	/// Selects the line with the given line number.
@@ -201,7 +195,7 @@ public abstract partial class TextEditorBase
 	/// Gets the document offset corresponding to the given point in the view.
 	/// </summary>
 	/// <param name="point">The point in view coordinates.</param>
-	/// <returns>The document offset, or -1 if the point does not map to a position.</returns>
+	/// <returns>The document offset, or <c>-1</c> if the point does not map to a position.</returns>
 	public int GetOffsetFromPoint(Point point)
 		=> _viewService.GetOffsetFromPoint(point);
 
@@ -209,11 +203,13 @@ public abstract partial class TextEditorBase
 	/// Gets the word surrounding the given document offset.
 	/// </summary>
 	/// <param name="offset">The document offset to inspect.</param>
-	/// <returns>The word text, or null if no word is found.</returns>
+	/// <returns>The word text, or <see langword="null"/> if no word is found.</returns>
 	public string? GetWordFromOffset(int offset)
 		=> _viewService.GetWordFromOffset(offset);
 
-	// ToolTips
+	#endregion View operations
+
+	#region ToolTips
 
 	/// <summary>
 	/// Shows a plain-text tooltip with the default colors.
@@ -222,9 +218,9 @@ public abstract partial class TextEditorBase
 	public void ShowToolTip(string content)
 	{
 		ShowToolTip(content,
-			DefaultToolTipBorder,
-			DefaultToolTipBackground,
-			ToolTipForeground);
+			TextEditorColorPalette.ToolTipBorder,
+			TextEditorColorPalette.ToolTipBackground,
+			TextEditorColorPalette.ToolTipForeground);
 	}
 
 	/// <summary>
@@ -234,9 +230,9 @@ public abstract partial class TextEditorBase
 	public void ShowMarkdownToolTip(string content)
 	{
 		ShowMarkdownToolTip(content,
-			DefaultToolTipBorder,
-			DefaultToolTipBackground,
-			ToolTipForeground);
+			TextEditorColorPalette.ToolTipBorder,
+			TextEditorColorPalette.ToolTipBackground,
+			TextEditorColorPalette.ToolTipForeground);
 	}
 
 	/// <summary>
@@ -268,7 +264,9 @@ public abstract partial class TextEditorBase
 	public void ShowToolTip(object content, SolidColorBrush border, SolidColorBrush background)
 		=> _toolTipPresenter.Show(content, border, background);
 
-	// Formatting
+	#endregion ToolTips
+
+	#region Formatting
 
 	/// <summary>
 	/// Converts spaces to tabs throughout the document content.
@@ -287,5 +285,7 @@ public abstract partial class TextEditorBase
 	/// </summary>
 	/// <param name="trimOnly">Whether only trailing whitespace should be trimmed.</param>
 	public virtual void TidyCode(bool trimOnly = false)
-		=> FormattingService.FormatDocument(this, DocumentFormatter, trimOnly);
+		=> s_formattingService.FormatDocument(this, DocumentFormatter, trimOnly);
+
+	#endregion Formatting
 }

@@ -17,11 +17,11 @@ public class FileSystemColorSchemeProvider<TConfig> : FileSystemColorSchemeProvi
 		: base(colorSchemesDirectory)
 	{ }
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public override string GetSelectedName(TextEditorConfigBase config)
 		=> TextEditorColorProviderGuard.GetConfig<TConfig>(config, GetType().Name).SelectedColorSchemeName;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public override void SetSelectedName(TextEditorConfigBase config, string name)
 		=> TextEditorColorProviderGuard.GetConfig<TConfig>(config, GetType().Name).SelectedColorSchemeName = name;
 }

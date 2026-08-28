@@ -25,7 +25,7 @@ public sealed class GameFlowScriptDocumentService : IGameFlowScriptDocumentServi
 		_lineService = lineService;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool IsLevelScriptDefined(ITextSnapshot source, string levelName)
 	{
 		ArgumentNullException.ThrowIfNull(source);
@@ -48,7 +48,7 @@ public sealed class GameFlowScriptDocumentService : IGameFlowScriptDocumentServi
 		return false;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public int? FindDocumentLineOfObject(ITextSnapshot source, string objectName, ObjectType type)
 	{
 		ArgumentNullException.ThrowIfNull(source);

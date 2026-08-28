@@ -9,6 +9,7 @@ using TombLib.Scripting.Hover;
 using TombLib.Scripting.Presentation;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Rendering;
+using TombLib.Scripting.UI.Resources;
 
 namespace TombLib.Scripting.UI.Hover;
 
@@ -31,10 +32,6 @@ public static class HoverControllerFactory
 		Func<int, CancellationToken, Task<TextHoverInfo?>> requestHoverAsync,
 		Action<TextHoverPresentationState>? applyHoverState = null)
 	{
-		ArgumentNullException.ThrowIfNull(editor);
-		ArgumentNullException.ThrowIfNull(buildRequestState);
-		ArgumentNullException.ThrowIfNull(requestHoverAsync);
-
 		return new TextHoverController(
 			owner: editor,
 			getOffsetFromPoint: editor.GetOffsetFromPoint,
@@ -43,8 +40,7 @@ public static class HoverControllerFactory
 			getCurrentRequestOffset: hoveredOffset => hoveredOffset,
 			showDiagnosticToolTip: editor.ShowDiagnosticToolTip,
 			showHoverToolTip: hoverInfo => ShowStandardHoverToolTip(editor, hoverInfo),
-			showCombinedToolTip: (hoverInfo, diagnosticInfo) =>
-				ShowStandardCombinedToolTip(editor, hoverInfo, diagnosticInfo),
+			showCombinedToolTip: (hoverInfo, diagnosticInfo) => ShowStandardCombinedToolTip(editor, hoverInfo, diagnosticInfo),
 			applyHoverState: applyHoverState);
 	}
 
@@ -57,9 +53,13 @@ public static class HoverControllerFactory
 		ArgumentNullException.ThrowIfNull(hoverInfo);
 
 		editor.ShowToolTip(
-			TextHoverToolTipContentFactory.CreateHoverContent(hoverInfo, TextEditorBase.ToolTipForeground, TextEditorBase.DefaultToolTipBackground),
-			TextEditorBase.DefaultToolTipBorder,
-			TextEditorBase.DefaultToolTipBackground);
+			content: TextHoverToolTipContentFactory.CreateHoverContent(
+				hoverInfo: hoverInfo,
+				foreground: TextEditorColorPalette.ToolTipForeground,
+				background: TextEditorColorPalette.ToolTipBackground),
+
+			border: TextEditorColorPalette.ToolTipBorder,
+			background: TextEditorColorPalette.ToolTipBackground);
 	}
 
 	/// <summary>
@@ -75,16 +75,17 @@ public static class HoverControllerFactory
 		ArgumentNullException.ThrowIfNull(diagnosticInfo);
 
 		editor.ShowToolTip(
-			TextHoverToolTipContentFactory.CreateCombinedContent(
-				hoverInfo,
-				diagnosticInfo,
-				TextEditorBase.ToolTipForeground,
-				TextEditorBase.DefaultToolTipBackground,
-				TextEditorBase.ToolTipTextMaxWidth,
-				TextEditorBase.ToolTipTextFontSize,
-				GetDiagnosticColors),
-			TextEditorBase.DefaultToolTipBorder,
-			TextEditorBase.DefaultToolTipBackground);
+			content: TextHoverToolTipContentFactory.CreateCombinedContent(
+				hoverInfo: hoverInfo,
+				diagnosticInfo: diagnosticInfo,
+				foreground: TextEditorColorPalette.ToolTipForeground,
+				background: TextEditorColorPalette.ToolTipBackground,
+				maxWidth: ToolTipDefaults.TextMaxWidth,
+				fontSize: ToolTipDefaults.TextFontSize,
+				getDiagnosticColors: GetDiagnosticColors),
+
+			border: TextEditorColorPalette.ToolTipBorder,
+			background: TextEditorColorPalette.ToolTipBackground);
 	}
 
 	/// <summary>

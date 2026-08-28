@@ -26,7 +26,7 @@ public sealed class TRXGameFlowHoverService : ITextHoverProvider
 	/// <param name="schemaService">The schema service used to resolve hover information.</param>
 	public TRXGameFlowHoverService(ITRXGameFlowSchemaService schemaService) => _schemaService = schemaService;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public TextHoverInfo? GetHoverInfo(TextHoverRequest request)
 	{
 		try

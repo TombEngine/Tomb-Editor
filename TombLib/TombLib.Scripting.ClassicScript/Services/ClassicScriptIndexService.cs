@@ -43,14 +43,14 @@ public sealed class ClassicScriptIndexService : IClassicScriptIndexService
 		_mnemonicCatalogService = mnemonicCatalogService;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public int GetNextFreeIndex(ITextSnapshot source, int offset)
 	{
 		string? commandKey = _commandService.GetCommandKey(source, offset);
 		return GetNextFreeIndex(source, offset, commandKey);
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public int GetNextFreeIndex(ITextSnapshot source, int offset, string? commandKey)
 	{
 		if (string.IsNullOrEmpty(commandKey))

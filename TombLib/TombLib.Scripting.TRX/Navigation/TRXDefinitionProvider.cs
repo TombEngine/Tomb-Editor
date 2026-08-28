@@ -23,7 +23,7 @@ public sealed class TRXDefinitionProvider : ITextDefinitionProvider
 		_documentService = documentService;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public TextDefinitionLocation? GetDefinition(TextDefinitionRequest request)
 	{
 		if (string.IsNullOrWhiteSpace(request.SymbolName))

@@ -36,11 +36,11 @@ public sealed class SynchronizationContextUiDispatcherService : IUiDispatcherSer
 		return new SynchronizationContextUiDispatcherService(synchronizationContext);
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool CheckAccess()
 		=> ReferenceEquals(SynchronizationContext.Current, _synchronizationContext);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public void Invoke(Action action)
 	{
 		ArgumentNullException.ThrowIfNull(action);

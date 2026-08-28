@@ -15,7 +15,7 @@ public sealed class TrimTrailingWhitespaceFormatter : ITextDocumentFormatter
 	private TrimTrailingWhitespaceFormatter()
 	{ }
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string FormatDocument(string content, bool trimOnly = false)
 		=> content.TrimTrailingWhitespaceOnLines();
 }

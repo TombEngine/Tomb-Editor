@@ -80,8 +80,8 @@ internal sealed class EditorFactoryService
 			?? _registrations.FirstOrDefault(registration => registration.SupportsFile(filePath));
 	}
 
-	private static IEditorControl CreateDefaultPlainTextEditor(Version engineVersion)
-		=> new PlainTextEditor(engineVersion);
+	private static IEditorControl CreateDefaultPlainTextEditor(Version _)
+		=> new PlainTextEditor();
 
 	private static ScriptingDocumentRegistration CreatePlainTextRegistration(
 		Func<Version, IEditorControl>? factory,

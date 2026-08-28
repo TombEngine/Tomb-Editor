@@ -19,13 +19,13 @@ public sealed class TRXGameFlowSchemaService : ITRXGameFlowSchemaService
 {
 	private static readonly Logger s_log = LogManager.GetCurrentClassLogger();
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public TRXSchemaLoadState LoadState { get; }
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public TRXGameFlowSchemaModel? Model { get; }
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public TRXSchemaKeywords Keywords => Model?.Keywords ?? TRXSchemaKeywords.Empty;
 
 	/// <summary>

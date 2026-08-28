@@ -28,19 +28,19 @@ public sealed class StringTextSnapshot : ITextSnapshot
 		(_lines, _lineStartOffsets) = BuildLines(_text);
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string? FileName { get; }
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public int TextLength => _text.Length;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public int LineCount => _lines.Length;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public IEnumerable<ITextLine> Lines => _lines;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public char GetCharAt(int offset)
 	{
 		if (offset < 0 || offset >= _text.Length)
@@ -49,7 +49,7 @@ public sealed class StringTextSnapshot : ITextSnapshot
 		return _text[offset];
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string GetText(int offset, int length)
 	{
 		// Overflow-safe bounds check: the subtraction cannot overflow because
@@ -60,7 +60,7 @@ public sealed class StringTextSnapshot : ITextSnapshot
 		return _text.Substring(offset, length);
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public ITextLine GetLineByOffset(int offset)
 	{
 		if (offset < 0 || offset > _text.Length)
@@ -94,7 +94,7 @@ public sealed class StringTextSnapshot : ITextSnapshot
 		throw new ArgumentOutOfRangeException(nameof(offset));
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public ITextLine GetLineByNumber(int lineNumber)
 	{
 		if (lineNumber < 1 || lineNumber > _lines.Length)

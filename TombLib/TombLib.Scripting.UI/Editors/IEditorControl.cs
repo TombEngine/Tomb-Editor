@@ -21,7 +21,7 @@ public interface IEditorControl : IDisposable
 
 	/// <summary>
 	/// Silent session prevents the control from checking if the content has changed, therefore not running background processing to do so.
-	/// <para>Setting this to <c>true</c> will also prevent the creation of backup files.</para>
+	/// <para>Setting this to <see langword="true"/> will also prevent the creation of backup files.</para>
 	/// </summary>
 	bool IsSilentSession { get; set; }
 

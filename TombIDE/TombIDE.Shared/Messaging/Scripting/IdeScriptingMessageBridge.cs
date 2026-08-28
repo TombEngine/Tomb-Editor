@@ -29,7 +29,7 @@ public sealed class IdeScriptingMessageBridge : IDisposable
 		_ide.IDEEventRaised += OnIdeEventRaised;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public void Dispose()
 		=> _ide.IDEEventRaised -= OnIdeEventRaised;
 

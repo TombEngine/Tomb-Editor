@@ -20,7 +20,7 @@ public sealed class ClassicScriptLineService : IClassicScriptLineService
 	private static readonly Regex IncludeLineRegex = new("\".*\"", RegexOptions.Compiled);
 	private static readonly Regex NGStringIndexRegex = new(@"^\d+:\s*", RegexOptions.Compiled | RegexOptions.Multiline);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string? GetWordAtOffset(ITextSnapshot source, int offset)
 	{
 		if (offset > source.TextLength)
@@ -78,7 +78,7 @@ public sealed class ClassicScriptLineService : IClassicScriptLineService
 		return null;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public WordType GetWordTypeAtOffset(ITextSnapshot source, int offset)
 	{
 		if (offset > source.TextLength)
@@ -146,11 +146,11 @@ public sealed class ClassicScriptLineService : IClassicScriptLineService
 		return WordType.Unknown;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool IsSectionHeaderLine(string lineText)
 		=> SectionHeaderRegex.IsMatch(lineText);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string? GetSectionHeaderText(string sectionHeaderLine)
 	{
 		Match match = SectionHeaderRegex.Match(sectionHeaderLine);
@@ -161,18 +161,18 @@ public sealed class ClassicScriptLineService : IClassicScriptLineService
 		return match.Groups[1].Value;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool IsEmptyOrComments(string? lineText)
 		=> string.IsNullOrWhiteSpace(lineText) || lineText.TrimStart().StartsWith(CommentDelimiter, StringComparison.Ordinal);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool IsValidIncludeLine(string lineText)
 	{
 		return lineText.TrimStart().StartsWith("#include ", StringComparison.OrdinalIgnoreCase)
 			&& IncludeLineRegex.IsMatch(lineText);
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool IsStandardStringSectionName(string? sectionName)
 	{
 		if (string.IsNullOrEmpty(sectionName))
@@ -183,7 +183,7 @@ public sealed class ClassicScriptLineService : IClassicScriptLineService
 			|| sectionName.Equals("psxstrings", StringComparison.OrdinalIgnoreCase);
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool IsExtraNGSectionName(string? sectionName)
 	{
 		if (string.IsNullOrEmpty(sectionName))
@@ -192,23 +192,23 @@ public sealed class ClassicScriptLineService : IClassicScriptLineService
 		return sectionName.Equals("extrang", StringComparison.OrdinalIgnoreCase);
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool IsStringSectionName(string? sectionName)
 		=> IsStandardStringSectionName(sectionName) || IsExtraNGSectionName(sectionName);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string RemoveComments(string lineText)
 		=> LineCommentHelper.RemoveLineComment(lineText, CommentDelimiter);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string EscapeComments(string lineText)
 		=> LineCommentHelper.MaskLineComment(lineText, CommentDelimiter);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string EscapeCommentsAndNewLines(string lineText)
 		=> EscapeComments(lineText).Replace(ContinuationMarker, ' ').Replace('\n', ' ').Replace('\r', ' ');
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string RemoveNGStringIndex(string lineText)
 		=> NGStringIndexRegex.Replace(lineText, string.Empty);
 }

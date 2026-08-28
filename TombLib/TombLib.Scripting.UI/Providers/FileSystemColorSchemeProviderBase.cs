@@ -21,7 +21,7 @@ public abstract class FileSystemColorSchemeProviderBase : ITextEditorColorProvid
 	/// <param name="colorSchemesDirectory">The directory that contains the color scheme files.</param>
 	protected FileSystemColorSchemeProviderBase(string colorSchemesDirectory) => _colorSchemesDirectory = colorSchemesDirectory;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public virtual IReadOnlyList<string> GetAvailableNames()
 	{
 		if (!Directory.Exists(_colorSchemesDirectory))
@@ -30,10 +30,10 @@ public abstract class FileSystemColorSchemeProviderBase : ITextEditorColorProvid
 		return FilterNames(Directory.GetFiles(_colorSchemesDirectory, "*" + ScriptingDefaults.ColorSchemeFileExtension, SearchOption.TopDirectoryOnly));
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public abstract string GetSelectedName(TextEditorConfigBase config);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public abstract void SetSelectedName(TextEditorConfigBase config, string name);
 
 	/// <summary>

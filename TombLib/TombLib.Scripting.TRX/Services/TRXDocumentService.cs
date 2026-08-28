@@ -26,7 +26,7 @@ public sealed class TRXDocumentService : ITRXDocumentService
 		_lineService = lineService;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool IsLevelScriptDefined(ITextSnapshot source, string levelName)
 	{
 		ArgumentNullException.ThrowIfNull(source);
@@ -48,7 +48,7 @@ public sealed class TRXDocumentService : ITRXDocumentService
 		return false;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public int? FindDocumentLineOfLevel(ITextSnapshot source, string levelName)
 	{
 		ArgumentNullException.ThrowIfNull(source);

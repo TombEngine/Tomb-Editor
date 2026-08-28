@@ -11,7 +11,7 @@ public class TextEditorSettingsValidationTests
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
-			var editor = new PlainTextEditor(new Version(1, 0));
+			var editor = new PlainTextEditor();
 
 			Assert.ThrowsException<ArgumentOutOfRangeException>(() => editor.MinZoom = 0);
 			Assert.ThrowsException<ArgumentOutOfRangeException>(() => editor.MinZoom = -1);
@@ -23,7 +23,7 @@ public class TextEditorSettingsValidationTests
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
-			var editor = new PlainTextEditor(new Version(1, 0));
+			var editor = new PlainTextEditor();
 
 			Assert.ThrowsException<ArgumentOutOfRangeException>(() => editor.MaxZoom = 0);
 		});
@@ -34,7 +34,7 @@ public class TextEditorSettingsValidationTests
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
-			var editor = new PlainTextEditor(new Version(1, 0));
+			var editor = new PlainTextEditor();
 
 			Assert.ThrowsException<ArgumentOutOfRangeException>(() => editor.ZoomStepSize = 0);
 		});
@@ -45,7 +45,7 @@ public class TextEditorSettingsValidationTests
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
-			var editor = new PlainTextEditor(new Version(1, 0));
+			var editor = new PlainTextEditor();
 
 			Assert.ThrowsException<ArgumentNullException>(() => editor.EngineVersion = null!);
 		});
@@ -56,7 +56,7 @@ public class TextEditorSettingsValidationTests
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
-			var editor = new PlainTextEditor(new Version(1, 0));
+			var editor = new PlainTextEditor();
 
 			Assert.ThrowsException<ArgumentNullException>(() => editor.ParenthesesClosingString = null!);
 			Assert.ThrowsException<ArgumentNullException>(() => editor.BracesClosingString = null!);

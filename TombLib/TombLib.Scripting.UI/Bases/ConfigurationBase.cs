@@ -10,7 +10,7 @@ namespace TombLib.Scripting.UI.Bases;
 /// </summary>
 public abstract class ConfigurationBase
 {
-	private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+	private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
 	/// <summary>
 	/// Gets the default path used when the configuration is loaded or saved without an explicit path.
@@ -34,7 +34,7 @@ public abstract class ConfigurationBase
 		}
 		catch (Exception exception)
 		{
-			Log.Warn(exception, "Configuration '{Type}' could not be loaded from a stream; using defaults.", typeof(T).Name);
+			s_logger.Warn(exception, "Configuration '{Type}' could not be loaded from a stream; using defaults.", typeof(T).Name);
 			return new T();
 		}
 	}
@@ -56,7 +56,7 @@ public abstract class ConfigurationBase
 		}
 		catch (Exception exception)
 		{
-			Log.Warn(exception, "Configuration '{Type}' could not be loaded from '{Path}'; using defaults.", typeof(T).Name, filePath);
+			s_logger.Warn(exception, "Configuration '{Type}' could not be loaded from '{Path}'; using defaults.", typeof(T).Name, filePath);
 			return new T();
 		}
 	}

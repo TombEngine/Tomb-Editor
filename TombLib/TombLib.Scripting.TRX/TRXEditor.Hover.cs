@@ -8,7 +8,7 @@ namespace TombLib.Scripting.TRX;
 
 public sealed partial class TRXEditor
 {
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	protected override bool CanShowDiagnosticFallback => true;
 
 	private Task<TextHoverInfo?> RequestHover(int hoveredOffset, CancellationToken cancellationToken)

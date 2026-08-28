@@ -5,7 +5,7 @@ namespace TombLib.Scripting.UI.Bases;
 
 public abstract partial class TextEditorBase
 {
-	// File I/O
+	#region File I/O
 
 	/// <summary>
 	/// Loads the file at the given path into the editor.
@@ -22,8 +22,10 @@ public abstract partial class TextEditorBase
 	public void Load(string filePath, bool silentSession)
 	{
 		EnsureNotDisposed();
+
 		base.Load(filePath);
 		FilePath = filePath;
+
 		_contentPersistenceCoordinator.SetPersistedContent(Content);
 
 		IsContentChanged = _contentPersistenceCoordinator.HasChanges(Content);
@@ -46,7 +48,9 @@ public abstract partial class TextEditorBase
 	{
 		EnsureNotDisposed();
 		base.Save(filePath);
+
 		_contentPersistenceCoordinator.SetPersistedContent(Content);
+
 		IsContentChanged = _contentPersistenceCoordinator.HasChanges(Content);
 		LastModified = DateTime.Now;
 	}
@@ -54,7 +58,9 @@ public abstract partial class TextEditorBase
 	internal void SaveBookmarks()
 		=> _bookmarkCoordinator.Save(FilePath);
 
-	// Content
+	#endregion File I/O
+
+	#region Content
 
 	/// <summary>
 	/// Runs the content-change worker check and updates the changed state.
@@ -73,7 +79,9 @@ public abstract partial class TextEditorBase
 	{
 		EnsureNotDisposed();
 		SetContent(content);
+
 		_contentPersistenceCoordinator.SetPersistedContent(Content);
+
 		IsContentChanged = _contentPersistenceCoordinator.HasChanges(Content);
 		LastModified = DateTime.Now;
 	}
@@ -98,4 +106,6 @@ public abstract partial class TextEditorBase
 
 		RunContentChangedWorker();
 	}
+
+	#endregion Content
 }

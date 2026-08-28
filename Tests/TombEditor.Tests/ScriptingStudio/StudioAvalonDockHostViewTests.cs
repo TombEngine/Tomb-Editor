@@ -27,7 +27,7 @@ public sealed class StudioAvalonDockHostViewTests
 				DocumentMode.PlainText,
 				static _ => false,
 				static _ => false,
-				version => new PlainTextEditor(version),
+				_ => new PlainTextEditor(),
 				ScriptingDocumentContributions.None,
 				isFallback: true));
 			var pane = new TestDockPane();

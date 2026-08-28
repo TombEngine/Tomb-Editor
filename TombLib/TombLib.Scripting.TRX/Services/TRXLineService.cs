@@ -12,15 +12,15 @@ public sealed class TRXLineService : ITRXLineService
 {
 	private const string CommentDelimiter = "//";
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string RemoveComments(string lineText)
 		=> LineCommentHelper.RemoveLineComment(lineText, CommentDelimiter);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string EscapeComments(string lineText)
 		=> LineCommentHelper.MaskLineComment(lineText, CommentDelimiter);
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool IsEmptyOrComments(string? lineText)
 		=> string.IsNullOrWhiteSpace(lineText) || lineText.TrimStart().StartsWith(CommentDelimiter, StringComparison.Ordinal);
 }

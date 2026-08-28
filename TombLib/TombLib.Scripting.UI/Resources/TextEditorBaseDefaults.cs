@@ -66,11 +66,6 @@ public static class TextEditorBaseDefaults
 	public const bool AutoCloseSingleQuotes = true;
 
 	/// <summary>
-	/// The default value for auto-closing both quote kinds.
-	/// </summary>
-	public const bool AutoCloseQuotes = AutoCloseDoubleQuotes && AutoCloseSingleQuotes;
-
-	/// <summary>
 	/// The default value for word wrapping.
 	/// </summary>
 	public const bool WordWrapping = false;

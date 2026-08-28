@@ -1,4 +1,3 @@
-using System;
 using TombLib.Scripting.UI.Completion;
 using TombLib.Scripting.UI.Diagnostics;
 using TombLib.Scripting.UI.Documents;
@@ -6,21 +5,28 @@ using TombLib.Scripting.UI.Editing;
 using TombLib.Scripting.UI.Editors;
 using TombLib.Scripting.UI.Navigation;
 using TombLib.Scripting.UI.Presentation;
+using TombLib.Scripting.UI.Resources;
 
 namespace TombLib.Scripting.UI.Bases;
 
 /// <summary>
 /// Construction-time composition of the per-editor services created in the
 /// <see cref="TextEditorBase"/> constructor.
-/// This is not a general-purpose service locator or DI service collection: every member is
-/// 1:1 with the editor instance it was created for and depends on the editor being
-/// constructed (document, text area, popup host, etc.), so real DI composition is not
-/// applicable here. The name intentionally uses "composition" rather than "collection" to
-/// reflect that it is a fixed, narrow set of services rather than an extensible registry.
-/// Ownership and lifetime: the composition object (and each service) is owned by the editor
+///	<para>
+/// This is not a general-purpose service locator or DI service collection.
+/// Every member is 1:1 with the editor instance it was created for and depends
+/// on the editor being constructed (document, text area, popup host, etc.),
+/// so real DI composition is not applicable here.
+///
+/// The name intentionally uses "composition" rather than "collection" to reflect
+/// that it is a fixed, narrow set of services rather than an extensible registry.
+///
+/// Ownership and lifetime:
+/// the composition object (and each service) is owned by the editor
 /// instance that created it and lives exactly as long as that editor; the constructor fields
 /// it into <see cref="TextEditorBase"/> readonly fields, after which the composition object
 /// itself is discarded.
+/// </para>
 /// </summary>
 internal sealed class TextEditorServiceComposition
 {
@@ -48,54 +54,15 @@ internal sealed class TextEditorServiceComposition
 		ViewService = viewService;
 	}
 
-	/// <summary>
-	/// The auto-closing service used by the editor.
-	/// </summary>
 	public TextAutoClosingService AutoClosingService { get; }
-
-	/// <summary>
-	/// The bookmark coordinator used by the editor.
-	/// </summary>
 	public BookmarkCoordinator BookmarkCoordinator { get; }
-
-	/// <summary>
-	/// The line comment service used by the editor.
-	/// </summary>
 	public TextLineCommentService CommentService { get; }
-
-	/// <summary>
-	/// The completion window coordinator used by the editor.
-	/// </summary>
 	public CompletionWindowCoordinator CompletionWindowCoordinator { get; }
-
-	/// <summary>
-	/// The content persistence coordinator used by the editor.
-	/// </summary>
 	public ContentPersistenceCoordinator ContentPersistenceCoordinator { get; }
-
-	/// <summary>
-	/// The definition navigation service used by the editor.
-	/// </summary>
 	public TextDefinitionNavigationService DefinitionNavigationService { get; }
-
-	/// <summary>
-	/// The diagnostic tooltip service used by the editor.
-	/// </summary>
 	public TextDiagnosticToolTipService DiagnosticToolTipService { get; }
-
-	/// <summary>
-	/// The status coordinator used by the editor.
-	/// </summary>
 	public TextEditorStatusCoordinator StatusCoordinator { get; }
-
-	/// <summary>
-	/// The tooltip presenter used by the editor.
-	/// </summary>
 	public EditorToolTipPresenter ToolTipPresenter { get; }
-
-	/// <summary>
-	/// The view service used by the editor.
-	/// </summary>
 	public TextEditorViewService ViewService { get; }
 
 	/// <summary>
@@ -105,27 +72,40 @@ internal sealed class TextEditorServiceComposition
 	/// <returns>The service composition bound to the editor.</returns>
 	public static TextEditorServiceComposition Create(TextEditorBase editor)
 	{
-		ArgumentNullException.ThrowIfNull(editor);
-
 		return new TextEditorServiceComposition(
 			autoClosingService: new TextAutoClosingService(),
+
 			bookmarkCoordinator: new BookmarkCoordinator(
-				() => editor.Document,
+				documentProvider: () => editor.Document,
 				onBookmarksChanged: () =>
 				{
 					editor.TextArea.TextView.InvalidateLayer(ICSharpCode.AvalonEdit.Rendering.KnownLayer.Background);
 					editor.SaveBookmarks();
 				}),
+
 			commentService: new TextLineCommentService(),
+
 			completionWindowCoordinator: new CompletionWindowCoordinator(
-				new CompletionWindowHost(editor.TextArea),
-				TextEditorBase.DefaultToolTipBorder,
-				TextEditorBase.DefaultToolTipBackground,
-				TextEditorBase.ToolTipForeground),
-			contentPersistenceCoordinator: new ContentPersistenceCoordinator(() => editor.Content, () => editor.IsSilentSession, useDelayedScheduling: true),
+				host: new CompletionWindowHost(editor.TextArea),
+				defaultBorderBrush: TextEditorColorPalette.ToolTipBorder,
+				defaultBackground: TextEditorColorPalette.ToolTipBackground,
+				defaultForeground: TextEditorColorPalette.ToolTipForeground),
+
+			contentPersistenceCoordinator: new ContentPersistenceCoordinator(
+				contentProvider: () => editor.Content,
+				silentSessionProvider: () => editor.IsSilentSession,
+				useDelayedScheduling: true),
+
 			definitionNavigationService: new TextDefinitionNavigationService(),
-			diagnosticToolTipService: new TextDiagnosticToolTipService(onDiagnosticsChanged: () => editor.InvalidateDiagnosticLayer()),
-			statusCoordinator: new TextEditorStatusCoordinator(editor.TextArea, editor.RaiseStatusChanged, editor.RaiseZoomChanged),
+
+			diagnosticToolTipService: new TextDiagnosticToolTipService(
+				onDiagnosticsChanged: () => editor.InvalidateDiagnosticLayer()),
+
+			statusCoordinator: new TextEditorStatusCoordinator(
+				textArea: editor.TextArea,
+				raiseStatusChanged: editor.RaiseStatusChanged,
+				raiseZoomChanged: editor.RaiseZoomChanged),
+
 			toolTipPresenter: new EditorToolTipPresenter(editor),
 			viewService: new TextEditorViewService(editor));
 	}

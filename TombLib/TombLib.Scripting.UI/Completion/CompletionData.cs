@@ -75,7 +75,7 @@ public sealed class CompletionData : ICompletionData, INotifyPropertyChanged
 		_displayDetail = FlattenSingleLineText(_item.Detail);
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public event PropertyChangedEventHandler? PropertyChanged;
 
 	/// <summary>
@@ -85,10 +85,10 @@ public sealed class CompletionData : ICompletionData, INotifyPropertyChanged
 	/// </summary>
 	public ImageSource Image => _getImage?.Invoke(_item)!;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string Text => _item.FilterText;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string DisplayText => _item.Label;
 
 	/// <summary>
@@ -101,10 +101,10 @@ public sealed class CompletionData : ICompletionData, INotifyPropertyChanged
 	/// </summary>
 	public Visibility DetailVisibility => string.IsNullOrEmpty(_displayDetail) ? Visibility.Collapsed : Visibility.Visible;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public object Content => DisplayText;
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public object? Description
 	{
 		get
@@ -114,7 +114,7 @@ public sealed class CompletionData : ICompletionData, INotifyPropertyChanged
 		}
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public double Priority => _item.Priority;
 
 	/// <summary>

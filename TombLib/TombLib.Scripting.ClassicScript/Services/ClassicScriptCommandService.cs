@@ -48,7 +48,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 	// Command location and text
 	// ------------------------------------------------------------------
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public int? GetCommandStartLine(ITextSnapshot source, int offset)
 	{
 		ITextLine offsetLine = source.GetLineByOffset(offset);
@@ -64,7 +64,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 		return FindCommandStartLine(source, offsetLine);
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string? GetWholeCommandLineText(ITextSnapshot source, int offset)
 	{
 		int? commandStartLineNumber = GetCommandStartLine(source, offset);
@@ -86,7 +86,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 		return MergeLines(source, linesToMerge);
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string? GetCommandKey(ITextSnapshot source, int offset)
 	{
 		int? commandStartLineNumber = GetCommandStartLine(source, offset);
@@ -110,7 +110,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 		return null;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string? GetCommandSyntax(ITextSnapshot source, int offset)
 	{
 		string? wholeCommandLineText = GetWholeCommandLineText(source, offset);
@@ -132,7 +132,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 		return _syntaxCatalogService.GetCommandSyntax(commandKey);
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public IReadOnlyList<ClassicScriptSyntaxDefinition> GetCommandSyntaxDefinitions()
 		=> _syntaxCatalogService.GetCommandSyntaxDefinitions();
 
@@ -140,7 +140,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 	// Argument navigation
 	// ------------------------------------------------------------------
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public int GetArgumentIndexAtOffset(ITextSnapshot source, int offset)
 	{
 		string? wholeLineText = GetWholeCommandLineText(source, offset);
@@ -172,7 +172,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 		return totalArgumentCount - argumentCountAfterOffset;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string? GetArgumentFromIndex(ITextSnapshot source, int offset, int index)
 	{
 		string? wholeLineText = GetWholeCommandLineText(source, offset);
@@ -183,7 +183,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 		return wholeLineText.Split(',')[index];
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string? GetFlagPrefixOfCurrentArgument(ITextSnapshot source, int offset)
 	{
 		try
@@ -222,7 +222,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 	// Include path resolution
 	// ------------------------------------------------------------------
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string? GetFullIncludePath(ITextSnapshot source, int offset)
 	{
 		ITextLine caretLine = source.GetLineByOffset(offset);
@@ -248,7 +248,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 	// Section queries
 	// ------------------------------------------------------------------
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool DocumentContainsSections(ITextSnapshot source)
 	{
 		foreach (ITextLine line in source.Lines)
@@ -262,7 +262,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 		return false;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public int GetSectionsCount(ITextSnapshot source)
 	{
 		int sectionsCount = 0;
@@ -278,7 +278,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 		return sectionsCount;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public string? GetCurrentSectionName(ITextSnapshot source, int offset)
 	{
 		int? sectionStartLineNumber = GetStartLineOfCurrentSection(source, offset);
@@ -292,7 +292,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 		return _lineService.GetSectionHeaderText(lineText);
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public int? GetStartLineOfCurrentSection(ITextSnapshot source, int offset)
 	{
 		ITextLine offsetLine = source.GetLineByOffset(offset);
@@ -309,7 +309,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 		return null;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public int? GetLastLineOfCurrentSection(ITextSnapshot source, int offset)
 	{
 		ITextLine offsetLine = source.GetLineByOffset(offset);
@@ -341,7 +341,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 		return null;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public int? FindDocumentLineOfSection(ITextSnapshot source, string sectionName)
 	{
 		sectionName = sectionName.Trim('[').Trim(']').Trim();
@@ -366,7 +366,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 	// Object lookup
 	// ------------------------------------------------------------------
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public int? FindDocumentLineOfObject(ITextSnapshot source, string objectName, ObjectType type)
 	{
 		foreach (ITextLine line in source.Lines)
@@ -400,7 +400,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 		return null;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool IsLevelScriptDefined(ITextSnapshot source, string levelName)
 	{
 		foreach (ITextLine line in source.Lines)
@@ -419,7 +419,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 		return false;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool IsLevelLanguageStringDefined(ITextSnapshot source, string levelName)
 	{
 		foreach (ITextLine line in source.Lines)
@@ -434,7 +434,7 @@ public sealed class ClassicScriptCommandService : IClassicScriptCommandService
 		return false;
 	}
 
-	/// <inheritdoc />
+	/// <inheritdoc/>
 	public bool IsPluginDefined(ITextSnapshot source, string pluginName)
 	{
 		int? optionsSectionLineNumber = FindDocumentLineOfSection(source, "Options");
