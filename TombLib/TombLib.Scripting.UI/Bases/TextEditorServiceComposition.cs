@@ -1,9 +1,12 @@
-using TombLib.Scripting.UI.Completion;
+using Nickelony.IDEKit.AvalonEdit.Bookmarks;
+using Nickelony.IDEKit.AvalonEdit.ChangeMarkers;
+using Nickelony.IDEKit.AvalonEdit.Comments;
+using Nickelony.IDEKit.AvalonEdit.Editing;
+using Nickelony.IDEKit.AvalonEdit.Editors;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
 using TombLib.Scripting.UI.Diagnostics;
 using TombLib.Scripting.UI.Documents;
-using TombLib.Scripting.UI.Editing;
 using TombLib.Scripting.UI.Editors;
-using TombLib.Scripting.UI.Navigation;
 using TombLib.Scripting.UI.Presentation;
 using TombLib.Scripting.UI.Resources;
 
@@ -33,37 +36,37 @@ internal sealed class TextEditorServiceComposition
 	private TextEditorServiceComposition(
 		TextAutoClosingService autoClosingService,
 		BookmarkCoordinator bookmarkCoordinator,
+		IBookmarkStore bookmarkStore,
 		TextLineCommentService commentService,
 		CompletionWindowCoordinator completionWindowCoordinator,
 		ContentPersistenceCoordinator contentPersistenceCoordinator,
-		TextDefinitionNavigationService definitionNavigationService,
 		TextDiagnosticToolTipService diagnosticToolTipService,
 		TextEditorStatusCoordinator statusCoordinator,
 		EditorToolTipPresenter toolTipPresenter,
-		TextEditorViewService viewService)
+		UnsavedChangesTracker unsavedChangesTracker)
 	{
 		AutoClosingService = autoClosingService;
 		BookmarkCoordinator = bookmarkCoordinator;
+		BookmarkStore = bookmarkStore;
 		CommentService = commentService;
 		CompletionWindowCoordinator = completionWindowCoordinator;
 		ContentPersistenceCoordinator = contentPersistenceCoordinator;
-		DefinitionNavigationService = definitionNavigationService;
 		DiagnosticToolTipService = diagnosticToolTipService;
 		StatusCoordinator = statusCoordinator;
 		ToolTipPresenter = toolTipPresenter;
-		ViewService = viewService;
+		UnsavedChangesTracker = unsavedChangesTracker;
 	}
 
 	public TextAutoClosingService AutoClosingService { get; }
 	public BookmarkCoordinator BookmarkCoordinator { get; }
+	public IBookmarkStore BookmarkStore { get; }
 	public TextLineCommentService CommentService { get; }
 	public CompletionWindowCoordinator CompletionWindowCoordinator { get; }
 	public ContentPersistenceCoordinator ContentPersistenceCoordinator { get; }
-	public TextDefinitionNavigationService DefinitionNavigationService { get; }
 	public TextDiagnosticToolTipService DiagnosticToolTipService { get; }
 	public TextEditorStatusCoordinator StatusCoordinator { get; }
 	public EditorToolTipPresenter ToolTipPresenter { get; }
-	public TextEditorViewService ViewService { get; }
+	public UnsavedChangesTracker UnsavedChangesTracker { get; }
 
 	/// <summary>
 	/// Creates the service composition for the given editor.
@@ -79,9 +82,11 @@ internal sealed class TextEditorServiceComposition
 				documentProvider: () => editor.Document,
 				onBookmarksChanged: () =>
 				{
-					editor.TextArea.TextView.InvalidateLayer(ICSharpCode.AvalonEdit.Rendering.KnownLayer.Background);
+					editor.InvalidateBookmarkMargin();
 					editor.SaveBookmarks();
 				}),
+
+			bookmarkStore: new BookmarkSidecarStore(),
 
 			commentService: new TextLineCommentService(),
 
@@ -93,10 +98,8 @@ internal sealed class TextEditorServiceComposition
 
 			contentPersistenceCoordinator: new ContentPersistenceCoordinator(
 				contentProvider: () => editor.Content,
-				silentSessionProvider: () => editor.IsSilentSession,
+				suppressedProvider: () => editor.ProcessingMode == EditorProcessingMode.Suppressed,
 				useDelayedScheduling: true),
-
-			definitionNavigationService: new TextDefinitionNavigationService(),
 
 			diagnosticToolTipService: new TextDiagnosticToolTipService(
 				onDiagnosticsChanged: () => editor.InvalidateDiagnosticLayer()),
@@ -107,6 +110,9 @@ internal sealed class TextEditorServiceComposition
 				raiseZoomChanged: editor.RaiseZoomChanged),
 
 			toolTipPresenter: new EditorToolTipPresenter(editor),
-			viewService: new TextEditorViewService(editor));
+
+			unsavedChangesTracker: new UnsavedChangesTracker(
+				documentProvider: () => editor.Document,
+				onChanged: () => editor.InvalidateChangeMarkerMargin()));
 	}
 }

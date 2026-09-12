@@ -1,15 +1,14 @@
-using DarkUI.Controls;
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using System.Collections.Generic;
 using TombLib.Scripting.ClassicScript.Services;
 using TombLib.Scripting.ClassicScript.Types;
-using TombLib.Scripting.UI.ContentNodes;
 
 namespace TombLib.Scripting.ClassicScript.ContentNodes;
 
 /// <summary>
-/// Provides the content nodes for a ClassicScript document.
+/// Provides the document symbols (outline entries) for a ClassicScript document.
 /// </summary>
-public sealed class ClassicScriptNodesProvider : ContentNodesProviderBase
+public sealed class ClassicScriptNodesProvider : ITextDocumentSymbolProvider
 {
 	private readonly ClassicScriptContentNodeService _nodeService;
 
@@ -23,13 +22,11 @@ public sealed class ClassicScriptNodesProvider : ContentNodesProviderBase
 	}
 
 	/// <inheritdoc/>
-	protected override IReadOnlyList<DarkTreeNode> GetNodesCore(string content, string filter)
-	{
-		return ContentNodeTreeBuilder.BuildGroupedNodes(
-			_nodeService.GetNodeGroups(content, filter),
+	public IReadOnlyList<TextDocumentSymbol> GetSymbols(TextDocumentSymbolRequest request)
+		=> DocumentSymbolTreeBuilder.BuildGroupedNodes(
+			_nodeService.GetNodeGroups(request.DocumentText, request.Filter),
 			group => group.Header,
 			group => group.Nodes,
 			node => node.Text,
 			node => new ClassicScriptObjectDiscriminator(node.ObjectType));
-	}
 }

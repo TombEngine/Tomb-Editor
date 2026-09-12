@@ -2,25 +2,38 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TombIDE.ScriptingStudio.Shell;
+using TombIDE.Shared.Messaging;
+using Nickelony.IDEKit.Workspace.Documents;
 
 namespace TombIDE.ScriptingStudio.Host;
 
 internal sealed class ScriptingStudioShell : IScriptingStudioShell
 {
-	private readonly IServiceScope _shellScope;
+	private readonly AsyncServiceScope _shellScope;
 	private readonly RootShellHost _host;
 	private readonly RootShellViewModel _viewModel;
-	private bool _disposed;
+	private readonly IWorkspaceDocumentManager _documentManager;
+	private readonly IUiDispatcherService _uiDispatcher;
+	private readonly object _stateLock = new();
+	private Task? _stopTask;
 
-	public ScriptingStudioShell(IServiceScope shellScope, RootShellViewModel viewModel)
+	public ScriptingStudioShell(
+		AsyncServiceScope shellScope,
+		RootShellViewModel viewModel,
+		IWorkspaceDocumentManager documentManager,
+		IUiDispatcherService uiDispatcher)
 	{
-		ArgumentNullException.ThrowIfNull(shellScope);
 		ArgumentNullException.ThrowIfNull(viewModel);
+		ArgumentNullException.ThrowIfNull(documentManager);
+		ArgumentNullException.ThrowIfNull(uiDispatcher);
 
 		_shellScope = shellScope;
 		_viewModel = viewModel;
+		_documentManager = documentManager;
+		_uiDispatcher = uiDispatcher;
 
 		var view = new RootShellView
 		{
@@ -30,14 +43,32 @@ internal sealed class ScriptingStudioShell : IScriptingStudioShell
 		_host = new RootShellHost(view);
 	}
 
-	public void Dispose()
+	public Task StopAsync()
 	{
-		if (_disposed)
-			return;
+		lock (_stateLock)
+			return _stopTask ??= StopCoreAsync();
+	}
 
-		_disposed = true;
-		_host.Dispose();
-		_shellScope.Dispose();
+	public ValueTask DisposeAsync()
+		=> new(StopAsync());
+
+	private async Task StopCoreAsync()
+	{
+		try
+		{
+			await _documentManager.StopAsync().ConfigureAwait(false);
+		}
+		finally
+		{
+			try
+			{
+				_uiDispatcher.Invoke(_host.Dispose);
+			}
+			finally
+			{
+				await _shellScope.DisposeAsync().ConfigureAwait(false);
+			}
+		}
 	}
 
 	public void Mount(Control hostContainer, Form ownerForm)

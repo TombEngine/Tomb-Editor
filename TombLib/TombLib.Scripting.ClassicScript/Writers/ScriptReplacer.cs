@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
+using Nickelony.IDEKit.Core.Comments;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.ClassicScript.Services;
-using TombLib.Scripting.Text;
 using TombLib.Scripting.UI.Bases;
-using TombLib.Scripting.UI.Editing;
 
 namespace TombLib.Scripting.ClassicScript.Writers;
 
@@ -30,8 +30,7 @@ public sealed class ScriptReplacer
 	/// <param name="newName">The new level script name.</param>
 	public void RenameLevelScript(TextEditorBase textEditor, string oldName, string newName)
 	{
-		TextEditorLineOperations.TryReplaceFirstMatchingLine(
-			textEditor,
+		textEditor.TryReplaceFirstMatchingLine(
 			lineText =>
 			{
 				if (!NameCommandRegex.IsMatch(lineText))
@@ -52,7 +51,7 @@ public sealed class ScriptReplacer
 	/// <param name="newName">The new language string name.</param>
 	public void RenameLanguageString(TextEditorBase textEditor, string oldName, string newName)
 	{
-		TextEditorLineOperations.TryReplaceFirstMatchingLine(textEditor, lineText =>
+		textEditor.TryReplaceFirstMatchingLine(lineText =>
 		{
 			string cleanString = _lineService.RemoveComments(_lineService.RemoveNGStringIndex(lineText)).Trim();
 			return cleanString == oldName
@@ -63,7 +62,7 @@ public sealed class ScriptReplacer
 
 	private static string ReplaceCodeValue(string lineText, string oldName, string newName)
 	{
-		TextRange codeRange = LineCommentHelper.GetCodeRange(lineText, ";");
+		TextRange codeRange = CommentHelper.GetCodeRange(lineText, new CommentSyntax(";", null, null, StringLiteralStyle.None));
 		string codeText = lineText[..codeRange.Length];
 		return codeText.Replace(oldName, newName) + lineText[codeRange.Length..];
 	}

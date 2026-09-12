@@ -223,6 +223,58 @@ public class ContentChangedWorkerDisposalTests
 		});
 	}
 
+	[TestMethod]
+	public void ContentPersistenceCoordinator_ResetScope_IsNestSafeAndSuppressesDelayedWork()
+	{
+		WPFTestHelper.RunInSta(() =>
+		{
+			var coordinator = new ContentPersistenceCoordinator(() => "changed", () => false, useDelayedScheduling: true);
+			int delayedNotificationCount = 0;
+			coordinator.TextChangedDelayed += OnTextChangedDelayed;
+			try
+			{
+				using (coordinator.BeginResetScope())
+				{
+					Assert.IsTrue(coordinator.IsResetting);
+					Assert.IsTrue(coordinator.HandleContentChanged());
+
+					using (coordinator.BeginResetScope())
+						Assert.IsTrue(coordinator.IsResetting);
+
+					Assert.IsTrue(coordinator.IsResetting);
+				}
+
+				Assert.IsFalse(coordinator.IsResetting);
+				PumpDispatcherFor(TimeSpan.FromMilliseconds(400.0));
+				Assert.AreEqual(0, delayedNotificationCount);
+			}
+			finally
+			{
+				coordinator.TextChangedDelayed -= OnTextChangedDelayed;
+				coordinator.Dispose();
+			}
+
+			void OnTextChangedDelayed(object? sender, EventArgs e)
+				=> delayedNotificationCount++;
+		});
+	}
+
+	private static void PumpDispatcherFor(TimeSpan duration)
+	{
+		var frame = new DispatcherFrame();
+		var timer = new DispatcherTimer { Interval = duration };
+		timer.Tick += OnTimerTick;
+		timer.Start();
+		Dispatcher.PushFrame(frame);
+
+		void OnTimerTick(object? sender, EventArgs e)
+		{
+			timer.Stop();
+			timer.Tick -= OnTimerTick;
+			frame.Continue = false;
+		}
+	}
+
 	private static string CreateTempDirectory()
 	{
 		string directory = Path.Combine(Path.GetTempPath(), "TombLibContentChangedWorker_" + Guid.NewGuid().ToString("N"));

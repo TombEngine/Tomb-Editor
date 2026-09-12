@@ -1,5 +1,6 @@
 using ICSharpCode.AvalonEdit.Document;
-using Nickelony.LanguageServer.Abstractions.Completion;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using System.Reflection;
 using TombLib.Scripting.UI.Completion;
 
@@ -16,8 +17,8 @@ public class LuaCompletionDataTests
 			fallbackOffset: 1,
 			fallbackLength: 2,
 			new TextCompletionTextEdit(
-				new TextCompletionRange(new TextCompletionPosition(0, 2), new TextCompletionPosition(0, 3)),
-				new TextCompletionRange(new TextCompletionPosition(0, 2), new TextCompletionPosition(0, 5))),
+				new TextRange(2, 1),
+				new TextRange(2, 3)),
 			useReplaceRange: false);
 
 		Assert.AreEqual(2, offset);
@@ -32,8 +33,8 @@ public class LuaCompletionDataTests
 			fallbackOffset: 1,
 			fallbackLength: 2,
 			new TextCompletionTextEdit(
-				new TextCompletionRange(new TextCompletionPosition(0, 2), new TextCompletionPosition(0, 3)),
-				new TextCompletionRange(new TextCompletionPosition(0, 2), new TextCompletionPosition(0, 5))),
+				new TextRange(2, 1),
+				new TextRange(2, 3)),
 			useReplaceRange: true);
 
 		Assert.AreEqual(2, offset);
@@ -48,7 +49,7 @@ public class LuaCompletionDataTests
 			fallbackOffset: 1,
 			fallbackLength: 2,
 			new TextCompletionTextEdit(
-				new TextCompletionRange(new TextCompletionPosition(4, 0), new TextCompletionPosition(4, 1))),
+				new TextRange(4, 1)),
 			useReplaceRange: false);
 
 		Assert.AreEqual(1, offset);

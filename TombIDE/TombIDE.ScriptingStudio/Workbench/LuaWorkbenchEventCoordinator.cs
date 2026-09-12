@@ -2,13 +2,13 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 using Nickelony.LanguageServer.Abstractions;
-using Nickelony.LanguageServer.Abstractions.Navigation;
+using Nickelony.IDEKit.AvalonEdit.Navigation;
+using Nickelony.IDEKit.IntelliSense.Navigation;
 using System;
 using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.Editors;
 using TombIDE.ScriptingStudio.Lua;
 using TombIDE.ScriptingStudio.Messaging;
-using TombIDE.ScriptingStudio.Navigation;
 using TombIDE.ScriptingStudio.Shell;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.ScriptingStudio.WorkspaceProfile;

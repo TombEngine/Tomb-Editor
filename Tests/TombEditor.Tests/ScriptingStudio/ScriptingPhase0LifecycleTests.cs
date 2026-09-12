@@ -2,15 +2,18 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 using System.ComponentModel;
+using System.IO;
 using System.Reflection;
+using System.Windows.Threading;
 using Moq;
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.Editors;
+using TombIDE.ScriptingStudio.Editors.ClassicScript.StringEditor;
 using TombIDE.ScriptingStudio.Diagnostics;
 using TombIDE.ScriptingStudio.Messaging;
 using TombIDE.ScriptingStudio.Shell;
-using TombIDE.ScriptingStudio.Shortcuts;
+using Nickelony.IDEKit.KeyBindings;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.ScriptingStudio.Workbench;
 using TombLib.Scripting.ClassicScript;
@@ -23,9 +26,174 @@ using TombLib.Scripting.UI.Presentation;
 namespace TombEditor.Tests.ScriptingStudio;
 
 [TestClass]
+[TestCategory("TextEditorBaseModernization")]
 public sealed class ScriptingPhase0LifecycleTests
 {
 	private static IEditorControl? _collectibilityRoot;
+
+	[TestMethod]
+	public void CurrentEditorEdit_UsesUndoAndDirtyState()
+		=> StaTestHelper.RunInSta(() =>
+		{
+			var editor = new ClassicScriptEditor(new Version(1, 0), ScriptingLanguageServicesTestFactory.CreateClassicScript());
+			try
+			{
+				editor.ApplyPersistedContent("original");
+				editor.Document.UndoStack.ClearAll();
+
+				Assert.IsFalse(editor.IsContentChanged);
+
+				editor.SelectAll();
+				editor.SelectedText = "edited";
+				editor.RunContentChangedWorker();
+
+				Assert.AreEqual("edited", editor.Content);
+				Assert.IsTrue(editor.IsContentChanged);
+				Assert.IsTrue(editor.CanUndo);
+
+				editor.Undo();
+				editor.RunContentChangedWorker();
+
+				Assert.AreEqual("original", editor.Content);
+				Assert.IsFalse(editor.IsContentChanged);
+			}
+			finally
+			{
+				editor.Dispose();
+			}
+		});
+
+	[TestMethod]
+	public void StringEditorView_Load_UsesSerializedContentAndCleanBaseline()
+		=> StaTestHelper.RunInSta(() =>
+		{
+			string filePath = Path.Combine(Path.GetTempPath(), $"tomb-editor-{Guid.NewGuid():N}.txt");
+			File.WriteAllText(filePath, "[Strings]\r\nHello");
+
+			var editor = new StringEditorView(new Version(1, 0));
+			try
+			{
+				editor.Load(filePath, new(EditorProcessingMode.Suppressed));
+
+				Assert.AreEqual(filePath, editor.FilePath);
+				Assert.AreEqual(EditorProcessingMode.Normal, editor.ProcessingMode);
+				Assert.IsFalse(editor.IsContentChanged);
+				StringAssert.Contains(editor.Content, "Hello");
+			}
+			finally
+			{
+				editor.Dispose();
+				File.Delete(filePath);
+			}
+		});
+
+	[TestMethod]
+	public void TextEditorBase_Load_UsesLoadedContentAndCleanBaseline()
+		=> StaTestHelper.RunInSta(() =>
+		{
+			string filePath = Path.Combine(Path.GetTempPath(), $"tomb-editor-{Guid.NewGuid():N}.txt");
+			File.WriteAllText(filePath, "local value = 1");
+
+			var editor = new ClassicScriptEditor(new Version(1, 0), ScriptingLanguageServicesTestFactory.CreateClassicScript());
+			try
+			{
+				editor.Load(filePath, new(EditorProcessingMode.Suppressed));
+
+				Assert.AreEqual(filePath, editor.FilePath);
+				Assert.AreEqual(EditorProcessingMode.Normal, editor.ProcessingMode);
+				Assert.IsFalse(editor.IsContentChanged);
+				Assert.AreEqual("local value = 1", editor.Content);
+			}
+			finally
+			{
+				editor.Dispose();
+				File.Delete(filePath);
+			}
+		});
+
+	[TestMethod]
+	public void TextEditorBase_Load_CancelsQueuedPersistenceAndDelayedPublication()
+		=> StaTestHelper.RunInSta(() =>
+		{
+			string filePath = Path.Combine(Path.GetTempPath(), $"tomb-editor-{Guid.NewGuid():N}.txt");
+			File.WriteAllText(filePath, "loaded");
+
+			var editor = new ClassicScriptEditor(new Version(1, 0), ScriptingLanguageServicesTestFactory.CreateClassicScript());
+			int delayedNotificationCount = 0;
+			editor.TextChangedDelayed += OnTextChangedDelayed;
+			try
+			{
+				editor.FilePath = filePath;
+				editor.ApplyPersistedContent("old");
+				editor.SelectAll();
+				editor.SelectedText = "pending";
+
+				editor.Load(filePath, default);
+				PumpFor(TimeSpan.FromMilliseconds(400.0));
+
+				Assert.AreEqual(0, delayedNotificationCount);
+				Assert.IsFalse(File.Exists(filePath + ".backup"));
+			}
+			finally
+			{
+				editor.TextChangedDelayed -= OnTextChangedDelayed;
+				editor.Dispose();
+				File.Delete(filePath);
+				File.Delete(filePath + ".backup");
+			}
+
+			void OnTextChangedDelayed(object? sender, EventArgs e)
+				=> delayedNotificationCount++;
+		});
+
+	[TestMethod]
+	public void StringEditorView_Load_CancelsPersistenceAndRestoresPreviousProcessingState()
+		=> StaTestHelper.RunInSta(() =>
+		{
+			string filePath = Path.Combine(Path.GetTempPath(), $"tomb-editor-{Guid.NewGuid():N}.txt");
+			File.WriteAllText(filePath, "[Strings]\r\nLoaded");
+
+			var editor = new StringEditorView(new Version(1, 0));
+			try
+			{
+				editor.FilePath = filePath;
+				editor.ApplyPersistedContent("[Strings]\r\nOld");
+				using IDisposable suppressedScope = editor.BeginProcessingScope(EditorProcessingMode.Suppressed);
+
+				editor.Load(filePath, default);
+				PumpFor(TimeSpan.FromMilliseconds(100.0));
+
+				Assert.AreEqual(EditorProcessingMode.Suppressed, editor.ProcessingMode);
+				Assert.IsFalse(editor.IsContentChanged);
+				Assert.IsFalse(File.Exists(filePath + ".backup"));
+			}
+			finally
+			{
+				editor.Dispose();
+				File.Delete(filePath);
+				File.Delete(filePath + ".backup");
+			}
+		});
+
+	[TestMethod]
+	public void TextEditorBase_WorkerAfterDispose_ThrowsObjectDisposedException()
+		=> StaTestHelper.RunInSta(() =>
+		{
+			var editor = new ClassicScriptEditor(new Version(1, 0), ScriptingLanguageServicesTestFactory.CreateClassicScript());
+			editor.Dispose();
+
+			Assert.ThrowsException<ObjectDisposedException>(() => editor.RunContentChangedWorker());
+		});
+
+	[TestMethod]
+	public void StringEditorView_WorkerAfterDispose_DoesNotThrow()
+		=> StaTestHelper.RunInSta(() =>
+		{
+			var editor = new StringEditorView(new Version(1, 0));
+			editor.Dispose();
+
+			editor.RunContentChangedWorker();
+		});
 
 	[TestMethod]
 	public void ClosedEditor_DetachesStudioLifecycleHandlers()
@@ -137,7 +305,7 @@ public sealed class ScriptingPhase0LifecycleTests
 				_ => { },
 				_ => { },
 				_ => false,
-				new Mock<IShortcutBindingService>().Object);
+				new Mock<IKeyBindingService<UICommand>>().Object);
 
 			coordinator.Attach();
 			controller.Raise(value => value.FileOpened += null, editor.Object, EventArgs.Empty);
@@ -479,7 +647,7 @@ public sealed class ScriptingPhase0LifecycleTests
 			_ => { },
 			_ => { },
 			_ => false,
-			new Mock<IShortcutBindingService>().Object);
+			new Mock<IKeyBindingService<UICommand>>().Object);
 
 	private static WeakReference CreateDisposedLifecycleCoordinator(IEditorControl editor)
 	{
@@ -515,6 +683,22 @@ public sealed class ScriptingPhase0LifecycleTests
 		Assert.IsNotNull(field);
 
 		return (TextDiagnosticsViewModel)field.GetValue(pane)!;
+	}
+
+	private static void PumpFor(TimeSpan duration)
+	{
+		var frame = new DispatcherFrame();
+		var timer = new DispatcherTimer { Interval = duration };
+		timer.Tick += OnTimerTick;
+		timer.Start();
+		Dispatcher.PushFrame(frame);
+
+		void OnTimerTick(object? sender, EventArgs e)
+		{
+			timer.Stop();
+			timer.Tick -= OnTimerTick;
+			frame.Continue = false;
+		}
 	}
 
 	public sealed class CommandStateRefreshRecipient : IRecipient<CommandStateRefreshMessage>

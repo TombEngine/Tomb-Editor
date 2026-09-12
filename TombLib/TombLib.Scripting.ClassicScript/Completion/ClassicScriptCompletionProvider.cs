@@ -1,4 +1,6 @@
-using Nickelony.LanguageServer.Abstractions.Completion;
+using Nickelony.IDEKit.Core.Identifiers;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +8,8 @@ using System.Text.RegularExpressions;
 using TombLib.Scripting.ClassicScript.Commands;
 using TombLib.Scripting.ClassicScript.Mnemonics;
 using TombLib.Scripting.ClassicScript.Services;
-using TombLib.Scripting.Completion;
-using TombLib.Scripting.Extensions;
-using TombLib.Scripting.Text;
+using TombLib.Scripting.UI.Completion;
+using TombLib.Scripting.UI.Extensions;
 
 namespace TombLib.Scripting.ClassicScript.Completion;
 
@@ -121,7 +122,7 @@ public sealed class ClassicScriptCompletionProvider : ITextCompletionProvider
 		if (caretOffset <= 0 || caretOffset > documentText.Length)
 			return [];
 
-		string word = documentText.GetIdentifierPrefix(caretOffset);
+		string word = IdentifierHelper.GetPrefix(documentText, caretOffset);
 
 		if (string.IsNullOrEmpty(word)
 			|| !_mnemonicCatalogService.GetAllFlags().Any(constant => constant.StartsWith(word, StringComparison.OrdinalIgnoreCase)))

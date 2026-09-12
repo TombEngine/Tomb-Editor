@@ -3,8 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using Nickelony.IDEKit.KeyBindings;
 using TombIDE.ScriptingStudio.CommandSurface;
-using TombIDE.ScriptingStudio.Shortcuts;
 using TombIDE.ScriptingStudio.ToolStrips;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.ScriptingStudio.WorkspaceProfile;
@@ -28,15 +28,15 @@ internal sealed class ToolBarService : IToolBarService
 
 	public ToolBarService(
 		ScriptingWorkspaceProfile workspaceProfile,
-		IShortcutBindingService shortcutBindingService)
+		IKeyBindingService<UICommand> keyBindingService)
 	{
 		ArgumentNullException.ThrowIfNull(workspaceProfile);
-		ArgumentNullException.ThrowIfNull(shortcutBindingService);
+		ArgumentNullException.ThrowIfNull(keyBindingService);
 
 		_workspaceProfile = workspaceProfile;
 		_toolStrip = new StudioToolStrip
 		{
-			ShortcutBindingService = shortcutBindingService,
+			KeyBindingService = keyBindingService,
 			WorkspaceContributionItems = workspaceProfile.ToolStripContributions
 		};
 

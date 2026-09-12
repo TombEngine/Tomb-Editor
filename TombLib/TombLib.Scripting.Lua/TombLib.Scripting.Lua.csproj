@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <!-- Explicit usings (repository standard; implicit usings are not used). -->
   <PropertyGroup>
@@ -14,16 +14,11 @@
     <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
   </ItemGroup>
 
-  <!-- Checked-in preview binaries (0.1.0-preview) under Libs/; not NuGet packages. Version and
-       build provenance are documented in Libs/README.md. -->
   <ItemGroup>
-    <Reference Include="Nickelony.LanguageServer.Abstractions">
-      <HintPath>..\..\Libs\Nickelony.LanguageServer.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Nickelony.LanguageServer.Lua">
-      <HintPath>..\..\Libs\Nickelony.LanguageServer.Lua.dll</HintPath>
-    </Reference>
-    <ProjectReference Include="..\TombLib.Scripting\TombLib.Scripting.csproj" />
+    <PackageReference Include="Nickelony.LanguageServer.Abstractions" Version="$(NickelonyLanguageServerVersion)" />
+    <PackageReference Include="Nickelony.LanguageServer.Lua" Version="$(NickelonyLanguageServerVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.AvalonEdit" Version="$(NickelonyIDEKitAvalonEditVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Core" Version="$(NickelonyIDEKitCoreVersion)" />
     <ProjectReference Include="..\TombLib.Scripting.UI\TombLib.Scripting.UI.csproj" />
     <ProjectReference Include="..\TombLib.WPF\TombLib.WPF.csproj" />
   </ItemGroup>

@@ -1,5 +1,5 @@
+using Nickelony.IDEKit.Tooling;
 using System;
-using System.Diagnostics;
 using System.IO;
 using TombLib.Scripting.GameFlowScript.Compilers;
 
@@ -7,8 +7,8 @@ namespace TombLib.Tests.GameFlow;
 
 /// <summary>
 /// Direct tests for <see cref="ScriptCompiler"/> process orchestration through the injected
-/// <see cref="ICompilerProcessFactory"/> seam: null starts, paused and timed waits, timeout
-/// termination with fallback, start configuration, and staging-directory cleanup.
+/// <see cref="IProcessRunner"/> seam: null starts, paused and timed waits, start configuration,
+/// and staging-directory cleanup.
 /// </summary>
 [TestClass]
 public class ScriptCompilerProcessTests
@@ -28,7 +28,7 @@ public class ScriptCompilerProcessTests
 				"tombpc.dat",
 				"gameFlow.exe",
 				pause: false,
-				new FakeCompilerProcessFactory(_ => null));
+				new FakeProcessRunner(_ => new ProcessRunResult { Started = false }));
 
 			Assert.IsFalse(result);
 			Assert.IsFalse(File.Exists(Path.Combine(gameflowDirectory, "compile.bat")));
@@ -46,8 +46,11 @@ public class ScriptCompilerProcessTests
 
 		try
 		{
-			var process = new FakeCompilerProcess(
-				onWaitForExit: () => File.WriteAllText(Path.Combine(gameflowDirectory, "tombpc.dat"), "compiled data"));
+			var runner = new FakeProcessRunner(_ =>
+			{
+				File.WriteAllText(Path.Combine(gameflowDirectory, "tombpc.dat"), "compiled data");
+				return new ProcessRunResult { Started = true };
+			});
 
 			bool result = ScriptCompiler.RunCompileWorkflow(
 				inputDirectory,
@@ -57,12 +60,12 @@ public class ScriptCompilerProcessTests
 				"tombpc.dat",
 				"gameFlow.exe",
 				pause: true,
-				new FakeCompilerProcessFactory(_ => process));
+				runner);
 
 			Assert.IsTrue(result);
-			Assert.IsTrue(process.WaitForExitCalled);
-			Assert.IsFalse(process.TimedWaitForExitCalled);
-			Assert.IsTrue(process.Disposed);
+			Assert.IsTrue(runner.RunCalled);
+			Assert.IsNotNull(runner.LastRequest);
+			Assert.IsNull(runner.LastRequest.Timeout);
 			Assert.AreEqual("compiled data", File.ReadAllText(Path.Combine(outputDirectory, "tombpc.dat")));
 		}
 		finally
@@ -78,12 +81,11 @@ public class ScriptCompilerProcessTests
 
 		try
 		{
-			var process = new FakeCompilerProcess(
-				onTimedWaitForExit: () =>
-				{
-					File.WriteAllText(Path.Combine(gameflowDirectory, "tombpc.dat"), "compiled data");
-					return true;
-				});
+			var runner = new FakeProcessRunner(_ =>
+			{
+				File.WriteAllText(Path.Combine(gameflowDirectory, "tombpc.dat"), "compiled data");
+				return new ProcessRunResult { Started = true };
+			});
 
 			bool result = ScriptCompiler.RunCompileWorkflow(
 				inputDirectory,
@@ -93,12 +95,12 @@ public class ScriptCompilerProcessTests
 				"tombpc.dat",
 				"gameFlow.exe",
 				pause: false,
-				new FakeCompilerProcessFactory(_ => process));
+				runner);
 
 			Assert.IsTrue(result);
-			Assert.IsTrue(process.TimedWaitForExitCalled);
-			Assert.IsFalse(process.WaitForExitCalled);
-			Assert.IsTrue(process.Disposed);
+			Assert.IsTrue(runner.RunCalled);
+			Assert.IsNotNull(runner.LastRequest);
+			Assert.AreEqual(TimeSpan.FromMilliseconds(300000), runner.LastRequest.Timeout);
 			Assert.AreEqual("compiled data", File.ReadAllText(Path.Combine(outputDirectory, "tombpc.dat")));
 		}
 		finally
@@ -116,7 +118,7 @@ public class ScriptCompilerProcessTests
 		{
 			File.WriteAllText(Path.Combine(gameflowDirectory, "tombpc.dat"), "stale data");
 			File.WriteAllText(Path.Combine(outputDirectory, "tombpc.dat"), "existing project data");
-			var process = new FakeCompilerProcess(onTimedWaitForExit: () => true);
+			var runner = new FakeProcessRunner(_ => new ProcessRunResult { Started = true });
 
 			bool result = ScriptCompiler.RunCompileWorkflow(
 				inputDirectory,
@@ -126,73 +128,11 @@ public class ScriptCompilerProcessTests
 				"tombpc.dat",
 				"gameFlow.exe",
 				pause: false,
-				new FakeCompilerProcessFactory(_ => process));
+				runner);
 
 			Assert.IsFalse(result);
 			Assert.AreEqual("existing project data", File.ReadAllText(Path.Combine(outputDirectory, "tombpc.dat")));
 			Assert.IsFalse(File.Exists(Path.Combine(gameflowDirectory, "tombpc.dat")));
-		}
-		finally
-		{
-			Directory.Delete(baseDirectory, recursive: true);
-		}
-	}
-
-	[TestMethod]
-	public void RunCompileWorkflow_Timeout_TerminatesProcessTreeAndReturnsFalse()
-	{
-		(string baseDirectory, string inputDirectory, string gameflowDirectory, string outputDirectory) = CreateWorkflowDirectories();
-
-		try
-		{
-			var process = new FakeCompilerProcess(onTimedWaitForExit: () => false);
-
-			bool result = ScriptCompiler.RunCompileWorkflow(
-				inputDirectory,
-				outputDirectory,
-				gameflowDirectory,
-				ScriptCompiler.BuildClassicBatchContent(isTR3: false, pause: false),
-				"tombpc.dat",
-				"gameFlow.exe",
-				pause: false,
-				new FakeCompilerProcessFactory(_ => process));
-
-			Assert.IsFalse(result);
-			Assert.AreEqual(1, process.KillEntireProcessTreeCalls);
-			Assert.AreEqual(0, process.KillCalls);
-			Assert.IsTrue(process.Disposed);
-		}
-		finally
-		{
-			Directory.Delete(baseDirectory, recursive: true);
-		}
-	}
-
-	[TestMethod]
-	public void RunCompileWorkflow_TimeoutWithTreeKillFailure_FallsBackToSingleKill()
-	{
-		(string baseDirectory, string inputDirectory, string gameflowDirectory, string outputDirectory) = CreateWorkflowDirectories();
-
-		try
-		{
-			var process = new FakeCompilerProcess(
-				onTimedWaitForExit: () => false,
-				onKillEntireProcessTree: () => throw new InvalidOperationException("Process has already exited"));
-
-			bool result = ScriptCompiler.RunCompileWorkflow(
-				inputDirectory,
-				outputDirectory,
-				gameflowDirectory,
-				ScriptCompiler.BuildClassicBatchContent(isTR3: false, pause: false),
-				"tombpc.dat",
-				"gameFlow.exe",
-				pause: false,
-				new FakeCompilerProcessFactory(_ => process));
-
-			Assert.IsFalse(result);
-			Assert.AreEqual(1, process.KillEntireProcessTreeCalls);
-			Assert.AreEqual(1, process.KillCalls);
-			Assert.IsTrue(process.Disposed);
 		}
 		finally
 		{
@@ -207,7 +147,7 @@ public class ScriptCompilerProcessTests
 
 		try
 		{
-			var process = new FakeCompilerProcess(onTimedWaitForExit: () => throw new InvalidOperationException("process wait failed"));
+			var runner = new FakeProcessRunner(_ => throw new InvalidOperationException("process wait failed"));
 
 			Assert.ThrowsException<InvalidOperationException>(() => ScriptCompiler.RunCompileWorkflow(
 				inputDirectory,
@@ -217,9 +157,9 @@ public class ScriptCompilerProcessTests
 				"tombpc.dat",
 				"gameFlow.exe",
 				pause: false,
-				new FakeCompilerProcessFactory(_ => process)));
+				runner));
 
-			Assert.IsTrue(process.Disposed);
+			Assert.IsTrue(runner.RunCalled);
 			Assert.IsFalse(File.Exists(Path.Combine(gameflowDirectory, "compile.bat")));
 		}
 		finally
@@ -235,8 +175,7 @@ public class ScriptCompilerProcessTests
 
 		try
 		{
-			ProcessStartInfo? capturedStartInfo = null;
-			var process = new FakeCompilerProcess(onTimedWaitForExit: () => true);
+			var runner = new FakeProcessRunner(_ => new ProcessRunResult { Started = true });
 
 			bool result = ScriptCompiler.RunCompileWorkflow(
 				inputDirectory,
@@ -246,21 +185,17 @@ public class ScriptCompilerProcessTests
 				"tombpc.dat",
 				"gameFlow.exe",
 				pause: false,
-				new FakeCompilerProcessFactory(startInfo =>
-				{
-					capturedStartInfo = startInfo;
-					return process;
-				}));
+				runner);
 
 			Assert.IsFalse(result);
 
-			Assert.IsNotNull(capturedStartInfo);
-			Assert.IsNotNull(capturedStartInfo.FileName);
-			Assert.IsNotNull(capturedStartInfo.WorkingDirectory);
-			Assert.AreEqual(Path.Combine(gameflowDirectory, "compile.bat"), capturedStartInfo.FileName);
-			Assert.AreEqual(gameflowDirectory, capturedStartInfo.WorkingDirectory);
-			Assert.IsTrue(capturedStartInfo.UseShellExecute);
-			Assert.IsTrue(process.TimedWaitForExitCalled);
+			Assert.IsTrue(runner.RunCalled);
+			Assert.IsNotNull(runner.LastRequest);
+			Assert.IsNotNull(runner.LastRequest.FileName);
+			Assert.IsNotNull(runner.LastRequest.WorkingDirectory);
+			Assert.AreEqual(Path.Combine(gameflowDirectory, "compile.bat"), runner.LastRequest.FileName);
+			Assert.AreEqual(gameflowDirectory, runner.LastRequest.WorkingDirectory);
+			Assert.IsTrue(runner.LastRequest.UseShellExecute);
 		}
 		finally
 		{
@@ -287,71 +222,25 @@ public class ScriptCompilerProcessTests
 		return path;
 	}
 
-	private sealed class FakeCompilerProcessFactory : ICompilerProcessFactory
+	private sealed class FakeProcessRunner : IProcessRunner
 	{
-		private readonly Func<ProcessStartInfo, ICompilerProcess?> _start;
+		private readonly Func<ProcessRunRequest, ProcessRunResult> _run;
 
-		public FakeCompilerProcessFactory(Func<ProcessStartInfo, ICompilerProcess?> start)
-			=> _start = start;
+		public FakeProcessRunner(Func<ProcessRunRequest, ProcessRunResult> run)
+			=> _run = run;
 
-		public ICompilerProcess? Start(ProcessStartInfo startInfo)
-			=> _start(startInfo);
-	}
+		public ProcessRunRequest? LastRequest { get; private set; }
 
-	private sealed class FakeCompilerProcess : ICompilerProcess
-	{
-		private readonly Action? _onWaitForExit;
-		private readonly Func<bool>? _onTimedWaitForExit;
-		private readonly Action? _onKillEntireProcessTree;
-		private readonly Action? _onKill;
+		public bool RunCalled { get; private set; }
 
-		public FakeCompilerProcess(
-			Action? onWaitForExit = null,
-			Func<bool>? onTimedWaitForExit = null,
-			Action? onKillEntireProcessTree = null,
-			Action? onKill = null)
+		public ProcessRunResult Run(ProcessRunRequest request, CancellationToken cancellationToken = default)
 		{
-			_onWaitForExit = onWaitForExit;
-			_onTimedWaitForExit = onTimedWaitForExit;
-			_onKillEntireProcessTree = onKillEntireProcessTree;
-			_onKill = onKill;
+			RunCalled = true;
+			LastRequest = request;
+			return _run(request);
 		}
 
-		public bool WaitForExitCalled { get; private set; }
-
-		public bool TimedWaitForExitCalled { get; private set; }
-
-		public int KillEntireProcessTreeCalls { get; private set; }
-
-		public int KillCalls { get; private set; }
-
-		public bool Disposed { get; private set; }
-
-		public void WaitForExit()
-		{
-			WaitForExitCalled = true;
-			_onWaitForExit?.Invoke();
-		}
-
-		public bool WaitForExit(int timeoutMilliseconds)
-		{
-			TimedWaitForExitCalled = true;
-			return _onTimedWaitForExit?.Invoke() ?? true;
-		}
-
-		public void KillEntireProcessTree()
-		{
-			KillEntireProcessTreeCalls++;
-			_onKillEntireProcessTree?.Invoke();
-		}
-
-		public void Kill()
-		{
-			KillCalls++;
-			_onKill?.Invoke();
-		}
-
-		public void Dispose()
-			=> Disposed = true;
+		public IProcessHandle Start(ProcessRunRequest request)
+			=> throw new NotSupportedException("The fake runner only supports Run.");
 	}
 }

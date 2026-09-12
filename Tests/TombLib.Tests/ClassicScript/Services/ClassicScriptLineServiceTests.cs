@@ -1,6 +1,6 @@
 using TombLib.Scripting.ClassicScript.Services;
 using TombLib.Scripting.ClassicScript.Types;
-using TombLib.Scripting.Text;
+using Nickelony.IDEKit.Core.Text;
 
 namespace TombLib.Tests.ClassicScript.Services;
 

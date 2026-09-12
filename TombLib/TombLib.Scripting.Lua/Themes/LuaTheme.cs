@@ -1,6 +1,6 @@
+using Nickelony.IDEKit.AvalonEdit.Extras.TextMate.Highlighting;
 using TombLib.Scripting.Lua.Resources;
 using TombLib.Scripting.UI.Bases;
-using TombLib.Scripting.UI.Highlighting;
 
 namespace TombLib.Scripting.Lua.Themes;
 

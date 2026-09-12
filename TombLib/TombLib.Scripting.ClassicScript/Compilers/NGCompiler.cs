@@ -1,10 +1,10 @@
+using Nickelony.IDEKit.Tooling;
 using NLog;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
-using TombLib.Scripting.IO;
+using TombLib.Scripting.UI.IO;
 
 namespace TombLib.Scripting.ClassicScript.Compilers;
 
@@ -14,6 +14,8 @@ namespace TombLib.Scripting.ClassicScript.Compilers;
 public static class NGCompiler
 {
 	private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+
+	private static readonly IProcessRunner s_processRunner = new ProcessRunner();
 
 	static NGCompiler()
 	{
@@ -26,15 +28,15 @@ public static class NGCompiler
 	/// <returns><c>true</c> when the required libraries are available; otherwise, <c>false</c>.</returns>
 	public static bool AreLibrariesRegistered()
 	{
-		return AreLibrariesRegistered(ClassicScriptCompilerPaths.Default, ProcessCompilerProcessFactory.Instance);
+		return AreLibrariesRegistered(ClassicScriptCompilerPaths.Default, s_processRunner);
 	}
 
 	internal static bool AreLibrariesRegistered(
 		ClassicScriptCompilerPaths compilerPaths,
-		ICompilerProcessFactory processFactory)
+		IProcessRunner processRunner)
 	{
 		ArgumentNullException.ThrowIfNull(compilerPaths);
-		ArgumentNullException.ThrowIfNull(processFactory);
+		ArgumentNullException.ThrowIfNull(processRunner);
 
 		bool requiredFilesExist = File.Exists(compilerPaths.MscomctlSystemFile)
 			&& File.Exists(compilerPaths.Richtx32SystemFile)
@@ -45,14 +47,13 @@ public static class NGCompiler
 		{
 			try
 			{
-				var process = new ProcessStartInfo
+				var request = new ProcessRunRequest
 				{
 					FileName = compilerPaths.LibraryRegistrationExecutable,
 					UseShellExecute = true
 				};
 
-				using ICompilerProcess? compilerProcess = processFactory.Start(process);
-				compilerProcess?.WaitForExit();
+				processRunner.Run(request);
 			}
 			catch (Exception exception)
 			{
@@ -75,7 +76,7 @@ public static class NGCompiler
 	{
 		ThrowIfLibrariesNotRegistered(AreLibrariesRegistered());
 
-		return CompileCore(projectScriptPath, projectEnginePath, newIncludeMethod, ClassicScriptCompilerPaths.Default, ProcessCompilerProcessFactory.Instance);
+		return CompileCore(projectScriptPath, projectEnginePath, newIncludeMethod, ClassicScriptCompilerPaths.Default, s_processRunner);
 	}
 
 	internal static bool CompileCore(
@@ -83,10 +84,10 @@ public static class NGCompiler
 		string projectEnginePath,
 		bool newIncludeMethod,
 		ClassicScriptCompilerPaths compilerPaths,
-		ICompilerProcessFactory processFactory)
+		IProcessRunner processRunner)
 	{
 		ArgumentNullException.ThrowIfNull(compilerPaths);
-		ArgumentNullException.ThrowIfNull(processFactory);
+		ArgumentNullException.ThrowIfNull(processRunner);
 
 		CopyFilesToVGEScriptDirectory(projectScriptPath, compilerPaths.VGEScriptDirectory);
 
@@ -97,15 +98,14 @@ public static class NGCompiler
 		File.Delete(Path.Combine(compilerPaths.VGEDirectory, "Script.dat"));
 		File.Delete(Path.Combine(compilerPaths.VGEDirectory, "English.dat"));
 
-		var process = new ProcessStartInfo
+		var request = new ProcessRunRequest
 		{
 			FileName = compilerPaths.NGCExecutable,
 			Arguments = $"\"{compilerPaths.VGEScriptDirectory}\\Script.txt\" -Log -NoMsgBox -NoWait -Concise",
 			UseShellExecute = true
 		};
 
-		using (ICompilerProcess? compilerProcess = processFactory.Start(process))
-			compilerProcess?.WaitForExit();
+		processRunner.Run(request);
 
 		FixLogs(projectEnginePath, compilerPaths, out bool containsError);
 		CopyCompiledFilesToProject(projectEnginePath, compilerPaths);

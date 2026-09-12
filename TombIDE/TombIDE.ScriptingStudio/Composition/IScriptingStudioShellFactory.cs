@@ -6,7 +6,9 @@ using TombIDE.ScriptingStudio.Host;
 using TombIDE.ScriptingStudio.Settings;
 using TombIDE.ScriptingStudio.Shell;
 using TombIDE.Shared;
+using TombIDE.Shared.Messaging;
 using TombIDE.Shared.Messaging.Scripting;
+using Nickelony.IDEKit.Workspace.Documents;
 
 namespace TombIDE.ScriptingStudio.Composition;
 
@@ -38,7 +40,7 @@ internal sealed class ScriptingStudioShellFactory : IScriptingStudioShellFactory
 	{
 		ArgumentNullException.ThrowIfNull(ide);
 
-		IServiceScope shellScope = _serviceProvider.CreateScope();
+		AsyncServiceScope shellScope = _serviceProvider.CreateAsyncScope();
 
 		try
 		{
@@ -50,12 +52,16 @@ internal sealed class ScriptingStudioShellFactory : IScriptingStudioShellFactory
 
 			RootShellViewModel viewModel =
 				shellScope.ServiceProvider.GetRequiredService<RootShellViewModel>();
+			IWorkspaceDocumentManager documentManager =
+				shellScope.ServiceProvider.GetRequiredService<IWorkspaceDocumentManager>();
+			IUiDispatcherService uiDispatcher =
+				shellScope.ServiceProvider.GetRequiredService<IUiDispatcherService>();
 
-			return new ScriptingStudioShell(shellScope, viewModel);
+			return new ScriptingStudioShell(shellScope, viewModel, documentManager, uiDispatcher);
 		}
 		catch
 		{
-			shellScope.Dispose();
+			shellScope.DisposeAsync().AsTask().GetAwaiter().GetResult();
 			throw;
 		}
 	}

@@ -1,10 +1,8 @@
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
-using Nickelony.LanguageServer.Abstractions.Hover;
-using System.Threading;
-using System.Threading.Tasks;
-using TombLib.Scripting.Diagnostics;
-using TombLib.Scripting.Hover;
-using TombLib.Scripting.UI.Threading;
+using Nickelony.IDEKit.Core.Infrastructure;
+	using Nickelony.IDEKit.IntelliSense.Diagnostics;
+	using Nickelony.IDEKit.IntelliSense.Hover;
+	using System.Threading;
+	using System.Threading.Tasks;
 
 namespace TombLib.Scripting.ClassicScript;
 
@@ -12,7 +10,7 @@ public sealed partial class ClassicScriptEditor
 {
 	private TextHoverRequestState BuildHoverRequestState(int hoveredOffset)
 	{
-		TryGetDiagnosticInfo(hoveredOffset, out TextEditorDiagnosticInfo? diagnosticInfo, allowLineFallback: false);
+		TryGetDiagnosticInfo(hoveredOffset, out TextEditorDiagnostic? diagnosticInfo, allowLineFallback: false);
 
 		return new TextHoverRequestState(
 			ShouldRequestHover: true,

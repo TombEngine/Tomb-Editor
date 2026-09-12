@@ -1,10 +1,9 @@
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
-using Nickelony.LanguageServer.Abstractions.Hover;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Hover;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using TombLib.Scripting.Diagnostics;
 
 namespace TombLib.Scripting.UI.Rendering;
 
@@ -28,7 +27,7 @@ public static class TextHoverToolTipContentFactory
 	/// </summary>
 	public static FrameworkElement CreateCombinedContent(
 		TextHoverInfo hoverInfo,
-		TextEditorDiagnosticInfo diagnosticInfo,
+		TextEditorDiagnostic diagnosticInfo,
 		Brush foreground,
 		Brush background,
 		double maxWidth,

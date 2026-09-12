@@ -1,6 +1,6 @@
-using ICSharpCode.AvalonEdit.Document;
 using System;
 using System.Text.RegularExpressions;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.Lua.Parsing;
 
 namespace TombLib.Scripting.Lua.Documents;
@@ -26,7 +26,7 @@ public sealed partial class TombEngineLevelScriptService
 	/// <param name="languageDocument">The Tomb Engine language strings document.</param>
 	/// <param name="levelName">The display name of the level.</param>
 	/// <returns><see langword="true"/> when the level is registered in both documents; otherwise, <see langword="false"/>.</returns>
-	public bool IsLevelScriptDefined(TextDocument scriptDocument, TextDocument languageDocument, string levelName)
+	public bool IsLevelScriptDefined(ITextSnapshot scriptDocument, ITextSnapshot languageDocument, string levelName)
 	{
 		string? levelKey = TryResolveLevelKey(languageDocument, levelName);
 
@@ -36,7 +36,7 @@ public sealed partial class TombEngineLevelScriptService
 		return ContainsAddLevelRegistration(scriptDocument, levelKey);
 	}
 
-	private static string? TryResolveLevelKey(TextDocument languageDocument, string levelName)
+	private static string? TryResolveLevelKey(ITextSnapshot languageDocument, string levelName)
 	{
 		string? matchedKey = null;
 
@@ -58,7 +58,7 @@ public sealed partial class TombEngineLevelScriptService
 		return found ? matchedKey : null;
 	}
 
-	private static bool ContainsAddLevelRegistration(TextDocument scriptDocument, string levelKey)
+	private static bool ContainsAddLevelRegistration(ITextSnapshot scriptDocument, string levelKey)
 	{
 		return ScanForMatch(
 			scriptDocument,
@@ -70,13 +70,13 @@ public sealed partial class TombEngineLevelScriptService
 			});
 	}
 
-	private static bool ScanForMatch(TextDocument document, Func<string, bool> lineMatcher)
+	private static bool ScanForMatch(ITextSnapshot document, Func<string, bool> lineMatcher)
 	{
 		LuaLineParserState parserState = default;
 
-		foreach (DocumentLine line in document.Lines)
+		foreach (ITextLine line in document.Lines)
 		{
-			string lineText = document.GetText(line);
+			string lineText = document.GetText(line.Offset, line.Length);
 			bool insideLongBlockAtLineStart = parserState.Kind != LuaLineParserStateKind.None;
 			LuaLineParser.IsInsideCommentOrString(lineText, parserState, out LuaLineParserState nextState);
 

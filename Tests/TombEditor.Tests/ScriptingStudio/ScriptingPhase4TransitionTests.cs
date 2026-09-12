@@ -1,9 +1,8 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Moq;
 using Nickelony.LanguageServer.Abstractions;
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
-using Nickelony.LanguageServer.Abstractions.Editing;
-using Nickelony.LanguageServer.Abstractions.Navigation;
+using Nickelony.LanguageServer.Abstractions;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using Nickelony.LanguageServer.Lua;
 using System;
 using System.Collections.Generic;
@@ -21,7 +20,7 @@ using TombIDE.ScriptingStudio.Lua;
 using TombIDE.ScriptingStudio.Messaging;
 using TombIDE.ScriptingStudio.Navigation;
 using TombIDE.ScriptingStudio.Shell;
-using TombIDE.ScriptingStudio.Shortcuts;
+using Nickelony.IDEKit.KeyBindings;
 using TombIDE.ScriptingStudio.Settings;
 using TombIDE.ScriptingStudio.TextEditing;
 using TombIDE.ScriptingStudio.UI;
@@ -34,11 +33,10 @@ using TombLib.LevelData;
 using TombLib.Scripting.ClassicScript;
 using TombLib.Scripting.Lua;
 using TombLib.Scripting.TRX;
-using TombLib.Scripting.Presentation;
+using TombLib.Scripting.UI.Presentation;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editing;
 using TombLib.Scripting.UI.Editors;
-using TombLib.Scripting.UI.Presentation;
 using TombLib.WPF.Services.Abstract;
 
 namespace TombEditor.Tests.ScriptingStudio;
@@ -388,7 +386,7 @@ public sealed class ScriptingPhase4TransitionTests
 				projectContext.Object,
 				Messenger,
 				new Mock<IMessageService>().Object,
-				CreateShortcutBindingService(),
+				CreateKeyBindingService(),
 				ScriptingStudioChromeTestFixture.CreateMenuServiceMock().Object,
 				ScriptingStudioChromeTestFixture.CreateToolBarServiceMock().Object,
 				ScriptingStudioChromeTestFixture.CreateStatusBarServiceMock().Object,
@@ -566,10 +564,10 @@ public sealed class ScriptingPhase4TransitionTests
 			return textEditorHost.Object;
 		}
 
-		private static IShortcutBindingService CreateShortcutBindingService()
-			=> new ShortcutBindingService(
-				new StudioCommandCatalog([]),
-				new ShortcutOverrideCollection(),
+		private static IKeyBindingService<UICommand> CreateKeyBindingService()
+			=> new KeyBindingService<UICommand>(
+				new CommandCatalog<UICommand>([]),
+				new KeyBindingOverrideCollection(),
 				_ => true);
 
 	}

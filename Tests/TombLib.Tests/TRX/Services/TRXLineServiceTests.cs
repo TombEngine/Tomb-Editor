@@ -1,6 +1,5 @@
 #nullable enable
 
-using TombLib.Scripting.Text;
 using TombLib.Scripting.TRX.Services;
 
 namespace TombLib.Tests.TRX.Services;

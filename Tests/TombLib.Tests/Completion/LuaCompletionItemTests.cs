@@ -1,4 +1,5 @@
-using Nickelony.LanguageServer.Abstractions.Completion;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Completion;
 
 namespace TombLib.Tests;
 
@@ -27,7 +28,7 @@ public class LuaCompletionItemTests
 	public async Task WithFilteredCommitContext_DropsTextEditAndPreservesResolveMetadata()
 	{
 		TextCompletionTextEdit textEdit = new(
-			new TextCompletionRange(new TextCompletionPosition(0, 2), new TextCompletionPosition(0, 5)));
+			new TextRange(2, 3));
 
 		var item = new TextCompletionItem(
 			"Color",

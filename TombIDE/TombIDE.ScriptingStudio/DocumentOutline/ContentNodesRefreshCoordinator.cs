@@ -1,58 +1,59 @@
 #nullable enable
 
 using DarkUI.Controls;
+using Nickelony.IDEKit.Core.Infrastructure;
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
-using TombLib.Scripting.UI.ContentNodes;
 
 namespace TombIDE.ScriptingStudio.DocumentOutline;
 
 internal sealed class ContentNodesRefreshCoordinator
 {
-	private int _latestRefreshRequestId;
+	private readonly LatestRequestCoordinator _latestRequestCoordinator = new();
 
 	public void InvalidatePendingRequests()
-		=> Interlocked.Increment(ref _latestRefreshRequestId);
+		=> _latestRequestCoordinator.Invalidate();
 
 	public void RequestRefresh(
-		ContentNodesProviderBase nodesProvider,
+		ITextDocumentSymbolProvider nodesProvider,
 		string content,
 		string filter,
-		Func<ContentNodesProviderBase, bool> canApplyRefresh,
+		Func<ITextDocumentSymbolProvider, bool> canApplyRefresh,
 		Action<IReadOnlyList<DarkTreeNode>> applyNodes)
 	{
 		ArgumentNullException.ThrowIfNull(nodesProvider);
 		ArgumentNullException.ThrowIfNull(canApplyRefresh);
 		ArgumentNullException.ThrowIfNull(applyNodes);
 
-		int requestId = Interlocked.Increment(ref _latestRefreshRequestId);
-		_ = RefreshAsync(nodesProvider, content ?? string.Empty, filter ?? string.Empty, requestId, canApplyRefresh, applyNodes);
+		_ = RefreshAsync(nodesProvider, content ?? string.Empty, filter ?? string.Empty, canApplyRefresh, applyNodes);
 	}
 
 	private async Task RefreshAsync(
-		ContentNodesProviderBase nodesProvider,
+		ITextDocumentSymbolProvider nodesProvider,
 		string content,
 		string filter,
-		int requestId,
-		Func<ContentNodesProviderBase, bool> canApplyRefresh,
+		Func<ITextDocumentSymbolProvider, bool> canApplyRefresh,
 		Action<IReadOnlyList<DarkTreeNode>> applyNodes)
 	{
-		IReadOnlyList<DarkTreeNode> nodes;
-
 		try
 		{
-			nodes = await Task.Run(() => nodesProvider.GetNodes(content, filter));
+			await _latestRequestCoordinator.RunAsync(
+				(nodesProvider, content, filter),
+				static (state, token) => Task.Run(() =>
+				{
+					IReadOnlyList<TextDocumentSymbol> symbols = state.nodesProvider.GetSymbols(
+						new TextDocumentSymbolRequest(state.content, state.filter));
+
+					return DocumentSymbolTreeNodeConverter.ToTreeNodes(symbols);
+				}, token),
+				(state, _) => canApplyRefresh(state.nodesProvider),
+				applyNodes);
 		}
 		catch
 		{
-			return;
+			// Node generation is best-effort; a failed or superseded refresh is simply skipped.
 		}
-
-		if (requestId != Volatile.Read(ref _latestRefreshRequestId) || !canApplyRefresh(nodesProvider))
-			return;
-
-		applyNodes(nodes);
 	}
 }

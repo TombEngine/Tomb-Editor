@@ -20,10 +20,30 @@ public interface IEditorControl : IDisposable
 	string FilePath { get; set; }
 
 	/// <summary>
-	/// Silent session prevents the control from checking if the content has changed, therefore not running background processing to do so.
-	/// <para>Setting this to <see langword="true"/> will also prevent the creation of backup files.</para>
+	/// Gets the current processing mode of the editor.
 	/// </summary>
-	bool IsSilentSession { get; set; }
+	/// <remarks>
+	/// The mode is owned by a nest-safe processing scope entered through
+	/// <see cref="BeginProcessingScope"/>. A control exposes the current mode but does not own
+	/// an unbalanced public flag.
+	/// </remarks>
+	EditorProcessingMode ProcessingMode
+	{
+		get => EditorProcessingMode.Normal;
+	}
+
+	/// <summary>
+	/// Begins a nest-safe scope that applies the given processing mode to the editor and
+	/// restores the previous mode when the returned scope is disposed.
+	/// </summary>
+	/// <param name="mode">The processing mode to apply for the scope.</param>
+	/// <returns>A scope that restores the previous mode when disposed.</returns>
+	IDisposable BeginProcessingScope(EditorProcessingMode mode)
+	{
+		// Legacy compatibility default for the unregistered WinForms string editor, which is
+		// removed by Phase 3C. Active editors implement the real processing scope.
+		return new NullScope();
+	}
 
 	/// <summary>
 	/// Gets or sets whether backup files are created when the content changes.
@@ -120,8 +140,15 @@ public interface IEditorControl : IDisposable
 	/// Loads the file at the given path into the editor.
 	/// </summary>
 	/// <param name="filePath">The path of the file to load.</param>
-	/// <param name="silentSession">Whether the load runs as a silent session.</param>
-	void Load(string filePath, bool silentSession);
+	void Load(string filePath);
+
+	/// <summary>
+	/// Loads the file at the given path into the editor using the given load options.
+	/// </summary>
+	/// <param name="filePath">The path of the file to load.</param>
+	/// <param name="options">The load options that select the initial processing mode.</param>
+	void Load(string filePath, DocumentLoadOptions options = default)
+		=> Load(filePath);
 
 	/// <summary>
 	/// Saves the editor content to the current file path.
@@ -191,4 +218,9 @@ public interface IEditorControl : IDisposable
 	/// Raised when the zoom level changes.
 	/// </summary>
 	event EventHandler ZoomChanged;
+
+	private sealed class NullScope : IDisposable
+	{
+		public void Dispose() { }
+	}
 }

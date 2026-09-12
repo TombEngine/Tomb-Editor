@@ -73,24 +73,26 @@ public interface IEditorDocumentController
 	/// <summary>
 	/// Opens the specified file in an appropriate editor.
 	/// </summary>
-	/// <param name="silentSession">
-	/// When <see langword="true"/>, suppresses backup file creation, background content-change
-	/// processing, and diagnostics/error checking for the editor. The tab is still created and
-	/// activated normally. Intended for bulk or recovery open scenarios where side-effects
-	/// should be avoided.
+	/// <param name="options">
+	/// The load options that select the initial processing mode. Suppressed processing
+	/// disables backup file creation, background content-change processing, and
+	/// diagnostics/error checking for the editor. The tab is still created and
+	/// activated normally. Intended for bulk or recovery open scenarios where
+	/// side-effects should be avoided.
 	/// </param>
-	void OpenFile(string filePath, EditorType editorType = EditorType.Default, bool silentSession = false);
+	void OpenFile(string filePath, EditorType editorType = EditorType.Default, DocumentLoadOptions options = default);
 
 	/// <summary>
 	/// Opens the specified file in source view mode (<see cref="EditorType.Text"/>),
 	/// showing the raw code/text representation rather than a specialized domain editor.
 	/// </summary>
-	/// <param name="silentSession">
-	/// When <see langword="true"/>, suppresses backup file creation, background content-change
-	/// processing, and diagnostics/error checking for the editor. The tab is still created and
+	/// <param name="options">
+	/// The load options that select the initial processing mode. Suppressed processing
+	/// disables backup file creation, background content-change processing, and
+	/// diagnostics/error checking for the editor. The tab is still created and
 	/// activated normally.
 	/// </param>
-	void OpenSourceFile(string filePath, bool silentSession = false);
+	void OpenSourceFile(string filePath, DocumentLoadOptions options = default);
 
 	/// <summary>
 	/// Adds a file path to the reload queue for deferred processing.

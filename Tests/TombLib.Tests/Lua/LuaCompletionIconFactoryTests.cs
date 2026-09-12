@@ -1,4 +1,4 @@
-using Nickelony.LanguageServer.Abstractions.Completion;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using System.Windows.Media;
 using TombLib.Scripting.Lua.Completion;
 using TombLib.Scripting.Lua.Resources;

@@ -1,7 +1,9 @@
 using System;
 using System.Text.RegularExpressions;
+using Nickelony.IDEKit.Core.Comments;
+using Nickelony.IDEKit.Core.Identifiers;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.ClassicScript.Types;
-using TombLib.Scripting.Text;
 
 namespace TombLib.Scripting.ClassicScript.Services;
 
@@ -10,9 +12,8 @@ namespace TombLib.Scripting.ClassicScript.Services;
 /// Provides line-level text operations using Core helpers and, where needed,
 /// regex patterns for the ClassicScript section, include, and NG-string syntax.
 /// </summary>
-public sealed class ClassicScriptLineService : IClassicScriptLineService
+public sealed class ClassicScriptLineService : TextLineSyntaxService, IClassicScriptLineService
 {
-	private const string CommentDelimiter = ";";
 	private const char ContinuationMarker = '>';
 
 	// Regex patterns for the ClassicScript section-header, include, and NG-string syntax.
@@ -20,62 +21,31 @@ public sealed class ClassicScriptLineService : IClassicScriptLineService
 	private static readonly Regex IncludeLineRegex = new("\".*\"", RegexOptions.Compiled);
 	private static readonly Regex NGStringIndexRegex = new(@"^\d+:\s*", RegexOptions.Compiled | RegexOptions.Multiline);
 
+	// A token is any run of characters that are not command delimiters and not line breaks; the
+	// surrounding whitespace is trimmed by the callers. Command delimiters split a line into the
+	// command key, arguments, and hex or mnemonic constant tokens.
+	private static readonly IdentifierCharacterPolicy WordPolicy = IdentifierCharacterPolicy.Create(
+		static c => c is not (',' or '=' or ';' or '+' or '-' or '*' or '/' or '(' or ')' or '\r' or '\n'));
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="ClassicScriptLineService"/> class.
+	/// </summary>
+	public ClassicScriptLineService()
+		: base(new CommentSyntax(";", null, null, StringLiteralStyle.None))
+	{ }
+
 	/// <inheritdoc/>
 	public string? GetWordAtOffset(ITextSnapshot source, int offset)
 	{
 		if (offset > source.TextLength)
 			return null;
 
-		ITextLine line = source.GetLineByOffset(offset);
+		TextRange? range = IdentifierHelper.TryGetContainingSpan(source, offset, WordPolicy);
 
-		int wordStart = -1;
-		int wordEnd = -1;
+		if (range is null)
+			return null;
 
-		for (int i = offset; i <= line.EndOffset; i++)
-		{
-			if (i == line.EndOffset)
-			{
-				wordEnd = i;
-				break;
-			}
-
-			char c = source.GetCharAt(i);
-
-			if (c == ',' || c == '=' || c == ';' || c == '+' || c == '-' || c == '*' || c == '/' || c == ')')
-			{
-				wordEnd = i;
-				break;
-			}
-		}
-
-		if (offset == line.Offset)
-		{
-			wordStart = offset;
-		}
-		else
-		{
-			for (int i = offset - 1; i >= line.Offset; i--)
-			{
-				if (i == line.Offset)
-				{
-					wordStart = i;
-					break;
-				}
-
-				char c = source.GetCharAt(i);
-
-				if (c == ',' || c == '=' || c == '+' || c == '-' || c == '*' || c == '/' || c == '(')
-				{
-					wordStart = i + 1;
-					break;
-				}
-			}
-		}
-
-		if (wordStart >= 0 && wordEnd >= 0 && wordStart < wordEnd)
-			return source.GetText(wordStart, wordEnd - wordStart).Trim();
-
-		return null;
+		return source.GetText(range.Value.Offset, range.Value.Length).Trim();
 	}
 
 	/// <inheritdoc/>
@@ -163,7 +133,7 @@ public sealed class ClassicScriptLineService : IClassicScriptLineService
 
 	/// <inheritdoc/>
 	public bool IsEmptyOrComments(string? lineText)
-		=> string.IsNullOrWhiteSpace(lineText) || lineText.TrimStart().StartsWith(CommentDelimiter, StringComparison.Ordinal);
+		=> base.IsEmptyOrComments(lineText);
 
 	/// <inheritdoc/>
 	public bool IsValidIncludeLine(string lineText)
@@ -198,11 +168,11 @@ public sealed class ClassicScriptLineService : IClassicScriptLineService
 
 	/// <inheritdoc/>
 	public string RemoveComments(string lineText)
-		=> LineCommentHelper.RemoveLineComment(lineText, CommentDelimiter);
+		=> base.RemoveComments(lineText);
 
 	/// <inheritdoc/>
 	public string EscapeComments(string lineText)
-		=> LineCommentHelper.MaskLineComment(lineText, CommentDelimiter);
+		=> base.EscapeComments(lineText);
 
 	/// <inheritdoc/>
 	public string EscapeCommentsAndNewLines(string lineText)

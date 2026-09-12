@@ -1,61 +1,31 @@
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Indentation;
-using System;
+using Nickelony.IDEKit.AvalonEdit.Indentation;
 
 namespace TombLib.Scripting.Lua.Editing;
 
+/// <summary>
+/// Adapts the Lua indentation policy to AvalonEdit's indentation strategy contract.
+/// </summary>
 internal sealed class LuaAutoIndentationStrategy : IIndentationStrategy
 {
-	private readonly TextEditorOptions _options;
+	private readonly PolicyIndentationStrategy _strategy;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="LuaAutoIndentationStrategy"/> class.
+	/// </summary>
+	/// <param name="options">The editor options that determine the indentation unit.</param>
 	public LuaAutoIndentationStrategy(TextEditorOptions options)
-		=> _options = options;
+		=> _strategy = new PolicyIndentationStrategy(options, LuaIndentationStrategy.Instance, ShouldUseSmartIndent);
 
+	/// <inheritdoc/>
 	public void IndentLine(TextDocument document, DocumentLine line)
-	{
-		string lineText = document.GetText(line);
-		string desiredIndentation = GetDesiredIndentation(document, line, lineText);
-		ReplaceLeadingWhitespace(document, line, lineText, desiredIndentation);
-	}
+		=> _strategy.IndentLine(document, line);
 
+	/// <inheritdoc/>
 	public void IndentLines(TextDocument document, int beginLine, int endLine)
-	{
-		if (document.LineCount == 0)
-			return;
-
-		int startLine = Math.Max(1, Math.Min(beginLine, document.LineCount));
-		int lastLine = Math.Max(startLine, Math.Min(endLine, document.LineCount));
-
-		document.BeginUpdate();
-
-		try
-		{
-			for (int lineNumber = startLine; lineNumber <= lastLine; lineNumber++)
-				IndentLine(document, document.GetLineByNumber(lineNumber));
-		}
-		finally
-		{
-			document.EndUpdate();
-		}
-	}
-
-	private string GetDesiredIndentation(TextDocument document, DocumentLine line, string lineText)
-	{
-		if (line.PreviousLine is null)
-			return LuaIndentationStrategy.GetLeadingWhitespace(lineText);
-
-		DocumentLine previousLine = line.PreviousLine;
-		string previousLineText = document.GetText(previousLine);
-		string previousLineIndentation = LuaIndentationStrategy.GetLeadingWhitespace(previousLineText);
-
-		return LuaIndentationStrategy.GetDesiredIndentation(
-			previousLineText,
-			lineText,
-			previousLineIndentation,
-			LuaIndentationStrategy.CreateIndentationUnit(_options.ConvertTabsToSpaces, _options.IndentationSize, _options.IndentationSize),
-			ShouldUseSmartIndent(document, previousLine));
-	}
+		=> _strategy.IndentLines(document, beginLine, endLine);
 
 	private static bool ShouldUseSmartIndent(TextDocument document, DocumentLine previousLine)
 	{
@@ -63,24 +33,5 @@ internal sealed class LuaAutoIndentationStrategy : IIndentationStrategy
 			return true;
 
 		return !LuaEditorInteractionRules.IsInsideCommentOrString(document, previousLine.EndOffset - 1);
-	}
-
-	private static void ReplaceLeadingWhitespace(TextDocument document, DocumentLine line, string lineText, string desiredIndentation)
-	{
-		int leadingWhitespaceLength = 0;
-
-		while (leadingWhitespaceLength < lineText.Length
-			&& (lineText[leadingWhitespaceLength] == ' ' || lineText[leadingWhitespaceLength] == '\t'))
-		{
-			leadingWhitespaceLength++;
-		}
-
-		if (leadingWhitespaceLength == desiredIndentation.Length
-			&& string.CompareOrdinal(lineText, 0, desiredIndentation, 0, leadingWhitespaceLength) == 0)
-		{
-			return;
-		}
-
-		document.Replace(line.Offset, leadingWhitespaceLength, desiredIndentation);
 	}
 }

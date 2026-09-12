@@ -215,7 +215,7 @@ public sealed partial class LuaEditor
 
 	[MemberNotNullWhen(true, nameof(IntelliSenseProvider))]
 	private bool IsIntelliSenseAvailable()
-		=> IntelliSenseProvider?.IsAvailable == true && !string.IsNullOrWhiteSpace(FilePath);
+		=> IntelliSenseEnabled && IntelliSenseProvider?.IsAvailable == true && !string.IsNullOrWhiteSpace(FilePath);
 
 	private static bool TryGetCompletionTrigger(string? inputText, out char? triggerCharacter)
 	{
@@ -255,23 +255,6 @@ public sealed partial class LuaEditor
 		return (location.Line - 1, location.Column - 1);
 	}
 
-	private static CancellationToken ResetCancellationTokenSource(ref CancellationTokenSource? cancellationTokenSource)
-	{
-		CancelAndDispose(ref cancellationTokenSource);
-		cancellationTokenSource = new();
-		return cancellationTokenSource.Token;
-	}
-
-	private static void CancelAndDispose(ref CancellationTokenSource? cancellationTokenSource)
-	{
-		if (cancellationTokenSource is null)
-			return;
-
-		cancellationTokenSource.Cancel();
-		cancellationTokenSource.Dispose();
-		cancellationTokenSource = null;
-	}
-
 	private static void LogEditorFailure(string area, Exception exception)
 		=> Log.Warn(exception, "Lua editor operation '{Area}' failed.", area);
 
@@ -288,11 +271,21 @@ public sealed partial class LuaEditor
 
 	private void InvalidateAsyncEditorRequests()
 	{
-		_editorRequestGeneration++;
+		// The session generation is advanced by the base at load, replace, rename, and disposal
+		// boundaries; this method only invalidates the language-service controllers.
 		CompletionController.InvalidateRequests();
 		_hoverController.InvalidateRequests();
 		_signatureHelpController.InvalidateRequests();
 		_definitionNavigationController.InvalidateRequests();
+	}
+
+	/// <inheritdoc/>
+	protected override void OnLoadReset()
+	{
+		base.OnLoadReset();
+		InvalidateAsyncEditorRequests();
+		DismissTransientToolTips();
+		_definitionNavigationController.CancelPendingRequest();
 	}
 
 	private bool IsAsyncEditorResultCurrent(CancellationToken cancellationToken,
@@ -308,7 +301,7 @@ public sealed partial class LuaEditor
 			requestDocumentVersion,
 			_editorDocumentVersion,
 			requestGeneration,
-			_editorRequestGeneration,
+			SessionGeneration,
 			IsLoaded,
 			IsIntelliSenseAvailable());
 	}

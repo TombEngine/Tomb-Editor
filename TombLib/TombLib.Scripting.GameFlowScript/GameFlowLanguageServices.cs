@@ -1,9 +1,9 @@
 using System;
-using TombLib.Scripting.Completion;
 using TombLib.Scripting.GameFlowScript.Completion;
 using TombLib.Scripting.GameFlowScript.Services;
-using TombLib.Scripting.Hover;
-using TombLib.Scripting.Navigation;
+using Nickelony.IDEKit.IntelliSense.Completion;
+using Nickelony.IDEKit.IntelliSense.Hover;
+using Nickelony.IDEKit.IntelliSense.Navigation;
 
 namespace TombLib.Scripting.GameFlowScript;
 

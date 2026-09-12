@@ -1,16 +1,16 @@
-using Nickelony.LanguageServer.Abstractions.Hover;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Hover;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Navigation;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Presentation;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Hover;
+using Nickelony.IDEKit.IntelliSense.Navigation;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using TombLib.Scripting.Diagnostics;
-using TombLib.Scripting.Hover;
-using TombLib.Scripting.Navigation;
-using TombLib.Scripting.Presentation;
-using TombLib.Scripting.UI.Completion;
 using TombLib.Scripting.UI.Diagnostics;
 using TombLib.Scripting.UI.Hover;
-using TombLib.Scripting.UI.Navigation;
 
 namespace TombLib.Scripting.UI.Bases;
 
@@ -28,7 +28,13 @@ public abstract partial class TextEditorBase
 	/// </summary>
 	/// <param name="tryNavigateAsync">The callback used to resolve and navigate to a definition.</param>
 	protected void InitializeDefinitionNavigation(Func<int, CancellationToken, Task<bool>> tryNavigateAsync)
-		=> _definitionTriggerController = new TextDefinitionTriggerController(this, GetOffsetFromPoint, tryNavigateAsync);
+	{
+		EnsureNotDisposed();
+		TextDefinitionTriggerController triggerController = new(this, GetOffsetFromPoint, tryNavigateAsync);
+
+		_definitionTriggerController?.Dispose();
+		_definitionTriggerController = triggerController;
+	}
 
 	/// <summary>
 	/// Initializes hover tooltips for the language.
@@ -40,7 +46,13 @@ public abstract partial class TextEditorBase
 		Func<int, TextHoverRequestState> buildRequestState,
 		Func<int, CancellationToken, Task<TextHoverInfo?>> requestHoverAsync,
 		Action<TextHoverPresentationState>? applyHoverState = null)
-		=> _hoverController = HoverControllerFactory.Create(this, buildRequestState, requestHoverAsync, applyHoverState);
+	{
+		EnsureNotDisposed();
+		TextHoverController hoverController = HoverControllerFactory.Create(this, buildRequestState, requestHoverAsync, applyHoverState);
+
+		_hoverController?.Dispose();
+		_hoverController = hoverController;
+	}
 
 	/// <summary>
 	/// Gets whether hover tooltips may fall back to diagnostic tooltips for this language.
@@ -52,7 +64,7 @@ public abstract partial class TextEditorBase
 	/// </summary>
 	protected TextHoverRequestState BuildStandardHoverRequestState(int hoveredOffset)
 	{
-		TryGetDiagnosticInfo(hoveredOffset, out TextEditorDiagnosticInfo? diagnosticInfo);
+		TryGetDiagnosticInfo(hoveredOffset, out TextEditorDiagnostic? diagnosticInfo);
 
 		return new TextHoverRequestState(
 			ShouldRequestHover: true,
@@ -68,7 +80,13 @@ public abstract partial class TextEditorBase
 	/// <param name="engineVersion">The engine version diagnostics should target.</param>
 	/// <param name="diagnosticsProvider">The provider used to source diagnostics (optional).</param>
 	protected void InitializeDiagnostics(Version engineVersion, ITextDiagnosticsProvider? diagnosticsProvider = null)
-		=> _diagnosticsCoordinator = new TextDiagnosticsCoordinator(this, engineVersion, diagnosticsProvider);
+	{
+		EnsureNotDisposed();
+		TextDiagnosticsCoordinator diagnosticsCoordinator = new(this, engineVersion, diagnosticsProvider);
+
+		_diagnosticsCoordinator?.Dispose();
+		_diagnosticsCoordinator = diagnosticsCoordinator;
+	}
 
 	/// <summary>
 	/// Called synchronously when text is being entered into the editor.
@@ -85,7 +103,7 @@ public abstract partial class TextEditorBase
 	/// </summary>
 	protected virtual async Task OnLanguageKeyDown(KeyEventArgs e)
 	{
-		if (_definitionTriggerController is null)
+		if (!IntelliSenseEnabled || _definitionTriggerController is null)
 			return;
 
 		await _definitionTriggerController.TryHandleKeyDownAsync(e, CaretOffset).ConfigureAwait(true);
@@ -96,7 +114,7 @@ public abstract partial class TextEditorBase
 	/// </summary>
 	protected virtual async Task OnLanguagePreviewMouseLeftButtonDown(MouseButtonEventArgs e)
 	{
-		if (_definitionTriggerController is null)
+		if (!IntelliSenseEnabled || _definitionTriggerController is null)
 			return;
 
 		await _definitionTriggerController.TryHandlePointerNavigationAsync(e).ConfigureAwait(true);
@@ -107,6 +125,9 @@ public abstract partial class TextEditorBase
 	/// </summary>
 	protected virtual async Task OnLanguageMouseHover(MouseEventArgs e)
 	{
+		if (!IntelliSenseEnabled)
+			return;
+
 		await HandleMouseHover(e).ConfigureAwait(true);
 
 		if (_hoverController is null)
@@ -120,7 +141,7 @@ public abstract partial class TextEditorBase
 	/// </summary>
 	protected virtual void OnLanguageTextChanged(EventArgs e)
 	{
-		if (_diagnosticsCoordinator is null || !LiveErrorUnderlining)
+		if (_diagnosticsCoordinator is null || !IntelliSenseEnabled || !LiveErrorUnderlining)
 			return;
 
 		_diagnosticsCoordinator.RunOnIdle(Text);
@@ -138,7 +159,10 @@ public abstract partial class TextEditorBase
 	/// <param name="identifyingObject">An optional discriminator used to disambiguate the target.</param>
 	/// <returns><see langword="true"/> if a definition was found and navigated to; otherwise <see langword="false"/>.</returns>
 	protected bool GoToDefinition(ITextDefinitionProvider definitionProvider, string objectName, TextDefinitionDiscriminator? identifyingObject = null)
-		=> _definitionNavigationService.TryGoToObject(this, definitionProvider, objectName, identifyingObject);
+	{
+		EnsureNotDisposed();
+		return TextDefinitionNavigation.TryGoToObject(this, definitionProvider, objectName, identifyingObject);
+	}
 
 	/// <summary>
 	/// Attempts to navigate to the definition at the given offset using the specified providers.
@@ -148,7 +172,10 @@ public abstract partial class TextEditorBase
 	/// <param name="offset">The document offset to inspect.</param>
 	/// <returns><see langword="true"/> if a definition was found and navigated to; otherwise <see langword="false"/>.</returns>
 	protected bool TryGoToDefinition(ITextDefinitionProvider definitionProvider, ITextHoverProvider hoverProvider, int offset)
-		=> _definitionNavigationService.TryGoToDefinition(this, definitionProvider, hoverProvider, offset);
+	{
+		EnsureNotDisposed();
+		return TextDefinitionNavigation.TryGoToDefinition(this, definitionProvider, hoverProvider, offset);
+	}
 
 	#endregion Definition navigation
 }

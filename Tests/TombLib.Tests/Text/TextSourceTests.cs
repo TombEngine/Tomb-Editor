@@ -1,6 +1,6 @@
 using ICSharpCode.AvalonEdit.Document;
-using TombLib.Scripting.Text;
-using TombLib.Scripting.UI.Text;
+using Nickelony.IDEKit.AvalonEdit.Documents;
+using Nickelony.IDEKit.Core.Text;
 
 namespace TombLib.Tests.Text;
 

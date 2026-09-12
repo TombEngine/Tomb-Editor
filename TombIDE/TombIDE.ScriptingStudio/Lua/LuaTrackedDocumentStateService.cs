@@ -1,6 +1,6 @@
 #nullable enable
 
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;

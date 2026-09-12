@@ -8,13 +8,14 @@ using TombIDE.ScriptingStudio.Editors;
 using TombIDE.ScriptingStudio.FindAndReplace;
 using TombIDE.ScriptingStudio.Lua;
 using TombIDE.ScriptingStudio.Shell;
-using TombIDE.ScriptingStudio.Shortcuts;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.ScriptingStudio.WorkspaceProfile;
 using TombIDE.Shared.Messaging.Scripting;
 using TombLib.Scripting.ClassicScript;
 using TombLib.Scripting.GameFlowScript;
 using TombLib.Scripting.TRX;
+using Nickelony.IDEKit.KeyBindings;
+using Nickelony.IDEKit.Workspace.Documents;
 using TombLib.WPF.Services.Abstract;
 
 namespace TombIDE.ScriptingStudio.Workbench;
@@ -26,7 +27,7 @@ internal sealed class WorkbenchComposition
 		IScriptingProjectContext projectContext,
 		IMessenger messenger,
 		IMessageService messageService,
-		IShortcutBindingService shortcutBindingService,
+		IKeyBindingService<UICommand> keyBindingService,
 		IMenuService menuService,
 		IToolBarService toolBarService,
 		IStatusBarService statusBarService,
@@ -43,13 +44,14 @@ internal sealed class WorkbenchComposition
 		ClassicScriptLanguageServices languageServices,
 		GameFlowLanguageServices gameFlowLanguageServices,
 		TRXLanguageServices trxLanguageServices,
-		StudioFileExplorerDocumentSyncService fileSyncService)
+		StudioFileExplorerDocumentSyncService fileSyncService,
+		IWorkspaceDocumentManager? documentManager = null)
 	{
 		ArgumentNullException.ThrowIfNull(workspaceProfile);
 		ArgumentNullException.ThrowIfNull(projectContext);
 		ArgumentNullException.ThrowIfNull(messenger);
 		ArgumentNullException.ThrowIfNull(messageService);
-		ArgumentNullException.ThrowIfNull(shortcutBindingService);
+		ArgumentNullException.ThrowIfNull(keyBindingService);
 		ArgumentNullException.ThrowIfNull(menuService);
 		ArgumentNullException.ThrowIfNull(toolBarService);
 		ArgumentNullException.ThrowIfNull(statusBarService);
@@ -73,13 +75,14 @@ internal sealed class WorkbenchComposition
 		ProjectContext = projectContext;
 		Messenger = messenger;
 		MessageService = messageService;
-		ShortcutBindingService = shortcutBindingService;
+		KeyBindingService = keyBindingService;
 		MenuService = menuService;
 		ToolBarService = toolBarService;
 		StatusBarService = statusBarService;
 		PaneHostService = paneHostService;
 		DialogOwnerProvider = dialogOwnerProvider;
 		DocumentController = documentController;
+		DocumentBridge = documentManager;
 		DockHost = dockHost;
 		PaneCatalog = paneCatalog;
 		FindAndReplaceViewModel = findAndReplaceViewModel;
@@ -97,13 +100,14 @@ internal sealed class WorkbenchComposition
 	public IScriptingProjectContext ProjectContext { get; }
 	public IMessenger Messenger { get; }
 	public IMessageService MessageService { get; }
-	public IShortcutBindingService ShortcutBindingService { get; }
+	public IKeyBindingService<UICommand> KeyBindingService { get; }
 	public IMenuService MenuService { get; }
 	public IToolBarService ToolBarService { get; }
 	public IStatusBarService StatusBarService { get; }
 	public IPaneHostService PaneHostService { get; }
 	public IWin32DialogOwnerProvider DialogOwnerProvider { get; }
 	public IEditorDocumentController DocumentController { get; }
+	public IWorkspaceDocumentManager? DocumentBridge { get; }
 	public IAvalonDockHost DockHost { get; }
 	public PaneCatalog PaneCatalog { get; }
 	public FindAndReplaceViewModel FindAndReplaceViewModel { get; }

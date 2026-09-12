@@ -3,6 +3,7 @@
 using System;
 using TombIDE.ScriptingStudio.WorkspaceProfile;
 using TombIDE.Shared.Messaging.Scripting;
+using Nickelony.IDEKit.Workspace.Documents;
 using TombLib.WPF.Services.Abstract;
 
 namespace TombIDE.ScriptingStudio.Controls;
@@ -14,6 +15,17 @@ namespace TombIDE.ScriptingStudio.Controls;
 /// </summary>
 internal sealed class EditorDocumentControllerFactory : IEditorDocumentControllerFactory
 {
+	private readonly IWorkspaceDocumentManager _documentManager;
+	private readonly IWorkspaceFileSystem _workspaceFileSystem;
+
+	public EditorDocumentControllerFactory(
+		IWorkspaceDocumentManager documentManager,
+		IWorkspaceFileSystem workspaceFileSystem)
+	{
+		_documentManager = documentManager ?? throw new ArgumentNullException(nameof(documentManager));
+		_workspaceFileSystem = workspaceFileSystem ?? throw new ArgumentNullException(nameof(workspaceFileSystem));
+	}
+
 	public IEditorDocumentController Create(
 		ScriptingWorkspaceProfile profile,
 		IScriptingProjectContext projectContext,
@@ -26,7 +38,9 @@ internal sealed class EditorDocumentControllerFactory : IEditorDocumentControlle
 		var controller = new EditorDocumentController(
 			projectContext.Project.GetCurrentEngineVersion(),
 			projectContext.ScriptRootDirectoryPath,
-			messageService);
+			messageService,
+			_documentManager,
+			_workspaceFileSystem);
 
 		profile.RegisterEditors(controller);
 

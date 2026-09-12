@@ -1,5 +1,4 @@
-using Nickelony.LanguageServer.Abstractions.Hover;
-using TombLib.Scripting.Hover;
+using Nickelony.IDEKit.IntelliSense.Hover;
 using TombLib.Scripting.TRX.Hover;
 using TombLib.Scripting.TRX.Models;
 using TombLib.Scripting.TRX.Services;

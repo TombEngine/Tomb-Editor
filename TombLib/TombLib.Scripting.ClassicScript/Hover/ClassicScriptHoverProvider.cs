@@ -1,11 +1,10 @@
-using Nickelony.LanguageServer.Abstractions.Hover;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Hover;
+using Nickelony.IDEKit.IntelliSense.Navigation;
 using System;
 using TombLib.Scripting.ClassicScript.Mnemonics;
 using TombLib.Scripting.ClassicScript.Services;
 using TombLib.Scripting.ClassicScript.Types;
-using TombLib.Scripting.Hover;
-using TombLib.Scripting.Navigation;
-using TombLib.Scripting.Text;
 
 namespace TombLib.Scripting.ClassicScript.Hover;
 

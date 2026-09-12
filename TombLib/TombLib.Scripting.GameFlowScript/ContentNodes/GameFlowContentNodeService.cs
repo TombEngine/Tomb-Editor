@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Nickelony.IDEKit.Core.Comments;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.GameFlowScript.Resources;
 using TombLib.Scripting.GameFlowScript.Services;
 using TombLib.Scripting.GameFlowScript.Types;
-using TombLib.Scripting.Text;
 
 namespace TombLib.Scripting.GameFlowScript.ContentNodes;
 
@@ -83,7 +84,7 @@ internal sealed class GameFlowContentNodeService
 		if (!LevelPropertyRegex.IsMatch(lineText))
 			return null;
 
-		string sanitizedLineText = LineCommentHelper.RemoveLineComment(lineText, "//");
+		string sanitizedLineText = CommentHelper.RemoveComments(lineText, new CommentSyntax("//", null, null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.TripleDoubleQuoted));
 		string levelName = LevelPropertyRegex.Replace(sanitizedLineText, string.Empty);
 
 		if (string.IsNullOrWhiteSpace(levelName) || !levelName.Contains(filter, StringComparison.OrdinalIgnoreCase))

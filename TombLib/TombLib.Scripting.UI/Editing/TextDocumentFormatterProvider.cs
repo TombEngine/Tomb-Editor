@@ -1,8 +1,8 @@
-using Nickelony.LanguageServer.Abstractions.Editing;
+using Nickelony.LanguageServer.Abstractions;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using TombLib.Scripting.Cleaning;
+using Nickelony.IDEKit.Core.Formatting;
 
 namespace TombLib.Scripting.UI.Editing;
 

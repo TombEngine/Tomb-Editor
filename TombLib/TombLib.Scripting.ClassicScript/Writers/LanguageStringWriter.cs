@@ -1,11 +1,11 @@
 using ICSharpCode.AvalonEdit.Document;
+using Nickelony.IDEKit.Core.Text;
 using System;
 using System.Text.RegularExpressions;
 using TombLib.Scripting.ClassicScript.Services;
-using TombLib.Scripting.Text;
+using Nickelony.IDEKit.AvalonEdit.Documents;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editing;
-using TombLib.Scripting.UI.Text;
 
 namespace TombLib.Scripting.ClassicScript.Writers;
 
@@ -30,7 +30,7 @@ public sealed class LanguageStringWriter
 	/// <param name="levelName">The level name to write.</param>
 	public void WriteNewLevelNameString(TextEditorBase textEditor, string levelName)
 	{
-		if (!TextEditorLineOperations.TryAssignStockLevelNameStringSlot(textEditor, levelName))
+		if (!StockLevelNameWriter.TryAssignStockLevelNameStringSlot(textEditor, levelName))
 			WriteNewNGString(textEditor, levelName);
 	}
 
@@ -62,14 +62,14 @@ public sealed class LanguageStringWriter
 				{
 					int prevNumber = int.Parse(Regex.Replace(lineText, @"^(\d+):.*$", "$1"));
 
-					TextEditorEditHelper.InsertText(textEditor, line.EndOffset, $"{Environment.NewLine}{prevNumber + 1}: {ngString}");
+					textEditor.InsertText(line.EndOffset, $"{Environment.NewLine}{prevNumber + 1}: {ngString}");
 
 					textEditor.ScrollToLine(i + 1);
 					return true;
 				}
 				else if (i == extrangSectionStartLine.LineNumber)
 				{
-					TextEditorEditHelper.InsertText(textEditor, line.EndOffset, $"{Environment.NewLine}0: {ngString}");
+					textEditor.InsertText(line.EndOffset, $"{Environment.NewLine}0: {ngString}");
 
 					textEditor.ScrollToLine(i + 1);
 					return true;

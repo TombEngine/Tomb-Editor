@@ -1,6 +1,7 @@
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
-using Nickelony.LanguageServer.Abstractions.Completion;
+using Nickelony.IDEKit.Core.Indentation;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -33,11 +34,11 @@ public sealed partial class LuaEditor
 	private bool CanApplyCompletionItem(TextCompletionItem item)
 	{
 		return IsCompletionItemCurrent(item.RequestDocumentVersion, _editorDocumentVersion,
-			item.RequestGeneration, _editorRequestGeneration, IsLoaded, IsIntelliSenseAvailable());
+			item.RequestGeneration, SessionGeneration, IsLoaded, IsIntelliSenseAvailable());
 	}
 
 	private void RebaseOpenCompletionItems()
-		=> CompletionController.RebaseOpenCompletionItems(_editorDocumentVersion, _editorRequestGeneration);
+		=> RebaseOpenCompletionItems(_editorDocumentVersion, SessionGeneration);
 
 	private static bool IsCompletionItemCurrent(int? requestDocumentVersion,
 		int currentDocumentVersion,
@@ -78,7 +79,7 @@ public sealed partial class LuaEditor
 		int requestToken = CompletionController.BeginRequest();
 		CancellationToken cancellationToken = CompletionController.CurrentRequestCancellationToken;
 		int requestDocumentVersion = _editorDocumentVersion;
-		int requestGeneration = _editorRequestGeneration;
+		int requestGeneration = SessionGeneration;
 
 		try
 		{
@@ -171,16 +172,16 @@ public sealed partial class LuaEditor
 	{
 		TextDocument document = textArea.Document;
 		DocumentLine line = document.GetLineByOffset(Math.Clamp(replacementOffset, 0, document.TextLength));
-		string currentLineIndentation = LuaIndentationStrategy.GetLeadingWhitespace(document.GetText(line));
+		string currentLineIndentation = IndentationTextHelper.GetLeadingWhitespace(document.GetText(line));
 
-		LuaCompletionNormalizationResult normalizedInsertion = LuaIndentationStrategy.NormalizeCompletionInsertion(
+		CompletionInsertionResult normalizedInsertion = LuaIndentationStrategy.Instance.NormalizeCompletionInsertion(new CompletionInsertionContext(
 			insertText,
 			insertCaretOffset,
 			currentLineIndentation,
-			LuaIndentationStrategy.CreateIndentationUnit(
+			IndentationTextHelper.CreateIndentationUnit(
 				textArea.Options.ConvertTabsToSpaces,
 				textArea.Options.IndentationSize,
-				textArea.Options.IndentationSize));
+				textArea.Options.IndentationSize)));
 
 		return new CompletionDataInsertionResult(normalizedInsertion.Text, normalizedInsertion.CaretOffset);
 	}

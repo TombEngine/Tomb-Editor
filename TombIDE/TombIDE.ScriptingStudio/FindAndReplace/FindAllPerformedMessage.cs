@@ -1,6 +1,7 @@
 #nullable enable
 
 using CommunityToolkit.Mvvm.Messaging.Messages;
+using Nickelony.IDEKit.Core.FindReplace;
 using System.Collections.Generic;
 
 namespace TombIDE.ScriptingStudio.FindAndReplace;

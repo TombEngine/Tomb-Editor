@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Nickelony.IDEKit.Core.Text;
 using TombIDE.ScriptingStudio.ClassicScript;
 using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.Editors;
@@ -29,7 +30,7 @@ using TombLib.Scripting.Lua.Documents;
 using TombLib.Scripting.TRX;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editors;
-using TombLib.Scripting.UI.Text;
+using Nickelony.IDEKit.Workspace.Documents;
 using GameFlowScriptReplacer = TombLib.Scripting.GameFlowScript.Writers.ScriptReplacer;
 using TRXScriptReplacer = TombLib.Scripting.TRX.Writers.ScriptReplacer;
 
@@ -53,7 +54,8 @@ internal sealed class ScriptingMessageService : IDisposable
 		ScriptingMessageServiceOptions options,
 		ClassicScriptLanguageServices languageServices,
 		GameFlowLanguageServices gameFlowLanguageServices,
-		TRXLanguageServices trxLanguageServices)
+		TRXLanguageServices trxLanguageServices,
+		IWorkspaceDocumentManager? documentManager = null)
 	{
 		ArgumentNullException.ThrowIfNull(messenger);
 		ArgumentNullException.ThrowIfNull(workspaceProfile);
@@ -73,6 +75,7 @@ internal sealed class ScriptingMessageService : IDisposable
 		_workspaceAutomationProvider = CreateWorkspaceAutomationProvider(
 			workspaceProfile,
 			documentController,
+			documentManager,
 			ApplyEditorSettings,
 			engineDirectoryPath,
 			engineExecutableFilePath,
@@ -168,6 +171,7 @@ internal sealed class ScriptingMessageService : IDisposable
 	private static IStudioWorkspaceAutomationProvider CreateWorkspaceAutomationProvider(
 		ScriptingWorkspaceProfile workspaceProfile,
 		IEditorDocumentController documentController,
+		IWorkspaceDocumentManager? documentManager,
 		Action applyEditorSettings,
 		string engineDirectoryPath,
 		string engineExecutableFilePath,
@@ -186,10 +190,10 @@ internal sealed class ScriptingMessageService : IDisposable
 
 		return workspaceProfile.Kind switch
 		{
-			ScriptingWorkspaceKind.ClassicScript => CreateClassicScriptProvider(workspaceProfile, documentController, applyEditorSettings, engineDirectoryPath, hostOperations, showCompilerLogsPane, updateCompilerLogs, showCompilerLogsAfterBuild, useNewIncludeMethod, languageServices),
-			ScriptingWorkspaceKind.GameFlowScript => CreateGameFlowProvider(workspaceProfile, documentController, engineDirectoryPath, engineExecutableFilePath, hostOperations, showCompilerLogsPane, updateCompilerLogs, showCompilerLogsAfterBuild, gameFlowLanguageServices),
-			ScriptingWorkspaceKind.TRX => CreateTrxProvider(workspaceProfile, documentController, hostOperations, trxLanguageServices),
-			ScriptingWorkspaceKind.Lua => CreateLuaProvider(workspaceProfile, documentController, hostOperations),
+			ScriptingWorkspaceKind.ClassicScript => CreateClassicScriptProvider(workspaceProfile, documentController, documentManager, applyEditorSettings, engineDirectoryPath, hostOperations, showCompilerLogsPane, updateCompilerLogs, showCompilerLogsAfterBuild, useNewIncludeMethod, languageServices),
+			ScriptingWorkspaceKind.GameFlowScript => CreateGameFlowProvider(workspaceProfile, documentController, documentManager, engineDirectoryPath, engineExecutableFilePath, hostOperations, showCompilerLogsPane, updateCompilerLogs, showCompilerLogsAfterBuild, gameFlowLanguageServices),
+			ScriptingWorkspaceKind.TRX => CreateTrxProvider(workspaceProfile, documentController, documentManager, hostOperations, trxLanguageServices),
+			ScriptingWorkspaceKind.Lua => CreateLuaProvider(workspaceProfile, documentController, documentManager, hostOperations),
 			_ => throw new NotSupportedException($"Unsupported scripting workspace kind: {workspaceProfile.Kind}.")
 		};
 	}
@@ -197,6 +201,7 @@ internal sealed class ScriptingMessageService : IDisposable
 	private static IStudioWorkspaceAutomationProvider CreateClassicScriptProvider(
 		ScriptingWorkspaceProfile workspaceProfile,
 		IEditorDocumentController documentController,
+		IWorkspaceDocumentManager? documentManager,
 		Action applyEditorSettings,
 		string engineDirectoryPath,
 		IScriptingHostOperations hostOperations,
@@ -206,10 +211,10 @@ internal sealed class ScriptingMessageService : IDisposable
 		Func<bool> useNewIncludeMethod,
 		ClassicScriptLanguageServices languageServices)
 	{
-		var textEditorHost = new DocumentControllerTextEditorHost(documentController);
+		var textEditorHost = new DocumentControllerTextEditorHost(documentController, documentManager);
 		var scriptReplacer = new ScriptReplacer(languageServices.LineService);
 		var languageStringWriter = new LanguageStringWriter(languageServices.CommandService);
-		var silentActionService = new StudioSilentActionService(documentController, hostOperations);
+		var silentActionService = new StudioSilentActionService(documentController, hostOperations, textEditorHost, documentManager);
 
 		return new ClassicScriptWorkspaceAutomationProvider(
 			new Control(),
@@ -221,7 +226,7 @@ internal sealed class ScriptingMessageService : IDisposable
 				scriptText =>
 				{
 					TextEditorBase editor = textEditorHost.OpenTextEditor(PathHelper.GetScriptFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TR4));
-					editor.AppendText(Environment.NewLine + scriptText + Environment.NewLine);
+					editor.InsertText(editor.Text.Length, Environment.NewLine + scriptText + Environment.NewLine);
 					editor.ScrollToLine(editor.LineCount);
 				},
 				levelName =>
@@ -240,15 +245,15 @@ internal sealed class ScriptingMessageService : IDisposable
 					&& languageStringWriter.WriteNewNGString(languageEditor, ngString),
 				levelName =>
 				{
-					TextEditorBase editor = textEditorHost.OpenTextEditor(PathHelper.GetScriptFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TR4));
-					return languageServices.CommandService.IsLevelScriptDefined(new TextDocumentSnapshot(editor.Document), levelName);
+					ITextSnapshot? snapshot = textEditorHost.TryGetTextSnapshot(
+						PathHelper.GetScriptFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TR4));
+					return snapshot is not null && languageServices.CommandService.IsLevelScriptDefined(snapshot, levelName);
 				},
 				levelName =>
 				{
-					TextEditorBase editor = textEditorHost.OpenTextEditor(
-						PathHelper.GetLanguageFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TR4),
-						openSourceView: true);
-					return languageServices.CommandService.IsLevelLanguageStringDefined(new TextDocumentSnapshot(editor.Document), levelName);
+					ITextSnapshot? snapshot = textEditorHost.TryGetTextSnapshot(
+						PathHelper.GetLanguageFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TR4));
+					return snapshot is not null && languageServices.CommandService.IsLevelLanguageStringDefined(snapshot, levelName);
 				},
 				(oldName, newName) =>
 				{
@@ -273,6 +278,7 @@ internal sealed class ScriptingMessageService : IDisposable
 	private static IStudioWorkspaceAutomationProvider CreateGameFlowProvider(
 		ScriptingWorkspaceProfile workspaceProfile,
 		IEditorDocumentController documentController,
+		IWorkspaceDocumentManager? documentManager,
 		string engineDirectoryPath,
 		string engineExecutableFilePath,
 		IScriptingHostOperations hostOperations,
@@ -281,9 +287,9 @@ internal sealed class ScriptingMessageService : IDisposable
 		Func<bool> showCompilerLogsAfterBuild,
 		GameFlowLanguageServices languageServices)
 	{
-		var textEditorHost = new DocumentControllerTextEditorHost(documentController);
+		var textEditorHost = new DocumentControllerTextEditorHost(documentController, documentManager);
 		var scriptReplacer = new GameFlowScriptReplacer();
-		var silentActionService = new StudioSilentActionService(documentController, hostOperations);
+		var silentActionService = new StudioSilentActionService(documentController, hostOperations, textEditorHost, documentManager);
 
 		return new GameFlowWorkspaceAutomationProvider(
 			new Control(),
@@ -296,13 +302,14 @@ internal sealed class ScriptingMessageService : IDisposable
 				scriptText =>
 				{
 					TextEditorBase editor = textEditorHost.OpenTextEditor(PathHelper.GetScriptFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TR2));
-					editor.AppendText(Environment.NewLine + scriptText + Environment.NewLine);
+					editor.InsertText(editor.Text.Length, Environment.NewLine + scriptText + Environment.NewLine);
 					editor.ScrollToLine(editor.LineCount);
 				},
 				levelName =>
 				{
-					TextEditorBase editor = textEditorHost.OpenTextEditor(PathHelper.GetScriptFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TR2));
-					return languageServices.DocumentService.IsLevelScriptDefined(new TextDocumentSnapshot(editor.Document), levelName);
+					ITextSnapshot? snapshot = textEditorHost.TryGetTextSnapshot(
+						PathHelper.GetScriptFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TR2));
+					return snapshot is not null && languageServices.DocumentService.IsLevelScriptDefined(snapshot, levelName);
 				},
 				(oldName, newName) =>
 				{
@@ -318,12 +325,13 @@ internal sealed class ScriptingMessageService : IDisposable
 	private static IStudioWorkspaceAutomationProvider CreateLuaProvider(
 		ScriptingWorkspaceProfile workspaceProfile,
 		IEditorDocumentController documentController,
+		IWorkspaceDocumentManager? documentManager,
 		IScriptingHostOperations hostOperations)
 	{
-		var textEditorHost = new DocumentControllerTextEditorHost(documentController);
+		var textEditorHost = new DocumentControllerTextEditorHost(documentController, documentManager);
 		var levelScriptService = new TombEngineLevelScriptService();
 		var languageScriptService = new TombEngineLanguageScriptService();
-		var silentActionService = new StudioSilentActionService(documentController, hostOperations);
+		var silentActionService = new StudioSilentActionService(documentController, hostOperations, textEditorHost, documentManager);
 
 		return new LuaWorkspaceAutomationProvider(
 			silentActionService,
@@ -337,7 +345,7 @@ internal sealed class ScriptingMessageService : IDisposable
 					if (result.GameFlowScript.Length > 0)
 					{
 						TextEditorBase editor = textEditorHost.OpenTextEditor(PathHelper.GetScriptFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TombEngine));
-						editor.AppendText(Environment.NewLine + result.GameFlowScript + Environment.NewLine);
+						editor.InsertText(editor.Text.Length, Environment.NewLine + result.GameFlowScript + Environment.NewLine);
 						editor.ScrollToLine(editor.LineCount);
 						scriptUpdated = true;
 					}
@@ -345,7 +353,7 @@ internal sealed class ScriptingMessageService : IDisposable
 					if (result.LanguageScript.Length > 0
 						&& textEditorHost.OpenTextEditor(PathHelper.GetLanguageFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TombEngine)) is TextEditorBase stringsEditor)
 					{
-						int? insertedLineNumber = languageScriptService.InsertLanguageScript(stringsEditor.Document, result.LanguageScript);
+						int? insertedLineNumber = languageScriptService.InsertLanguageScript(stringsEditor, result.LanguageScript);
 
 						if (insertedLineNumber is not null)
 						{
@@ -360,8 +368,8 @@ internal sealed class ScriptingMessageService : IDisposable
 				},
 				levelName =>
 				{
-					TextDocument? scriptDocument = textEditorHost.TryGetTextDocument(PathHelper.GetScriptFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TombEngine));
-					TextDocument? languageDocument = textEditorHost.TryGetTextDocument(PathHelper.GetLanguageFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TombEngine));
+					ITextSnapshot? scriptDocument = textEditorHost.TryGetTextSnapshot(PathHelper.GetScriptFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TombEngine));
+					ITextSnapshot? languageDocument = textEditorHost.TryGetTextSnapshot(PathHelper.GetLanguageFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TombEngine));
 
 					if (scriptDocument is null || languageDocument is null)
 						return false;
@@ -370,9 +378,11 @@ internal sealed class ScriptingMessageService : IDisposable
 				},
 				levelName =>
 				{
-					TextEditorBase editor = textEditorHost.OpenTextEditor(PathHelper.GetLanguageFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TombEngine));
+					ITextSnapshot? snapshot = textEditorHost.TryGetTextSnapshot(
+						PathHelper.GetLanguageFilePath(documentController.ScriptRootDirectoryPath, TRVersion.Game.TombEngine));
 					var regex = new Regex($"\"{Regex.Escape(levelName)}\"");
-					return editor.Document.Lines.Any(line => regex.IsMatch(editor.Document.GetText(line)));
+					return snapshot is not null
+						&& snapshot.Lines.Any(line => regex.IsMatch(snapshot.GetText(line.Offset, line.Length)));
 				},
 				(oldName, newName) =>
 				{
@@ -386,7 +396,10 @@ internal sealed class ScriptingMessageService : IDisposable
 						return;
 
 					string lineText = editor.Document.GetText(stringLine);
-					editor.ReplaceLine(stringLine, regex.Replace(lineText, $"\"{newName}\""));
+					editor.ReplaceText(
+						stringLine.Offset,
+						stringLine.Length,
+						regex.Replace(lineText, $"\"{newName}\""));
 					editor.ScrollToLine(stringLine.LineNumber);
 				}));
 	}
@@ -394,12 +407,13 @@ internal sealed class ScriptingMessageService : IDisposable
 	private static IStudioWorkspaceAutomationProvider CreateTrxProvider(
 		ScriptingWorkspaceProfile workspaceProfile,
 		IEditorDocumentController documentController,
+		IWorkspaceDocumentManager? documentManager,
 		IScriptingHostOperations hostOperations,
 		TRXLanguageServices trxLanguageServices)
 	{
-		var textEditorHost = new DocumentControllerTextEditorHost(documentController);
+		var textEditorHost = new DocumentControllerTextEditorHost(documentController, documentManager);
 		var scriptReplacer = new TRXScriptReplacer();
-		var silentActionService = new StudioSilentActionService(documentController, hostOperations);
+		var silentActionService = new StudioSilentActionService(documentController, hostOperations, textEditorHost, documentManager);
 
 		return new TrxWorkspaceAutomationProvider(
 			silentActionService,
@@ -408,9 +422,14 @@ internal sealed class ScriptingMessageService : IDisposable
 			new TrxWorkspaceAutomationCallbacks(
 				levelName =>
 				{
-					TextEditorBase editor = textEditorHost.OpenTextEditor(PathHelper.GetScriptFilePath(documentController.ScriptRootDirectoryPath, workspaceProfile.GameVersion));
-					var source = new TextDocumentSnapshot(editor.Document);
-					return trxLanguageServices.DocumentService.IsLevelScriptDefined(source, levelName);
+					ITextSnapshot? snapshot = textEditorHost.TryGetTextSnapshot(
+						PathHelper.GetScriptFilePath(documentController.ScriptRootDirectoryPath, workspaceProfile.GameVersion));
+					return snapshot is not null
+						&& trxLanguageServices.DocumentService.IsLevelScriptDefined(
+							new Nickelony.IDEKit.Core.Text.StringTextSnapshot(
+								snapshot.GetText(0, snapshot.TextLength),
+								snapshot.FileName),
+							levelName);
 				},
 				(oldName, newName) =>
 				{

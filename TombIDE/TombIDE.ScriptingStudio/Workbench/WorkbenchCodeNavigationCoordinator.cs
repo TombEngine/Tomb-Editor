@@ -1,6 +1,6 @@
 #nullable enable
 
-using Nickelony.LanguageServer.Abstractions.Navigation;
+using Nickelony.LanguageServer.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -13,10 +13,10 @@ using TombIDE.ScriptingStudio.UI;
 using TombIDE.ScriptingStudio.WorkspaceProfile;
 using TombLib.Forms.ViewModels;
 using TombLib.Scripting.ClassicScript;
-using TombLib.Scripting.Presentation;
+using TombLib.Scripting.UI.Presentation;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editors;
-using TombLib.Scripting.UI.Text;
+using Nickelony.IDEKit.AvalonEdit.Documents;
 using TombLib.WPF.Services.Abstract;
 
 namespace TombIDE.ScriptingStudio.Workbench;

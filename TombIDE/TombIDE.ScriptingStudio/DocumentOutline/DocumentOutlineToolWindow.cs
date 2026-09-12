@@ -1,11 +1,11 @@
 #nullable enable
 
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using System;
 using System.Windows;
 using TombIDE.ScriptingStudio.Shell;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.Shared;
-using TombLib.Scripting.UI.ContentNodes;
 using TombLib.Scripting.UI.Editors;
 
 namespace TombIDE.ScriptingStudio.DocumentOutline;
@@ -33,7 +33,7 @@ public sealed class DocumentOutlineToolWindow : StudioDockPane
 
 	public override UIElement Content => _view;
 
-	public Func<ContentNodesProviderBase?>? OutlineProviderFactory
+	public Func<ITextDocumentSymbolProvider?>? OutlineProviderFactory
 	{
 		get => _viewModel.OutlineProviderFactory;
 		set => _viewModel.OutlineProviderFactory = value;

@@ -1,18 +1,22 @@
 using ICSharpCode.AvalonEdit.Document;
 using Moq;
-using Nickelony.LanguageServer.Abstractions.Editing;
-using Nickelony.LanguageServer.Abstractions.Navigation;
+using Nickelony.LanguageServer.Abstractions;
 using System.IO;
 using TombIDE.ScriptingStudio.Lua;
 using TombIDE.ScriptingStudio.TextEditing;
+using TombIDE.ScriptingStudio.Workspace;
+using Nickelony.IDEKit.Workspace.Views;
 using TombLib.Scripting.Lua;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editors;
 using TombLib.Scripting.UI.Editing;
+using Nickelony.IDEKit.Workspace.Documents;
 
 namespace TombEditor.Tests.ScriptingStudio;
 
 [TestClass]
+[TestCategory("TextEditorBaseModernization")]
 public sealed class LuaReferenceAndRenameTests
 {
 	[TestMethod]
@@ -52,7 +56,7 @@ public sealed class LuaReferenceAndRenameTests
 					]);
 
 				var service = new LuaReferenceSearchService(textEditorHost.Object, referencesProvider.Object, rootPath);
-				IReadOnlyList<TombLib.Scripting.Presentation.TextReferenceGroup> groups =
+				IReadOnlyList<TombLib.Scripting.UI.Presentation.TextReferenceGroup> groups =
 					service.FindReferencesAsync(editor, CancellationToken.None).GetAwaiter().GetResult();
 
 				Assert.AreEqual(2, groups.Count);
@@ -68,6 +72,61 @@ public sealed class LuaReferenceAndRenameTests
 			}
 		});
 	}
+
+	[TestMethod]
+	public void ReferenceSearch_UsesCanonicalSnapshotForClosedFilePreview()
+		=> StaTestHelper.RunInSta(() =>
+		{
+			string rootPath = Path.Combine(Path.GetTempPath(), "TombEditor-LuaReferences-" + Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(rootPath);
+			string filePath = Path.Combine(rootPath, "closed.lua");
+			File.WriteAllText(filePath, "stale disk text\n");
+
+			try
+			{
+				using var editor = new LuaEditor(new Version(1, 0))
+				{
+					FilePath = Path.Combine(rootPath, "request.lua"),
+					Text = "return true"
+				};
+				var textEditorHost = new Mock<ITextEditorHost>();
+				textEditorHost
+					.Setup(host => host.GetOpenEditors(filePath))
+					.Returns([]);
+				var referencesProvider = new Mock<ITextReferencesProvider>();
+				referencesProvider.SetupGet(provider => provider.SupportsReferences).Returns(true);
+				referencesProvider
+					.Setup(provider => provider.GetReferencesAsync(It.IsAny<TextReferenceRequest>(), It.IsAny<CancellationToken>()))
+					.ReturnsAsync([new TextReferenceLocation(filePath, 1, 1, 1, 7)]);
+
+				WorkspaceDocumentSnapshot snapshot = new(
+					new WorkspaceDocumentKey(Guid.NewGuid()),
+					filePath,
+					filePath,
+					1,
+					1,
+					false,
+					new StringTextSnapshot("canonical workspace text\n", filePath),
+					new TextFileFormat(TextEncodingKind.Utf8, false, TextNewlineStyle.Lf),
+					FileStamp.Missing);
+				var documentManager = new TestDocumentBridge(snapshot);
+
+				var service = new LuaReferenceSearchService(
+					textEditorHost.Object,
+					referencesProvider.Object,
+					rootPath,
+					documentManager);
+				IReadOnlyList<TombLib.Scripting.UI.Presentation.TextReferenceGroup> groups =
+					service.FindReferencesAsync(editor, CancellationToken.None).GetAwaiter().GetResult();
+
+				Assert.AreEqual("canonical workspace text", groups[0].Items[0].PreviewText);
+				Assert.AreEqual(1, documentManager.OpenCount);
+			}
+			finally
+			{
+				Directory.Delete(rootPath, recursive: true);
+			}
+		});
 
 	[TestMethod]
 	public void WorkspaceCommandService_RenameForwardsRequestToLanguageServerProvider()
@@ -100,5 +159,92 @@ public sealed class LuaReferenceAndRenameTests
 				It.IsAny<CancellationToken>()), Times.Once);
 			editor.Dispose();
 		});
+	}
+
+	private sealed class TestDocumentBridge(WorkspaceDocumentSnapshot snapshot) : IWorkspaceDocumentManager
+	{
+		private readonly WorkspaceDocumentSnapshot _snapshot = snapshot;
+
+		public int OpenCount { get; private set; }
+
+		public Task<WorkspaceDocumentOpenResult> OpenAsync(
+			string? filePath,
+			WorkspaceDocumentOpenOptions options,
+			CancellationToken cancellationToken = default)
+		{
+			OpenCount++;
+			return Task.FromResult(new WorkspaceDocumentOpenResult(
+				WorkspaceDocumentOpenStatus.AlreadyOpen,
+				_snapshot));
+		}
+
+		public IReadOnlyList<WorkspaceDocumentSnapshot> GetSnapshotsUnderDirectory(string directoryPath)
+			=> new[] { _snapshot };
+
+		public Task<WorkspaceDocumentManagerOpenResult> OpenWithViewAsync(
+			string? filePath,
+			WorkspaceDocumentOpenOptions options,
+			IWorkspaceDocumentView view,
+			CancellationToken cancellationToken = default)
+			=> throw new NotSupportedException();
+
+		public WorkspaceDocumentManagerOpenResult OpenWithView(
+			string? filePath,
+			WorkspaceDocumentOpenOptions options,
+			IWorkspaceDocumentView view,
+			CancellationToken cancellationToken = default)
+			=> throw new NotSupportedException();
+
+		public WorkspaceDocumentMutationResult Replace(WorkspaceDocumentReplaceRequest request)
+			=> throw new NotSupportedException();
+
+		public WorkspaceDocumentMutationResult Discard(WorkspaceDocumentDiscardRequest request)
+			=> throw new NotSupportedException();
+
+		public Task<WorkspaceDocumentRenameResult> RenameAsync(
+			WorkspaceDocumentRenameRequest request,
+			CancellationToken cancellationToken = default)
+			=> throw new NotSupportedException();
+
+		public Task<WorkspaceDocumentSaveAsResult> SaveAsAsync(
+			WorkspaceDocumentSaveAsRequest request,
+			CancellationToken cancellationToken = default)
+			=> throw new NotSupportedException();
+
+		public Task<WorkspaceDocumentDeleteResult> DeleteAsync(
+			WorkspaceDocumentDeleteRequest request,
+			CancellationToken cancellationToken = default)
+			=> throw new NotSupportedException();
+
+		public Task<WorkspaceDocumentDirectoryRenameResult> RenameDirectoryAsync(
+			WorkspaceDocumentDirectoryRenameRequest request,
+			CancellationToken cancellationToken = default)
+			=> throw new NotSupportedException();
+
+		public Task<WorkspaceDocumentDirectoryDeleteResult> DeleteDirectoryAsync(
+			WorkspaceDocumentDirectoryDeleteRequest request,
+			CancellationToken cancellationToken = default)
+			=> throw new NotSupportedException();
+
+		public Task<WorkspaceDocumentCommitResult> CommitAsync(
+			WorkspaceDocumentCommitRequest request,
+			CancellationToken cancellationToken = default)
+			=> throw new NotSupportedException();
+
+		public Task<WorkspaceDocumentReloadResult> ReloadAsync(
+			WorkspaceDocumentReloadRequest request,
+			CancellationToken cancellationToken = default)
+			=> throw new NotSupportedException();
+
+		public Task<WorkspaceDocumentConflictResolutionResult> ResolveExternalConflictAsync(
+			WorkspaceDocumentConflictResolutionRequest request,
+			CancellationToken cancellationToken = default)
+			=> throw new NotSupportedException();
+
+		public void UnregisterOpenView(IWorkspaceDocumentView view) { }
+
+		public Task StopAsync() => Task.CompletedTask;
+
+		public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 	}
 }

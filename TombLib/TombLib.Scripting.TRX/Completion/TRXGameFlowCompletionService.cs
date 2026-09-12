@@ -1,8 +1,8 @@
-using Nickelony.LanguageServer.Abstractions.Completion;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using NLog;
 using System;
 using System.Collections.Generic;
-using TombLib.Scripting.Completion;
+using TombLib.Scripting.UI.Completion;
 using TombLib.Scripting.TRX.Models;
 using TombLib.Scripting.TRX.Resources;
 using TombLib.Scripting.TRX.Services;

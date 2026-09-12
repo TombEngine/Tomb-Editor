@@ -2,15 +2,15 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using TombLib.Scripting.Navigation;
+using Nickelony.IDEKit.Core.Comments;
+using Nickelony.IDEKit.IntelliSense.Navigation;
 using TombLib.Scripting.TRX.Completion;
 using TombLib.Scripting.TRX.Highlighting;
-using TombLib.Scripting.UI.Bases;
-using TombLib.Scripting.UI.Completion;
-using TombLib.Scripting.UI.Editing;
-using TombLib.Scripting.UI.Editors;
-using TombLib.Scripting.UI.Resources;
-using TombLib.Scripting.UI.Threading;
+using Nickelony.IDEKit.Core.Infrastructure;
+	using TombLib.Scripting.UI.Bases;
+	using TombLib.Scripting.UI.Completion;
+	using TombLib.Scripting.UI.Editors;
+	using TombLib.Scripting.UI.Resources;
 
 namespace TombLib.Scripting.TRX;
 
@@ -46,7 +46,7 @@ public sealed partial class TRXEditor : TextEditorBase, INameBasedObjectNavigato
 
 		InitializeDiagnostics(EngineVersion, _languageServices.ErrorDetector);
 
-		CommentPrefix = "//";
+		CommentSyntax = new CommentSyntax("//", null, null, StringLiteralStyle.DoubleQuoted);
 	}
 
 	// Event handlers
@@ -82,7 +82,7 @@ public sealed partial class TRXEditor : TextEditorBase, INameBasedObjectNavigato
 	/// <inheritdoc/>
 	protected override void OnLanguageTextEntered(TextCompositionEventArgs e)
 	{
-		if (CompletionEnabled)
+		if (IntelliSenseEnabled && CompletionEnabled)
 			CompletionController.ApplyDecision(
 				_completionCoordinator.GetTextEnteredDecision(Document, CaretOffset, e.Text, CompletionController.ActiveWindow is not null),
 				item => new CompletionData(item, TRXCompletionIconProvider.GetImage));
@@ -104,7 +104,7 @@ public sealed partial class TRXEditor : TextEditorBase, INameBasedObjectNavigato
 			return;
 
 		_pendingBracketAutospacing = false;
-		TextEditorEditHelper.InsertText(this, CaretOffset, Environment.NewLine + GetIndentationUnit());
+		InsertText(CaretOffset, Environment.NewLine + GetIndentationUnit());
 	}
 
 	private string GetIndentationUnit()
@@ -121,6 +121,8 @@ public sealed partial class TRXEditor : TextEditorBase, INameBasedObjectNavigato
 	/// <inheritdoc/>
 	public override void UpdateSettings(TombLib.Scripting.UI.Bases.ConfigurationBase configuration)
 	{
+		EnsureNotDisposed();
+
 		if (configuration is not TRXEditorConfiguration config)
 			return;
 

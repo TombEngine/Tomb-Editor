@@ -1,5 +1,5 @@
+using Nickelony.IDEKit.Tooling;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using TombLib.Scripting.ClassicScript.Compilers;
@@ -24,19 +24,19 @@ public class ClassicScriptCompilerProcessTests
 			directories.OutputDirectory,
 			newIncludeMethod: false,
 			directories.Paths,
-			new FakeCompilerProcessFactory(_ => throw new InvalidOperationException("process start failed"))));
+			new FakeProcessRunner(_ => throw new InvalidOperationException("process start failed"))));
 	}
 
 	[TestMethod]
 	public void NGCompiler_SuccessfulProcess_CopiesCompiledFilesAndCapturesStartInfo()
 	{
 		using var directories = CompilerDirectories.Create();
-		ProcessStartInfo? capturedStartInfo = null;
-		var process = new FakeCompilerProcess(() =>
+		var runner = new FakeProcessRunner(_ =>
 		{
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "LastCompilerLog.txt"), "Compilation complete");
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "Script.dat"), "script data");
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "English.dat"), "english data");
+			return new ProcessRunResult { Started = true };
 		});
 
 		bool result = NGCompiler.CompileCore(
@@ -44,18 +44,13 @@ public class ClassicScriptCompilerProcessTests
 			directories.OutputDirectory,
 			newIncludeMethod: false,
 			directories.Paths,
-			new FakeCompilerProcessFactory(startInfo =>
-			{
-				capturedStartInfo = startInfo;
-				return process;
-			}));
+			runner);
 
 		Assert.IsTrue(result);
-		Assert.IsTrue(process.WaitForExitCalled);
-		Assert.IsTrue(process.Disposed);
-		Assert.IsNotNull(capturedStartInfo);
-		Assert.AreEqual(directories.Paths.NGCExecutable, capturedStartInfo.FileName);
-		Assert.AreEqual("\"" + Path.Combine(directories.Paths.VGEScriptDirectory, "Script.txt") + "\" -Log -NoMsgBox -NoWait -Concise", capturedStartInfo.Arguments);
+		Assert.IsTrue(runner.RunCalled);
+		Assert.IsNotNull(runner.LastRequest);
+		Assert.AreEqual(directories.Paths.NGCExecutable, runner.LastRequest.FileName);
+		Assert.AreEqual("\"" + Path.Combine(directories.Paths.VGEScriptDirectory, "Script.txt") + "\" -Log -NoMsgBox -NoWait -Concise", runner.LastRequest.Arguments);
 		Assert.AreEqual("script data", File.ReadAllText(Path.Combine(directories.OutputDirectory, "Script.dat")));
 		Assert.AreEqual("english data", File.ReadAllText(Path.Combine(directories.OutputDirectory, "English.dat")));
 	}
@@ -64,10 +59,11 @@ public class ClassicScriptCompilerProcessTests
 	public void NGCompiler_ErrorLog_ReturnsFalseAndStillCopiesCompiledFiles()
 	{
 		using var directories = CompilerDirectories.Create();
-		var process = new FakeCompilerProcess(() =>
+		var runner = new FakeProcessRunner(_ =>
 		{
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "LastCompilerLog.txt"), "ERROR: compiler failure");
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "Script.dat"), "script data");
+			return new ProcessRunResult { Started = true };
 		});
 
 		bool result = NGCompiler.CompileCore(
@@ -75,7 +71,7 @@ public class ClassicScriptCompilerProcessTests
 			directories.OutputDirectory,
 			newIncludeMethod: false,
 			directories.Paths,
-			new FakeCompilerProcessFactory(_ => process));
+			runner);
 
 		Assert.IsFalse(result);
 		Assert.AreEqual("script data", File.ReadAllText(Path.Combine(directories.OutputDirectory, "Script.dat")));
@@ -87,15 +83,18 @@ public class ClassicScriptCompilerProcessTests
 		using var directories = CompilerDirectories.Create();
 		File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "Script.dat"), "stale compiler data");
 		File.WriteAllText(Path.Combine(directories.OutputDirectory, "Script.dat"), "stale data");
-		var process = new FakeCompilerProcess(() =>
-			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "LastCompilerLog.txt"), "Compilation complete"));
+		var runner = new FakeProcessRunner(_ =>
+		{
+			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "LastCompilerLog.txt"), "Compilation complete");
+			return new ProcessRunResult { Started = true };
+		});
 
 		bool result = NGCompiler.CompileCore(
 			directories.InputDirectory,
 			directories.OutputDirectory,
 			newIncludeMethod: false,
 			directories.Paths,
-			new FakeCompilerProcessFactory(_ => process));
+			runner);
 
 		Assert.IsFalse(result);
 		Assert.AreEqual("stale data", File.ReadAllText(Path.Combine(directories.OutputDirectory, "Script.dat")));
@@ -106,10 +105,11 @@ public class ClassicScriptCompilerProcessTests
 	public void NGCompiler_MissingOptionalEnglishOutput_ReturnsTrueAndCopiesPrimaryOutput()
 	{
 		using var directories = CompilerDirectories.Create();
-		var process = new FakeCompilerProcess(() =>
+		var runner = new FakeProcessRunner(_ =>
 		{
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "LastCompilerLog.txt"), "Compilation complete");
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "Script.dat"), "script data");
+			return new ProcessRunResult { Started = true };
 		});
 
 		bool result = NGCompiler.CompileCore(
@@ -117,7 +117,7 @@ public class ClassicScriptCompilerProcessTests
 			directories.OutputDirectory,
 			newIncludeMethod: false,
 			directories.Paths,
-			new FakeCompilerProcessFactory(_ => process));
+			runner);
 
 		Assert.IsTrue(result);
 		Assert.AreEqual("script data", File.ReadAllText(Path.Combine(directories.OutputDirectory, "Script.dat")));
@@ -128,12 +128,13 @@ public class ClassicScriptCompilerProcessTests
 	public void NGCompiler_NonAsciiLog_UsesWindows1252()
 	{
 		using var directories = CompilerDirectories.Create();
-		var process = new FakeCompilerProcess(() =>
+		var runner = new FakeProcessRunner(_ =>
 		{
 			File.WriteAllBytes(
 				Path.Combine(directories.Paths.VGEDirectory, "LastCompilerLog.txt"),
 				Encoding.GetEncoding(1252).GetBytes("Compilation caf\u00E9"));
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "Script.dat"), "script data");
+			return new ProcessRunResult { Started = true };
 		});
 
 		bool result = NGCompiler.CompileCore(
@@ -141,7 +142,7 @@ public class ClassicScriptCompilerProcessTests
 			directories.OutputDirectory,
 			newIncludeMethod: false,
 			directories.Paths,
-			new FakeCompilerProcessFactory(_ => process));
+			runner);
 
 		Assert.IsTrue(result);
 		Assert.AreEqual("Compilation caf\u00E9", File.ReadAllText(Path.Combine(directories.Paths.VGEDirectory, "LastCompilerLog.txt")));
@@ -158,7 +159,7 @@ public class ClassicScriptCompilerProcessTests
 				directories.InputDirectory,
 				directories.OutputDirectory,
 				directories.Paths,
-				new FakeCompilerProcessFactory(_ => throw new InvalidOperationException("process start failed"))));
+				new FakeProcessRunner(_ => throw new InvalidOperationException("process start failed"))));
 
 		StringAssert.Contains(exception.Message, "process start failed");
 		Assert.IsFalse(File.Exists(Path.Combine(directories.Paths.TR4ScriptCompilerDirectory, "stale-output.tmp")));
@@ -168,31 +169,26 @@ public class ClassicScriptCompilerProcessTests
 	public void TR4Compiler_SuccessfulProcess_CopiesCompiledFilesAndPreservesArguments()
 	{
 		using var directories = CompilerDirectories.Create();
-		ProcessStartInfo? capturedStartInfo = null;
-		var process = new FakeCompilerProcess(() =>
+		var runner = new FakeProcessRunner(_ =>
 		{
 			File.WriteAllText(Path.Combine(directories.Paths.TR4ScriptCompilerDirectory, "logs.txt"), "Compilation complete");
 			File.WriteAllText(Path.Combine(directories.Paths.TR4ScriptCompilerDirectory, "Script.dat"), "script data");
 			File.WriteAllText(Path.Combine(directories.Paths.TR4ScriptCompilerDirectory, "English.dat"), "english data");
+			return new ProcessRunResult { Started = true };
 		});
 
 		string result = TR4Compiler.CompileCore(
 			directories.InputDirectory,
 			directories.OutputDirectory,
 			directories.Paths,
-			new FakeCompilerProcessFactory(startInfo =>
-			{
-				capturedStartInfo = startInfo;
-				return process;
-			}));
+			runner);
 
 		Assert.AreEqual("Compilation complete", result);
-		Assert.IsTrue(process.WaitForExitCalled);
-		Assert.IsTrue(process.Disposed);
-		Assert.IsNotNull(capturedStartInfo);
-		Assert.AreEqual(directories.Paths.DOSBoxExecutable, capturedStartInfo.FileName);
-		Assert.AreEqual(directories.Paths.DOSDirectory, capturedStartInfo.WorkingDirectory);
-		StringAssert.Contains(capturedStartInfo.Arguments, directories.Paths.TR4ScriptCompilerDirectory);
+		Assert.IsTrue(runner.RunCalled);
+		Assert.IsNotNull(runner.LastRequest);
+		Assert.AreEqual(directories.Paths.DOSBoxExecutable, runner.LastRequest.FileName);
+		Assert.AreEqual(directories.Paths.DOSDirectory, runner.LastRequest.WorkingDirectory);
+		StringAssert.Contains(runner.LastRequest.Arguments, directories.Paths.TR4ScriptCompilerDirectory);
 		Assert.AreEqual("script data", File.ReadAllText(Path.Combine(directories.OutputDirectory, "Script.dat")));
 		Assert.AreEqual("english data", File.ReadAllText(Path.Combine(directories.OutputDirectory, "English.dat")));
 	}
@@ -203,14 +199,17 @@ public class ClassicScriptCompilerProcessTests
 		using var directories = CompilerDirectories.Create();
 		File.WriteAllText(Path.Combine(directories.Paths.TR4ScriptCompilerDirectory, "Script.dat"), "stale script data");
 		File.WriteAllText(Path.Combine(directories.OutputDirectory, "Script.dat"), "existing project data");
-		var process = new FakeCompilerProcess(() =>
-			File.WriteAllText(Path.Combine(directories.Paths.TR4ScriptCompilerDirectory, "logs.txt"), "Compilation complete"));
+		var runner = new FakeProcessRunner(_ =>
+		{
+			File.WriteAllText(Path.Combine(directories.Paths.TR4ScriptCompilerDirectory, "logs.txt"), "Compilation complete");
+			return new ProcessRunResult { Started = true };
+		});
 
 		string result = TR4Compiler.CompileCore(
 			directories.InputDirectory,
 			directories.OutputDirectory,
 			directories.Paths,
-			new FakeCompilerProcessFactory(_ => process));
+			runner);
 
 		Assert.AreEqual("Compilation complete", result);
 		Assert.AreEqual("existing project data", File.ReadAllText(Path.Combine(directories.OutputDirectory, "Script.dat")));
@@ -228,7 +227,7 @@ public class ClassicScriptCompilerProcessTests
 			directories.InputDirectory,
 			directories.OutputDirectory,
 			directories.Paths,
-			new FakeCompilerProcessFactory(_ => new FakeCompilerProcess(() => { }))));
+			new FakeProcessRunner(_ => new ProcessRunResult { Started = true })));
 
 		Assert.IsFalse(File.Exists(Path.Combine(directories.Paths.TR4ScriptCompilerDirectory, "stale-output.tmp")));
 	}
@@ -237,16 +236,19 @@ public class ClassicScriptCompilerProcessTests
 	public void TR4Compiler_NonAsciiLog_UsesWindows1252()
 	{
 		using var directories = CompilerDirectories.Create();
-		var process = new FakeCompilerProcess(() =>
+		var runner = new FakeProcessRunner(_ =>
+		{
 			File.WriteAllBytes(
 				Path.Combine(directories.Paths.TR4ScriptCompilerDirectory, "logs.txt"),
-				Encoding.GetEncoding(1252).GetBytes("Compilation caf\u00E9")));
+				Encoding.GetEncoding(1252).GetBytes("Compilation caf\u00E9"));
+			return new ProcessRunResult { Started = true };
+		});
 
 		string result = TR4Compiler.CompileCore(
 			directories.InputDirectory,
 			directories.OutputDirectory,
 			directories.Paths,
-			new FakeCompilerProcessFactory(_ => process));
+			runner);
 
 		Assert.AreEqual("Compilation caf\u00E9", result);
 	}
@@ -290,35 +292,25 @@ public class ClassicScriptCompilerProcessTests
 		}
 	}
 
-	private sealed class FakeCompilerProcessFactory : ICompilerProcessFactory
+	private sealed class FakeProcessRunner : IProcessRunner
 	{
-		private readonly Func<ProcessStartInfo, ICompilerProcess?> _start;
+		private readonly Func<ProcessRunRequest, ProcessRunResult> _run;
 
-		public FakeCompilerProcessFactory(Func<ProcessStartInfo, ICompilerProcess?> start)
-			=> _start = start;
+		public FakeProcessRunner(Func<ProcessRunRequest, ProcessRunResult> run)
+			=> _run = run;
 
-		public ICompilerProcess? Start(ProcessStartInfo startInfo)
-			=> _start(startInfo);
-	}
+		public ProcessRunRequest? LastRequest { get; private set; }
 
-	private sealed class FakeCompilerProcess : ICompilerProcess
-	{
-		private readonly Action _onWaitForExit;
+		public bool RunCalled { get; private set; }
 
-		public FakeCompilerProcess(Action onWaitForExit)
-			=> _onWaitForExit = onWaitForExit;
-
-		public bool WaitForExitCalled { get; private set; }
-
-		public bool Disposed { get; private set; }
-
-		public void WaitForExit()
+		public ProcessRunResult Run(ProcessRunRequest request, CancellationToken cancellationToken = default)
 		{
-			WaitForExitCalled = true;
-			_onWaitForExit();
+			RunCalled = true;
+			LastRequest = request;
+			return _run(request);
 		}
 
-		public void Dispose()
-			=> Disposed = true;
+		public IProcessHandle Start(ProcessRunRequest request)
+			=> throw new NotSupportedException("The fake runner only supports Run.");
 	}
 }

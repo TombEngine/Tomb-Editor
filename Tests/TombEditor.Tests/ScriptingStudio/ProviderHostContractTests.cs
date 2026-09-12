@@ -145,8 +145,8 @@ public sealed class ProviderHostContractTests
 		public IEnumerable<IEditorControl> FindEditorsOfFile(string filePath) => [];
 		public bool ContainsEditor(IEditorControl editor) => false;
 		public void CheckPreviousSession() { }
-		public void OpenFile(string filePath, EditorType editorType = EditorType.Default, bool silentSession = false) { }
-		public void OpenSourceFile(string filePath, bool silentSession = false) { }
+		public void OpenFile(string filePath, EditorType editorType = EditorType.Default, DocumentLoadOptions options = default) { }
+		public void OpenSourceFile(string filePath, DocumentLoadOptions options = default) { }
 		public void AddFileToReloadQueue(string filePath) { }
 		public void TryRunFileReloadQueue() { }
 		public bool AskSaveAll() => true;

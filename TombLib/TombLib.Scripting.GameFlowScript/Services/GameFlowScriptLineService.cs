@@ -1,7 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
 using TombLib.Scripting.GameFlowScript.Resources;
-using TombLib.Scripting.Text;
+using Nickelony.IDEKit.Core.Comments;
 
 namespace TombLib.Scripting.GameFlowScript.Services;
 
@@ -10,24 +10,29 @@ namespace TombLib.Scripting.GameFlowScript.Services;
 /// Provides line-level text operations using Core helpers and, where needed,
 /// regex patterns for the GameFlow section-header syntax.
 /// </summary>
-public sealed class GameFlowScriptLineService : IGameFlowScriptLineService
+public sealed class GameFlowScriptLineService : TextLineSyntaxService, IGameFlowScriptLineService
 {
-	private const string CommentDelimiter = "//";
-
 	// Regex pattern for the GameFlow section-header syntax.
 	private static readonly Regex SectionHeaderRegex = new(Patterns.Sections, RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="GameFlowScriptLineService"/> class.
+	/// </summary>
+	public GameFlowScriptLineService()
+		: base(new CommentSyntax("//", null, null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.TripleDoubleQuoted))
+	{ }
+
 	/// <inheritdoc/>
 	public string RemoveComments(string lineText)
-		=> LineCommentHelper.RemoveLineComment(lineText, CommentDelimiter);
+		=> base.RemoveComments(lineText);
 
 	/// <inheritdoc/>
 	public string EscapeComments(string lineText)
-		=> LineCommentHelper.MaskLineComment(lineText, CommentDelimiter);
+		=> base.EscapeComments(lineText);
 
 	/// <inheritdoc/>
 	public bool IsEmptyOrComments(string? lineText)
-		=> string.IsNullOrWhiteSpace(lineText) || lineText.TrimStart().StartsWith(CommentDelimiter, StringComparison.Ordinal);
+		=> base.IsEmptyOrComments(lineText);
 
 	/// <inheritdoc/>
 	public bool IsSectionHeaderLine(string lineText)

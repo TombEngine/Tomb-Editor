@@ -1,5 +1,5 @@
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.ClassicScript.Types;
-using TombLib.Scripting.Text;
 
 namespace TombLib.Scripting.ClassicScript.Services;
 

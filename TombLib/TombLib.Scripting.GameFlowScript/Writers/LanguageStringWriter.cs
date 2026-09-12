@@ -18,5 +18,5 @@ public sealed class LanguageStringWriter
 	/// <param name="textEditor">The editor to write into.</param>
 	/// <param name="levelName">The level name to write.</param>
 	public void WriteNewLevelNameString(TextEditorBase textEditor, string levelName)
-		=> TextEditorLineOperations.TryAssignStockLevelNameStringSlot(textEditor, levelName);
+		=> StockLevelNameWriter.TryAssignStockLevelNameStringSlot(textEditor, levelName);
 }

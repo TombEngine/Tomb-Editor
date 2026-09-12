@@ -1,7 +1,6 @@
-using Nickelony.LanguageServer.Abstractions.Signatures;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Signatures;
 using TombLib.Scripting.ClassicScript.Services;
-using TombLib.Scripting.Signatures;
-using TombLib.Scripting.Text;
 
 namespace TombLib.Scripting.ClassicScript.Signatures;
 

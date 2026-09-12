@@ -1,7 +1,7 @@
-using Nickelony.LanguageServer.Abstractions.Completion;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using System;
 using System.Collections.Generic;
-using TombLib.Scripting.Completion;
+using TombLib.Scripting.UI.Completion;
 
 namespace TombLib.Scripting.GameFlowScript.Completion;
 

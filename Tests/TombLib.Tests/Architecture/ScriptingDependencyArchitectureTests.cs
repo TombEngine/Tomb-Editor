@@ -1,9 +1,9 @@
 using System.Reflection;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.ClassicScript;
 using TombLib.Scripting.GameFlowScript;
 using TombLib.Scripting.Lua;
 using TombLib.Scripting.TRX;
-using TombLib.Scripting.Text;
 using TombLib.Scripting.UI.Bases;
 
 namespace TombLib.Tests;
@@ -45,21 +45,21 @@ public class ScriptingDependencyArchitectureTests
 	}
 
 	[TestMethod]
-	public void NeutralCore_ReferencesTheIntentionalNickelonyContract()
+	public void NeutralCore_RemainsDependencyFree()
 	{
-		Assert.IsTrue(
+		Assert.IsFalse(
 			ReferencesAssembly(typeof(TextRange).Assembly, "Nickelony.LanguageServer.Abstractions"),
-			"TombLib.Scripting intentionally depends on the Nickelony language-server abstraction contract.");
+			"Nickelony.IDEKit.Core must remain dependency-free.");
 	}
 
 	[TestMethod]
 	public void EditorIntegrationProjects_ReferenceTheNeutralCore()
 	{
-		Assert.IsTrue(ReferencesAssembly(typeof(TextEditorBase).Assembly, "TombLib.Scripting"), "TombLib.Scripting.UI must reference TombLib.Scripting.");
-		Assert.IsTrue(ReferencesAssembly(typeof(ClassicScriptEditor).Assembly, "TombLib.Scripting"), "TombLib.Scripting.ClassicScript must reference TombLib.Scripting.");
-		Assert.IsTrue(ReferencesAssembly(typeof(GameFlowEditor).Assembly, "TombLib.Scripting"), "TombLib.Scripting.GameFlowScript must reference TombLib.Scripting.");
-		Assert.IsTrue(ReferencesAssembly(typeof(TRXEditor).Assembly, "TombLib.Scripting"), "TombLib.Scripting.TRX must reference TombLib.Scripting.");
-		Assert.IsTrue(ReferencesAssembly(typeof(LuaEditor).Assembly, "TombLib.Scripting"), "TombLib.Scripting.Lua must reference TombLib.Scripting.");
+		Assert.IsTrue(ReferencesAssembly(typeof(TextEditorBase).Assembly, "Nickelony.IDEKit.Core"), "TombLib.Scripting.UI must reference Nickelony.IDEKit.Core.");
+		Assert.IsTrue(ReferencesAssembly(typeof(ClassicScriptEditor).Assembly, "Nickelony.IDEKit.Core"), "TombLib.Scripting.ClassicScript must reference Nickelony.IDEKit.Core.");
+		Assert.IsTrue(ReferencesAssembly(typeof(GameFlowEditor).Assembly, "Nickelony.IDEKit.Core"), "TombLib.Scripting.GameFlowScript must reference Nickelony.IDEKit.Core.");
+		Assert.IsTrue(ReferencesAssembly(typeof(TRXEditor).Assembly, "Nickelony.IDEKit.Core"), "TombLib.Scripting.TRX must reference Nickelony.IDEKit.Core.");
+		Assert.IsTrue(ReferencesAssembly(typeof(LuaEditor).Assembly, "Nickelony.IDEKit.Core"), "TombLib.Scripting.Lua must reference Nickelony.IDEKit.Core.");
 	}
 
 	private static string[] GetReferencedAssemblyNames(Assembly assembly)

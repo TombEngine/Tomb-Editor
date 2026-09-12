@@ -204,6 +204,23 @@ public sealed class ContentChangedWorker : IDisposable
 				TaskContinuationOptions.OnlyOnFaulted);
 	}
 
+		/// <summary>
+		/// Invalidates pending and in-flight persistence work without changing the persisted baseline.
+		/// </summary>
+		public void ResetPendingWork()
+		{
+			if (_isDisposed)
+				return;
+
+			lock (_syncRoot)
+			{
+				_hasPendingRequest = false;
+				_isBusy = false;
+				_latestRequestId++;
+				_stateVersion++;
+			}
+		}
+
 	/// <summary>
 	/// Reports whether the given content differs from the persisted baseline.
 	/// </summary>

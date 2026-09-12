@@ -1,10 +1,9 @@
-using Nickelony.LanguageServer.Abstractions.Hover;
+using Nickelony.IDEKit.IntelliSense.Hover;
 using TombLib.Scripting.ClassicScript.Hover;
 using TombLib.Scripting.ClassicScript.Mnemonics;
 using TombLib.Scripting.ClassicScript.Services;
 using TombLib.Scripting.ClassicScript.Syntaxes;
 using TombLib.Scripting.ClassicScript.Types;
-using TombLib.Scripting.Hover;
 
 namespace TombLib.Tests.ClassicScript.Hover;
 

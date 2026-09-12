@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System.Collections.Generic;
 using TombIDE.ScriptingStudio.UI;
@@ -14,7 +14,7 @@ public class StudioToolStripItem
 
 	/// <summary>
 	/// Optional explicit shortcut display text override.
-	/// When empty, the display text is obtained from <see cref="Shortcuts.IShortcutBindingService"/>.
+	/// When empty, the display text is obtained from <see cref="Nickelony.IDEKit.KeyBindings.IKeyBindingService{TCommandId}"/>.
 	/// </summary>
 	public string ShortcutDisplayText { get; set; } = string.Empty;
 

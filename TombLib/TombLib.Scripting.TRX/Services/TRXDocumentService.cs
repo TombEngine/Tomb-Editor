@@ -1,6 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
-using TombLib.Scripting.Text;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.TRX.Resources;
 
 namespace TombLib.Scripting.TRX.Services;

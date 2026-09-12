@@ -1,5 +1,6 @@
 #nullable enable
 
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,6 @@ using TombIDE.ScriptingStudio.DocumentOutline;
 using TombIDE.ScriptingStudio.Shell;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.ScriptingStudio.WorkspaceProfile;
-using TombLib.Scripting.UI.ContentNodes;
 using TombLib.Scripting.UI.Editors;
 
 namespace TombIDE.ScriptingStudio.Editors;
@@ -28,7 +28,7 @@ public sealed class ScriptingDocumentContributions
 		ScriptingSettingsPageKind? settingsPageKind,
 		ScriptingDocumentConfigurationKind configurationKind,
 		IStudioDocumentCommandSurfaceProvider? commandSurfaceProvider = null,
-		Func<ContentNodesProviderBase?>? outlineProviderFactory = null,
+		Func<ITextDocumentSymbolProvider?>? outlineProviderFactory = null,
 		IStudioDocumentStatusStripProvider? statusStripProvider = null)
 	{
 		SettingsPageKind = settingsPageKind;
@@ -44,7 +44,7 @@ public sealed class ScriptingDocumentContributions
 
 	public IStudioDocumentCommandSurfaceProvider? CommandSurfaceProvider { get; }
 
-	public Func<ContentNodesProviderBase?>? OutlineProviderFactory { get; }
+	public Func<ITextDocumentSymbolProvider?>? OutlineProviderFactory { get; }
 
 	public IStudioDocumentStatusStripProvider? StatusStripProvider { get; }
 

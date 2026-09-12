@@ -27,6 +27,8 @@ namespace TombIDE
 		private IDE _ide;
 		private readonly IMessenger? _messenger;
 		private readonly IScriptingStudioShell _scriptingStudioShell;
+		private bool _scriptingStudioShutdownStarted;
+		private bool _scriptingStudioShutdownCompleted;
 
 		private LevelManager levelManager;
 		private PluginManager? pluginManager;
@@ -131,20 +133,34 @@ namespace TombIDE
 			}
 		}
 
-		protected override void OnClosing(CancelEventArgs e)
+		protected override async void OnClosing(CancelEventArgs e)
 		{
+			if (_scriptingStudioShutdownCompleted)
+			{
+				_ide.Project.Save();
+				SaveSettings();
+				base.OnClosing(e);
+				return;
+			}
+
+			if (_scriptingStudioShutdownStarted)
+			{
+				e.Cancel = true;
+				return;
+			}
+
 			if (!_ide.CanClose())
 				e.Cancel = true;
 
 			if (e.Cancel)
 				return;
 
-			_scriptingStudioShell.Dispose();
+			e.Cancel = true;
+			_scriptingStudioShutdownStarted = true;
+			await _scriptingStudioShell.StopAsync();
+			_scriptingStudioShutdownCompleted = true;
 
-			_ide.Project.Save();
-			SaveSettings();
-
-			base.OnClosing(e);
+			Close();
 		}
 
 		private void ApplySavedSettings()

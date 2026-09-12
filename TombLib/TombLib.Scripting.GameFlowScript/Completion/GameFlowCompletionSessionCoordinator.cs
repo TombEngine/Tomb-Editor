@@ -1,10 +1,11 @@
 using ICSharpCode.AvalonEdit.Document;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
+using Nickelony.IDEKit.Core.Identifiers;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using System.Windows.Documents;
-using TombLib.Scripting.Completion;
 using TombLib.Scripting.GameFlowScript.Services;
-using TombLib.Scripting.Text;
 using TombLib.Scripting.UI.Completion;
-using TombLib.Scripting.UI.Text;
 
 namespace TombLib.Scripting.GameFlowScript.Completion;
 
@@ -17,6 +18,7 @@ public sealed class GameFlowCompletionSessionCoordinator(GameFlowCompletionProvi
 {
 	private readonly GameFlowCompletionProvider _completionProvider = completionProvider;
 	private readonly IGameFlowScriptLineService _lineService = lineService;
+	private readonly CompletionSessionKernel _kernel = new();
 
 	/// <summary>
 	/// Gets the decision for whether a completion session should open at the caret.
@@ -27,26 +29,35 @@ public sealed class GameFlowCompletionSessionCoordinator(GameFlowCompletionProvi
 	/// <returns>The completion session decision.</returns>
 	public TextCompletionSessionDecision GetOpenDecision(TextDocument document, int caretOffset, bool completionWindowIsOpen)
 	{
-		var source = new TextDocumentSnapshot(document);
+		var source = new StringTextSnapshot(document.Text, document.FileName);
 
 		if (completionWindowIsOpen || !ShouldShowCompletion(source, caretOffset))
 			return TextCompletionSessionDecision.None;
 
+		CompletionWordInfo? wordInfo = LocateWord(document, caretOffset);
+
+		return wordInfo is null
+			? TextCompletionSessionDecision.None
+			: _kernel.GetDecision(source, caretOffset, _completionProvider, wordInfo: wordInfo.Value);
+	}
+
+	private static CompletionWordInfo? LocateWord(TextDocument document, int caretOffset)
+	{
 		// TextUtilities.GetNextCaretPosition is AvalonEdit-specific and must use TextDocument.
 		int wordStartOffset = TextUtilities.GetNextCaretPosition(document, caretOffset, LogicalDirection.Backward, CaretPositioningMode.WordStartOrSymbol);
 
 		if (wordStartOffset < 0)
-			return TextCompletionSessionDecision.None;
+			return null;
 
 		string word = document.GetText(wordStartOffset, caretOffset - wordStartOffset);
 		int startOffset = word.StartsWith(':') ? caretOffset : wordStartOffset;
-		var context = new TextCompletionContext(source.GetText(0, source.TextLength), caretOffset);
-		var items = _completionProvider.GetCompletionItems(context);
-		var filteredItems = TextCompletionFilter.FilterByCurrentWord(items, context);
 
-		return filteredItems.Count == 0
-			? TextCompletionSessionDecision.None
-			: TextCompletionSessionDecision.Open(filteredItems, startOffset, caretOffset);
+		// The kernel filters by the identifier prefix before the caret, matching the legacy
+		// FilterByCurrentWord behavior, while the replacement range keeps WordStartOrSymbol
+		// semantics plus the ':' prefix quirk.
+		string filterWord = IdentifierHelper.GetPrefix(document.Text, caretOffset);
+
+		return new CompletionWordInfo(filterWord, new Nickelony.IDEKit.Core.Text.TextRange(startOffset, caretOffset - startOffset));
 	}
 
 	private bool ShouldShowCompletion(ITextSnapshot source, int caretOffset)

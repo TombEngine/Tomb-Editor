@@ -1,7 +1,7 @@
 #nullable enable
 
 using CommunityToolkit.Mvvm.Messaging.Messages;
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using System.Collections.Generic;
 
 namespace TombIDE.ScriptingStudio.Messaging;

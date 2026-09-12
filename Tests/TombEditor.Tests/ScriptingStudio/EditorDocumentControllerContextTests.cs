@@ -1,10 +1,12 @@
 using System;
 using System.IO;
 using Moq;
+using System.Windows.Forms;
 using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.Editors;
 using TombIDE.ScriptingStudio.UI;
 using TombLib.Scripting.UI.Editors;
+using TombLib.WPF.Services.Abstract;
 
 namespace TombEditor.Tests.ScriptingStudio;
 
@@ -85,6 +87,14 @@ public sealed class EditorDocumentControllerContextTests
 	}
 
 	[TestMethod]
+	public void ClosingDirtyFinalView_HonorsSaveDiscardAndCancel()
+	{
+		AssertCloseOutcome(DialogResult.Yes, expectedClosed: true, expectedSaved: true);
+		AssertCloseOutcome(DialogResult.No, expectedClosed: true, expectedSaved: false);
+		AssertCloseOutcome(DialogResult.Cancel, expectedClosed: false, expectedSaved: false);
+	}
+
+	[TestMethod]
 	public void RapidMixedLanguageTransitions_RestoreExactRegistrationWithNewGeneration()
 	{
 		using var luaFile = new TemporaryFile("script.lua");
@@ -115,12 +125,43 @@ public sealed class EditorDocumentControllerContextTests
 		var mock = new Mock<IEditorControl>();
 		mock.SetupGet(editor => editor.EditorType).Returns(editorType);
 		mock.SetupProperty(editor => editor.FilePath);
-		mock.Setup(editor => editor.Load(It.IsAny<string>(), It.IsAny<bool>()))
-			.Callback((string filePath, bool _) => mock.Object.FilePath = filePath);
+		mock.Setup(editor => editor.Load(It.IsAny<string>(), It.IsAny<DocumentLoadOptions>()))
+			.Callback((string filePath, DocumentLoadOptions _) => mock.Object.FilePath = filePath);
 		mock.SetupProperty(editor => editor.Content);
 		mock.SetupProperty(editor => editor.IsContentChanged);
 		mock.SetupProperty(editor => editor.LastModified);
 		return mock.Object;
+	}
+
+	private static void AssertCloseOutcome(DialogResult choice, bool expectedClosed, bool expectedSaved)
+	{
+		using var file = new TemporaryFile($"{choice}.txt");
+		var messageService = new Mock<IMessageService>();
+		messageService
+			.Setup(service => service.ShowConfirmation<DialogResult>(
+				It.IsAny<string>(),
+				It.IsAny<string>(),
+				It.IsAny<DialogResult>(),
+				It.IsAny<DialogResult>(),
+				It.IsAny<DialogResult?>(),
+				It.IsAny<DialogResult?>(),
+				It.IsAny<bool>()))
+			.Returns(choice);
+
+		IEditorControl editor = CreateEditor(EditorType.Text);
+		var editorMock = Mock.Get(editor);
+		editorMock.Setup(editorControl => editorControl.Save())
+			.Callback(() => editor.IsContentChanged = false);
+		var controller = new EditorDocumentController(new Version(1, 0), string.Empty, messageService: messageService.Object);
+		controller.RegisterDocument(CreateRegistration(EditorType.Text, DocumentMode.PlainText, _ => true, _ => true, editor));
+		controller.OpenFile(file.Path);
+		editor.IsContentChanged = true;
+
+		bool closed = controller.TryCloseEditor(editor);
+
+		Assert.AreEqual(expectedClosed, closed);
+		Assert.AreEqual(expectedSaved, !editor.IsContentChanged);
+		Assert.AreEqual(expectedClosed, !controller.ContainsEditor(editor));
 	}
 
 	private static ScriptingDocumentRegistration CreateRegistration(

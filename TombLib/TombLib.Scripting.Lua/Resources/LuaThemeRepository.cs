@@ -1,8 +1,8 @@
+using Nickelony.IDEKit.Core.Themes;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using TombLib.Scripting.Lua.Themes;
 using TombLib.Scripting.UI.Resources;
@@ -16,7 +16,7 @@ public static class LuaThemeRepository
 {
 	private static readonly Logger Log = LogManager.GetCurrentClassLogger();
 
-	private static readonly Lazy<LuaThemeCatalog> Catalog = new(LoadCatalog);
+	private static readonly Lazy<ThemeCatalog<LuaTheme>> Catalog = new(LoadCatalog);
 
 	/// <summary>
 	/// Gets all available Lua themes known to the repository.
@@ -30,20 +30,9 @@ public static class LuaThemeRepository
 	/// <param name="themeName">The theme name or alias to resolve.</param>
 	/// <returns>The resolved theme.</returns>
 	public static LuaTheme GetTheme(string themeName)
-	{
-		LuaThemeCatalog catalog = Catalog.Value;
+		=> Catalog.Value.GetTheme(themeName);
 
-		if (!string.IsNullOrWhiteSpace(themeName)
-			&& catalog.ThemesByLookupName.TryGetValue(themeName, out LuaTheme? theme)
-			&& theme is not null)
-		{
-			return theme;
-		}
-
-		return catalog.DefaultTheme;
-	}
-
-	private static LuaThemeCatalog LoadCatalog()
+	private static ThemeCatalog<LuaTheme> LoadCatalog()
 	{
 		var themes = new List<LuaTheme>();
 		string themesDirectory = ScriptingPaths.Default.LuaThemeConfigsDirectory;
@@ -77,42 +66,10 @@ public static class LuaThemeRepository
 		if (themes.Count == 0)
 			themes.Add(LuaBuiltInThemes.CreateDefaultTheme().Normalize(ConfigurationDefaults.SelectedThemeName));
 
-		var orderedThemes = themes
-			.OrderByDescending(theme => string.Equals(theme.Name, ConfigurationDefaults.SelectedThemeName, StringComparison.OrdinalIgnoreCase))
-			.ThenBy(theme => theme.Name, StringComparer.OrdinalIgnoreCase)
-			.ToList();
-
-		var themesByLookupName = new Dictionary<string, LuaTheme>(StringComparer.OrdinalIgnoreCase);
-
-		for (int i = 0; i < orderedThemes.Count; i++)
-		{
-			LuaTheme theme = orderedThemes[i];
-			AddLookupName(themesByLookupName, theme.Name, theme);
-
-			for (int aliasIndex = 0; aliasIndex < theme.Aliases.Count; aliasIndex++)
-				AddLookupName(themesByLookupName, theme.Aliases[aliasIndex], theme);
-		}
-
-		LuaTheme defaultTheme = themesByLookupName.TryGetValue(ConfigurationDefaults.SelectedThemeName, out LuaTheme? configuredTheme)
-			&& configuredTheme is not null
-			? configuredTheme
-			: orderedThemes[0];
-
-		return new LuaThemeCatalog(orderedThemes, themesByLookupName, defaultTheme);
-	}
-
-	private static void AddLookupName(Dictionary<string, LuaTheme> themesByLookupName, string lookupName, LuaTheme theme)
-	{
-		if (string.IsNullOrWhiteSpace(lookupName) || themesByLookupName.ContainsKey(lookupName))
-			return;
-
-		themesByLookupName[lookupName] = theme;
-	}
-
-	private sealed class LuaThemeCatalog(IReadOnlyList<LuaTheme> themes, IReadOnlyDictionary<string, LuaTheme> themesByLookupName, LuaTheme defaultTheme)
-	{
-		public IReadOnlyList<LuaTheme> Themes { get; } = themes;
-		public IReadOnlyDictionary<string, LuaTheme> ThemesByLookupName { get; } = themesByLookupName;
-		public LuaTheme DefaultTheme { get; } = defaultTheme;
+		return new ThemeCatalog<LuaTheme>(
+			themes,
+			static theme => theme.Name,
+			static theme => theme.Aliases,
+			ConfigurationDefaults.SelectedThemeName);
 	}
 }

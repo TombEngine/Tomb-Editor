@@ -19,20 +19,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Nickelony.IDEKit.Core" Version="$(NickelonyIDEKitCoreVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.AvalonEdit" Version="$(NickelonyIDEKitAvalonEditVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Workspace" Version="$(NickelonyIDEKitWorkspaceVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.KeyBindings" Version="$(NickelonyIDEKitKeyBindingsVersion)" />
     <ProjectReference Include="..\..\TombEditor\TombEditor.csproj" />
     <ProjectReference Include="..\..\TombIDE\TombIDE.ScriptingStudio\TombIDE.ScriptingStudio.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Nickelony.LanguageServer.Abstractions">
-      <HintPath>..\..\Libs\Nickelony.LanguageServer.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Nickelony.LanguageServer.Client">
-      <HintPath>..\..\Libs\Nickelony.LanguageServer.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Nickelony.LanguageServer.Lua">
-      <HintPath>..\..\Libs\Nickelony.LanguageServer.Lua.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Nickelony.LanguageServer.Abstractions" Version="$(NickelonyLanguageServerVersion)" />
+    <PackageReference Include="Nickelony.LanguageServer.Client" Version="$(NickelonyLanguageServerVersion)" />
+    <PackageReference Include="Nickelony.LanguageServer.Lua" Version="$(NickelonyLanguageServerVersion)" />
   </ItemGroup>
 
   <ItemGroup>

@@ -115,53 +115,6 @@ public class TRXGameFlowSchemaServiceTests
 	}
 
 	[TestMethod]
-	public void SchemaWithOnlyDefs_SurfacesDefinitionProperties()
-	{
-		string path = WriteFixture("gameflow-defs-only-fixture.json", DefsOnlyFixture);
-
-		try
-		{
-			var service = new TRXGameFlowSchemaService(path);
-
-			Assert.AreEqual(TRXSchemaLoadState.Loaded, service.LoadState);
-			Assert.IsNotNull(service.Model);
-
-			Assert.IsTrue(service.Model.Properties.Any(p => p.Name == "root_prop"));
-			Assert.IsTrue(service.Model.Properties.Any(p => p.Name == "item_name"));
-			Assert.IsTrue(service.Keywords.Properties.Contains("root_prop"));
-			Assert.IsTrue(service.Keywords.Properties.Contains("item_name"));
-		}
-		finally
-		{
-			File.Delete(path);
-		}
-	}
-
-	[TestMethod]
-	public void SchemaWithDuplicateKeywords_DeduplicatesKeywords()
-	{
-		string path = WriteFixture("gameflow-duplicate-keywords-fixture.json", DuplicateKeywordsFixture);
-
-		try
-		{
-			var service = new TRXGameFlowSchemaService(path);
-
-			Assert.AreEqual(TRXSchemaLoadState.Loaded, service.LoadState);
-			Assert.IsNotNull(service.Model);
-
-			// A keyword reachable through both the root and a referenced definition is surfaced
-			// exactly once, in both the keyword lists and the model properties.
-			Assert.AreEqual(1, service.Keywords.Properties.Count(name => name == "shared"));
-			Assert.AreEqual(1, service.Keywords.Constants.Count(name => name == "ENGINE_1"));
-			Assert.AreEqual(1, service.Model.Properties.Count(property => property.Name == "shared"));
-		}
-		finally
-		{
-			File.Delete(path);
-		}
-	}
-
-	[TestMethod]
 	public void SchemaWithDescriptions_SurfacesPropertyDescriptions()
 	{
 		string path = WriteFixture("gameflow-descriptions-fixture.json", DescriptionsFixture);
@@ -175,6 +128,34 @@ public class TRXGameFlowSchemaServiceTests
 
 			Assert.AreEqual("Human-readable level name.", service.Model.Properties.First(p => p.Name == "name").Description);
 			Assert.AreEqual("Name of an individual level.", service.Model.Properties.First(p => p.Name == "level_name").Description);
+		}
+		finally
+		{
+			File.Delete(path);
+		}
+	}
+
+	[TestMethod]
+	public void DuplicatePropertyNames_DeduplicateKeepingFirstOccurrence()
+	{
+		string path = WriteFixture("gameflow-duplicate-property-fixture.json", DuplicatePropertyFixture);
+
+		try
+		{
+			var service = new TRXGameFlowSchemaService(path);
+
+			Assert.AreEqual(TRXSchemaLoadState.Loaded, service.LoadState);
+			Assert.IsNotNull(service.Model);
+
+			// The root declares "shared" as a string; a reachable $defs declares the same name as
+			// an array. The schema-wide vocabulary keeps the first deterministic occurrence, so the
+			// TRX model must carry the root descriptor and must not classify "shared" as a collection.
+			TRXGameFlowProperty shared = service.Model.Properties.Single(p => p.Name == "shared");
+
+			Assert.AreEqual(TRXGameFlowPropertyType.String, shared.Types.Single());
+			Assert.AreEqual("Root shared property.", shared.Description);
+			Assert.IsTrue(service.Keywords.Properties.Contains("shared"));
+			Assert.IsFalse(service.Keywords.Collections.Contains("shared"));
 		}
 		finally
 		{
@@ -230,45 +211,6 @@ public class TRXGameFlowSchemaServiceTests
 		}
 		""";
 
-	private const string DefsOnlyFixture =
-		"""
-		{
-		  "$defs": {
-		    "item": {
-		      "type": "object",
-		      "properties": {
-		        "item_name": { "type": "string" }
-		      }
-		    }
-		  },
-		  "type": "object",
-		  "properties": {
-		    "root_prop": { "type": "string" }
-		  }
-		}
-		""";
-
-	private const string DuplicateKeywordsFixture =
-		"""
-		{
-		  "$defs": {
-		    "shared": {
-		      "type": "object",
-		      "properties": {
-		        "shared": { "type": "string" },
-		        "engine": { "enum": [ "ENGINE_1", "ENGINE_2" ] }
-		      }
-		    }
-		  },
-		  "type": "object",
-		  "properties": {
-		    "name": { "type": "string" },
-		    "shared": { "$ref": "#/$defs/shared" },
-		    "engine": { "enum": [ "ENGINE_1" ] }
-		  }
-		}
-		""";
-
 	private const string DescriptionsFixture =
 		"""
 		{
@@ -287,6 +229,25 @@ public class TRXGameFlowSchemaServiceTests
 		      "type": "array",
 		      "items": { "$ref": "#/$defs/level" }
 		    }
+		  }
+		}
+		""";
+
+	private const string DuplicatePropertyFixture =
+		"""
+		{
+		  "$defs": {
+		    "shared_def": {
+		      "type": "object",
+		      "properties": {
+		        "shared": { "type": "array", "description": "Array shared property from $defs." }
+		      }
+		    }
+		  },
+		  "type": "object",
+		  "properties": {
+		    "shared": { "type": "string", "description": "Root shared property." },
+		    "uses_def": { "$ref": "#/$defs/shared_def" }
 		  }
 		}
 		""";

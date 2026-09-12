@@ -2,9 +2,11 @@
 
 using System;
 using System.Collections.Generic;
+using Nickelony.IDEKit.AvalonEdit.Navigation;
+using Nickelony.IDEKit.Core.FindReplace;
+using Nickelony.IDEKit.Core.Navigation;
 using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.FindAndReplace;
-using TombIDE.ScriptingStudio.Navigation;
 using TombIDE.ScriptingStudio.Shell;
 using TombIDE.ScriptingStudio.UI;
 using TombLib.Scripting.UI.Bases;
@@ -37,7 +39,7 @@ internal sealed class SearchResultsPaneProvider : IStudioPaneContributionProvide
 		if (_documentController.CurrentEditor is not TextEditorBase textEditor)
 			return;
 
-		if (!EditorNavigationHelper.TryCreateSearchResultLocation(textEditor, filePath, item, out EditorNavigationLocation? location)
+		if (!textEditor.Document.TryCreateSearchResultLocation(filePath, item, out NavigationLocation? location)
 			|| location is null)
 		{
 			return;

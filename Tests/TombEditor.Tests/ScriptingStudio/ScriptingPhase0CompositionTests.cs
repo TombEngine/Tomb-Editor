@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
+using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using Moq;
@@ -35,6 +37,8 @@ public sealed class ScriptingPhase0CompositionTests
 		StaTestHelper.RunInSta(() =>
 		{
 			ResourceDictionary[] addedResources = EnsureDarkUiResources(out WpfApplication application);
+			SynchronizationContext? previousSynchronizationContext = SynchronizationContext.Current;
+			SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(application.Dispatcher));
 			(TRVersion.Game GameVersion, bool SupportsLua)[] profiles =
 			[
 				(TRVersion.Game.TR4, false),
@@ -142,7 +146,7 @@ public sealed class ScriptingPhase0CompositionTests
 						}
 
 						using ServiceProvider serviceProvider = services.BuildServiceProvider();
-						IServiceScope scope = serviceProvider.CreateScope();
+						AsyncServiceScope scope = serviceProvider.CreateAsyncScope();
 						PaneCatalog? paneCatalog = null;
 						try
 						{
@@ -166,8 +170,8 @@ public sealed class ScriptingPhase0CompositionTests
 						}
 						finally
 						{
-							scope.Dispose();
-							scope.Dispose();
+							scope.DisposeAsync().AsTask().GetAwaiter().GetResult();
+							scope.DisposeAsync().AsTask().GetAwaiter().GetResult();
 						}
 
 						if (supportsLua)
@@ -205,6 +209,8 @@ public sealed class ScriptingPhase0CompositionTests
 			}
 			finally
 			{
+				SynchronizationContext.SetSynchronizationContext(previousSynchronizationContext);
+
 				foreach (ResourceDictionary resource in addedResources)
 					application.Resources.MergedDictionaries.Remove(resource);
 			}

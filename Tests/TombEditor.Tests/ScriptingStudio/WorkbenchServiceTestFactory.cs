@@ -8,7 +8,7 @@ using TombIDE.ScriptingStudio.Editors;
 using TombIDE.ScriptingStudio.FindAndReplace;
 using TombIDE.ScriptingStudio.Lua;
 using TombIDE.ScriptingStudio.Shell;
-using TombIDE.ScriptingStudio.Shortcuts;
+using Nickelony.IDEKit.KeyBindings;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.ScriptingStudio.Workbench;
 using TombIDE.ScriptingStudio.WorkspaceProfile;
@@ -27,7 +27,7 @@ internal static class WorkbenchServiceTestFactory
 		IScriptingProjectContext projectContext,
 		IMessenger messenger,
 		IMessageService messageService,
-		IShortcutBindingService shortcutBindingService,
+		IKeyBindingService<UICommand> keyBindingService,
 		IMenuService menuService,
 		IToolBarService toolBarService,
 		IStatusBarService statusBarService,
@@ -50,7 +50,7 @@ internal static class WorkbenchServiceTestFactory
 			projectContext,
 			messenger,
 			messageService,
-			shortcutBindingService,
+			keyBindingService,
 			menuService,
 			toolBarService,
 			statusBarService,

@@ -1,10 +1,9 @@
 using ICSharpCode.AvalonEdit.Document;
-using Nickelony.LanguageServer.Abstractions.Completion;
-using Nickelony.LanguageServer.Abstractions.Hover;
+using Nickelony.IDEKit.IntelliSense.Completion;
+using Nickelony.IDEKit.IntelliSense.Hover;
 using System.Collections.Generic;
 using System.Linq;
-using TombLib.Scripting.Completion;
-using TombLib.Scripting.Hover;
+using TombLib.Scripting.UI.Completion;
 using TombLib.Scripting.TRX.Completion;
 using TombLib.Scripting.TRX.Hover;
 using TombLib.Scripting.TRX.Models;

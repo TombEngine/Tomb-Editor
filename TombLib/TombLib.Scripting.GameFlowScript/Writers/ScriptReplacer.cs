@@ -1,8 +1,7 @@
 using System.Text.RegularExpressions;
 using TombLib.Scripting.GameFlowScript.Resources;
-using TombLib.Scripting.Text;
+using Nickelony.IDEKit.Core.Comments;
 using TombLib.Scripting.UI.Bases;
-using TombLib.Scripting.UI.Editing;
 
 namespace TombLib.Scripting.GameFlowScript.Writers;
 
@@ -21,10 +20,9 @@ public sealed class ScriptReplacer
 	/// <param name="newName">The new level script name.</param>
 	public void RenameLevelScript(TextEditorBase textEditor, string oldName, string newName)
 	{
-		TextEditorLineOperations.TryReplaceFirstMatchingLine(
-			textEditor,
+		textEditor.TryReplaceFirstMatchingLine(
 			LevelPropertyRegex,
-			(lineText, regex) => regex.Replace(LineCommentHelper.RemoveLineComment(lineText, "//"), string.Empty).Trim(),
+			(lineText, regex) => regex.Replace(CommentHelper.RemoveComments(lineText, new CommentSyntax("//", null, null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.TripleDoubleQuoted)), string.Empty).Trim(),
 			oldName,
 			newName);
 	}
@@ -37,8 +35,7 @@ public sealed class ScriptReplacer
 	/// <param name="newName">The new language string name.</param>
 	public void RenameLanguageString(TextEditorBase textEditor, string oldName, string newName)
 	{
-		TextEditorLineOperations.TryReplaceFirstMatchingLine(
-			textEditor,
+		textEditor.TryReplaceFirstMatchingLine(
 			lineText =>
 			{
 				string trimmedLineText = lineText.Trim();

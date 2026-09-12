@@ -1,13 +1,13 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Moq;
 using MvvmDialogs;
-using Nickelony.LanguageServer.Abstractions.Editing;
+using Nickelony.LanguageServer.Abstractions;
 using Nickelony.LanguageServer.Lua;
 using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.FindAndReplace;
 using TombIDE.ScriptingStudio.Lua;
 using TombIDE.ScriptingStudio.Shell;
-using TombIDE.ScriptingStudio.Shortcuts;
+using Nickelony.IDEKit.KeyBindings;
 using TombIDE.ScriptingStudio.TextEditing;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.ScriptingStudio.Workbench;
@@ -23,10 +23,6 @@ using TombLib.Scripting.ClassicScript.Syntaxes;
 using TombLib.Scripting.GameFlowScript;
 using TombLib.Scripting.GameFlowScript.Completion;
 using TombLib.Scripting.GameFlowScript.Services;
-using TombLib.Scripting.Hover;
-using TombLib.Scripting.Navigation;
-using TombLib.Scripting.Signatures;
-using Nickelony.LanguageServer.Abstractions.Navigation;
 using TombLib.Scripting.TRX;
 using TombLib.Scripting.TRX.Completion;
 using TombLib.Scripting.TRX.Hover;
@@ -68,22 +64,22 @@ public class WorkbenchServiceTests
         return contextMock.Object;
     }
 
-    private static IShortcutBindingService CreateShortcutBindingService()
+    private static IKeyBindingService<UICommand> CreateKeyBindingService()
     {
-        return new ShortcutBindingService(
+        return new KeyBindingService<UICommand>(
             CreateDefaultCatalog(),
-            new ShortcutOverrideCollection(),
+            new KeyBindingOverrideCollection(),
             _ => true);
     }
 
-    private static StudioCommandCatalog CreateDefaultCatalog()
+    private static CommandCatalog<UICommand> CreateDefaultCatalog()
     {
-        return new StudioCommandCatalog([
-            new StudioCommandDescriptor(UICommand.Save, nameof(UICommand.Save), isRemappable: true, isHostReserved: false,
-                new ShortcutKey(System.Windows.Input.Key.S, System.Windows.Input.ModifierKeys.Control)),
-            new StudioCommandDescriptor(UICommand.Find, nameof(UICommand.Find), isRemappable: true, isHostReserved: false,
-                new ShortcutKey(System.Windows.Input.Key.F, System.Windows.Input.ModifierKeys.Control),
-                new ShortcutKey(System.Windows.Input.Key.H, System.Windows.Input.ModifierKeys.Control))
+        return new CommandCatalog<UICommand>([
+            new CommandDescriptor<UICommand>(UICommand.Save, nameof(UICommand.Save), isRemappable: true, isHostReserved: false,
+                new KeyCombo(System.Windows.Input.Key.S, System.Windows.Input.ModifierKeys.Control)),
+            new CommandDescriptor<UICommand>(UICommand.Find, nameof(UICommand.Find), isRemappable: true, isHostReserved: false,
+                new KeyCombo(System.Windows.Input.Key.F, System.Windows.Input.ModifierKeys.Control),
+                new KeyCombo(System.Windows.Input.Key.H, System.Windows.Input.ModifierKeys.Control))
         ]);
     }
 
@@ -179,7 +175,7 @@ public class WorkbenchServiceTests
                     CreateProjectContext(),
                     new Mock<IMessenger>().Object,
                     new Mock<IMessageService>().Object,
-                    CreateShortcutBindingService(),
+                    CreateKeyBindingService(),
                     CreateMenuServiceMock(),
                     CreateToolBarServiceMock(),
                     CreateStatusBarServiceMock(),
@@ -210,7 +206,7 @@ public class WorkbenchServiceTests
                     null!,
                     new Mock<IMessenger>().Object,
                     new Mock<IMessageService>().Object,
-                    CreateShortcutBindingService(),
+                    CreateKeyBindingService(),
                     CreateMenuServiceMock(),
                     CreateToolBarServiceMock(),
                     CreateStatusBarServiceMock(),
@@ -241,7 +237,7 @@ public class WorkbenchServiceTests
                     CreateProjectContext(),
                     null!,
                     new Mock<IMessageService>().Object,
-                    CreateShortcutBindingService(),
+                    CreateKeyBindingService(),
                     CreateMenuServiceMock(),
                     CreateToolBarServiceMock(),
                     CreateStatusBarServiceMock(),
@@ -272,7 +268,7 @@ public class WorkbenchServiceTests
                     CreateProjectContext(),
                     new Mock<IMessenger>().Object,
                     null!,
-                    CreateShortcutBindingService(),
+                    CreateKeyBindingService(),
                     CreateMenuServiceMock(),
                     CreateToolBarServiceMock(),
                     CreateStatusBarServiceMock(),
@@ -303,7 +299,7 @@ public class WorkbenchServiceTests
                     CreateProjectContext(),
                     new Mock<IMessenger>().Object,
                     new Mock<IMessageService>().Object,
-                    CreateShortcutBindingService(),
+                    CreateKeyBindingService(),
                     CreateMenuServiceMock(),
                     CreateToolBarServiceMock(),
                     CreateStatusBarServiceMock(),
@@ -334,7 +330,7 @@ public class WorkbenchServiceTests
                     CreateProjectContext(),
                     new Mock<IMessenger>().Object,
                     new Mock<IMessageService>().Object,
-                    CreateShortcutBindingService(),
+                    CreateKeyBindingService(),
                     CreateMenuServiceMock(),
                     CreateToolBarServiceMock(),
                     CreateStatusBarServiceMock(),
@@ -365,7 +361,7 @@ public class WorkbenchServiceTests
                     CreateProjectContext(),
                     new Mock<IMessenger>().Object,
                     new Mock<IMessageService>().Object,
-                    CreateShortcutBindingService(),
+                    CreateKeyBindingService(),
                     CreateMenuServiceMock(),
                     CreateToolBarServiceMock(),
                     CreateStatusBarServiceMock(),
@@ -471,7 +467,7 @@ public class WorkbenchServiceTests
                     CreateProjectContext(),
                     new Mock<IMessenger>().Object,
                     new Mock<IMessageService>().Object,
-                    CreateShortcutBindingService(),
+                    CreateKeyBindingService(),
                     CreateMenuServiceMock(),
                     CreateToolBarServiceMock(),
                     CreateStatusBarServiceMock(),
@@ -502,7 +498,7 @@ public class WorkbenchServiceTests
                     CreateProjectContext(),
                     new Mock<IMessenger>().Object,
                     new Mock<IMessageService>().Object,
-                    CreateShortcutBindingService(),
+                    CreateKeyBindingService(),
                     CreateMenuServiceMock(),
                     CreateToolBarServiceMock(),
                     CreateStatusBarServiceMock(),
@@ -533,7 +529,7 @@ public class WorkbenchServiceTests
                     CreateProjectContext(),
                     new Mock<IMessenger>().Object,
                     new Mock<IMessageService>().Object,
-                    CreateShortcutBindingService(),
+                    CreateKeyBindingService(),
                     CreateMenuServiceMock(),
                     CreateToolBarServiceMock(),
                     CreateStatusBarServiceMock(),
@@ -593,7 +589,7 @@ public class WorkbenchServiceTests
                 CreateProjectContext(),
                 messenger,
                 new Mock<IMessageService>().Object,
-                CreateShortcutBindingService(),
+                CreateKeyBindingService(),
                 menuService.Object,
                 toolBarService.Object,
                 CreateStatusBarServiceMock(),

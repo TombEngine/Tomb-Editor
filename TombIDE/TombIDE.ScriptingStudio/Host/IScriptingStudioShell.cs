@@ -1,6 +1,7 @@
 #nullable enable
 
 using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TombIDE.ScriptingStudio.Host;
@@ -8,8 +9,13 @@ namespace TombIDE.ScriptingStudio.Host;
 /// <summary>
 /// Defines the narrow host boundary for mounting the ScriptingStudio shell into TombIDE.
 /// </summary>
-public interface IScriptingStudioShell : IDisposable
+public interface IScriptingStudioShell : IAsyncDisposable
 {
+	/// <summary>
+	/// Stops shell work, detaches workspace projections, and disposes the shell scope.
+	/// </summary>
+	Task StopAsync();
+
 	/// <summary>
 	/// Mounts the shell into the supplied WinForms host container.
 	/// </summary>

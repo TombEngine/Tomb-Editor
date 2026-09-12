@@ -1,5 +1,5 @@
 using ICSharpCode.AvalonEdit.Document;
-using TombLib.Scripting.Completion;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using TombLib.Scripting.GameFlowScript.Completion;
 using TombLib.Scripting.GameFlowScript.Services;
 

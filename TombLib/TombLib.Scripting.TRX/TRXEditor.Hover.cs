@@ -1,8 +1,7 @@
-using Nickelony.LanguageServer.Abstractions.Hover;
-using System.Threading;
-using System.Threading.Tasks;
-using TombLib.Scripting.Hover;
-using TombLib.Scripting.UI.Threading;
+using Nickelony.IDEKit.Core.Infrastructure;
+	using Nickelony.IDEKit.IntelliSense.Hover;
+	using System.Threading;
+	using System.Threading.Tasks;
 
 namespace TombLib.Scripting.TRX;
 

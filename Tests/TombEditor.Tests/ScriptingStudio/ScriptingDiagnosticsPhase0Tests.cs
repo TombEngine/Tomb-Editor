@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using MvvmDialogs;
 using Moq;
 using System.Collections;
@@ -16,7 +16,7 @@ using TombIDE.ScriptingStudio.FindAndReplace;
 using TombIDE.ScriptingStudio.Lua;
 using TombIDE.ScriptingStudio.Navigation;
 using TombIDE.ScriptingStudio.Shell;
-using TombIDE.ScriptingStudio.Shortcuts;
+using Nickelony.IDEKit.KeyBindings;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.ScriptingStudio.Workbench;
 using TombIDE.ScriptingStudio.WorkspaceProfile;
@@ -26,10 +26,9 @@ using TombIDE.Shared.Messaging.Scripting;
 using TombIDE.Shared.NewStructure;
 using TombLib.LevelData;
 using TombLib.Scripting.ClassicScript;
-using TombLib.Scripting.Diagnostics;
 using TombLib.Scripting.GameFlowScript;
 using TombLib.Scripting.Lua;
-using TombLib.Scripting.Presentation;
+using TombLib.Scripting.UI.Presentation;
 using TombLib.Scripting.TRX;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Diagnostics;
@@ -156,9 +155,9 @@ public sealed class ScriptingDiagnosticsPhase0Tests
         dockHost.Setup(value => value.Dispatcher).Returns(Dispatcher.CurrentDispatcher);
 
         var messenger = new WeakReferenceMessenger();
-        var shortcutBindingService = new ShortcutBindingService(
-            new StudioCommandCatalog([]),
-            new ShortcutOverrideCollection(),
+        var keyBindingService = new KeyBindingService<UICommand>(
+            new CommandCatalog<UICommand>([]),
+            new KeyBindingOverrideCollection(),
             _ => true);
         var findAndReplaceViewModel = new FindAndReplaceViewModel(
             documentController,
@@ -170,7 +169,7 @@ public sealed class ScriptingDiagnosticsPhase0Tests
             projectContext.Object,
             messenger,
             new Mock<IMessageService>().Object,
-            shortcutBindingService,
+            keyBindingService,
             menuService.Object,
             toolBarService.Object,
             statusBarService.Object,

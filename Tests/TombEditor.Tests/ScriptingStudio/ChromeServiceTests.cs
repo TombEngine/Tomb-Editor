@@ -4,7 +4,7 @@ using System.Windows;
 using TombIDE.ScriptingStudio.CommandSurface;
 using TombIDE.ScriptingStudio.Settings;
 using TombIDE.ScriptingStudio.Shell;
-using TombIDE.ScriptingStudio.Shortcuts;
+using Nickelony.IDEKit.KeyBindings;
 using TombIDE.ScriptingStudio.ToolStrips;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.ScriptingStudio.WorkspaceProfile;
@@ -18,15 +18,15 @@ public class ChromeServiceTests
 {
     // ---------- MenuService ----------
 
-    private static IShortcutBindingService CreateShortcutBindingService()
+    private static IKeyBindingService<UICommand> CreateKeyBindingService()
     {
-        var catalog = new StudioCommandCatalog([
-            new StudioCommandDescriptor(UICommand.Save, nameof(UICommand.Save), isRemappable: true, isHostReserved: false,
-                new ShortcutKey(System.Windows.Input.Key.S, System.Windows.Input.ModifierKeys.Control)),
-            new StudioCommandDescriptor(UICommand.Find, nameof(UICommand.Find), isRemappable: true, isHostReserved: false,
-                new ShortcutKey(System.Windows.Input.Key.F, System.Windows.Input.ModifierKeys.Control))
+        var catalog = new CommandCatalog<UICommand>([
+            new CommandDescriptor<UICommand>(UICommand.Save, nameof(UICommand.Save), isRemappable: true, isHostReserved: false,
+                new KeyCombo(System.Windows.Input.Key.S, System.Windows.Input.ModifierKeys.Control)),
+            new CommandDescriptor<UICommand>(UICommand.Find, nameof(UICommand.Find), isRemappable: true, isHostReserved: false,
+                new KeyCombo(System.Windows.Input.Key.F, System.Windows.Input.ModifierKeys.Control))
         ]);
-        return new ShortcutBindingService(catalog, new ShortcutOverrideCollection(), _ => true);
+        return new KeyBindingService<UICommand>(catalog, new KeyBindingOverrideCollection(), _ => true);
     }
 
     [TestMethod]
@@ -35,8 +35,8 @@ public class ChromeServiceTests
         StaTestHelper.RunInSta(() =>
         {
             var profile = ScriptingWorkspaceProfileTestFactory.CreateLuaProfile();
-            var shortcutBindingService = CreateShortcutBindingService();
-            using var menuService = new MenuService(profile, shortcutBindingService);
+            var keyBindingService = CreateKeyBindingService();
+            using var menuService = new MenuService(profile, keyBindingService);
 
             UICommand? receivedCommand = null;
             menuService.CommandInvoked += (_, e) => receivedCommand = e.Command;
@@ -55,8 +55,8 @@ public class ChromeServiceTests
         StaTestHelper.RunInSta(() =>
         {
             var profile = ScriptingWorkspaceProfileTestFactory.CreateLuaProfile();
-            var shortcutBindingService = CreateShortcutBindingService();
-            using var menuService = new MenuService(profile, shortcutBindingService);
+            var keyBindingService = CreateKeyBindingService();
+            using var menuService = new MenuService(profile, keyBindingService);
 
             // These should not throw.
             menuService.SetCommandChecked(UICommand.ToolStrip, true);
@@ -70,8 +70,8 @@ public class ChromeServiceTests
         StaTestHelper.RunInSta(() =>
         {
             var profile = ScriptingWorkspaceProfileTestFactory.CreateLuaProfile();
-            var shortcutBindingService = CreateShortcutBindingService();
-            using var menuService = new MenuService(profile, shortcutBindingService);
+            var keyBindingService = CreateKeyBindingService();
+            using var menuService = new MenuService(profile, keyBindingService);
 
             menuService.SetCommandEnabled(UICommand.Settings, true);
             menuService.SetCommandEnabled(UICommand.Settings, false);
@@ -84,8 +84,8 @@ public class ChromeServiceTests
         StaTestHelper.RunInSta(() =>
         {
             var profile = ScriptingWorkspaceProfileTestFactory.CreateLuaProfile();
-            var shortcutBindingService = CreateShortcutBindingService();
-            using var menuService = new MenuService(profile, shortcutBindingService);
+            var keyBindingService = CreateKeyBindingService();
+            using var menuService = new MenuService(profile, keyBindingService);
 
             bool wasCalled = false;
             menuService.UpdateCommandEnabledStates(cmd =>
@@ -104,7 +104,7 @@ public class ChromeServiceTests
         StaTestHelper.RunInSta(() =>
         {
             Assert.ThrowsException<ArgumentNullException>(() =>
-                new MenuService(null!, CreateShortcutBindingService()));
+                new MenuService(null!, CreateKeyBindingService()));
         });
     }
 
@@ -116,7 +116,7 @@ public class ChromeServiceTests
         StaTestHelper.RunInSta(() =>
         {
             var profile = ScriptingWorkspaceProfileTestFactory.CreateLuaProfile();
-            using var toolBarService = new ToolBarService(profile, CreateShortcutBindingService());
+            using var toolBarService = new ToolBarService(profile, CreateKeyBindingService());
 
             Assert.IsNotNull(toolBarService.ToolBarView);
             Assert.IsTrue(toolBarService.ToolBarView is FrameworkElement);
@@ -129,7 +129,7 @@ public class ChromeServiceTests
         StaTestHelper.RunInSta(() =>
         {
             var profile = ScriptingWorkspaceProfileTestFactory.CreateLuaProfile();
-            using var toolBarService = new ToolBarService(profile, CreateShortcutBindingService());
+            using var toolBarService = new ToolBarService(profile, CreateKeyBindingService());
 
             toolBarService.SetCommandToolTip(UICommand.Undo, "Test tooltip");
         });
@@ -141,7 +141,7 @@ public class ChromeServiceTests
         StaTestHelper.RunInSta(() =>
         {
             var profile = ScriptingWorkspaceProfileTestFactory.CreateLuaProfile();
-            using var toolBarService = new ToolBarService(profile, CreateShortcutBindingService());
+            using var toolBarService = new ToolBarService(profile, CreateKeyBindingService());
 
             bool wasCalled = false;
             toolBarService.UpdateCommandEnabledStates(cmd =>

@@ -1,63 +1,63 @@
-using DarkUI.Controls;
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using TombLib.Scripting.TRX.ContentNodes;
 using TombLib.Scripting.TRX.Services;
 
 namespace TombLib.Tests.TRX;
 
 /// <summary>
-/// Tests for <see cref="TRXNodesProvider"/> level-name node extraction.
+/// Tests for <see cref="TRXNodesProvider"/> level-name symbol extraction.
 /// </summary>
 [TestClass]
 public class TRXNodesProviderTests
 {
     private readonly ITRXLineService _lineService = new TRXLineService();
 
-    private static IReadOnlyList<DarkTreeNode> GetNodes(string content, string filter = "")
-        => new TRXNodesProvider(new TRXLineService()).GetNodes(content, filter);
+    private static IReadOnlyList<TextDocumentSymbol> GetSymbols(string content, string filter = "")
+        => new TRXNodesProvider(new TRXLineService()).GetSymbols(new TextDocumentSymbolRequest(content, filter));
 
     // ---------------------------------------------------------------------------
     // Title properties
     // ---------------------------------------------------------------------------
 
     [TestMethod]
-    public void GetNodes_TitleProperty_ReturnsLevelNode()
+    public void GetSymbols_TitleProperty_ReturnsLevelSymbol()
     {
-        IReadOnlyList<DarkTreeNode> nodes = GetNodes("\"title\": \"Caves\",\n");
+        IReadOnlyList<TextDocumentSymbol> nodes = GetSymbols("\"title\": \"Caves\",\n");
 
         Assert.AreEqual(1, nodes.Count);
-        Assert.AreEqual("Caves", nodes[0].Text);
+        Assert.AreEqual("Caves", nodes[0].Name);
     }
 
     [TestMethod]
-    public void GetNodes_TitlePropertyWithComment_ReturnsLevelNode()
+    public void GetSymbols_TitlePropertyWithComment_ReturnsLevelSymbol()
     {
-        IReadOnlyList<DarkTreeNode> nodes = GetNodes("\"title\": \"Caves\", // level title\n");
+        IReadOnlyList<TextDocumentSymbol> nodes = GetSymbols("\"title\": \"Caves\", // level title\n");
 
         Assert.AreEqual(1, nodes.Count);
-        Assert.AreEqual("Caves", nodes[0].Text);
+        Assert.AreEqual("Caves", nodes[0].Name);
     }
 
     [TestMethod]
-    public void GetNodes_TitlePropertyWithUrlValue_ReturnsFullValue()
+    public void GetSymbols_TitlePropertyWithUrlValue_ReturnsFullValue()
     {
-        IReadOnlyList<DarkTreeNode> nodes = GetNodes("\"title\": \"http://example.com\",\n");
+        IReadOnlyList<TextDocumentSymbol> nodes = GetSymbols("\"title\": \"http://example.com\",\n");
 
         Assert.AreEqual(1, nodes.Count);
-        Assert.AreEqual("http://example.com", nodes[0].Text);
+        Assert.AreEqual("http://example.com", nodes[0].Name);
     }
 
     [TestMethod]
-    public void GetNodes_EmptyTitleValue_ReturnsNoNode()
+    public void GetSymbols_EmptyTitleValue_ReturnsNoSymbol()
     {
-        IReadOnlyList<DarkTreeNode> nodes = GetNodes("\"title\": \"\",\n");
+        IReadOnlyList<TextDocumentSymbol> nodes = GetSymbols("\"title\": \"\",\n");
 
         Assert.AreEqual(0, nodes.Count);
     }
 
     [TestMethod]
-    public void GetNodes_MalformedTitleValue_ReturnsNoNode()
+    public void GetSymbols_MalformedTitleValue_ReturnsNoSymbol()
     {
-        IReadOnlyList<DarkTreeNode> nodes = GetNodes("\"title\": ,\n");
+        IReadOnlyList<TextDocumentSymbol> nodes = GetSymbols("\"title\": ,\n");
 
         Assert.AreEqual(0, nodes.Count);
     }
@@ -67,32 +67,32 @@ public class TRXNodesProviderTests
     // ---------------------------------------------------------------------------
 
     [TestMethod]
-    public void GetNodes_LevelCommentLine_ReturnsFallbackNode()
+    public void GetSymbols_LevelCommentLine_ReturnsFallbackSymbol()
     {
-        IReadOnlyList<DarkTreeNode> nodes = GetNodes("// Level 1: Caves\n");
+        IReadOnlyList<TextDocumentSymbol> nodes = GetSymbols("// Level 1: Caves\n");
 
         Assert.AreEqual(1, nodes.Count);
-        Assert.AreEqual("Caves", nodes[0].Text);
+        Assert.AreEqual("Caves", nodes[0].Name);
     }
 
     [TestMethod]
-    public void GetNodes_LevelCommentWithDotSeparator_ReturnsFallbackNode()
+    public void GetSymbols_LevelCommentWithDotSeparator_ReturnsFallbackSymbol()
     {
-        IReadOnlyList<DarkTreeNode> nodes = GetNodes("// Level 2. Venice\n");
+        IReadOnlyList<TextDocumentSymbol> nodes = GetSymbols("// Level 2. Venice\n");
 
         Assert.AreEqual(1, nodes.Count);
-        Assert.AreEqual("Venice", nodes[0].Text);
+        Assert.AreEqual("Venice", nodes[0].Name);
     }
 
     [TestMethod]
-    public void GetNodes_CommentLineContainingTitle_StillUsesRawFallback()
+    public void GetSymbols_CommentLineContainingTitle_StillUsesRawFallback()
     {
         // Malformed mixed input: the line is a comment that also contains a title property.
         // The fallback must run against the raw line text, not the comment-stripped text.
-        IReadOnlyList<DarkTreeNode> nodes = GetNodes("// Level 1: \"title\": \"Caves\"\n");
+        IReadOnlyList<TextDocumentSymbol> nodes = GetSymbols("// Level 1: \"title\": \"Caves\"\n");
 
         Assert.AreEqual(1, nodes.Count);
-        Assert.AreEqual("\"title\": \"Caves\"", nodes[0].Text);
+        Assert.AreEqual("\"title\": \"Caves\"", nodes[0].Name);
     }
 
     // ---------------------------------------------------------------------------
@@ -100,13 +100,13 @@ public class TRXNodesProviderTests
     // ---------------------------------------------------------------------------
 
     [TestMethod]
-    public void GetNodes_Filter_ReturnsOnlyMatchingNodes()
+    public void GetSymbols_Filter_ReturnsOnlyMatchingSymbols()
     {
         const string content = "\"title\": \"Caves\",\n\"title\": \"Venice\",\n\"title\": \"City\",\n";
 
-        IReadOnlyList<DarkTreeNode> nodes = GetNodes(content, "ven");
+        IReadOnlyList<TextDocumentSymbol> nodes = GetSymbols(content, "ven");
 
         Assert.AreEqual(1, nodes.Count);
-        Assert.AreEqual("Venice", nodes[0].Text);
+        Assert.AreEqual("Venice", nodes[0].Name);
     }
 }

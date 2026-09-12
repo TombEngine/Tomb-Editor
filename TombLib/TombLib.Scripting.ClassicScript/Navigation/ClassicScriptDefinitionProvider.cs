@@ -1,8 +1,7 @@
-using Nickelony.LanguageServer.Abstractions.Navigation;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Navigation;
 using TombLib.Scripting.ClassicScript.Services;
 using TombLib.Scripting.ClassicScript.Types;
-using TombLib.Scripting.Navigation;
-using TombLib.Scripting.Text;
 
 namespace TombLib.Scripting.ClassicScript.Navigation;
 

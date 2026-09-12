@@ -1,4 +1,4 @@
-using TombLib.Scripting.Text;
+using Nickelony.IDEKit.Core.Text;
 
 namespace TombLib.Scripting.TRX.Services;
 

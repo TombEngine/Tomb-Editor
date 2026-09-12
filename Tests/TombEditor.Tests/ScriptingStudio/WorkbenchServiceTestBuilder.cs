@@ -4,9 +4,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Moq;
 using MvvmDialogs;
 using Nickelony.LanguageServer.Abstractions;
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
-using Nickelony.LanguageServer.Abstractions.Editing;
-using Nickelony.LanguageServer.Abstractions.Navigation;
 using Nickelony.LanguageServer.Lua;
 using System;
 using System.Collections.Generic;
@@ -22,7 +19,7 @@ using TombIDE.ScriptingStudio.FindAndReplace;
 using TombIDE.ScriptingStudio.Lua;
 using TombIDE.ScriptingStudio.Navigation;
 using TombIDE.ScriptingStudio.Shell;
-using TombIDE.ScriptingStudio.Shortcuts;
+using Nickelony.IDEKit.KeyBindings;
 using TombIDE.ScriptingStudio.TextEditing;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.ScriptingStudio.Workbench;
@@ -323,7 +320,7 @@ internal sealed class WorkbenchServiceTestBuilder : IDisposable
 			projectContext.Object,
 			_messenger,
 			_messageService.Object,
-			CreateShortcutBindingService(),
+			CreateKeyBindingService(),
 			ScriptingStudioChromeTestFixture.CreateMenuServiceMock().Object,
 			ScriptingStudioChromeTestFixture.CreateToolBarServiceMock().Object,
 			ScriptingStudioChromeTestFixture.CreateStatusBarServiceMock().Object,
@@ -410,10 +407,10 @@ internal sealed class WorkbenchServiceTestBuilder : IDisposable
 		return new LuaTrackedDocumentStateService(textEditorHost, intellisenseProvider.Object);
 	}
 
-	private static IShortcutBindingService CreateShortcutBindingService()
-		=> new ShortcutBindingService(
-			new StudioCommandCatalog([]),
-			new ShortcutOverrideCollection(),
+	private static IKeyBindingService<UICommand> CreateKeyBindingService()
+		=> new KeyBindingService<UICommand>(
+			new CommandCatalog<UICommand>([]),
+			new KeyBindingOverrideCollection(),
 			_ => true);
 
 }

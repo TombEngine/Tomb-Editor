@@ -1,9 +1,8 @@
-using Nickelony.LanguageServer.Abstractions.Navigation;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Navigation;
 using System;
 using TombLib.Scripting.GameFlowScript.Services;
 using TombLib.Scripting.GameFlowScript.Types;
-using TombLib.Scripting.Navigation;
-using TombLib.Scripting.Text;
 
 namespace TombLib.Scripting.GameFlowScript.Navigation;
 

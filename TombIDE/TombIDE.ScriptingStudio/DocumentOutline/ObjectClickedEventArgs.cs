@@ -1,7 +1,7 @@
 #nullable enable
 
 using System;
-using TombLib.Scripting.Navigation;
+using Nickelony.IDEKit.IntelliSense.Navigation;
 
 namespace TombIDE.ScriptingStudio.DocumentOutline;
 

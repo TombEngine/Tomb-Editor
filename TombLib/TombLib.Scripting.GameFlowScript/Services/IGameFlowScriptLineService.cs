@@ -7,14 +7,14 @@ namespace TombLib.Scripting.GameFlowScript.Services;
 public interface IGameFlowScriptLineService
 {
 	/// <summary>
-	/// Removes line comments from the text. Delegates to <c>LineCommentHelper.RemoveLineComment</c>
-	/// with the <c>"//"</c> delimiter.
+	/// Removes line comments from the text. Delegates to <c>CommentHelper.RemoveComments</c>
+	/// with a <c>"//"</c> <c>CommentSyntax</c>.
 	/// </summary>
 	string RemoveComments(string lineText);
 
 	/// <summary>
 	/// Replaces comments with spaces to maintain the original string length.
-	/// Delegates to <c>LineCommentHelper.MaskLineComment</c> with the <c>"//"</c> delimiter.
+	/// Delegates to <c>CommentHelper.MaskComments</c> with a <c>"//"</c> <c>CommentSyntax</c>.
 	/// </summary>
 	string EscapeComments(string lineText);
 

@@ -3,7 +3,11 @@
 using System;
 using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.Shell;
+using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editors;
+using Nickelony.IDEKit.Workspace.Documents;
+using Nickelony.IDEKit.Workspace.Editing;
+using Nickelony.IDEKit.Workspace.Views;
 
 namespace TombIDE.ScriptingStudio.TextEditing;
 
@@ -11,49 +15,58 @@ internal readonly record struct SilentActionFileState(
 	string FilePath,
 	EditorType EditorType,
 	bool OpenSourceView,
-	bool WasAlreadyOpen,
-	bool WasContentChanged);
+	bool WasContentChanged,
+	IEditorSession? Session);
 
 internal readonly record struct SilentActionCompletion(
 	IEditorControl? Editor,
 	bool SaveAffectedFile,
-	bool CloseAffectedTab);
+	IEditorSession? Session);
 
 internal sealed class StudioSilentActionService
 {
 	private readonly IEditorDocumentController _documentController;
 	private readonly IScriptingHostOperations _hostOperations;
+	private readonly IEditorViewHost? _viewHost;
+	private readonly IWorkspaceDocumentManager? _documentManager;
+	private readonly WorkspaceEditApplierCore? _workspaceEditApplier;
 
-	public StudioSilentActionService(IEditorDocumentController documentController, IScriptingHostOperations hostOperations)
+	public StudioSilentActionService(
+		IEditorDocumentController documentController,
+		IScriptingHostOperations hostOperations,
+		IEditorViewHost? viewHost = null,
+		IWorkspaceDocumentManager? documentManager = null)
 	{
 		_documentController = documentController ?? throw new ArgumentNullException(nameof(documentController));
 		_hostOperations = hostOperations ?? throw new ArgumentNullException(nameof(hostOperations));
+		_viewHost = viewHost;
+		_documentManager = documentManager;
+		_workspaceEditApplier = documentManager is null
+			? null
+			: new WorkspaceEditApplierCore(documentManager.Replace);
 	}
-
-	public IEditorControl? RememberSelectedEditor() => _documentController.CurrentEditor;
 
 	public SilentActionFileState CaptureFileState(string filePath, EditorType editorType = EditorType.Default)
 	{
 		IEditorControl? editor = _documentController.FindEditor(filePath, editorType);
-		bool wasAlreadyOpen = editor is not null;
 		bool wasContentChanged = editor is not null && editor.IsContentChanged;
+		IEditorSession? session = AcquireSession(filePath);
 
-		return new SilentActionFileState(filePath, editorType, false, wasAlreadyOpen, wasContentChanged);
+		return new SilentActionFileState(filePath, editorType, false, wasContentChanged, session);
 	}
 
 	public SilentActionFileState CaptureSourceFileState(string filePath)
 	{
 		IEditorControl? editor = _documentController.FindSourceEditor(filePath);
-		bool wasAlreadyOpen = editor is not null;
 		bool wasContentChanged = editor is not null && editor.IsContentChanged;
+		IEditorSession? session = AcquireSession(filePath);
 
-		return new SilentActionFileState(filePath, EditorType.Default, true, wasAlreadyOpen, wasContentChanged);
+		return new SilentActionFileState(filePath, EditorType.Default, true, wasContentChanged, session);
 	}
 
 	public SilentActionCompletion CreateCompletion(
 		SilentActionFileState fileState,
-		bool saveAffectedFile = true,
-		bool closeAffectedTab = true)
+		bool saveAffectedFile = true)
 	{
 		IEditorControl? editor = fileState.OpenSourceView
 			? _documentController.FindSourceEditor(fileState.FilePath)
@@ -62,10 +75,10 @@ internal sealed class StudioSilentActionService
 		return new SilentActionCompletion(
 			editor,
 			saveAffectedFile && !fileState.WasContentChanged,
-			closeAffectedTab && !fileState.WasAlreadyOpen);
+			fileState.Session);
 	}
 
-	public void Complete(IEditorControl? previousEditor, bool indicateChange, params SilentActionCompletion[] completions)
+	public void Complete(bool indicateChange, params SilentActionCompletion[] completions)
 	{
 		if (indicateChange && _documentController.CurrentEditor is { } currentEditor)
 		{
@@ -75,19 +88,71 @@ internal sealed class StudioSilentActionService
 
 		foreach (SilentActionCompletion completion in completions)
 		{
-			if (completion.SaveAffectedFile && completion.Editor is not null && _documentController.ContainsEditor(completion.Editor))
-				_documentController.SaveFile(completion.Editor);
+			if (!completion.SaveAffectedFile
+				|| completion.Editor is not { } editor
+				|| !_documentController.ContainsEditor(editor))
+				continue;
+
+			if (_workspaceEditApplier is not null
+				&& editor is TextEditorBase textEditor
+				&& textEditor.WorkspaceEditTarget is null)
+			{
+				ApplyThroughWorkspace(textEditor);
+				continue;
+			}
+
+			_documentController.SaveFile(editor);
 		}
 
-		foreach (SilentActionCompletion completion in completions)
-		{
-			if (completion.CloseAffectedTab && completion.Editor is not null && _documentController.ContainsEditor(completion.Editor))
-				_documentController.TryCloseEditor(completion.Editor);
-		}
+		for (int completionIndex = completions.Length - 1; completionIndex >= 0; completionIndex--)
+			completions[completionIndex].Session?.Dispose();
 
 		_documentController.EnsureTabFileSynchronization();
-
-		if (previousEditor is not null && _documentController.ContainsEditor(previousEditor))
-			_documentController.ActivateEditor(previousEditor);
 	}
+
+	private void ApplyThroughWorkspace(TextEditorBase editor)
+	{
+		WorkspaceDocumentOpenResult openResult = _documentManager!
+			.OpenAsync(editor.FilePath, DefaultWorkspaceOpenOptions)
+			.GetAwaiter()
+			.GetResult();
+
+		if (openResult.Snapshot is not WorkspaceDocumentSnapshot snapshot)
+		{
+			_documentController.SaveFile(editor);
+			return;
+		}
+
+		_workspaceEditApplier!.Apply([
+			new WorkspaceEditTargetPreparation(
+				editor.FilePath,
+				snapshot.DocumentKey,
+				snapshot.DocumentId,
+				snapshot.Version,
+				snapshot.Content,
+				editor.Text,
+				snapshot.FileFormat)]);
+
+		_documentController.SaveFile(editor);
+	}
+
+	private IEditorSession? AcquireSession(string filePath)
+	{
+		if (_viewHost is null || _documentManager is null)
+			return null;
+
+		WorkspaceDocumentOpenResult result = _documentManager
+			.OpenAsync(filePath, DefaultWorkspaceOpenOptions)
+			.GetAwaiter()
+			.GetResult();
+
+		WorkspaceDocumentSnapshot snapshot = result.Snapshot
+			?? throw new InvalidOperationException($"Unable to resolve the canonical document for '{filePath}'.");
+
+		return _viewHost.Open(snapshot, new(EditorSessionMode.Transient)).Session;
+	}
+
+	private static readonly WorkspaceDocumentOpenOptions DefaultWorkspaceOpenOptions = new(
+		TextEncodingKind.Utf8,
+		new TextFileFormat(TextEncodingKind.Utf8, false, TextNewlineStyle.Lf));
 }

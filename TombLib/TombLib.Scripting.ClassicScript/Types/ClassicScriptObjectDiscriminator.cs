@@ -1,4 +1,4 @@
-using TombLib.Scripting.Navigation;
+using Nickelony.IDEKit.IntelliSense.Navigation;
 
 namespace TombLib.Scripting.ClassicScript.Types;
 

@@ -2,9 +2,9 @@ using TombLib.Scripting.ClassicScript.Completion;
 using TombLib.Scripting.ClassicScript.Diagnostics;
 using TombLib.Scripting.ClassicScript.Mnemonics;
 using TombLib.Scripting.ClassicScript.Services;
-using TombLib.Scripting.Hover;
-using TombLib.Scripting.Navigation;
-using TombLib.Scripting.Signatures;
+using Nickelony.IDEKit.IntelliSense.Hover;
+using Nickelony.IDEKit.IntelliSense.Navigation;
+using Nickelony.IDEKit.IntelliSense.Signatures;
 
 namespace TombLib.Scripting.ClassicScript;
 

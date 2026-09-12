@@ -1,18 +1,17 @@
-using DarkUI.Controls;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using TombLib.Scripting.Text;
 using TombLib.Scripting.TRX.Resources;
 using TombLib.Scripting.TRX.Services;
-using TombLib.Scripting.UI.ContentNodes;
 
 namespace TombLib.Scripting.TRX.ContentNodes;
 
 /// <summary>
-/// Builds content nodes for level names found in TRX documents.
+/// Provides the document symbols (outline entries) for level names found in TRX documents.
 /// </summary>
-public sealed class TRXNodesProvider : ContentNodesProviderBase
+public sealed class TRXNodesProvider : ITextDocumentSymbolProvider
 {
 	private static readonly Regex s_levelCommentRegex = new(Patterns.LevelCommentName, RegexOptions.IgnoreCase);
 
@@ -29,26 +28,25 @@ public sealed class TRXNodesProvider : ContentNodesProviderBase
 	}
 
 	/// <summary>
-	/// Builds the level-name nodes for the given content and filter.
+	/// Gets the level-name symbols for the supplied request.
 	/// </summary>
-	/// <param name="content">The document content to scan.</param>
-	/// <param name="filter">The filter used to match level names.</param>
-	/// <returns>The content nodes that match the filter.</returns>
-	protected override IReadOnlyList<DarkTreeNode> GetNodesCore(string content, string filter)
+	/// <param name="request">The document-symbol request.</param>
+	/// <returns>The level-name symbols that match the filter.</returns>
+	public IReadOnlyList<TextDocumentSymbol> GetSymbols(TextDocumentSymbolRequest request)
 	{
 		var nodes = new List<string>();
-		var source = new StringTextSnapshot(content);
+		var source = new StringTextSnapshot(request.DocumentText);
 
 		foreach (ITextLine line in source.Lines)
 		{
 			string lineText = source.GetText(line.Offset, line.Length);
-			string? levelNode = GetLevelNode(lineText, filter);
+			string? levelNode = GetLevelNode(lineText, request.Filter);
 
 			if (levelNode is not null)
 				nodes.Add(levelNode);
 		}
 
-		return ContentNodeTreeBuilder.BuildFlatNodes(nodes, node => node);
+		return DocumentSymbolTreeBuilder.BuildFlatNodes(nodes, node => node);
 	}
 
 	private string? GetLevelNode(string lineText, string filter)

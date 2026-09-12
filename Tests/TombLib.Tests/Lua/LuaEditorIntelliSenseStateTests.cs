@@ -1,10 +1,8 @@
-using Nickelony.LanguageServer.Abstractions.Completion;
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
-using Nickelony.LanguageServer.Abstractions.Editing;
-using Nickelony.LanguageServer.Abstractions.Hover;
-using Nickelony.LanguageServer.Abstractions.Infrastructure.Provider;
-using Nickelony.LanguageServer.Abstractions.Navigation;
-using Nickelony.LanguageServer.Abstractions.Signatures;
+using Nickelony.IDEKit.IntelliSense.Completion;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Hover;
+using Nickelony.IDEKit.IntelliSense.Navigation;
+using Nickelony.IDEKit.IntelliSense.Signatures;
 using System.Reflection;
 using System.Windows;
 using static TombLib.Tests.WPFTestHelper;

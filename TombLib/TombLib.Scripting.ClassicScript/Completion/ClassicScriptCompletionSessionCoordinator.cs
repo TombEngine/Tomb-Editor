@@ -1,5 +1,7 @@
 using ICSharpCode.AvalonEdit.Document;
-using Nickelony.LanguageServer.Abstractions.Completion;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -9,11 +11,8 @@ using System.Threading.Tasks;
 using System.Windows.Documents;
 using TombLib.Scripting.ClassicScript.Mnemonics;
 using TombLib.Scripting.ClassicScript.Services;
-using TombLib.Scripting.Completion;
-using TombLib.Scripting.Extensions;
-using TombLib.Scripting.Text;
 using TombLib.Scripting.UI.Completion;
-using TombLib.Scripting.UI.Text;
+using TombLib.Scripting.UI.Extensions;
 
 namespace TombLib.Scripting.ClassicScript.Completion;
 
@@ -27,6 +26,7 @@ public sealed class ClassicScriptCompletionSessionCoordinator
 	private readonly IClassicScriptLineService _lineService;
 	private readonly IClassicScriptCommandService _commandService;
 	private readonly ITextCompletionProvider _completionProvider;
+	private readonly CompletionSessionKernel _kernel = new();
 
 	private int _latestRequestId;
 
@@ -69,7 +69,7 @@ public sealed class ClassicScriptCompletionSessionCoordinator
 			return Task.FromResult(TextCompletionSessionDecision.None);
 
 		TextDocument document = CreateDocument(documentText, filePath);
-		ITextSnapshot source = new TextDocumentSnapshot(document);
+		ITextSnapshot source = new StringTextSnapshot(document.Text, document.FileName);
 		string? wholeLineText = _commandService.GetWholeCommandLineText(source, caretOffset);
 
 		return string.IsNullOrEmpty(wholeLineText)
@@ -97,7 +97,7 @@ public sealed class ClassicScriptCompletionSessionCoordinator
 			return TextCompletionSessionDecision.None;
 
 		TextDocument document = CreateDocument(documentText, filePath);
-		ITextSnapshot source = new TextDocumentSnapshot(document);
+		ITextSnapshot source = new StringTextSnapshot(document.Text, document.FileName);
 
 		if (EditorCompletionTriggerHelper.IsSingleCharacterLine(document.GetText(document.GetLineByOffset(caretOffset))))
 			return GetEmptyLineDecision(source, caretOffset);
@@ -292,12 +292,15 @@ public sealed class ClassicScriptCompletionSessionCoordinator
 		if (wordStartOffset < 0)
 			return TextCompletionSessionDecision.None;
 
-		IReadOnlyList<TextCompletionItem> completionItems = _completionProvider.GetCompletionItems(
-			new TextCompletionContext(document.Text, caretOffset, TextCompletionTrigger.Word));
+		string word = document.GetText(wordStartOffset, caretOffset - wordStartOffset);
+		var wordInfo = new CompletionWordInfo(word, new Nickelony.IDEKit.Core.Text.TextRange(wordStartOffset, caretOffset - wordStartOffset));
 
-		return completionItems.Count == 0
-			? TextCompletionSessionDecision.None
-			: CreateOpenDecision(completionItems, wordStartOffset, caretOffset);
+		return _kernel.GetDecision(
+			new StringTextSnapshot(document.Text),
+			caretOffset,
+			_completionProvider,
+			TextCompletionTrigger.Word,
+			wordInfo);
 	}
 
 	private TextCompletionSessionDecision GetEmptyLineDecision(ITextSnapshot source, int caretOffset)
@@ -307,45 +310,27 @@ public sealed class ClassicScriptCompletionSessionCoordinator
 		if (currentSection is not null && currentSection.IgnoreCaseEqualsAny("Strings", "PSXStrings", "PCStrings", "ExtraNG"))
 			return TextCompletionSessionDecision.None;
 
-		IReadOnlyList<TextCompletionItem> completionItems = _completionProvider.GetCompletionItems(
-			new TextCompletionContext(source.GetText(0, source.TextLength), caretOffset, TextCompletionTrigger.EmptyLine));
+		// The empty-line replacement range starts at the line start; an empty filter word keeps the
+		// full command and section catalog offered by the provider.
+		int lineStartOffset = source.GetLineByOffset(caretOffset).Offset;
+		var wordInfo = new CompletionWordInfo(string.Empty, new Nickelony.IDEKit.Core.Text.TextRange(lineStartOffset, caretOffset - lineStartOffset));
 
-		return completionItems.Count == 0
-			? TextCompletionSessionDecision.None
-			: CreateOpenDecision(completionItems, source.GetLineByOffset(caretOffset).Offset, caretOffset);
+		return _kernel.GetDecision(source, caretOffset, _completionProvider, TextCompletionTrigger.EmptyLine, wordInfo);
 	}
 
 	private async Task<TextCompletionSessionDecision> GetContextualDecisionAsync(TextDocument document, int caretOffset, bool insertAtCaret = false)
 	{
 		int requestId = Interlocked.Increment(ref _latestRequestId);
-		string documentText = document.Text;
+		var source = new StringTextSnapshot(document.Text);
 
 		int wordStartOffset = insertAtCaret
 			? caretOffset
 			: TextUtilities.GetNextCaretPosition(document, caretOffset, LogicalDirection.Backward, CaretPositioningMode.WordStart);
 
-		string word = wordStartOffset >= 0
-			? document.GetText(wordStartOffset, caretOffset - wordStartOffset)
-			: string.Empty;
-
-		IReadOnlyList<TextCompletionItem> completionItems;
-
-		try
-		{
-			// The completion provider scans large catalogs to build items, so the work is CPU-bound.
-			// The provider contract (ITextCompletionProvider) explicitly permits background execution.
-			completionItems = await Task.Run(() => _completionProvider.GetCompletionItems(
-				new TextCompletionContext(documentText, caretOffset, TextCompletionTrigger.Contextual, -1))).ConfigureAwait(false);
-		}
-		catch (Exception exception)
-		{
-			Log.Warn(exception, "Failed to retrieve ClassicScript completion items; suppressing the completion session.");
-			return TextCompletionSessionDecision.None;
-		}
-
-		if (requestId != Volatile.Read(ref _latestRequestId) || completionItems.Count == 0 || wordStartOffset < 0)
+		if (wordStartOffset < 0)
 			return TextCompletionSessionDecision.None;
 
+		string word = document.GetText(wordStartOffset, caretOffset - wordStartOffset);
 		int? startOffset = null;
 
 		if (insertAtCaret)
@@ -353,7 +338,34 @@ public sealed class ClassicScriptCompletionSessionCoordinator
 		else if (!word.StartsWithAny('=', ',', '+', '-', '*', '/'))
 			startOffset = wordStartOffset;
 
-		return CreateOpenDecision(completionItems, startOffset, caretOffset);
+		if (!startOffset.HasValue)
+			return TextCompletionSessionDecision.None;
+
+		// The provider returns the fully context-filtered candidate set (ENABLED/DISABLED or
+		// prefix-matched mnemonics), so the kernel is told not to filter by word; the replacement
+		// range is still supplied here so the kernel owns the open/no-op decision with it.
+		var wordInfo = new CompletionWordInfo(string.Empty, new Nickelony.IDEKit.Core.Text.TextRange(startOffset.Value, caretOffset - startOffset.Value));
+
+		try
+		{
+			// The completion provider scans large catalogs to build items, so the work is CPU-bound.
+			// The provider contract (ITextCompletionProvider) explicitly permits background execution.
+			TextCompletionSessionDecision decision = await _kernel.GetDecisionAsync(
+				source,
+				caretOffset,
+				_completionProvider,
+				TextCompletionTrigger.Contextual,
+				wordInfo).ConfigureAwait(false);
+
+			return requestId == Volatile.Read(ref _latestRequestId)
+				? decision
+				: TextCompletionSessionDecision.None;
+		}
+		catch (Exception exception)
+		{
+			Log.Warn(exception, "Failed to retrieve ClassicScript completion items; suppressing the completion session.");
+			return TextCompletionSessionDecision.None;
+		}
 	}
 
 	private static TextCompletionSessionDecision CreateOpenDecision(IReadOnlyList<TextCompletionItem> items, int? startOffset, int? endOffset)

@@ -63,7 +63,6 @@ internal sealed class LuaWorkspaceAutomationProvider : IStudioWorkspaceAutomatio
 		if (!result.HasOutput)
 			return;
 
-		var cachedEditor = _silentActionService.RememberSelectedEditor();
 		string scriptFilePath = PathHelper.GetScriptFilePath(_scriptRootDirectoryPath, TRVersion.Game.TombEngine);
 		string languageFilePath = PathHelper.GetLanguageFilePath(_scriptRootDirectoryPath, TRVersion.Game.TombEngine);
 		SilentActionFileState scriptFileState = _silentActionService.CaptureFileState(scriptFilePath);
@@ -77,31 +76,22 @@ internal sealed class LuaWorkspaceAutomationProvider : IStudioWorkspaceAutomatio
 		if (languageUpdated)
 			completions.Add(_silentActionService.CreateCompletion(languageFileState));
 
-		_silentActionService.Complete(cachedEditor, scriptUpdated || languageUpdated, completions.ToArray());
+		_silentActionService.Complete(scriptUpdated || languageUpdated, completions.ToArray());
 	}
 
 	public bool IsScriptDefined(string levelName)
 		=> _callbacks.IsLevelScriptDefined(levelName);
 
 	public bool IsStringDefined(string value)
-	{
-		var cachedEditor = _silentActionService.RememberSelectedEditor();
-		string languageFilePath = PathHelper.GetLanguageFilePath(_scriptRootDirectoryPath, TRVersion.Game.TombEngine);
-		SilentActionFileState languageFileState = _silentActionService.CaptureFileState(languageFilePath);
-		bool isDefined = _callbacks.IsLevelLanguageStringDefined(value);
-
-		_silentActionService.Complete(cachedEditor, false, _silentActionService.CreateCompletion(languageFileState, saveAffectedFile: false));
-		return isDefined;
-	}
+		=> _callbacks.IsLevelLanguageStringDefined(value);
 
 	public void RenameLevel(string oldName, string newName)
 	{
-		var cachedEditor = _silentActionService.RememberSelectedEditor();
 		string languageFilePath = PathHelper.GetLanguageFilePath(_scriptRootDirectoryPath, TRVersion.Game.TombEngine);
 		SilentActionFileState languageFileState = _silentActionService.CaptureFileState(languageFilePath);
 
 		_callbacks.RenameRequestedLanguageString(oldName, newName);
-		_silentActionService.Complete(cachedEditor, true, _silentActionService.CreateCompletion(languageFileState));
+		_silentActionService.Complete(true, _silentActionService.CreateCompletion(languageFileState));
 	}
 
 	private static bool IsSilentAction(IIDEEvent ideEvent)

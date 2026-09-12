@@ -1,4 +1,5 @@
-using Nickelony.LanguageServer.Abstractions.Navigation;
+using Nickelony.IDEKit.Core.Comments;
+using Nickelony.IDEKit.IntelliSense.Navigation;
 using NLog;
 using System;
 using System.Threading;
@@ -27,7 +28,6 @@ public sealed partial class LuaEditor : TextEditorBase
 	private LuaTextMateInstallation? _textMateHighlighting;
 	private LuaThemeBrushSet? _themeBrushSet;
 	private int _editorDocumentVersion;
-	private int _editorRequestGeneration;
 
 	/// <summary>
 	/// Gets or sets the IntelliSense provider used to supply completions, hover text, diagnostics, and navigation results.
@@ -35,7 +35,9 @@ public sealed partial class LuaEditor : TextEditorBase
 	public ILanguageServerIntelliSenseProvider? IntelliSenseProvider { get; set; }
 
 	/// <summary>
-	/// Gets the monotonically increasing version of the editor document.
+	/// Gets the monotonically increasing version of the logical document content snapshot. The
+	/// version advances on every text change and is distinct from the session generation (operation
+	/// ownership); the two counters are not interchangeable.
 	/// </summary>
 	public int DocumentVersion => Volatile.Read(ref _editorDocumentVersion);
 
@@ -50,7 +52,7 @@ public sealed partial class LuaEditor : TextEditorBase
 	/// <param name="engineVersion">The engine version used to configure editor behavior.</param>
 	public LuaEditor(Version engineVersion) : base(engineVersion)
 	{
-		CommentPrefix = "--";
+		CommentSyntax = new CommentSyntax("--", null, null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.SingleQuoted);
 		TextArea.IndentationStrategy = new LuaAutoIndentationStrategy(Options);
 		CompletionController.InitializeScheduling(RequestScheduledCompletionAsync);
 		_definitionNavigationController = new(this);
@@ -66,6 +68,8 @@ public sealed partial class LuaEditor : TextEditorBase
 	/// <param name="configuration">The editor configuration to apply.</param>
 	public override void UpdateSettings(TombLib.Scripting.UI.Bases.ConfigurationBase configuration)
 	{
+		EnsureNotDisposed();
+
 		if (configuration is not LuaEditorConfiguration config)
 			return;
 

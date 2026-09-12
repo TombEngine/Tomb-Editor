@@ -23,23 +23,6 @@ public class ClassicScriptDocumentFormatterTests
 	}
 
 	[TestMethod]
-	public void FormatDocument_TrimOnlyOnlyRemovesTrailingWhitespace()
-	{
-		var formatter = new ClassicScriptDocumentFormatter
-		{
-			SpaceBeforeEquals = false,
-			SpaceAfterEquals = false,
-			SpaceBeforeComma = false,
-			SpaceAfterComma = false,
-			CollapseMultipleSpaces = false
-		};
-
-		string formatted = formatter.FormatDocument("Legend = 1   \r\nCustomize = CUST_BAR, foo\t", trimOnly: true);
-
-		Assert.AreEqual("Legend = 1" + Environment.NewLine + "Customize = CUST_BAR, foo", formatted);
-	}
-
-	[TestMethod]
 	public void FormatDocument_IsIdempotentAcrossRepresentativeScriptLines()
 	{
 		var formatter = new ClassicScriptDocumentFormatter

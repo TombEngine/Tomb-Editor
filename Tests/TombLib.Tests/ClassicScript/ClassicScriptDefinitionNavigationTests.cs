@@ -1,4 +1,5 @@
-using Nickelony.LanguageServer.Abstractions.Navigation;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Navigation;
+using Nickelony.IDEKit.IntelliSense.Navigation;
 using System.Windows;
 using System.Windows.Input;
 using TombLib.Scripting.ClassicScript;
@@ -10,8 +11,6 @@ using TombLib.Scripting.ClassicScript.Services;
 using TombLib.Scripting.ClassicScript.Signatures;
 using TombLib.Scripting.ClassicScript.Syntaxes;
 using TombLib.Scripting.ClassicScript.Types;
-using TombLib.Scripting.Navigation;
-using TombLib.Scripting.UI.Navigation;
 
 namespace TombLib.Tests;
 

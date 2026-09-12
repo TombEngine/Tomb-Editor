@@ -108,29 +108,26 @@ internal sealed class ClassicScriptWorkspaceAutomationProvider : IStudioWorkspac
 
 	public void AddLevelString(string levelName)
 	{
-		var cachedEditor = _silentActionService.RememberSelectedEditor();
 		string languageFilePath = PathHelper.GetLanguageFilePath(_scriptRootDirectoryPath, TRVersion.Game.TR4);
 		SilentActionFileState languageFileState = _silentActionService.CaptureSourceFileState(languageFilePath);
 		_callbacks.AddNewLevelNameString(levelName);
-		_silentActionService.Complete(cachedEditor, true, _silentActionService.CreateCompletion(languageFileState));
+		_silentActionService.Complete(true, _silentActionService.CreateCompletion(languageFileState));
 	}
 
 	public void AddNgString(string ngString)
 	{
-		var cachedEditor = _silentActionService.RememberSelectedEditor();
 		string ngLanguageFilePath = PathHelper.GetLanguageFilePath(_scriptRootDirectoryPath, TRVersion.Game.TRNG);
 		SilentActionFileState ngLanguageFileState = _silentActionService.CaptureSourceFileState(ngLanguageFilePath);
 		bool isChanged = _callbacks.AddNewNGString(ngString);
-		_silentActionService.Complete(cachedEditor, isChanged, _silentActionService.CreateCompletion(ngLanguageFileState));
+		_silentActionService.Complete(isChanged, _silentActionService.CreateCompletion(ngLanguageFileState));
 	}
 
 	public void AddPluginEntry(string pluginString)
 	{
-		var cachedEditor = _silentActionService.RememberSelectedEditor();
 		string scriptFilePath = PathHelper.GetScriptFilePath(_scriptRootDirectoryPath, TRVersion.Game.TR4);
 		SilentActionFileState scriptFileState = _silentActionService.CaptureFileState(scriptFilePath);
 		bool isChanged = _callbacks.AddNewPluginEntry(pluginString);
-		_silentActionService.Complete(cachedEditor, isChanged, _silentActionService.CreateCompletion(scriptFileState));
+		_silentActionService.Complete(isChanged, _silentActionService.CreateCompletion(scriptFileState));
 	}
 
 	public void AppendScript(ScriptGenerationResult result)
@@ -138,11 +135,10 @@ internal sealed class ClassicScriptWorkspaceAutomationProvider : IStudioWorkspac
 		if (!result.HasContent)
 			return;
 
-		var cachedEditor = _silentActionService.RememberSelectedEditor();
 		string scriptFilePath = PathHelper.GetScriptFilePath(_scriptRootDirectoryPath, TRVersion.Game.TR4);
 		SilentActionFileState scriptFileState = _silentActionService.CaptureFileState(scriptFilePath);
 		_callbacks.AppendScript(result.GameFlowScript);
-		_silentActionService.Complete(cachedEditor, true, _silentActionService.CreateCompletion(scriptFileState));
+		_silentActionService.Complete(true, _silentActionService.CreateCompletion(scriptFileState));
 	}
 
 	public void Build()
@@ -162,31 +158,16 @@ internal sealed class ClassicScriptWorkspaceAutomationProvider : IStudioWorkspac
 	}
 
 	public bool IsScriptDefined(string levelName)
-	{
-		var cachedEditor = _silentActionService.RememberSelectedEditor();
-		string scriptFilePath = PathHelper.GetScriptFilePath(_scriptRootDirectoryPath, TRVersion.Game.TR4);
-		SilentActionFileState scriptFileState = _silentActionService.CaptureFileState(scriptFilePath);
-		bool isDefined = _callbacks.IsLevelScriptDefined(levelName);
-		_silentActionService.Complete(cachedEditor, false, _silentActionService.CreateCompletion(scriptFileState, saveAffectedFile: false));
-		return isDefined;
-	}
+		=> _callbacks.IsLevelScriptDefined(levelName);
 
 	public bool IsStringDefined(string value)
-	{
-		var cachedEditor = _silentActionService.RememberSelectedEditor();
-		string languageFilePath = PathHelper.GetLanguageFilePath(_scriptRootDirectoryPath, TRVersion.Game.TR4);
-		SilentActionFileState languageFileState = _silentActionService.CaptureSourceFileState(languageFilePath);
-		bool isDefined = _callbacks.IsLevelLanguageStringDefined(value);
-		_silentActionService.Complete(cachedEditor, false, _silentActionService.CreateCompletion(languageFileState, saveAffectedFile: false));
-		return isDefined;
-	}
+		=> _callbacks.IsLevelLanguageStringDefined(value);
 
 	public void ReloadSyntaxHighlighting()
 		=> _callbacks.ApplyUserSettings();
 
 	public void RenameLevel(string oldName, string newName)
 	{
-		var cachedEditor = _silentActionService.RememberSelectedEditor();
 		string scriptFilePath = PathHelper.GetScriptFilePath(_scriptRootDirectoryPath, TRVersion.Game.TR4);
 		string languageFilePath = PathHelper.GetLanguageFilePath(_scriptRootDirectoryPath, TRVersion.Game.TR4);
 		SilentActionFileState scriptFileState = _silentActionService.CaptureFileState(scriptFilePath);
@@ -194,7 +175,6 @@ internal sealed class ClassicScriptWorkspaceAutomationProvider : IStudioWorkspac
 		_callbacks.RenameRequestedLevelScript(oldName, newName);
 		_callbacks.RenameRequestedLanguageString(oldName, newName);
 		_silentActionService.Complete(
-			cachedEditor,
 			true,
 			_silentActionService.CreateCompletion(scriptFileState),
 			_silentActionService.CreateCompletion(languageFileState));

@@ -2,11 +2,11 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using DarkUI.Controls;
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using TombIDE.ScriptingStudio.UI;
-using TombLib.Scripting.UI.ContentNodes;
 using TombLib.Scripting.UI.Editors;
 using TombLib.WPF.Services.Abstract;
 
@@ -17,7 +17,7 @@ public sealed partial class DocumentOutlineViewModel : ObservableObject, IDispos
 	private readonly ILocalizationService _localizationService;
 	private readonly ContentNodesRefreshCoordinator _refreshCoordinator;
 
-	private Func<ContentNodesProviderBase?>? _outlineProviderFactory;
+	private Func<ITextDocumentSymbolProvider?>? _outlineProviderFactory;
 	private IEditorControl? _editorControl;
 
 	internal DocumentOutlineViewModel(
@@ -31,13 +31,13 @@ public sealed partial class DocumentOutlineViewModel : ObservableObject, IDispos
 
 	public ObservableCollection<DocumentOutlineNodeViewModel> Nodes { get; } = [];
 
-	public ContentNodesProviderBase? NodesProvider { get; private set; }
+	public ITextDocumentSymbolProvider? NodesProvider { get; private set; }
 
 	public string Title => _localizationService["Title"];
 
 	public bool IsEmpty => Nodes.Count == 0;
 
-	public Func<ContentNodesProviderBase?>? OutlineProviderFactory
+	public Func<ITextDocumentSymbolProvider?>? OutlineProviderFactory
 	{
 		get => _outlineProviderFactory;
 		set
@@ -138,7 +138,7 @@ public sealed partial class DocumentOutlineViewModel : ObservableObject, IDispos
 		OnPropertyChanged(nameof(IsEmpty));
 	}
 
-	private bool CanApplyRefreshResult(ContentNodesProviderBase nodesProvider)
+	private bool CanApplyRefreshResult(ITextDocumentSymbolProvider nodesProvider)
 		=> ReferenceEquals(nodesProvider, NodesProvider);
 
 	private void EditorControl_ContentChangedWorkerRunCompleted(object? sender, EventArgs e)
@@ -173,7 +173,7 @@ public sealed partial class DocumentOutlineViewModel : ObservableObject, IDispos
 			? string.Empty
 			: SearchText.Trim();
 
-		ContentNodesProviderBase nodesProvider = NodesProvider;
+		ITextDocumentSymbolProvider nodesProvider = NodesProvider;
 		string content = EditorControl.Content;
 
 		_refreshCoordinator.RequestRefresh(nodesProvider, content, filter, CanApplyRefreshResult, ApplyNodes);

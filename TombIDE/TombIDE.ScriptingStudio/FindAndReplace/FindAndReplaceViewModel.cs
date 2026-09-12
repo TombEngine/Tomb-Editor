@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using TombIDE.ScriptingStudio.Controls;
+using Nickelony.IDEKit.Core.FindReplace;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.UI.Bases;
 
 namespace TombIDE.ScriptingStudio.FindAndReplace;
@@ -105,8 +107,8 @@ public partial class FindAndReplaceViewModel : ObservableObject
 	/// </summary>
 	private (string pattern, RegexOptions options) GetCurrentPatternAndOptions()
 	{
-		string pattern = _service.BuildPattern(FindText, UseRegex, MatchWholeWord);
-		RegexOptions options = _service.BuildRegexOptions(CaseSensitive);
+		string pattern = FindReplaceText.BuildPattern(FindText, UseRegex, MatchWholeWord);
+		RegexOptions options = FindReplaceText.BuildRegexOptions(CaseSensitive);
 		return (pattern, options);
 	}
 
@@ -171,7 +173,7 @@ public partial class FindAndReplaceViewModel : ObservableObject
 			return;
 		}
 
-		if (_service.CountMatches(editor.Text, pattern, options) == 0)
+		if (FindReplaceText.CountMatches(editor.Text, pattern, options) == 0)
 		{
 			if (SearchAllTabs)
 				FindMatchInAnotherTab(order, pattern, options);
@@ -181,7 +183,7 @@ public partial class FindAndReplaceViewModel : ObservableObject
 			return;
 		}
 
-		MatchCollection sectionMatches = _service.GetMatchesFromSection(
+		MatchCollection sectionMatches = FindReplaceText.GetMatchesFromSection(
 			order, editor.Text, editor.SelectionStart, editor.SelectionLength, pattern, options);
 
 		if (sectionMatches.Count == 0)
@@ -204,15 +206,15 @@ public partial class FindAndReplaceViewModel : ObservableObject
 		{
 			case FindingOrder.Previous:
 				{
-					Match lastMatch = _service.GetLastMatch(sectionMatches)!;
+					Match lastMatch = FindReplaceText.GetLastMatch(sectionMatches)!;
 					editor.Select(lastMatch.Index, lastMatch.Length);
 					break;
 				}
 			case FindingOrder.Next:
 				{
-					Match firstMatch = _service.GetFirstMatch(sectionMatches)!;
+					Match firstMatch = FindReplaceText.GetFirstMatch(sectionMatches)!;
 					int selectionEnd = editor.SelectionStart + editor.SelectionLength;
-					string textAfterSelection = _service.GetTextAfterSelection(editor.Text, selectionEnd);
+					string textAfterSelection = FindReplaceText.GetTextAfterSelection(editor.Text, selectionEnd);
 					int cutStringLength = editor.Document.TextLength - textAfterSelection.Length;
 					editor.Select(cutStringLength + firstMatch.Index, firstMatch.Length);
 					break;
@@ -351,9 +353,9 @@ public partial class FindAndReplaceViewModel : ObservableObject
 			return;
 
 		if (UseRegex)
-			editor.SelectedText = _service.ReplaceAll(editor.SelectedText, pattern, ReplaceText, options);
+			ApplySelectionReplacement(editor, FindReplaceText.ReplaceAll(editor.SelectedText, pattern, ReplaceText, options));
 		else
-			editor.SelectedText = ReplaceText;
+			ApplySelectionReplacement(editor, ReplaceText);
 	}
 
 	// ---------------------------------------------------------------------------
@@ -457,12 +459,12 @@ public partial class FindAndReplaceViewModel : ObservableObject
 				return;
 			}
 
-			matchCount = _service.CountMatches(editor.Text, pattern, options);
+			matchCount = FindReplaceText.CountMatches(editor.Text, pattern, options);
 
 			if (matchCount > 0)
 			{
 				editor.SelectAll();
-				editor.SelectedText = _service.ReplaceAll(editor.Text, pattern, ReplaceText, options);
+				ApplySelectionReplacement(editor, FindReplaceText.ReplaceAll(editor.Text, pattern, ReplaceText, options));
 				MoveCaretToDocumentStart(editor);
 			}
 		}
@@ -475,7 +477,7 @@ public partial class FindAndReplaceViewModel : ObservableObject
 				foreach (TextEditorBase editor in GetOpenTextEditors())
 				{
 					editor.SelectAll();
-					editor.SelectedText = _service.ReplaceAll(editor.Text, pattern, ReplaceText, options);
+					ApplySelectionReplacement(editor, FindReplaceText.ReplaceAll(editor.Text, pattern, ReplaceText, options));
 					MoveCaretToDocumentStart(editor);
 				}
 			}
@@ -495,9 +497,27 @@ public partial class FindAndReplaceViewModel : ObservableObject
 	// Helpers
 	// ---------------------------------------------------------------------------
 
+	private static void ApplySelectionReplacement(TextEditorBase editor, string replacement)
+	{
+		ITextEditTarget? editTarget = editor.WorkspaceEditTarget;
+		if (editTarget is null)
+		{
+			editor.SelectedText = replacement;
+			return;
+		}
+
+		int selectionStart = editor.SelectionStart;
+		int selectionEnd = selectionStart + editor.SelectionLength;
+		if (string.Equals(editor.Document.GetText(selectionStart, selectionEnd - selectionStart), replacement, StringComparison.Ordinal))
+			return;
+
+		editTarget.Apply([new TextEditOperation(selectionStart, selectionEnd, replacement, 0)]);
+		editor.CaretOffset = selectionStart + replacement.Length;
+	}
+
 	private void ShowMatchCountStatus(string documentText, string pattern, RegexOptions options)
 	{
-		int currentDocumentMatchCount = _service.CountMatches(documentText, pattern, options);
+		int currentDocumentMatchCount = FindReplaceText.CountMatches(documentText, pattern, options);
 
 		if (SearchCurrentDocument)
 		{
@@ -519,7 +539,7 @@ public partial class FindAndReplaceViewModel : ObservableObject
 		int matchCount = 0;
 
 		foreach (TextEditorBase editor in GetOpenTextEditors())
-			matchCount += _service.CountMatches(editor.Text, pattern, options);
+			matchCount += FindReplaceText.CountMatches(editor.Text, pattern, options);
 
 		return matchCount;
 	}

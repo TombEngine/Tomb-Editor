@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using TombLib.Scripting.Presentation;
+using TombLib.Scripting.UI.Presentation;
 
 namespace TombLib.Scripting.UI.Presentation;
 

@@ -21,7 +21,7 @@ internal sealed class StudioFileExplorerDocumentSyncService
 		ArgumentNullException.ThrowIfNull(documentController);
 		ArgumentNullException.ThrowIfNull(e);
 
-		documentController.CloseInvalidEditors();
+		documentController.AddFileToReloadQueue(e.FullPath);
 	}
 
 	public void ApplyOpened(IEditorDocumentController documentController, FileOpenedEventArgs e)
@@ -40,7 +40,7 @@ internal sealed class StudioFileExplorerDocumentSyncService
 		ArgumentNullException.ThrowIfNull(documentController);
 		ArgumentNullException.ThrowIfNull(e);
 
-		documentController.RenameDocument(e.OldFullPath, e.FullPath);
+		documentController.AddFileToReloadQueue(e.OldFullPath);
 	}
 
 	public void ApplyWindowFocus(IEditorDocumentController documentController, bool isMainWindowFocused)

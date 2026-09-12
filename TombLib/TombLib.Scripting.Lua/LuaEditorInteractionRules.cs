@@ -1,4 +1,7 @@
 using ICSharpCode.AvalonEdit.Document;
+using Nickelony.IDEKit.AvalonEdit.Documents;
+using Nickelony.IDEKit.Core.Identifiers;
+using Nickelony.IDEKit.Core.Text;
 using System;
 using System.Runtime.CompilerServices;
 using TombLib.Scripting.Lua.Parsing;
@@ -10,7 +13,7 @@ namespace TombLib.Scripting.Lua;
 /// </summary>
 internal static class LuaEditorInteractionRules
 {
-	private static readonly ConditionalWeakTable<TextDocument, LuaDocumentLineParserStateCache> LineStartStateCaches = [];
+	private static readonly ConditionalWeakTable<TextDocument, DocumentLineStateCache<LuaLineParserState>> LineStartStateCaches = [];
 
 	/// <summary>
 	/// Attempts to resolve the exact offset that should be used for a hover request.
@@ -134,7 +137,13 @@ internal static class LuaEditorInteractionRules
 	}
 
 	private static LuaLineParserState GetLineStartParserState(TextDocument document, DocumentLine currentLine)
-		=> LineStartStateCaches.GetValue(document, static doc => new LuaDocumentLineParserStateCache(doc)).GetLineStartState(currentLine.LineNumber);
+		=> LineStartStateCaches.GetValue(document, static doc => new DocumentLineStateCache<LuaLineParserState>(doc, TransitionLineState)).GetLineStartState(currentLine.LineNumber);
+
+	private static LuaLineParserState TransitionLineState(string lineText, LuaLineParserState state)
+	{
+		LuaLineParser.IsInsideCommentOrString(lineText, state, out LuaLineParserState nextState);
+		return nextState;
+	}
 
 	private static int ClampOffset(TextDocument document, int offset)
 		=> Math.Clamp(offset, 0, document.TextLength);
@@ -147,30 +156,14 @@ internal static class LuaEditorInteractionRules
 		if (document.TextLength == 0)
 			return false;
 
-		int probeOffset = ClampOffset(document, offset);
+		var snapshot = new TextDocumentSnapshot(document);
+		TextRange? range = IdentifierHelper.TryGetContainingSpan(snapshot, offset, IdentifierCharacterPolicy.Default);
 
-		if (probeOffset >= document.TextLength)
-			probeOffset = document.TextLength - 1;
-
-		if (probeOffset > 0
-			&& !LuaLineParser.IsIdentifierCharacter(document.GetCharAt(probeOffset))
-			&& LuaLineParser.IsIdentifierCharacter(document.GetCharAt(probeOffset - 1)))
-		{
-			probeOffset--;
-		}
-
-		if (!LuaLineParser.IsIdentifierCharacter(document.GetCharAt(probeOffset)))
+		if (range is null)
 			return false;
 
-		wordStart = probeOffset;
-		wordEnd = probeOffset + 1;
-
-		while (wordStart > 0 && LuaLineParser.IsIdentifierCharacter(document.GetCharAt(wordStart - 1)))
-			wordStart--;
-
-		while (wordEnd < document.TextLength && LuaLineParser.IsIdentifierCharacter(document.GetCharAt(wordEnd)))
-			wordEnd++;
-
-		return wordEnd > wordStart;
+		wordStart = range.Value.Offset;
+		wordEnd = range.Value.EndOffset;
+		return true;
 	}
 }

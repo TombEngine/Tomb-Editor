@@ -1,17 +1,19 @@
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using TombLib.Scripting.Diagnostics;
-using TombLib.Scripting.UI.Bases;
-
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
+	using Nickelony.IDEKit.Core.Infrastructure;
+	using System;
+	using System.Collections.Generic;
+	using System.ComponentModel;
+	using TombLib.Scripting.UI.Bases;
+	using TombLib.Scripting.UI.Editors;
 namespace TombLib.Scripting.UI.Diagnostics;
 
 /// <summary>
 /// Coordinates background diagnostics detection for an editor. The worker is single-flight and
-/// coalesces to the latest content; while the editor is in a silent session, new checks are not
-/// started and completed results are discarded, so diagnostics are never replaced with content
-/// captured during the session.
+/// coalesces to the latest content; while the editor is in a suppressed processing scope, new
+/// checks are not started and completed results are discarded, so diagnostics are never replaced
+/// with content captured during the scope. Each admitted run is classified with a
+/// <see cref="TextEditorRequestOutcome"/>: completed and failed runs are handled here, while
+/// cancelled, superseded, and stale runs never reach the editor.
 /// </summary>
 public sealed class TextDiagnosticsCoordinator : IDisposable
 {
@@ -37,7 +39,13 @@ public sealed class TextDiagnosticsCoordinator : IDisposable
 		ArgumentNullException.ThrowIfNull(editor);
 
 		_editor = editor;
-		_worker = new ErrorDetectionWorker(diagnosticsProvider, engineVersion, idleDelayInterval ?? DefaultIdleDelay, () => _editor.IsSilentSession);
+		_worker = new ErrorDetectionWorker(
+			diagnosticsProvider,
+			engineVersion,
+			idleDelayInterval ?? DefaultIdleDelay,
+			() => _editor.ProcessingMode == EditorProcessingMode.Suppressed,
+			() => _editor.SessionGeneration,
+			() => _editor.FilePath);
 
 		_worker.RunWorkerCompleted += ErrorDetectionWorker_RunWorkerCompleted;
 	}
@@ -48,12 +56,23 @@ public sealed class TextDiagnosticsCoordinator : IDisposable
 	public bool IsBusy => _worker.IsBusy;
 
 	/// <summary>
-	/// Schedules a diagnostics run after the idle debounce interval. No-op while the editor is in a silent session.
+	/// Stops queued diagnostics work and invalidates any in-flight result without disposing the coordinator.
+	/// </summary>
+	public void Reset()
+	{
+		if (_isDisposed)
+			return;
+
+		_worker.Reset();
+	}
+
+	/// <summary>
+	/// Schedules a diagnostics run after the idle debounce interval. No-op while the editor is in a suppressed processing scope.
 	/// </summary>
 	/// <param name="editorContent">The editor content to check.</param>
 	public void RunOnIdle(string? editorContent)
 	{
-		if (_isDisposed || _editor.IsSilentSession)
+		if (_isDisposed || _editor.ProcessingMode == EditorProcessingMode.Suppressed)
 			return;
 
 		_worker.RunErrorCheckOnIdle(editorContent);
@@ -61,12 +80,12 @@ public sealed class TextDiagnosticsCoordinator : IDisposable
 
 	/// <summary>
 	/// Runs a diagnostics check now, coalescing to the latest content when a check is already in
-	/// progress. No-op while the editor is in a silent session.
+	/// progress. No-op while the editor is in a suppressed processing scope.
 	/// </summary>
 	/// <param name="editorContent">The editor content to check.</param>
 	public void RunErrorCheck(string? editorContent)
 	{
-		if (_isDisposed || _editor.IsSilentSession)
+		if (_isDisposed || _editor.ProcessingMode == EditorProcessingMode.Suppressed)
 			return;
 
 		_worker.RunErrorCheck(editorContent);
@@ -90,8 +109,8 @@ public sealed class TextDiagnosticsCoordinator : IDisposable
 	private void ErrorDetectionWorker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
 	{
 		// Keep the last known diagnostics when the provider failed; the worker already logged the failure.
-		// While a silent session is active, discard the completed result instead of publishing it.
-		if (!_isDisposed && !_editor.IsSilentSession && !e.Cancelled && e.Error is null && e.Result is IReadOnlyList<TextEditorDiagnostic> diagnostics)
+		// While processing is suppressed, discard the completed result instead of publishing it.
+		if (!_isDisposed && _editor.ProcessingMode != EditorProcessingMode.Suppressed && !e.Cancelled && e.Error is null && e.Result is IReadOnlyList<TextEditorDiagnostic> diagnostics)
 			_editor.SetDiagnostics(diagnostics);
 	}
 }

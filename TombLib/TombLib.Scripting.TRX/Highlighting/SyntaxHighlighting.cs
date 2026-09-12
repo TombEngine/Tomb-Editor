@@ -1,23 +1,19 @@
-using ICSharpCode.AvalonEdit.Highlighting;
+using Nickelony.IDEKit.AvalonEdit.Highlighting;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Windows;
 using TombLib.Scripting.TRX.Resources;
 using TombLib.Scripting.TRX.Services;
 using TombLib.Scripting.UI.Highlighting;
-using TombLib.Scripting.UI.Resources;
 
 namespace TombLib.Scripting.TRX.Highlighting;
 
 /// <summary>
 /// Provides the TRX highlighting definition built from the active color scheme and GameFlow schema.
 /// </summary>
-public sealed class SyntaxHighlighting : IHighlightingDefinition
+public sealed class SyntaxHighlighting : RegexHighlightingDefinition
 {
 	private readonly ColorScheme _scheme;
 	private readonly ITRXGameFlowSchemaService _schemaService;
-
-	// Construction
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="SyntaxHighlighting"/> class.
@@ -25,33 +21,19 @@ public sealed class SyntaxHighlighting : IHighlightingDefinition
 	/// <param name="scheme">The color scheme used for the highlighting rules.</param>
 	/// <param name="schemaService">The schema service used to source the highlighting keywords.</param>
 	public SyntaxHighlighting(ColorScheme scheme, ITRXGameFlowSchemaService schemaService)
+		: base("TRX Rules")
 	{
 		_scheme = scheme;
 		_schemaService = schemaService;
 	}
 
-	// Rules
-
-	private HighlightingRuleSet? _cachedRuleSet;
-
-	/// <summary>
-	/// Gets the main highlighting rule set for the TRX language.
-	/// </summary>
-	public HighlightingRuleSet MainRuleSet
-	{
-		get
-		{
-			_cachedRuleSet ??= BuildRuleSet();
-			return _cachedRuleSet;
-		}
-	}
-
-	private HighlightingRuleSet BuildRuleSet()
+	/// <inheritdoc/>
+	protected override IEnumerable<RegexHighlightingRule> BuildRules()
 	{
 		var patterns = new Patterns(_schemaService);
-		var ruleSet = new HighlightingRuleSet();
+		var rules = new List<RegexHighlightingRule>();
 
-		(string regex, HighlightingObject scheme, RegexOptions options)[] rules =
+		(string regex, HighlightingObject scheme, RegexOptions options)[] ruleDescriptors =
 		[
 			(patterns.Comments, _scheme.Comments, RegexOptions.None),
 			(patterns.Collections, _scheme.Collections, RegexOptions.IgnoreCase),
@@ -61,48 +43,19 @@ public sealed class SyntaxHighlighting : IHighlightingDefinition
 			(patterns.Strings, _scheme.Strings, RegexOptions.None)
 		];
 
-		foreach ((string regex, HighlightingObject scheme, RegexOptions options) in rules)
+		foreach ((string regex, HighlightingObject scheme, RegexOptions options) in ruleDescriptors)
 		{
 			// Skip empty patterns: an empty regex would match at every position and override
 			// the baseline colors (for example when the schema produced no keywords).
 			if (string.IsNullOrEmpty(regex))
 				continue;
 
-			ruleSet.Rules.Add(new HighlightingRule
-			{
-				Regex = new Regex(regex, options),
-				Color = CreateColor(scheme)
-			});
+			rules.Add(new(new Regex(regex, options), Style(scheme)));
 		}
 
-		ruleSet.Name = "TRX Rules";
-		return ruleSet;
+		return rules;
 	}
 
-	private static HighlightingColor CreateColor(HighlightingObject scheme) => new()
-	{
-		Foreground = new SimpleHighlightingBrush(ScriptingColorParser.ParseColorOrDefault(scheme.HtmlColor, ScriptingColorParser.DefaultHighlightingColor)),
-		FontWeight = scheme.IsBold ? FontWeights.Bold : FontWeights.Normal,
-		FontStyle = scheme.IsItalic ? FontStyles.Italic : FontStyles.Normal
-	};
-
-	// Other
-
-	/// <summary>
-	/// Gets the name of the TRX highlighting definition.
-	/// </summary>
-	public string Name => "TRX Rules";
-
-	/// <inheritdoc/>
-	public IEnumerable<HighlightingColor> NamedHighlightingColors => [];
-
-	/// <inheritdoc/>
-	public IDictionary<string, string> Properties => new Dictionary<string, string>();
-
-	/// <inheritdoc/>
-	public HighlightingColor? GetNamedColor(string name) => null;
-
-	/// <inheritdoc/>
-	public HighlightingRuleSet? GetNamedRuleSet(string name)
-		=> name == MainRuleSet.Name ? MainRuleSet : null;
+	private static RegexHighlightingStyle Style(HighlightingObject scheme)
+		=> new(scheme.HtmlColor, scheme.IsBold, scheme.IsItalic);
 }

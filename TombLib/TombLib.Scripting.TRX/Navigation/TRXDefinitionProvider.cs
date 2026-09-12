@@ -1,7 +1,6 @@
-using Nickelony.LanguageServer.Abstractions.Navigation;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Navigation;
 using System;
-using TombLib.Scripting.Navigation;
-using TombLib.Scripting.Text;
 using TombLib.Scripting.TRX.Services;
 
 namespace TombLib.Scripting.TRX.Navigation;

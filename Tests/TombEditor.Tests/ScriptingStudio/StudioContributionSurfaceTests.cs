@@ -284,7 +284,38 @@ public class StudioContributionSurfaceTests
 
 		public string FilePath { get; set; } = string.Empty;
 
-		public bool IsSilentSession { get; set; }
+		private EditorProcessingMode _processingMode;
+
+		public EditorProcessingMode ProcessingMode => _processingMode;
+
+		public IDisposable BeginProcessingScope(EditorProcessingMode mode)
+		{
+			EditorProcessingMode previousMode = _processingMode;
+			_processingMode = mode;
+			return new ProcessingScope(this, previousMode);
+		}
+
+		private sealed class ProcessingScope : IDisposable
+		{
+			private readonly TestEditorControl _owner;
+			private readonly EditorProcessingMode _previousMode;
+			private bool _disposed;
+
+			public ProcessingScope(TestEditorControl owner, EditorProcessingMode previousMode)
+			{
+				_owner = owner;
+				_previousMode = previousMode;
+			}
+
+			public void Dispose()
+			{
+				if (_disposed)
+					return;
+
+				_disposed = true;
+				_owner._processingMode = _previousMode;
+			}
+		}
 
 		public bool CreateBackupFiles { get; set; }
 
@@ -347,11 +378,11 @@ public class StudioContributionSurfaceTests
 		public void Dispose()
 		{ }
 
-		public void Load(string fileName, bool silentSession)
-		{
-			FilePath = fileName;
-			IsSilentSession = silentSession;
-		}
+		public void Load(string fileName)
+			=> Load(fileName, default);
+
+		public void Load(string fileName, DocumentLoadOptions options)
+			=> FilePath = fileName;
 
 		public void Paste()
 		{ }

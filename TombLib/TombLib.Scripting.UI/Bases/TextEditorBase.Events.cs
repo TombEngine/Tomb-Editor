@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Nickelony.IDEKit.AvalonEdit.Navigation;
 using TombLib.Scripting.UI.Rendering;
 
 namespace TombLib.Scripting.UI.Bases;
@@ -80,8 +81,12 @@ public abstract partial class TextEditorBase
 
 	private void TextEditor_TextChanged(object? sender, EventArgs e)
 	{
+		if (_contentPersistenceCoordinator.IsResetting)
+			return;
+
 		LastModified = DateTime.Now;
-		IsContentChanged = _contentPersistenceCoordinator.HandleContentChanged();
+		if (WorkspaceEditTarget is null)
+			IsContentChanged = _contentPersistenceCoordinator.HandleContentChanged();
 
 		OnLanguageTextChanged(e);
 	}
@@ -139,7 +144,7 @@ public abstract partial class TextEditorBase
 
 	private void TextEditor_MouseRightButtonDown(object? sender, MouseButtonEventArgs e)
 	{
-		_viewService.TryMoveCaretToMousePosition();
+		this.TryMoveCaretToMousePosition();
 
 		ContextMenu ??= TextEditorContextMenuFactory.BuildDefault();
 		ContextMenu.IsOpen = true;

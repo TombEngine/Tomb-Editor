@@ -1,8 +1,9 @@
-using Nickelony.LanguageServer.Abstractions.Hover;
+using Nickelony.IDEKit.Core.Identifiers;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Hover;
 using System;
 using System.Collections.Generic;
 using TombLib.Scripting.GameFlowScript.Types;
-using TombLib.Scripting.Hover;
 
 namespace TombLib.Scripting.GameFlowScript.Hover;
 
@@ -49,91 +50,21 @@ public sealed class GameFlowHoverProvider : ITextHoverProvider
 		return false;
 	}
 
-	// The word-boundary scan replicates AvalonEdit's TextUtilities.GetNextCaretPosition in
-	// WordBorder mode so the hover word is identical without allocating a TextDocument per hover.
+	// The word is the default identifier token (letters, digits, underscores); the GameFlow
+	// definition catalogs only contain identifier-like symbols. Probes on whitespace or
+	// punctuation resolve to the adjacent identifier or no word, instead of forming a
+	// punctuation-only run.
 	private static string? GetWordFromOffset(string documentText, int offset)
 	{
 		if (offset < 0 || offset > documentText.Length)
 			return null;
 
-		int wordStart = GetNextWordBorder(documentText, offset, forward: false);
-		int wordEnd = GetNextWordBorder(documentText, offset, forward: true);
+		var snapshot = new StringTextSnapshot(documentText);
+		TextRange? range = IdentifierHelper.TryGetContainingSpan(snapshot, offset, IdentifierCharacterPolicy.Default);
 
-		if (wordStart < 0 || wordEnd < 0 || wordEnd <= wordStart)
+		if (range is null)
 			return null;
 
-		return documentText.Substring(wordStart, wordEnd - wordStart).Trim();
-	}
-
-	private static int GetNextWordBorder(string text, int offset, bool forward)
-	{
-		int textLength = text.Length;
-
-		if (textLength <= 0)
-			return -1;
-
-		while (true)
-		{
-			int nextPos = forward ? offset + 1 : offset - 1;
-
-			if (nextPos < 0 || nextPos > textLength)
-				return -1;
-
-			if (nextPos == 0)
-			{
-				return 0;
-			}
-			else if (nextPos == textLength)
-			{
-				if (!char.IsWhiteSpace(text[textLength - 1]))
-					return textLength;
-			}
-			else
-			{
-				if (IsWordBorder(text[nextPos - 1], text[nextPos]))
-					return nextPos;
-			}
-
-			offset = nextPos;
-		}
-	}
-
-	private static bool IsWordBorder(char before, char after)
-		=> IsWordBorder(GetCharacterClass(before), GetCharacterClass(after));
-
-	private static bool IsWordBorder(WordCharacterClass before, WordCharacterClass after)
-	{
-		if (before == after)
-			return false;
-
-		if (before == WordCharacterClass.LineTerminator || after == WordCharacterClass.LineTerminator)
-			return false;
-
-		if (before == WordCharacterClass.Whitespace)
-			return false;
-
-		return true;
-	}
-
-	private static WordCharacterClass GetCharacterClass(char character)
-	{
-		if (character == '\r' || character == '\n')
-			return WordCharacterClass.LineTerminator;
-
-		if (char.IsWhiteSpace(character))
-			return WordCharacterClass.Whitespace;
-
-		if (char.IsLetterOrDigit(character) || character == '_')
-			return WordCharacterClass.IdentifierPart;
-
-		return WordCharacterClass.Other;
-	}
-
-	private enum WordCharacterClass
-	{
-		LineTerminator,
-		Whitespace,
-		IdentifierPart,
-		Other
+		return snapshot.GetText(range.Value.Offset, range.Value.Length).Trim();
 	}
 }

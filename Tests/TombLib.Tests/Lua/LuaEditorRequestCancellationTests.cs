@@ -1,12 +1,11 @@
-using Nickelony.LanguageServer.Abstractions.Completion;
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
-using Nickelony.LanguageServer.Abstractions.Editing;
-using Nickelony.LanguageServer.Abstractions.Hover;
-using Nickelony.LanguageServer.Abstractions.Infrastructure.Provider;
-using Nickelony.LanguageServer.Abstractions.Navigation;
-using Nickelony.LanguageServer.Abstractions.Signatures;
+using Nickelony.IDEKit.IntelliSense.Completion;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Hover;
+using Nickelony.IDEKit.IntelliSense.Navigation;
+using Nickelony.IDEKit.IntelliSense.Signatures;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -72,6 +71,35 @@ public class LuaEditorRequestCancellationTests
 			finally
 			{
 				hostWindow.Close();
+			}
+		});
+	}
+
+	[TestMethod]
+	public void Load_ObservesCancellation_WhenEditorRequestsArePending()
+	{
+		RunInSta(() =>
+		{
+			string filePath = Path.Combine(Path.GetTempPath(), $"tomb-editor-{Guid.NewGuid():N}.lua");
+			File.WriteAllText(filePath, "local loaded = true");
+
+			var provider = new TrackingIntelliSenseProvider();
+			var editor = CreateEditor(provider, "spa");
+			Window hostWindow = ShowInHostWindow(editor);
+
+			try
+			{
+				_ = InvokeCompletionRequest(editor);
+				Assert.IsFalse(provider.LastCompletionToken.IsCancellationRequested);
+
+				editor.Load(filePath, default);
+
+				Assert.IsTrue(provider.LastCompletionToken.IsCancellationRequested);
+			}
+			finally
+			{
+				hostWindow.Close();
+				File.Delete(filePath);
 			}
 		});
 	}

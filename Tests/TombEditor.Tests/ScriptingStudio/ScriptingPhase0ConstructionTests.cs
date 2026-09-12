@@ -2,8 +2,7 @@
 
 using Moq;
 using CommunityToolkit.Mvvm.Messaging;
-using Nickelony.LanguageServer.Abstractions.Editing;
-using Nickelony.LanguageServer.Abstractions.Navigation;
+using Nickelony.LanguageServer.Abstractions;
 using Nickelony.LanguageServer.Lua;
 using System;
 using System.IO;
@@ -100,7 +99,7 @@ public sealed class ScriptingPhase0ConstructionTests
 			builder.WithProfile(profile);
 			builder.WithDockHost(dockHost);
 			builder.DocumentController
-				.Setup(controller => controller.OpenFile(It.IsAny<string>(), It.IsAny<EditorType>(), It.IsAny<bool>()))
+				.Setup(controller => controller.OpenFile(It.IsAny<string>(), It.IsAny<EditorType>(), It.IsAny<DocumentLoadOptions>()))
 				.Throws(new InvalidOperationException("initial file failed"));
 
 			Assert.ThrowsException<InvalidOperationException>(() => builder.Build());

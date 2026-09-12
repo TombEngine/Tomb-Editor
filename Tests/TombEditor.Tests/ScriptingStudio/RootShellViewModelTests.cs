@@ -11,12 +11,15 @@ using TombIDE.ScriptingStudio.Shell;
 using TombIDE.ScriptingStudio.Workbench;
 using TombIDE.ScriptingStudio.WorkspaceProfile;
 using TombIDE.Shared.Docking;
+using TombIDE.Shared.Messaging;
 using TombIDE.Shared.Messaging.Scripting;
 using TombIDE.Shared.NewStructure;
 using TombLib.LevelData;
 using TombLib.Scripting.ClassicScript;
 using TombLib.Scripting.GameFlowScript;
 using TombLib.Scripting.TRX;
+using Nickelony.IDEKit.Workspace.Documents;
+using Nickelony.IDEKit.Workspace.Views;
 using TombLib.WPF.Services.Abstract;
 using static TombEditor.Tests.ScriptingStudio.ScriptingStudioChromeTestFixture;
 using static TombEditor.Tests.ScriptingStudio.ScriptingWorkspaceProfileTestFactory;
@@ -286,12 +289,107 @@ public class RootShellViewModelTests
         StaTestHelper.RunInSta(() =>
         {
             var scope = new Mock<IServiceScope>();
-            var shell = new ScriptingStudioShell(scope.Object, CreateViewModel());
+            var documentManager = new TestDocumentBridge();
+            var uiDispatcher = new Mock<IUiDispatcherService>();
+            uiDispatcher.Setup(value => value.Invoke(It.IsAny<Action>()))
+                .Callback<Action>(action => action());
+            var shell = new ScriptingStudioShell(
+                new AsyncServiceScope(scope.Object),
+                CreateViewModel(),
+                documentManager,
+                uiDispatcher.Object);
 
-            shell.Dispose();
-            shell.Dispose();
+            shell.StopAsync().GetAwaiter().GetResult();
+            shell.StopAsync().GetAwaiter().GetResult();
 
             scope.Verify(value => value.Dispose(), Times.Once);
+            Assert.AreEqual(1, documentManager.StopCount);
         });
+    }
+
+    private sealed class TestDocumentBridge : IWorkspaceDocumentManager
+    {
+        public int StopCount { get; private set; }
+
+        public Task<WorkspaceDocumentOpenResult> OpenAsync(
+            string? filePath,
+            WorkspaceDocumentOpenOptions options,
+            CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public IReadOnlyList<WorkspaceDocumentSnapshot> GetSnapshotsUnderDirectory(string directoryPath)
+            => [];
+
+        public Task<WorkspaceDocumentManagerOpenResult> OpenWithViewAsync(
+            string? filePath,
+            WorkspaceDocumentOpenOptions options,
+            IWorkspaceDocumentView view,
+            CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public WorkspaceDocumentManagerOpenResult OpenWithView(
+            string? filePath,
+            WorkspaceDocumentOpenOptions options,
+            IWorkspaceDocumentView view,
+            CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public WorkspaceDocumentMutationResult Replace(WorkspaceDocumentReplaceRequest request)
+            => throw new NotSupportedException();
+
+        public WorkspaceDocumentMutationResult Discard(WorkspaceDocumentDiscardRequest request)
+            => throw new NotSupportedException();
+
+        public Task<WorkspaceDocumentRenameResult> RenameAsync(
+            WorkspaceDocumentRenameRequest request,
+            CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<WorkspaceDocumentSaveAsResult> SaveAsAsync(
+            WorkspaceDocumentSaveAsRequest request,
+            CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<WorkspaceDocumentDeleteResult> DeleteAsync(
+            WorkspaceDocumentDeleteRequest request,
+            CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<WorkspaceDocumentDirectoryRenameResult> RenameDirectoryAsync(
+            WorkspaceDocumentDirectoryRenameRequest request,
+            CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<WorkspaceDocumentDirectoryDeleteResult> DeleteDirectoryAsync(
+            WorkspaceDocumentDirectoryDeleteRequest request,
+            CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<WorkspaceDocumentCommitResult> CommitAsync(
+            WorkspaceDocumentCommitRequest request,
+            CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<WorkspaceDocumentReloadResult> ReloadAsync(
+            WorkspaceDocumentReloadRequest request,
+            CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<WorkspaceDocumentConflictResolutionResult> ResolveExternalConflictAsync(
+            WorkspaceDocumentConflictResolutionRequest request,
+            CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public void UnregisterOpenView(IWorkspaceDocumentView view)
+            => throw new NotSupportedException();
+
+        public Task StopAsync()
+        {
+            StopCount++;
+            return Task.CompletedTask;
+        }
+
+        public ValueTask DisposeAsync()
+            => ValueTask.CompletedTask;
     }
 }

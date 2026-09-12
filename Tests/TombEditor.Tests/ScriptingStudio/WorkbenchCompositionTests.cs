@@ -3,8 +3,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Moq;
 using MvvmDialogs;
-using Nickelony.LanguageServer.Abstractions.Editing;
-using Nickelony.LanguageServer.Abstractions.Navigation;
+using Nickelony.LanguageServer.Abstractions;
 using Nickelony.LanguageServer.Lua;
 using System;
 using System.Collections.Generic;
@@ -14,7 +13,7 @@ using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.FindAndReplace;
 using TombIDE.ScriptingStudio.Lua;
 using TombIDE.ScriptingStudio.Shell;
-using TombIDE.ScriptingStudio.Shortcuts;
+using Nickelony.IDEKit.KeyBindings;
 using TombIDE.ScriptingStudio.TextEditing;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.ScriptingStudio.Workbench;
@@ -40,7 +39,7 @@ public sealed class WorkbenchCompositionTests
 	[DataRow(nameof(WorkbenchComposition.ProjectContext))]
 	[DataRow(nameof(WorkbenchComposition.Messenger))]
 	[DataRow(nameof(WorkbenchComposition.MessageService))]
-	[DataRow(nameof(WorkbenchComposition.ShortcutBindingService))]
+	[DataRow(nameof(WorkbenchComposition.KeyBindingService))]
 	[DataRow(nameof(WorkbenchComposition.MenuService))]
 	[DataRow(nameof(WorkbenchComposition.ToolBarService))]
 	[DataRow(nameof(WorkbenchComposition.StatusBarService))]
@@ -105,7 +104,7 @@ public sealed class WorkbenchCompositionTests
 			NullWhen(nameof(WorkbenchComposition.ProjectContext), projectContext.Object, nullDependency),
 			NullWhen(nameof(WorkbenchComposition.Messenger), messenger, nullDependency),
 			NullWhen(nameof(WorkbenchComposition.MessageService), new Mock<IMessageService>().Object, nullDependency),
-			NullWhen(nameof(WorkbenchComposition.ShortcutBindingService), CreateShortcutBindingService(), nullDependency),
+			NullWhen(nameof(WorkbenchComposition.KeyBindingService), CreateKeyBindingService(), nullDependency),
 			NullWhen(nameof(WorkbenchComposition.MenuService), ScriptingStudioChromeTestFixture.CreateMenuServiceMock().Object, nullDependency),
 			NullWhen(nameof(WorkbenchComposition.ToolBarService), ScriptingStudioChromeTestFixture.CreateToolBarServiceMock().Object, nullDependency),
 			NullWhen(nameof(WorkbenchComposition.StatusBarService), ScriptingStudioChromeTestFixture.CreateStatusBarServiceMock().Object, nullDependency),
@@ -125,10 +124,10 @@ public sealed class WorkbenchCompositionTests
 			NullWhen(nameof(WorkbenchComposition.FileSyncService), new StudioFileExplorerDocumentSyncService(), nullDependency));
 	}
 
-	private static IShortcutBindingService CreateShortcutBindingService()
-		=> new ShortcutBindingService(
-			new StudioCommandCatalog([]),
-			new ShortcutOverrideCollection(),
+	private static IKeyBindingService<UICommand> CreateKeyBindingService()
+		=> new KeyBindingService<UICommand>(
+			new CommandCatalog<UICommand>([]),
+			new KeyBindingOverrideCollection(),
 			_ => true);
 
 	private static T NullWhen<T>(string dependencyName, T value, string? nullDependency)

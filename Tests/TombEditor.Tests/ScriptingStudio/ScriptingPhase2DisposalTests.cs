@@ -1,14 +1,15 @@
 #nullable enable
 
+using System.IO;
 using CommunityToolkit.Mvvm.Messaging;
 using Moq;
 using Microsoft.Extensions.DependencyInjection;
 using MvvmDialogs;
-using Nickelony.LanguageServer.Abstractions.Editing;
-using Nickelony.LanguageServer.Abstractions.Navigation;
+using Nickelony.LanguageServer.Abstractions;
 using Nickelony.LanguageServer.Lua;
 using TombIDE.ScriptingStudio.Composition;
 using TombIDE.ScriptingStudio.Controls;
+using TombIDE.ScriptingStudio.FileExplorer;
 using TombIDE.ScriptingStudio.Lua;
 using TombIDE.ScriptingStudio.Messaging;
 using TombIDE.ScriptingStudio.Shell;
@@ -28,6 +29,48 @@ namespace TombEditor.Tests.ScriptingStudio;
 [TestClass]
 public sealed class ScriptingPhase2DisposalTests
 {
+	[TestMethod]
+	[TestCategory("TextEditorBaseModernization")]
+	public void FileExplorerDocumentSync_RoutesExternalObservationsThroughController()
+	{
+		var controller = new Mock<IEditorDocumentController>();
+		var service = new StudioFileExplorerDocumentSyncService();
+		const string changedPath = @"C:\Scripts\changed.lua";
+		const string deletedPath = @"C:\Scripts\deleted.lua";
+		const string oldPath = @"C:\Scripts\old.lua";
+		const string newPath = @"C:\Scripts\new.lua";
+		const string directoryPath = @"C:\Scripts";
+
+		service.ApplyChanged(
+			controller.Object,
+			false,
+			new FileSystemEventArgs(WatcherChangeTypes.Changed, directoryPath, "changed.lua"));
+		service.ApplyChanged(
+			controller.Object,
+			true,
+			new FileSystemEventArgs(WatcherChangeTypes.Changed, directoryPath, "changed.lua"));
+		service.ApplyDeleted(
+			controller.Object,
+			new FileSystemEventArgs(WatcherChangeTypes.Deleted, directoryPath, "deleted.lua"));
+		service.ApplyRenamed(
+			controller.Object,
+			new RenamedEventArgs(
+				WatcherChangeTypes.Renamed,
+				directoryPath,
+				"new.lua",
+				"old.lua"));
+		service.ApplyOpened(controller.Object, new FileOpenedEventArgs(changedPath));
+		service.ApplyOpened(controller.Object, FileOpenedEventArgs.CreateSourceView(newPath));
+		service.ApplyWindowFocus(controller.Object, true);
+
+		controller.Verify(item => item.AddFileToReloadQueue(changedPath), Times.Once);
+		controller.Verify(item => item.AddFileToReloadQueue(deletedPath), Times.Once);
+		controller.Verify(item => item.AddFileToReloadQueue(oldPath), Times.Once);
+		controller.Verify(item => item.OpenFile(changedPath, EditorType.Default, default), Times.Once);
+		controller.Verify(item => item.OpenSourceFile(newPath, default), Times.Once);
+		controller.Verify(item => item.TryRunFileReloadQueue(), Times.Once);
+	}
+
 	[TestMethod]
 	public void LayoutCoordinator_DisposesLayoutAndDockHostExactlyOnce()
 	{

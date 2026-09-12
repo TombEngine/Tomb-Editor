@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.ClassicScript.Mnemonics;
-using TombLib.Scripting.Extensions;
-using TombLib.Scripting.Text;
+using TombLib.Scripting.UI.Extensions;
 
 namespace TombLib.Scripting.ClassicScript.Services;
 

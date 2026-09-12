@@ -1,7 +1,8 @@
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
-using Nickelony.LanguageServer.Abstractions.Completion;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -199,8 +200,8 @@ public sealed class CompletionData : ICompletionData, INotifyPropertyChanged
 	}
 
 	/// <summary>
-	/// Rebases the item's commit context onto the current document version and generation, dropping
-	/// any in-flight resolve task so the next request re-resolves.
+	/// Rebases the item's commit context onto the current document version and session generation,
+	/// dropping any in-flight resolve task so the next request re-resolves.
 	/// </summary>
 	public void RebaseForCurrentDocument(int requestDocumentVersion, int requestGeneration)
 	{
@@ -239,7 +240,7 @@ public sealed class CompletionData : ICompletionData, INotifyPropertyChanged
 		if (textEdit is not TextCompletionTextEdit completionTextEdit)
 			return fallbackSegment;
 
-		TextCompletionRange range = useReplaceRange
+		TextRange range = useReplaceRange
 			? completionTextEdit.ReplacementRange
 			: completionTextEdit.InsertRange;
 
@@ -249,36 +250,16 @@ public sealed class CompletionData : ICompletionData, INotifyPropertyChanged
 	}
 
 	private static bool TryCreateCompletionSegment(TextDocument document,
-		TextCompletionRange range,
+		TextRange range,
 		out (int Offset, int Length) segment)
 	{
 		segment = default;
 
-		if (!TryGetCompletionOffset(document, range.Start, out int startOffset)
-			|| !TryGetCompletionOffset(document, range.End, out int endOffset)
-			|| endOffset < startOffset)
-		{
-			return false;
-		}
-
-		segment = (startOffset, endOffset - startOffset);
-		return true;
-	}
-
-	private static bool TryGetCompletionOffset(TextDocument document, TextCompletionPosition position, out int offset)
-	{
-		offset = 0;
-		int lineNumber = position.Line + 1;
-
-		if (lineNumber < 1 || lineNumber > document.LineCount)
+		// Completion ranges are absolute document offsets; they must fit within the document.
+		if (range.EndOffset > document.TextLength)
 			return false;
 
-		DocumentLine line = document.GetLineByNumber(lineNumber);
-
-		if (position.Character < 0 || position.Character > line.Length)
-			return false;
-
-		offset = line.Offset + position.Character;
+		segment = (range.Offset, range.Length);
 		return true;
 	}
 
@@ -287,7 +268,8 @@ public sealed class CompletionData : ICompletionData, INotifyPropertyChanged
 	private Border? BuildDescriptionContent()
 	{
 		bool hasDetail = !string.IsNullOrWhiteSpace(_item.Detail);
-		bool hasDescription = !string.IsNullOrWhiteSpace(_item.Description);
+		string? descriptionText = MarkupTextNormalizer.NormalizeForPlainText(_item.Description);
+		bool hasDescription = descriptionText is not null;
 
 		if (!hasDetail && !hasDescription)
 			return null;
@@ -312,13 +294,11 @@ public sealed class CompletionData : ICompletionData, INotifyPropertyChanged
 			});
 		}
 
-		if (hasDescription)
+		if (descriptionText is string displayDescription)
 		{
-			string descriptionText = _item.Description ?? string.Empty;
-
 			panel.Children.Add(_item.IsDescriptionMarkdown
-				? MarkdownToolTipRenderer.CreateContent(descriptionText, DescriptionForegroundBrush, DescriptionBackgroundBrush, false)
-				: MarkdownToolTipRenderer.CreatePlainTextContent(descriptionText, DescriptionForegroundBrush, false));
+				? MarkdownToolTipRenderer.CreateContent(displayDescription, DescriptionForegroundBrush, DescriptionBackgroundBrush, false)
+				: MarkdownToolTipRenderer.CreatePlainTextContent(displayDescription, DescriptionForegroundBrush, false));
 		}
 
 		return new Border

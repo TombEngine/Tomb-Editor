@@ -2,13 +2,14 @@
 
 using System;
 using System.Collections.Generic;
+using Nickelony.IDEKit.AvalonEdit.Navigation;
+using Nickelony.IDEKit.Core.Navigation;
 using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.Diagnostics;
-using TombIDE.ScriptingStudio.Navigation;
 using TombIDE.ScriptingStudio.Shell;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.ScriptingStudio.WorkspaceProfile;
-using TombLib.Scripting.Presentation;
+using TombLib.Scripting.UI.Presentation;
 using TombLib.Scripting.UI.Bases;
 
 namespace TombIDE.ScriptingStudio.Workbench;
@@ -57,7 +58,7 @@ internal sealed class DocumentDiagnosticsPaneProvider : IStudioPaneContributionP
 	{
 		NavigateToLocation(
 			diagnostic.FilePath,
-			_ => new EditorNavigationLocation(
+			_ => new NavigationLocation(
 				diagnostic.FilePath,
 				diagnostic.StartOffset,
 				diagnostic.StartOffset,
@@ -65,7 +66,7 @@ internal sealed class DocumentDiagnosticsPaneProvider : IStudioPaneContributionP
 				diagnostic.LineNumber));
 	}
 
-	private void NavigateToLocation(string filePath, Func<TextEditorBase, EditorNavigationLocation?> locationFactory)
+	private void NavigateToLocation(string filePath, Func<TextEditorBase, NavigationLocation?> locationFactory)
 	{
 		if (string.IsNullOrWhiteSpace(filePath))
 			return;
@@ -75,7 +76,7 @@ internal sealed class DocumentDiagnosticsPaneProvider : IStudioPaneContributionP
 		if (_documentController.CurrentEditor is not TextEditorBase textEditor)
 			return;
 
-		EditorNavigationLocation? location = locationFactory(textEditor);
+		NavigationLocation? location = locationFactory(textEditor);
 
 		if (location is null)
 			return;

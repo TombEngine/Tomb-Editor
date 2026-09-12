@@ -1,9 +1,11 @@
-using ICSharpCode.AvalonEdit.Document;
+using System;
 using TombLib.Scripting.Lua.Documents;
+using Nickelony.IDEKit.Core.Text;
 
 namespace TombLib.Tests;
 
 [TestClass]
+[TestCategory("TextEditorBaseModernization")]
 public class TombEngineLevelScriptServiceTests
 {
 	private readonly TombEngineLevelScriptService _service = new();
@@ -61,6 +63,6 @@ public class TombEngineLevelScriptServiceTests
 		Assert.IsTrue(secondResult);
 	}
 
-	private static TextDocument CreateDocument(params string[] lines)
-		=> new(string.Join(Environment.NewLine, lines));
+	private static ITextSnapshot CreateDocument(params string[] lines)
+		=> new StringTextSnapshot(string.Join(Environment.NewLine, lines));
 }

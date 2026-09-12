@@ -1,11 +1,11 @@
 #nullable enable
 
 using NLog;
+using Nickelony.IDEKit.KeyBindings;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TombIDE.ScriptingStudio.Shortcuts;
 using TombIDE.ScriptingStudio.WorkspaceProfile;
 using TombIDE.Shared.Docking;
 using TombLib.Utils;
@@ -48,7 +48,7 @@ public interface IScriptingStudioShellSettingsStore
 	/// preserving all other settings (layout, editor config, etc.).
 	/// Returns <see langword="true"/> when the save succeeded.
 	/// </summary>
-	bool SaveShortcutOverrides(ScriptingWorkspaceKind workspaceKind, ShortcutOverrideCollection overrides);
+	bool SaveShortcutOverrides(ScriptingWorkspaceKind workspaceKind, KeyBindingOverrideCollection overrides);
 }
 
 public sealed class ScriptingStudioShellWorkspaceSettings
@@ -77,7 +77,7 @@ public sealed class ScriptingStudioShellWorkspaceSettings
 
 	public bool UseNewIncludeMethod { get; set; } = true;
 
-	public ShortcutOverrideCollection ShortcutOverrides { get; set; } = new();
+	public KeyBindingOverrideCollection ShortcutOverrides { get; set; } = new();
 
 	public ScriptingStudioShellWorkspaceSettings Clone() => new()
 	{
@@ -94,17 +94,17 @@ public sealed class ScriptingStudioShellWorkspaceSettings
 		ShortcutOverrides = CloneShortcutOverrides(ShortcutOverrides)
 	};
 
-	private static ShortcutOverrideCollection CloneShortcutOverrides(ShortcutOverrideCollection source)
+	private static KeyBindingOverrideCollection CloneShortcutOverrides(KeyBindingOverrideCollection source)
 	{
-		var clone = new ShortcutOverrideCollection { Version = source.Version };
+		var clone = new KeyBindingOverrideCollection { Version = source.Version };
 
-		foreach (ShortcutOverrideEntry entry in source.Overrides)
+		foreach (KeyBindingOverrideEntry entry in source.Overrides)
 		{
-			clone.Overrides.Add(new ShortcutOverrideEntry
+			clone.Overrides.Add(new KeyBindingOverrideEntry
 			{
 				CommandId = entry.CommandId,
 				Bindings = entry.Bindings
-					.Select(b => new ShortcutBindingSettings { KeyName = b.KeyName, Modifiers = b.Modifiers })
+					.Select(b => new KeyBindingSettings { KeyName = b.KeyName, Modifiers = b.Modifiers })
 					.ToList()
 			});
 		}
@@ -252,7 +252,7 @@ internal sealed class XmlScriptingStudioShellSettingsStore : IScriptingStudioShe
 		XmlUtils.WriteXmlFile(_settingsPath, document);
 	}
 
-	public bool SaveShortcutOverrides(ScriptingWorkspaceKind workspaceKind, ShortcutOverrideCollection overrides)
+	public bool SaveShortcutOverrides(ScriptingWorkspaceKind workspaceKind, KeyBindingOverrideCollection overrides)
 	{
 		ArgumentNullException.ThrowIfNull(overrides);
 

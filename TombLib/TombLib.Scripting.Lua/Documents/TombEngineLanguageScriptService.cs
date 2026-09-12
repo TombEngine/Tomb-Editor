@@ -2,6 +2,7 @@ using ICSharpCode.AvalonEdit.Document;
 using System;
 using System.Text.RegularExpressions;
 using TombLib.Scripting.Lua.Parsing;
+using TombLib.Scripting.UI.Bases;
 
 namespace TombLib.Scripting.Lua.Documents;
 
@@ -44,6 +45,36 @@ public sealed partial class TombEngineLanguageScriptService
 			return InsertLanguageScript(document, languageScript, insertionLine);
 
 		return InsertLanguageScriptIntoEmptyTable(document, languageScript, stopLine);
+	}
+
+	/// <summary>
+	/// Inserts a generated language entry through the editor's canonical edit target.
+	/// </summary>
+	/// <param name="textEditor">The editor whose target should receive the mutation.</param>
+	/// <param name="languageScript">The generated language-table entry to insert.</param>
+	/// <returns>The one-based line number of the inserted entry, or <see langword="null"/> when no suitable strings table could be found.</returns>
+	public int? InsertLanguageScript(TextEditorBase textEditor, string languageScript)
+	{
+		string? stringsVariableName = TryGetStringsVariableName(textEditor.Document);
+
+		if (stringsVariableName is null)
+			return null;
+
+		DocumentLine? stringsStartLine = FindStringsStartLine(textEditor.Document, stringsVariableName);
+
+		if (stringsStartLine is null)
+			return null;
+
+		DocumentLine? stopLine = FindStringsStopLine(textEditor.Document, stringsStartLine);
+
+		if (stopLine is null)
+			return null;
+
+		DocumentLine? insertionLine = FindLanguageInsertionLine(textEditor.Document, stringsStartLine, stopLine);
+
+		return insertionLine is not null
+			? InsertLanguageScript(textEditor, languageScript, insertionLine)
+			: InsertLanguageScriptIntoEmptyTable(textEditor, languageScript, stopLine);
 	}
 
 	private static string? TryGetStringsVariableName(TextDocument document)
@@ -168,9 +199,27 @@ public sealed partial class TombEngineLanguageScriptService
 		return insertionLine.LineNumber + 1;
 	}
 
+	private static int InsertLanguageScript(TextEditorBase textEditor, string languageScript, DocumentLine insertionLine)
+	{
+		string rawLine = textEditor.Document.GetText(insertionLine);
+		string cleanLine = LuaLineParser.StripLineComment(rawLine).TrimEnd();
+
+		if (cleanLine.EndsWith('}'))
+			textEditor.InsertText(insertionLine.Offset + cleanLine.Length, ",");
+
+		textEditor.InsertText(insertionLine.EndOffset, Environment.NewLine + languageScript);
+		return insertionLine.LineNumber + 1;
+	}
+
 	private static int InsertLanguageScriptIntoEmptyTable(TextDocument document, string languageScript, DocumentLine stopLine)
 	{
 		document.Insert(stopLine.Offset, languageScript + Environment.NewLine);
+		return stopLine.LineNumber;
+	}
+
+	private static int InsertLanguageScriptIntoEmptyTable(TextEditorBase textEditor, string languageScript, DocumentLine stopLine)
+	{
+		textEditor.InsertText(stopLine.Offset, languageScript + Environment.NewLine);
 		return stopLine.LineNumber;
 	}
 }

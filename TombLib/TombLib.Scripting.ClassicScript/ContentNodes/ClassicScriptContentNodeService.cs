@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.ClassicScript.Commands;
 using TombLib.Scripting.ClassicScript.Services;
 using TombLib.Scripting.ClassicScript.Types;
-using TombLib.Scripting.Text;
 
 namespace TombLib.Scripting.ClassicScript.ContentNodes;
 

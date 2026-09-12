@@ -1,6 +1,8 @@
 #nullable enable
 
-using Nickelony.LanguageServer.Abstractions.Editing;
+using Nickelony.LanguageServer.Abstractions;
+using Nickelony.IDEKit.AvalonEdit.Editing;
+using Nickelony.IDEKit.Core.Editing;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,12 +35,17 @@ internal sealed class TextWorkspaceCommandService(TextWorkspaceEditApplier works
 			if (workspaceEdit is null || !workspaceEdit.HasEdits)
 				return TextWorkspaceCommandResult.NoChanges;
 
-			TextWorkspaceEditSelectionState selectionState = TextWorkspaceEditSelectionState.Capture(editor);
-			TextWorkspaceEditTransaction transaction = _workspaceEditApplier.Apply(workspaceEdit, selectionState);
+			TextWorkspaceEditSelectionState selectionState = TextWorkspaceEditSelectionState.Capture(editor, editor.FilePath);
+			TextWorkspaceEditApplicationResult result = _workspaceEditApplier.Apply(workspaceEdit, selectionState);
 
-			return transaction.HasChanges
-				? TextWorkspaceCommandResult.Applied(transaction)
-				: TextWorkspaceCommandResult.NoChanges;
+			return result.Status switch
+			{
+				TextWorkspaceEditApplicationStatus.Completed when result.HasChanges => TextWorkspaceCommandResult.Applied(result),
+				TextWorkspaceEditApplicationStatus.Completed => TextWorkspaceCommandResult.NoChanges,
+				TextWorkspaceEditApplicationStatus.ValidationFailed => TextWorkspaceCommandResult.ValidationFailed(result),
+				TextWorkspaceEditApplicationStatus.PartiallyApplied => TextWorkspaceCommandResult.PartiallyApplied(result),
+				_ => throw new InvalidOperationException($"Unknown workspace edit status: {result.Status}.")
+			};
 		}
 		catch (OperationCanceledException)
 		{
@@ -67,11 +74,16 @@ internal sealed class TextWorkspaceCommandService(TextWorkspaceEditApplier works
 			if (workspaceEdit is null || !workspaceEdit.HasEdits)
 				return TextWorkspaceCommandResult.NoChanges;
 
-			TextWorkspaceEditTransaction transaction = _workspaceEditApplier.Apply(workspaceEdit);
+			TextWorkspaceEditApplicationResult result = _workspaceEditApplier.Apply(workspaceEdit);
 
-			return transaction.HasChanges
-				? TextWorkspaceCommandResult.Applied(transaction)
-				: TextWorkspaceCommandResult.NoChanges;
+			return result.Status switch
+			{
+				TextWorkspaceEditApplicationStatus.Completed when result.HasChanges => TextWorkspaceCommandResult.Applied(result),
+				TextWorkspaceEditApplicationStatus.Completed => TextWorkspaceCommandResult.NoChanges,
+				TextWorkspaceEditApplicationStatus.ValidationFailed => TextWorkspaceCommandResult.ValidationFailed(result),
+				TextWorkspaceEditApplicationStatus.PartiallyApplied => TextWorkspaceCommandResult.PartiallyApplied(result),
+				_ => throw new InvalidOperationException($"Unknown workspace edit status: {result.Status}.")
+			};
 		}
 		catch (OperationCanceledException)
 		{

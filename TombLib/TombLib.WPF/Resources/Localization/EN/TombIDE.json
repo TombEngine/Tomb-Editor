@@ -35,6 +35,8 @@
 		"NewFileTitle": "Create New File",
 		"NewFolderTitle": "Create New Folder",
 		"RenameTitle": "Rename Item",
+		"UnsavedChangesMessage": "Save changes to '{0}' before deleting?",
+		"UnsavedChangesTitle": "Unsaved changes",
 		"Title": "File Explorer"
 	},
 	"ReferenceBrowserView": {

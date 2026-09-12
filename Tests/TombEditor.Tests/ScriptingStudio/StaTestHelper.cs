@@ -15,7 +15,7 @@ internal static class StaTestHelper
     /// Runs the test body on a dedicated STA thread without installing a synchronization context.
     /// Blocking waits are safe for these tests because production UI dispatch is not being exercised.
     /// </summary>
-    public static void RunInSta(Action action)
+    public static void RunInSta(Action action, TimeSpan? timeout = null)
     {
         ExceptionDispatchInfo? capturedException = null;
 
@@ -35,7 +35,7 @@ internal static class StaTestHelper
         thread.SetApartmentState(ApartmentState.STA);
         thread.IsBackground = true;
         thread.Start();
-        JoinStaThread(thread);
+        JoinStaThread(thread, timeout ?? StaThreadTimeout);
 
         capturedException?.Throw();
     }
@@ -63,19 +63,19 @@ internal static class StaTestHelper
         thread.SetApartmentState(ApartmentState.STA);
         thread.IsBackground = true;
         thread.Start();
-        JoinStaThread(thread);
+        JoinStaThread(thread, StaThreadTimeout);
 
         capturedException?.Throw();
         return result ?? throw new InvalidOperationException("The STA function did not return a workbench reference.");
     }
 
-    private static void JoinStaThread(Thread thread)
+    private static void JoinStaThread(Thread thread, TimeSpan timeout)
     {
-        if (thread.Join(StaThreadTimeout))
+        if (thread.Join(timeout))
             return;
 
         throw new TimeoutException(
-            $"The STA test thread did not finish within {StaThreadTimeout.TotalSeconds:0} seconds. "
+            $"The STA test thread did not finish within {timeout.TotalSeconds:0} seconds. "
             + "The test may be blocked on an incomplete task or dispatcher operation.");
     }
 

@@ -1,8 +1,7 @@
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using System;
 using System.Collections.Generic;
-using TombLib.Scripting.Diagnostics;
-using TombLib.Scripting.Text;
 using TombLib.Scripting.TRX.Resources;
 using TombLib.Scripting.TRX.Services;
 

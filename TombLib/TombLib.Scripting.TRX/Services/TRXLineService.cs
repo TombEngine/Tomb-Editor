@@ -1,26 +1,30 @@
-using System;
-using TombLib.Scripting.Text;
+using Nickelony.IDEKit.Core.Comments;
 
 namespace TombLib.Scripting.TRX.Services;
 
 /// <summary>
 /// Default implementation of <see cref="ITRXLineService"/>.
-/// Delegates comment removal and masking to <see cref="LineCommentHelper"/>
-/// with the <c>"//"</c> delimiter.
+/// Delegates comment removal and masking to the shared <see cref="TextLineSyntaxService"/>
+/// with a <c>"//"</c> <see cref="CommentSyntax"/>.
 /// </summary>
-public sealed class TRXLineService : ITRXLineService
+public sealed class TRXLineService : TextLineSyntaxService, ITRXLineService
 {
-	private const string CommentDelimiter = "//";
+	/// <summary>
+	/// Initializes a new instance of the <see cref="TRXLineService"/> class.
+	/// </summary>
+	public TRXLineService()
+		: base(new CommentSyntax("//", null, null, StringLiteralStyle.DoubleQuoted))
+	{ }
 
 	/// <inheritdoc/>
 	public string RemoveComments(string lineText)
-		=> LineCommentHelper.RemoveLineComment(lineText, CommentDelimiter);
+		=> base.RemoveComments(lineText);
 
 	/// <inheritdoc/>
 	public string EscapeComments(string lineText)
-		=> LineCommentHelper.MaskLineComment(lineText, CommentDelimiter);
+		=> base.EscapeComments(lineText);
 
 	/// <inheritdoc/>
 	public bool IsEmptyOrComments(string? lineText)
-		=> string.IsNullOrWhiteSpace(lineText) || lineText.TrimStart().StartsWith(CommentDelimiter, StringComparison.Ordinal);
+		=> base.IsEmptyOrComments(lineText);
 }

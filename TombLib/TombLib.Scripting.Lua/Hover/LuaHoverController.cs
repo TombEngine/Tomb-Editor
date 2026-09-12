@@ -1,11 +1,10 @@
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
-using Nickelony.LanguageServer.Abstractions.Hover;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Hover;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Hover;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using TombLib.Scripting.Diagnostics;
-using TombLib.Scripting.Hover;
-using TombLib.Scripting.UI.Completion;
 using TombLib.Scripting.UI.Hover;
 
 namespace TombLib.Scripting.Lua;
@@ -38,7 +37,7 @@ public sealed partial class LuaEditor
 				showCombinedToolTip: (hoverInfo, diagnosticInfo) =>
 					HoverControllerFactory.ShowStandardCombinedToolTip(_editor, hoverInfo, diagnosticInfo),
 				applyHoverState: _ => { },
-				handleRequestFailure: exception => LogEditorFailure("Hover request", exception));
+				sessionGenerationProvider: () => _editor.SessionGeneration);
 		}
 
 		internal Task HandleMouseHoverAsync(MouseEventArgs e) => _controller.HandleMouseHoverAsync(e);
@@ -51,7 +50,7 @@ public sealed partial class LuaEditor
 
 		private TextHoverRequestState BuildRequestState(int hoveredOffset)
 		{
-			_editor.TryGetDiagnosticInfo(hoveredOffset, out TextEditorDiagnosticInfo? diagnosticInfo, allowLineFallback: false);
+			_editor.TryGetDiagnosticInfo(hoveredOffset, out TextEditorDiagnostic? diagnosticInfo, allowLineFallback: false);
 			bool canShowToolTip = TextPopupInteractionRules.CanShowHover(_editor.IsCompletionWindowOpen, _editor._signatureHelpController.IsVisible);
 			int hoverOffset = 0;
 			bool shouldRequestHover = false;

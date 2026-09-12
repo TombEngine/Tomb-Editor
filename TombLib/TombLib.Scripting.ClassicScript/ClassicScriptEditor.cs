@@ -1,26 +1,25 @@
 using ICSharpCode.AvalonEdit.Rendering;
-using Nickelony.LanguageServer.Abstractions.Signatures;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Signatures;
+using Nickelony.IDEKit.IntelliSense.Navigation;
+using Nickelony.IDEKit.IntelliSense.Signatures;
 using NLog;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Nickelony.IDEKit.Core.Comments;
+using Nickelony.IDEKit.Core.Formatting;
+using Nickelony.IDEKit.Core.Infrastructure;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using TombLib.Scripting.ClassicScript.Cleaning;
 using TombLib.Scripting.ClassicScript.Completion;
 using TombLib.Scripting.ClassicScript.Highlighting;
-using TombLib.Scripting.Cleaning;
-using TombLib.Scripting.Completion;
-using TombLib.Scripting.Navigation;
-using TombLib.Scripting.Signatures;
-using TombLib.Scripting.Text;
-using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Completion;
-using TombLib.Scripting.UI.Editing;
+using TombLib.Scripting.UI.Bases;
+using Nickelony.IDEKit.AvalonEdit.Documents;
 using TombLib.Scripting.UI.Editors;
 using TombLib.Scripting.UI.Resources;
-using TombLib.Scripting.UI.Signatures;
-using TombLib.Scripting.UI.Text;
-using TombLib.Scripting.UI.Threading;
 
 namespace TombLib.Scripting.ClassicScript;
 
@@ -102,7 +101,7 @@ public sealed partial class ClassicScriptEditor : TextEditorBase, ISyntaxPreview
 
 		_sectionRenderer = InitializeRenderers();
 
-		CommentPrefix = ";";
+		CommentSyntax = new CommentSyntax(";", null, null, StringLiteralStyle.None);
 	}
 
 	private SectionRenderer InitializeRenderers()
@@ -127,7 +126,7 @@ public sealed partial class ClassicScriptEditor : TextEditorBase, ISyntaxPreview
 	/// <inheritdoc/>
 	protected override void OnLanguageTextEntered(TextCompositionEventArgs e)
 	{
-		if (CompletionEnabled && !SuppressCompletion)
+		if (IntelliSenseEnabled && CompletionEnabled && !SuppressCompletion)
 			QueueTextEnteredCompletionDecision(e.Text);
 	}
 
@@ -203,12 +202,14 @@ public sealed partial class ClassicScriptEditor : TextEditorBase, ISyntaxPreview
 		if (nextFreeIndex == -1)
 			return;
 
-		TextEditorEditHelper.InsertText(this, CaretOffset, nextFreeIndex.ToString());
+		InsertText(CaretOffset, nextFreeIndex.ToString());
 	}
 
 	/// <inheritdoc/>
 	public override void UpdateSettings(TombLib.Scripting.UI.Bases.ConfigurationBase configuration)
 	{
+		EnsureNotDisposed();
+
 		if (configuration is not ClassicScriptEditorConfiguration config)
 			return;
 
@@ -267,7 +268,7 @@ public sealed partial class ClassicScriptEditor : TextEditorBase, ISyntaxPreview
 		ITextLine lastSectionLine = source.GetLineByNumber(lastSectionLineNumber.Value);
 		int insertOffset = lastSectionLine.Offset + lastSectionLine.Length;
 
-		TextEditorEditHelper.InsertText(this, insertOffset, $"{Environment.NewLine}Plugin= {nextFreePluginIndex}, {pluginString}, IGNORE");
+		InsertText(insertOffset, $"{Environment.NewLine}Plugin= {nextFreePluginIndex}, {pluginString}, IGNORE");
 
 		return true;
 	}

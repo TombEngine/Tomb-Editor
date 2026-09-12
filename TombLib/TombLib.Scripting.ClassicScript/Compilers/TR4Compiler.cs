@@ -1,8 +1,8 @@
+using Nickelony.IDEKit.Tooling;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
-using TombLib.Scripting.IO;
+using TombLib.Scripting.UI.IO;
 
 namespace TombLib.Scripting.ClassicScript.Compilers;
 
@@ -11,6 +11,7 @@ namespace TombLib.Scripting.ClassicScript.Compilers;
 /// </summary>
 public static class TR4Compiler
 {
+	private static readonly IProcessRunner s_processRunner = new ProcessRunner();
 	/// <summary>
 	/// Throws when the TR4 script compiler directory contains a character that is invalid for
 	/// the DOSBox mount command.
@@ -34,17 +35,17 @@ public static class TR4Compiler
 	/// <returns>The compiler log content.</returns>
 	public static string Compile(string projectScriptPath, string projectEnginePath)
 	{
-		return CompileCore(projectScriptPath, projectEnginePath, ClassicScriptCompilerPaths.Default, ProcessCompilerProcessFactory.Instance);
+		return CompileCore(projectScriptPath, projectEnginePath, ClassicScriptCompilerPaths.Default, s_processRunner);
 	}
 
 	internal static string CompileCore(
 		string projectScriptPath,
 		string projectEnginePath,
 		ClassicScriptCompilerPaths compilerPaths,
-		ICompilerProcessFactory processFactory)
+		IProcessRunner processRunner)
 	{
 		ArgumentNullException.ThrowIfNull(compilerPaths);
-		ArgumentNullException.ThrowIfNull(processFactory);
+		ArgumentNullException.ThrowIfNull(processRunner);
 
 		ThrowIfInvalidCompilerPath(compilerPaths.TR4ScriptCompilerDirectory);
 
@@ -55,7 +56,7 @@ public static class TR4Compiler
 
 		try
 		{
-			var startInfo = new ProcessStartInfo
+			var request = new ProcessRunRequest
 			{
 				FileName = compilerPaths.DOSBoxExecutable,
 				WorkingDirectory = compilerPaths.DOSDirectory,
@@ -68,8 +69,7 @@ public static class TR4Compiler
 				UseShellExecute = true
 			};
 
-			using (ICompilerProcess? compilerProcess = processFactory.Start(startInfo))
-				compilerProcess?.WaitForExit();
+			processRunner.Run(request);
 
 			string logFilePath = Path.Combine(compilerPaths.TR4ScriptCompilerDirectory, "logs.txt");
 			string logFileContent = File.ReadAllText(logFilePath, Encoding.GetEncoding(1252));

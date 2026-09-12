@@ -1,6 +1,6 @@
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
-using TombLib.Scripting.Lua.Completion;
+using Nickelony.IDEKit.Core.Indentation;
 using TombLib.Scripting.Lua.Editing;
 
 namespace TombLib.Tests;
@@ -43,11 +43,11 @@ public class LuaIndentationStrategyTests
 	[TestMethod]
 	public void NormalizeCompletionInsertion_DedentsEndLineAndPreservesCaretAndCrLf()
 	{
-		LuaCompletionNormalizationResult result = LuaIndentationStrategy.NormalizeCompletionInsertion(
+		CompletionInsertionResult result = LuaIndentationStrategy.Instance.NormalizeCompletionInsertion(new CompletionInsertionContext(
 			"if condition then\r\n\t\r\nend",
 			"if condition then\r\n\t".Length,
 			"    ",
-			"    ");
+			"    "));
 
 		Assert.AreEqual("if condition then\r\n        \r\n    end", result.Text);
 		Assert.AreEqual("if condition then\r\n        ".Length, result.CaretOffset);
@@ -56,13 +56,13 @@ public class LuaIndentationStrategyTests
 	[TestMethod]
 	public void BuildEnterInsertion_BeforeDedent_SplitsLineAndRemovesExistingIndentation()
 	{
-		LuaEnterInsertionResult result = LuaIndentationStrategy.BuildEnterInsertion(
+		EnterInsertionResult result = LuaIndentationStrategy.Instance.BuildEnterInsertion(new EnterInsertionContext(
 			"if condition then",
 			"    end",
 			string.Empty,
 			"    ",
 			"\r\n",
-			useSmartIndent: true);
+			UseSmartIndent: true));
 
 		Assert.AreEqual("\r\n    \r\n", result.Text);
 		Assert.AreEqual("\r\n    ".Length, result.CaretOffset);
@@ -72,13 +72,13 @@ public class LuaIndentationStrategyTests
 	[TestMethod]
 	public void BuildEnterInsertion_WithoutDedentSplit_InsertsIndentedNewLineOnly()
 	{
-		LuaEnterInsertionResult result = LuaIndentationStrategy.BuildEnterInsertion(
+		EnterInsertionResult result = LuaIndentationStrategy.Instance.BuildEnterInsertion(new EnterInsertionContext(
 			"if condition then",
 			"value = 1",
 			string.Empty,
 			"    ",
 			"\r\n",
-			useSmartIndent: true);
+			UseSmartIndent: true));
 
 		Assert.AreEqual("\r\n    ", result.Text);
 		Assert.AreEqual("\r\n    ".Length, result.CaretOffset);

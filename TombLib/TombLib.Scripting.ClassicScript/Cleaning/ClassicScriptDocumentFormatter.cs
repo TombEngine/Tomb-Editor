@@ -1,8 +1,8 @@
 using System;
 using System.Text;
+using Nickelony.IDEKit.Core.Formatting;
 using TombLib.Scripting.ClassicScript.Resources;
-using TombLib.Scripting.Cleaning;
-using TombLib.Scripting.Extensions;
+using TombLib.Scripting.UI.Extensions;
 
 namespace TombLib.Scripting.ClassicScript.Cleaning;
 
@@ -40,13 +40,9 @@ public sealed class ClassicScriptDocumentFormatter : ITextDocumentFormatter
 	/// Formats the given editor content.
 	/// </summary>
 	/// <param name="editorContent">The content to format.</param>
-	/// <param name="trimOnly">Whether only trailing whitespace is trimmed.</param>
 	/// <returns>The formatted content.</returns>
-	public string FormatDocument(string editorContent, bool trimOnly = false)
+	public string FormatDocument(string editorContent)
 	{
-		if (trimOnly)
-			return editorContent.TrimTrailingWhitespaceOnLines();
-
 		string[] lines = editorContent.Replace("\r", string.Empty).Split('\n');
 
 		for (int i = 0; i < lines.Length; i++)

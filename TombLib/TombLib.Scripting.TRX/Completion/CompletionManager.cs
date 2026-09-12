@@ -1,8 +1,9 @@
-using Nickelony.LanguageServer.Abstractions.Completion;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TombLib.Scripting.Text;
 using TombLib.Scripting.TRX.Services;
 using TombLib.Scripting.UI.Completion;
 

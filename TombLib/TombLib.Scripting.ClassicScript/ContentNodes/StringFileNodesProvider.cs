@@ -1,16 +1,15 @@
-using DarkUI.Controls;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using System;
 using System.Collections.Generic;
 using TombLib.Scripting.ClassicScript.Services;
-using TombLib.Scripting.Text;
-using TombLib.Scripting.UI.ContentNodes;
 
 namespace TombLib.Scripting.ClassicScript.ContentNodes;
 
 /// <summary>
-/// Provides the content nodes for a ClassicScript strings file.
+/// Provides the document symbols (outline entries) for a ClassicScript strings file.
 /// </summary>
-public sealed class StringFileNodesProvider : ContentNodesProviderBase
+public sealed class StringFileNodesProvider : ITextDocumentSymbolProvider
 {
 	private readonly IClassicScriptLineService _lineService;
 
@@ -21,11 +20,15 @@ public sealed class StringFileNodesProvider : ContentNodesProviderBase
 	public StringFileNodesProvider(IClassicScriptLineService lineService)
 		=> _lineService = lineService;
 
-	/// <inheritdoc/>
-	protected override IReadOnlyList<DarkTreeNode> GetNodesCore(string content, string filter)
+	/// <summary>
+	/// Gets the section-header symbols for the supplied request.
+	/// </summary>
+	/// <param name="request">The document-symbol request.</param>
+	/// <returns>The section-header symbols that match the filter.</returns>
+	public IReadOnlyList<TextDocumentSymbol> GetSymbols(TextDocumentSymbolRequest request)
 	{
-		var nodes = new List<DarkTreeNode>();
-		var source = new StringTextSnapshot(content);
+		var nodes = new List<string>();
+		var source = new StringTextSnapshot(request.DocumentText);
 
 		foreach (ITextLine line in source.Lines)
 		{
@@ -35,11 +38,11 @@ public sealed class StringFileNodesProvider : ContentNodesProviderBase
 			{
 				string? headerText = _lineService.GetSectionHeaderText(lineText);
 
-				if (headerText is not null && headerText.Contains(filter, StringComparison.OrdinalIgnoreCase))
-					nodes.Add(new DarkTreeNode(headerText));
+				if (headerText is not null && headerText.Contains(request.Filter, StringComparison.OrdinalIgnoreCase))
+					nodes.Add(headerText);
 			}
 		}
 
-		return nodes;
+		return DocumentSymbolTreeBuilder.BuildFlatNodes(nodes, node => node);
 	}
 }

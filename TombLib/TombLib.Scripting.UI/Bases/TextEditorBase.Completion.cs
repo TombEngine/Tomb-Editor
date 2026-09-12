@@ -1,4 +1,5 @@
 using ICSharpCode.AvalonEdit.CodeCompletion;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
 using System;
 using System.Windows.Input;
 using TombLib.Scripting.UI.Completion;
@@ -13,13 +14,19 @@ public abstract partial class TextEditorBase
 	/// <param name="width">The width of the completion window.</param>
 	/// <param name="height">The height of the completion window.</param>
 	public void InitializeCompletionWindow(int width = 300, int height = 300)
-		=> _completionWindowCoordinator.Initialize(width, height);
+	{
+		EnsureNotDisposed();
+		_completionWindowCoordinator.Initialize(width, height);
+	}
 
 	/// <summary>
 	/// Shows the completion window at the caret position.
 	/// </summary>
 	public void ShowCompletionWindow()
-		=> _completionWindowCoordinator.Show();
+	{
+		EnsureNotDisposed();
+		_completionWindowCoordinator.Show();
+	}
 
 	internal CompletionWindow? ActiveCompletionWindow => _completionWindowCoordinator.ActiveWindow;
 
@@ -39,7 +46,9 @@ public abstract partial class TextEditorBase
 	/// <returns><see langword="true"/> if the input was handled as a completion trigger; otherwise <see langword="false"/>.</returns>
 	protected bool TryHandleCtrlSpaceCompletion(TextCompositionEventArgs e, Action onTriggered)
 	{
-		if (!CompletionEnabled || !EditorCompletionTriggerHelper.IsCtrlSpaceInput(e.Text, Keyboard.Modifiers))
+		EnsureNotDisposed();
+
+		if (!IntelliSenseEnabled || !CompletionEnabled || !EditorCompletionTriggerHelper.IsCtrlSpaceInput(e.Text, Keyboard.Modifiers.HasFlag(ModifierKeys.Control)))
 			return false;
 
 		if (!IsCompletionWindowOpen)
@@ -47,5 +56,24 @@ public abstract partial class TextEditorBase
 
 		e.Handled = true;
 		return true;
+	}
+
+	/// <summary>
+	/// Rebases the open completion items onto the current document version and session generation.
+	/// </summary>
+	/// <param name="requestDocumentVersion">The logical document version of the request.</param>
+	/// <param name="requestGeneration">The session generation of the request.</param>
+	protected void RebaseOpenCompletionItems(int requestDocumentVersion, int requestGeneration)
+	{
+		CompletionWindow? completionWindow = CompletionController.ActiveWindow;
+
+		if (completionWindow?.CompletionList?.CompletionData is null)
+			return;
+
+		for (int i = 0; i < completionWindow.CompletionList.CompletionData.Count; i++)
+		{
+			if (completionWindow.CompletionList.CompletionData[i] is CompletionData completionData)
+				completionData.RebaseForCurrentDocument(requestDocumentVersion, requestGeneration);
+		}
 	}
 }

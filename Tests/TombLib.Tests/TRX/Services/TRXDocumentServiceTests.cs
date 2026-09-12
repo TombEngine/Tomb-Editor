@@ -1,6 +1,6 @@
 #nullable enable
 
-using TombLib.Scripting.Text;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.TRX.Services;
 
 namespace TombLib.Tests.TRX.Services;

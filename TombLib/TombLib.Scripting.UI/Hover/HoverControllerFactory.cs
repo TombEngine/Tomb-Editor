@@ -1,12 +1,11 @@
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
-using Nickelony.LanguageServer.Abstractions.Hover;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Hover;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Presentation;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Hover;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using TombLib.Scripting.Diagnostics;
-using TombLib.Scripting.Hover;
-using TombLib.Scripting.Presentation;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Rendering;
 using TombLib.Scripting.UI.Resources;
@@ -68,7 +67,7 @@ public static class HoverControllerFactory
 	public static void ShowStandardCombinedToolTip(
 		TextEditorBase editor,
 		TextHoverInfo hoverInfo,
-		TextEditorDiagnosticInfo diagnosticInfo)
+		TextEditorDiagnostic diagnosticInfo)
 	{
 		ArgumentNullException.ThrowIfNull(editor);
 		ArgumentNullException.ThrowIfNull(hoverInfo);

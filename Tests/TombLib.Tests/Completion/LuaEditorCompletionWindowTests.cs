@@ -1,11 +1,9 @@
 using ICSharpCode.AvalonEdit.CodeCompletion;
-using Nickelony.LanguageServer.Abstractions.Completion;
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
-using Nickelony.LanguageServer.Abstractions.Editing;
-using Nickelony.LanguageServer.Abstractions.Hover;
-using Nickelony.LanguageServer.Abstractions.Infrastructure.Provider;
-using Nickelony.LanguageServer.Abstractions.Navigation;
-using Nickelony.LanguageServer.Abstractions.Signatures;
+using Nickelony.IDEKit.IntelliSense.Completion;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Hover;
+using Nickelony.IDEKit.IntelliSense.Navigation;
+using Nickelony.IDEKit.IntelliSense.Signatures;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -48,6 +46,32 @@ public class LuaEditorCompletionWindowTests
 				Assert.AreEqual(1, provider.CompletionRequests.Count);
 				Assert.AreEqual(0, provider.CompletionRequests[0].Line);
 				Assert.AreEqual(3, provider.CompletionRequests[0].Column);
+			}
+			finally
+			{
+				CloseCompletionWindow(editor);
+				hostWindow.Close();
+			}
+		});
+	}
+
+	[TestMethod]
+	public void RequestCompletionAsync_WhenIntelliSenseIsDisabled_DoesNotQueryProvider()
+	{
+		RunInSta(() =>
+		{
+			var provider = new FakeLuaCompletionProvider();
+			var editor = CreateEditor(provider, "spa");
+			editor.IntelliSenseEnabled = false;
+			Window hostWindow = ShowInHostWindow(editor);
+
+			try
+			{
+				InvokePrivateTask(editor, "RequestCompletionAsync", [typeof(int), typeof(char?)], 3, null).GetAwaiter().GetResult();
+				PumpDispatcher(editor.Dispatcher, DispatcherPriority.ContextIdle);
+
+				Assert.AreEqual(0, provider.CompletionRequests.Count);
+				Assert.IsNull(editor.ActiveCompletionWindow);
 			}
 			finally
 			{

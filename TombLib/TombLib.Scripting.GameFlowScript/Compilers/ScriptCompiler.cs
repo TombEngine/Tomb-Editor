@@ -1,9 +1,8 @@
+using Nickelony.IDEKit.Tooling;
 using NLog;
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using TombLib.Scripting.IO;
+using TombLib.Scripting.UI.IO;
 
 namespace TombLib.Scripting.GameFlowScript.Compilers;
 
@@ -15,6 +14,8 @@ public static class ScriptCompiler
 	private const int ProcessTimeoutMilliseconds = 300000;
 
 	private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+
+	private static readonly IProcessRunner s_processRunner = new ProcessRunner();
 
 	/// <summary>
 	/// Compiles a classic GameFlow script and copies the resulting data file to the output directory.
@@ -34,7 +35,7 @@ public static class ScriptCompiler
 			"tombpc.dat",
 			"gameFlow.exe",
 			pause,
-			ProcessCompilerProcessFactory.Instance);
+			s_processRunner);
 	}
 
 	/// <summary>
@@ -54,7 +55,7 @@ public static class ScriptCompiler
 			"Script.dat",
 			"TRGameFlow.exe",
 			pause,
-			ProcessCompilerProcessFactory.Instance);
+			s_processRunner);
 	}
 
 	/// <summary>
@@ -104,7 +105,7 @@ public static class ScriptCompiler
 	/// <param name="compiledScriptFileName">The name of the compiled data file.</param>
 	/// <param name="keptExecutableName">The executable name preserved when the staging directory is cleaned.</param>
 	/// <param name="pause">Whether the compiler batch should pause when it finishes.</param>
-	/// <param name="processFactory">The process factory used to start the compiler batch.</param>
+	/// <param name="processRunner">The process runner used to start the compiler batch.</param>
 	/// <returns><c>true</c> when the compiled data file was produced and copied; otherwise, <c>false</c>.</returns>
 	internal static bool RunCompileWorkflow(
 		string inputDirectory,
@@ -114,7 +115,7 @@ public static class ScriptCompiler
 		string compiledScriptFileName,
 		string keptExecutableName,
 		bool pause,
-		ICompilerProcessFactory processFactory)
+		IProcessRunner processRunner)
 	{
 		ScriptDirectoryCopier.CopyScriptDirectory(inputDirectory, gameflowDirectory, clearTarget: false);
 
@@ -122,73 +123,29 @@ public static class ScriptCompiler
 		File.WriteAllText(batchFilePath, batchFileContent);
 		File.Delete(Path.Combine(gameflowDirectory, compiledScriptFileName));
 
-		var startInfo = new ProcessStartInfo
+		// In interactive (paused) mode the batch waits for the user to dismiss the compiler
+		// window, so it runs to completion; otherwise a runaway compiler is bounded by a
+		// timeout and the runner kills the whole process tree so no child compiler keeps running.
+		var request = new ProcessRunRequest
 		{
 			FileName = batchFilePath,
 			WorkingDirectory = gameflowDirectory,
-			UseShellExecute = true
+			UseShellExecute = true,
+			Timeout = pause ? null : TimeSpan.FromMilliseconds(ProcessTimeoutMilliseconds)
 		};
-
-		ICompilerProcess? process = null;
 
 		try
 		{
-			process = processFactory.Start(startInfo);
+			ProcessRunResult result = processRunner.Run(request);
 
-			if (process is null)
+			if (!result.Started || result.TimedOut || result.Cancelled)
 				return false;
-
-			// In interactive (paused) mode the batch waits for the user to dismiss the compiler
-			// window, so it runs to completion; otherwise a runaway compiler is bounded by a
-			// timeout and the whole process tree is killed so no child compiler keeps running.
-			if (pause)
-			{
-				process.WaitForExit();
-			}
-			else if (!process.WaitForExit(ProcessTimeoutMilliseconds))
-			{
-				TerminateProcessTree(process);
-				return false;
-			}
 
 			return FinalizeCompileResult(gameflowDirectory, outputDirectory, compiledScriptFileName);
 		}
 		finally
 		{
-			process?.Dispose();
 			ScriptDirectoryCopier.ClearDirectoryExcept(gameflowDirectory, name => name.Equals(keptExecutableName, StringComparison.OrdinalIgnoreCase));
-		}
-	}
-
-	private static void TerminateProcessTree(ICompilerProcess process)
-	{
-		try
-		{
-			process.KillEntireProcessTree();
-		}
-		catch (Exception exception) when (exception is InvalidOperationException or NotSupportedException or Win32Exception)
-		{
-			// Whole-tree termination is not always available for shell-launched batch processes.
-			// Fall back to killing the batch wrapper alone so the workflow still cannot hang.
-			Log.Warn(exception, "Could not terminate the whole compiler process tree; killing the batch process only.");
-
-			try
-			{
-				process.Kill();
-			}
-			catch (Exception fallbackException) when (fallbackException is InvalidOperationException or Win32Exception)
-			{
-				// The process already exited; there is nothing left to terminate.
-			}
-		}
-
-		try
-		{
-			process.WaitForExit();
-		}
-		catch (InvalidOperationException)
-		{
-			// The process exited before its termination state could be observed.
 		}
 	}
 }

@@ -1,28 +1,31 @@
 #nullable enable
 
-using ICSharpCode.AvalonEdit.Document;
-using Nickelony.LanguageServer.Abstractions.Editing;
-using Nickelony.LanguageServer.Abstractions.Navigation;
+using Nickelony.LanguageServer.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TombLib.Scripting.Presentation;
+using TombLib.Scripting.UI.Presentation;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editors;
+using Nickelony.IDEKit.AvalonEdit.Documents;
+using Nickelony.IDEKit.Workspace.Documents;
 
 namespace TombIDE.ScriptingStudio.Lua;
 
 internal sealed class LuaReferenceSearchService(
 	ITextEditorHost textEditorHost,
 	ITextReferencesProvider referencesProvider,
-	string scriptRootDirectoryPath)
+	string scriptRootDirectoryPath,
+	IWorkspaceDocumentManager? documentManager = null)
 {
 	private readonly ITextEditorHost _textEditorHost = textEditorHost ?? throw new ArgumentNullException(nameof(textEditorHost));
 	private readonly ITextReferencesProvider _referencesProvider = referencesProvider ?? throw new ArgumentNullException(nameof(referencesProvider));
 	private readonly string _scriptRootDirectoryPath = scriptRootDirectoryPath ?? string.Empty;
+	private readonly IWorkspaceDocumentManager? _documentManager = documentManager;
 
 	public bool SupportsReferences => _referencesProvider.SupportsReferences;
 
@@ -40,15 +43,17 @@ internal sealed class LuaReferenceSearchService(
 				cancellationToken)
 			.ConfigureAwait(true);
 
-		return BuildReferenceGroups(references);
+		return await BuildReferenceGroupsAsync(references, cancellationToken).ConfigureAwait(true);
 	}
 
-	private IReadOnlyList<TextReferenceGroup> BuildReferenceGroups(IReadOnlyList<TextReferenceLocation> references)
+	private async Task<IReadOnlyList<TextReferenceGroup>> BuildReferenceGroupsAsync(
+		IReadOnlyList<TextReferenceLocation> references,
+		CancellationToken cancellationToken)
 	{
 		if (references.Count == 0)
 			return [];
 
-		var lineCache = new Dictionary<string, string[]?>(StringComparer.OrdinalIgnoreCase);
+		var snapshotCache = new Dictionary<string, ITextSnapshot?>(StringComparer.OrdinalIgnoreCase);
 		var groups = new List<TextReferenceGroup>();
 
 		foreach (IGrouping<string, TextReferenceLocation> fileGroup in references
@@ -56,10 +61,12 @@ internal sealed class LuaReferenceSearchService(
 			.GroupBy(reference => reference.FilePath, StringComparer.OrdinalIgnoreCase)
 			.OrderBy(group => GetDisplayPath(group.Key), StringComparer.OrdinalIgnoreCase))
 		{
-			var items = fileGroup
+			var items = new List<TextReferenceListItem>();
+			foreach (TextReferenceLocation reference in fileGroup
 				.OrderBy(reference => reference.StartLineNumber)
-				.ThenBy(reference => reference.StartColumnNumber)
-				.Select(reference => new TextReferenceListItem(
+				.ThenBy(reference => reference.StartColumnNumber))
+			{
+				items.Add(new TextReferenceListItem(
 					reference.FilePath,
 					new TextDocumentRange(
 						reference.StartLineNumber,
@@ -68,10 +75,14 @@ internal sealed class LuaReferenceSearchService(
 						reference.EndColumnNumber),
 					reference.StartLineNumber,
 					reference.StartColumnNumber,
-					GetPreviewText(reference.FilePath, reference.StartLineNumber, lineCache)))
-				.ToArray();
+					await GetPreviewTextAsync(
+						reference.FilePath,
+						reference.StartLineNumber,
+						snapshotCache,
+						cancellationToken).ConfigureAwait(true)));
+			}
 
-			groups.Add(new TextReferenceGroup(fileGroup.Key, GetDisplayPath(fileGroup.Key), items));
+			groups.Add(new TextReferenceGroup(fileGroup.Key, GetDisplayPath(fileGroup.Key), [.. items]));
 		}
 
 		return groups;
@@ -91,43 +102,50 @@ internal sealed class LuaReferenceSearchService(
 		return fullFilePath;
 	}
 
-	private string GetPreviewText(string filePath, int lineNumber, Dictionary<string, string[]?> lineCache)
+	private async Task<string> GetPreviewTextAsync(
+		string filePath,
+		int lineNumber,
+		Dictionary<string, ITextSnapshot?> snapshotCache,
+		CancellationToken cancellationToken)
 	{
-		string? previewText = TryGetOpenEditorLineText(filePath, lineNumber);
-
-		if (previewText is null)
+		if (!snapshotCache.TryGetValue(filePath, out ITextSnapshot? snapshot))
 		{
-			if (!lineCache.TryGetValue(filePath, out string[]? lines))
-			{
-				lines = File.Exists(filePath) ? File.ReadAllLines(filePath) : null;
-				lineCache[filePath] = lines;
-			}
-
-			if (lines is not null && lineNumber >= 1 && lineNumber <= lines.Length)
-				previewText = lines[lineNumber - 1];
+			snapshot = await TryGetSnapshotAsync(filePath, cancellationToken).ConfigureAwait(true);
+			snapshotCache[filePath] = snapshot;
 		}
 
-		return previewText?.Trim() ?? string.Empty;
+		return TryGetSnapshotLineText(snapshot, lineNumber)?.Trim() ?? string.Empty;
 	}
 
-	private string? TryGetOpenEditorLineText(string filePath, int lineNumber)
+	private async Task<ITextSnapshot?> TryGetSnapshotAsync(string filePath, CancellationToken cancellationToken)
 	{
 		TextEditorBase? textEditor = _textEditorHost.GetOpenEditors(filePath)
 			.OfType<TextEditorBase>()
 			.FirstOrDefault();
 
-		if (textEditor is null)
+		if (textEditor is not null)
+			return new TextDocumentSnapshot(textEditor.Document);
+
+		if (_documentManager is null)
 			return null;
 
-		return TryGetDocumentLineText(textEditor.Document, lineNumber);
+		WorkspaceDocumentOpenResult result = await _documentManager
+			.OpenAsync(filePath, DefaultWorkspaceOpenOptions, cancellationToken)
+			.ConfigureAwait(true);
+
+		return result.Snapshot?.Text;
 	}
 
-	private static string? TryGetDocumentLineText(TextDocument document, int lineNumber)
+	private static string? TryGetSnapshotLineText(ITextSnapshot? snapshot, int lineNumber)
 	{
-		if (lineNumber < 1 || lineNumber > document.LineCount)
+		if (snapshot is null || lineNumber < 1 || lineNumber > snapshot.LineCount)
 			return null;
 
-		DocumentLine line = document.GetLineByNumber(lineNumber);
-		return document.GetText(line.Offset, line.Length);
+		ITextLine line = snapshot.GetLineByNumber(lineNumber);
+		return snapshot.GetText(line.Offset, line.Length);
 	}
+
+	private static readonly WorkspaceDocumentOpenOptions DefaultWorkspaceOpenOptions = new(
+		TextEncodingKind.Utf8,
+		new TextFileFormat(TextEncodingKind.Utf8, false, TextNewlineStyle.Lf));
 }

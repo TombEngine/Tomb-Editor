@@ -18,6 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Nickelony.IDEKit.Core" Version="$(NickelonyIDEKitCoreVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.IntelliSense" Version="$(NickelonyIDEKitIntelliSenseVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Tooling" Version="$(NickelonyIDEKitToolingVersion)" />
     <ProjectReference Include="..\..\TombIDE\TombIDE.Shared\TombIDE.Shared.csproj" />
     <ProjectReference Include="..\..\TombLib\TombLib.Scripting.ClassicScript\TombLib.Scripting.ClassicScript.csproj" />
     <ProjectReference Include="..\..\TombLib\TombLib.Scripting.GameFlowScript\TombLib.Scripting.GameFlowScript.csproj" />
@@ -29,15 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Nickelony.LanguageServer.Abstractions">
-      <HintPath>..\..\Libs\Nickelony.LanguageServer.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Nickelony.LanguageServer.Client">
-      <HintPath>..\..\Libs\Nickelony.LanguageServer.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Nickelony.LanguageServer.Lua">
-      <HintPath>..\..\Libs\Nickelony.LanguageServer.Lua.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Nickelony.LanguageServer.Abstractions" Version="$(NickelonyLanguageServerVersion)" />
+    <PackageReference Include="Nickelony.LanguageServer.Client" Version="$(NickelonyLanguageServerVersion)" />
+    <PackageReference Include="Nickelony.LanguageServer.Lua" Version="$(NickelonyLanguageServerVersion)" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,10 +1,9 @@
-using Nickelony.LanguageServer.Abstractions.Hover;
+using Nickelony.IDEKit.IntelliSense.Hover;
 using System;
 using System.Linq;
 using TombLib.Scripting.GameFlowScript;
 using TombLib.Scripting.GameFlowScript.Hover;
 using TombLib.Scripting.GameFlowScript.Types;
-using TombLib.Scripting.Hover;
 
 namespace TombLib.Tests;
 

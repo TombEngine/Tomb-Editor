@@ -1,7 +1,7 @@
 using System;
-using TombLib.Scripting.Completion;
-using TombLib.Scripting.Hover;
-using TombLib.Scripting.Navigation;
+using Nickelony.IDEKit.IntelliSense.Completion;
+using Nickelony.IDEKit.IntelliSense.Hover;
+using Nickelony.IDEKit.IntelliSense.Navigation;
 using TombLib.Scripting.TRX.Completion;
 using TombLib.Scripting.TRX.Diagnostics;
 using TombLib.Scripting.TRX.Services;

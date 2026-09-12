@@ -1,10 +1,10 @@
 #nullable enable
 
 using CommunityToolkit.Mvvm.Messaging;
+using Nickelony.IDEKit.KeyBindings;
 using System;
 using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.Messaging;
-using TombIDE.ScriptingStudio.Shortcuts;
 using TombIDE.ScriptingStudio.UI;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editors;
@@ -16,9 +16,7 @@ internal sealed class StudioEditorLifecycleCoordinator : IEditorLifecycleService
 	private readonly IEditorDocumentController _documentController;
 	private readonly IMessenger _messenger;
 	private readonly Action<IEditorControl> _applyUserSettings;
-	private readonly Func<UICommand, bool> _canExecuteCommand;
-	private readonly Action<UICommand> _executeCommand;
-	private readonly IShortcutBindingService _shortcutBindings;
+	private readonly KeyBindingDispatcher<UICommand> _shortcutDispatcher;
 
 	public StudioEditorLifecycleCoordinator(
 		IEditorDocumentController documentController,
@@ -26,14 +24,15 @@ internal sealed class StudioEditorLifecycleCoordinator : IEditorLifecycleService
 		Action<IEditorControl> applyUserSettings,
 		Action<UICommand> executeCommand,
 		Func<UICommand, bool> canExecuteCommand,
-		IShortcutBindingService shortcutBindings)
+		IKeyBindingService<UICommand> shortcutBindings)
 	{
 		_documentController = documentController ?? throw new ArgumentNullException(nameof(documentController));
 		_messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
 		_applyUserSettings = applyUserSettings ?? throw new ArgumentNullException(nameof(applyUserSettings));
-		_canExecuteCommand = canExecuteCommand ?? throw new ArgumentNullException(nameof(canExecuteCommand));
-		_executeCommand = executeCommand ?? throw new ArgumentNullException(nameof(executeCommand));
-		_shortcutBindings = shortcutBindings ?? throw new ArgumentNullException(nameof(shortcutBindings));
+		_shortcutDispatcher = new KeyBindingDispatcher<UICommand>(
+			shortcutBindings ?? throw new ArgumentNullException(nameof(shortcutBindings)),
+			canExecuteCommand ?? throw new ArgumentNullException(nameof(canExecuteCommand)),
+			executeCommand ?? throw new ArgumentNullException(nameof(executeCommand)));
 	}
 
 	public void Attach()
@@ -101,15 +100,7 @@ internal sealed class StudioEditorLifecycleCoordinator : IEditorLifecycleService
 
 	private void TextEditor_KeyDown(object? sender, System.Windows.Input.KeyEventArgs e)
 	{
-		ShortcutKey? shortcut = ShortcutKey.FromKeyEventArgs(e);
-
-		if (shortcut is null)
-			return;
-
-		if (!_shortcutBindings.TryGetCommand(shortcut.Value, out UICommand command) || !_canExecuteCommand(command))
-			return;
-
-		_executeCommand(command);
-		e.Handled = true;
+		if (_shortcutDispatcher.TryHandleKeyDown(e))
+			e.Handled = true;
 	}
 }

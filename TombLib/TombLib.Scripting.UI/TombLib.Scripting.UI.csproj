@@ -12,22 +12,20 @@
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="MdXaml" Version="1.27.0" />
     <PackageReference Include="TextMateSharp" Version="2.0.3" />
     <PackageReference Include="TextMateSharp.Grammars" Version="2.0.3" />
   </ItemGroup>
-  <!-- Checked-in preview binary (0.1.0-preview) under Libs/; not a NuGet package. Version and
-       build provenance are documented in Libs/README.md. -->
   <ItemGroup>
-    <Reference Include="Nickelony.LanguageServer.Abstractions">
-      <HintPath>..\..\Libs\Nickelony.LanguageServer.Abstractions.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Nickelony.LanguageServer.Abstractions" Version="$(NickelonyLanguageServerVersion)" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DarkUI\DarkUI.WPF\DarkUI.WPF.csproj" />
     <ProjectReference Include="..\..\DarkUI\DarkUI\DarkUI.csproj" />
+    <PackageReference Include="Nickelony.IDEKit.AvalonEdit" Version="$(NickelonyIDEKitAvalonEditVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.AvalonEdit.IntelliSense" Version="$(NickelonyIDEKitAvalonEditIntelliSenseVersion)" />
+<PackageReference Include="Nickelony.IDEKit.AvalonEdit.Extras" Version="$(NickelonyIDEKitAvalonEditExtrasVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Core" Version="$(NickelonyIDEKitCoreVersion)" />
     <ProjectReference Include="..\TombLib\TombLib.csproj" />
-    <ProjectReference Include="..\TombLib.Scripting\TombLib.Scripting.csproj" />
     <ProjectReference Include="..\TombLib.WPF\TombLib.WPF.csproj" />
   </ItemGroup>
 </Project>

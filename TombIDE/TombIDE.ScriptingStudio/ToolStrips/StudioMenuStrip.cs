@@ -1,9 +1,9 @@
-﻿#nullable enable
+#nullable enable
 
 using System;
 using System.Collections.Generic;
+using Nickelony.IDEKit.KeyBindings;
 using TombIDE.ScriptingStudio.CommandSurface;
-using TombIDE.ScriptingStudio.Shortcuts;
 using TombIDE.ScriptingStudio.UI;
 
 namespace TombIDE.ScriptingStudio.ToolStrips;
@@ -20,7 +20,7 @@ public sealed class StudioMenuStrip
 
 	internal StudioMenuStripView View { get; }
 
-	public IShortcutBindingService? ShortcutBindingService { get; set; }
+	public IKeyBindingService<UICommand>? KeyBindingService { get; set; }
 
 	public IReadOnlyList<StudioToolStripItem> DocumentModeContributionItems { get; set; } = [];
 
@@ -89,7 +89,7 @@ public sealed class StudioMenuStrip
 
 	private void RebuildAllItems()
 	{
-		var builder = new StudioCommandSurfaceBuilder(ShortcutBindingService);
+		var builder = new StudioCommandSurfaceBuilder(KeyBindingService);
 		IReadOnlyList<StudioCommandSurfaceItemViewModel> items = builder.BuildMenuItems(
 			WorkspaceContributionItems,
 			DocumentModeContributionItems,

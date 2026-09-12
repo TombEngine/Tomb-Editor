@@ -21,6 +21,7 @@ using TombLib.WPF.Services.Abstract;
 namespace TombEditor.Tests.ScriptingStudio;
 
 [TestClass]
+[TestCategory("TextEditorBaseModernization")]
 public class ScriptingMessageServiceTests
 {
     private static readonly ClassicScriptLanguageServices ClassicLanguageServices = ScriptingLanguageServicesTestFactory.CreateClassicScript();

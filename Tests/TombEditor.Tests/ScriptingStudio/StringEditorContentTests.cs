@@ -1,5 +1,4 @@
 using StringEditor = TombIDE.ScriptingStudio.Editors.ClassicScript.StringEditor;
-using TombIDE.ScriptingStudio.Editors.ClassicScript.Strings;
 
 namespace TombEditor.Tests.ScriptingStudio;
 
@@ -169,7 +168,7 @@ public class StringEditorContentTests
     [TestMethod]
     public void ContentBuilder_BuildContent_GeneratesHeaderComment()
     {
-        string content = ContentBuilder.BuildContent(System.Array.Empty<StringEditor.StringTableSection>());
+        string content = StringEditor.ContentBuilder.BuildContent(System.Array.Empty<StringEditor.StringTableSection>());
 
         Assert.IsTrue(content.StartsWith("; Automatically generated document using TombIDE"));
     }
@@ -177,7 +176,7 @@ public class StringEditorContentTests
     [TestMethod]
     public void ContentBuilder_BuildContent_EmptyGrids_ProducesOnlyHeader()
     {
-        string content = ContentBuilder.BuildContent(System.Array.Empty<StringEditor.StringTableSection>());
+        string content = StringEditor.ContentBuilder.BuildContent(System.Array.Empty<StringEditor.StringTableSection>());
 
         string[] lines = content.Split(["\r\n", "\n"], StringSplitOptions.None);
 

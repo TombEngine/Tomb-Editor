@@ -1,5 +1,6 @@
 #nullable enable
 
+using Nickelony.IDEKit.Core.FindReplace;
 using System;
 using System.Windows;
 using TombIDE.ScriptingStudio.Shell;

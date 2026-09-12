@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Controls;
 using System.Windows.Input;
-using TombLib.Scripting.Presentation;
+using TombLib.Scripting.UI.Presentation;
 
 namespace TombLib.Scripting.UI.Presentation;
 

@@ -1,3 +1,4 @@
+using Nickelony.IDEKit.AvalonEdit.Extras.TextMate.Highlighting;
 using System.Collections.Generic;
 
 namespace TombLib.Scripting.UI.Highlighting;

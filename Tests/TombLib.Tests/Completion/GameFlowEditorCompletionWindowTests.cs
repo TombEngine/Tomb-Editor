@@ -1,4 +1,5 @@
 using ICSharpCode.AvalonEdit.CodeCompletion;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
 using System.Windows;
 using System.Windows.Threading;
 using TombLib.Scripting.GameFlowScript;

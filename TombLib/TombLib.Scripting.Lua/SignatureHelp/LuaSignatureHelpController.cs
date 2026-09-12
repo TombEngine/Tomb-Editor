@@ -1,4 +1,6 @@
-using Nickelony.LanguageServer.Abstractions.Signatures;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Signatures;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Signatures;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -113,7 +115,6 @@ public sealed partial class LuaEditor
 				requestSignatureHelpAsync: RequestSignatureHelpAsync,
 				showSignatureHelp: ShowToolTip,
 				dismissSignatureHelp: DismissPopup,
-				handleRequestFailure: exception => LogEditorFailure("Signature help", exception),
 				cancelInFlightRequest: CancelInFlightRequest,
 				refreshDebounceDelay: TimeSpan.FromMilliseconds(50.0));
 		}
@@ -168,15 +169,18 @@ public sealed partial class LuaEditor
 			var panel = new StackPanel { MaxWidth = contentMaxWidth };
 			panel.Children.Add(BuildSignatureBlock(signatureInfo, brushSet));
 
-			if (!string.IsNullOrWhiteSpace(signatureInfo.Documentation))
-				panel.Children.Add(CreateSignatureDocumentationBlock(signatureInfo.Documentation, brushSet));
+			string? documentation = MarkupTextNormalizer.NormalizeForPlainText(signatureInfo.Documentation);
+
+			if (documentation is not null)
+				panel.Children.Add(CreateSignatureDocumentationBlock(documentation, brushSet));
 
 			if (signatureInfo.ActiveParameterIndex >= 0 && signatureInfo.ActiveParameterIndex < signatureInfo.Parameters.Count)
 			{
 				TextSignatureParameterInfo activeParameter = signatureInfo.Parameters[signatureInfo.ActiveParameterIndex];
+				string? parameterDocumentation = MarkupTextNormalizer.NormalizeForPlainText(activeParameter.Documentation);
 
-				if (!string.IsNullOrWhiteSpace(activeParameter.Documentation))
-					panel.Children.Add(CreateSignatureDocumentationBlock(activeParameter.Label + ": " + activeParameter.Documentation, brushSet));
+				if (parameterDocumentation is not null)
+					panel.Children.Add(CreateSignatureDocumentationBlock(activeParameter.Label + ": " + parameterDocumentation, brushSet));
 			}
 
 			return panel;
@@ -201,7 +205,7 @@ public sealed partial class LuaEditor
 			_requestCancellation = new();
 			CancellationToken cancellationToken = _requestCancellation.Token;
 			int requestDocumentVersion = _editor._editorDocumentVersion;
-			int requestGeneration = _editor._editorRequestGeneration;
+			int requestGeneration = _editor.SessionGeneration;
 
 			try
 			{
@@ -212,7 +216,7 @@ public sealed partial class LuaEditor
 					.ConfigureAwait(true);
 
 				return requestDocumentVersion == _editor._editorDocumentVersion
-					&& requestGeneration == _editor._editorRequestGeneration
+					&& requestGeneration == _editor.SessionGeneration
 					? signatureInfo
 					: null;
 			}

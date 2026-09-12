@@ -1,5 +1,6 @@
 #nullable enable
 
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -325,7 +326,7 @@ public static class ScriptingWorkspaceProfileSelector
 		ScriptingSettingsPageKind settingsPageKind,
 		ScriptingDocumentConfigurationKind configurationKind,
 		IStudioDocumentCommandSurfaceProvider commandSurfaceProvider,
-		Func<TombLib.Scripting.UI.ContentNodes.ContentNodesProviderBase?>? outlineProviderFactory,
+		Func<ITextDocumentSymbolProvider?>? outlineProviderFactory,
 		IStudioDocumentStatusStripProvider? statusStripProvider = null)
 	{
 		return new ScriptingDocumentContributions(

@@ -58,49 +58,55 @@ namespace TombIDE.ScriptingStudio.Controls
 		public IEditorControl? FindSourceEditor(string filePath)
 			=> FindEditor(filePath, _editorFactory.GetSourceViewEditorType(filePath));
 
-		public IEditorControl? GetMostRecentlyModifiedEditorOfFile(string filePath)
-		{
-			IEditorControl? mostRecentEditor = null;
-
-			foreach (IEditorControl editor in FindEditorsOfFile(filePath))
-			{
-				if (mostRecentEditor is null || editor.LastModified > mostRecentEditor.LastModified)
-					mostRecentEditor = editor;
-			}
-
-			return mostRecentEditor;
-		}
-
-		public bool IsMostRecentlyModifiedEditorOfFile(IEditorControl editor)
-		{
-			if (editor is null)
-				return false;
-
-			IEditorControl? mostRecentEditor = GetMostRecentlyModifiedEditorOfFile(editor.FilePath);
-			return mostRecentEditor is not null && editor.LastModified == mostRecentEditor.LastModified;
-		}
-
 		public EditorType GetSourceViewEditorType(string filePath)
 			=> _editorFactory.GetSourceViewEditorType(filePath);
 
 		public bool ContainsEditor(IEditorControl editor)
 			=> editor != null && _openEditors.Contains(editor);
 
-		public EditorOpenResult OpenFile(string filePath, EditorType editorType = EditorType.Default, bool silentSession = false)
+		public EditorOpenResult OpenFile(string filePath, EditorType editorType = EditorType.Default, DocumentLoadOptions options = default)
+		{
+			EditorOpenResult openResult = CreateEditor(filePath, editorType);
+			if (openResult.Editor is null || !openResult.IsNewDocument)
+				return openResult;
+
+			InitializeEditor(openResult.Editor, filePath, options);
+			_openEditors.Add(openResult.Editor);
+
+			return openResult;
+		}
+
+		public EditorOpenResult CreateEditor(string filePath, EditorType editorType = EditorType.Default)
 		{
 			IEditorControl? existingEditor = FindEditor(filePath, editorType);
 
-			if (existingEditor != null)
+			if (existingEditor is not null)
 				return new EditorOpenResult(existingEditor, false);
 
-			IEditorControl? newEditor = InitializeEditor(filePath, editorType, silentSession);
+			IEditorControl newEditor = _editorFactory.CreateEditor(filePath, editorType, _currentEngineVersion);
 
 			if (newEditor is null)
 				return default;
 
-			_openEditors.Add(newEditor);
-
 			return new EditorOpenResult(newEditor, true);
+		}
+
+		public void InitializeEditor(IEditorControl editor, string filePath, DocumentLoadOptions options = default)
+		{
+			ArgumentNullException.ThrowIfNull(editor);
+
+			if (File.Exists(filePath))
+				editor.Load(filePath, options);
+			else
+				editor.FilePath = filePath;
+		}
+
+		public void AddEditor(IEditorControl editor)
+		{
+			ArgumentNullException.ThrowIfNull(editor);
+
+			if (!_openEditors.Contains(editor))
+				_openEditors.Add(editor);
 		}
 
 		public void RegisterDocument(ScriptingDocumentRegistration registration)
@@ -122,21 +128,6 @@ namespace TombIDE.ScriptingStudio.Controls
 				return;
 
 			_openEditors.Remove(editor);
-		}
-
-		private IEditorControl? InitializeEditor(string filePath, EditorType editorType, bool silentSession)
-		{
-			IEditorControl newEditor = _editorFactory.CreateEditor(filePath, editorType, _currentEngineVersion);
-
-			if (newEditor is null)
-				return null;
-
-			if (File.Exists(filePath))
-				newEditor.Load(filePath, silentSession);
-			else
-				newEditor.FilePath = filePath;
-
-			return newEditor;
 		}
 
 	}

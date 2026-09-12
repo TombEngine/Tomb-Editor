@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 using MvvmDialogs;
+using Nickelony.IDEKit.Core.FindReplace;
 using System;
 using System.Collections.Generic;
 using System.IO;

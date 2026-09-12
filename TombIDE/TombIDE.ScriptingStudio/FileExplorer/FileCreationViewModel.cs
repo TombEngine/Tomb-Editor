@@ -264,9 +264,6 @@ public partial class FileCreationViewModel : ObservableObject
 
 			NewFilePath = Path.Combine(targetDirectory, newFileName);
 
-			// For "New" mode, create the file immediately (matching legacy behavior).
-			File.Create(NewFilePath).Close();
-
 			RequestAccept?.Invoke();
 		}
 		catch (Exception)

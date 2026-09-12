@@ -4,19 +4,19 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Nickelony.IDEKit.KeyBindings;
 using TombIDE.ScriptingStudio.CommandSurface;
-using TombIDE.ScriptingStudio.Shortcuts;
 using TombIDE.ScriptingStudio.UI;
 
 namespace TombIDE.ScriptingStudio.ToolStrips;
 
 internal sealed class StudioCommandSurfaceBuilder
 {
-	private readonly IShortcutBindingService? _shortcutBindingService;
+	private readonly IKeyBindingService<UICommand>? _keyBindingService;
 
-	public StudioCommandSurfaceBuilder(IShortcutBindingService? shortcutBindingService = null)
+	public StudioCommandSurfaceBuilder(IKeyBindingService<UICommand>? keyBindingService = null)
 	{
-		_shortcutBindingService = shortcutBindingService;
+		_keyBindingService = keyBindingService;
 	}
 
 	public IReadOnlyList<StudioCommandSurfaceItemViewModel> BuildMenuItems(
@@ -86,7 +86,7 @@ internal sealed class StudioCommandSurfaceBuilder
 	}
 
 	private string GetDisplayText(UICommand command, string fallbackDisplayText)
-		=> _shortcutBindingService?.GetDisplayText(command, fallbackDisplayText) ?? fallbackDisplayText;
+		=> _keyBindingService?.GetDisplayText(command, fallbackDisplayText) ?? fallbackDisplayText;
 
 	private static IReadOnlyList<StudioToolStripItem> CombineMenuItems(
 		IReadOnlyList<StudioToolStripItem>? workspaceItems,

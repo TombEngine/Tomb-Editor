@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DarkUI.Controls;
 using System;
 using System.Collections.ObjectModel;
-using TombLib.Scripting.Navigation;
+using Nickelony.IDEKit.IntelliSense.Navigation;
 
 namespace TombIDE.ScriptingStudio.DocumentOutline;
 

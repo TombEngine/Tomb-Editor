@@ -1,13 +1,13 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using ICSharpCode.AvalonEdit.Document;
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Data;
-using TombLib.Scripting.Presentation;
-using TombLib.Scripting.UI.Documents;
+using Nickelony.IDEKit.AvalonEdit.Documents;
+using TombLib.Scripting.UI.Presentation;
 
 namespace TombLib.Scripting.UI.Presentation;
 

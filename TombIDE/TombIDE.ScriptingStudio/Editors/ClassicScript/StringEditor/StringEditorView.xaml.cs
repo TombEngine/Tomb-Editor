@@ -10,10 +10,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using TombLib.Scripting.Navigation;
+using TombLib.Scripting.ClassicScript.StringTables;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Documents;
 using TombLib.Scripting.UI.Editors;
+using Nickelony.IDEKit.Workspace.Documents;
 
 namespace TombIDE.ScriptingStudio.Editors.ClassicScript.StringEditor;
 
@@ -30,17 +31,25 @@ public partial class StringEditorView : UserControl, IEditorControl, IStringSect
 		set => _contentPersistenceCoordinator.FilePath = value;
 	}
 
-	public bool IsSilentSession { get; set; }
+	private readonly EditorProcessingModeScope _processingModeScope = new();
+
+	public EditorProcessingMode ProcessingMode
+		=> _processingModeScope.CurrentMode;
+
+	public IDisposable BeginProcessingScope(EditorProcessingMode mode)
+		=> _processingModeScope.Begin(mode);
 
 	public bool CreateBackupFiles
 	{
-		get => IsSilentSession ? false : _contentPersistenceCoordinator.CreateBackupFiles;
+		get => ProcessingMode == EditorProcessingMode.Suppressed
+			? false
+			: _contentPersistenceCoordinator.CreateBackupFiles;
 		set => _contentPersistenceCoordinator.CreateBackupFiles = value;
 	}
 
 	public new string Content
 	{
-		get => Strings.ContentBuilder.BuildContent(_viewModel.Sections);
+		get => BuildWorkspaceContent();
 		set => UpdateContent(value);
 	}
 
@@ -165,7 +174,6 @@ public partial class StringEditorView : UserControl, IEditorControl, IStringSect
 
 	private readonly StringEditorViewModel _viewModel;
 	private readonly ContentPersistenceCoordinator _contentPersistenceCoordinator;
-
 	#endregion Fields
 
 	#region Construction
@@ -177,7 +185,7 @@ public partial class StringEditorView : UserControl, IEditorControl, IStringSect
 
 		DataContext = _viewModel;
 
-		_contentPersistenceCoordinator = new ContentPersistenceCoordinator(() => Content, () => IsSilentSession);
+		_contentPersistenceCoordinator = new ContentPersistenceCoordinator(() => Content, () => ProcessingMode == EditorProcessingMode.Suppressed);
 		_contentPersistenceCoordinator.ContentChangedWorkerRunCompleted += (s, e) =>
 			OnContentChangedWorkerRunCompleted(EventArgs.Empty);
 
@@ -233,10 +241,13 @@ public partial class StringEditorView : UserControl, IEditorControl, IStringSect
 	#region File I/O
 
 	public void Load(string filePath)
-		=> Load(filePath, false);
+		=> Load(filePath, default);
 
-	public void Load(string filePath, bool silentSession)
+	public void Load(string filePath, DocumentLoadOptions options)
 	{
+		using IDisposable processingScope = BeginProcessingScope(options.ProcessingMode);
+		using IDisposable resetScope = _contentPersistenceCoordinator.BeginResetScope();
+
 		string[] fileLines = File.ReadAllLines(filePath);
 		UpdateContent(fileLines);
 
@@ -244,7 +255,6 @@ public partial class StringEditorView : UserControl, IEditorControl, IStringSect
 		_contentPersistenceCoordinator.SetPersistedContent(Content);
 
 		IsContentChanged = _contentPersistenceCoordinator.HasChanges(Content);
-		IsSilentSession = silentSession;
 	}
 
 	public void Save()
@@ -263,7 +273,15 @@ public partial class StringEditorView : UserControl, IEditorControl, IStringSect
 	#region Content
 
 	public void RunContentChangedWorker()
-		=> IsContentChanged = _contentPersistenceCoordinator.RunContentChangedCheck();
+	{
+		if (_workspaceViewAttached)
+		{
+			IsContentChanged = true;
+			return;
+		}
+
+		IsContentChanged = _contentPersistenceCoordinator.RunContentChangedCheck();
+	}
 
 	public void ApplyPersistedContent(string content)
 	{
@@ -273,47 +291,38 @@ public partial class StringEditorView : UserControl, IEditorControl, IStringSect
 		LastModified = DateTime.Now;
 	}
 
-	private void UpdateContent(string content)
-	{
-		string[] lines = content.Replace("\r", string.Empty).Split('\n');
-		UpdateContent(lines);
-	}
-
-	private void UpdateContent(string[] lines)
+	internal void ApplyWorkspaceTable(ClassicScriptStringTable table)
 	{
 		DetachRowCollectionListeners();
 		_viewModel.Sections.Clear();
 		_viewModel.ClearUndoRedo();
 
-		int currentLineNumber = 0;
 		int totalStringCount = 0;
-
-		while (ContentReader.NextSectionExists(lines, currentLineNumber, out int nextSectionLineNumber))
+		foreach (ClassicScriptStringTableSection sourceSection in table.Sections)
 		{
-			string currentSectionName = lines[nextSectionLineNumber];
-			List<string> strings = ContentReader.GetStrings(lines, nextSectionLineNumber);
-
-			bool isExtraNG = Regex.IsMatch(currentSectionName, @"^\[ExtraNG\]", RegexOptions.IgnoreCase);
-
 			var section = new StringTableSection
 			{
-				SectionName = currentSectionName,
-				Mode = isExtraNG ? StringTableMode.ExtraNG : StringTableMode.Normal
+				SectionName = $"[{sourceSection.Name}]",
+				Mode = sourceSection.IsExtraNg ? StringTableMode.ExtraNG : StringTableMode.Normal
 			};
 
-			if (isExtraNG)
+			for (int index = 0; index < sourceSection.Rows.Count; index++)
 			{
-				PopulateExtraNGRows(section, strings);
+				ClassicScriptStringTableRow sourceRow = sourceSection.Rows[index];
+				int id = sourceRow.Id ?? totalStringCount + index;
+
+				section.Rows.Add(new StringTableRow
+				{
+					Id = id,
+					HexValue = ContentReader.GetShortHex((short)id, sourceSection.IsExtraNg ? 3 : 4),
+					StringValue = sourceRow.Value
+				});
 			}
-			else
-			{
-				PopulateNormalRows(section, strings, totalStringCount);
-				totalStringCount += strings.Count;
-			}
+
+			if (!sourceSection.IsExtraNg)
+				totalStringCount += sourceSection.Rows.Count;
 
 			_viewModel.Sections.Add(section);
-
-			currentLineNumber = nextSectionLineNumber + (strings.Count == 0 ? 1 : strings.Count);
 		}
 
 		if (_viewModel.Sections.Count > 0 && _viewModel.SelectedSectionIndex < 0)
@@ -321,201 +330,9 @@ public partial class StringEditorView : UserControl, IEditorControl, IStringSect
 
 		AttachRowCollectionListeners();
 		ApplyZoomToAllGrids();
-		RunContentChangedWorker();
-	}
-
-	private static void PopulateNormalRows(StringTableSection section, List<string> strings, int idOffset)
-	{
-		for (int i = 0; i < strings.Count; i++)
-		{
-			short id = (short)(idOffset + i);
-			string hex = ContentReader.GetShortHex(id, 4);
-
-			section.Rows.Add(new StringTableRow
-			{
-				Id = id,
-				HexValue = hex,
-				StringValue = strings[i]
-			});
-		}
-	}
-
-	private static void PopulateExtraNGRows(StringTableSection section, List<string> strings)
-	{
-		for (int i = 0; i < strings.Count; i++)
-		{
-			if (!Regex.IsMatch(strings[i], @"^\d+:.*"))
-				continue;
-
-			short id = short.Parse(strings[i].Split(':').First());
-			string hex = ContentReader.GetShortHex(id, 3);
-			string value = Regex.Replace(strings[i], @"^\d+:", string.Empty).TrimStart(' ');
-
-			section.Rows.Add(new StringTableRow
-			{
-				Id = id,
-				HexValue = hex,
-				StringValue = value
-			});
-		}
 	}
 
 	#endregion Content
-
-	#region Edit methods
-
-	public void Undo()
-	{
-		_viewModel.Undo();
-		LastModified = DateTime.Now;
-		RunContentChangedWorker();
-	}
-
-	public void Redo()
-	{
-		_viewModel.Redo();
-		LastModified = DateTime.Now;
-		RunContentChangedWorker();
-	}
-
-	public void Cut()
-	{
-		DataGrid? grid = GetCurrentDataGrid();
-
-		if (grid is null)
-			return;
-
-		if (grid.CurrentCell.Item is StringTableRow row && grid.CurrentColumn is not null)
-		{
-			object? value = GetCellValue(row, grid.CurrentColumn.DisplayIndex);
-
-			if (value is not null)
-				Clipboard.SetText(value.ToString());
-
-			if (!grid.CurrentColumn.IsReadOnly)
-			{
-				string? cachedValue = row.StringValue;
-				row.StringValue = string.Empty;
-
-				_viewModel.PushUndo(new DataGridUndoItem(
-					_viewModel.SelectedSection?.SectionName ?? string.Empty,
-					grid.Items.IndexOf(row),
-					grid.CurrentColumn.DisplayIndex,
-					cachedValue));
-			}
-		}
-	}
-
-	public void Copy()
-	{
-		DataGrid? grid = GetCurrentDataGrid();
-
-		if (grid is null)
-			return;
-
-		if (grid.CurrentCell.Item is StringTableRow row && grid.CurrentColumn is not null)
-		{
-			object? value = GetCellValue(row, grid.CurrentColumn.DisplayIndex);
-
-			if (value is not null)
-				Clipboard.SetText(value.ToString());
-		}
-	}
-
-	public void Paste()
-	{
-		DataGrid? grid = GetCurrentDataGrid();
-
-		if (grid is null)
-			return;
-
-		if (!Clipboard.ContainsText())
-			return;
-
-		if (grid.CurrentCell.Item is StringTableRow row && grid.CurrentColumn is not null && !grid.CurrentColumn.IsReadOnly)
-		{
-			string? cachedValue = row.StringValue;
-			row.StringValue = Clipboard.GetText();
-
-			_viewModel.PushUndo(new DataGridUndoItem(
-				_viewModel.SelectedSection?.SectionName ?? string.Empty,
-				grid.Items.IndexOf(row),
-				grid.CurrentColumn.DisplayIndex,
-				cachedValue));
-
-			IsContentChanged = true;
-			RunContentChangedWorker();
-		}
-	}
-
-	public void SelectAll()
-	{
-		DataGrid? grid = GetCurrentDataGrid();
-		grid?.SelectAll();
-	}
-
-	public void GoToObject(string objectName, TextDefinitionDiscriminator? identifyingObject = null)
-	{
-		// Callers pass the bare section name; the model stores it with brackets
-		// (e.g. "[Section1]"), matching the old WinForms behavior.
-		string bracketedName = $"[{objectName}]";
-
-		for (int i = 0; i < _viewModel.Sections.Count; i++)
-		{
-			if (_viewModel.Sections[i].SectionName.Equals(bracketedName, StringComparison.OrdinalIgnoreCase))
-			{
-				_viewModel.SelectedSectionIndex = i;
-				return;
-			}
-		}
-	}
-
-	#endregion Edit methods
-
-	#region Settings
-
-	public void UpdateSettings(ConfigurationBase configuration)
-	{
-		if (configuration is not TextEditorConfigBase config)
-			return;
-
-		_viewModel.FontSize = (int)config.FontSize - 4;
-		_viewModel.FontFamily = config.FontFamily;
-
-		ApplyZoomToAllGrids();
-	}
-
-	#endregion Settings
-
-	#region Zoom
-
-	private void ApplyZoomToAllGrids()
-	{
-		double fontSize = _viewModel.FontSize * _viewModel.ZoomLevel / 100.0;
-		var fontFamily = new FontFamily(_viewModel.FontFamily);
-
-		foreach (DataGrid grid in GetAllDataGrids())
-		{
-			grid.FontFamily = fontFamily;
-			grid.FontSize = fontSize;
-			grid.RowHeight = Double.NaN; // Auto row height
-
-			UpdateColumnWidths(grid, fontSize);
-		}
-	}
-
-	private static void UpdateColumnWidths(DataGrid grid, double fontSize)
-	{
-		double stringWidth = fontSize * 4.5;
-
-		if (grid.Columns.Count >= 2)
-		{
-			grid.Columns[0].Width = new DataGridLength(stringWidth);
-			grid.Columns[1].Width = new DataGridLength(stringWidth);
-		}
-	}
-
-	#endregion Zoom
 
 	#region Keyboard handlers
 
@@ -601,175 +418,4 @@ public partial class StringEditorView : UserControl, IEditorControl, IStringSect
 
 	#endregion Keyboard handlers
 
-	#region DataGrid event handlers
-
-	private void DataGrid_BeginningEdit(object? sender, DataGridBeginningEditEventArgs e)
-	{
-		if (e.Row.Item is StringTableRow row && e.Column is not null)
-		{
-			// Cache the current value for undo before edit begins.
-			_cachedBeginEditValue = GetCellValue(row, e.Column.DisplayIndex);
-		}
-	}
-
-	private void DataGrid_PreparingCellForEdit(object? sender, DataGridPreparingCellForEditEventArgs e)
-	{
-		// Let the editing TextBox accept newline characters so Shift+Enter
-		// can insert them; the DataGrid PreviewKeyDown handler intercepts
-		// Shift+Enter to prevent it from committing the edit.
-		if (e.EditingElement is TextBox textBox)
-			textBox.AcceptsReturn = true;
-	}
-
-	private void DataGrid_CellEditEnding(object? sender, DataGridCellEditEndingEventArgs e)
-	{
-		if (e.Row.Item is StringTableRow row && e.Column is not null)
-		{
-			object? newValue = GetCellValue(row, e.Column.DisplayIndex);
-
-			if (e.EditAction == DataGridEditAction.Commit && !Equals(_cachedBeginEditValue, newValue))
-			{
-				_viewModel.PushUndo(new DataGridUndoItem(
-					_viewModel.SelectedSection?.SectionName ?? string.Empty,
-					e.Row.GetIndex(),
-					e.Column.DisplayIndex,
-					_cachedBeginEditValue));
-
-				LastModified = DateTime.Now;
-			}
-
-			_cachedBeginEditValue = null;
-		}
-
-		// Always run the dirty check when a cell edit ends, so the file is
-		// marked as modified regardless of whether the cached begin-edit
-		// value matches the final value.
-		RunContentChangedWorker();
-	}
-
-	private void DataGrid_LoadingRow(object? sender, DataGridRowEventArgs e)
-	{
-		if (e.Row.Item is StringTableRow row)
-		{
-			// Style cells based on value.
-			foreach (DataGridColumn column in ((DataGrid)sender!).Columns)
-			{
-				if (column.GetCellContent(e.Row) is TextBlock textBlock)
-				{
-					string? cellValue = GetCellValue(row, column.DisplayIndex)?.ToString();
-
-					if (cellValue == "NULL")
-						textBlock.Foreground = Brushes.Gray;
-					else
-						textBlock.Foreground = Brushes.LightSalmon;
-				}
-			}
-		}
-	}
-
-	private void DataGrid_InitializingNewItem(object? sender, InitializingNewItemEventArgs e)
-	{
-		if (e.NewItem is StringTableRow row)
-		{
-			StringTableSection? section = _viewModel.SelectedSection;
-
-			if (section is not null && section.IsExtraNG)
-			{
-				int nextId = section.Rows.Count > 0
-					? section.Rows[^1].Id + 1
-					: 0;
-
-				row.Id = nextId;
-				row.HexValue = ContentReader.GetShortHex((short)nextId, 3);
-			}
-		}
-	}
-
-	#endregion DataGrid event handlers
-
-	#region Helpers
-
-	private object? _cachedBeginEditValue;
-
-	private DataGrid? GetCurrentDataGrid()
-	{
-		if (_viewModel.SelectedSection is null)
-			return null;
-
-		var selectedTab = SectionTabs.ItemContainerGenerator
-			.ContainerFromIndex(_viewModel.SelectedSectionIndex) as TabItem;
-
-		if (selectedTab is null)
-			return null;
-
-		return FindVisualChild<DataGrid>(selectedTab);
-	}
-
-	private IEnumerable<DataGrid> GetAllDataGrids()
-	{
-		for (int i = 0; i < _viewModel.Sections.Count; i++)
-		{
-			if (SectionTabs.ItemContainerGenerator.ContainerFromIndex(i) is TabItem tabItem)
-			{
-				DataGrid? grid = FindVisualChild<DataGrid>(tabItem);
-
-				if (grid is not null)
-					yield return grid;
-			}
-		}
-	}
-
-	private static DataGrid? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
-	{
-		for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
-		{
-			DependencyObject child = VisualTreeHelper.GetChild(parent, i);
-
-			if (child is T found)
-				return found as DataGrid;
-
-			DataGrid? result = FindVisualChild<T>(child);
-
-			if (result is not null)
-				return result;
-		}
-
-		return null;
-	}
-
-	private static object? GetCellValue(StringTableRow row, int columnIndex) => columnIndex switch
-	{
-		0 => row.Id,
-		1 => row.HexValue,
-		2 => row.StringValue,
-		_ => null
-	};
-
-	#endregion Helpers
-
-	#region Row collection change tracking
-
-	private void AttachRowCollectionListeners()
-	{
-		foreach (StringTableSection section in _viewModel.Sections)
-			section.Rows.CollectionChanged += OnRowsCollectionChanged;
-	}
-
-	private void DetachRowCollectionListeners()
-	{
-		foreach (StringTableSection section in _viewModel.Sections)
-			section.Rows.CollectionChanged -= OnRowsCollectionChanged;
-	}
-
-	private void OnRowsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-	{
-		if (e.Action == NotifyCollectionChangedAction.Add ||
-			e.Action == NotifyCollectionChangedAction.Remove)
-		{
-			LastModified = DateTime.Now;
-			RunContentChangedWorker();
-		}
-	}
-
-	#endregion Row collection change tracking
 }

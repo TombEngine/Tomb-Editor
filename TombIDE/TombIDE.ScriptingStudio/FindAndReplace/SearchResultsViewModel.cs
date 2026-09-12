@@ -1,6 +1,7 @@
 #nullable enable
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using Nickelony.IDEKit.Core.FindReplace;
 using System;
 using System.Collections.ObjectModel;
 

@@ -1,26 +1,35 @@
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Rendering;
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using TombLib.Scripting.Cleaning;
-using TombLib.Scripting.UI.Cleaning;
+using Nickelony.IDEKit.AvalonEdit.Bookmarks;
+using Nickelony.IDEKit.AvalonEdit.ChangeMarkers;
+using Nickelony.IDEKit.AvalonEdit.Comments;
+using Nickelony.IDEKit.AvalonEdit.Diagnostics;
+using Nickelony.IDEKit.AvalonEdit.Editing;
+using Nickelony.IDEKit.AvalonEdit.Editors;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Hover;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Navigation;
+using Nickelony.IDEKit.Core.Comments;
+using Nickelony.IDEKit.Core.Formatting;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.UI.Completion;
 using TombLib.Scripting.UI.Diagnostics;
 using TombLib.Scripting.UI.Documents;
-using TombLib.Scripting.UI.Editing;
 using TombLib.Scripting.UI.Editors;
 using TombLib.Scripting.UI.Hover;
-using TombLib.Scripting.UI.Navigation;
 using TombLib.Scripting.UI.Presentation;
-using TombLib.Scripting.UI.Rendering;
 using TombLib.Scripting.UI.Resources;
 
 namespace TombLib.Scripting.UI.Bases;
@@ -28,11 +37,48 @@ namespace TombLib.Scripting.UI.Bases;
 /// <summary>
 /// Base class for language-specific script editors built on AvalonEdit.
 /// </summary>
+/// <remarks>
+/// Disposal is terminal for view-backed operations and configuration mutations.
+/// Editor metadata and retained scalar state remain readable after disposal.
+/// </remarks>
 public abstract partial class TextEditorBase : TextEditor, IEditorControl
 {
 	private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
 	private static readonly TextEditorFormattingService s_formattingService = new();
+
+	static TextEditorBase()
+	{
+		// AvalonEdit inserts the line-number margin at the front of TextArea.LeftMargins when
+		// ShowLineNumbers changes; keep the change-marker and bookmark margins at the far left
+		// after that, in their fixed order.
+		ShowLineNumbersProperty.OverrideMetadata(
+			typeof(TextEditorBase),
+			new FrameworkPropertyMetadata(OnShowLineNumbersChanged));
+	}
+
+	private static void OnShowLineNumbersChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+	{
+		if (dependencyObject is not TextEditorBase editor)
+			return;
+
+		RepositionMargin(editor.TextArea.LeftMargins, editor._changeMarkerMargin, index: 0);
+		RepositionMargin(editor.TextArea.LeftMargins, editor._bookmarkMargin, index: 1);
+	}
+
+	private static void RepositionMargin(ObservableCollection<UIElement> margins, FrameworkElement? margin, int index)
+	{
+		if (margin is null)
+			return;
+
+		int currentIndex = margins.IndexOf(margin);
+
+		if (currentIndex < 0 || currentIndex == index)
+			return;
+
+		margins.RemoveAt(currentIndex);
+		margins.Insert(index, margin);
+	}
 
 	/// <inheritdoc/>
 	public EditorType EditorType => EditorType.Text;
@@ -50,54 +96,141 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 		get => Document.FileName;
 		set
 		{
+			EnsureNotDisposed();
+
+			// A path change is a rename boundary: it advances the session generation so asynchronous
+			// work admitted for the previous logical document is rejected as stale.
+			if (!string.Equals(Document.FileName, value, StringComparison.Ordinal))
+				Interlocked.Increment(ref _sessionGeneration);
+
 			Document.FileName = value;
 			_contentPersistenceCoordinator.FilePath = value;
 		}
 	}
 
+	private readonly EditorProcessingModeScope _processingModeScope = new();
+	private int _sessionGeneration;
+
 	/// <inheritdoc/>
-	public bool IsSilentSession { get; set; }
+	public EditorProcessingMode ProcessingMode => _processingModeScope.CurrentMode;
+
+	/// <summary>
+	/// Gets the monotonically increasing session generation that identifies the current operation
+	/// ownership of this editor. The generation advances on load, replace, rename, and disposal
+	/// boundaries and invalidates asynchronous work admitted for an earlier generation. It is the
+	/// operation-ownership counter: it is distinct from the document version (a logical content
+	/// snapshot) and from the projection version (the source version used to parse a view), and
+	/// those counters must not be used interchangeably.
+	/// </summary>
+	public int SessionGeneration => Volatile.Read(ref _sessionGeneration);
+
+	/// <inheritdoc/>
+	public IDisposable BeginProcessingScope(EditorProcessingMode mode)
+	{
+		EnsureNotDisposed();
+		return _processingModeScope.Begin(mode);
+	}
 
 	/// <summary>
 	/// Gets or sets whether backup files are created for the current document.
 	/// </summary>
 	public bool CreateBackupFiles
 	{
-		get => IsSilentSession ? false : _contentPersistenceCoordinator.CreateBackupFiles;
-		set => _contentPersistenceCoordinator.CreateBackupFiles = value;
+		get
+		{
+			EnsureNotDisposed();
+			return ProcessingMode == EditorProcessingMode.Suppressed
+				? false
+				: _contentPersistenceCoordinator.CreateBackupFiles;
+		}
+		set
+		{
+			EnsureNotDisposed();
+			_contentPersistenceCoordinator.CreateBackupFiles = value;
+		}
 	}
 
 	/// <inheritdoc/>
 	public string Content
 	{
-		get => Text;
+		get
+		{
+			EnsureNotDisposed();
+			return Text;
+		}
 		set => SetContent(value);
 	}
 
 	/// <summary>
+	/// Gets or sets the target used to apply workspace edits to this editor.
+	/// </summary>
+	public ITextEditTarget? WorkspaceEditTarget { get; set; }
+
+	private bool _isContentChanged;
+
+	/// <summary>
 	/// Gets or sets whether the content of the current document has unsaved changes.
 	/// </summary>
-	public bool IsContentChanged { get; set; }
+	public bool IsContentChanged
+	{
+		get => _isContentChanged;
+		set
+		{
+			EnsureNotDisposed();
+			_isContentChanged = value;
+		}
+	}
+
+	private DateTime _lastModified;
 
 	/// <summary>
 	/// Gets or sets the timestamp of the last content modification.
 	/// </summary>
-	public DateTime LastModified { get; set; }
+	public DateTime LastModified
+	{
+		get => _lastModified;
+		set
+		{
+			EnsureNotDisposed();
+			_lastModified = value;
+		}
+	}
 
 	/// <summary>
 	/// Gets the line number of the caret position.
 	/// </summary>
-	public int CurrentRow => TextArea.Caret.Position.Line;
+	public int CurrentRow
+	{
+		get
+		{
+			EnsureNotDisposed();
+			return TextArea.Caret.Position.Line;
+		}
+	}
 
 	/// <summary>
 	/// Gets the column of the caret position.
 	/// </summary>
-	public int CurrentColumn => TextArea.Caret.Position.Column;
+	public int CurrentColumn
+	{
+		get
+		{
+			EnsureNotDisposed();
+			return TextArea.Caret.Position.Column;
+		}
+	}
 
 	/// <summary>
 	/// Gets the currently selected content as text, or <c>null</c> when there is no selection.
 	/// </summary>
-	public string? SelectedContent => SelectedText.Length == 0 ? null : SelectedText;
+	public string? SelectedContent
+	{
+		get
+		{
+			EnsureNotDisposed();
+			return SelectedText.Length == 0 ? null : SelectedText;
+		}
+	}
 
 	/// <summary>
 	/// Gets the formatter used when tidying the document.
@@ -109,14 +242,20 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 	/// <summary>
 	/// Gets or sets the minimum allowed zoom percentage.
 	/// </summary>
-	/// <exception cref="ArgumentOutOfRangeException">The value is less than or equal to zero.</exception>
+	/// <exception cref="ArgumentOutOfRangeException">The value is less than or equal to zero or greater than <see cref="MaxZoom"/>.</exception>
 	public int MinZoom
 	{
 		get => _minZoom;
 		set
 		{
+			EnsureNotDisposed();
 			ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
+
+			if (value > _maxZoom)
+				throw new ArgumentOutOfRangeException(nameof(value), value, "Minimum zoom cannot exceed maximum zoom.");
+
 			_minZoom = value;
+			Zoom = _statusCoordinator.Zoom;
 		}
 	}
 
@@ -125,14 +264,20 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 	/// <summary>
 	/// Gets or sets the maximum allowed zoom percentage.
 	/// </summary>
-	/// <exception cref="ArgumentOutOfRangeException">The value is less than or equal to zero.</exception>
+	/// <exception cref="ArgumentOutOfRangeException">The value is less than or equal to zero or less than <see cref="MinZoom"/>.</exception>
 	public int MaxZoom
 	{
 		get => _maxZoom;
 		set
 		{
+			EnsureNotDisposed();
 			ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
+
+			if (value < _minZoom)
+				throw new ArgumentOutOfRangeException(nameof(value), value, "Maximum zoom cannot be less than minimum zoom.");
+
 			_maxZoom = value;
+			Zoom = _statusCoordinator.Zoom;
 		}
 	}
 
@@ -147,23 +292,42 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 		get => _zoomStepSize;
 		set
 		{
+			EnsureNotDisposed();
 			ArgumentOutOfRangeException.ThrowIfNegativeOrZero(value);
 			_zoomStepSize = value;
 		}
 	}
 
+	private CommentSyntax _commentSyntax;
+
 	/// <summary>
-	/// Gets or sets the prefix used to comment out lines.
+	/// Gets or sets the comment syntax used when commenting out lines.
 	/// </summary>
-	public string CommentPrefix { get; set; } = string.Empty;
+	public CommentSyntax CommentSyntax
+	{
+		get => _commentSyntax;
+		set
+		{
+			EnsureNotDisposed();
+			_commentSyntax = value;
+		}
+	}
 
 	/// <summary>
 	/// Gets or sets the delay before the delayed text-changed notification fires.
 	/// </summary>
 	public TimeSpan TextChangedDelayedInterval
 	{
-		get => _contentPersistenceCoordinator.DelayedInterval;
-		set => _contentPersistenceCoordinator.DelayedInterval = value;
+		get
+		{
+			EnsureNotDisposed();
+			return _contentPersistenceCoordinator.DelayedInterval;
+		}
+		set
+		{
+			EnsureNotDisposed();
+			_contentPersistenceCoordinator.DelayedInterval = value;
+		}
 	}
 
 	private string _parenthesesClosingString = ")";
@@ -177,6 +341,7 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 		get => _parenthesesClosingString;
 		set
 		{
+			EnsureNotDisposed();
 			ArgumentNullException.ThrowIfNull(value);
 			_parenthesesClosingString = value;
 		}
@@ -193,6 +358,7 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 		get => _bracesClosingString;
 		set
 		{
+			EnsureNotDisposed();
 			ArgumentNullException.ThrowIfNull(value);
 			_bracesClosingString = value;
 		}
@@ -209,6 +375,7 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 		get => _bracketsClosingString;
 		set
 		{
+			EnsureNotDisposed();
 			ArgumentNullException.ThrowIfNull(value);
 			_bracketsClosingString = value;
 		}
@@ -225,6 +392,7 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 		get => _quotesClosingString;
 		set
 		{
+			EnsureNotDisposed();
 			ArgumentNullException.ThrowIfNull(value);
 			_quotesClosingString = value;
 		}
@@ -241,6 +409,7 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 		get => _engineVersion;
 		set
 		{
+			EnsureNotDisposed();
 			ArgumentNullException.ThrowIfNull(value);
 			_engineVersion = value;
 		}
@@ -248,55 +417,155 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 
 	// Configuration
 
+	private double _defaultFontSize = TextEditorBaseDefaults.FontSize;
+
 	/// <summary>
 	/// Basically FontSize but zooming doesn't affect its value.
 	/// </summary>
-	public double DefaultFontSize { get; set; } = TextEditorBaseDefaults.FontSize;
+	public double DefaultFontSize
+	{
+		get => _defaultFontSize;
+		set
+		{
+			EnsureNotDisposed();
+			_defaultFontSize = value;
+		}
+	}
+
+	private bool _intelliSenseEnabled = TextEditorBaseDefaults.IntelliSenseEnabled;
 
 	/// <summary>
 	/// Gets or sets whether IntelliSense features are enabled for this editor.
 	/// </summary>
-	public bool IntelliSenseEnabled { get; set; } = TextEditorBaseDefaults.IntelliSenseEnabled;
+	public bool IntelliSenseEnabled
+	{
+		get => _intelliSenseEnabled;
+		set
+		{
+			EnsureNotDisposed();
+			_intelliSenseEnabled = value;
+		}
+	}
+
+	private bool _completionEnabled = TextEditorBaseDefaults.CompletionEnabled;
 
 	/// <summary>
 	/// Gets or sets whether completion suggestions are shown while typing.
 	/// </summary>
-	public bool CompletionEnabled { get; set; } = TextEditorBaseDefaults.CompletionEnabled;
+	public bool CompletionEnabled
+	{
+		get => _completionEnabled;
+		set
+		{
+			EnsureNotDisposed();
+			_completionEnabled = value;
+		}
+	}
+
+	private bool _liveErrorUnderlining = TextEditorBaseDefaults.LiveErrorUnderlining;
 
 	/// <summary>
 	/// Gets or sets whether errors are underlined as they are detected.
 	/// </summary>
-	public bool LiveErrorUnderlining { get; set; } = TextEditorBaseDefaults.LiveErrorUnderlining;
+	public bool LiveErrorUnderlining
+	{
+		get => _liveErrorUnderlining;
+		set
+		{
+			EnsureNotDisposed();
+			_liveErrorUnderlining = value;
+		}
+	}
+
+	private bool _signatureHelpPopupsEnabled = TextEditorBaseDefaults.SignatureHelpPopupsEnabled;
 
 	/// <summary>
 	/// Gets or sets whether signature help popups are shown.
 	/// </summary>
-	public bool SignatureHelpPopupsEnabled { get; set; } = TextEditorBaseDefaults.SignatureHelpPopupsEnabled;
+	public bool SignatureHelpPopupsEnabled
+	{
+		get => _signatureHelpPopupsEnabled;
+		set
+		{
+			EnsureNotDisposed();
+			_signatureHelpPopupsEnabled = value;
+		}
+	}
+
+	private bool _autoCloseParentheses = TextEditorBaseDefaults.AutoCloseParentheses;
 
 	/// <summary>
 	/// Gets or sets whether opening parentheses are auto-closed.
 	/// </summary>
-	public bool AutoCloseParentheses { get; set; } = TextEditorBaseDefaults.AutoCloseParentheses;
+	public bool AutoCloseParentheses
+	{
+		get => _autoCloseParentheses;
+		set
+		{
+			EnsureNotDisposed();
+			_autoCloseParentheses = value;
+		}
+	}
+
+	private bool _autoCloseBraces = TextEditorBaseDefaults.AutoCloseBraces;
 
 	/// <summary>
 	/// Gets or sets whether opening braces are auto-closed.
 	/// </summary>
-	public bool AutoCloseBraces { get; set; } = TextEditorBaseDefaults.AutoCloseBraces;
+	public bool AutoCloseBraces
+	{
+		get => _autoCloseBraces;
+		set
+		{
+			EnsureNotDisposed();
+			_autoCloseBraces = value;
+		}
+	}
+
+	private bool _autoCloseBrackets = TextEditorBaseDefaults.AutoCloseBrackets;
 
 	/// <summary>
 	/// Gets or sets whether opening brackets are auto-closed.
 	/// </summary>
-	public bool AutoCloseBrackets { get; set; } = TextEditorBaseDefaults.AutoCloseBrackets;
+	public bool AutoCloseBrackets
+	{
+		get => _autoCloseBrackets;
+		set
+		{
+			EnsureNotDisposed();
+			_autoCloseBrackets = value;
+		}
+	}
+
+	private bool _autoCloseDoubleQuotes = TextEditorBaseDefaults.AutoCloseDoubleQuotes;
 
 	/// <summary>
 	/// Gets or sets whether double quotes are auto-closed.
 	/// </summary>
-	public bool AutoCloseDoubleQuotes { get; set; } = TextEditorBaseDefaults.AutoCloseDoubleQuotes;
+	public bool AutoCloseDoubleQuotes
+	{
+		get => _autoCloseDoubleQuotes;
+		set
+		{
+			EnsureNotDisposed();
+			_autoCloseDoubleQuotes = value;
+		}
+	}
+
+	private bool _autoCloseSingleQuotes = TextEditorBaseDefaults.AutoCloseSingleQuotes;
 
 	/// <summary>
 	/// Gets or sets whether single quotes are auto-closed.
 	/// </summary>
-	public bool AutoCloseSingleQuotes { get; set; } = TextEditorBaseDefaults.AutoCloseSingleQuotes;
+	public bool AutoCloseSingleQuotes
+	{
+		get => _autoCloseSingleQuotes;
+		set
+		{
+			EnsureNotDisposed();
+			_autoCloseSingleQuotes = value;
+		}
+	}
 
 	// Fields
 
@@ -306,28 +575,37 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 	protected Popup _specialToolTip;
 
 	private readonly BookmarkCoordinator _bookmarkCoordinator;
+	private readonly IBookmarkStore _bookmarkStore;
 	private readonly TextAutoClosingService _autoClosingService;
 	private readonly TextLineCommentService _commentService;
 	private readonly CompletionWindowCoordinator _completionWindowCoordinator;
 	private readonly ContentPersistenceCoordinator _contentPersistenceCoordinator;
-	private readonly TextDefinitionNavigationService _definitionNavigationService;
 	private readonly TextDiagnosticToolTipService _diagnosticToolTipService;
 	private readonly TextEditorStatusCoordinator _statusCoordinator;
 	private readonly EditorToolTipPresenter _toolTipPresenter;
-	private readonly TextEditorViewService _viewService;
+	private readonly UnsavedChangesTracker _unsavedChangesTracker;
 
-	private IBackgroundRenderer _bookmarkRenderer;
-	private IBackgroundRenderer _errorRenderer;
+	private BookmarkMargin _bookmarkMargin;
+	private ChangeMarkerMargin _changeMarkerMargin;
+	private IBackgroundRenderer _diagnosticsRenderer;
 
 	private TextDefinitionTriggerController? _definitionTriggerController;
 	private TextHoverController? _hoverController;
 	private TextDiagnosticsCoordinator? _diagnosticsCoordinator;
 	private bool _isDisposed;
+	private bool _isDisposing;
 
 	/// <summary>
 	/// Gets the diagnostics currently owned by this editor instance.
 	/// </summary>
-	public IReadOnlyList<TextEditorDiagnostic> Diagnostics => _diagnosticToolTipService.Diagnostics;
+	public IReadOnlyList<TextEditorDiagnostic> Diagnostics
+	{
+		get
+		{
+			EnsureNotDisposed();
+			return _diagnosticToolTipService.Diagnostics;
+		}
+	}
 
 	// Construction
 
@@ -342,17 +620,30 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 		SetNewDefaultSettings();
 		_autoClosingService = services.AutoClosingService;
 		_bookmarkCoordinator = services.BookmarkCoordinator;
+		_bookmarkStore = services.BookmarkStore;
 		_commentService = services.CommentService;
 		_completionWindowCoordinator = services.CompletionWindowCoordinator;
 		_contentPersistenceCoordinator = services.ContentPersistenceCoordinator;
-		_definitionNavigationService = services.DefinitionNavigationService;
 		_diagnosticToolTipService = services.DiagnosticToolTipService;
 		_statusCoordinator = services.StatusCoordinator;
 		_toolTipPresenter = services.ToolTipPresenter;
-		_viewService = services.ViewService;
+		_unsavedChangesTracker = services.UnsavedChangesTracker;
 		_specialToolTip = _toolTipPresenter.Popup;
 
-		CompletionController = new TextCompletionController(this);
+		CompletionController = new TextCompletionController(
+			this,
+			_completionWindowCoordinator,
+			configureWindow: static window => TextCompletionWindowStyle.Apply(window),
+			completionItemFactory: static item => new CompletionData(item),
+			resolveDescriptionAsync: static item =>
+				item is CompletionData completionData && completionData.CanResolve
+					? completionData.GetDescriptionAsync()
+					: null,
+			getDisplayInfo: static item => item is CompletionData completionData
+				? (completionData.DisplayText, completionData.DisplayDetail)
+				: (item.Text, null),
+			toolTipBackground: TextEditorColorPalette.ToolTipBackground,
+			toolTipBorder: TextEditorColorPalette.ToolTipBorder);
 
 		InitializePersistenceCoordinator();
 		InitializeRenderers();
@@ -385,15 +676,31 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 		_contentPersistenceCoordinator.TextChangedDelayed += ContentPersistenceCoordinator_TextChangedDelayed;
 	}
 
-	[MemberNotNull(nameof(_bookmarkRenderer), nameof(_errorRenderer))]
+	private void UnsubscribePersistenceCoordinatorEvents()
+	{
+		_contentPersistenceCoordinator.ContentChangedWorkerRunCompleted -= ContentPersistenceCoordinator_ContentChangedWorkerRunCompleted;
+		_contentPersistenceCoordinator.TextChangedDelayed -= ContentPersistenceCoordinator_TextChangedDelayed;
+	}
+
+	[MemberNotNull(nameof(_bookmarkMargin), nameof(_changeMarkerMargin), nameof(_diagnosticsRenderer))]
 	private void InitializeRenderers()
 	{
-		_bookmarkRenderer = new BookmarkRenderer(_bookmarkCoordinator);
-		_errorRenderer = new ErrorRenderer(this);
+		_changeMarkerMargin = new ChangeMarkerMargin(_unsavedChangesTracker);
+		_bookmarkMargin = new BookmarkMargin(_bookmarkCoordinator);
+		_diagnosticsRenderer = new DiagnosticsRenderer(
+			documentProvider: () => Document,
+			segmentsProvider: CreateDiagnosticSegments);
 
-		TextArea.TextView.BackgroundRenderers.Add(_bookmarkRenderer);
-		TextArea.TextView.BackgroundRenderers.Add(_errorRenderer);
+		TextArea.LeftMargins.Insert(0, _changeMarkerMargin);
+		TextArea.LeftMargins.Insert(1, _bookmarkMargin);
+		TextArea.TextView.BackgroundRenderers.Add(_diagnosticsRenderer);
 	}
+
+	internal void InvalidateBookmarkMargin()
+		=> _bookmarkMargin?.InvalidateVisual();
+
+	internal void InvalidateChangeMarkerMargin()
+		=> _changeMarkerMargin?.InvalidateVisual();
 
 	private void BindEventMethods()
 	{
@@ -455,6 +762,60 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 
 	// IEditorControl methods
 
+	/// <summary>
+	/// Gets whether an undo operation is available.
+	/// </summary>
+	public new bool CanUndo
+	{
+		get
+		{
+			EnsureNotDisposed();
+			return Document.UndoStack.CanUndo;
+		}
+	}
+
+	/// <summary>
+	/// Gets whether a redo operation is available.
+	/// </summary>
+	public new bool CanRedo
+	{
+		get
+		{
+			EnsureNotDisposed();
+			return Document.UndoStack.CanRedo;
+		}
+	}
+
+	/// <summary>
+	/// Undoes the most recent document operation.
+	/// </summary>
+	/// <returns><see langword="true"/> when an operation was undone; otherwise, <see langword="false"/>.</returns>
+	public new bool Undo()
+	{
+		EnsureNotDisposed();
+
+		if (!CanUndo)
+			return false;
+
+		Document.UndoStack.Undo();
+		return true;
+	}
+
+	/// <summary>
+	/// Redoes the most recently undone document operation.
+	/// </summary>
+	/// <returns><see langword="true"/> when an operation was redone; otherwise, <see langword="false"/>.</returns>
+	public new bool Redo()
+	{
+		EnsureNotDisposed();
+
+		if (!CanRedo)
+			return false;
+
+		Document.UndoStack.Redo();
+		return true;
+	}
+
 	void IEditorControl.Undo()
 		=> Undo();
 
@@ -470,11 +831,24 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 			return;
 
 		_isDisposed = true;
+		_isDisposing = true;
 
-		DisposeEditorResources();
+		// Advance the session generation so in-flight asynchronous work admitted before disposal is
+		// rejected as stale instead of publishing to the disposed editor.
+		Interlocked.Increment(ref _sessionGeneration);
+
+		try
+		{
+			DisposeEditorResources();
+		}
+		finally
+		{
+			_isDisposing = false;
+		}
 
 		_diagnosticsCoordinator?.Dispose();
 		_hoverController?.Dispose();
+		_definitionTriggerController?.Dispose();
 		CompletionController.Dispose();
 
 		_toolTipPresenter.Dispose();
@@ -483,10 +857,12 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 
 		UnbindEventMethods();
 
-		TextArea.TextView.BackgroundRenderers.Remove(_bookmarkRenderer);
-		TextArea.TextView.BackgroundRenderers.Remove(_errorRenderer);
+		TextArea.LeftMargins.Remove(_changeMarkerMargin);
+		TextArea.LeftMargins.Remove(_bookmarkMargin);
+		TextArea.TextView.BackgroundRenderers.Remove(_diagnosticsRenderer);
 
 		_statusCoordinator.Dispose();
+		UnsubscribePersistenceCoordinatorEvents();
 		_contentPersistenceCoordinator.Dispose();
 	}
 
@@ -496,8 +872,11 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 	protected virtual void DisposeEditorResources()
 	{ }
 
-	private void EnsureNotDisposed()
-		=> ObjectDisposedException.ThrowIf(_isDisposed, this);
+	/// <summary>
+	/// Throws when this editor is no longer available for normal operations.
+	/// </summary>
+	protected void EnsureNotDisposed()
+		=> ObjectDisposedException.ThrowIf(_isDisposed && !_isDisposing, this);
 
 	private void UnbindEventMethods()
 	{

@@ -1,11 +1,10 @@
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using System;
 using System.Collections.Generic;
 using TombLib.Scripting.ClassicScript.Diagnostics;
 using TombLib.Scripting.ClassicScript.Mnemonics;
 using TombLib.Scripting.ClassicScript.Services;
 using TombLib.Scripting.ClassicScript.Syntaxes;
-using TombLib.Scripting.Diagnostics;
 
 namespace TombLib.Tests.ClassicScript.Diagnostics;
 

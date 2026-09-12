@@ -48,24 +48,15 @@ internal sealed class TrxWorkspaceAutomationProvider : IStudioWorkspaceAutomatio
 	}
 
 	public bool IsScriptDefined(string levelName)
-	{
-		var cachedEditor = _silentActionService.RememberSelectedEditor();
-		string scriptFilePath = PathHelper.GetScriptFilePath(_scriptRootDirectoryPath, _engine);
-		SilentActionFileState scriptFileState = _silentActionService.CaptureFileState(scriptFilePath);
-		bool isDefined = _callbacks.IsLevelScriptDefined(levelName);
-
-		_silentActionService.Complete(cachedEditor, false, _silentActionService.CreateCompletion(scriptFileState, saveAffectedFile: false));
-		return isDefined;
-	}
+		=> _callbacks.IsLevelScriptDefined(levelName);
 
 	public void RenameLevel(string oldName, string newName)
 	{
-		var cachedEditor = _silentActionService.RememberSelectedEditor();
 		string scriptFilePath = PathHelper.GetScriptFilePath(_scriptRootDirectoryPath, _engine);
 		SilentActionFileState scriptFileState = _silentActionService.CaptureFileState(scriptFilePath);
 
 		_callbacks.RenameRequestedLevelScript(oldName, newName);
-		_silentActionService.Complete(cachedEditor, true, _silentActionService.CreateCompletion(scriptFileState));
+		_silentActionService.Complete(true, _silentActionService.CreateCompletion(scriptFileState));
 	}
 
 	private static bool IsSilentAction(IIDEEvent ideEvent)

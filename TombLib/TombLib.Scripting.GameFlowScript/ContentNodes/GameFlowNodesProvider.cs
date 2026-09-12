@@ -1,16 +1,15 @@
-using DarkUI.Controls;
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using System;
 using System.Collections.Generic;
 using TombLib.Scripting.GameFlowScript.Services;
 using TombLib.Scripting.GameFlowScript.Types;
-using TombLib.Scripting.UI.ContentNodes;
 
 namespace TombLib.Scripting.GameFlowScript.ContentNodes;
 
 /// <summary>
-/// Provides the content nodes for a GameFlow script document.
+/// Provides the document symbols (outline entries) for a GameFlow script document.
 /// </summary>
-public sealed class GameFlowNodesProvider : ContentNodesProviderBase
+public sealed class GameFlowNodesProvider : ITextDocumentSymbolProvider
 {
 	private readonly GameFlowContentNodeService _nodeService;
 
@@ -25,13 +24,11 @@ public sealed class GameFlowNodesProvider : ContentNodesProviderBase
 	}
 
 	/// <inheritdoc/>
-	protected override IReadOnlyList<DarkTreeNode> GetNodesCore(string content, string filter)
-	{
-		return ContentNodeTreeBuilder.BuildGroupedNodes(
-			_nodeService.GetNodeGroups(content, filter),
+	public IReadOnlyList<TextDocumentSymbol> GetSymbols(TextDocumentSymbolRequest request)
+		=> DocumentSymbolTreeBuilder.BuildGroupedNodes(
+			_nodeService.GetNodeGroups(request.DocumentText, request.Filter),
 			group => group.Header,
 			group => group.Nodes,
 			node => node.Text,
 			node => new GameFlowObjectDiscriminator(node.ObjectType));
-	}
 }

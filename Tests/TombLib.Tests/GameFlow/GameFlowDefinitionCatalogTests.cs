@@ -1,12 +1,10 @@
-using Nickelony.LanguageServer.Abstractions.Hover;
-using Nickelony.LanguageServer.Abstractions.Navigation;
+using Nickelony.IDEKit.IntelliSense.Hover;
+using Nickelony.IDEKit.IntelliSense.Navigation;
 using TombLib.Scripting.GameFlowScript;
 using TombLib.Scripting.GameFlowScript.Hover;
 using TombLib.Scripting.GameFlowScript.Navigation;
 using TombLib.Scripting.GameFlowScript.Services;
 using TombLib.Scripting.GameFlowScript.Types;
-using TombLib.Scripting.Hover;
-using TombLib.Scripting.Navigation;
 
 namespace TombLib.Tests;
 

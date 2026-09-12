@@ -1,5 +1,5 @@
-using Nickelony.LanguageServer.Abstractions.Completion;
-using TombLib.Scripting.Completion;
+using Nickelony.IDEKit.IntelliSense.Completion;
+using TombLib.Scripting.UI.Completion;
 using TombLib.Scripting.TRX.Completion;
 using TombLib.Scripting.TRX.Models;
 using TombLib.Scripting.TRX.Services;

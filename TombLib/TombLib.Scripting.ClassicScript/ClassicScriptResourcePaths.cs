@@ -1,4 +1,4 @@
-using TombLib.Scripting.Resources;
+using TombLib.Scripting.UI.Resources;
 
 namespace TombLib.Scripting.ClassicScript;
 

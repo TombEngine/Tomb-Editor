@@ -1,8 +1,8 @@
+using Nickelony.IDEKit.AvalonEdit.Extras.TextMate.Highlighting;
 using System.Text.Json;
 using TombLib.Scripting.GameFlowScript;
 using TombLib.Scripting.Lua.Themes;
 using TombLib.Scripting.TRX.Resources;
-using TombLib.Scripting.UI.Highlighting;
 
 namespace TombLib.Tests;
 

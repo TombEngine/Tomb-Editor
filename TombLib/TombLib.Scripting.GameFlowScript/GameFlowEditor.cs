@@ -4,11 +4,12 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using TombLib.Scripting.GameFlowScript.Completion;
 using TombLib.Scripting.GameFlowScript.Highlighting;
-using TombLib.Scripting.Navigation;
-using TombLib.Scripting.UI.Bases;
-using TombLib.Scripting.UI.Editors;
-using TombLib.Scripting.UI.Resources;
-using TombLib.Scripting.UI.Threading;
+using Nickelony.IDEKit.Core.Comments;
+using Nickelony.IDEKit.IntelliSense.Navigation;
+using Nickelony.IDEKit.Core.Infrastructure;
+	using TombLib.Scripting.UI.Bases;
+	using TombLib.Scripting.UI.Editors;
+	using TombLib.Scripting.UI.Resources;
 
 namespace TombLib.Scripting.GameFlowScript;
 
@@ -38,7 +39,7 @@ public sealed partial class GameFlowEditor : TextEditorBase, INameBasedObjectNav
 		InitializeDefinitionNavigation(TryNavigateDefinition);
 		InitializeHover(BuildStandardHoverRequestState, RequestHover);
 
-		CommentPrefix = "//";
+		CommentSyntax = new CommentSyntax("//", null, null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.TripleDoubleQuoted);
 	}
 
 	/// <inheritdoc/>
@@ -53,7 +54,7 @@ public sealed partial class GameFlowEditor : TextEditorBase, INameBasedObjectNav
 	/// <inheritdoc/>
 	protected override void OnLanguageTextEntered(TextCompositionEventArgs e)
 	{
-		if (CompletionEnabled)
+		if (IntelliSenseEnabled && CompletionEnabled)
 		{
 			CompletionController.ApplyDecision(
 				_completionCoordinator.GetOpenDecision(Document, CaretOffset, CompletionController.ActiveWindow is not null));
@@ -63,6 +64,8 @@ public sealed partial class GameFlowEditor : TextEditorBase, INameBasedObjectNav
 	/// <inheritdoc/>
 	public override void UpdateSettings(TombLib.Scripting.UI.Bases.ConfigurationBase configuration)
 	{
+		EnsureNotDisposed();
+
 		if (configuration is not GameFlowEditorConfiguration config)
 			return;
 

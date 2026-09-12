@@ -1,7 +1,8 @@
 #nullable enable
 
 using ICSharpCode.AvalonEdit.Document;
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
+using Nickelony.IDEKit.Core.FindReplace;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using System;
 using System.Collections.Generic;
 using TombIDE.ScriptingStudio.Build;
@@ -15,7 +16,7 @@ using TombIDE.ScriptingStudio.Navigation;
 using TombIDE.ScriptingStudio.Shell;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.ScriptingStudio.WorkspaceProfile;
-using TombLib.Scripting.Presentation;
+using TombLib.Scripting.UI.Presentation;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editors;
 

@@ -1,13 +1,13 @@
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.ClassicScript.Commands;
 using TombLib.Scripting.ClassicScript.Services;
 using TombLib.Scripting.ClassicScript.Syntaxes;
-using TombLib.Scripting.Diagnostics;
-using TombLib.Scripting.Text;
+using Nickelony.IDEKit.Core.Comments;
 
 namespace TombLib.Scripting.ClassicScript.Diagnostics;
 
@@ -265,12 +265,12 @@ public sealed class ErrorDetector : ITextDiagnosticsProvider
 			ITextLine nextLine = source.GetLineByNumber(i);
 			nextLineText = _lineService.EscapeComments(source.GetText(nextLine.Offset, nextLine.Length));
 
-			if ((nextLineText.Contains('>') && !ContinuationHelper.IsValidContinuation(nextLineText, ";", '>')) || nextLineText.Count(c => c == '>') > 1)
+			if ((nextLineText.Contains('>') && !ContinuationHelper.IsValidContinuation(nextLineText, new CommentSyntax(";", null, null, StringLiteralStyle.None), '>')) || nextLineText.Count(c => c == '>') > 1)
 				return true;
 
 			i++;
 		}
-		while (ContinuationHelper.IsValidContinuation(nextLineText, ";", '>'));
+		while (ContinuationHelper.IsValidContinuation(nextLineText, new CommentSyntax(";", null, null, StringLiteralStyle.None), '>'));
 
 		return false;
 	}

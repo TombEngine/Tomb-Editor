@@ -1,4 +1,5 @@
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
+using Nickelony.IDEKit.Core.Infrastructure;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,8 +14,8 @@ using TombLib.Scripting.ClassicScript.Navigation;
 using TombLib.Scripting.ClassicScript.Services;
 using TombLib.Scripting.ClassicScript.Signatures;
 using TombLib.Scripting.ClassicScript.Syntaxes;
-using TombLib.Scripting.Diagnostics;
 using TombLib.Scripting.UI.Diagnostics;
+using TombLib.Scripting.UI.Editors;
 
 namespace TombLib.Tests;
 
@@ -89,6 +90,38 @@ public class TextDiagnosticsCoordinatorTests
 
 			Assert.AreEqual(0, completedCount);
 			Assert.IsFalse(worker.IsBusy);
+		});
+	}
+
+	[TestMethod]
+	public void Coordinator_ResetWhileBusy_CancelsInFlightAndRaisesNoCompletion()
+	{
+		WPFTestHelper.RunInSta(() =>
+		{
+			var editor = new ClassicScriptEditor(new Version(1, 0), CreateLanguageServices());
+			Window hostWindow = WPFTestHelper.ShowInHostWindow(editor);
+
+			try
+			{
+				var detector = new SlowDetector(blockFirstCalls: 1);
+				var coordinator = new TextDiagnosticsCoordinator(editor, new Version(1, 0), detector);
+
+				coordinator.RunErrorCheck("content");
+				PumpUntil(() => detector.CallCount >= 1);
+				Assert.IsTrue(coordinator.IsBusy);
+
+				coordinator.Reset();
+				detector.Release();
+				PumpUntil(() => !coordinator.IsBusy);
+
+				Assert.IsFalse(coordinator.IsBusy);
+				Assert.AreEqual(0, editor.Diagnostics.Count);
+				coordinator.Dispose();
+			}
+			finally
+			{
+				hostWindow.Close();
+			}
 		});
 	}
 
@@ -279,7 +312,7 @@ public class TextDiagnosticsCoordinatorTests
 	}
 
 	[TestMethod]
-	public void SilentSession_WhileDetectionActive_IgnoresCompletedResult()
+	public void ProcessingSuppressed_WhileDetectionActive_IgnoresCompletedResult()
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
@@ -295,7 +328,7 @@ public class TextDiagnosticsCoordinatorTests
 				PumpUntil(() => detector.CallCount >= 1);
 				Assert.IsTrue(coordinator.IsBusy);
 
-				editor.IsSilentSession = true;
+				using IDisposable suppressedScope = editor.BeginProcessingScope(EditorProcessingMode.Suppressed);
 				detector.Release();
 
 				PumpUntil(() => !coordinator.IsBusy);
@@ -312,7 +345,7 @@ public class TextDiagnosticsCoordinatorTests
 	}
 
 	[TestMethod]
-	public void SilentSession_WhileDetectionPending_DropsQueuedCheck()
+	public void ProcessingSuppressed_WhileDetectionPending_DropsQueuedCheck()
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
@@ -329,7 +362,7 @@ public class TextDiagnosticsCoordinatorTests
 				Assert.IsTrue(coordinator.IsBusy);
 
 				coordinator.RunErrorCheck("second");
-				editor.IsSilentSession = true;
+				using IDisposable suppressedScope = editor.BeginProcessingScope(EditorProcessingMode.Suppressed);
 				detector.Release();
 
 				PumpUntil(() => !coordinator.IsBusy);
@@ -346,7 +379,7 @@ public class TextDiagnosticsCoordinatorTests
 	}
 
 	[TestMethod]
-	public void SilentSession_WhileIdleTimerPending_DoesNotStartDetection()
+	public void ProcessingSuppressed_WhileIdleTimerPending_DoesNotStartDetection()
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
@@ -359,7 +392,7 @@ public class TextDiagnosticsCoordinatorTests
 				var coordinator = new TextDiagnosticsCoordinator(editor, new Version(1, 0), detector, idleDelayInterval: TimeSpan.FromMilliseconds(20.0));
 
 				coordinator.RunOnIdle("content");
-				editor.IsSilentSession = true;
+				using IDisposable suppressedScope = editor.BeginProcessingScope(EditorProcessingMode.Suppressed);
 
 				PumpFor(TimeSpan.FromMilliseconds(200.0));
 
@@ -371,6 +404,190 @@ public class TextDiagnosticsCoordinatorTests
 			{
 				hostWindow.Close();
 			}
+		});
+	}
+
+	[TestMethod]
+	[TestCategory("TextEditorBaseModernization")]
+	public void ErrorDetectionWorker_NormalCompletion_ClassifiesCompleted()
+	{
+		WPFTestHelper.RunInSta(() =>
+		{
+			var worker = new ErrorDetectionWorker(new SlowDetector(blockFirstCalls: 0), new Version(1, 0), TimeSpan.FromMilliseconds(50.0));
+			RunWorkerCompletedEventArgs? completedArgs = null;
+			worker.RunWorkerCompleted += (_, e) => completedArgs = e;
+
+			worker.RunErrorCheck("content");
+
+			PumpUntil(() => completedArgs is not null);
+
+			Assert.AreEqual(TextEditorRequestOutcome.Completed, worker.LastRequestOutcome);
+			Assert.IsNotNull(completedArgs);
+			Assert.IsNull(completedArgs.Error);
+			Assert.IsFalse(worker.IsBusy);
+		});
+	}
+
+	[TestMethod]
+	[TestCategory("TextEditorBaseModernization")]
+	public void ErrorDetectionWorker_ProviderFailure_ClassifiesFailed()
+	{
+		WPFTestHelper.RunInSta(() =>
+		{
+			var worker = new ErrorDetectionWorker(new ThrowingDiagnosticsProvider(), new Version(1, 0), TimeSpan.FromMilliseconds(50.0));
+			RunWorkerCompletedEventArgs? completedArgs = null;
+			worker.RunWorkerCompleted += (_, e) => completedArgs = e;
+
+			worker.RunErrorCheck("content");
+
+			PumpUntil(() => completedArgs is not null);
+
+			// Provider failure is classified as failed and surfaced through the completion event.
+			Assert.AreEqual(TextEditorRequestOutcome.Failed, worker.LastRequestOutcome);
+			Assert.IsNotNull(completedArgs?.Error);
+			Assert.IsFalse(worker.IsBusy);
+		});
+	}
+
+	[TestMethod]
+	[TestCategory("TextEditorBaseModernization")]
+	public void ErrorDetectionWorker_ResetWhileBusy_ProviderCompletes_ClassifiesSuperseded()
+	{
+		WPFTestHelper.RunInSta(() =>
+		{
+			var detector = new SlowDetector(blockFirstCalls: 1);
+			var worker = new ErrorDetectionWorker(detector, new Version(1, 0), TimeSpan.FromMilliseconds(50.0));
+			int publishedCount = 0;
+			worker.RunWorkerCompleted += (_, _) => publishedCount++;
+
+			worker.RunErrorCheck("content");
+			PumpUntil(() => detector.CallCount >= 1);
+			Assert.IsTrue(worker.IsBusy);
+
+			worker.Reset();
+			detector.Release();
+			PumpUntil(() => !worker.IsBusy);
+
+			// The owner invalidated the request while the provider still completed; the completed
+			// result is dropped and classified as superseded rather than published.
+			Assert.AreEqual(TextEditorRequestOutcome.Superseded, worker.LastRequestOutcome);
+			Assert.AreEqual(0, publishedCount);
+			Assert.IsFalse(worker.IsBusy);
+		});
+	}
+
+	[TestMethod]
+	[TestCategory("TextEditorBaseModernization")]
+	public void ErrorDetectionWorker_GenerationAdvancedWhileBusy_ClassifiesStaleAndDoesNotPublish()
+	{
+		WPFTestHelper.RunInSta(() =>
+		{
+			var detector = new SlowDetector(blockFirstCalls: 1);
+			int sessionGeneration = 0;
+			var worker = new ErrorDetectionWorker(
+				detector,
+				new Version(1, 0),
+				TimeSpan.FromMilliseconds(50.0),
+				sessionGenerationProvider: () => sessionGeneration);
+			int publishedCount = 0;
+			worker.RunWorkerCompleted += (_, _) => publishedCount++;
+
+			worker.RunErrorCheck("content");
+			PumpUntil(() => detector.CallCount >= 1);
+			Assert.IsTrue(worker.IsBusy);
+
+			// A load, replace, rename, or disposal boundary advanced the session generation while
+			// the run was in flight; the completed result is stale and must not publish.
+			sessionGeneration = 1;
+			detector.Release();
+			PumpUntil(() => !worker.IsBusy);
+
+			Assert.AreEqual(TextEditorRequestOutcome.Stale, worker.LastRequestOutcome);
+			Assert.AreEqual(0, publishedCount);
+			Assert.IsFalse(worker.IsBusy);
+		});
+	}
+
+	[TestMethod]
+	[TestCategory("TextEditorBaseModernization")]
+	public void ErrorDetectionWorker_LogicalDocumentChangedWhileBusy_ClassifiesStaleAndDoesNotPublish()
+	{
+		WPFTestHelper.RunInSta(() =>
+		{
+			var detector = new SlowDetector(blockFirstCalls: 1);
+			string? logicalDocumentId = @"C:\Scripts\a.cs";
+			var worker = new ErrorDetectionWorker(
+				detector,
+				new Version(1, 0),
+				TimeSpan.FromMilliseconds(50.0),
+				logicalDocumentIdProvider: () => logicalDocumentId);
+			int publishedCount = 0;
+			worker.RunWorkerCompleted += (_, _) => publishedCount++;
+
+			worker.RunErrorCheck("content");
+			PumpUntil(() => detector.CallCount >= 1);
+			Assert.IsTrue(worker.IsBusy);
+
+			// A rename changed the logical document identity while the run was in flight.
+			logicalDocumentId = @"C:\Scripts\b.cs";
+			detector.Release();
+			PumpUntil(() => !worker.IsBusy);
+
+			Assert.AreEqual(TextEditorRequestOutcome.Stale, worker.LastRequestOutcome);
+			Assert.AreEqual(0, publishedCount);
+			Assert.IsFalse(worker.IsBusy);
+		});
+	}
+
+	[TestMethod]
+	[TestCategory("TextEditorBaseModernization")]
+	public void Coordinator_RenameWhileBusy_StaleResultDoesNotReplaceDiagnostics()
+	{
+		WPFTestHelper.RunInSta(() =>
+		{
+			var editor = new ClassicScriptEditor(new Version(1, 0), CreateLanguageServices());
+			Window hostWindow = WPFTestHelper.ShowInHostWindow(editor);
+
+			try
+			{
+				var detector = new SlowDetector(blockFirstCalls: 1);
+				var coordinator = new TextDiagnosticsCoordinator(editor, new Version(1, 0), detector);
+
+				coordinator.RunErrorCheck("content");
+				PumpUntil(() => detector.CallCount >= 1);
+				Assert.IsTrue(coordinator.IsBusy);
+
+				// A rename advances the session generation and changes the logical document identity.
+				editor.FilePath = @"C:\Scripts\renamed.cs";
+				detector.Release();
+				PumpUntil(() => !coordinator.IsBusy);
+
+				// The in-flight result was computed for the previous document identity, so it must
+				// not replace the editor's diagnostics.
+				Assert.AreEqual(0, editor.Diagnostics.Count);
+				Assert.IsFalse(coordinator.IsBusy);
+			}
+			finally
+			{
+				hostWindow.Close();
+			}
+		});
+	}
+
+	[TestMethod]
+	[TestCategory("TextEditorBaseModernization")]
+	public void ErrorDetectionWorker_CallsAfterDisposal_ThrowObjectDisposedException()
+	{
+		WPFTestHelper.RunInSta(() =>
+		{
+			var worker = new ErrorDetectionWorker(new SlowDetector(blockFirstCalls: 0), new Version(1, 0), TimeSpan.FromMilliseconds(50.0));
+			worker.Dispose();
+
+			// New detection work cannot be admitted after disposal; only already-admitted work
+			// completes, with its normal cancellation outcome.
+			Assert.ThrowsException<ObjectDisposedException>(() => worker.RunErrorCheck("content"));
+			Assert.ThrowsException<ObjectDisposedException>(() => worker.RunErrorCheckOnIdle("content"));
+			Assert.ThrowsException<ObjectDisposedException>(() => worker.Reset());
 		});
 	}
 

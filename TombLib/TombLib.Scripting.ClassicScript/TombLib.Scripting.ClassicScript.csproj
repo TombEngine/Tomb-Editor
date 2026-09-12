@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <!-- Explicit usings (repository standard; implicit usings are not used). -->
   <PropertyGroup>
@@ -22,14 +22,14 @@
     <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
   </ItemGroup>
 
-  <!-- Checked-in preview binary (0.1.0-preview) under Libs/; not a NuGet package. Version and
-       build provenance are documented in Libs/README.md. -->
   <ItemGroup>
-    <Reference Include="Nickelony.LanguageServer.Abstractions">
-      <HintPath>..\..\Libs\Nickelony.LanguageServer.Abstractions.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Nickelony.LanguageServer.Abstractions" Version="$(NickelonyLanguageServerVersion)" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Nickelony.IDEKit.AvalonEdit" Version="$(NickelonyIDEKitAvalonEditVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Core" Version="$(NickelonyIDEKitCoreVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.IntelliSense" Version="$(NickelonyIDEKitIntelliSenseVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Tooling" Version="$(NickelonyIDEKitToolingVersion)" />
     <ProjectReference Include="..\TombLib.Scripting.UI\TombLib.Scripting.UI.csproj" />
   </ItemGroup>
 

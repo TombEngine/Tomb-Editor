@@ -1,4 +1,5 @@
 using ICSharpCode.AvalonEdit.Document;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
 using TombLib.Scripting.Lua;
 using TombLib.Scripting.UI.Completion;
 

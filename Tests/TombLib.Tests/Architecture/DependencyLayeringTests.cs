@@ -1,7 +1,10 @@
 using System.Reflection;
 using System.Runtime.Versioning;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using TombLib.Scripting.ClassicScript;
 using TombLib.Scripting.GameFlowScript;
+using TombLib.Scripting.Lua;
 using TombLib.Scripting.TRX;
 using TombLib.Scripting.UI.Bases;
 
@@ -15,7 +18,7 @@ public class DependencyLayeringTests
 	[TestMethod]
 	public void NeutralCore_HasNoHostOrUiDependency()
 	{
-		Assembly neutralCore = typeof(TombLib.Scripting.Text.ITextSnapshot).Assembly;
+		Assembly neutralCore = typeof(ITextSnapshot).Assembly;
 
 		string[] forbidden = neutralCore.GetReferencedAssemblies()
 			.Select(reference => reference.Name)
@@ -28,7 +31,7 @@ public class DependencyLayeringTests
 	[TestMethod]
 	public void NeutralCore_IsNotWindowsTargeted()
 	{
-		Assembly neutralCore = typeof(TombLib.Scripting.Text.ITextSnapshot).Assembly;
+		Assembly neutralCore = typeof(ITextSnapshot).Assembly;
 		TargetFrameworkAttribute? framework = neutralCore.GetCustomAttribute<TargetFrameworkAttribute>();
 
 		Assert.IsNotNull(framework, "Neutral core must carry a target framework attribute.");
@@ -36,15 +39,18 @@ public class DependencyLayeringTests
 	}
 
 	[TestMethod]
-	public void NeutralCore_DeclaresProviderContracts()
+	public void IntelliSenseContracts_LiveInDependencyFreeAssembly()
 	{
-		Assembly neutralCore = typeof(TombLib.Scripting.Text.ITextSnapshot).Assembly;
+		Assembly intellisenseAssembly = typeof(ITextDiagnosticsProvider).Assembly;
 
-		Assert.IsNotNull(neutralCore.GetType("TombLib.Scripting.Completion.ITextCompletionProvider"), "ITextCompletionProvider must live in the neutral core.");
-		Assert.IsNotNull(neutralCore.GetType("TombLib.Scripting.Hover.ITextHoverProvider"), "ITextHoverProvider must live in the neutral core.");
-		Assert.IsNotNull(neutralCore.GetType("TombLib.Scripting.Navigation.ITextDefinitionProvider"), "ITextDefinitionProvider must live in the neutral core.");
-		Assert.IsNotNull(neutralCore.GetType("TombLib.Scripting.Signatures.ITextSignatureHelpProvider"), "ITextSignatureHelpProvider must live in the neutral core.");
-		Assert.IsNotNull(neutralCore.GetType("TombLib.Scripting.Diagnostics.ITextDiagnosticsProvider"), "ITextDiagnosticsProvider must live in the neutral core.");
+		Assert.AreEqual("Nickelony.IDEKit.IntelliSense", intellisenseAssembly.GetName().Name, "IntelliSense contracts must live in the Nickelony.IDEKit.IntelliSense assembly.");
+
+		string[] forbidden = intellisenseAssembly.GetReferencedAssemblies()
+			.Select(reference => reference.Name)
+			.Where(name => HostAssemblyPrefixes.Any(prefix => name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)))
+			.ToArray();
+
+		Assert.AreEqual(0, forbidden.Length, "IntelliSense assembly references host assemblies: " + string.Join(", ", forbidden));
 	}
 
 	[TestMethod]
@@ -52,7 +58,7 @@ public class DependencyLayeringTests
 	{
 		Assembly uiAdapter = typeof(TextEditorBase).Assembly;
 
-		Assert.IsNotNull(uiAdapter.GetReferencedAssemblies().FirstOrDefault(reference => reference.Name == "TombLib.Scripting"), "UI adapter must reference the neutral core.");
+		Assert.IsNotNull(uiAdapter.GetReferencedAssemblies().FirstOrDefault(reference => reference.Name == "Nickelony.IDEKit.Core"), "UI adapter must reference Nickelony.IDEKit.Core.");
 		Assert.IsNotNull(uiAdapter.GetReferencedAssemblies().FirstOrDefault(reference => reference.Name == "ICSharpCode.AvalonEdit"), "UI adapter must reference AvalonEdit.");
 	}
 
@@ -62,12 +68,13 @@ public class DependencyLayeringTests
 		AssertProviderReferencesNeutralCore(typeof(ClassicScriptLanguageServices).Assembly);
 		AssertProviderReferencesNeutralCore(typeof(GameFlowLanguageServices).Assembly);
 		AssertProviderReferencesNeutralCore(typeof(TRXLanguageServices).Assembly);
+		AssertProviderReferencesNeutralCore(typeof(LuaEditor).Assembly);
 	}
 
 	private static void AssertProviderReferencesNeutralCore(Assembly providerAssembly)
 	{
 		Assert.IsNotNull(
-			providerAssembly.GetReferencedAssemblies().FirstOrDefault(reference => reference.Name == "TombLib.Scripting"),
-			$"{providerAssembly.GetName().Name} must reference the neutral TombLib.Scripting core.");
+			providerAssembly.GetReferencedAssemblies().FirstOrDefault(reference => reference.Name == "Nickelony.IDEKit.Core"),
+			$"{providerAssembly.GetName().Name} must reference the neutral Nickelony.IDEKit.Core assembly.");
 	}
 }

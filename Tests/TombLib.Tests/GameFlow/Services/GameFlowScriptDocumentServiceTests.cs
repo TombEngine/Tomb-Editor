@@ -1,6 +1,6 @@
 using TombLib.Scripting.GameFlowScript.Services;
 using TombLib.Scripting.GameFlowScript.Types;
-using TombLib.Scripting.Text;
+using Nickelony.IDEKit.Core.Text;
 
 namespace TombLib.Tests.GameFlow.Services;
 

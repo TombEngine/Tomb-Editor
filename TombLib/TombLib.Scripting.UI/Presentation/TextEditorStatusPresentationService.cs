@@ -1,8 +1,8 @@
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Signatures;
 using System;
-using TombLib.Scripting.Presentation;
+using TombLib.Scripting.UI.Presentation;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editors;
-using TombLib.Scripting.UI.Signatures;
 
 namespace TombLib.Scripting.UI.Presentation;
 

@@ -81,12 +81,11 @@ internal sealed class GameFlowWorkspaceAutomationProvider : IStudioWorkspaceAuto
 		if (!result.HasContent)
 			return;
 
-		var cachedEditor = _silentActionService.RememberSelectedEditor();
 		string scriptFilePath = PathHelper.GetScriptFilePath(_scriptRootDirectoryPath, TRVersion.Game.TR2);
 		SilentActionFileState scriptFileState = _silentActionService.CaptureFileState(scriptFilePath);
 
 		_callbacks.AppendScript(result.GameFlowScript);
-		_silentActionService.Complete(cachedEditor, true, _silentActionService.CreateCompletion(scriptFileState));
+		_silentActionService.Complete(true, _silentActionService.CreateCompletion(scriptFileState));
 	}
 
 	public void Build()
@@ -131,24 +130,15 @@ internal sealed class GameFlowWorkspaceAutomationProvider : IStudioWorkspaceAuto
 		=> OpenPathIfExists(GameFlowDocumentationPaths.MainManualPath);
 
 	public bool IsScriptDefined(string levelName)
-	{
-		var cachedEditor = _silentActionService.RememberSelectedEditor();
-		string scriptFilePath = PathHelper.GetScriptFilePath(_scriptRootDirectoryPath, TRVersion.Game.TR2);
-		SilentActionFileState scriptFileState = _silentActionService.CaptureFileState(scriptFilePath);
-		bool isDefined = _callbacks.IsLevelScriptDefined(levelName);
-
-		_silentActionService.Complete(cachedEditor, false, _silentActionService.CreateCompletion(scriptFileState, saveAffectedFile: false));
-		return isDefined;
-	}
+		=> _callbacks.IsLevelScriptDefined(levelName);
 
 	public void RenameLevel(string oldName, string newName)
 	{
-		var cachedEditor = _silentActionService.RememberSelectedEditor();
 		string scriptFilePath = PathHelper.GetScriptFilePath(_scriptRootDirectoryPath, TRVersion.Game.TR2);
 		SilentActionFileState scriptFileState = _silentActionService.CaptureFileState(scriptFilePath);
 
 		_callbacks.RenameRequestedLevelScript(oldName, newName);
-		_silentActionService.Complete(cachedEditor, true, _silentActionService.CreateCompletion(scriptFileState));
+		_silentActionService.Complete(true, _silentActionService.CreateCompletion(scriptFileState));
 	}
 
 	private static bool IsSilentAction(IIDEEvent ideEvent)

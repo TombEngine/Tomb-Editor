@@ -1,9 +1,9 @@
+using Nickelony.IDEKit.IntelliSense.Completion;
 using System.Linq;
 using TombLib.Scripting.ClassicScript.Completion;
 using TombLib.Scripting.ClassicScript.Mnemonics;
 using TombLib.Scripting.ClassicScript.Services;
 using TombLib.Scripting.ClassicScript.Syntaxes;
-using TombLib.Scripting.Completion;
 
 namespace TombLib.Tests;
 

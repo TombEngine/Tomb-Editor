@@ -1,4 +1,4 @@
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using System.Windows.Media;
 using TombLib.Scripting.UI.Resources;
 

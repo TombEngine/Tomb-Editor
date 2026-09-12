@@ -1,7 +1,7 @@
+using Nickelony.IDEKit.Core.Indentation;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TombLib.Scripting.Lua.Completion;
 using TombLib.Scripting.Lua.Parsing;
 
 namespace TombLib.Scripting.Lua.Editing;
@@ -9,57 +9,28 @@ namespace TombLib.Scripting.Lua.Editing;
 /// <summary>
 /// Computes Lua-specific newline indentation and multiline completion normalization.
 /// </summary>
-internal static class LuaIndentationStrategy
+internal sealed class LuaIndentationStrategy : IIndentationPolicy
 {
-	private readonly record struct TextLine(string Content, string Delimiter, int StartOffset);
-
 	/// <summary>
-	/// Creates the indentation unit that should be appended for one extra indent level.
+	/// Gets the shared policy instance.
 	/// </summary>
-	public static string CreateIndentationUnit(bool convertTabsToSpaces, int indentationSize, int tabSize)
+	public static LuaIndentationStrategy Instance { get; } = new();
+
+	private LuaIndentationStrategy() { }
+
+	/// <inheritdoc/>
+	public string GetDesiredIndentation(in IndentationContext context)
 	{
-		if (!convertTabsToSpaces)
-			return "\t";
+		string indentation = context.PreviousLineIndentation;
 
-		int size = indentationSize > 0
-			? indentationSize
-			: tabSize > 0
-				? tabSize
-				: 4;
-
-		return new string(' ', size);
-	}
-
-	/// <summary>
-	/// Gets the leading whitespace prefix for the supplied line.
-	/// </summary>
-	public static string GetLeadingWhitespace(string lineText)
-	{
-		return string.IsNullOrEmpty(lineText)
-			? string.Empty
-			: lineText[..GetLeadingWhitespaceLength(lineText)];
-	}
-
-	/// <summary>
-	/// Computes the indentation that should be applied to the current line based on the previous Lua line.
-	/// </summary>
-	public static string GetDesiredIndentation(
-		string previousLineText,
-		string currentLineText,
-		string previousLineIndentation,
-		string indentationUnit,
-		bool useSmartIndent)
-	{
-		string indentation = previousLineIndentation;
-
-		if (!useSmartIndent)
+		if (!context.UseSmartIndent)
 			return indentation;
 
-		if (ShouldIncreaseIndentAfterLine(previousLineText))
-			indentation += indentationUnit;
+		if (ShouldIncreaseIndentAfterLine(context.PreviousLineText))
+			indentation += context.IndentationUnit;
 
-		if (StartsWithDedentToken(currentLineText))
-			indentation = RemoveSingleIndentLevel(indentation, indentationUnit);
+		if (StartsWithDedentToken(context.CurrentLineText))
+			indentation = IndentationTextHelper.RemoveSingleIndentLevel(indentation, context.IndentationUnit);
 
 		return indentation;
 	}
@@ -67,75 +38,69 @@ internal static class LuaIndentationStrategy
 	/// <summary>
 	/// Builds the text that should be inserted when Enter is pressed inside Lua code.
 	/// </summary>
-	public static LuaEnterInsertionResult BuildEnterInsertion(
-		string lineTextBeforeCaret,
-		string lineTextAfterCaret,
-		string currentLineIndentation,
-		string indentationUnit,
-		string newLineText,
-		bool useSmartIndent)
+	/// <param name="context">The enter-insertion inputs.</param>
+	/// <returns>The text to insert and the resulting caret position.</returns>
+	public EnterInsertionResult BuildEnterInsertion(in EnterInsertionContext context)
 	{
-		newLineText = string.IsNullOrEmpty(newLineText) ? Environment.NewLine : newLineText;
+		string newLineText = string.IsNullOrEmpty(context.NewLineText) ? Environment.NewLine : context.NewLineText;
 
-		string nextLineIndentation = currentLineIndentation;
+		string nextLineIndentation = context.CurrentLineIndentation;
 
-		if (useSmartIndent && ShouldIncreaseIndentAfterLine(lineTextBeforeCaret))
-			nextLineIndentation += indentationUnit;
+		if (context.UseSmartIndent && ShouldIncreaseIndentAfterLine(context.LineTextBeforeCaret))
+			nextLineIndentation += context.IndentationUnit;
 
-		bool shouldSplitBeforeDedent = useSmartIndent
-			&& nextLineIndentation.Length > currentLineIndentation.Length
-			&& StartsWithDedentToken(lineTextAfterCaret);
+		bool shouldSplitBeforeDedent = context.UseSmartIndent
+			&& nextLineIndentation.Length > context.CurrentLineIndentation.Length
+			&& StartsWithDedentToken(context.LineTextAfterCaret);
 
 		if (!shouldSplitBeforeDedent)
 		{
 			string text = newLineText + nextLineIndentation;
-			return new LuaEnterInsertionResult(text, text.Length, 0);
+			return new EnterInsertionResult(text, text.Length, 0);
 		}
 
-		string splitText = newLineText + nextLineIndentation + newLineText + currentLineIndentation;
-		return new LuaEnterInsertionResult(
+		string splitText = newLineText + nextLineIndentation + newLineText + context.CurrentLineIndentation;
+		return new EnterInsertionResult(
 			splitText,
 			newLineText.Length + nextLineIndentation.Length,
-			GetLeadingWhitespaceLength(lineTextAfterCaret));
+			IndentationTextHelper.GetLeadingWhitespaceLength(context.LineTextAfterCaret));
 	}
 
 	/// <summary>
 	/// Normalizes multiline completion insertion relative to the current line indentation.
 	/// </summary>
-	public static LuaCompletionNormalizationResult NormalizeCompletionInsertion(
-		string text,
-		int? caretOffset,
-		string currentLineIndentation,
-		string indentationUnit)
+	/// <param name="context">The completion-insertion inputs.</param>
+	/// <returns>The normalized insertion text and caret offset.</returns>
+	public CompletionInsertionResult NormalizeCompletionInsertion(in CompletionInsertionContext context)
 	{
-		if (string.IsNullOrEmpty(text) || !ContainsLineBreak(text))
-			return new LuaCompletionNormalizationResult(text, caretOffset);
+		if (string.IsNullOrEmpty(context.Text) || !IndentationTextHelper.ContainsLineBreak(context.Text))
+			return new CompletionInsertionResult(context.Text, context.CaretOffset);
 
-		List<TextLine> lines = SplitLines(text);
-		var builder = new StringBuilder(text.Length + Math.Max(0, lines.Count - 1) * currentLineIndentation.Length);
+		IReadOnlyList<IndentationTextLine> lines = IndentationTextHelper.SplitLines(context.Text);
+		var builder = new StringBuilder(context.Text.Length + Math.Max(0, lines.Count - 1) * context.CurrentLineIndentation.Length);
 		int? normalizedCaretOffset = null;
 		int relativeIndentLevel = 0;
 
 		for (int i = 0; i < lines.Count; i++)
 		{
-			TextLine line = lines[i];
-			int originalLeadingWhitespaceLength = GetLeadingWhitespaceLength(line.Content);
+			IndentationTextLine line = lines[i];
+			int originalLeadingWhitespaceLength = IndentationTextHelper.GetLeadingWhitespaceLength(line.Content);
 			string trimmedContent = line.Content[originalLeadingWhitespaceLength..];
 			int currentIndentLevel = i == 0
 				? 0
 				: Math.Max(0, relativeIndentLevel - GetDedentLevel(trimmedContent));
 			string normalizedIndentation = i == 0
 				? string.Empty
-				: BuildIndentation(currentLineIndentation, indentationUnit, currentIndentLevel);
+				: IndentationTextHelper.BuildIndentation(context.CurrentLineIndentation, context.IndentationUnit, currentIndentLevel);
 			string normalizedLineContent = trimmedContent.Length == 0
 				? normalizedIndentation
 				: normalizedIndentation + trimmedContent;
 
-			if (caretOffset.HasValue
-				&& caretOffset.Value >= line.StartOffset
-				&& caretOffset.Value <= line.StartOffset + line.Content.Length)
+			if (context.CaretOffset.HasValue
+				&& context.CaretOffset.Value >= line.StartOffset
+				&& context.CaretOffset.Value <= line.StartOffset + line.Content.Length)
 			{
-				int caretColumn = caretOffset.Value - line.StartOffset;
+				int caretColumn = context.CaretOffset.Value - line.StartOffset;
 				int normalizedLeadingWhitespaceLength = normalizedLineContent.Length - trimmedContent.Length;
 				int contentColumn = Math.Max(0, caretColumn - originalLeadingWhitespaceLength);
 				normalizedCaretOffset = builder.Length + normalizedLeadingWhitespaceLength + contentColumn;
@@ -146,39 +111,10 @@ internal static class LuaIndentationStrategy
 			relativeIndentLevel = currentIndentLevel + GetIndentIncrease(trimmedContent);
 		}
 
-		if (caretOffset == text.Length)
+		if (context.CaretOffset == context.Text.Length)
 			normalizedCaretOffset = builder.Length;
 
-		return new LuaCompletionNormalizationResult(builder.ToString(), normalizedCaretOffset ?? caretOffset);
-	}
-
-	private static string BuildIndentation(string currentLineIndentation, string indentationUnit, int indentLevel)
-	{
-		if (indentLevel <= 0)
-			return currentLineIndentation;
-
-		var builder = new StringBuilder(currentLineIndentation.Length + indentationUnit.Length * indentLevel);
-		builder.Append(currentLineIndentation);
-
-		for (int i = 0; i < indentLevel; i++)
-			builder.Append(indentationUnit);
-
-		return builder.ToString();
-	}
-
-	private static string RemoveSingleIndentLevel(string indentation, string indentationUnit)
-	{
-		if (string.IsNullOrEmpty(indentation))
-			return string.Empty;
-
-		if (indentationUnit == "\t" && indentation[^1] == '\t')
-			return indentation[..^1];
-
-		int removeLength = indentationUnit.Length > 0
-			? Math.Min(indentationUnit.Length, indentation.Length)
-			: 1;
-
-		return indentation[..^removeLength];
+		return new CompletionInsertionResult(builder.ToString(), normalizedCaretOffset ?? context.CaretOffset);
 	}
 
 	private static int GetDedentLevel(string lineText)
@@ -293,50 +229,5 @@ internal static class LuaIndentationStrategy
 		}
 
 		return false;
-	}
-
-	private static bool ContainsLineBreak(string text)
-		=> text.IndexOfAny(['\r', '\n']) >= 0;
-
-	private static int GetLeadingWhitespaceLength(string text)
-	{
-		int length = 0;
-
-		while (length < text.Length && char.IsWhiteSpace(text[length]) && text[length] != '\r' && text[length] != '\n')
-			length++;
-
-		return length;
-	}
-
-	private static List<TextLine> SplitLines(string text)
-	{
-		var lines = new List<TextLine>();
-		int lineStart = 0;
-		int index = 0;
-
-		while (index < text.Length)
-		{
-			if (text[index] == '\r' || text[index] == '\n')
-			{
-				int delimiterStart = index;
-
-				if (text[index] == '\r' && index + 1 < text.Length && text[index + 1] == '\n')
-					index++;
-
-				lines.Add(new TextLine(
-					text[lineStart..delimiterStart],
-					text[delimiterStart..(index + 1)],
-					lineStart));
-
-				index++;
-				lineStart = index;
-				continue;
-			}
-
-			index++;
-		}
-
-		lines.Add(new TextLine(text[lineStart..], string.Empty, lineStart));
-		return lines;
 	}
 }

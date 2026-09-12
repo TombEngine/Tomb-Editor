@@ -1,4 +1,4 @@
-using Nickelony.LanguageServer.Abstractions.Completion;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using System.Windows.Media;
 
 namespace TombLib.Scripting.TRX.Completion;

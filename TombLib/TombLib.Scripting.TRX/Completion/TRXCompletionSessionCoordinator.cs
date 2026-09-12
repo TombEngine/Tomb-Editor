@@ -1,8 +1,6 @@
 using ICSharpCode.AvalonEdit.Document;
-using Nickelony.LanguageServer.Abstractions.Completion;
-using System.Collections.Generic;
-using TombLib.Scripting.Completion;
-using TombLib.Scripting.UI.Text;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense.Completion;
 
 namespace TombLib.Scripting.TRX.Completion;
 
@@ -14,6 +12,7 @@ public sealed class TRXCompletionSessionCoordinator
 	private readonly ITextCompletionProvider _completionProvider;
 	private readonly TextAnalysisService _textAnalysisService;
 	private readonly CompletionManager _completionManager;
+	private readonly CompletionSessionKernel _kernel;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="TRXCompletionSessionCoordinator"/> class.
@@ -29,6 +28,7 @@ public sealed class TRXCompletionSessionCoordinator
 		_completionProvider = completionProvider;
 		_textAnalysisService = textAnalysisService;
 		_completionManager = completionManager;
+		_kernel = new CompletionSessionKernel(filter: completionManager.FilterCompletions);
 	}
 
 	/// <summary>
@@ -43,8 +43,7 @@ public sealed class TRXCompletionSessionCoordinator
 		if (completionWindowIsOpen || !_textAnalysisService.IsValidPositionForCtrlSpaceCompletion(document, caretOffset))
 			return TextCompletionSessionDecision.None;
 
-		string currentWord = _textAnalysisService.GetCurrentWordBeingTyped(document, caretOffset);
-		return CreateOpenDecision(document, caretOffset, currentWord);
+		return CreateOpenDecision(document, caretOffset);
 	}
 
 	/// <summary>
@@ -69,17 +68,13 @@ public sealed class TRXCompletionSessionCoordinator
 			if (!_textAnalysisService.IsValidContextForCompletion(document, contextOffset))
 				return TextCompletionSessionDecision.None;
 
-			string currentWord = _textAnalysisService.GetCurrentWordBeingTyped(document, caretOffset);
-			return CreateOpenDecision(document, caretOffset, currentWord);
+			return CreateOpenDecision(document, caretOffset);
 		}
 
-		var source = new TextDocumentSnapshot(document);
+		var source = new StringTextSnapshot(document.Text, document.FileName);
 
 		if (_completionManager.ShouldTriggerCompletionOnEmptyLine(source, caretOffset))
-		{
-			string currentWord = _textAnalysisService.GetCurrentWordBeingTyped(document, caretOffset);
-			return CreateOpenDecision(document, caretOffset, currentWord);
-		}
+			return CreateOpenDecision(document, caretOffset);
 
 		return TextCompletionSessionDecision.None;
 	}
@@ -88,28 +83,15 @@ public sealed class TRXCompletionSessionCoordinator
 		=> inputText == "\"";
 
 	private bool HasMatchingCompletions(TextDocument document, int caretOffset)
+		=> CreateOpenDecision(document, caretOffset) != TextCompletionSessionDecision.None;
+
+	private TextCompletionSessionDecision CreateOpenDecision(TextDocument document, int caretOffset)
 	{
 		string currentWord = _textAnalysisService.GetCurrentWordBeingTyped(document, caretOffset);
-		IReadOnlyList<TextCompletionItem> completionData = _completionProvider.GetCompletionItems(new TextCompletionContext(document.Text, caretOffset));
-		IReadOnlyList<TextCompletionItem> matchingCompletions = _completionManager.FilterCompletions(completionData, currentWord);
-
-		return matchingCompletions.Count > 0;
-	}
-
-	private TextCompletionSessionDecision CreateOpenDecision(TextDocument document, int caretOffset, string currentWord)
-	{
-		IReadOnlyList<TextCompletionItem> completionData = _completionProvider.GetCompletionItems(new TextCompletionContext(document.Text, caretOffset));
-
-		if (completionData.Count == 0)
-			return TextCompletionSessionDecision.None;
-
-		IReadOnlyList<TextCompletionItem> filteredCompletions = _completionManager.FilterCompletions(completionData, currentWord);
-
-		if (filteredCompletions.Count == 0)
-			return TextCompletionSessionDecision.None;
-
-		var source = new TextDocumentSnapshot(document);
+		var source = new StringTextSnapshot(document.Text, document.FileName);
 		(int startOffset, int endOffset) = _completionManager.GetCompletionWindowOffsets(source, caretOffset, currentWord);
-		return TextCompletionSessionDecision.Open(filteredCompletions, startOffset, endOffset);
+
+		var wordInfo = new CompletionWordInfo(currentWord, new TextRange(startOffset, endOffset - startOffset));
+		return _kernel.GetDecision(source, caretOffset, _completionProvider, wordInfo: wordInfo);
 	}
 }

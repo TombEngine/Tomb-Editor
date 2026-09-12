@@ -1,13 +1,12 @@
 #nullable enable
 
-using System;
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using TombLib.Scripting.ClassicScript;
 using TombLib.Scripting.ClassicScript.ContentNodes;
 using TombLib.Scripting.GameFlowScript;
 using TombLib.Scripting.GameFlowScript.ContentNodes;
 using TombLib.Scripting.TRX;
 using TombLib.Scripting.TRX.ContentNodes;
-using TombLib.Scripting.UI.ContentNodes;
 
 namespace TombIDE.ScriptingStudio.DocumentOutline;
 
@@ -27,15 +26,15 @@ internal sealed class DocumentOutlineNodesProviderFactory
 		_trxLanguageServices = trxLanguageServices;
 	}
 
-	public ContentNodesProviderBase? CreateClassicScript()
+	public ITextDocumentSymbolProvider? CreateClassicScript()
 		=> _languageServices is null ? null : new ClassicScriptNodesProvider(_languageServices.LineService);
 
-	public ContentNodesProviderBase? CreateStrings()
+	public ITextDocumentSymbolProvider? CreateStrings()
 		=> _languageServices is null ? null : new StringFileNodesProvider(_languageServices.LineService);
 
-	public ContentNodesProviderBase? CreateGameFlowScript()
+	public ITextDocumentSymbolProvider? CreateGameFlowScript()
 		=> _gameFlowLanguageServices is null ? null : new GameFlowNodesProvider(_gameFlowLanguageServices.LineService);
 
-	public ContentNodesProviderBase? CreateTrx()
+	public ITextDocumentSymbolProvider? CreateTrx()
 		=> _trxLanguageServices is null ? null : new TRXNodesProvider(_trxLanguageServices.LineService);
 }

@@ -1,4 +1,7 @@
 using ICSharpCode.AvalonEdit.Document;
+using Nickelony.IDEKit.AvalonEdit.Documents;
+using Nickelony.IDEKit.Core.Identifiers;
+using Nickelony.IDEKit.Core.Text;
 
 namespace TombLib.Scripting.TRX.Completion;
 
@@ -7,6 +10,11 @@ namespace TombLib.Scripting.TRX.Completion;
 /// </summary>
 public sealed class TextAnalysisService
 {
+	// A token is any run of characters that is not whitespace or a JSON structural delimiter;
+	// double quotes belong to the token so a fresh quote can trigger completion.
+	private static readonly IdentifierCharacterPolicy WordPolicy = IdentifierCharacterPolicy.Create(
+		static c => c is not (' ' or ',' or '{' or '}' or '[' or ']' or ':' or '\t' or '\n' or '\r'));
+
 	/// <summary>
 	/// Determines whether Ctrl+Space completion is valid at the given caret offset.
 	/// </summary>
@@ -103,48 +111,13 @@ public sealed class TextAnalysisService
 		if (caretOffset == 0)
 			return string.Empty;
 
-		DocumentLine currentLine = document.GetLineByOffset(caretOffset);
-		int lineStart = currentLine.Offset;
-		int caretPosInLine = caretOffset - lineStart;
-		string lineText = document.GetText(lineStart, currentLine.Length);
+		var snapshot = new TextDocumentSnapshot(document);
+		TextRange? range = IdentifierHelper.TryGetContainingSpan(snapshot, caretOffset, WordPolicy, IdentifierAffinity.BeforeCaret);
 
-		// Find word boundaries using JSON-aware delimiters
-		int wordStart = FindWordStart(lineText, caretPosInLine);
+		if (range is null)
+			return string.Empty;
 
-		// If we just typed a quote, include it in the current word
-		string currentWord = wordStart < caretPosInLine
-			? lineText[wordStart..caretPosInLine]
-			: string.Empty;
-
-		// If the word starts with a quote but the caret is right after a quote we just typed,
-		// we want to return just the quote to trigger completion
-		if (caretPosInLine > 0 && lineText[caretPosInLine - 1] == '"')
-		{
-			// Check if this is a fresh quote (not part of an existing word)
-			if (wordStart == caretPosInLine - 1)
-				return "\"";
-		}
-
-		return currentWord;
-	}
-
-	private static int FindWordStart(string lineText, int caretPosition)
-	{
-		int wordStart = caretPosition;
-
-		// Move backwards to find start of word
-		while (wordStart > 0)
-		{
-			char c = lineText[wordStart - 1];
-
-			// Stop at most delimiters, but include quotes as part of the word for proper replacement
-			if (IsWhitespaceOrDelimiter(c) && c != '"')
-				break;
-
-			wordStart--;
-		}
-
-		return wordStart;
+		return snapshot.GetText(range.Value.Offset, range.Value.Length);
 	}
 
 	private static bool IsWhitespaceOrDelimiter(char c)

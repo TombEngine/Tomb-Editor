@@ -1,5 +1,5 @@
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.GameFlowScript.Types;
-using TombLib.Scripting.Text;
 
 namespace TombLib.Scripting.GameFlowScript.Services;
 

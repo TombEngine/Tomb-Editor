@@ -4,7 +4,7 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:presentation="clr-namespace:TombLib.Scripting.Presentation;assembly=TombLib.Scripting"
+	xmlns:presentation="clr-namespace:TombLib.Scripting.UI.Presentation"
 	d:DesignHeight="320"
 	d:DesignWidth="540"
 	mc:Ignorable="d">

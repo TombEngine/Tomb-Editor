@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.ClassicScript.Syntaxes;
 using TombLib.Scripting.ClassicScript.Types;
-using TombLib.Scripting.Text;
 
 namespace TombLib.Scripting.ClassicScript.Services;
 

@@ -1,8 +1,8 @@
 using System;
 using System.Text.RegularExpressions;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.GameFlowScript.Resources;
 using TombLib.Scripting.GameFlowScript.Types;
-using TombLib.Scripting.Text;
 
 namespace TombLib.Scripting.GameFlowScript.Services;
 
@@ -37,8 +37,8 @@ public sealed class GameFlowScriptDocumentService : IGameFlowScriptDocumentServi
 
 			if (_levelPropertyRegex.IsMatch(lineText))
 			{
-				string scriptLevelName = _levelPropertyRegex.Replace(
-					_lineService.RemoveComments(lineText), string.Empty).Trim();
+					string scriptLevelName = _levelPropertyRegex.Replace(
+						_lineService.RemoveComments(lineText), string.Empty).Trim();
 
 				if (scriptLevelName == levelName)
 					return true;

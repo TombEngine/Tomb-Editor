@@ -94,7 +94,8 @@ internal sealed class WorkbenchComponents : IDisposable
 				},
 				composition.LanguageServices,
 				composition.GameFlowLanguageServices,
-				composition.TrxLanguageServices);
+				composition.TrxLanguageServices,
+				composition.DocumentBridge);
 
 			commandRouter = new WorkbenchCommandRouter(
 				composition.WorkspaceProfile,
@@ -116,7 +117,7 @@ internal sealed class WorkbenchComponents : IDisposable
 				scriptingMessageService.ApplySettingsToEditor,
 				commandRouter.ExecuteCommand,
 				commandRouter.CanExecuteCommand,
-				composition.ShortcutBindingService);
+				composition.KeyBindingService);
 		}
 		catch
 		{

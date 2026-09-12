@@ -10,27 +10,28 @@ namespace TombLib.Scripting.UI.Documents;
 public sealed class ContentPersistenceCoordinator : IDisposable
 {
 	private readonly Func<string> _contentProvider;
-	private readonly Func<bool> _silentSessionProvider;
+	private readonly Func<bool> _suppressedProvider;
 	private readonly ContentChangedWorker _contentChangedWorker;
 	private readonly DispatcherTimer? _textChangedDelayedTimer;
 	private TimeSpan _delayedInterval = TimeSpan.FromMilliseconds(300.0);
 	private bool _isDisposed;
+	private bool _notificationsSuppressed;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ContentPersistenceCoordinator"/> class.
 	/// </summary>
 	/// <param name="contentProvider">The callback that returns the current editor content.</param>
-	/// <param name="silentSessionProvider">The callback that reports whether the editor is in a silent session.</param>
+	/// <param name="suppressedProvider">The callback that reports whether editor processing is currently suppressed.</param>
 	/// <param name="useDelayedScheduling">Whether content-change runs are scheduled through a delayed dispatcher timer.</param>
 	public ContentPersistenceCoordinator(
 		Func<string> contentProvider,
-		Func<bool> silentSessionProvider,
+		Func<bool> suppressedProvider,
 		bool useDelayedScheduling = false)
 	{
 		ArgumentNullException.ThrowIfNull(contentProvider);
 		_contentProvider = contentProvider;
-		ArgumentNullException.ThrowIfNull(silentSessionProvider);
-		_silentSessionProvider = silentSessionProvider;
+		ArgumentNullException.ThrowIfNull(suppressedProvider);
+		_suppressedProvider = suppressedProvider;
 		_contentChangedWorker = new ContentChangedWorker();
 
 		if (useDelayedScheduling)
@@ -52,6 +53,25 @@ public sealed class ContentPersistenceCoordinator : IDisposable
 	/// Raised when a content change is scheduled through the delayed timer.
 	/// </summary>
 	public event EventHandler? TextChangedDelayed;
+
+	/// <summary>
+	/// Gets whether delayed persistence and notifications are temporarily suppressed.
+	/// </summary>
+	public bool IsResetting => _notificationsSuppressed;
+
+	/// <summary>
+	/// Begins a nest-safe scope that cancels pending persistence work and suppresses delayed notifications.
+	/// </summary>
+	/// <returns>A scope that restores the previous suppression state when disposed.</returns>
+	public IDisposable BeginResetScope()
+	{
+		bool previousNotificationsSuppressed = _notificationsSuppressed;
+		_notificationsSuppressed = true;
+		_textChangedDelayedTimer?.Stop();
+		_contentChangedWorker.ResetPendingWork();
+
+		return new ResetScope(this, previousNotificationsSuppressed);
+	}
 
 	/// <summary>
 	/// Gets or sets the path of the file the content is persisted to.
@@ -112,6 +132,9 @@ public sealed class ContentPersistenceCoordinator : IDisposable
 
 		bool isChanged = _contentChangedWorker.HasChanges(_contentProvider());
 
+		if (_notificationsSuppressed)
+			return isChanged;
+
 		if (_textChangedDelayedTimer is not null)
 		{
 			_textChangedDelayedTimer.Stop();
@@ -122,7 +145,7 @@ public sealed class ContentPersistenceCoordinator : IDisposable
 	}
 
 	/// <summary>
-	/// Reports whether the content changed and runs the persistence worker unless the editor is in a silent session.
+	/// Reports whether the content changed and runs the persistence worker unless processing is suppressed.
 	/// </summary>
 	/// <returns><c>true</c> when the content differs from the persisted content; otherwise, <c>false</c>.</returns>
 	public bool RunContentChangedCheck()
@@ -130,17 +153,29 @@ public sealed class ContentPersistenceCoordinator : IDisposable
 		if (_isDisposed)
 			return false;
 
-		string content = _contentProvider();
+		return RunContentChangedCheck(_contentProvider());
+	}
+
+	/// <summary>
+	/// Reports whether the supplied content changed and runs the persistence worker unless processing is suppressed.
+	/// </summary>
+	/// <param name="content">The current editor content.</param>
+	/// <returns><c>true</c> when the content differs from the persisted content; otherwise, <c>false</c>.</returns>
+	public bool RunContentChangedCheck(string content)
+	{
+		if (_isDisposed)
+			return false;
+
 		bool isChanged = _contentChangedWorker.HasChanges(content);
 
-		if (!_silentSessionProvider())
+		if (!_notificationsSuppressed && !_suppressedProvider())
 			_contentChangedWorker.Run(content);
 
 		return isChanged;
 	}
 
 	/// <summary>
-	/// Records the given content as the persisted baseline.
+	/// Stops delayed scheduling and records the given content as the persisted baseline.
 	/// </summary>
 	/// <param name="content">The persisted content.</param>
 	public void SetPersistedContent(string content)
@@ -148,6 +183,7 @@ public sealed class ContentPersistenceCoordinator : IDisposable
 		if (_isDisposed)
 			return;
 
+		_textChangedDelayedTimer?.Stop();
 		_contentChangedWorker.SetPersistedContent(content);
 	}
 
@@ -187,10 +223,38 @@ public sealed class ContentPersistenceCoordinator : IDisposable
 		if (_isDisposed)
 			return;
 
+		_textChangedDelayedTimer?.Stop();
+
+		if (_notificationsSuppressed)
+			return;
+
 		RunContentChangedCheck();
 		TextChangedDelayed?.Invoke(this, EventArgs.Empty);
 
 		if (_textChangedDelayedTimer is not null)
 			_textChangedDelayedTimer.Stop();
+	}
+
+	private sealed class ResetScope : IDisposable
+	{
+		private readonly ContentPersistenceCoordinator _coordinator;
+		private readonly bool _previousNotificationsSuppressed;
+		private bool _disposed;
+
+		public ResetScope(ContentPersistenceCoordinator coordinator, bool previousNotificationsSuppressed)
+		{
+			_coordinator = coordinator;
+			_previousNotificationsSuppressed = previousNotificationsSuppressed;
+		}
+
+		public void Dispose()
+		{
+			if (_disposed)
+				return;
+
+			_disposed = true;
+			_coordinator._contentChangedWorker.ResetPendingWork();
+			_coordinator._notificationsSuppressed = _previousNotificationsSuppressed;
+		}
 	}
 }

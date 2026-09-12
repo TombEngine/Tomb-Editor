@@ -1,9 +1,8 @@
-using Nickelony.LanguageServer.Abstractions.Hover;
+using Nickelony.IDEKit.IntelliSense.Hover;
 using NLog;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using TombLib.Scripting.Hover;
 using TombLib.Scripting.TRX.Models;
 using TombLib.Scripting.TRX.Services;
 

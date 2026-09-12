@@ -1,4 +1,4 @@
-using Nickelony.LanguageServer.Abstractions.Completion;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using System.Threading.Tasks;
 using System.Windows;
 using TombLib.Scripting.ClassicScript;
@@ -9,7 +9,7 @@ using TombLib.Scripting.ClassicScript.Navigation;
 using TombLib.Scripting.ClassicScript.Services;
 using TombLib.Scripting.ClassicScript.Signatures;
 using TombLib.Scripting.ClassicScript.Syntaxes;
-using TombLib.Scripting.Completion;
+using TombLib.Scripting.UI.Completion;
 
 namespace TombLib.Tests;
 

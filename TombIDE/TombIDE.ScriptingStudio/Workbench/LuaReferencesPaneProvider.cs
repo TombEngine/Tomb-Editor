@@ -2,12 +2,14 @@
 
 using System;
 using System.Collections.Generic;
+using Nickelony.IDEKit.AvalonEdit.Navigation;
+using Nickelony.IDEKit.Core.Navigation;
 using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.Navigation;
 using TombIDE.ScriptingStudio.Shell;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.ScriptingStudio.WorkspaceProfile;
-using TombLib.Scripting.Presentation;
+using TombLib.Scripting.UI.Presentation;
 using TombLib.Scripting.UI.Bases;
 
 namespace TombIDE.ScriptingStudio.Workbench;
@@ -50,10 +52,16 @@ internal sealed class LuaReferencesPaneProvider : IStudioPaneContributionProvide
 	{
 		NavigateToLocation(
 			reference.FilePath,
-			textEditor => EditorNavigationHelper.CreateRangeLocation(textEditor, reference.FilePath, reference.Range));
+			textEditor => EditorNavigationHelper.CreateRangeLocation(
+				textEditor,
+				reference.FilePath,
+				reference.Range.StartLineNumber,
+				reference.Range.StartColumnNumber,
+				reference.Range.EndLineNumber,
+				reference.Range.EndColumnNumber));
 	}
 
-	private void NavigateToLocation(string filePath, Func<TextEditorBase, EditorNavigationLocation?> locationFactory)
+	private void NavigateToLocation(string filePath, Func<TextEditorBase, NavigationLocation?> locationFactory)
 	{
 		if (string.IsNullOrWhiteSpace(filePath))
 			return;
@@ -63,7 +71,7 @@ internal sealed class LuaReferencesPaneProvider : IStudioPaneContributionProvide
 		if (_documentController.CurrentEditor is not TextEditorBase textEditor)
 			return;
 
-		EditorNavigationLocation? location = locationFactory(textEditor);
+		NavigationLocation? location = locationFactory(textEditor);
 
 		if (location is null)
 			return;

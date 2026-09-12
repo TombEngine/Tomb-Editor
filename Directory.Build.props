@@ -19,6 +19,16 @@
 
   <PropertyGroup>
     <Version>2.1</Version>
+    <NickelonyIDEKitCoreVersion Condition="'$(NickelonyIDEKitCoreVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitCoreVersion>
+    <NickelonyIDEKitIntelliSenseVersion Condition="'$(NickelonyIDEKitIntelliSenseVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitIntelliSenseVersion>
+    <NickelonyIDEKitWorkspaceVersion Condition="'$(NickelonyIDEKitWorkspaceVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitWorkspaceVersion>
+    <NickelonyIDEKitKeyBindingsVersion Condition="'$(NickelonyIDEKitKeyBindingsVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitKeyBindingsVersion>
+    <NickelonyIDEKitAvalonEditVersion Condition="'$(NickelonyIDEKitAvalonEditVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitAvalonEditVersion>
+    <NickelonyIDEKitAvalonEditIntelliSenseVersion Condition="'$(NickelonyIDEKitAvalonEditIntelliSenseVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitAvalonEditIntelliSenseVersion>
+    <NickelonyIDEKitAvalonEditExtrasVersion Condition="'$(NickelonyIDEKitAvalonEditExtrasVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitAvalonEditExtrasVersion>
+    <NickelonyIDEKitJsonSchemaVersion Condition="'$(NickelonyIDEKitJsonSchemaVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitJsonSchemaVersion>
+    <NickelonyIDEKitToolingVersion Condition="'$(NickelonyIDEKitToolingVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitToolingVersion>
+    <NickelonyLanguageServerVersion Condition="'$(NickelonyLanguageServerVersion)' == ''">1.0.0-preview.33</NickelonyLanguageServerVersion>
     <Company>Tomb Engine Team</Company>
     <Copyright>Copyright © Tomb Engine Team 2017 - 2026</Copyright>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>

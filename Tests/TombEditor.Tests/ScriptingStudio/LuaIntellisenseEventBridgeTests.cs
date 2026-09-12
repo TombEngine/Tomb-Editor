@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Moq;
 using Nickelony.LanguageServer.Abstractions;
-using Nickelony.LanguageServer.Abstractions.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using Nickelony.LanguageServer.Lua;
 using System;
 using System.Collections.Generic;

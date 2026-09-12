@@ -2,8 +2,7 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 using Moq;
-using Nickelony.LanguageServer.Abstractions.Editing;
-using Nickelony.LanguageServer.Abstractions.Navigation;
+using Nickelony.LanguageServer.Abstractions;
 using System;
 using System.Reflection;
 using System.Threading;

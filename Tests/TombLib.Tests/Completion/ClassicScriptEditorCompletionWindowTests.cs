@@ -1,5 +1,6 @@
 using ICSharpCode.AvalonEdit.CodeCompletion;
-using Nickelony.LanguageServer.Abstractions.Completion;
+using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Threading;
@@ -12,7 +13,6 @@ using TombLib.Scripting.ClassicScript.Navigation;
 using TombLib.Scripting.ClassicScript.Services;
 using TombLib.Scripting.ClassicScript.Signatures;
 using TombLib.Scripting.ClassicScript.Syntaxes;
-using TombLib.Scripting.Completion;
 using TombLib.Scripting.UI.Completion;
 
 namespace TombLib.Tests;
