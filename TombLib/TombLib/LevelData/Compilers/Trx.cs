@@ -513,6 +513,15 @@ public partial class LevelCompilerClassicTR
                     Y = (int)vec[1],
                     Z = (int)vec[2],
                 };
+            case LuaPropertyType.Color:
+                var rgb = LuaValueParser.UnboxColor(propertyValue);
+                return new TrxRGBProperty
+                {
+                    Name = propertyName,
+                    R = rgb[0],
+                    G = rgb[1],
+                    B = rgb[2],
+                };
             default:
                 return null;
         }
