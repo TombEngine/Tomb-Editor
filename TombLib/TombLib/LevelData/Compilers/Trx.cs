@@ -121,8 +121,11 @@ public partial class LevelCompilerClassicTR
     private TrxSectorOverwrite GetSectorOverwrite(Room teRoom, tr_room trRoom, ushort x, ushort z)
     {
         var teSector = teRoom.Sectors[x, z];
-        var roomBelow = GetPortalRoom(teSector.FloorPortal);
-        var roomAbove = GetPortalRoom(teSector.CeilingPortal);
+        var pos = new VectorInt2(x, z);
+        var roomBelow = GetPortalRoom(teSector.FloorPortal,
+            teRoom.GetFloorRoomConnectionInfo(pos, true).TraversableType);
+        var roomAbove = GetPortalRoom(teSector.CeilingPortal,
+            teRoom.GetCeilingRoomConnectionInfo(pos, true).TraversableType);
         
         if (roomBelow < _legacyRoomLimit && roomAbove < _legacyRoomLimit)
         {
@@ -140,9 +143,10 @@ public partial class LevelCompilerClassicTR
         };
     }
 
-    private int GetPortalRoom(PortalInstance portal)
+    private int GetPortalRoom(PortalInstance portal, Room.RoomConnectionType connType)
     {
         return portal != null && portal.Opacity != PortalOpacity.SolidFaces
+            && connType != Room.RoomConnectionType.NoPortal
             ? _roomRemapping[portal.AdjoiningRoom]
             : _noRoom;
     }
