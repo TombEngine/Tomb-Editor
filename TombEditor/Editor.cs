@@ -27,10 +27,12 @@ namespace TombEditor
 
     public interface IEditorEventCausesUnsavedChanges : IEditorEvent { }
 
-    public interface IEditorRoomChangedEvent : IEditorEventCausesUnsavedChanges
+    public interface IEditorRoomEvent : IEditorEvent
     {
         Room Room { get; }
     }
+
+    public interface IEditorRoomChangedEvent : IEditorEventCausesUnsavedChanges, IEditorRoomEvent { }
 
     public enum ObjectChangeType
     {
@@ -611,6 +613,15 @@ namespace TombEditor
             RaiseEvent(new RoomGeometryChangedEvent { Room = room });
         }
 
+        public class RoomLightingChangedEvent : IEditorRoomEvent
+        {
+            public Room Room { get; internal set; }
+        }
+        public void RoomLightingChange(Room room)
+        {
+            RaiseEvent(new RoomLightingChangedEvent { Room = room });
+        }
+
         // This is invoked when room pos is changed.
         public class RoomPositionChangedEvent : IEditorRoomChangedEvent
         {
@@ -1168,8 +1179,13 @@ namespace TombEditor
                 // If the mode switched to lighting mode, relight all rooms which have `PendingRelight` set to true
                 if (@event.Current == EditorMode.Lighting)
                 {
-                    Parallel.ForEach(Level.Rooms.Where(room => room?.PendingRelight == true),
+                    var pendingRooms = Level.Rooms.Where(room => room?.PendingRelight == true).ToList();
+
+                    Parallel.ForEach(pendingRooms,
                         room => room.RebuildLighting(Configuration.Rendering3D_HighQualityLightPreview));
+
+                    foreach (var room in pendingRooms)
+                        RoomLightingChange(room);
                 }
             }
 
