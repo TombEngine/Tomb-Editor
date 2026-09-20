@@ -10,6 +10,8 @@ local SetTimer = function (name, debug, alignment, effects, color, pColor, x, y,
     Timer.Get(name):SetScale(scale)
     Timer.Get(name):SetTextOption(LevelFuncs.Engine.Node.GeneratesTextOption(alignment, effects))
     LevelVars.nodeTimers[name] = {debug = debug}
+    LevelVars.nodeTimers[name].alignment = alignment
+    LevelVars.nodeTimers[name].effects = effects
 end
 
 local CreateStruct = function (name)
@@ -29,15 +31,15 @@ end
 -- !Arguments "Boolean, 25, {true}, Minutes"
 -- !Arguments "Boolean , 25, {true}, Seconds"
 -- !Arguments "Boolean, 25, {true}, Centiseconds"
--- !Arguments "NewLine, Boolean , 47, {false}, Debug messages in console"
--- !Arguments "Enumeration, 18, {1}, [ Left | Center | Right ], Horizontal alignment"
--- !Arguments "Enumeration, 35, {1}, [ Flat | Shadow | Blinking | Shadow + Blinking ], Effects"
 -- !Arguments "NewLine, Color, 20, {TEN.Color(255, 255, 255)}, Timer's color"
 -- !Arguments "Color, 20, {TEN.Color(255, 255, 0)}, Timer's paused color"
--- !Arguments "Numerical, 20, {50}, [ 0 | 100 | 2 ], Position X (%)\nRange [0 to 100]"
--- !Arguments "Numerical, 20, {90}, [ 0 | 100 | 2 ], Position Y (%)\nRange [0 to 100]"
--- !Arguments "Numerical, 20, {1}, [ 0.1 | 100 | 2 | 0.1 ], Scale\nRange [0.1 to 100]"
-LevelFuncs.Engine.Node.CreateTimer = function(name, time, loop, hours, minutes, seconds, deciseconds, debug, alignment, effects, color, pColor, x, y, scale)
+-- !Arguments "Numerical, 20, {50}, [ -1000 | 1000 | 2 ], Position X (%)\nRange [-1000 to 1000]\nVisible range [0 to 100]"
+-- !Arguments "Numerical, 20, {90}, [ -1000 | 1000 | 2 ], Position Y (%)\nRange [-1000 to 1000]\nVisible range [0 to 100]"
+-- !Arguments "Enumeration, 20, {1}, [ Left | Center | Right ], Horizontal alignment"
+-- !Arguments "NewLine, Enumeration, 35, {1}, [ Flat | Shadow | Blinking | Shadow + Blinking ], Effects"
+-- !Arguments "Numerical, 16, {1}, [ 0.1 | 100 | 2 | 0.1 ], Scale\nRange [0.1 to 100]"
+-- !Arguments "Boolean , 47, {false}, Debug messages in console"
+LevelFuncs.Engine.Node.CreateTimer = function(name, time, loop, hours, minutes, seconds, deciseconds, color, pColor, x, y, alignment, effects, scale, debug)
     if name ~= '' then
         local nodeTimerFormat = {hours = hours, minutes = minutes, seconds = seconds, deciseconds = deciseconds }
         Timer.Create(name, time, loop, nodeTimerFormat)
@@ -61,17 +63,17 @@ end
 -- !Arguments "Boolean, 25, {true}, Minutes"
 -- !Arguments "Boolean , 25, {true}, Seconds"
 -- !Arguments "Boolean, 25, {true}, Centiseconds"
--- !Arguments "NewLine, Boolean , 47, {false}, Debug messages in console"
--- !Arguments "Enumeration, 18, {1}, [ Left | Center | Right ], Horizontal alignment"
--- !Arguments "Enumeration, 35, {1}, [ Flat | Shadow | Blinking | Shadow + Blinking ], Effects"
 -- !Arguments "NewLine, Color, 20, {TEN.Color(255, 255, 255)}, Timer's color"
 -- !Arguments "Color, 20, {TEN.Color(255, 255, 0)}, Timer's paused color"
--- !Arguments "Numerical, 20, {50}, [ 0 | 100 | 2 ], Position X (%)\nRange [0 to 100]"
--- !Arguments "Numerical, 20, {90}, [ 0 | 100 | 2 ], Position Y (%)\nRange [0 to 100]"
--- !Arguments "Numerical, 20, {1}, [ 0.1 | 100 | 2 | 0.1 ], Scale\nRange [0.1 to 100]"
+-- !Arguments "Numerical, 20, {50}, [ -1000 | 1000 | 2 ], Position X (%)\nRange [-1000 to 1000]\nVisible range [0 to 100]"
+-- !Arguments "Numerical, 20, {90}, [ -1000 | 1000 | 2 ], Position Y (%)\nRange [-1000 to 1000]\nVisible range [0 to 100]"
+-- !Arguments "Enumeration, 20, {1}, [ Left | Center | Right ], Horizontal alignment"
+-- !Arguments "NewLine, Enumeration, 35, {1}, [ Flat | Shadow | Blinking | Shadow + Blinking ], Effects"
+-- !Arguments "Numerical, 16, {1}, [ 0.1 | 100 | 2 | 0.1 ], Scale\nRange [0.1 to 100]"
+-- !Arguments "Boolean , 47, {false}, Debug messages in console"
 -- !Arguments "NewLine, LuaScript, The function to call when the time is up"
 -- !Arguments "NewLine, String, Arguments"
-LevelFuncs.Engine.Node.CreateTimerWithFunction = function(name, time, loop, hours, minutes, seconds, deciseconds, debug, alignment, effects, color, pColor, x, y, scale, luaFunction, args)
+LevelFuncs.Engine.Node.CreateTimerWithFunction = function(name, time, loop, hours, minutes, seconds, deciseconds, color, pColor, x, y, alignment, effects, scale, debug, luaFunction, args)
     if name ~= '' then
         local nodeTimerFormat = {hours = hours, minutes = minutes, seconds = seconds, deciseconds = deciseconds }
         local argsTable = args ~= '' and table.unpack(LevelFuncs.Engine.Node.SplitString(args, ",")) or nil
@@ -96,18 +98,18 @@ end
 -- !Arguments "Boolean, 25, {true}, Minutes"
 -- !Arguments "Boolean , 25, {true}, Seconds"
 -- !Arguments "Boolean, 25, {true}, Centiseconds"
--- !Arguments "NewLine, Boolean , 47, {false}, Debug messages in console"
--- !Arguments "Enumeration, 18, {1}, [ Left | Center | Right ], Horizontal alignment"
--- !Arguments "Enumeration, 35, {1}, [ Flat | Shadow | Blinking | Shadow + Blinking ], Effects"
 -- !Arguments "NewLine, Color, 20, {TEN.Color(255, 255, 255)}, Timer's color"
 -- !Arguments "Color, 20, {TEN.Color(255, 255, 0)}, Timer's paused color"
--- !Arguments "Numerical, 20, {50}, [ 0 | 100 | 2 ], Position X (%)\nRange [0 to 100]"
--- !Arguments "Numerical, 20, {90}, [ 0 | 100 | 2 ], Position Y (%)\nRange [0 to 100]"
--- !Arguments "Numerical, 20, {1}, [ 0.1 | 100 | 2 | 0.1 ], Scale\nRange [0.1 to 100]"
+-- !Arguments "Numerical, 20, {50}, [ -1000 | 1000 | 2 ], Position X (%)\nRange [-1000 to 1000]\nVisible range [0 to 100]"
+-- !Arguments "Numerical, 20, {90}, [ -1000 | 1000 | 2 ], Position Y (%)\nRange [-1000 to 1000]\nVisible range [0 to 100]"
+-- !Arguments "Enumeration, 20, {1}, [ Left | Center | Right ], Horizontal alignment"
+-- !Arguments "NewLine, Enumeration, 35, {1}, [ Flat | Shadow | Blinking | Shadow + Blinking ], Effects"
+-- !Arguments "Numerical, 16, {1}, [ 0.1 | 100 | 2 | 0.1 ], Scale\nRange [0.1 to 100]"
+-- !Arguments "Boolean , 47, {false}, Debug messages in console"
 -- !Arguments "NewLine, 66, VolumeEventSets, The event set to be called when the time is up"
 -- !Arguments "VolumeEvents, 34, Event to run"
 -- !Arguments "NewLine, Moveables, Activator for the event (when necessary)"
-LevelFuncs.Engine.Node.CreateTimerWithEventSet = function(name, time, loop, hours, minutes, seconds, deciseconds, debug, alignment, effects, color, pColor, x, y, scale, setName, eventType, activator)
+LevelFuncs.Engine.Node.CreateTimerWithEventSet = function(name, time, loop, hours, minutes, seconds, deciseconds, color, pColor, x, y, alignment, effects, scale, debug, setName, eventType, activator)
     if name ~= '' then
         local nodeTimerFormat = {hours = hours, minutes = minutes, seconds = seconds, deciseconds = deciseconds }
         Timer.Create(name, time, loop, nodeTimerFormat, LevelFuncs.Engine.Node.RunEventSet, setName, eventType, activator)
@@ -131,18 +133,18 @@ end
 -- !Arguments "Boolean, 25, {true}, Minutes"
 -- !Arguments "Boolean , 25, {true}, Seconds"
 -- !Arguments "Boolean, 25, {true}, Centiseconds"
--- !Arguments "NewLine, Boolean , 47, {false}, Debug messages in console"
--- !Arguments "Enumeration, 18, {1}, [ Left | Center | Right ], Horizontal alignment"
--- !Arguments "Enumeration, 35, {1}, [ Flat | Shadow | Blinking | Shadow + Blinking ], Effects"
 -- !Arguments "NewLine, Color, 20, {TEN.Color(255, 255, 255)}, Timer's color"
 -- !Arguments "Color, 20, {TEN.Color(255, 255, 0)}, Timer's paused color"
--- !Arguments "Numerical, 20, {50}, [ 0 | 100 | 2 ], Position X (%)\nRange [0 to 100]"
--- !Arguments "Numerical, 20, {90}, [ 0 | 100 | 2 ], Position Y (%)\nRange [0 to 100]"
--- !Arguments "Numerical, 20, {1}, [ 0.1 | 100 | 2 | 0.1 ], Scale\nRange [0.1 to 100]"
+-- !Arguments "Numerical, 20, {50}, [ -1000 | 1000 | 2 ], Position X (%)\nRange [-1000 to 1000]\nVisible range [0 to 100]"
+-- !Arguments "Numerical, 20, {90}, [ -1000 | 1000 | 2 ], Position Y (%)\nRange [-1000 to 1000]\nVisible range [0 to 100]"
+-- !Arguments "Enumeration, 20, {1}, [ Left | Center | Right ], Horizontal alignment"
+-- !Arguments "NewLine, Enumeration, 35, {1}, [ Flat | Shadow | Blinking | Shadow + Blinking ], Effects"
+-- !Arguments "Numerical, 16, {1}, [ 0.1 | 100 | 2 | 0.1 ], Scale\nRange [0.1 to 100]"
+-- !Arguments "Boolean , 47, {false}, Debug messages in console"
 -- !Arguments "NewLine, 70, GlobalEventSets, The event set to be called when the time is up"
 -- !Arguments "GlobalEvents, 30, Event to run"
 -- !Arguments "NewLine, Moveables, Activator for the event (when necessary)"
-LevelFuncs.Engine.Node.CreateTimerWithGEventSet = function(name, time, loop, hours, minutes, seconds, deciseconds, debug, alignment, effects, color, pColor, x, y, scale, setName, eventType, activator)
+LevelFuncs.Engine.Node.CreateTimerWithGEventSet = function(name, time, loop, hours, minutes, seconds, deciseconds, color, pColor, x, y, alignment, effects, scale, debug, setName, eventType, activator)
     if name ~= '' then
         local nodeTimerFormat = {hours = hours, minutes = minutes, seconds = seconds, deciseconds = deciseconds }
         Timer.Create(name, time, loop, nodeTimerFormat, LevelFuncs.Engine.Node.RunGlobalEventSet, setName, eventType, activator)
@@ -347,26 +349,18 @@ end
 -- !Description "sets the position of the timer.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
 -- !Section "Timer"
 -- !Arguments "NewLine, String, 100, [ NoMultiline ], Timer name"
--- !Arguments "NewLine, Enumeration, 10, [ + | - | * | / | = ], {4}, Mathematical operation to perform for X"
--- !Arguments "Numerical, 90, [ -1000 | 1000 | 2 ], {50},  Position X (%)\nRange [-1000 to 1000]\nVisible range [0 to 100]"
--- !Arguments "NewLine, Enumeration, 10, [ + | - | * | / | = ], {4}, Mathematical operation to perform for Y"
--- !Arguments "Numerical, 90, [ -1000 | 1000 | 2 ], {90}, Position Y (%)\nRange [-1000 to 1000]\nVisible range [0 to 100]"
-LevelFuncs.Engine.Node.SetTimerPosition = function (name, operatorX, x, operatorY, y)
+-- !Arguments "NewLine, Boolean, 25, {true}, Set X position"
+-- !Arguments "Enumeration, 10, [ + | - | * | / | = ], {4}, Mathematical operation to perform for X"
+-- !Arguments "Numerical, 65, [ -1000 | 1000 | 2 ], {50},  Position X (%)\nRange [-1000 to 1000]\nVisible range [0 to 100]"
+-- !Arguments "NewLine, Boolean, 25, {true}, Set Y position"
+-- !Arguments "Enumeration, 10, [ + | - | * | / | = ], {4}, Mathematical operation to perform for Y"
+-- !Arguments "Numerical, 65, [ -1000 | 1000 | 2 ], {90}, Position Y (%)\nRange [-1000 to 1000]\nVisible range [0 to 100]"
+LevelFuncs.Engine.Node.SetTimerPosition = function (name, setX, operatorX, x, setY, operatorY, y)
     if name ~= '' then
         if Timer.IfExists(name) then
-            local valueX, valueY
-            if operatorX == 4 then
-                valueX = x
-            else
-                local oldValue = Timer.Get(name):GetPosition()
-                valueX = LevelFuncs.Engine.Node.ModifyValue(x, oldValue.x, operatorX)
-            end
-            if operatorY == 4 then
-                valueY = y
-            else
-                local oldValue = Timer.Get(name):GetPosition()
-                valueY = LevelFuncs.Engine.Node.ModifyValue(y, oldValue.y, operatorY)
-            end
+            local oldPos = Timer.Get(name):GetPosition()
+            local valueX = setX and (operatorX == 4 and x or LevelFuncs.Engine.Node.ModifyValue(x, oldPos.x, operatorX)) or oldPos.x
+            local valueY = setY and (operatorY == 4 and y or LevelFuncs.Engine.Node.ModifyValue(y, oldPos.y, operatorY)) or oldPos.y
             Timer.Get(name):SetPosition(valueX, valueY)
         else
             TEN.Util.PrintLog("Timer '" .. name .. "' does not exist", TEN.Util.LogLevel.ERROR)
@@ -399,6 +393,76 @@ LevelFuncs.Engine.Node.SetTimerScale = function (name, operator, scale)
         end
     else
         TEN.Util.PrintLog("Error in the 'Modify timer scale' node. No timer name provided", TEN.Util.LogLevel.ERROR)
+    end
+end
+
+-- !Name "Modify timer alignment"
+-- !Conditional "False"
+-- !Description "Sets the horizontal alignment of the timer.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Section "Timer"
+-- !Arguments "NewLine, String, 80, [ NoMultiline ], Timer name"
+-- !Arguments "Enumeration, 20, {1}, [ Left | Center | Right ], Alignment"
+LevelFuncs.Engine.Node.SetTimerAlignment = function (name, alignment)
+    if name ~= '' then
+        if Timer.IfExists(name) then
+            CreateStruct(name)
+            if LevelVars.nodeTimers[name].alignment == nil then
+                TEN.Util.PrintLog("Error in the 'Modify timer alignment' node. Timer '" .. name .. "' has no alignment set. No changes will be applied", TEN.Util.LogLevel.ERROR)
+            else
+                Timer.Get(name):SetTextOption(LevelFuncs.Engine.Node.GeneratesTextOption(alignment, LevelVars.nodeTimers[name].effects))
+                LevelVars.nodeTimers[name].alignment = alignment
+            end
+        else
+            TEN.Util.PrintLog("Timer '" .. name .. "' does not exist", TEN.Util.LogLevel.ERROR)
+        end
+    else
+        TEN.Util.PrintLog("Error in the 'Modify timer alignment' node. No timer name provided", TEN.Util.LogLevel.ERROR)
+    end
+end
+
+-- !Name "Modify timer effects"
+-- !Conditional "False"
+-- !Description "Sets the effects of the timer.\nUsing this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation. Please carefully consider this configuration."
+-- !Section "Timer"
+-- !Arguments "NewLine, String, 65, [ NoMultiline ], Timer name"
+-- !Arguments "Enumeration, 35, {1}, [ Flat | Shadow | Blinking | Shadow + Blinking ], Effects"
+LevelFuncs.Engine.Node.SetTimerEffects = function (name, effects)
+    if name ~= '' then
+        if Timer.IfExists(name) then
+            CreateStruct(name)
+            if LevelVars.nodeTimers[name].effects == nil then
+                TEN.Util.PrintLog("Error in the 'Modify timer effects' node. Timer '" .. name .. "' has no effects set. No changes will be applied", TEN.Util.LogLevel.ERROR)
+            else
+                Timer.Get(name):SetTextOption(LevelFuncs.Engine.Node.GeneratesTextOption(LevelVars.nodeTimers[name].alignment, effects))
+                LevelVars.nodeTimers[name].effects = effects
+            end
+        else
+            TEN.Util.PrintLog("Timer '" .. name .. "' does not exist", TEN.Util.LogLevel.ERROR)
+        end
+    else
+        TEN.Util.PrintLog("Error in the 'Modify timer effects' node. No timer name provided", TEN.Util.LogLevel.ERROR)
+    end
+end
+
+-- !Name "Set debug messages in console"
+-- !Conditional "False"
+-- !Description "Enables or disables debug messages in console for a specific timer.\nNote: using this node within “On Volume Inside” or “On Loop” events may cause continuous loops and improper operation."
+-- !Section "Timer"
+-- !Arguments "NewLine, String, 80, [ NoMultiline ], Timer name"
+-- !Arguments "Enumeration, 20, {1}, [ Enable | Disable ], Debug messages in console"
+LevelFuncs.Engine.Node.SetDebugMessages = function(name, debug)
+    if name ~= '' then
+        if Timer.IfExists(name) then
+            CreateStruct(name)
+            LevelVars.nodeTimers[name].debug = (debug == 1) and true or false
+            if LevelVars.nodeTimers[name].debug then
+                TEN.Util.PrintLog("Timer '" .. name .. "' debug messages in console: " .. tostring(LevelVars.nodeTimers[name].debug), TEN.Util.LogLevel.INFO)
+            end
+        else
+            TEN.Util.PrintLog("Timer '" .. name .. "' does not exist", TEN.Util.LogLevel.ERROR)
+        end
+    else
+        TEN.Util.PrintLog("Error in the 'Set Debug Messages' node. No timer name provided", TEN.Util.LogLevel.ERROR)
     end
 end
 
@@ -539,6 +603,69 @@ LevelFuncs.Engine.Node.IfTotalTimeIs = function(name, operator, time)
         end
     else
         TEN.Util.PrintLog("Error in the 'If total time is...' node. No timer name provided", TEN.Util.LogLevel.ERROR)
+    end
+end
+
+-- !Name "If timer position is..."
+-- !Conditional "True"
+-- !Description "Checks if a specific timer is at a specific position.\n\nTo be used inside the `On Volume Inside` or `On Loop` events only."
+-- !Section "Timer"
+-- !Arguments "NewLine, String, 100, [ NoMultiline ], Timer name"
+-- !Arguments "NewLine, Boolean, 30, {true}, Check X position"
+-- !Arguments "CompareOperator, 30, Comparison type for X"
+-- !Arguments "Numerical, 40, [ -1000 | 1000 | 2 ], Position X (%)\nRange [-1000 to 1000]\nVisible range [0 to 100]"
+-- !Arguments "NewLine, Boolean, 30, {true}, Check Y position"
+-- !Arguments "CompareOperator, 30, Comparison type for Y"
+-- !Arguments "Numerical, 40, [ -1000 | 1000 | 2 ], Position Y (%)\nRange [-1000 to 1000]\nVisible range [0 to 100]"
+LevelFuncs.Engine.Node.IfPositionIs = function(name, checkX, operatorX, valueX, checkY, operatorY, valueY)
+    if name ~= '' then
+        if Timer.IfExists(name) then
+            local position = Timer.Get(name):GetPosition()
+            local resultX, resultY = true, true
+            if checkX then
+                resultX = LevelFuncs.Engine.Node.CompareValue(position.x, valueX, operatorX)
+            end
+            if checkY then
+                resultY = LevelFuncs.Engine.Node.CompareValue(position.y, valueY, operatorY)
+            end
+            if LevelVars.nodeTimers[name].debug then
+                local posX = position.x
+                local posY = position.y
+                local checkText = "Checking timer '" .. name .. "' position. "
+                if checkX then
+                    checkText = checkText .. "X: " .. posX .. " is " .. textCompareOp[operatorX] .. " " .. valueX .. ". Result: " .. tostring(resultX) .. ". "
+                end
+                if checkY then
+                    checkText = checkText .. "Y: " .. posY .. " is " .. textCompareOp[operatorY] .. " " .. valueY .. ". Result: " .. tostring(resultY) .. "."
+                end
+                TEN.Util.PrintLog(checkText, TEN.Util.LogLevel.INFO, true)
+            end
+            return (resultX and resultY)
+        else
+            TEN.Util.PrintLog("Timer '" .. name .. "' does not exist", TEN.Util.LogLevel.ERROR)
+        end
+    else
+        TEN.Util.PrintLog("Error in the 'If timer position is...' node. No timer name provided", TEN.Util.LogLevel.ERROR)
+    end
+end
+
+-- !Name "If timer scale is..."
+-- !Conditional "True"
+-- !Description "Checks if a specific timer is at a specific scale.\n\nTo be used inside the `On Volume Inside` or `On Loop` events only."
+-- !Section "Timer"
+-- !Arguments "NewLine, String, 70, [ NoMultiline ], Timer name"
+-- !Arguments "CompareOperator, 30"
+-- !Arguments "Numerical, 20, [ 0.1 | 100 | 2 | 0.01 ], Scale\nRange [0.10 to 100]"
+LevelFuncs.Engine.Node.IfScaleIs = function(name, operator, scale)
+    if name ~= '' then
+        if Timer.IfExists(name) then
+            local timerScale = Timer.Get(name):GetScale()
+            return LevelFuncs.Engine.Node.CompareValue(timerScale, scale, operator)
+        else
+            TEN.Util.PrintLog("Timer '" .. name .. "' does not exist", TEN.Util.LogLevel.ERROR)
+        end
+    else
+        TEN.Util.PrintLog("Error in the 'If timer scale is...' node. No timer name provided", TEN.Util.LogLevel.ERROR)
     end
 end
 
