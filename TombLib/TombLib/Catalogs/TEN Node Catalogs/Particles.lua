@@ -168,11 +168,11 @@ end
 -- !Name "Emit weather from volume"
 -- !Section "Particles"
 -- !Description "Emit a weather effect from a chosen volume."
--- !Arguments "NewLine, Volumes, 50,  Volume to emit weather from.\nAutomatically adjusts to the width of the assigned volume."
--- !Arguments "Enumeration, 50, [ Rain | Snow ], Weather type"
--- !Arguments "NewLine, Color, 50, { TEN.Color(255,255,255) }, Color of weather effect"
--- !Arguments "Vector3, 50, [ 0 | 64 ], { TEN.Vec3(.1,.1,.1) }, initial velocity"
--- !Arguments "NewLine, Numerical, 25, [ 0 | 5 | 1 | 0.1 | 0.5 ], {1.0}, lifetime in seconds"
+-- !Arguments "NewLine, Volumes, 80,  Volume to emit weather from.\nAutomatically adjusts to the width of the assigned volume."
+-- !Arguments "Enumeration, 20, [ Rain | Snow ], Weather type"
+-- !Arguments "NewLine, Color, { TEN.Color(255,255,255) } , Color of weather effect"
+-- !Arguments "NewLine, Vector3, 50, [ 0 | 64 ], { TEN.Vec3(.1,.1,.1) }, initial velocity"
+-- !Arguments "Numerical, 25, [ 0 | 5 | 1 | 0.1 | 0.5 ], {1.0}, lifetime in seconds"
 -- !Arguments "Numerical, 25, [ 0 | 2 | 1 | 0.1 | 0.5 ], {1.0}, weather strength"
 -- !Arguments "NewLine, Boolean, 50, Enable clustering"
 -- !Arguments "Boolean, 50, Check wind flag"
@@ -184,13 +184,8 @@ LevelFuncs.Engine.Node.EmitWeatherVolume = function(vol, weatherType, color, vel
 	elseif weatherType == 1 then
 		weatherType = TEN.Flow.WeatherType.SNOW
 	end
-
+	
 	local volume = TEN.Objects.GetVolumeByName(vol)
-	local scale = volume:GetScale()
-
-	-- Use the volume's scale so the effect automatically matches its footprint.
-	local rangeXZ = math.max(scale.x, scale.z)
-	local rangeY = scale.y
 
 	local weatherData =
 	{
@@ -203,7 +198,9 @@ LevelFuncs.Engine.Node.EmitWeatherVolume = function(vol, weatherType, color, vel
 		strength = strength,
 		enableClustering = enableClustering,
 		checkWindFlag = checkWindFlag,
-		baseColor = color
+		baseColor = color,
+		spawnRange = volume:GetScale(),
+		spawnRotation = volume:GetRotation()
 	}
 
 	TEN.Effects.EmitWeather(weatherData)
