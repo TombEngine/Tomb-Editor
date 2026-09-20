@@ -19,6 +19,7 @@ Tomb Editor:
  * Added support for flyby cameras in TRX.
  * Added support for specifying moveable instance names in TRX.
  * Added support for moveable item properties in TRX levels; refer to LostArtefacts documentation.
+ * Added drag and drop support for CAMERA and SINK objects into the Node Editor.
  * Fixed "Map animated textures" checkbox not unchecking in Level Settings dialog.
  * Fixed occasional exceptions after closing Node Editor.
  * Fixed exception while opening texture lists in Remap Texture dialog.
