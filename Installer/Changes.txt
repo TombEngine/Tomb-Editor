@@ -19,7 +19,7 @@ Tomb Editor:
  * Added support for flyby cameras in TRX.
  * Added support for specifying moveable instance names in TRX.
  * Added support for moveable item properties in TRX levels; refer to LostArtefacts documentation.
- * Added level compilation warning for TombEngine targets if multiple Lara objects are placed in the level.
+ * Added level compilation warning for TEN targets if multiple Lara objects are placed in the level.
  * Fixed "Map animated textures" checkbox not unchecking in Level Settings dialog.
  * Fixed occasional exceptions after closing Node Editor.
  * Fixed exception while opening texture lists in Remap Texture dialog.

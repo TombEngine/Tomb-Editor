@@ -4434,12 +4434,7 @@ namespace TombEditor
         {
             return _editor?.Level?.Settings?.WadTryGetMoveable(WadMoveableId.Lara) != null &&
                    _editor.Level.ExistingRooms.SelectMany(room => room.Objects)
-                                              .Any(IsLaraObject);
-        }
-
-        private static bool IsLaraObject(ObjectInstance obj)
-        {
-            return obj is ItemInstance && ((ItemInstance)obj).ItemType == new ItemType(WadMoveableId.Lara);
+                                              .Any(obj => obj is ItemInstance && ((ItemInstance)obj).ItemType == new ItemType(WadMoveableId.Lara));
         }
 
         public static bool AddAndPlaceImportedGeometry(IWin32Window owner, VectorInt2 position, string file)
