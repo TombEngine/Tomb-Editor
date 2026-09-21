@@ -20,6 +20,7 @@ public static class GameVersionHelper
 
 		TRVersion.Game.TR4
 		or TRVersion.Game.TRNG
+		or TRVersion.Game.TRNGCE
 		or TRVersion.Game.TombEngine => 110,
 
 		_ => 0
@@ -42,5 +43,5 @@ public static class GameVersionHelper
 	/// <param name="project">The target game project.</param>
 	/// <returns><see langword="true"/> if the horizon setting is available; otherwise, <see langword="false"/>.</returns>
 	public static bool IsHorizonSettingAvailable(IGameProject project)
-		=> project.GameVersion is TRVersion.Game.TR4 or TRVersion.Game.TRNG or TRVersion.Game.TombEngine;
+		=> project.GameVersion is TRVersion.Game.TR4 or TRVersion.Game.TRNG or TRVersion.Game.TRNGCE or TRVersion.Game.TombEngine;
 }

@@ -300,7 +300,7 @@ namespace TombIDE.Shared.NewStructure
 		{
 			FindEngineExecutable(searchingDirectory, out TRVersion.Game version);
 
-			if (version is not TRVersion.Game.TRNG)
+			if (version is not TRVersion.Game.TRNG and not TRVersion.Game.TRNGCE)
 				return null;
 
 			string launcherExecutable = FindLauncherExecutable(searchingDirectory);
@@ -334,9 +334,13 @@ namespace TombIDE.Shared.NewStructure
 
 			if (version == TRVersion.Game.TR4)
 			{
-				string trngDllFilePath = Path.Combine(Path.GetDirectoryName(engineExecutableFilePath), "Tomb_NextGeneration.dll");
+				string engineDirectory = Path.GetDirectoryName(engineExecutableFilePath);
+				string trngceDllFilePath = Path.Combine(engineDirectory, "TRNGCE.dll");
+				string trngDllFilePath = Path.Combine(engineDirectory, "Tomb_NextGeneration.dll");
 
-				if (File.Exists(trngDllFilePath))
+				if (File.Exists(trngceDllFilePath))
+					version = TRVersion.Game.TRNGCE;
+				else if (File.Exists(trngDllFilePath))
 					version = TRVersion.Game.TRNG;
 			}
 

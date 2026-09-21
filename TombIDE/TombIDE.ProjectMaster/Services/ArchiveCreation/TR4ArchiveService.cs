@@ -8,7 +8,7 @@ namespace TombIDE.ProjectMaster.Services.ArchiveCreation;
 public sealed class TR4ArchiveService : GameArchiveServiceBase
 {
 	public override bool SupportsGameVersion(IGameProject project)
-		=> project.GameVersion is TRVersion.Game.TR4 or TRVersion.Game.TRNG;
+		=> project.GameVersion is TRVersion.Game.TR4 or TRVersion.Game.TRNG or TRVersion.Game.TRNGCE;
 
 	protected override IReadOnlyList<string> GetImportantFolders(string engineDirectory) => [
 		Path.Combine(engineDirectory, "audio"),
