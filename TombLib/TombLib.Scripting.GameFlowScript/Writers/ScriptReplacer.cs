@@ -22,7 +22,7 @@ public sealed class ScriptReplacer
 	{
 		textEditor.TryReplaceFirstMatchingLine(
 			LevelPropertyRegex,
-			(lineText, regex) => regex.Replace(CommentHelper.RemoveComments(lineText, new CommentSyntax("//", null, null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.TripleDoubleQuoted)), string.Empty).Trim(),
+			(lineText, regex) => regex.Replace(CommentOperations.RemoveComments(lineText, new CommentSyntax("//", null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.TripleDoubleQuoted)), string.Empty).Trim(),
 			oldName,
 			newName);
 	}

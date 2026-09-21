@@ -31,7 +31,7 @@ public class ClassicScriptErrorDetectorTests
 	[TestMethod]
 	public void GetDiagnostics_EmptyContent_ReturnsNoDiagnostics()
 	{
-		IReadOnlyList<TextEditorDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest(string.Empty, new Version(1, 0)));
+		IReadOnlyList<TextDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest(string.Empty));
 
 		Assert.AreEqual(0, diagnostics.Count);
 	}
@@ -39,7 +39,7 @@ public class ClassicScriptErrorDetectorTests
 	[TestMethod]
 	public void GetDiagnostics_InvalidSectionName_ReturnsSectionDiagnostic()
 	{
-		IReadOnlyList<TextEditorDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Bogus]", new Version(1, 0)));
+		IReadOnlyList<TextDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Bogus]"));
 
 		Assert.AreEqual(1, diagnostics.Count);
 		StringAssert.Contains(diagnostics[0].Message, "Invalid section name");
@@ -48,7 +48,7 @@ public class ClassicScriptErrorDetectorTests
 	[TestMethod]
 	public void GetDiagnostics_ValidSectionHeader_ReturnsNoDiagnostics()
 	{
-		IReadOnlyList<TextEditorDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Level]", new Version(1, 0)));
+		IReadOnlyList<TextDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Level]"));
 
 		Assert.AreEqual(0, diagnostics.Count);
 	}
@@ -56,7 +56,7 @@ public class ClassicScriptErrorDetectorTests
 	[TestMethod]
 	public void GetDiagnostics_UnknownCommand_ReturnsCommandDiagnostic()
 	{
-		IReadOnlyList<TextEditorDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Level]\nBogus= 1", new Version(1, 0)));
+		IReadOnlyList<TextDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Level]\nBogus= 1"));
 
 		Assert.AreEqual(1, diagnostics.Count);
 		StringAssert.Contains(diagnostics[0].Message, "Invalid command");
@@ -65,7 +65,7 @@ public class ClassicScriptErrorDetectorTests
 	[TestMethod]
 	public void GetDiagnostics_WrongSectionCommand_ReturnsSectionDiagnostic()
 	{
-		IReadOnlyList<TextEditorDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Options]\nLegend= 42", new Version(1, 0)));
+		IReadOnlyList<TextDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Options]\nLegend= 42"));
 
 		Assert.AreEqual(1, diagnostics.Count);
 		StringAssert.Contains(diagnostics[0].Message, "wrong section");
@@ -74,7 +74,7 @@ public class ClassicScriptErrorDetectorTests
 	[TestMethod]
 	public void GetDiagnostics_ValidCommandInLevelSection_ReturnsNoDiagnostics()
 	{
-		IReadOnlyList<TextEditorDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Level]\nLegend= 42", new Version(1, 0)));
+		IReadOnlyList<TextDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Level]\nLegend= 42"));
 
 		Assert.AreEqual(0, diagnostics.Count);
 	}
@@ -82,7 +82,7 @@ public class ClassicScriptErrorDetectorTests
 	[TestMethod]
 	public void GetDiagnostics_InvalidArgumentCount_ReturnsArgumentCountDiagnostic()
 	{
-		IReadOnlyList<TextEditorDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Level]\nName= Level1, extra", new Version(1, 0)));
+		IReadOnlyList<TextDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Level]\nName= Level1, extra"));
 
 		Assert.AreEqual(1, diagnostics.Count);
 		StringAssert.Contains(diagnostics[0].Message, "Invalid argument count");
@@ -93,7 +93,7 @@ public class ClassicScriptErrorDetectorTests
 	{
 		// AddEffect accepts array arguments, so the empty middle argument is detected
 		// instead of being rejected as an argument-count mismatch.
-		IReadOnlyList<TextEditorDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Level]\nAddEffect= 1, , 2", new Version(1, 0)));
+		IReadOnlyList<TextDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Level]\nAddEffect= 1, , 2"));
 
 		Assert.AreEqual(1, diagnostics.Count);
 		StringAssert.Contains(diagnostics[0].Message, "Empty arguments");
@@ -102,7 +102,7 @@ public class ClassicScriptErrorDetectorTests
 	[TestMethod]
 	public void GetDiagnostics_NGStringWithoutIndex_ReturnsNgStringDiagnostic()
 	{
-		IReadOnlyList<TextEditorDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[ExtraNG]\nnotAnIndexedString", new Version(1, 0)));
+		IReadOnlyList<TextDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[ExtraNG]\nnotAnIndexedString"));
 
 		Assert.AreEqual(1, diagnostics.Count);
 		StringAssert.Contains(diagnostics[0].Message, "NG string must start with an index");
@@ -111,7 +111,7 @@ public class ClassicScriptErrorDetectorTests
 	[TestMethod]
 	public void GetDiagnostics_ValidNGString_ReturnsNoDiagnostics()
 	{
-		IReadOnlyList<TextEditorDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[ExtraNG]\n0: First String", new Version(1, 0)));
+		IReadOnlyList<TextDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[ExtraNG]\n0: First String"));
 
 		Assert.AreEqual(0, diagnostics.Count);
 	}
@@ -119,7 +119,7 @@ public class ClassicScriptErrorDetectorTests
 	[TestMethod]
 	public void GetDiagnostics_MultipleMisplacedContinuationMarkers_ReturnsDiagnostic()
 	{
-		IReadOnlyList<TextEditorDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Level]\nName= Level1 > >", new Version(1, 0)));
+		IReadOnlyList<TextDiagnostic> diagnostics = _errorDetector.GetDiagnostics(new TextDiagnosticsRequest("[Level]\nName= Level1 > >"));
 
 		Assert.AreEqual(1, diagnostics.Count);
 		StringAssert.Contains(diagnostics[0].Message, "Misplaced");

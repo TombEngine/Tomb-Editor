@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Moq;
 using MvvmDialogs;
 using Nickelony.LanguageServer.Abstractions;
-using Nickelony.LanguageServer.Abstractions;
 using Nickelony.LanguageServer.Lua;
 using System;
 using System.Reflection;
@@ -173,7 +172,7 @@ public sealed class WorkbenchCollaboratorLifecycleTests
 				TaskCreationOptions.RunContinuationsAsynchronously);
 			var requestStarted = new TaskCompletionSource<CancellationToken>(
 				TaskCreationOptions.RunContinuationsAsynchronously);
-			var referencesProvider = new Mock<ITextReferencesProvider>();
+			var referencesProvider = new Mock<ILanguageServerReferencesProvider>();
 			referencesProvider.SetupGet(provider => provider.SupportsReferences).Returns(true);
 			referencesProvider
 				.Setup(provider => provider.GetReferencesAsync(It.IsAny<TextReferenceRequest>(), It.IsAny<CancellationToken>()))
@@ -299,21 +298,21 @@ public sealed class WorkbenchCollaboratorLifecycleTests
 	}
 
 	private static LuaHostServices CreateLuaHostServices(
-		ITextReferencesProvider? referencesProvider = null,
+		ILanguageServerReferencesProvider? referencesProvider = null,
 		ITextEditorHost? textEditorHost = null)
 	{
 		textEditorHost ??= new Mock<ITextEditorHost>().Object;
 		return new LuaHostServices(
 			new Mock<ILuaEditorLifecycleService>().Object,
 			new Mock<ILuaIntellisenseBridge>().Object,
-			new LuaTrackedDocumentStateService(textEditorHost, new Mock<ILuaIntelliSenseProvider>().Object),
+			new LuaTrackedDocumentStateService(textEditorHost, new Mock<ILuaLanguageServerIntelliSenseProvider>().Object),
 			new LuaReferenceSearchService(
 				textEditorHost,
-				referencesProvider ?? new Mock<ITextReferencesProvider>().Object,
+				referencesProvider ?? new Mock<ILanguageServerReferencesProvider>().Object,
 				@"C:\Scripts"),
 			new TextWorkspaceCommandService(
 				new TombLib.Scripting.UI.Editing.TextWorkspaceEditApplier(textEditorHost),
-				new Mock<ITextEditProvider>().Object));
+				new Mock<ILanguageServerRenameProvider>().Object));
 	}
 
 	private static int GetDiagnosticsSubscriptionCount(TextEditorBase editor)

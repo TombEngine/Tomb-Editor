@@ -57,37 +57,36 @@ public sealed partial class FileExplorerViewModel
 
 				if (_documentManager is not null)
 				{
-					WorkspaceDocumentOpenResult openResult = _documentManager
+					WorkspaceDocumentManagerOpenResult openResult = _documentManager
 						.OpenAsync(filePath, GetWorkspaceOpenOptions())
 						.GetAwaiter()
 						.GetResult();
 					if (openResult.Snapshot is not WorkspaceDocumentSnapshot snapshot)
 						throw new IOException(openResult.Failure?.Message ?? "The file could not be opened.");
 
-					WorkspaceDocumentMutationResult replacement = _documentManager.Replace(
-						new WorkspaceDocumentReplaceRequest(
-							snapshot.DocumentKey,
-							snapshot.DocumentId,
-							snapshot.Version,
+					WorkspaceDocumentManagerMutationResult replacement = _documentManager
+						.ReplaceAsync(new WorkspaceDocumentReplaceRequest(
+							new(snapshot.DocumentKey, snapshot.DocumentId, snapshot.Version),
 							content,
 							new TextFileFormat(
 								TextEncodingKind.Utf8,
 								false,
-								TextNewlineStyle.Lf)));
+								TextNewlineStyle.Lf)))
+						.GetAwaiter()
+						.GetResult();
 					if (replacement.Snapshot is not WorkspaceDocumentSnapshot replacementSnapshot)
 						throw new IOException("The file content could not be prepared.");
 
-					WorkspaceDocumentCommitResult commit = _documentManager
+					WorkspaceDocumentManagerCommitResult commit = _documentManager
 						.CommitAsync(
 							new WorkspaceDocumentCommitRequest(
-								replacementSnapshot.DocumentKey,
-								replacementSnapshot.DocumentId,
-								replacementSnapshot.Version,
+								new(replacementSnapshot.DocumentKey, replacementSnapshot.DocumentId, replacementSnapshot.Version),
 								replacementSnapshot.OnDiskStamp))
 						.GetAwaiter()
 						.GetResult();
-					if (commit.Status != WorkspaceDocumentCommitStatus.Committed)
-						throw new IOException(commit.Failure?.Message ?? "The file could not be saved.");
+					if (commit.Outcome != WorkspaceDocumentCommitOutcome.Committed
+						|| commit.Views.Outcome != WorkspaceDocumentViewSynchronizationOutcome.Synchronized)
+						throw new IOException(commit.StoreResult?.Failure?.Message ?? "The file could not be saved.");
 				}
 				else
 				{
@@ -176,18 +175,17 @@ public sealed partial class FileExplorerViewModel
 		{
 			if (SelectedItem.IsDirectory && _documentManager is not null)
 			{
-				if (!PrepareRetainedDocumentsForDelete(_documentManager.GetSnapshotsUnderDirectory(SelectedItem.FullPath)))
+				if (!PrepareRetainedDocumentsForDelete(_documentManager.Documents.GetSnapshotsUnderDirectory(SelectedItem.FullPath)))
 					return;
 
-				WorkspaceDocumentDirectoryDeleteResult result = _documentManager
+				WorkspaceDocumentManagerDirectoryDeleteResult result = _documentManager
 					.DeleteDirectoryAsync(new WorkspaceDocumentDirectoryDeleteRequest(
-						SelectedItem.FullPath,
-						[],
-						UseRecycleBin: true))
+						SelectedItem.FullPath))
 					.GetAwaiter()
 					.GetResult();
-				if (result.Status != WorkspaceDocumentDirectoryDeleteStatus.Deleted)
-					throw new IOException(result.Failure?.Message ?? "The folder could not be deleted.");
+				if (result.Outcome != WorkspaceDocumentDirectoryDeleteOutcome.Deleted
+					|| result.Views.Outcome != WorkspaceDocumentViewSynchronizationOutcome.Synchronized)
+					throw new IOException(result.StoreResult?.Failure?.Message ?? "The folder could not be deleted.");
 			}
 			else if (SelectedItem.IsDirectory)
 				FileSystem.DeleteDirectory(SelectedItem.FullPath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
@@ -199,18 +197,16 @@ public sealed partial class FileExplorerViewModel
 
 				snapshot = OpenWorkspaceSnapshot(SelectedItem.FullPath);
 
-				WorkspaceDocumentDeleteResult result = _documentManager
+				WorkspaceDocumentManagerDeleteResult result = _documentManager
 					.DeleteAsync(
 						new WorkspaceDocumentDeleteRequest(
-							snapshot.DocumentKey,
-							snapshot.DocumentId,
-							snapshot.Version,
-							snapshot.OnDiskStamp,
-							UseRecycleBin: true))
+							new(snapshot.DocumentKey, snapshot.DocumentId, snapshot.Version),
+							snapshot.OnDiskStamp))
 					.GetAwaiter()
 					.GetResult();
-				if (result.Status != WorkspaceDocumentDeleteStatus.Deleted)
-					throw new IOException(result.Failure?.Message ?? "The file could not be deleted.");
+				if (result.Outcome != WorkspaceDocumentDeleteOutcome.Deleted
+					|| result.Views.Outcome != WorkspaceDocumentViewSynchronizationOutcome.Synchronized)
+					throw new IOException(result.StoreResult?.Failure?.Message ?? "The file could not be deleted.");
 			}
 			else
 				FileSystem.DeleteFile(SelectedItem.FullPath, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
@@ -294,30 +290,30 @@ public sealed partial class FileExplorerViewModel
 			{
 				if (SelectedItem.IsDirectory && _documentManager is not null)
 				{
-					WorkspaceDocumentDirectoryRenameResult result = _documentManager
-						.RenameDirectoryAsync(new WorkspaceDocumentDirectoryRenameRequest(SelectedItem.FullPath, newPath, []))
+					WorkspaceDocumentManagerDirectoryRenameResult result = _documentManager
+						.RenameDirectoryAsync(new WorkspaceDocumentDirectoryRenameRequest(SelectedItem.FullPath, newPath))
 						.GetAwaiter()
 						.GetResult();
-					if (result.Status != WorkspaceDocumentDirectoryRenameStatus.Renamed)
-						throw new IOException(result.Failure?.Message ?? "The folder could not be renamed.");
+					if (result.Outcome != WorkspaceDocumentDirectoryRenameOutcome.Renamed
+						|| result.Views.Outcome != WorkspaceDocumentViewSynchronizationOutcome.Synchronized)
+						throw new IOException(result.StoreResult?.Failure?.Message ?? "The folder could not be renamed.");
 				}
 				else if (SelectedItem.IsDirectory)
 					Directory.Move(SelectedItem.FullPath, newPath);
 				else if (_documentManager is not null)
 				{
 					WorkspaceDocumentSnapshot snapshot = OpenWorkspaceSnapshot(SelectedItem.FullPath);
-					WorkspaceDocumentRenameResult result = _documentManager
+					WorkspaceDocumentManagerRenameResult result = _documentManager
 						.RenameAsync(
 							new WorkspaceDocumentRenameRequest(
-								snapshot.DocumentKey,
-								snapshot.DocumentId,
-								snapshot.Version,
+								new(snapshot.DocumentKey, snapshot.DocumentId, snapshot.Version),
 								snapshot.OnDiskStamp,
 								newPath))
 						.GetAwaiter()
 						.GetResult();
-					if (result.Status != WorkspaceDocumentRenameStatus.Renamed)
-						throw new IOException(result.Failure?.Message ?? "The file could not be renamed.");
+					if (result.Outcome != WorkspaceDocumentRenameOutcome.Renamed
+						|| result.Views.Outcome != WorkspaceDocumentViewSynchronizationOutcome.Synchronized)
+						throw new IOException(result.StoreResult?.Failure?.Message ?? "The file could not be renamed.");
 				}
 				else
 					File.Move(SelectedItem.FullPath, newPath);
@@ -350,7 +346,7 @@ public sealed partial class FileExplorerViewModel
 
 	private WorkspaceDocumentSnapshot OpenWorkspaceSnapshot(string path)
 	{
-		WorkspaceDocumentOpenResult openResult = _documentManager!
+			WorkspaceDocumentManagerOpenResult openResult = _documentManager!
 			.OpenAsync(path, GetWorkspaceOpenOptions())
 			.GetAwaiter()
 			.GetResult();
@@ -376,7 +372,7 @@ public sealed partial class FileExplorerViewModel
 				DialogResult.Cancel,
 				DialogResult.Yes);
 
-			WorkspaceDocumentOpenResult openResult = _documentManager
+			WorkspaceDocumentManagerOpenResult openResult = _documentManager
 				.OpenAsync(snapshot.DisplayPath, GetWorkspaceOpenOptions())
 				.GetAwaiter()
 				.GetResult();
@@ -385,24 +381,24 @@ public sealed partial class FileExplorerViewModel
 
 			if (choice == DialogResult.Yes)
 			{
-				WorkspaceDocumentCommitResult commit = _documentManager
+				WorkspaceDocumentManagerCommitResult commit = _documentManager
 					.CommitAsync(new WorkspaceDocumentCommitRequest(
-						currentSnapshot.DocumentKey,
-						currentSnapshot.DocumentId,
-						currentSnapshot.Version,
+						new(currentSnapshot.DocumentKey, currentSnapshot.DocumentId, currentSnapshot.Version),
 						currentSnapshot.OnDiskStamp))
 					.GetAwaiter()
 					.GetResult();
-				if (commit.Status != WorkspaceDocumentCommitStatus.Committed)
+				if (commit.Outcome != WorkspaceDocumentCommitOutcome.Committed
+					|| commit.Views.Outcome != WorkspaceDocumentViewSynchronizationOutcome.Synchronized)
 					return false;
 			}
 			else if (choice == DialogResult.No)
 			{
-				WorkspaceDocumentMutationResult discard = _documentManager.Discard(new WorkspaceDocumentDiscardRequest(
-					currentSnapshot.DocumentKey,
-					currentSnapshot.DocumentId,
-					currentSnapshot.Version));
-				if (discard.Status is not (WorkspaceDocumentMutationStatus.Replaced or WorkspaceDocumentMutationStatus.NoChange))
+				WorkspaceDocumentManagerMutationResult discard = _documentManager
+					.DiscardAsync(new WorkspaceDocumentDiscardRequest(
+						new(currentSnapshot.DocumentKey, currentSnapshot.DocumentId, currentSnapshot.Version)))
+					.GetAwaiter()
+					.GetResult();
+				if (discard.Outcome is not (WorkspaceDocumentMutationOutcome.Changed or WorkspaceDocumentMutationOutcome.NoChange))
 					return false;
 			}
 			else

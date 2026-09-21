@@ -21,7 +21,7 @@ internal sealed class LuaIndentationStrategy : IIndentationPolicy
 	/// <inheritdoc/>
 	public string GetDesiredIndentation(in IndentationContext context)
 	{
-		string indentation = context.PreviousLineIndentation;
+		string indentation = IndentationOperations.GetLeadingWhitespace(context.PreviousLineText);
 
 		if (!context.UseSmartIndent)
 			return indentation;
@@ -30,8 +30,7 @@ internal sealed class LuaIndentationStrategy : IIndentationPolicy
 			indentation += context.IndentationUnit;
 
 		if (StartsWithDedentToken(context.CurrentLineText))
-			indentation = IndentationTextHelper.RemoveSingleIndentLevel(indentation, context.IndentationUnit);
-
+                        indentation = IndentationOperations.TruncateIndentationByUnitLength(indentation, context.IndentationUnit);
 		return indentation;
 	}
 
@@ -63,7 +62,7 @@ internal sealed class LuaIndentationStrategy : IIndentationPolicy
 		return new EnterInsertionResult(
 			splitText,
 			newLineText.Length + nextLineIndentation.Length,
-			IndentationTextHelper.GetLeadingWhitespaceLength(context.LineTextAfterCaret));
+			IndentationOperations.GetLeadingWhitespaceLength(context.LineTextAfterCaret));
 	}
 
 	/// <summary>
@@ -73,10 +72,10 @@ internal sealed class LuaIndentationStrategy : IIndentationPolicy
 	/// <returns>The normalized insertion text and caret offset.</returns>
 	public CompletionInsertionResult NormalizeCompletionInsertion(in CompletionInsertionContext context)
 	{
-		if (string.IsNullOrEmpty(context.Text) || !IndentationTextHelper.ContainsLineBreak(context.Text))
+		if (string.IsNullOrEmpty(context.Text) || !IndentationOperations.ContainsLineBreak(context.Text))
 			return new CompletionInsertionResult(context.Text, context.CaretOffset);
 
-		IReadOnlyList<IndentationTextLine> lines = IndentationTextHelper.SplitLines(context.Text);
+		IReadOnlyList<IndentationTextLine> lines = IndentationOperations.SplitLines(context.Text);
 		var builder = new StringBuilder(context.Text.Length + Math.Max(0, lines.Count - 1) * context.CurrentLineIndentation.Length);
 		int? normalizedCaretOffset = null;
 		int relativeIndentLevel = 0;
@@ -84,14 +83,14 @@ internal sealed class LuaIndentationStrategy : IIndentationPolicy
 		for (int i = 0; i < lines.Count; i++)
 		{
 			IndentationTextLine line = lines[i];
-			int originalLeadingWhitespaceLength = IndentationTextHelper.GetLeadingWhitespaceLength(line.Content);
+			int originalLeadingWhitespaceLength = IndentationOperations.GetLeadingWhitespaceLength(line.Content);
 			string trimmedContent = line.Content[originalLeadingWhitespaceLength..];
 			int currentIndentLevel = i == 0
 				? 0
 				: Math.Max(0, relativeIndentLevel - GetDedentLevel(trimmedContent));
 			string normalizedIndentation = i == 0
 				? string.Empty
-				: IndentationTextHelper.BuildIndentation(context.CurrentLineIndentation, context.IndentationUnit, currentIndentLevel);
+				: IndentationOperations.BuildIndentation(context.CurrentLineIndentation, context.IndentationUnit, currentIndentLevel);
 			string normalizedLineContent = trimmedContent.Length == 0
 				? normalizedIndentation
 				: normalizedIndentation + trimmedContent;
@@ -107,7 +106,7 @@ internal sealed class LuaIndentationStrategy : IIndentationPolicy
 			}
 
 			builder.Append(normalizedLineContent);
-			builder.Append(line.Delimiter);
+			builder.Append(line.Terminator);
 			relativeIndentLevel = currentIndentLevel + GetIndentIncrease(trimmedContent);
 		}
 

@@ -12,7 +12,7 @@ public class GameFlowCompletionProviderTests
 	[TestMethod]
 	public void GetCompletionItems_EmptyWord_ReturnsAllCatalogItems()
 	{
-		IReadOnlyList<TextCompletionItem> items = CreateProvider().GetCompletionItems(new TextCompletionContext(string.Empty, 0));
+		IReadOnlyList<TextCompletionItem> items = CreateProvider().GetCompletionItems(new TextCompletionRequest(string.Empty, 0));
 
 		Assert.IsTrue(items.Count > 0);
 		Assert.IsTrue(items.Any(item => item.InsertText == "LEVEL: "));
@@ -23,7 +23,7 @@ public class GameFlowCompletionProviderTests
 	[TestMethod]
 	public void GetCompletionItems_CaretAtDocumentStart_ReturnsAllCatalogItems()
 	{
-		IReadOnlyList<TextCompletionItem> items = CreateProvider().GetCompletionItems(new TextCompletionContext("LEVEL: ", 0));
+		IReadOnlyList<TextCompletionItem> items = CreateProvider().GetCompletionItems(new TextCompletionRequest("LEVEL: ", 0));
 
 		Assert.IsTrue(items.Count > 0);
 	}
@@ -31,7 +31,7 @@ public class GameFlowCompletionProviderTests
 	[TestMethod]
 	public void GetCompletionItems_ReturnsAllCatalogItemsRegardlessOfTypedWord()
 	{
-		IReadOnlyList<TextCompletionItem> items = CreateProvider().GetCompletionItems(new TextCompletionContext("TITLE", 5));
+		IReadOnlyList<TextCompletionItem> items = CreateProvider().GetCompletionItems(new TextCompletionRequest("TITLE", 5));
 
 		Assert.IsTrue(items.Any(item => item.InsertText == "TITLE: "));
 		Assert.IsTrue(items.Any(item => item.InsertText == "LEVEL: "));
@@ -40,7 +40,7 @@ public class GameFlowCompletionProviderTests
 	[TestMethod]
 	public void GetCompletionItems_NonMatchingWord_StillReturnsAllItems()
 	{
-		IReadOnlyList<TextCompletionItem> items = CreateProvider().GetCompletionItems(new TextCompletionContext("QwErTyZz", 8));
+		IReadOnlyList<TextCompletionItem> items = CreateProvider().GetCompletionItems(new TextCompletionRequest("QwErTyZz", 8));
 
 		Assert.IsTrue(items.Count > 0);
 		Assert.IsTrue(items.Any(item => item.InsertText == "LEVEL: "));
@@ -49,7 +49,7 @@ public class GameFlowCompletionProviderTests
 	[TestMethod]
 	public void GetCompletionItems_BundledCatalog_HasUniqueInsertionTextsIncludingOverlappingNames()
 	{
-		IReadOnlyList<TextCompletionItem> items = CreateProvider().GetCompletionItems(new TextCompletionContext(string.Empty, 0));
+		IReadOnlyList<TextCompletionItem> items = CreateProvider().GetCompletionItems(new TextCompletionRequest(string.Empty, 0));
 
 		// No two items may share a case-insensitive insertion text, even when a name belongs to
 		// both the constants and the properties categories (e.g. KEY1 and PICKUP1).

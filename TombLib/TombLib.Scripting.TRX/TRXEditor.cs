@@ -2,11 +2,12 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 using Nickelony.IDEKit.Core.Comments;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using Nickelony.IDEKit.IntelliSense.Navigation;
 using TombLib.Scripting.TRX.Completion;
 using TombLib.Scripting.TRX.Highlighting;
-using Nickelony.IDEKit.Core.Infrastructure;
 	using TombLib.Scripting.UI.Bases;
 	using TombLib.Scripting.UI.Completion;
 	using TombLib.Scripting.UI.Editors;
@@ -44,9 +45,9 @@ public sealed partial class TRXEditor : TextEditorBase, INameBasedObjectNavigato
 		InitializeDefinitionNavigation(TryNavigateDefinition);
 		InitializeHover(BuildStandardHoverRequestState, RequestHover);
 
-		InitializeDiagnostics(EngineVersion, _languageServices.ErrorDetector);
+		InitializeDiagnostics(_languageServices.CreateErrorDetector(EngineVersion));
 
-		CommentSyntax = new CommentSyntax("//", null, null, StringLiteralStyle.DoubleQuoted);
+		CommentSyntax = new CommentSyntax("//", null, StringLiteralStyle.DoubleQuoted);
 	}
 
 	// Event handlers
@@ -57,8 +58,7 @@ public sealed partial class TRXEditor : TextEditorBase, INameBasedObjectNavigato
 		if (TryHandleCtrlSpaceCompletion(
 			e,
 			() => CompletionController.ApplyDecision(
-				_completionCoordinator.GetCtrlSpaceDecision(Document, CaretOffset, CompletionController.ActiveWindow is not null),
-				item => new CompletionData(item, TRXCompletionIconProvider.GetImage))))
+				_completionCoordinator.GetCtrlSpaceDecision(Document, CaretOffset, CompletionController.ActiveWindow is not null))))
 		{
 			return;
 		}
@@ -84,11 +84,14 @@ public sealed partial class TRXEditor : TextEditorBase, INameBasedObjectNavigato
 	{
 		if (IntelliSenseEnabled && CompletionEnabled)
 			CompletionController.ApplyDecision(
-				_completionCoordinator.GetTextEnteredDecision(Document, CaretOffset, e.Text, CompletionController.ActiveWindow is not null),
-				item => new CompletionData(item, TRXCompletionIconProvider.GetImage));
+				_completionCoordinator.GetTextEnteredDecision(Document, CaretOffset, e.Text, CompletionController.ActiveWindow is not null));
 
 		HandleBracketAutospacing();
 	}
+
+	/// <inheritdoc/>
+	protected override ICompletionData CreateCompletionData(TextCompletionItem item)
+		=> new CompletionData(item, TRXCompletionIconProvider.GetImage);
 
 	// Text manipulation helpers
 
@@ -139,9 +142,11 @@ public sealed partial class TRXEditor : TextEditorBase, INameBasedObjectNavigato
 
 	private Task<bool> TryNavigateDefinition(int offset, CancellationToken cancellationToken)
 	{
-		return SynchronousRequestAdapter.Adapt(
-			() => TryGoToDefinition(_languageServices.DefinitionProvider, _languageServices.HoverProvider, offset),
-			cancellationToken);
+		// The definition provider is synchronous; the token is honored before the request starts.
+		cancellationToken.ThrowIfCancellationRequested();
+
+		return Task.FromResult(
+			TryGoToDefinition(_languageServices.DefinitionProvider, _languageServices.HoverProvider, offset));
 	}
 
 	/// <inheritdoc/>

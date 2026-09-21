@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TombIDE.ScriptingStudio.Editors;
 using TombIDE.ScriptingStudio.Editors.ClassicScript.StringEditor;
@@ -16,7 +17,10 @@ using TombIDE.Shared;
 using TombIDE.Shared.SharedClasses;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editors;
+using Nickelony.IDEKit.Workspace;
 using Nickelony.IDEKit.Workspace.Documents;
+using Nickelony.IDEKit.Workspace.Documents.FileSystem;
+using Nickelony.IDEKit.Workspace.Documents.Reloading;
 
 namespace TombIDE.ScriptingStudio.Controls;
 
@@ -56,11 +60,20 @@ internal sealed partial class EditorDocumentController
 		if (_documentManager is null)
 			return;
 
-		_fileReloadCoordinator.ProcessQueuedFiles(
-			ShowFileReloadPrompt,
-			ReloadWorkspaceDocument,
-			ReportReloadFailure,
-			ResolveWorkspaceConflict);
+		_fileReloadCoordinator
+			.ProcessQueuedFilesAsync(new FileReloadHooks<DialogResult>(
+				(WorkspaceDocumentReloadResult result, CancellationToken _) =>
+					Task.FromResult(ShowFileReloadPrompt(result.Snapshot?.DisplayPath ?? result.RequestedIdentity.DocumentId)),
+				(string filePath, CancellationToken _) => Task.FromResult(ReloadWorkspaceDocument(filePath)),
+				(WorkspaceDocumentReloadResult result, CancellationToken _) =>
+				{
+					ReportReloadFailure(result);
+					return Task.CompletedTask;
+				},
+				(WorkspaceDocumentReloadResult result, DialogResult choice, CancellationToken _) =>
+					Task.FromResult(ResolveWorkspaceConflict(result, choice))))
+			.GetAwaiter()
+			.GetResult();
 		CloseInvalidEditors();
 	}
 
@@ -99,15 +112,16 @@ internal sealed partial class EditorDocumentController
 			if (snapshot.IsDirty)
 				continue;
 
-			WorkspaceDocumentMutationResult replacement = _documentManager.Replace(new WorkspaceDocumentReplaceRequest(
-				snapshot.DocumentKey,
-				snapshot.DocumentId,
-				snapshot.Version,
-				backupFileContent,
-				snapshot.FileFormat));
-			if (replacement.Status is not (WorkspaceDocumentMutationStatus.Replaced or WorkspaceDocumentMutationStatus.NoChange))
+			WorkspaceDocumentManagerMutationResult replacement = _documentManager
+				.ReplaceAsync(new WorkspaceDocumentReplaceRequest(
+					new(snapshot.DocumentKey, snapshot.DocumentId, snapshot.Version),
+					backupFileContent,
+					snapshot.FileFormat))
+				.GetAwaiter()
+				.GetResult();
+			if (replacement.Outcome is not (WorkspaceDocumentMutationOutcome.Changed or WorkspaceDocumentMutationOutcome.NoChange))
 				System.Diagnostics.Debug.WriteLine(
-					$"Unable to restore backup for '{originalFilePath}': {replacement.Status}.");
+					$"Unable to restore backup for '{originalFilePath}': {replacement.Outcome}.");
 		}
 	}
 
@@ -121,7 +135,7 @@ internal sealed partial class EditorDocumentController
 			.GetAwaiter()
 			.GetResult();
 		if (result.RawBytes is ReadOnlyMemory<byte> rawBytes)
-			return WorkspaceFileCodec.Decode(rawBytes.Span, TextEncodingKind.Utf8, out _);
+			return WorkspaceTextCodec.Decode(rawBytes.Span, TextEncodingKind.Utf8, out _);
 
 		return result.Content;
 	}
@@ -130,20 +144,25 @@ internal sealed partial class EditorDocumentController
 	{
 		if (!TryGetWorkspaceSnapshot(filePath, out WorkspaceDocumentSnapshot? snapshot) || snapshot is null)
 			return new WorkspaceDocumentReloadResult(
-				WorkspaceDocumentReloadStatus.DocumentNotFound,
-				new WorkspaceDocumentKey(Guid.Empty),
-				filePath,
-				0,
+				WorkspaceDocumentReloadOutcome.DocumentNotFound,
+				new WorkspaceDocumentRequestIdentity(new WorkspaceDocumentKey(Guid.Empty), filePath, 0),
 				null);
 
-		return _documentManager!
-			.ReloadAsync(new WorkspaceDocumentReloadRequest(
-				snapshot.DocumentKey,
-				snapshot.DocumentId,
-				snapshot.Version,
-				snapshot.OnDiskStamp))
+		var request = new WorkspaceDocumentReloadRequest(
+			new(snapshot.DocumentKey, snapshot.DocumentId, snapshot.Version));
+
+		WorkspaceDocumentManagerReloadResult reload = _documentManager!
+			.ReloadAsync(request)
 			.GetAwaiter()
 			.GetResult();
+
+		// The reload coordinator consumes store-level results. Attached views that blocked the reload
+		// report no store result; mapping that to a non-reloaded status makes the coordinator report
+		// the failure, which is the desired outcome for a view-blocked reload.
+		return reload.StoreResult ?? new WorkspaceDocumentReloadResult(
+			WorkspaceDocumentReloadOutcome.OperationInProgress,
+			request.Identity,
+			reload.Snapshot);
 	}
 
 	private WorkspaceDocumentConflictResolutionResult? ResolveWorkspaceConflict(
@@ -164,35 +183,45 @@ internal sealed partial class EditorDocumentController
 
 		if (resolutionChoice == WorkspaceDocumentConflictResolutionChoice.UseDisk)
 		{
-			List<string> failedViewIds = [];
+			List<string> unsynchronizedViewIds = [];
 			foreach (IWorkspaceDocumentView view in _workspaceViews.Values
-				.Where(view => string.Equals(view.DocumentId, snapshot.DocumentId, StringComparison.Ordinal)))
+				.Where(view => view is IWorkspaceScriptView scriptView
+					&& string.Equals(scriptView.DocumentId, snapshot.DocumentId, StringComparison.Ordinal)))
 			{
-				WorkspaceDocumentViewRefreshResult discardResult = view.DiscardPendingEdits(snapshot);
-				if (discardResult.Status != WorkspaceDocumentViewRefreshStatus.Refreshed)
-					failedViewIds.Add(view.ViewId);
+				WorkspaceDocumentViewRefreshResult discardResult = view is IWorkspaceViewPendingEdits pendingEdits
+					? pendingEdits.DiscardPendingEdits(snapshot)
+					: new WorkspaceDocumentViewRefreshResult(
+						WorkspaceDocumentViewRefreshOutcome.Failed,
+						new WorkspaceOperationFailure(
+							WorkspaceViewOperationFailureCodes.ViewRefreshFailed,
+							"The view does not support discarding pending edits."));
+
+				if (discardResult.Outcome != WorkspaceDocumentViewRefreshOutcome.Refreshed)
+					unsynchronizedViewIds.Add(view.ViewId);
 			}
 
-			if (failedViewIds.Count > 0)
-				return new WorkspaceDocumentConflictResolutionResult(
-					WorkspaceDocumentConflictResolutionStatus.ViewNotSynchronized,
-					snapshot.DocumentKey,
-					snapshot.DocumentId,
-					snapshot.Version,
-					resolutionChoice,
-					snapshot,
-					BlockingViewIds: failedViewIds);
+			// The reload coordinator consumes store-level results only; a view that could not discard
+			// its pending edits reports a failed resolution, which re-reports the original conflict.
+			if (unsynchronizedViewIds.Count > 0)
+				return null;
 		}
 
-		return _documentManager
+		WorkspaceDocumentManagerConflictResolutionResult resolved = _documentManager
 			.ResolveExternalConflictAsync(new WorkspaceDocumentConflictResolutionRequest(
-				snapshot.DocumentKey,
-				snapshot.DocumentId,
-				snapshot.Version,
+				new(snapshot.DocumentKey, snapshot.DocumentId, snapshot.Version),
 				reloadResult.ObservedOnDiskStamp ?? snapshot.OnDiskStamp,
 				resolutionChoice))
 			.GetAwaiter()
 			.GetResult();
+
+			// The reload coordinator consumes store-level results. A resolution whose attached views
+			// stayed unsynchronized is reported as a failed resolution - the coordinator re-reports the
+			// original conflict - while the manager still tracks the unsynchronized view and blocks
+			// later disk operations for it.
+			if (resolved.Views.Outcome == WorkspaceDocumentViewSynchronizationOutcome.Unsynchronized)
+				return null;
+
+			return resolved.StoreResult;
 	}
 
 	private bool TryGetWorkspaceSnapshot(string filePath, out WorkspaceDocumentSnapshot? snapshot)
@@ -201,19 +230,19 @@ internal sealed partial class EditorDocumentController
 		if (_documentManager is null)
 			return false;
 
-		WorkspaceDocumentOpenResult result = _documentManager
-			.OpenAsync(filePath, DefaultWorkspaceOpenOptions)
-			.GetAwaiter()
-			.GetResult();
+		WorkspaceDocumentManagerOpenResult result = _documentManager
+				.OpenAsync(filePath, DefaultWorkspaceOpenOptions)
+				.GetAwaiter()
+				.GetResult();
 		snapshot = result.Snapshot;
 		return snapshot is not null;
 	}
 
 	private void ReportReloadFailure(WorkspaceDocumentReloadResult result)
 	{
-		if (result.Status is WorkspaceDocumentReloadStatus.ExternalFileConflict
-			or WorkspaceDocumentReloadStatus.Unchanged
-			or WorkspaceDocumentReloadStatus.Reloaded)
+		if (result.Outcome is WorkspaceDocumentReloadOutcome.ExternalFileConflict
+			or WorkspaceDocumentReloadOutcome.Unchanged
+			or WorkspaceDocumentReloadOutcome.Reloaded)
 			return;
 
 		if (result.Failure is not null)
@@ -244,12 +273,12 @@ internal sealed partial class EditorDocumentController
 
 		using IDisposable processingScope = editor.BeginProcessingScope(options.ProcessingMode);
 
-		WorkspaceDocumentManagerOpenResult result = _documentManager.OpenWithView(
-			filePath,
-			DefaultWorkspaceOpenOptions,
-			view);
+		WorkspaceDocumentManagerOpenResult result = _documentManager
+			.OpenWithViewAsync(filePath, DefaultWorkspaceOpenOptions, view)
+			.GetAwaiter()
+			.GetResult();
 
-		if (result.Status != WorkspaceDocumentManagerOpenStatus.Opened)
+		if (result.Outcome != WorkspaceDocumentManagerOpenOutcome.Opened)
 		{
 			view.Close();
 			editor.Dispose();

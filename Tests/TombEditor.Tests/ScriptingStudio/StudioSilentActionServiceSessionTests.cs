@@ -12,7 +12,6 @@ using TombIDE.ScriptingStudio.TextEditing;
 using TombLib.Scripting.UI.Editors;
 using Nickelony.IDEKit.Workspace.Documents;
 using Nickelony.IDEKit.Workspace.Views;
-using Nickelony.IDEKit.Workspace.Views;
 
 namespace TombEditor.Tests.ScriptingStudio;
 
@@ -102,7 +101,7 @@ public sealed class StudioSilentActionServiceSessionTests
 		public TrackingSession Session { get; } = new();
 
 		public EditorSessionOpenResult Open(WorkspaceDocumentSnapshot snapshot, EditorSessionOptions options)
-			=> new(EditorSessionOpenStatus.AlreadyOpen, Session);
+			=> EditorSessionOpenResult.Reused(Session);
 	}
 
 	private sealed class TrackingSession : IEditorSession
@@ -124,16 +123,15 @@ public sealed class StudioSilentActionServiceSessionTests
 	{
 		private readonly WorkspaceDocumentSnapshot _snapshot = snapshot;
 
-		public Task<WorkspaceDocumentOpenResult> OpenAsync(
+		public Task<WorkspaceDocumentManagerOpenResult> OpenAsync(
 			string? filePath,
 			WorkspaceDocumentOpenOptions options,
 			CancellationToken cancellationToken = default)
-			=> Task.FromResult(new WorkspaceDocumentOpenResult(
-				WorkspaceDocumentOpenStatus.AlreadyOpen,
+			=> Task.FromResult(new WorkspaceDocumentManagerOpenResult(
+				WorkspaceDocumentManagerOpenOutcome.AlreadyOpen,
 				_snapshot));
 
-		public IReadOnlyList<WorkspaceDocumentSnapshot> GetSnapshotsUnderDirectory(string directoryPath)
-			=> [_snapshot];
+		public IWorkspaceDocumentReader Documents => throw new NotSupportedException();
 
 		public Task<WorkspaceDocumentManagerOpenResult> OpenWithViewAsync(
 			string? filePath,
@@ -142,55 +140,48 @@ public sealed class StudioSilentActionServiceSessionTests
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public WorkspaceDocumentManagerOpenResult OpenWithView(
-			string? filePath,
-			WorkspaceDocumentOpenOptions options,
-			IWorkspaceDocumentView view,
-			CancellationToken cancellationToken = default)
+		public Task<WorkspaceDocumentManagerMutationResult> ReplaceAsync(WorkspaceDocumentReplaceRequest request)
 			=> throw new NotSupportedException();
 
-		public WorkspaceDocumentMutationResult Replace(WorkspaceDocumentReplaceRequest request)
+		public Task<WorkspaceDocumentManagerMutationResult> DiscardAsync(WorkspaceDocumentDiscardRequest request)
 			=> throw new NotSupportedException();
 
-		public WorkspaceDocumentMutationResult Discard(WorkspaceDocumentDiscardRequest request)
-			=> throw new NotSupportedException();
-
-		public Task<WorkspaceDocumentRenameResult> RenameAsync(
+		public Task<WorkspaceDocumentManagerRenameResult> RenameAsync(
 			WorkspaceDocumentRenameRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentSaveAsResult> SaveAsAsync(
+		public Task<WorkspaceDocumentManagerSaveAsResult> SaveAsAsync(
 			WorkspaceDocumentSaveAsRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentDeleteResult> DeleteAsync(
+		public Task<WorkspaceDocumentManagerDeleteResult> DeleteAsync(
 			WorkspaceDocumentDeleteRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentDirectoryRenameResult> RenameDirectoryAsync(
+		public Task<WorkspaceDocumentManagerDirectoryRenameResult> RenameDirectoryAsync(
 			WorkspaceDocumentDirectoryRenameRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentDirectoryDeleteResult> DeleteDirectoryAsync(
+		public Task<WorkspaceDocumentManagerDirectoryDeleteResult> DeleteDirectoryAsync(
 			WorkspaceDocumentDirectoryDeleteRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentCommitResult> CommitAsync(
+		public Task<WorkspaceDocumentManagerCommitResult> CommitAsync(
 			WorkspaceDocumentCommitRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentReloadResult> ReloadAsync(
+		public Task<WorkspaceDocumentManagerReloadResult> ReloadAsync(
 			WorkspaceDocumentReloadRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentConflictResolutionResult> ResolveExternalConflictAsync(
+		public Task<WorkspaceDocumentManagerConflictResolutionResult> ResolveExternalConflictAsync(
 			WorkspaceDocumentConflictResolutionRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();

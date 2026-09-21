@@ -6,7 +6,10 @@ using System.Linq;
 using System.Runtime.Versioning;
 using System.Text;
 using Nickelony.IDEKit.Core.Editing;
+using Nickelony.IDEKit.Core.Pathing;
 using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.Workspace.Documents;
+using Nickelony.IDEKit.Workspace.Editing;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editors;
 
@@ -36,42 +39,37 @@ public sealed class TextWorkspaceEditApplier
 	/// <param name="workspaceEdit">The workspace edit to apply.</param>
 	/// <param name="selectionState">The optional selection state to restore for the initiating editor.</param>
 	/// <returns>The explicit application result and its non-atomic change set.</returns>
-	public TextWorkspaceEditApplicationResult Apply(TextWorkspaceEdit workspaceEdit, TextWorkspaceEditSelectionState? selectionState = null)
+	public WorkspaceEditApplicationResult Apply(TextWorkspaceEdit workspaceEdit, TextWorkspaceEditSelectionState? selectionState = null)
 	{
 		ArgumentNullException.ThrowIfNull(workspaceEdit);
 
-		if (!workspaceEdit.HasEdits)
+		if (!workspaceEdit.HasChanges)
 			return CreateCompletedResult([], 0, []);
 
 		PreparedWorkspaceEdit preparedEdit = Preflight(workspaceEdit, selectionState);
 		if (!preparedEdit.IsValid)
-			return new TextWorkspaceEditApplicationResult(
-				TextWorkspaceEditApplicationStatus.ValidationFailed,
-				preparedEdit.PreparedOperationCount,
-				preparedEdit.TargetResults,
-				[],
-				[],
+			return WorkspaceEditApplicationResult.ValidationFailed(
 				preparedEdit.Diagnostics,
 				preparedEdit.Failure,
-				new TextWorkspaceEditTransaction([]));
+				// Host flavor: target ids are Windows file paths, so deduplicate them case-insensitively.
+				LocalPathComparisonPolicy.CaseInsensitive);
 
 		return _textEditorHost.ExecutePreservingSelection(() =>
 		{
-			var documentChanges = new List<TextWorkspaceDocumentChange>();
-			var targetResults = new List<TextWorkspaceEditTargetResult>(preparedEdit.Targets.Count);
-			var changedTargetIds = new List<string>();
+			var documentChanges = new List<WorkspaceDocumentChange>();
+			var targetResults = new List<WorkspaceEditTargetResult>(preparedEdit.Targets.Count);
 			var unknownTargetIds = new List<string>();
 
 			for (int targetIndex = 0; targetIndex < preparedEdit.Targets.Count; targetIndex++)
 			{
 				PreparedTarget target = preparedEdit.Targets[targetIndex];
-				if (!TryConfirmPreflightState(target, out TextWorkspaceEditFailure? stateFailure))
+				if (!TryConfirmPreflightState(target, out WorkspaceOperationFailure? stateFailure))
 				{
-					TextWorkspaceEditFailure failure = stateFailure ?? new TextWorkspaceEditFailure(
+					WorkspaceOperationFailure failure = stateFailure ?? new WorkspaceOperationFailure(
 						"TargetUnavailable",
 						$"The target '{target.TargetId}' could not be confirmed.");
 					targetResults.Add(target.CreateResult(
-						TextWorkspaceEditTargetStatus.Unknown,
+						WorkspaceEditTargetOutcome.Unknown,
 						TryGetVersion(target.EditTarget),
 						failure));
 					unknownTargetIds.Add(target.TargetId);
@@ -80,7 +78,6 @@ public sealed class TextWorkspaceEditApplier
 						preparedEdit,
 						documentChanges,
 						targetResults,
-						changedTargetIds,
 						unknownTargetIds,
 						failure);
 				}
@@ -88,14 +85,14 @@ public sealed class TextWorkspaceEditApplier
 				if (string.Equals(target.BeforeContent, target.ExpectedAfterContent, StringComparison.Ordinal))
 				{
 					targetResults.Add(target.CreateResult(
-						TextWorkspaceEditTargetStatus.Applied,
+						WorkspaceEditTargetOutcome.Applied,
 						TryGetVersion(target.EditTarget)));
 					continue;
 				}
 
 				try
 				{
-					target.EditTarget.Apply(target.Operations);
+					target.EditTarget.Apply(target.Edits);
 					string actualContent = target.EditTarget.Text;
 					long? actualVersion = TryGetVersion(target.EditTarget);
 
@@ -103,15 +100,18 @@ public sealed class TextWorkspaceEditApplier
 					{
 						if (!string.Equals(actualContent, target.BeforeContent, StringComparison.Ordinal))
 						{
-							documentChanges.Add(new TextWorkspaceDocumentChange(
-								target.TargetId,
-								target.BeforeContent,
-								actualContent ?? string.Empty));
-							changedTargetIds.Add(target.TargetId);
+							documentChanges.Add(new WorkspaceDocumentChange
+							{
+								TargetId = target.TargetId,
+								BeforeContent = target.BeforeContent,
+								AfterContent = actualContent ?? string.Empty
+							});
+							// The content changed, but not to the prepared final content, so the target's final
+							// state is unconfirmed.
 							targetResults.Add(target.CreateResult(
-								TextWorkspaceEditTargetStatus.Changed,
+								WorkspaceEditTargetOutcome.Unknown,
 								actualVersion,
-								new TextWorkspaceEditFailure(
+								new WorkspaceOperationFailure(
 									"UnexpectedTargetContent",
 									"The target did not reach the prepared final content.")));
 						}
@@ -119,9 +119,9 @@ public sealed class TextWorkspaceEditApplier
 						{
 							unknownTargetIds.Add(target.TargetId);
 							targetResults.Add(target.CreateResult(
-								TextWorkspaceEditTargetStatus.Unknown,
+								WorkspaceEditTargetOutcome.Unknown,
 								actualVersion,
-								new TextWorkspaceEditFailure(
+								new WorkspaceOperationFailure(
 									"TargetNotChanged",
 									"The target did not apply the prepared operations.")));
 						}
@@ -131,20 +131,20 @@ public sealed class TextWorkspaceEditApplier
 							preparedEdit,
 							documentChanges,
 							targetResults,
-							changedTargetIds,
 							unknownTargetIds,
-							new TextWorkspaceEditFailure(
+							new WorkspaceOperationFailure(
 								"UnexpectedTargetContent",
 								"The target did not reach the prepared final content."));
 					}
 
-					documentChanges.Add(new TextWorkspaceDocumentChange(
-						target.TargetId,
-						target.BeforeContent,
-						actualContent));
-					changedTargetIds.Add(target.TargetId);
+					documentChanges.Add(new WorkspaceDocumentChange
+					{
+						TargetId = target.TargetId,
+						BeforeContent = target.BeforeContent,
+						AfterContent = actualContent
+					});
 					targetResults.Add(target.CreateResult(
-						TextWorkspaceEditTargetStatus.Applied,
+						WorkspaceEditTargetOutcome.Applied,
 						actualVersion));
 
 					if (target.SelectionState is not null && target.RestoredSelectionState is not null)
@@ -161,11 +161,12 @@ public sealed class TextWorkspaceEditApplier
 					{
 						if (!string.Equals(actualContent, target.BeforeContent, StringComparison.Ordinal))
 						{
-							documentChanges.Add(new TextWorkspaceDocumentChange(
-								target.TargetId,
-								target.BeforeContent,
-								actualContent ?? string.Empty));
-							changedTargetIds.Add(target.TargetId);
+							documentChanges.Add(new WorkspaceDocumentChange
+							{
+								TargetId = target.TargetId,
+								BeforeContent = target.BeforeContent,
+								AfterContent = actualContent ?? string.Empty
+							});
 						}
 						else
 							unknownTargetIds.Add(target.TargetId);
@@ -175,11 +176,11 @@ public sealed class TextWorkspaceEditApplier
 						unknownTargetIds.Add(target.TargetId);
 					}
 
-					TextWorkspaceEditFailure failure = new("TargetApplicationFailed", exception.Message, exception);
+					WorkspaceOperationFailure failure = new("TargetApplicationFailed", exception.Message, exception);
+					// The target threw after it may have changed the document, so its final state is
+					// unconfirmed.
 					targetResults.Add(target.CreateResult(
-						unknownTargetIds.Contains(target.TargetId, StringComparer.OrdinalIgnoreCase)
-							? TextWorkspaceEditTargetStatus.Unknown
-							: TextWorkspaceEditTargetStatus.Changed,
+						WorkspaceEditTargetOutcome.Unknown,
 						TryGetVersion(target.EditTarget),
 						failure));
 					AddNotAppliedTargetResults(preparedEdit.Targets, targetResults, targetIndex + 1);
@@ -187,7 +188,6 @@ public sealed class TextWorkspaceEditApplier
 						preparedEdit,
 						documentChanges,
 						targetResults,
-						changedTargetIds,
 						unknownTargetIds,
 						failure);
 				}
@@ -205,7 +205,7 @@ public sealed class TextWorkspaceEditApplier
 	/// </summary>
 	/// <param name="transaction">The transaction whose before snapshots should be restored.</param>
 	/// <returns>The file paths whose contents changed.</returns>
-	public IReadOnlyList<string> ApplyBeforeSnapshot(TextWorkspaceEditTransaction transaction)
+	public IReadOnlyList<string> ApplyBeforeSnapshot(WorkspaceEditChangeSet transaction)
 		=> ApplyContentSnapshots(transaction, static documentChange => documentChange.BeforeContent);
 
 	/// <summary>
@@ -213,10 +213,10 @@ public sealed class TextWorkspaceEditApplier
 	/// </summary>
 	/// <param name="transaction">The transaction whose after snapshots should be restored.</param>
 	/// <returns>The file paths whose contents changed.</returns>
-	public IReadOnlyList<string> ApplyAfterSnapshot(TextWorkspaceEditTransaction transaction)
+	public IReadOnlyList<string> ApplyAfterSnapshot(WorkspaceEditChangeSet transaction)
 		=> ApplyContentSnapshots(transaction, static documentChange => documentChange.AfterContent);
 
-	private IReadOnlyList<string> ApplyContentSnapshots(TextWorkspaceEditTransaction transaction, Func<TextWorkspaceDocumentChange, string> selectContent)
+	private IReadOnlyList<string> ApplyContentSnapshots(WorkspaceEditChangeSet transaction, Func<WorkspaceDocumentChange, string> selectContent)
 	{
 		ArgumentNullException.ThrowIfNull(transaction);
 		ArgumentNullException.ThrowIfNull(selectContent);
@@ -228,24 +228,24 @@ public sealed class TextWorkspaceEditApplier
 		{
 			var updatedFiles = new List<string>(transaction.DocumentChanges.Count);
 
-			foreach (TextWorkspaceDocumentChange documentChange in transaction.DocumentChanges)
+			foreach (WorkspaceDocumentChange documentChange in transaction.DocumentChanges)
 			{
-				TextEditorBase textEditor = _textEditorHost.OpenTextEditor(documentChange.FilePath);
+				TextEditorBase textEditor = _textEditorHost.OpenTextEditor(documentChange.TargetId);
 				ApplyDocumentContent(textEditor, selectContent(documentChange));
 				if (textEditor.WorkspaceEditTarget is null)
-					SynchronizeOpenEditors(documentChange.FilePath, textEditor);
-				updatedFiles.Add(documentChange.FilePath);
+					SynchronizeOpenEditors(documentChange.TargetId, textEditor);
+				updatedFiles.Add(documentChange.TargetId);
 			}
 
 			return (IReadOnlyList<string>)updatedFiles;
 		});
 	}
 
-	private static RestoredSelectionState MapSelectionState(TextWorkspaceEditSelectionState selectionState, IReadOnlyList<TextEditOperation> preparedTextEdits)
+	private static RestoredSelectionState MapSelectionState(TextWorkspaceEditSelectionState selectionState, PreparedTextEdits preparedTextEdits)
 	{
-		int selectionStart = TextEditKernel.MapOffset(selectionState.SelectionStart, preparedTextEdits);
-		int selectionEnd = TextEditKernel.MapOffset(selectionState.SelectionEnd, preparedTextEdits);
-		int caretOffset = TextEditKernel.MapOffset(selectionState.CaretOffset, preparedTextEdits);
+		int selectionStart = preparedTextEdits.MapOffset(selectionState.SelectionStart);
+		int selectionEnd = preparedTextEdits.MapOffset(selectionState.SelectionEnd);
+		int caretOffset = preparedTextEdits.MapOffset(selectionState.CaretOffset);
 
 		if (selectionEnd < selectionStart)
 			(selectionStart, selectionEnd) = (selectionEnd, selectionStart);
@@ -275,7 +275,7 @@ public sealed class TextWorkspaceEditApplier
 			if (string.Equals(editTarget.Text, content, StringComparison.Ordinal))
 				return;
 
-			editTarget.Apply([new TextEditOperation(0, editTarget.Text.Length, content, 0)]);
+			editTarget.Apply(new PreparedTextEdits([new TextEditOperation(0, editTarget.Text.Length, content, 0)]));
 			return;
 		}
 
@@ -290,9 +290,9 @@ public sealed class TextWorkspaceEditApplier
 		TextWorkspaceEditSelectionState? selectionState)
 	{
 		var targets = new List<PreparedTarget>();
-		var targetResults = new List<TextWorkspaceEditTargetResult>();
+		var targetResults = new List<WorkspaceEditTargetResult>();
 		var diagnostics = new List<TextEditPreparationDiagnostic>();
-		TextWorkspaceEditFailure? failure = null;
+		WorkspaceOperationFailure? failure = null;
 
 		IEnumerable<IGrouping<string, TextDocumentEdit>> fileGroups = workspaceEdit.DocumentEdits
 			.GroupBy(documentEdit => documentEdit.FilePath, StringComparer.OrdinalIgnoreCase)
@@ -303,17 +303,18 @@ public sealed class TextWorkspaceEditApplier
 			string targetId = fileGroup.Key;
 			if (string.IsNullOrWhiteSpace(targetId))
 			{
-				TextWorkspaceEditFailure targetFailure = new(
+				WorkspaceOperationFailure targetFailure = new(
 					"InvalidTarget",
 					"A workspace edit target must have a file path.");
 				failure ??= targetFailure;
-				targetResults.Add(new TextWorkspaceEditTargetResult(
-					targetId,
-					0,
-					null,
-					0,
-					TextWorkspaceEditTargetStatus.NotApplied,
-					targetFailure));
+				targetResults.Add(new WorkspaceEditTargetResult
+				{
+					TargetId = targetId,
+					ExpectedVersion = 0,
+					PreparedOperationCount = 0,
+					Outcome = WorkspaceEditTargetOutcome.NotApplied,
+					Failure = targetFailure
+				});
 				continue;
 			}
 
@@ -323,17 +324,18 @@ public sealed class TextWorkspaceEditApplier
 				ITextEditTarget editTarget = _textEditorHost.GetTextEditTarget(editor);
 				if (editTarget is not ITextEditTargetVersion)
 				{
-					TextWorkspaceEditFailure targetFailure = new(
+					WorkspaceOperationFailure targetFailure = new(
 						"UnsupportedTargetCapability",
 						$"The target '{targetId}' does not expose a document version.");
 					failure ??= targetFailure;
-					targetResults.Add(new TextWorkspaceEditTargetResult(
-						targetId,
-						0,
-						null,
-						0,
-						TextWorkspaceEditTargetStatus.NotApplied,
-						targetFailure));
+					targetResults.Add(new WorkspaceEditTargetResult
+					{
+						TargetId = targetId,
+						ExpectedVersion = 0,
+						PreparedOperationCount = 0,
+						Outcome = WorkspaceEditTargetOutcome.NotApplied,
+						Failure = targetFailure
+					});
 					continue;
 				}
 
@@ -348,12 +350,14 @@ public sealed class TextWorkspaceEditApplier
 				if (!preparation.IsValid)
 				{
 					diagnostics.AddRange(preparation.Diagnostics);
-					targetResults.Add(new TextWorkspaceEditTargetResult(
-						targetId,
-						expectedVersion,
-						expectedVersion,
-						preparation.Operations.Count,
-						TextWorkspaceEditTargetStatus.NotApplied));
+					targetResults.Add(new WorkspaceEditTargetResult
+					{
+						TargetId = targetId,
+						ExpectedVersion = expectedVersion,
+						ActualVersion = expectedVersion,
+						PreparedOperationCount = preparation.Edits.Operations.Count,
+						Outcome = WorkspaceEditTargetOutcome.NotApplied
+					});
 					continue;
 				}
 
@@ -363,36 +367,37 @@ public sealed class TextWorkspaceEditApplier
 						: null;
 				RestoredSelectionState? restoredSelectionState = selectionStateForTarget is null
 					? null
-					: MapSelectionState(selectionStateForTarget, preparation.Operations);
+					: MapSelectionState(selectionStateForTarget, preparation.Edits);
 
 				var target = new PreparedTarget(
 					targetId,
 					editor,
 					editTarget,
 					beforeContent,
-					ApplyOperations(beforeContent, preparation.Operations),
-					preparation.Operations,
+					ApplyOperations(beforeContent, preparation.Edits.Operations),
+					preparation.Edits,
 					expectedVersion,
 					selectionStateForTarget,
 					restoredSelectionState);
 				targets.Add(target);
-				targetResults.Add(target.CreateResult(TextWorkspaceEditTargetStatus.NotApplied, expectedVersion));
+				targetResults.Add(target.CreateResult(WorkspaceEditTargetOutcome.NotApplied, expectedVersion));
 			}
 			catch (Exception exception)
 			{
-				TextWorkspaceEditFailure targetFailure = new("TargetResolutionFailed", exception.Message, exception);
+				WorkspaceOperationFailure targetFailure = new("TargetResolutionFailed", exception.Message, exception);
 				failure ??= targetFailure;
-				targetResults.Add(new TextWorkspaceEditTargetResult(
-					targetId,
-					0,
-					null,
-					0,
-					TextWorkspaceEditTargetStatus.NotApplied,
-					targetFailure));
+				targetResults.Add(new WorkspaceEditTargetResult
+				{
+					TargetId = targetId,
+					ExpectedVersion = 0,
+					PreparedOperationCount = 0,
+					Outcome = WorkspaceEditTargetOutcome.NotApplied,
+					Failure = targetFailure
+				});
 			}
 		}
 
-		int preparedOperationCount = targets.Sum(target => target.Operations.Count);
+		int preparedOperationCount = targets.Sum(target => target.Edits.Operations.Count);
 		return new PreparedWorkspaceEdit(
 			targets,
 			targetResults,
@@ -413,7 +418,7 @@ public sealed class TextWorkspaceEditApplier
 		return builder.ToString();
 	}
 
-	private static bool TryConfirmPreflightState(PreparedTarget target, out TextWorkspaceEditFailure? failure)
+	private static bool TryConfirmPreflightState(PreparedTarget target, out WorkspaceOperationFailure? failure)
 	{
 		failure = null;
 		try
@@ -421,7 +426,7 @@ public sealed class TextWorkspaceEditApplier
 			if (!string.Equals(target.EditTarget.Text, target.BeforeContent, StringComparison.Ordinal)
 				|| TryGetVersion(target.EditTarget) != target.ExpectedVersion)
 			{
-				failure = new TextWorkspaceEditFailure(
+				failure = new WorkspaceOperationFailure(
 					"TargetChangedDuringPreflight",
 					$"The target '{target.TargetId}' changed after preflight.");
 				return false;
@@ -431,7 +436,7 @@ public sealed class TextWorkspaceEditApplier
 		}
 		catch (Exception exception)
 		{
-			failure = new TextWorkspaceEditFailure("TargetUnavailable", exception.Message, exception);
+			failure = new WorkspaceOperationFailure("TargetUnavailable", exception.Message, exception);
 			return false;
 		}
 	}
@@ -457,43 +462,38 @@ public sealed class TextWorkspaceEditApplier
 
 	private static void AddNotAppliedTargetResults(
 		IReadOnlyList<PreparedTarget> targets,
-		ICollection<TextWorkspaceEditTargetResult> targetResults,
+		ICollection<WorkspaceEditTargetResult> targetResults,
 		int startIndex)
 	{
 		for (int index = startIndex; index < targets.Count; index++)
-			targetResults.Add(targets[index].CreateResult(TextWorkspaceEditTargetStatus.NotApplied, null));
+			targetResults.Add(targets[index].CreateResult(WorkspaceEditTargetOutcome.NotApplied, null));
 	}
 
-	private static TextWorkspaceEditApplicationResult CreateCompletedResult(
-		IReadOnlyList<TextWorkspaceDocumentChange> documentChanges,
+	private static WorkspaceEditApplicationResult CreateCompletedResult(
+		IReadOnlyList<WorkspaceDocumentChange> documentChanges,
 		int preparedOperationCount,
-		IReadOnlyList<TextWorkspaceEditTargetResult> targetResults)
-		=> new(
-			TextWorkspaceEditApplicationStatus.Completed,
+		IReadOnlyList<WorkspaceEditTargetResult> targetResults)
+		=> WorkspaceEditApplicationResult.Completed(
 			preparedOperationCount,
 			targetResults,
-			documentChanges.Select(change => change.FilePath).ToArray(),
-			[],
-			[],
-			null,
-			new TextWorkspaceEditTransaction(documentChanges));
+			new WorkspaceEditChangeSet(documentChanges),
+			// Host flavor: target ids are Windows file paths, so deduplicate them case-insensitively.
+			LocalPathComparisonPolicy.CaseInsensitive);
 
-	private static TextWorkspaceEditApplicationResult CreatePartialResult(
+	private static WorkspaceEditApplicationResult CreatePartialResult(
 		PreparedWorkspaceEdit preparedEdit,
-		IReadOnlyList<TextWorkspaceDocumentChange> documentChanges,
-		IReadOnlyList<TextWorkspaceEditTargetResult> targetResults,
-		IReadOnlyList<string> changedTargetIds,
+		IReadOnlyList<WorkspaceDocumentChange> documentChanges,
+		IReadOnlyList<WorkspaceEditTargetResult> targetResults,
 		IReadOnlyList<string> unknownTargetIds,
-		TextWorkspaceEditFailure failure)
-		=> new(
-			TextWorkspaceEditApplicationStatus.PartiallyApplied,
+		WorkspaceOperationFailure failure)
+		=> WorkspaceEditApplicationResult.PartiallyApplied(
 			preparedEdit.PreparedOperationCount,
 			targetResults,
-			changedTargetIds,
 			unknownTargetIds,
-			preparedEdit.Diagnostics,
 			failure,
-			new TextWorkspaceEditTransaction(documentChanges));
+			new WorkspaceEditChangeSet(documentChanges),
+			// Host flavor: target ids are Windows file paths, so deduplicate them case-insensitively.
+			LocalPathComparisonPolicy.CaseInsensitive);
 
 	private void SynchronizeOpenEditors(string filePath, TextEditorBase sourceEditor)
 	{
@@ -513,16 +513,16 @@ public sealed class TextWorkspaceEditApplier
 
 	private sealed class PreparedWorkspaceEdit(
 		IReadOnlyList<PreparedTarget> targets,
-		IReadOnlyList<TextWorkspaceEditTargetResult> targetResults,
+		IReadOnlyList<WorkspaceEditTargetResult> targetResults,
 		int preparedOperationCount,
 		IReadOnlyList<TextEditPreparationDiagnostic> diagnostics,
-		TextWorkspaceEditFailure? failure)
+		WorkspaceOperationFailure? failure)
 	{
 		public IReadOnlyList<PreparedTarget> Targets { get; } = targets;
-		public IReadOnlyList<TextWorkspaceEditTargetResult> TargetResults { get; } = targetResults;
+		public IReadOnlyList<WorkspaceEditTargetResult> TargetResults { get; } = targetResults;
 		public int PreparedOperationCount { get; } = preparedOperationCount;
 		public IReadOnlyList<TextEditPreparationDiagnostic> Diagnostics { get; } = diagnostics;
-		public TextWorkspaceEditFailure? Failure { get; } = failure;
+		public WorkspaceOperationFailure? Failure { get; } = failure;
 		public bool IsValid => Failure is null && Diagnostics.Count == 0;
 	}
 
@@ -532,7 +532,7 @@ public sealed class TextWorkspaceEditApplier
 		ITextEditTarget editTarget,
 		string beforeContent,
 		string expectedAfterContent,
-		IReadOnlyList<TextEditOperation> operations,
+		PreparedTextEdits edits,
 		long expectedVersion,
 		TextWorkspaceEditSelectionState? selectionState,
 		RestoredSelectionState? restoredSelectionState)
@@ -542,15 +542,23 @@ public sealed class TextWorkspaceEditApplier
 		public ITextEditTarget EditTarget { get; } = editTarget;
 		public string BeforeContent { get; } = beforeContent;
 		public string ExpectedAfterContent { get; } = expectedAfterContent;
-		public IReadOnlyList<TextEditOperation> Operations { get; } = operations;
+		public PreparedTextEdits Edits { get; } = edits;
 		public long ExpectedVersion { get; } = expectedVersion;
 		public TextWorkspaceEditSelectionState? SelectionState { get; } = selectionState;
 		public RestoredSelectionState? RestoredSelectionState { get; } = restoredSelectionState;
 
-		public TextWorkspaceEditTargetResult CreateResult(
-			TextWorkspaceEditTargetStatus status,
+		public WorkspaceEditTargetResult CreateResult(
+			WorkspaceEditTargetOutcome status,
 			long? actualVersion,
-			TextWorkspaceEditFailure? failure = null)
-			=> new(TargetId, ExpectedVersion, actualVersion, Operations.Count, status, failure);
+			WorkspaceOperationFailure? failure = null)
+			=> new()
+			{
+				TargetId = TargetId,
+				ExpectedVersion = ExpectedVersion,
+				ActualVersion = actualVersion,
+				PreparedOperationCount = Edits.Operations.Count,
+				Outcome = status,
+				Failure = failure
+			};
 	}
 }

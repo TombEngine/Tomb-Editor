@@ -1,12 +1,13 @@
 using ICSharpCode.AvalonEdit;
-using Nickelony.IDEKit.AvalonEdit.Extras.Markdown;
+using Nickelony.IDEKit.AvalonEdit.Markdown;
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 using TombLib.Scripting.UI.Highlighting;
 using TombLib.Scripting.UI.Resources;
 using static TombLib.WPF.BrushHelpers;
-using PackageMarkdownToolTipRenderer = Nickelony.IDEKit.AvalonEdit.Extras.Markdown.MarkdownToolTipRenderer;
+using PackageMarkdownToolTipRenderer = Nickelony.IDEKit.AvalonEdit.Markdown.MarkdownRenderer;
 
 namespace TombLib.Scripting.UI.Rendering;
 
@@ -23,7 +24,7 @@ public static class MarkdownToolTipRenderer
 	private static readonly Brush DefaultBackground = TextEditorColorPalette.ToolTipBackground;
 	private static readonly Brush DefaultLinkForeground = CreateFrozenBrush(Color.FromRgb(112, 192, 231));
 
-	private static MarkdownToolTipTheme CreateTheme(Brush foreground, Brush? background)
+	private static MarkdownRenderTheme CreateTheme(Brush foreground, Brush? background)
 		=> new()
 		{
 			BodyFontFamily = BodyFontFamily,
@@ -31,18 +32,19 @@ public static class MarkdownToolTipRenderer
 			CodeFontFamily = CodeFontFamily,
 			CodeFontSize = CodeFontSize,
 			Foreground = foreground ?? DefaultForeground,
-			Background = background ?? DefaultBackground,
+			SurfaceBackground = background ?? DefaultBackground,
 			LinkForeground = DefaultLinkForeground,
 			MaxWidth = ToolTipDefaults.PopupMaxWidth,
 			MaxHeight = ToolTipDefaults.PopupMaxHeight,
-			TextMaxWidth = ToolTipDefaults.TextMaxWidth
+			CodeMaxWidth = ToolTipDefaults.TextMaxWidth
 		};
 
-	private static MarkdownToolTipOptions CreateOptions(bool allowScrolling)
+	private static MarkdownRenderOptions CreateOptions(bool allowScrolling)
 		=> new()
 		{
 			AllowScrolling = allowScrolling,
-			InstallCustomHighlighting = TryInstallCustomHighlighting
+			CustomHighlightingInstaller = TryInstallCustomHighlighting,
+			OpenExternalUri = OpenUriWithShell
 		};
 
 	private static bool TryInstallCustomHighlighting(TextEditor editor, string? language)
@@ -50,11 +52,23 @@ public static class MarkdownToolTipRenderer
 		if (!string.Equals(language?.Trim(), "lua", StringComparison.OrdinalIgnoreCase))
 			return false;
 
-		if (LuaTextMateSyntaxHighlighting.TryInstall(editor, out _))
+		if (LuaTextMateSyntaxHighlighting.TryInstall(editor, out LuaTextMateInstallation? installation))
+		{
+			// The installation owns a TextMate model with a background tokenizer thread, so it must be
+			// disposed when the tooltip's code-block editor leaves the visual tree.
+			editor.Unloaded += (_, _) => installation.Dispose();
 			return true;
+		}
 
 		editor.SyntaxHighlighting = LuaFallbackHighlightingLoader.Load();
 		return true;
+	}
+
+	private static bool OpenUriWithShell(Uri uri)
+	{
+		// The renderer never opens a link on its own, so the host supplies the external opener it
+		// wants; tooltips open links through the operating system's default protocol handler.
+		return Process.Start(new ProcessStartInfo(uri.AbsoluteUri) { UseShellExecute = true }) is not null;
 	}
 
 	/// <summary>

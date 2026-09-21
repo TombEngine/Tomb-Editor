@@ -25,9 +25,9 @@ public sealed class TRXGameFlowCompletionService : ITextCompletionProvider
 	public TRXGameFlowCompletionService(ITRXGameFlowSchemaService schemaService) => _schemaService = schemaService;
 
 	/// <inheritdoc/>
-	public IReadOnlyList<TextCompletionItem> GetCompletionItems(TextCompletionContext context)
+	public IReadOnlyList<TextCompletionItem> GetCompletionItems(TextCompletionRequest request)
 	{
-		ArgumentNullException.ThrowIfNull(context);
+		ArgumentNullException.ThrowIfNull(request);
 
 		try
 		{

@@ -1,4 +1,3 @@
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Navigation;
 using Nickelony.IDEKit.IntelliSense.Navigation;
 using System.Windows;
 using System.Windows.Input;
@@ -11,6 +10,7 @@ using TombLib.Scripting.ClassicScript.Services;
 using TombLib.Scripting.ClassicScript.Signatures;
 using TombLib.Scripting.ClassicScript.Syntaxes;
 using TombLib.Scripting.ClassicScript.Types;
+using TombLib.Scripting.UI.Navigation;
 
 namespace TombLib.Tests;
 
@@ -53,7 +53,7 @@ public class ClassicScriptDefinitionNavigationTests
 			new TextDefinitionRequest(document, "[Level]", new ClassicScriptObjectDiscriminator(ObjectType.Section)));
 
 		Assert.IsNotNull(location);
-		Assert.AreEqual(1, location!.LineNumber);
+		Assert.AreEqual(0, location!.TargetRange.Start.Line);
 	}
 
 	private sealed record UnrecognizedDiscriminator : TextDefinitionDiscriminator;
@@ -80,7 +80,10 @@ public class ClassicScriptDefinitionNavigationTests
 
 				Assert.IsTrue(handled);
 				Assert.IsTrue(eventArgs.Handled);
-				Assert.AreEqual("[Level]", editor.SelectedText);
+
+				// Navigation places the caret at the target without selecting the line.
+				Assert.AreEqual(0, editor.CaretOffset);
+				Assert.AreEqual(0, editor.SelectionLength);
 			}
 			finally
 			{

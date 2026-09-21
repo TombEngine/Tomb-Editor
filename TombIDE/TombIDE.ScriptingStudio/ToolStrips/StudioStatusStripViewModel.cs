@@ -117,7 +117,7 @@ public sealed partial class StudioStatusStripViewModel : ObservableObject
 		ZoomLabelText = presentation.ZoomLabelText;
 		CanResetZoom = presentation.CanResetZoom;
 		ResetZoomToolTipText = presentation.ResetZoomToolTipText;
-		PreviewText = presentation.SyntaxPreview?.Label ?? string.Empty;
+		PreviewText = presentation.SyntaxPreview?.ActiveSignature.Label ?? string.Empty;
 		CurrentArgumentIndex = presentation.SyntaxPreview?.ActiveParameterIndex ?? -1;
 
 		ResetZoomCommand.NotifyCanExecuteChanged();

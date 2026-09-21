@@ -1,5 +1,5 @@
+using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Rendering;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Signatures;
 using Nickelony.IDEKit.IntelliSense.Navigation;
 using Nickelony.IDEKit.IntelliSense.Signatures;
 using NLog;
@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Nickelony.IDEKit.Core.Comments;
 using Nickelony.IDEKit.Core.Formatting;
-using Nickelony.IDEKit.Core.Infrastructure;
 using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.IntelliSense.Completion;
 using TombLib.Scripting.ClassicScript.Cleaning;
@@ -19,6 +18,7 @@ using TombLib.Scripting.UI.Completion;
 using TombLib.Scripting.UI.Bases;
 using Nickelony.IDEKit.AvalonEdit.Documents;
 using TombLib.Scripting.UI.Editors;
+using TombLib.Scripting.UI.Presentation;
 using TombLib.Scripting.UI.Resources;
 
 namespace TombLib.Scripting.ClassicScript;
@@ -97,11 +97,11 @@ public sealed partial class ClassicScriptEditor : TextEditorBase, ISyntaxPreview
 
 		InitializeDefinitionNavigation(TryNavigateDefinition);
 		InitializeHover(BuildHoverRequestState, RequestHover);
-		InitializeDiagnostics(engineVersion, _languageServices.ErrorDetector);
+		InitializeDiagnostics(_languageServices.ErrorDetector);
 
 		_sectionRenderer = InitializeRenderers();
 
-		CommentSyntax = new CommentSyntax(";", null, null, StringLiteralStyle.None);
+		CommentSyntax = new CommentSyntax(";", null, StringLiteralStyle.None);
 	}
 
 	private SectionRenderer InitializeRenderers()
@@ -142,7 +142,7 @@ public sealed partial class ClassicScriptEditor : TextEditorBase, ISyntaxPreview
 	{
 		string requestText = Text;
 		int requestCaretOffset = CaretOffset;
-		int requestToken = CompletionController.BeginRequest();
+		long requestToken = CompletionController.Requests.BeginRequest();
 		_ = ApplyCompletionDecisionAsync(decisionTask, requestText, requestCaretOffset, requestToken);
 	}
 
@@ -150,7 +150,7 @@ public sealed partial class ClassicScriptEditor : TextEditorBase, ISyntaxPreview
 		Task<TextCompletionSessionDecision> decisionTask,
 		string requestText,
 		int requestCaretOffset,
-		int requestToken)
+		long requestToken)
 	{
 		TextCompletionSessionDecision decision;
 
@@ -168,7 +168,7 @@ public sealed partial class ClassicScriptEditor : TextEditorBase, ISyntaxPreview
 			return;
 		}
 
-		if (!CompletionController.IsRequestCurrent(requestToken)
+		if (!CompletionController.Requests.IsCurrent(requestToken)
 			|| CompletionController.ActiveWindow is not null
 			|| decision.Items is null
 			|| !decision.StartOffset.HasValue
@@ -179,16 +179,22 @@ public sealed partial class ClassicScriptEditor : TextEditorBase, ISyntaxPreview
 			return;
 		}
 
-		CompletionController.ApplyDecision(decision, item => new CompletionData(item, ClassicScriptCompletionIconProvider.GetImage));
+		CompletionController.ApplyDecision(decision);
 	}
+
+	/// <inheritdoc/>
+	protected override ICompletionData CreateCompletionData(TextCompletionItem item)
+		=> new CompletionData(item, ClassicScriptCompletionIconProvider.GetImage);
 
 	// Navigation
 
 	private Task<bool> TryNavigateDefinition(int offset, CancellationToken cancellationToken)
 	{
-		return SynchronousRequestAdapter.Adapt(
-			() => TryGoToDefinition(_languageServices.DefinitionProvider, _languageServices.HoverProvider, offset),
-			cancellationToken);
+		// The definition provider is synchronous; the token is honored before the request starts.
+		cancellationToken.ThrowIfCancellationRequested();
+
+		return Task.FromResult(
+			TryGoToDefinition(_languageServices.DefinitionProvider, _languageServices.HoverProvider, offset));
 	}
 
 	/// <summary>
@@ -239,7 +245,7 @@ public sealed partial class ClassicScriptEditor : TextEditorBase, ISyntaxPreview
 	/// Gets the syntax preview at the caret.
 	/// </summary>
 	/// <returns>The signature help info for the current syntax, or <c>null</c> when none is available.</returns>
-	public TextSignatureHelpInfo? GetSyntaxPreview()
+	public TextSignatureHelp? GetSyntaxPreview()
 		=> _languageServices.SignatureHelpProvider.GetSignatureHelp(new TextSignatureHelpRequest(Document.Text, CaretOffset));
 
 	/// <summary>

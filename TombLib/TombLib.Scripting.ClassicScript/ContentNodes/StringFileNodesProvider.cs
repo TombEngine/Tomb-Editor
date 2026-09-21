@@ -38,11 +38,13 @@ public sealed class StringFileNodesProvider : ITextDocumentSymbolProvider
 			{
 				string? headerText = _lineService.GetSectionHeaderText(lineText);
 
-				if (headerText is not null && headerText.Contains(request.Filter, StringComparison.OrdinalIgnoreCase))
+				if (headerText is not null && headerText.Contains(request.FilterText, StringComparison.OrdinalIgnoreCase))
 					nodes.Add(headerText);
 			}
 		}
 
-		return DocumentSymbolTreeBuilder.BuildFlatNodes(nodes, node => node);
+		return DocumentSymbolOutlineBuilder.BuildFlatOutline(
+			nodes,
+			new DocumentSymbolProjection<string>(static node => node, static _ => TextDocumentSymbolKind.Variable));
 	}
 }

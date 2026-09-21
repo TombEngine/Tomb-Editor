@@ -1,4 +1,4 @@
-using Nickelony.IDEKit.Core.Infrastructure;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Hover;
 	using Nickelony.IDEKit.IntelliSense.Diagnostics;
 	using Nickelony.IDEKit.IntelliSense.Hover;
 	using System.Threading;
@@ -8,22 +8,24 @@ namespace TombLib.Scripting.ClassicScript;
 
 public sealed partial class ClassicScriptEditor
 {
-	private TextHoverRequestState BuildHoverRequestState(int hoveredOffset)
+	private TextHoverEvaluationState BuildHoverRequestState(int hoveredOffset)
 	{
-		TryGetDiagnosticInfo(hoveredOffset, out TextEditorDiagnostic? diagnosticInfo, allowLineFallback: false);
+		TryGetDiagnosticInfo(hoveredOffset, out TextDiagnostic? diagnosticInfo, allowLineFallback: false);
 
-		return new TextHoverRequestState(
+		return new TextHoverEvaluationState(
 			ShouldRequestHover: true,
 			RequestOffset: hoveredOffset,
-			CanShowToolTip: true,
+				CanShowHoverContent: true,
 			CanShowDiagnosticFallback: false,
 			DiagnosticInfo: diagnosticInfo);
 	}
 
 	private Task<TextHoverInfo?> RequestHover(int hoveredOffset, CancellationToken cancellationToken)
 	{
-		return SynchronousRequestAdapter.Adapt(
-			() => _languageServices.HoverProvider.GetHoverInfo(new TextHoverRequest(Document.Text, hoveredOffset)),
-			cancellationToken);
+		// The hover provider is synchronous; the token is honored before the request starts.
+		cancellationToken.ThrowIfCancellationRequested();
+
+		return Task.FromResult(
+			_languageServices.HoverProvider.GetHoverInfo(new TextHoverRequest(Document.Text, hoveredOffset)));
 	}
 }

@@ -52,9 +52,8 @@ public sealed partial class LuaEditor : TextEditorBase
 	/// <param name="engineVersion">The engine version used to configure editor behavior.</param>
 	public LuaEditor(Version engineVersion) : base(engineVersion)
 	{
-		CommentSyntax = new CommentSyntax("--", null, null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.SingleQuoted);
+		CommentSyntax = new CommentSyntax("--", null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.SingleQuoted);
 		TextArea.IndentationStrategy = new LuaAutoIndentationStrategy(Options);
-		CompletionController.InitializeScheduling(RequestScheduledCompletionAsync);
 		_definitionNavigationController = new(this);
 		InitializeDefinitionNavigation(TryNavigateDefinitionAsync);
 		_hoverController = new(this);

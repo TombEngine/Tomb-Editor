@@ -19,6 +19,8 @@ using Nickelony.IDEKit.Workspace.Documents;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
 using TombIDE.ScriptingStudio.Workspace;
+using Nickelony.IDEKit.Workspace.Documents.FileSystem;
+using Nickelony.IDEKit.Workspace.Documents.Reloading;
 
 namespace TombIDE.ScriptingStudio.Controls;
 

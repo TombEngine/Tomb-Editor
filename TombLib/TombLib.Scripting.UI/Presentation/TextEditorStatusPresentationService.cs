@@ -1,4 +1,4 @@
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Signatures;
+using Nickelony.IDEKit.IntelliSense.Signatures;
 using System;
 using TombLib.Scripting.UI.Presentation;
 using TombLib.Scripting.UI.Bases;

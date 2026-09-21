@@ -6,6 +6,7 @@ using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.UI;
 using TombLib.Scripting.UI.Editors;
 using TombLib.WPF.Services.Abstract;
@@ -17,8 +18,7 @@ public sealed partial class DocumentOutlineViewModel : ObservableObject, IDispos
 	private readonly ILocalizationService _localizationService;
 	private readonly ContentNodesRefreshCoordinator _refreshCoordinator;
 
-	private Func<ITextDocumentSymbolProvider?>? _outlineProviderFactory;
-	private IEditorControl? _editorControl;
+	private ScriptingDocumentContext? _documentContext;
 
 	internal DocumentOutlineViewModel(
 		ILocalizationService localizationService)
@@ -37,36 +37,27 @@ public sealed partial class DocumentOutlineViewModel : ObservableObject, IDispos
 
 	public bool IsEmpty => Nodes.Count == 0;
 
-	public Func<ITextDocumentSymbolProvider?>? OutlineProviderFactory
+	/// <summary>
+	/// Gets or sets the document context the outline is bound to; the outline provider and the
+	/// observed editor are resolved from it.
+	/// </summary>
+	public ScriptingDocumentContext? DocumentContext
 	{
-		get => _outlineProviderFactory;
+		get => _documentContext;
 		set
 		{
-			if (ReferenceEquals(_outlineProviderFactory, value))
+			if (ReferenceEquals(_documentContext, value))
 				return;
 
-			_outlineProviderFactory = value;
+			if (_documentContext?.Editor is { } previousEditor)
+				previousEditor.ContentChangedWorkerRunCompleted -= EditorControl_ContentChangedWorkerRunCompleted;
+
+			_documentContext = value;
+
+			if (_documentContext?.Editor is { } editor)
+				editor.ContentChangedWorkerRunCompleted += EditorControl_ContentChangedWorkerRunCompleted;
+
 			UpdateNodesProvider();
-		}
-	}
-
-	public IEditorControl? EditorControl
-	{
-		get => _editorControl;
-		set
-		{
-			if (ReferenceEquals(_editorControl, value))
-				return;
-
-			if (_editorControl is not null)
-				_editorControl.ContentChangedWorkerRunCompleted -= EditorControl_ContentChangedWorkerRunCompleted;
-
-			_editorControl = value;
-
-			if (_editorControl is not null)
-				_editorControl.ContentChangedWorkerRunCompleted += EditorControl_ContentChangedWorkerRunCompleted;
-
-			RefreshNodes();
 		}
 	}
 
@@ -98,8 +89,8 @@ public sealed partial class DocumentOutlineViewModel : ObservableObject, IDispos
 	{
 		_refreshCoordinator.InvalidatePendingRequests();
 
-		if (_editorControl is not null)
-			_editorControl.ContentChangedWorkerRunCompleted -= EditorControl_ContentChangedWorkerRunCompleted;
+		if (_documentContext?.Editor is { } editor)
+			editor.ContentChangedWorkerRunCompleted -= EditorControl_ContentChangedWorkerRunCompleted;
 	}
 
 	public bool SelectNode(string nodeText)
@@ -162,7 +153,7 @@ public sealed partial class DocumentOutlineViewModel : ObservableObject, IDispos
 
 	private void RefreshNodes()
 	{
-		if (EditorControl is null || NodesProvider is null)
+		if (_documentContext?.Editor is not { } editorControl || NodesProvider is null)
 		{
 			_refreshCoordinator.InvalidatePendingRequests();
 			ApplyNodes([]);
@@ -174,14 +165,14 @@ public sealed partial class DocumentOutlineViewModel : ObservableObject, IDispos
 			: SearchText.Trim();
 
 		ITextDocumentSymbolProvider nodesProvider = NodesProvider;
-		string content = EditorControl.Content;
+		string content = editorControl.Content;
 
 		_refreshCoordinator.RequestRefresh(nodesProvider, content, filter, CanApplyRefreshResult, ApplyNodes);
 	}
 
 	private void UpdateNodesProvider()
 	{
-		NodesProvider = _outlineProviderFactory?.Invoke();
+		NodesProvider = _documentContext?.Registration?.Contributions.OutlineProviderFactory?.Invoke(_documentContext);
 		_refreshCoordinator.InvalidatePendingRequests();
 
 		RefreshNodes();

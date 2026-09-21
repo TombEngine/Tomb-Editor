@@ -6,7 +6,6 @@ using TombLib.Scripting.GameFlowScript.Completion;
 using TombLib.Scripting.GameFlowScript.Highlighting;
 using Nickelony.IDEKit.Core.Comments;
 using Nickelony.IDEKit.IntelliSense.Navigation;
-using Nickelony.IDEKit.Core.Infrastructure;
 	using TombLib.Scripting.UI.Bases;
 	using TombLib.Scripting.UI.Editors;
 	using TombLib.Scripting.UI.Resources;
@@ -39,7 +38,7 @@ public sealed partial class GameFlowEditor : TextEditorBase, INameBasedObjectNav
 		InitializeDefinitionNavigation(TryNavigateDefinition);
 		InitializeHover(BuildStandardHoverRequestState, RequestHover);
 
-		CommentSyntax = new CommentSyntax("//", null, null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.TripleDoubleQuoted);
+		CommentSyntax = new CommentSyntax("//", null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.TripleDoubleQuoted);
 	}
 
 	/// <inheritdoc/>
@@ -79,9 +78,11 @@ public sealed partial class GameFlowEditor : TextEditorBase, INameBasedObjectNav
 
 	private Task<bool> TryNavigateDefinition(int offset, CancellationToken cancellationToken)
 	{
-		return SynchronousRequestAdapter.Adapt(
-			() => TryGoToDefinition(_languageServices.DefinitionProvider, _languageServices.HoverProvider, offset),
-			cancellationToken);
+		// The definition provider is synchronous; the token is honored before the request starts.
+		cancellationToken.ThrowIfCancellationRequested();
+
+		return Task.FromResult(
+			TryGoToDefinition(_languageServices.DefinitionProvider, _languageServices.HoverProvider, offset));
 	}
 
 	/// <inheritdoc/>

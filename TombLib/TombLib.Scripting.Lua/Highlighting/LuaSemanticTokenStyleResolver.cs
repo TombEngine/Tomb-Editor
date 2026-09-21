@@ -1,4 +1,5 @@
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Highlighting;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Highlighting;
+using Nickelony.IDEKit.AvalonEdit.Rendering;
 using Nickelony.IDEKit.IntelliSense.SemanticTokens;
 using System;
 using System.Windows;
@@ -37,7 +38,7 @@ internal sealed class LuaSemanticTokenStyleResolver : ISemanticTokenStyleResolve
 	}
 
 	/// <inheritdoc/>
-	public SemanticTokenStyle Resolve(TextSemanticToken token)
+	public TextRunStyle Resolve(TextSemanticToken token)
 	{
 		ArgumentNullException.ThrowIfNull(token);
 
@@ -62,10 +63,11 @@ internal sealed class LuaSemanticTokenStyleResolver : ISemanticTokenStyleResolve
 			_ => null
 		};
 
-		return new SemanticTokenStyle(
+		return new TextRunStyle(
 			foreground,
 			token.HasModifier(LuaSemanticTokenKinds.Declaration)
 				&& (token.Type == LuaSemanticTokenKinds.Function || token.Type == LuaSemanticTokenKinds.Method),
+			IsItalic: false,
 			token.HasModifier(LuaSemanticTokenKinds.Deprecated) ? DeprecatedDecorations : null);
 	}
 

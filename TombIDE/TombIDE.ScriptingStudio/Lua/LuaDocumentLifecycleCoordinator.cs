@@ -15,14 +15,14 @@ internal sealed class LuaDocumentLifecycleCoordinator : ILuaEditorLifecycleServi
 {
 	private readonly IEditorDocumentController _documentController;
 	private readonly IMessenger _messenger;
-	private readonly ILuaIntelliSenseProvider _intellisenseProvider;
+	private readonly ILuaLanguageServerIntelliSenseProvider _intellisenseProvider;
 	private readonly LuaTrackedDocumentStateService _trackedDocumentStateService;
 	private readonly HashSet<LuaEditor> _trackedEditors = [];
 
 	public LuaDocumentLifecycleCoordinator(
 		IEditorDocumentController documentController,
 		IMessenger messenger,
-		ILuaIntelliSenseProvider intellisenseProvider,
+		ILuaLanguageServerIntelliSenseProvider intellisenseProvider,
 		LuaTrackedDocumentStateService trackedDocumentStateService)
 	{
 		_documentController = documentController ?? throw new ArgumentNullException(nameof(documentController));

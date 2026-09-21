@@ -62,7 +62,7 @@ public sealed class ScriptReplacer
 
 	private static string ReplaceCodeValue(string lineText, string oldName, string newName)
 	{
-		TextRange codeRange = CommentHelper.GetCodeRange(lineText, new CommentSyntax(";", null, null, StringLiteralStyle.None));
+		TextRange codeRange = CommentOperations.GetCodeRange(lineText, new CommentSyntax(";", null, StringLiteralStyle.None));
 		string codeText = lineText[..codeRange.Length];
 		return codeText.Replace(oldName, newName) + lineText[codeRange.Length..];
 	}

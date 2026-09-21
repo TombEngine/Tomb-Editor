@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Threading;
 using Moq;
+using Nickelony.IDEKit.Core.Diagnostics;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.Editors;
@@ -365,7 +366,7 @@ public sealed class ScriptingPhase0LifecycleTests
 
 			try
 			{
-				editor.SetDiagnostics([new TextEditorDiagnostic(TextEditorDiagnosticSeverity.Error, "error", 0, 1)]);
+				editor.SetDiagnostics([new TextDiagnostic(TextDiagnosticSeverity.Error, "error", 0, 1)]);
 			}
 			finally
 			{
@@ -450,7 +451,7 @@ public sealed class ScriptingPhase0LifecycleTests
 			builder.SetNoDocument();
 			string statusBeforeLatePublication = diagnostics.StatusText;
 
-			editor.SetDiagnostics([new TextEditorDiagnostic(TextEditorDiagnosticSeverity.Error, "late", 0, 1)]);
+			editor.SetDiagnostics([new TextDiagnostic(TextDiagnosticSeverity.Error, "late", 0, 1)]);
 
 			Assert.AreEqual(statusBeforeLatePublication, diagnostics.StatusText);
 			Assert.AreEqual(0, GetDiagnosticsSubscriptionCount(editor));

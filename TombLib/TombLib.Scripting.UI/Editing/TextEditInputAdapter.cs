@@ -23,8 +23,8 @@ internal static class TextEditInputAdapter
 				continue;
 			}
 
-			if (!TryGetOffset(snapshot, edit.Range.StartLineNumber, edit.Range.StartColumnNumber, out int startOffset)
-				|| !TryGetOffset(snapshot, edit.Range.EndLineNumber, edit.Range.EndColumnNumber, out int endOffset)
+			if (!TryGetOffset(snapshot, edit.Range.Start.Line, edit.Range.Start.Character, out int startOffset)
+				|| !TryGetOffset(snapshot, edit.Range.End.Line, edit.Range.End.Character, out int endOffset)
 				|| endOffset < startOffset)
 			{
 				yield return new TextEditInput(new TextRange(snapshot.TextLength, 1), edit.NewText ?? string.Empty);
@@ -39,21 +39,21 @@ internal static class TextEditInputAdapter
 
 	private static bool TryGetOffset(
 		ITextSnapshot snapshot,
-		int lineNumber,
-		int columnNumber,
+		int lineIndex,
+		int character,
 		out int offset)
 	{
 		offset = 0;
 
-		if (lineNumber < 1 || lineNumber > snapshot.LineCount || columnNumber < 1)
+		if (lineIndex < 0 || lineIndex >= snapshot.LineCount || character < 0)
 			return false;
 
-		ITextLine line = snapshot.GetLineByNumber(lineNumber);
-		int columnOffset = columnNumber - 1;
-		if (columnOffset > line.Length)
+		ITextLine line = snapshot.GetLineByNumber(lineIndex + 1);
+
+		if (character > line.Length)
 			return false;
 
-		offset = line.Offset + columnOffset;
+		offset = line.Offset + character;
 		return true;
 	}
 }

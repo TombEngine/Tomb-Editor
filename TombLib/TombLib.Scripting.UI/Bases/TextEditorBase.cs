@@ -1,5 +1,7 @@
 using ICSharpCode.AvalonEdit;
+using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Rendering;
+using Nickelony.IDEKit.IntelliSense.Completion;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using NLog;
 using System;
@@ -7,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -17,11 +20,12 @@ using Nickelony.IDEKit.AvalonEdit.ChangeMarkers;
 using Nickelony.IDEKit.AvalonEdit.Comments;
 using Nickelony.IDEKit.AvalonEdit.Diagnostics;
 using Nickelony.IDEKit.AvalonEdit.Editing;
-using Nickelony.IDEKit.AvalonEdit.Editors;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Hover;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Navigation;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Completion;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Hover;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Navigation;
+using Nickelony.IDEKit.Core.Bookmarks;
 using Nickelony.IDEKit.Core.Comments;
+using Nickelony.IDEKit.Core.Editing;
 using Nickelony.IDEKit.Core.Formatting;
 using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.UI.Completion;
@@ -29,6 +33,7 @@ using TombLib.Scripting.UI.Diagnostics;
 using TombLib.Scripting.UI.Documents;
 using TombLib.Scripting.UI.Editors;
 using TombLib.Scripting.UI.Hover;
+using TombLib.Scripting.UI.Navigation;
 using TombLib.Scripting.UI.Presentation;
 using TombLib.Scripting.UI.Resources;
 
@@ -45,7 +50,7 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 {
 	private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-	private static readonly TextEditorFormattingService s_formattingService = new();
+	private static readonly TextDocumentFormattingService s_formattingService = new();
 
 	static TextEditorBase()
 	{
@@ -255,7 +260,7 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 				throw new ArgumentOutOfRangeException(nameof(value), value, "Minimum zoom cannot exceed maximum zoom.");
 
 			_minZoom = value;
-			Zoom = _statusCoordinator.Zoom;
+			Zoom = _statusCoordinator.ZoomPercent;
 		}
 	}
 
@@ -277,7 +282,7 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 				throw new ArgumentOutOfRangeException(nameof(value), value, "Maximum zoom cannot be less than minimum zoom.");
 
 			_maxZoom = value;
-			Zoom = _statusCoordinator.Zoom;
+			Zoom = _statusCoordinator.ZoomPercent;
 		}
 	}
 
@@ -581,7 +586,7 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 	private readonly CompletionWindowCoordinator _completionWindowCoordinator;
 	private readonly ContentPersistenceCoordinator _contentPersistenceCoordinator;
 	private readonly TextDiagnosticToolTipService _diagnosticToolTipService;
-	private readonly TextEditorStatusCoordinator _statusCoordinator;
+	private readonly TextEditorViewStateCoordinator _statusCoordinator;
 	private readonly EditorToolTipPresenter _toolTipPresenter;
 	private readonly UnsavedChangesTracker _unsavedChangesTracker;
 
@@ -598,7 +603,7 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 	/// <summary>
 	/// Gets the diagnostics currently owned by this editor instance.
 	/// </summary>
-	public IReadOnlyList<TextEditorDiagnostic> Diagnostics
+	public IReadOnlyList<TextDiagnostic> Diagnostics
 	{
 		get
 		{
@@ -622,7 +627,6 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 		_bookmarkCoordinator = services.BookmarkCoordinator;
 		_bookmarkStore = services.BookmarkStore;
 		_commentService = services.CommentService;
-		_completionWindowCoordinator = services.CompletionWindowCoordinator;
 		_contentPersistenceCoordinator = services.ContentPersistenceCoordinator;
 		_diagnosticToolTipService = services.DiagnosticToolTipService;
 		_statusCoordinator = services.StatusCoordinator;
@@ -631,19 +635,32 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 		_specialToolTip = _toolTipPresenter.Popup;
 
 		CompletionController = new TextCompletionController(
-			this,
-			_completionWindowCoordinator,
-			configureWindow: static window => TextCompletionWindowStyle.Apply(window),
-			completionItemFactory: static item => new CompletionData(item),
-			resolveDescriptionAsync: static item =>
-				item is CompletionData completionData && completionData.CanResolve
-					? completionData.GetDescriptionAsync()
-					: null,
-			getDisplayInfo: static item => item is CompletionData completionData
-				? (completionData.DisplayText, completionData.DisplayDetail)
-				: (item.Text, null),
-			toolTipBackground: TextEditorColorPalette.ToolTipBackground,
-			toolTipBorder: TextEditorColorPalette.ToolTipBorder);
+			this.TextArea,
+			new CompletionWindowSkin(
+				BorderBrush: TextEditorColorPalette.ToolTipBorder,
+				Background: TextEditorColorPalette.ToolTipBackground,
+				Foreground: TextEditorColorPalette.ToolTipForeground),
+			hooks: new TextCompletionControllerHooks
+			{
+				ConfigureWindow = static window => TextCompletionWindowStyle.Apply(window),
+				CompletionItemFactory = CreateCompletionData,
+				ResolveDescriptionAsync = static (item, cancellationToken) => item is CompletionData completionData
+					? completionData.GetDescriptionAsync(cancellationToken)
+					: Task.FromResult<object?>(item.Description),
+				GetDisplayInfo = static item => item is CompletionData completionData
+					? (completionData.DisplayText, completionData.DisplayDetail)
+					: (item.Text, null),
+				// The debounced request runs through the editor's overridable scheduled-request member;
+				// editors that do not use debounced completion keep the base no-op.
+				ScheduledRequestAsync = RequestScheduledCompletionAsync,
+				TooltipSkin = CompletionTooltipSkin.Default with
+				{
+					Background = TextEditorColorPalette.ToolTipBackground,
+					BorderBrush = TextEditorColorPalette.ToolTipBorder
+				}
+			});
+
+		_completionWindowCoordinator = CompletionController.WindowCoordinator;
 
 		InitializePersistenceCoordinator();
 		InitializeRenderers();
@@ -652,6 +669,15 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 
 		EngineVersion = engineVersion ?? new Version(0, 0);
 	}
+
+	/// <summary>
+	/// Creates the AvalonEdit completion data for a completion item. Language editors override this
+	/// member to supply their icon provider and any language-specific item policy.
+	/// </summary>
+	/// <param name="item">The completion item to map.</param>
+	/// <returns>The completion data shown by the editor's completion window.</returns>
+	protected virtual ICompletionData CreateCompletionData(TextCompletionItem item)
+		=> new CompletionData(item);
 
 	private void SetNewDefaultSettings()
 	{
@@ -687,13 +713,7 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 	{
 		_changeMarkerMargin = new ChangeMarkerMargin(_unsavedChangesTracker);
 		_bookmarkMargin = new BookmarkMargin(_bookmarkCoordinator);
-		_diagnosticsRenderer = new DiagnosticsRenderer(
-			documentProvider: () => Document,
-			segmentsProvider: CreateDiagnosticSegments);
-
-		TextArea.LeftMargins.Insert(0, _changeMarkerMargin);
-		TextArea.LeftMargins.Insert(1, _bookmarkMargin);
-		TextArea.TextView.BackgroundRenderers.Add(_diagnosticsRenderer);
+			_diagnosticsRenderer = new DiagnosticsRenderer(CreateDiagnosticSegments);
 	}
 
 	internal void InvalidateBookmarkMargin()
@@ -852,7 +872,7 @@ public abstract partial class TextEditorBase : TextEditor, IEditorControl
 		CompletionController.Dispose();
 
 		_toolTipPresenter.Dispose();
-		_completionWindowCoordinator.Dispose();
+		_completionWindowCoordinator.Close();
 		_diagnosticToolTipService.ClearDiagnostics();
 
 		UnbindEventMethods();

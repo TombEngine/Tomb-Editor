@@ -68,18 +68,17 @@ public class WorkbenchServiceTests
     {
         return new KeyBindingService<UICommand>(
             CreateDefaultCatalog(),
-            new KeyBindingOverrideCollection(),
-            _ => true);
+            new KeyBindingTestStore());
     }
 
     private static CommandCatalog<UICommand> CreateDefaultCatalog()
     {
         return new CommandCatalog<UICommand>([
-            new CommandDescriptor<UICommand>(UICommand.Save, nameof(UICommand.Save), isRemappable: true, isHostReserved: false,
-                new KeyCombo(System.Windows.Input.Key.S, System.Windows.Input.ModifierKeys.Control)),
-            new CommandDescriptor<UICommand>(UICommand.Find, nameof(UICommand.Find), isRemappable: true, isHostReserved: false,
-                new KeyCombo(System.Windows.Input.Key.F, System.Windows.Input.ModifierKeys.Control),
-                new KeyCombo(System.Windows.Input.Key.H, System.Windows.Input.ModifierKeys.Control))
+            new CommandDescriptor<UICommand>(UICommand.Save, nameof(UICommand.Save), CommandRemappingPolicy.Remappable,
+                new KeyCombo(KeyCode.S, KeyModifiers.Control)),
+            new CommandDescriptor<UICommand>(UICommand.Find, nameof(UICommand.Find), CommandRemappingPolicy.Remappable,
+                new KeyCombo(KeyCode.F, KeyModifiers.Control),
+                new KeyCombo(KeyCode.H, KeyModifiers.Control))
         ]);
     }
 
@@ -133,14 +132,14 @@ public class WorkbenchServiceTests
     {
         return new LuaTrackedDocumentStateService(
             new Mock<ITextEditorHost>().Object,
-            new Mock<ILuaIntelliSenseProvider>().Object);
+            new Mock<ILuaLanguageServerIntelliSenseProvider>().Object);
     }
 
     private static LuaReferenceSearchService CreateLuaReferenceSearchService()
     {
         return new LuaReferenceSearchService(
             new Mock<ITextEditorHost>().Object,
-            new Mock<ITextReferencesProvider>().Object,
+            new Mock<ILanguageServerReferencesProvider>().Object,
             "C:\\Scripts");
     }
 
@@ -148,7 +147,7 @@ public class WorkbenchServiceTests
     {
         return new TextWorkspaceCommandService(
             new TextWorkspaceEditApplier(new Mock<ITextEditorHost>().Object),
-            new Mock<ITextEditProvider>().Object);
+            new Mock<ILanguageServerRenameProvider>().Object);
     }
 
     private static LuaHostServices CreateLuaHostServices()
@@ -579,9 +578,9 @@ public class WorkbenchServiceTests
             documentController
                 .Setup(controller => controller.FindEditorsOfFile(It.IsAny<string>()))
                 .Returns([editor]);
-            var referencesProvider = new Mock<ITextReferencesProvider>();
+            var referencesProvider = new Mock<ILanguageServerReferencesProvider>();
             referencesProvider.SetupGet(provider => provider.SupportsReferences).Returns(() => supportsReferences);
-            var editProvider = new Mock<ITextEditProvider>();
+            var editProvider = new Mock<ILanguageServerRenameProvider>();
             editProvider.SetupGet(provider => provider.SupportsRename).Returns(() => supportsRename);
             var messenger = new WeakReferenceMessenger();
             var workbench = WorkbenchServiceTestFactory.Create(

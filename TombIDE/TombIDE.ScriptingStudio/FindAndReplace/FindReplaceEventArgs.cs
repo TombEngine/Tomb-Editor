@@ -1,4 +1,3 @@
-using Nickelony.IDEKit.Core.FindReplace;
 using System;
 using System.Collections.Generic;
 

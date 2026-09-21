@@ -18,7 +18,7 @@ public class GameFlowHoverProviderTests
 			&& !GameFlowDefinitionCatalog.Sections.Contains(name, StringComparer.OrdinalIgnoreCase)
 			&& !GameFlowDefinitionCatalog.SpecialProperties.Contains(name, StringComparer.OrdinalIgnoreCase));
 
-		AssertHoverIdentifier(property, ObjectType.Property);
+		AssertHoverDiscriminator(property, ObjectType.Property);
 	}
 
 	[TestMethod]
@@ -30,17 +30,17 @@ public class GameFlowHoverProviderTests
 			&& !GameFlowDefinitionCatalog.SpecialProperties.Contains(name, StringComparer.OrdinalIgnoreCase)
 			&& !GameFlowDefinitionCatalog.Properties.Contains(name, StringComparer.OrdinalIgnoreCase));
 
-		AssertHoverIdentifier(constant, ObjectType.Constant);
+		AssertHoverDiscriminator(constant, ObjectType.Constant);
 	}
 
 	[TestMethod]
 	public void SectionHover_StillUsesTypedSectionIdentifier()
 	{
 		string section = GameFlowDefinitionCatalog.Sections.First(name => !string.IsNullOrWhiteSpace(name));
-		AssertHoverIdentifier(section, ObjectType.Section);
+		AssertHoverDiscriminator(section, ObjectType.Section);
 	}
 
-	private static void AssertHoverIdentifier(string symbol, ObjectType expectedIdentifier)
+	private static void AssertHoverDiscriminator(string symbol, ObjectType expectedIdentifier)
 	{
 		var hoverProvider = new GameFlowHoverProvider();
 		string text = $"LEVEL: {symbol}";
@@ -49,6 +49,6 @@ public class GameFlowHoverProviderTests
 		TextHoverInfo? hoverInfo = hoverProvider.GetHoverInfo(new TextHoverRequest(text, offset));
 
 		Assert.IsNotNull(hoverInfo);
-		Assert.AreEqual(new GameFlowObjectDiscriminator(expectedIdentifier), hoverInfo.Identifier);
+		Assert.AreEqual(new GameFlowObjectDiscriminator(expectedIdentifier), hoverInfo.DefinitionDiscriminator);
 	}
 }

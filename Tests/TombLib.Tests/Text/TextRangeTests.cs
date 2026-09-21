@@ -124,10 +124,9 @@ public class TextRangeTests
     }
 
     [TestMethod]
-    public void GetText_OffsetPlusLengthWouldOverflow_Throws()
+    public void Constructor_RangeEndWouldOverflow_Throws()
     {
-        var range = new TextRange(int.MaxValue - 1, int.MaxValue);
-
-        Assert.ThrowsException<ArgumentOutOfRangeException>(() => range.GetText("x"));
+        // The overflowing range is rejected at construction instead of wrapping to a negative end.
+        Assert.ThrowsException<ArgumentOutOfRangeException>(() => new TextRange(int.MaxValue - 1, int.MaxValue));
     }
 }

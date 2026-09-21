@@ -95,7 +95,7 @@ internal sealed partial class EditorDocumentController
 
 	private FileSavingResult CommitWorkspaceDocument(IEditorControl editor)
 	{
-		WorkspaceDocumentOpenResult openResult = _documentManager!
+WorkspaceDocumentManagerOpenResult openResult = _documentManager!
 			.OpenAsync(editor.FilePath, DefaultWorkspaceOpenOptions)
 			.GetAwaiter()
 			.GetResult();
@@ -103,21 +103,22 @@ internal sealed partial class EditorDocumentController
 		if (openResult.Snapshot is not WorkspaceDocumentSnapshot snapshot)
 			return FileSavingResult.Failed;
 
-		WorkspaceDocumentCommitResult result = _documentManager
+		WorkspaceDocumentManagerCommitResult result = _documentManager
 			.CommitAsync(
 				new WorkspaceDocumentCommitRequest(
-					snapshot.DocumentKey,
-					snapshot.DocumentId,
-					snapshot.Version,
+					new(snapshot.DocumentKey, snapshot.DocumentId, snapshot.Version),
 					snapshot.OnDiskStamp))
 			.GetAwaiter()
 			.GetResult();
 
-		return result.Status switch
+		return result.Outcome switch
 		{
-			WorkspaceDocumentCommitStatus.Committed => FileSavingResult.Success,
-			WorkspaceDocumentCommitStatus.CommittedWithUnsynchronizedView => FileSavingResult.Failed,
-			WorkspaceDocumentCommitStatus.Cancelled => FileSavingResult.Canceled,
+			// A commit that succeeded while an attached view stayed unsynchronized reports a failed
+			// save, matching the behavior of the previous library status for that outcome.
+			WorkspaceDocumentCommitOutcome.Committed
+				when result.Views.Outcome == WorkspaceDocumentViewSynchronizationOutcome.Unsynchronized => FileSavingResult.Failed,
+			WorkspaceDocumentCommitOutcome.Committed => FileSavingResult.Success,
+			WorkspaceDocumentCommitOutcome.Canceled => FileSavingResult.Canceled,
 			_ => FileSavingResult.Failed
 		};
 	}
@@ -160,28 +161,30 @@ internal sealed partial class EditorDocumentController
 
 		if (_documentManager is not null)
 		{
-			WorkspaceDocumentOpenResult openResult = _documentManager
+			WorkspaceDocumentManagerOpenResult openResult = _documentManager
 				.OpenAsync(oldFilePath, DefaultWorkspaceOpenOptions)
 				.GetAwaiter()
 				.GetResult();
 			WorkspaceDocumentSnapshot? snapshot = openResult.Snapshot;
 			if (snapshot is not null)
 			{
-				WorkspaceDocumentSaveAsResult saveAsResult = _documentManager
+				WorkspaceDocumentManagerSaveAsResult saveAsResult = _documentManager
 					.SaveAsAsync(
 						new WorkspaceDocumentSaveAsRequest(
-							snapshot.DocumentKey,
-							snapshot.DocumentId,
-							snapshot.Version,
+							new(snapshot.DocumentKey, snapshot.DocumentId, snapshot.Version),
 							snapshot.OnDiskStamp,
 							newFilePath))
 					.GetAwaiter()
 					.GetResult();
 
-				if (saveAsResult.Status != WorkspaceDocumentSaveAsStatus.SavedAs)
-					return saveAsResult.Status == WorkspaceDocumentSaveAsStatus.Cancelled
-						? FileSavingResult.Canceled
-						: FileSavingResult.Failed;
+				if (saveAsResult.Outcome == WorkspaceDocumentSaveAsOutcome.Canceled)
+					return FileSavingResult.Canceled;
+
+				// A save that was blocked by a view or left a view unsynchronized still reports a
+				// failed save; only a store success with synchronized views is treated as success.
+				if (saveAsResult.Outcome != WorkspaceDocumentSaveAsOutcome.SavedAs
+					|| saveAsResult.Views.Outcome != WorkspaceDocumentViewSynchronizationOutcome.Synchronized)
+					return FileSavingResult.Failed;
 
 				foreach (IEditorControl openEditor in FindEditorsOfFile(oldFilePath).ToList())
 				{
@@ -285,7 +288,7 @@ internal sealed partial class EditorDocumentController
 
 		try
 		{
-			WorkspaceDocumentOpenResult openResult = _documentManager
+			WorkspaceDocumentManagerOpenResult openResult = _documentManager
 				.OpenAsync(editor.FilePath, DefaultWorkspaceOpenOptions)
 				.GetAwaiter()
 				.GetResult();
@@ -303,7 +306,7 @@ internal sealed partial class EditorDocumentController
 		if (_documentManager is null || !_workspaceViews.ContainsKey(editor))
 			return true;
 
-		WorkspaceDocumentOpenResult openResult = _documentManager
+		WorkspaceDocumentManagerOpenResult openResult = _documentManager
 			.OpenAsync(editor.FilePath, DefaultWorkspaceOpenOptions)
 			.GetAwaiter()
 			.GetResult();
@@ -311,13 +314,13 @@ internal sealed partial class EditorDocumentController
 		if (openResult.Snapshot is not WorkspaceDocumentSnapshot snapshot)
 			return false;
 
-		WorkspaceDocumentMutationResult result = _documentManager.Discard(
-			new WorkspaceDocumentDiscardRequest(
-				snapshot.DocumentKey,
-				snapshot.DocumentId,
-				snapshot.Version));
+		WorkspaceDocumentManagerMutationResult result = _documentManager
+			.DiscardAsync(new WorkspaceDocumentDiscardRequest(
+				new(snapshot.DocumentKey, snapshot.DocumentId, snapshot.Version)))
+			.GetAwaiter()
+			.GetResult();
 
-		return result.Status is WorkspaceDocumentMutationStatus.Replaced or WorkspaceDocumentMutationStatus.NoChange;
+		return result.Outcome is WorkspaceDocumentMutationOutcome.Changed or WorkspaceDocumentMutationOutcome.NoChange;
 	}
 
 	private void SaveOtherEditorsOfFile(IEditorControl excludedEditor)

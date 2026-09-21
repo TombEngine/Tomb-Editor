@@ -9,8 +9,8 @@ using TombLib.Scripting.ClassicScript.Syntaxes;
 namespace TombLib.Tests.ClassicScript;
 
 /// <summary>
-/// Tests for the <see cref="ClassicScriptCompletionProvider"/> handling of the <c>-1</c>
-/// argument-index sentinel and null-context rejection.
+/// Tests for the <see cref="ClassicScriptCompletionProvider"/> contextual argument resolution
+/// from the caret position and null-request rejection.
 /// </summary>
 [TestClass]
 public class ClassicScriptCompletionProviderTests
@@ -26,34 +26,34 @@ public class ClassicScriptCompletionProviderTests
 	}
 
 	[TestMethod]
-	public void MinusOneSentinel_ResolvesArgumentFromCaret()
+	public void ContextualTrigger_CaretInSecondArgument_ResolvesArgumentFromCaret()
 	{
 		ITextCompletionProvider provider = CreateProvider();
 
 		// The caret sits after the comma, in the second argument, so the index resolved
 		// from the caret is beyond the single-argument syntax and yields no items.
 		IReadOnlyList<TextCompletionItem> items = provider.GetCompletionItems(
-			new TextCompletionContext("Horizon= ENABLED, ", 18, TextCompletionTrigger.Contextual, -1));
+			new TextCompletionRequest("Horizon= ENABLED, ", 18, ClassicScriptCompletionTriggers.Contextual));
 
 		Assert.AreEqual(0, items.Count);
 	}
 
 	[TestMethod]
-	public void ZeroArgumentIndex_DoesNotResolveFromCaret()
+	public void ContextualTrigger_CaretInFirstArgument_OffersEnabledAndDisabled()
 	{
 		ITextCompletionProvider provider = CreateProvider();
 
-		// A forced index of 0 treats the caret as being in the first argument even though
-		// it is past a comma, so the first argument's ENABLED/DISABLED items are offered.
+		// The caret is inside the first argument, so the syntax resolves the first slot and
+		// the ENABLED/DISABLED values are offered.
 		IReadOnlyList<TextCompletionItem> items = provider.GetCompletionItems(
-			new TextCompletionContext("Horizon= ENABLED, ", 18, TextCompletionTrigger.Contextual, 0));
+			new TextCompletionRequest("Horizon= ", 9, ClassicScriptCompletionTriggers.Contextual));
 
 		Assert.IsTrue(items.Any(item => item.Label == "ENABLED"));
 		Assert.IsTrue(items.Any(item => item.Label == "DISABLED"));
 	}
 
 	[TestMethod]
-	public void NullContext_Throws()
+	public void NullRequest_Throws()
 	{
 		ITextCompletionProvider provider = CreateProvider();
 

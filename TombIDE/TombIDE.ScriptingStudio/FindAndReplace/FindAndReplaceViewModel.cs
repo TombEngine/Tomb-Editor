@@ -11,6 +11,7 @@ using TombIDE.ScriptingStudio.Controls;
 using Nickelony.IDEKit.Core.FindReplace;
 using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.UI.Bases;
+using Nickelony.IDEKit.Core.Editing;
 
 namespace TombIDE.ScriptingStudio.FindAndReplace;
 
@@ -112,8 +113,18 @@ public partial class FindAndReplaceViewModel : ObservableObject
 		return (pattern, options);
 	}
 
-	private FindingOrder GetCurrentDirection()
-		=> SearchUp ? FindingOrder.Previous : FindingOrder.Next;
+	private SearchDirection GetCurrentDirection()
+		=> SearchUp ? SearchDirection.Previous : SearchDirection.Next;
+
+	/// <summary>
+	/// The direction of a search or replace operation. The Core find helpers are direction-specific:
+	/// a previous search ends at the selection start and a next search begins at the selection end.
+	/// </summary>
+	private enum SearchDirection
+	{
+		Previous,
+		Next
+	}
 
 	// ---------------------------------------------------------------------------
 	// Find
@@ -129,7 +140,7 @@ public partial class FindAndReplaceViewModel : ObservableObject
 		}
 
 		var (pattern, options) = GetCurrentPatternAndOptions();
-		FindMatch(FindingOrder.Previous, pattern, options);
+		FindMatch(SearchDirection.Previous, pattern, options);
 	}
 
 	[RelayCommand]
@@ -142,7 +153,7 @@ public partial class FindAndReplaceViewModel : ObservableObject
 		}
 
 		var (pattern, options) = GetCurrentPatternAndOptions();
-		FindMatch(FindingOrder.Next, pattern, options);
+		FindMatch(SearchDirection.Next, pattern, options);
 	}
 
 	[RelayCommand]
@@ -155,11 +166,11 @@ public partial class FindAndReplaceViewModel : ObservableObject
 		}
 
 		var (pattern, options) = GetCurrentPatternAndOptions();
-		FindingOrder order = GetCurrentDirection();
+		SearchDirection order = GetCurrentDirection();
 		FindMatch(order, pattern, options);
 	}
 
-	private void FindMatch(FindingOrder order, string pattern, RegexOptions options)
+	private void FindMatch(SearchDirection order, string pattern, RegexOptions options)
 	{
 		TextEditorBase? editor = GetCurrentTextEditor();
 
@@ -173,58 +184,32 @@ public partial class FindAndReplaceViewModel : ObservableObject
 			return;
 		}
 
-		if (FindReplaceText.CountMatches(editor.Text, pattern, options) == 0)
+		var query = new TextSearchQuery(pattern, options);
+
+		// The match helpers return absolute document offsets and exclude the selection themselves:
+		// a previous search ends at the selection start and a next search begins at the selection end.
+		Match? match = order == SearchDirection.Previous
+			? FindReplaceText.FindPreviousMatch(editor.Text, editor.SelectionStart, query)
+			: FindReplaceText.FindNextMatch(editor.Text, editor.SelectionStart + editor.SelectionLength, query);
+
+		if (match is null)
 		{
 			if (SearchAllTabs)
 				FindMatchInAnotherTab(order, pattern, options);
-			else
+			else if (FindReplaceText.CountMatches(editor.Text, pattern, options) == 0)
 				ShowStatus("No matches found in the current document.", FindReplaceStatusType.Error);
-
-			return;
-		}
-
-		MatchCollection sectionMatches = FindReplaceText.GetMatchesFromSection(
-			order, editor.Text, editor.SelectionStart, editor.SelectionLength, pattern, options);
-
-		if (sectionMatches.Count == 0)
-		{
-			if (SearchAllTabs)
-				FindMatchInAnotherTab(order, pattern, options);
 			else
 				EndSuccessfulSearch(order, editor);
 
 			return;
 		}
 
-		SelectMatch(order, editor, sectionMatches);
+		editor.Select(match.Index, match.Length);
+		editor.ScrollTo(editor.TextArea.Caret.Position.Line, editor.TextArea.Caret.Position.Column);
 		ShowMatchCountStatus(editor.Text, pattern, options);
 	}
 
-	private void SelectMatch(FindingOrder order, TextEditorBase editor, MatchCollection sectionMatches)
-	{
-		switch (order)
-		{
-			case FindingOrder.Previous:
-				{
-					Match lastMatch = FindReplaceText.GetLastMatch(sectionMatches)!;
-					editor.Select(lastMatch.Index, lastMatch.Length);
-					break;
-				}
-			case FindingOrder.Next:
-				{
-					Match firstMatch = FindReplaceText.GetFirstMatch(sectionMatches)!;
-					int selectionEnd = editor.SelectionStart + editor.SelectionLength;
-					string textAfterSelection = FindReplaceText.GetTextAfterSelection(editor.Text, selectionEnd);
-					int cutStringLength = editor.Document.TextLength - textAfterSelection.Length;
-					editor.Select(cutStringLength + firstMatch.Index, firstMatch.Length);
-					break;
-				}
-		}
-
-		editor.ScrollTo(editor.TextArea.Caret.Position.Line, editor.TextArea.Caret.Position.Column);
-	}
-
-	private void FindMatchInAnotherTab(FindingOrder order, string pattern, RegexOptions options)
+	private void FindMatchInAnotherTab(SearchDirection order, string pattern, RegexOptions options)
 	{
 		if (GetAllTabsMatchCount(pattern, options) == 0)
 		{
@@ -234,11 +219,11 @@ public partial class FindAndReplaceViewModel : ObservableObject
 
 		switch (order)
 		{
-			case FindingOrder.Previous:
+			case SearchDirection.Previous:
 				FindPrevInPrevTab();
 				break;
 
-			case FindingOrder.Next:
+			case SearchDirection.Next:
 				FindNextInNextTab();
 				break;
 		}
@@ -267,7 +252,7 @@ public partial class FindAndReplaceViewModel : ObservableObject
 			MoveCaretToDocumentEnd(nextTarget);
 
 			var (pattern, options) = GetCurrentPatternAndOptions();
-			FindMatch(FindingOrder.Previous, pattern, options);
+			FindMatch(SearchDirection.Previous, pattern, options);
 		}
 	}
 
@@ -294,22 +279,22 @@ public partial class FindAndReplaceViewModel : ObservableObject
 			MoveCaretToDocumentStart(nextTarget);
 
 			var (pattern, options) = GetCurrentPatternAndOptions();
-			FindMatch(FindingOrder.Next, pattern, options);
+			FindMatch(SearchDirection.Next, pattern, options);
 		}
 	}
 
-	private void EndSuccessfulSearch(FindingOrder order, TextEditorBase editor)
+	private void EndSuccessfulSearch(SearchDirection order, TextEditorBase editor)
 	{
 		switch (order)
 		{
-			case FindingOrder.Previous:
+			case SearchDirection.Previous:
 				MoveCaretToDocumentStart(editor);
 				ShowStatus(
 					"Reached the start of the document with no more matches found.",
 					FindReplaceStatusType.Warning);
 				break;
 
-			case FindingOrder.Next:
+			case SearchDirection.Next:
 				MoveCaretToDocumentEnd(editor);
 				ShowStatus(
 					"Reached the end of the document with no more matches found.",
@@ -324,17 +309,17 @@ public partial class FindAndReplaceViewModel : ObservableObject
 
 	[RelayCommand]
 	private void ReplacePrevious()
-		=> ReplaceWithDirection(FindingOrder.Previous);
+		=> ReplaceWithDirection(SearchDirection.Previous);
 
 	[RelayCommand]
 	private void ReplaceNext()
-		=> ReplaceWithDirection(FindingOrder.Next);
+		=> ReplaceWithDirection(SearchDirection.Next);
 
 	[RelayCommand]
 	private void Replace()
 		=> ReplaceWithDirection(GetCurrentDirection());
 
-	private void ReplaceWithDirection(FindingOrder order)
+	private void ReplaceWithDirection(SearchDirection order)
 	{
 		if (string.IsNullOrEmpty(FindText))
 		{
@@ -511,7 +496,7 @@ public partial class FindAndReplaceViewModel : ObservableObject
 		if (string.Equals(editor.Document.GetText(selectionStart, selectionEnd - selectionStart), replacement, StringComparison.Ordinal))
 			return;
 
-		editTarget.Apply([new TextEditOperation(selectionStart, selectionEnd, replacement, 0)]);
+		editTarget.Apply(new PreparedTextEdits([new TextEditOperation(selectionStart, selectionEnd, replacement, 0)]));
 		editor.CaretOffset = selectionStart + replacement.Length;
 	}
 

@@ -116,18 +116,18 @@ public sealed class ScriptingPhase0CompositionTests
 						services.AddSingleton<IMessageService>(Mock.Of<IMessageService>());
 						services.AddSingleton<IDialogService>(Mock.Of<IDialogService>());
 						services.AddSingleton<ILocalizationService>(localizationService.Object);
-						Mock<ILuaIntelliSenseProvider>? provider = null;
+						Mock<ILuaLanguageServerIntelliSenseProvider>? provider = null;
 						Mock<ILuaEditorLifecycleService>? lifecycleService = null;
 						Mock<ILuaIntellisenseBridge>? intellisenseBridge = null;
 						var disposalOrder = new List<string>();
 						if (supportsLua)
 						{
-							var intellisenseProvider = new Mock<ILuaIntelliSenseProvider>();
+							var intellisenseProvider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
 							provider = intellisenseProvider;
-							intellisenseProvider.Setup(value => value.Dispose()).Callback(() => disposalOrder.Add("provider"));
+							intellisenseProvider.Setup(value => value.DisposeAsync()).Callback(() => disposalOrder.Add("provider"));
 							intellisenseProvider.Setup(provider => provider.GetDiagnostics(It.IsAny<string>())).Returns([]);
 							intellisenseProvider.Setup(provider => provider.GetSemanticTokens(It.IsAny<string>())).Returns([]);
-							services.AddScoped<ILuaIntelliSenseProvider>(_ => intellisenseProvider.Object);
+							services.AddScoped<ILuaLanguageServerIntelliSenseProvider>(_ => intellisenseProvider.Object);
 							lifecycleService = new Mock<ILuaEditorLifecycleService>();
 							intellisenseBridge = new Mock<ILuaIntellisenseBridge>();
 							lifecycleService.Setup(value => value.Dispose()).Callback(() => disposalOrder.Add("lifecycle"));
@@ -137,7 +137,7 @@ public sealed class ScriptingPhase0CompositionTests
 						}
 						else
 						{
-							services.AddScoped<ILuaIntelliSenseProvider>(_ =>
+							services.AddScoped<ILuaLanguageServerIntelliSenseProvider>(_ =>
 								throw new InvalidOperationException("Lua provider must not be resolved for a Lua-disabled profile."));
 							services.AddScoped<ILuaEditorLifecycleService>(_ =>
 								throw new InvalidOperationException("Lua lifecycle must not be resolved for a Lua-disabled profile."));
@@ -179,7 +179,7 @@ public sealed class ScriptingPhase0CompositionTests
 							Assert.IsNotNull(provider);
 							Assert.IsNotNull(lifecycleService);
 							Assert.IsNotNull(intellisenseBridge);
-							provider.Verify(value => value.Dispose(), Times.Once);
+							provider.Verify(value => value.DisposeAsync(), Times.Once);
 							lifecycleService.Verify(value => value.Dispose(), Times.Once);
 							intellisenseBridge.Verify(value => value.Dispose(), Times.Once);
 							CollectionAssert.AreEqual(new[] { "provider", "bridge", "lifecycle" }, disposalOrder);

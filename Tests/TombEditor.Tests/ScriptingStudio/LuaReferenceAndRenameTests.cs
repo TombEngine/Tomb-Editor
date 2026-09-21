@@ -45,14 +45,14 @@ public sealed class LuaReferenceAndRenameTests
 					.Returns((string filePath) => filePath.Equals(firstFilePath, StringComparison.OrdinalIgnoreCase)
 						? [editor]
 						: []);
-				var referencesProvider = new Mock<ITextReferencesProvider>();
+				var referencesProvider = new Mock<ILanguageServerReferencesProvider>();
 				referencesProvider.SetupGet(provider => provider.SupportsReferences).Returns(true);
 				referencesProvider
 					.Setup(provider => provider.GetReferencesAsync(It.IsAny<TextReferenceRequest>(), It.IsAny<CancellationToken>()))
 					.ReturnsAsync([
-						new TextReferenceLocation(secondFilePath, 2, 1, 2, 6),
-						new TextReferenceLocation(firstFilePath, 2, 8, 2, 13),
-						new TextReferenceLocation(firstFilePath, 1, 7, 1, 11)
+						new TextReferenceLocation(secondFilePath, new TextPositionRange(new TextPosition(0, 6), new TextPosition(0, 12))),
+						new TextReferenceLocation(firstFilePath, new TextPositionRange(new TextPosition(1, 7), new TextPosition(1, 12))),
+						new TextReferenceLocation(firstFilePath, new TextPositionRange(new TextPosition(0, 6), new TextPosition(0, 11)))
 					]);
 
 				var service = new LuaReferenceSearchService(textEditorHost.Object, referencesProvider.Object, rootPath);
@@ -93,11 +93,11 @@ public sealed class LuaReferenceAndRenameTests
 				textEditorHost
 					.Setup(host => host.GetOpenEditors(filePath))
 					.Returns([]);
-				var referencesProvider = new Mock<ITextReferencesProvider>();
+				var referencesProvider = new Mock<ILanguageServerReferencesProvider>();
 				referencesProvider.SetupGet(provider => provider.SupportsReferences).Returns(true);
 				referencesProvider
 					.Setup(provider => provider.GetReferencesAsync(It.IsAny<TextReferenceRequest>(), It.IsAny<CancellationToken>()))
-					.ReturnsAsync([new TextReferenceLocation(filePath, 1, 1, 1, 7)]);
+					.ReturnsAsync([new TextReferenceLocation(filePath, new TextPositionRange(new TextPosition(0, 0), new TextPosition(0, 6)))]);
 
 				WorkspaceDocumentSnapshot snapshot = new(
 					new WorkspaceDocumentKey(Guid.NewGuid()),
@@ -139,7 +139,7 @@ public sealed class LuaReferenceAndRenameTests
 				Text = "local value = 1"
 			};
 			var textEditorHost = new Mock<ITextEditorHost>();
-			var editProvider = new Mock<ITextEditProvider>();
+			var editProvider = new Mock<ILanguageServerRenameProvider>();
 			editProvider.SetupGet(provider => provider.SupportsRename).Returns(true);
 			editProvider
 				.Setup(provider => provider.RenameSymbolAsync(It.IsAny<TextRenameRequest>(), It.IsAny<CancellationToken>()))
@@ -153,8 +153,8 @@ public sealed class LuaReferenceAndRenameTests
 				It.Is<TextRenameRequest>(request =>
 					request.FilePath == editor.FilePath
 					&& request.DocumentText == editor.Text
-					&& request.Line == 3
-					&& request.Column == 4
+					&& request.Position.Line == 3
+					&& request.Position.Character == 4
 					&& request.NewName == "renamed"),
 				It.IsAny<CancellationToken>()), Times.Once);
 			editor.Dispose();
@@ -167,19 +167,18 @@ public sealed class LuaReferenceAndRenameTests
 
 		public int OpenCount { get; private set; }
 
-		public Task<WorkspaceDocumentOpenResult> OpenAsync(
+		public Task<WorkspaceDocumentManagerOpenResult> OpenAsync(
 			string? filePath,
 			WorkspaceDocumentOpenOptions options,
 			CancellationToken cancellationToken = default)
 		{
 			OpenCount++;
-			return Task.FromResult(new WorkspaceDocumentOpenResult(
-				WorkspaceDocumentOpenStatus.AlreadyOpen,
+			return Task.FromResult(new WorkspaceDocumentManagerOpenResult(
+				WorkspaceDocumentManagerOpenOutcome.AlreadyOpen,
 				_snapshot));
 		}
 
-		public IReadOnlyList<WorkspaceDocumentSnapshot> GetSnapshotsUnderDirectory(string directoryPath)
-			=> new[] { _snapshot };
+		public IWorkspaceDocumentReader Documents => throw new NotSupportedException();
 
 		public Task<WorkspaceDocumentManagerOpenResult> OpenWithViewAsync(
 			string? filePath,
@@ -188,55 +187,48 @@ public sealed class LuaReferenceAndRenameTests
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public WorkspaceDocumentManagerOpenResult OpenWithView(
-			string? filePath,
-			WorkspaceDocumentOpenOptions options,
-			IWorkspaceDocumentView view,
-			CancellationToken cancellationToken = default)
+		public Task<WorkspaceDocumentManagerMutationResult> ReplaceAsync(WorkspaceDocumentReplaceRequest request)
 			=> throw new NotSupportedException();
 
-		public WorkspaceDocumentMutationResult Replace(WorkspaceDocumentReplaceRequest request)
+		public Task<WorkspaceDocumentManagerMutationResult> DiscardAsync(WorkspaceDocumentDiscardRequest request)
 			=> throw new NotSupportedException();
 
-		public WorkspaceDocumentMutationResult Discard(WorkspaceDocumentDiscardRequest request)
-			=> throw new NotSupportedException();
-
-		public Task<WorkspaceDocumentRenameResult> RenameAsync(
+		public Task<WorkspaceDocumentManagerRenameResult> RenameAsync(
 			WorkspaceDocumentRenameRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentSaveAsResult> SaveAsAsync(
+		public Task<WorkspaceDocumentManagerSaveAsResult> SaveAsAsync(
 			WorkspaceDocumentSaveAsRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentDeleteResult> DeleteAsync(
+		public Task<WorkspaceDocumentManagerDeleteResult> DeleteAsync(
 			WorkspaceDocumentDeleteRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentDirectoryRenameResult> RenameDirectoryAsync(
+		public Task<WorkspaceDocumentManagerDirectoryRenameResult> RenameDirectoryAsync(
 			WorkspaceDocumentDirectoryRenameRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentDirectoryDeleteResult> DeleteDirectoryAsync(
+		public Task<WorkspaceDocumentManagerDirectoryDeleteResult> DeleteDirectoryAsync(
 			WorkspaceDocumentDirectoryDeleteRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentCommitResult> CommitAsync(
+		public Task<WorkspaceDocumentManagerCommitResult> CommitAsync(
 			WorkspaceDocumentCommitRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentReloadResult> ReloadAsync(
+		public Task<WorkspaceDocumentManagerReloadResult> ReloadAsync(
 			WorkspaceDocumentReloadRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentConflictResolutionResult> ResolveExternalConflictAsync(
+		public Task<WorkspaceDocumentManagerConflictResolutionResult> ResolveExternalConflictAsync(
 			WorkspaceDocumentConflictResolutionRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();

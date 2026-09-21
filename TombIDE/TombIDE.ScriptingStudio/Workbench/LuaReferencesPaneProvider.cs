@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using ICSharpCode.AvalonEdit.Document;
 using Nickelony.IDEKit.AvalonEdit.Navigation;
 using Nickelony.IDEKit.Core.Navigation;
 using TombIDE.ScriptingStudio.Controls;
@@ -52,13 +53,11 @@ internal sealed class LuaReferencesPaneProvider : IStudioPaneContributionProvide
 	{
 		NavigateToLocation(
 			reference.FilePath,
-			textEditor => EditorNavigationHelper.CreateRangeLocation(
-				textEditor,
+			textEditor => TextAreaNavigationOperations.CreateRangeLocation(
+				textEditor.TextArea,
 				reference.FilePath,
-				reference.Range.StartLineNumber,
-				reference.Range.StartColumnNumber,
-				reference.Range.EndLineNumber,
-				reference.Range.EndColumnNumber));
+				new TextLocation(reference.Range.Start.Line + 1, reference.Range.Start.Character + 1),
+				new TextLocation(reference.Range.End.Line + 1, reference.Range.End.Character + 1)));
 	}
 
 	private void NavigateToLocation(string filePath, Func<TextEditorBase, NavigationLocation?> locationFactory)
@@ -76,6 +75,6 @@ internal sealed class LuaReferencesPaneProvider : IStudioPaneContributionProvide
 		if (location is null)
 			return;
 
-		EditorNavigationHelper.ApplyLocation(textEditor, location.Value);
+		TextAreaNavigationOperations.ApplyLocation(textEditor.TextArea, location.Value);
 	}
 }

@@ -23,10 +23,18 @@ public sealed class ClassicScriptNodesProvider : ITextDocumentSymbolProvider
 
 	/// <inheritdoc/>
 	public IReadOnlyList<TextDocumentSymbol> GetSymbols(TextDocumentSymbolRequest request)
-		=> DocumentSymbolTreeBuilder.BuildGroupedNodes(
-			_nodeService.GetNodeGroups(request.DocumentText, request.Filter),
-			group => group.Header,
-			group => group.Nodes,
-			node => node.Text,
-			node => new ClassicScriptObjectDiscriminator(node.ObjectType));
+	{
+		IReadOnlyList<ClassicScriptContentNodeGroup> groups = _nodeService.GetNodeGroups(request.DocumentText, request.FilterText);
+
+		// Group roots are modules and entries are variables, matching the outline vocabulary the editors display.
+		var groupProjection = new DocumentSymbolProjection<ClassicScriptContentNodeGroup>(
+			static group => group.Header,
+			static _ => TextDocumentSymbolKind.Module);
+		var itemProjection = new DocumentSymbolProjection<ClassicScriptContentNode>(
+			static node => node.Text,
+			static _ => TextDocumentSymbolKind.Variable,
+			static node => new ClassicScriptObjectDiscriminator(node.ObjectType));
+
+		return DocumentSymbolOutlineBuilder.BuildGroupedOutline(groups, groupProjection, static group => group.Nodes, itemProjection);
+	}
 }

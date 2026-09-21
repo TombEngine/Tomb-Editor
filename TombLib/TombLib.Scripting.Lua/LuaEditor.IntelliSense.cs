@@ -92,7 +92,7 @@ public sealed partial class LuaEditor
 		InvalidateAsyncEditorRequests();
 
 		CancelPendingCompletionRequest();
-		_hoverController.CancelPendingRequest();
+		_hoverController.CancelInFlightRequest();
 
 		CompletionController.CancelTooltipUpdate();
 
@@ -160,7 +160,7 @@ public sealed partial class LuaEditor
 				return;
 			}
 
-			_signatureHelpController.CancelPendingRefresh();
+			_signatureHelpController.CancelScheduledRefresh();
 
 			// The signature help request is asynchronous and exception-safe; the hook stays synchronous.
 			_ = RequestSignatureHelpAsync(CaretOffset);
@@ -241,7 +241,7 @@ public sealed partial class LuaEditor
 	private void DismissTransientToolTips()
 	{
 		CancelPendingCompletionRequest();
-		_hoverController.CancelPendingRequest();
+		_hoverController.CancelInFlightRequest();
 		_hoverController.InvalidateRequests();
 		DismissSignatureHelp();
 		CloseDefinitionToolTip(true);
@@ -272,8 +272,11 @@ public sealed partial class LuaEditor
 	private void InvalidateAsyncEditorRequests()
 	{
 		// The session generation is advanced by the base at load, replace, rename, and disposal
-		// boundaries; this method only invalidates the language-service controllers.
-		CompletionController.InvalidateRequests();
+		// boundaries; this method only invalidates the language-service controllers. Canceling the
+		// in-flight provider calls keeps them from running on when the results are already stale.
+		CompletionController.Requests.CancelInFlightRequest();
+		CompletionController.Requests.InvalidateRequests();
+		_hoverController.CancelInFlightRequest();
 		_hoverController.InvalidateRequests();
 		_signatureHelpController.InvalidateRequests();
 		_definitionNavigationController.InvalidateRequests();
@@ -289,8 +292,8 @@ public sealed partial class LuaEditor
 	}
 
 	private bool IsAsyncEditorResultCurrent(CancellationToken cancellationToken,
-		int requestToken,
-		int currentRequestToken,
+		long requestToken,
+		long currentRequestToken,
 		int requestDocumentVersion,
 		int requestGeneration)
 	{
@@ -307,8 +310,8 @@ public sealed partial class LuaEditor
 	}
 
 	private static bool IsAsyncEditorResultCurrent(bool isCancellationRequested,
-		int requestToken,
-		int currentRequestToken,
+		long requestToken,
+		long currentRequestToken,
 		int requestDocumentVersion,
 		int currentDocumentVersion,
 		int requestGeneration,
@@ -325,10 +328,10 @@ public sealed partial class LuaEditor
 	}
 
 	private bool ShouldRefreshSignatureHelpAfterTextInput(string? inputText)
-		=> ShouldRefreshSignatureHelpAfterTextInput(inputText, _signatureHelpController.IsActiveOrPending);
+		=> ShouldRefreshSignatureHelpAfterTextInput(inputText, _signatureHelpController.IsPresentationVisibleOrRequestPending);
 
-	private static bool ShouldRefreshSignatureHelpAfterTextInput(string? inputText, bool isSignatureHelpActiveOrPending)
-		=> isSignatureHelpActiveOrPending && inputText?.Length == 1;
+	private static bool ShouldRefreshSignatureHelpAfterTextInput(string? inputText, bool isPresentationVisibleOrRequestPending)
+		=> isPresentationVisibleOrRequestPending && inputText?.Length == 1;
 
 	private static bool ShouldDismissSignatureHelpOnAutoClosingSkip(string element, string parenthesesClosingString)
 		=> string.Equals(element, parenthesesClosingString, StringComparison.Ordinal);

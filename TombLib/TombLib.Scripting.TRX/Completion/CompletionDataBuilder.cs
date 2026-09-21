@@ -23,7 +23,12 @@ public sealed class CompletionDataBuilder
 		if (!_addedTexts.Add(text))
 			return false;
 
-		_data.Add(new TextCompletionItem(text, text, description, kind: kind ?? TextCompletionItemKind.Generic));
+		_data.Add(new TextCompletionItem(text)
+		{
+			InsertText = text,
+			Documentation = description,
+			Kind = kind ?? TextCompletionItemKind.Generic
+		});
 		return true;
 	}
 

@@ -6,7 +6,8 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using Nickelony.IDEKit.Core.Infrastructure;
+using Nickelony.IDEKit.Core.Requests;
+using TombLib.Scripting.UI.Diagnostics;
 
 
 /// <summary>
@@ -50,11 +51,6 @@ public sealed class ErrorDetectionWorker : IDisposable
 		set => _errorUpdateTimer.Interval = value;
 	}
 
-	/// <summary>
-	/// Gets the engine version used for error detection.
-	/// </summary>
-	public Version EngineVersion { get; }
-
 	// Fields
 
 	private readonly ITextDiagnosticsProvider? _diagnosticsProvider;
@@ -78,24 +74,19 @@ public sealed class ErrorDetectionWorker : IDisposable
 	/// Initializes a new instance of the <see cref="ErrorDetectionWorker"/> class on the current dispatcher thread.
 	/// </summary>
 	/// <param name="diagnosticsProvider">The diagnostics provider used to detect errors (optional).</param>
-	/// <param name="engineVersion">The engine version used for error detection.</param>
 	/// <param name="idleDelayInterval">The idle debounce interval.</param>
 	/// <param name="suppressedProvider">The callback that reports whether editor processing is currently suppressed (optional).</param>
 	/// <param name="sessionGenerationProvider">The callback that reports the editor's current session generation (optional).</param>
 	/// <param name="logicalDocumentIdProvider">The callback that reports the editor's current logical document identity (optional).</param>
 	public ErrorDetectionWorker(
 		ITextDiagnosticsProvider? diagnosticsProvider,
-		Version engineVersion,
 		TimeSpan idleDelayInterval,
 		Func<bool>? suppressedProvider = null,
 		Func<int>? sessionGenerationProvider = null,
 		Func<string?>? logicalDocumentIdProvider = null)
 	{
-		ArgumentNullException.ThrowIfNull(engineVersion);
-
 		_diagnosticsProvider = diagnosticsProvider;
 		_dispatcher = Dispatcher.CurrentDispatcher;
-		EngineVersion = engineVersion;
 		IdleDelayInterval = idleDelayInterval;
 		_suppressedProvider = suppressedProvider;
 		_sessionGenerationProvider = sessionGenerationProvider;
@@ -198,7 +189,7 @@ public sealed class ErrorDetectionWorker : IDisposable
 		_requestCancellation?.Cancel();
 		_requestCancellation = new CancellationTokenSource();
 
-		int requestId = _requestTokens.Begin();
+		long requestId = _requestTokens.BeginRequest();
 		var requestIdentity = new TextEditorRequestIdentity(
 			LogicalDocumentId: _logicalDocumentIdProvider?.Invoke(),
 			DocumentVersion: 0,
@@ -208,10 +199,10 @@ public sealed class ErrorDetectionWorker : IDisposable
 		_ = RunErrorCheckCoreAsync(editorContent, requestId, requestIdentity, _requestCancellation.Token);
 	}
 
-	private async Task RunErrorCheckCoreAsync(string editorContent, int requestId, TextEditorRequestIdentity requestIdentity, CancellationToken cancellationToken)
+	private async Task RunErrorCheckCoreAsync(string editorContent, long requestId, TextEditorRequestIdentity requestIdentity, CancellationToken cancellationToken)
 	{
 		Exception? error = null;
-		IReadOnlyList<TextEditorDiagnostic> result = [];
+		IReadOnlyList<TextDiagnostic> result = [];
 
 		try
 		{
@@ -236,16 +227,16 @@ public sealed class ErrorDetectionWorker : IDisposable
 		await _dispatcher.InvokeAsync(() => CompleteRequest(requestId, requestIdentity, result, error));
 	}
 
-	private IReadOnlyList<TextEditorDiagnostic> GetDiagnostics(string editorContent)
+	private IReadOnlyList<TextDiagnostic> GetDiagnostics(string editorContent)
 	{
 		ITextDiagnosticsProvider? diagnosticsProvider = _diagnosticsProvider;
 
 		return diagnosticsProvider is null
 			? []
-			: diagnosticsProvider.GetDiagnostics(new TextDiagnosticsRequest(editorContent, EngineVersion));
+			: diagnosticsProvider.GetDiagnostics(new TextDiagnosticsRequest(editorContent));
 	}
 
-	private void CompleteRequest(int requestId, TextEditorRequestIdentity requestIdentity, object result, Exception? error)
+	private void CompleteRequest(long requestId, TextEditorRequestIdentity requestIdentity, object result, Exception? error)
 	{
 		if (_isDisposed)
 			return;
@@ -281,12 +272,12 @@ public sealed class ErrorDetectionWorker : IDisposable
 			RunPendingCheck();
 	}
 
-	private void CompleteCanceledRequest(int requestId)
+	private void CompleteCanceledRequest(long requestId)
 	{
 		if (_isDisposed || _requestTokens.IsCurrent(requestId))
 			return;
 
-		LastRequestOutcome = TextEditorRequestOutcome.Cancelled;
+		LastRequestOutcome = TextEditorRequestOutcome.Canceled;
 		CompleteInvalidatedRequest();
 	}
 

@@ -1,5 +1,5 @@
 using ICSharpCode.AvalonEdit.CodeCompletion;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Completion;
 using Nickelony.IDEKit.IntelliSense.Completion;
 using System.Collections.Generic;
 using System.Windows;
@@ -55,7 +55,7 @@ public class ClassicScriptEditorCompletionWindowTests
 	public void EmptyLineCompletion_ItemsExposeKindDetailText()
 	{
 		IReadOnlyList<TextCompletionItem> completionItems = CompletionProvider.GetCompletionItems(
-			new TextCompletionContext(string.Empty, 0, TextCompletionTrigger.EmptyLine));
+			new TextCompletionRequest(string.Empty, 0, ClassicScriptCompletionTriggers.EmptyLine));
 
 		Assert.AreEqual("Old Command", completionItems.First(item => item.Kind.Identifier == "OldCommand").Detail);
 		Assert.AreEqual("New Command", completionItems.First(item => item.Kind.Identifier == "NewCommand").Detail);
@@ -67,7 +67,7 @@ public class ClassicScriptEditorCompletionWindowTests
 	public void EmptyLineCompletion_CommandItemsComeFromCatalog()
 	{
 		IReadOnlyList<TextCompletionItem> completionItems = CompletionProvider.GetCompletionItems(
-			new TextCompletionContext(string.Empty, 0, TextCompletionTrigger.EmptyLine));
+			new TextCompletionRequest(string.Empty, 0, ClassicScriptCompletionTriggers.EmptyLine));
 
 		// FMV (one of the four entries absent from the legacy new-command array) is a new command.
 		Assert.IsTrue(completionItems.Any(item => item.Label.Equals("FMV", StringComparison.Ordinal)
@@ -87,7 +87,7 @@ public class ClassicScriptEditorCompletionWindowTests
 	public void ContextualCompletion_HorizonEquals_OffersEnabledDisabled()
 	{
 		IReadOnlyList<TextCompletionItem> completionItems = CompletionProvider.GetCompletionItems(
-			new TextCompletionContext("Horizon= ", 9, TextCompletionTrigger.Contextual, -1));
+			new TextCompletionRequest("Horizon= ", 9, ClassicScriptCompletionTriggers.Contextual));
 
 		Assert.IsTrue(completionItems.Any(item => item.Label == "ENABLED"));
 		Assert.IsTrue(completionItems.Any(item => item.Label == "DISABLED"));
@@ -97,7 +97,7 @@ public class ClassicScriptEditorCompletionWindowTests
 	public void WordCompletion_CaretAtStart_ReturnsNoItems()
 	{
 		IReadOnlyList<TextCompletionItem> completionItems = CompletionProvider.GetCompletionItems(
-			new TextCompletionContext("CUST_", 0, TextCompletionTrigger.Word));
+			new TextCompletionRequest("CUST_", 0, ClassicScriptCompletionTriggers.Word));
 
 		Assert.AreEqual(0, completionItems.Count);
 	}
@@ -119,7 +119,7 @@ public class ClassicScriptEditorCompletionWindowTests
 			{
 				CompletionData[] completionItems = [..
 					CompletionProvider.GetCompletionItems(
-						new TextCompletionContext(editor.Text, editor.CaretOffset, TextCompletionTrigger.EmptyLine))
+						new TextCompletionRequest(editor.Text, editor.CaretOffset, ClassicScriptCompletionTriggers.EmptyLine))
 						.Select(item => new CompletionData(item))];
 				int lineOffset = editor.Document.GetLineByOffset(editor.CaretOffset).Offset;
 
@@ -129,7 +129,7 @@ public class ClassicScriptEditorCompletionWindowTests
 					Type.EmptyTypes)
 					?? throw new InvalidOperationException("Completion controller was not found.");
 
-				bool opened = completionController.OpenOrRefresh(completionItems, lineOffset);
+				bool opened = completionController.OpenOrRefresh(completionItems, lineOffset, editor.CaretOffset);
 
 				WPFTestHelper.PumpDispatcher(editor.Dispatcher, DispatcherPriority.Background);
 

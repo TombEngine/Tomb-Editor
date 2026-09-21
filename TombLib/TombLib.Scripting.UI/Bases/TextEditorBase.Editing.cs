@@ -1,5 +1,6 @@
 using ICSharpCode.AvalonEdit.Document;
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
@@ -7,6 +8,8 @@ using System.Windows.Media;
 using Nickelony.IDEKit.AvalonEdit.Comments;
 using Nickelony.IDEKit.AvalonEdit.Editing;
 using Nickelony.IDEKit.AvalonEdit.Navigation;
+using Nickelony.IDEKit.Core.AutoClosing;
+using Nickelony.IDEKit.Core.Comments;
 using Nickelony.IDEKit.Core.Formatting;
 using TombLib.Scripting.UI.Rendering;
 using TombLib.Scripting.UI.Resources;
@@ -18,19 +21,49 @@ public abstract partial class TextEditorBase
 	#region Auto bracket closing
 
 	private void HandleAutoClosing(TextCompositionEventArgs e)
-		=> _autoClosingService.HandleTextEntering(this, e, CreateAutoClosingOptions(), OnAutoClosingElementSkipped);
+	{
+		TextAutoClosingResult result = _autoClosingService.HandleTextEntering(this, e, CreateAutoClosingOptions());
 
-	private TextAutoClosingOptions CreateAutoClosingOptions() => new(
-		AutoCloseParentheses,
-		AutoCloseBraces,
-		AutoCloseBrackets,
-		AutoCloseDoubleQuotes,
-		AutoCloseSingleQuotes,
-		ParenthesesClosingString,
-		BracesClosingString,
-		BracketsClosingString,
-		QuotesClosingString,
-		"'"); // TODO: Add field that handles this one as well
+		if (result.Action.Kind == TextAutoClosingActionKind.SkipExistingClosingText && result.Action.ClosingText is not null)
+			OnAutoClosingElementSkipped(result.Action.ClosingText);
+	}
+
+	/// <summary>
+	/// Removes an auto-inserted pair as one unit when Backspace is pressed between its opening and
+	/// closing text.
+	/// </summary>
+	private void HandleAutoClosingBackspace(KeyEventArgs e)
+		=> _autoClosingService.HandleBackspace(this, e, CreateAutoClosingOptions());
+
+	private TextAutoClosingOptions CreateAutoClosingOptions()
+	{
+		var pairs = new List<TextAutoClosingPair>();
+
+		if (AutoCloseParentheses)
+			pairs.Add(new TextAutoClosingPair("(", ParenthesesClosingString));
+
+		if (AutoCloseBraces)
+			pairs.Add(new TextAutoClosingPair("{", BracesClosingString));
+
+		if (AutoCloseBrackets)
+			pairs.Add(new TextAutoClosingPair("[", BracketsClosingString));
+
+		if (AutoCloseDoubleQuotes)
+			pairs.Add(new TextAutoClosingPair("\"", QuotesClosingString)
+			{
+				Kind = TextAutoClosingPairKind.Quote,
+				SuppressAfterWordCharacter = true
+			});
+
+		if (AutoCloseSingleQuotes)
+			pairs.Add(new TextAutoClosingPair("'", "'")
+			{
+				Kind = TextAutoClosingPairKind.Quote,
+				SuppressAfterWordCharacter = true
+			});
+
+		return new TextAutoClosingOptions { Pairs = pairs };
+	}
 
 	/// <summary>
 	/// Called when an auto-closed element is skipped by the user.
@@ -51,7 +84,12 @@ public abstract partial class TextEditorBase
 	/// <param name="newText">The text to insert.</param>
 	/// <param name="caretOffset">The caret offset after the edit; defaults to just after the inserted text.</param>
 	public void InsertText(int insertOffset, string newText, int? caretOffset = null)
-		=> TextEditorEditHelper.InsertText(this, insertOffset, newText, caretOffset, WorkspaceEditTarget, () => RunContentChangedWorker());
+	{
+		TextEditorEditOperations.InsertText(this, insertOffset, newText, caretOffset, WorkspaceEditTarget);
+
+		if (WorkspaceEditTarget is null)
+			RunContentChangedWorker();
+	}
 
 	/// <summary>
 	/// Replaces the range starting at <paramref name="startOffset"/> with <paramref name="newText"/>
@@ -63,7 +101,12 @@ public abstract partial class TextEditorBase
 	/// <param name="newText">The replacement text.</param>
 	/// <param name="caretOffset">The caret offset after the edit; defaults to just after the inserted text.</param>
 	public void ReplaceText(int startOffset, int length, string newText, int? caretOffset = null)
-		=> TextEditorEditHelper.ReplaceText(this, startOffset, length, newText, caretOffset, WorkspaceEditTarget, () => RunContentChangedWorker());
+	{
+		TextEditorEditOperations.ReplaceText(this, startOffset, length, newText, caretOffset, WorkspaceEditTarget);
+
+		if (WorkspaceEditTarget is null)
+			RunContentChangedWorker();
+	}
 
 	/// <summary>
 	/// Replaces the first line whose selector returns replacement text.
@@ -72,7 +115,14 @@ public abstract partial class TextEditorBase
 	/// <param name="scrollToLine">Whether to scroll the editor to the updated line.</param>
 	/// <returns><see langword="true"/> when a matching line was replaced; otherwise, <see langword="false"/>.</returns>
 	public bool TryReplaceFirstMatchingLine(Func<string, string?> replacementSelector, bool scrollToLine = true)
-		=> TextEditorLineOperations.TryReplaceFirstMatchingLine(this, replacementSelector, scrollToLine, WorkspaceEditTarget, () => RunContentChangedWorker());
+	{
+		bool replaced = TextEditorFirstMatchingLineOperations.TryReplaceFirstMatchingLine(this, replacementSelector, scrollToLine, WorkspaceEditTarget);
+
+		if (replaced && WorkspaceEditTarget is null)
+			RunContentChangedWorker();
+
+		return replaced;
+	}
 
 	/// <summary>
 	/// Replaces the first occurrence of <paramref name="oldName"/> with <paramref name="newName"/>
@@ -86,7 +136,36 @@ public abstract partial class TextEditorBase
 	/// <param name="scrollToLine">Whether to scroll the editor to the updated line.</param>
 	/// <returns><see langword="true"/> when a matching line was replaced; otherwise, <see langword="false"/>.</returns>
 	public bool TryReplaceFirstMatchingLine(Regex lineRegex, Func<string, Regex, string> nameExtractor, string oldName, string newName, bool scrollToLine = true)
-		=> TextEditorLineOperations.TryReplaceFirstMatchingLine(this, lineRegex, nameExtractor, oldName, newName, scrollToLine, WorkspaceEditTarget, () => RunContentChangedWorker());
+	{
+		ArgumentNullException.ThrowIfNull(lineRegex);
+		ArgumentNullException.ThrowIfNull(nameExtractor);
+		ArgumentNullException.ThrowIfNull(newName);
+		ArgumentException.ThrowIfNullOrEmpty(oldName);
+
+		// The rename workflow is host vocabulary: a line regex selects candidate lines, a name extractor
+		// normalizes the name on each candidate, and the replacement only applies when the extracted name
+		// matches. It composes the library's generic selector-driven replacement.
+		bool replaced = TextEditorFirstMatchingLineOperations.TryReplaceFirstMatchingLine(
+			this,
+			lineText =>
+			{
+				if (!lineRegex.IsMatch(lineText))
+					return null;
+
+				string extractedName = nameExtractor(lineText, lineRegex);
+
+				return extractedName == oldName
+					? lineText.Replace(oldName, newName)
+					: null;
+			},
+			scrollToLine,
+			WorkspaceEditTarget);
+
+		if (replaced && WorkspaceEditTarget is null)
+			RunContentChangedWorker();
+
+		return replaced;
+	}
 
 	#endregion Programmatic edits
 
@@ -178,7 +257,7 @@ public abstract partial class TextEditorBase
 		if (!confirmClearBookmarks())
 			return;
 
-		_bookmarkCoordinator.Clear();
+		_bookmarkCoordinator.ClearBookmarks();
 	}
 
 	#endregion Bookmarks
@@ -193,17 +272,17 @@ public abstract partial class TextEditorBase
 		get
 		{
 			EnsureNotDisposed();
-			return _statusCoordinator.Zoom;
+			return _statusCoordinator.ZoomPercent;
 		}
 		set
 		{
 			EnsureNotDisposed();
 
 			int constrainedZoom = Math.Clamp(value, _minZoom, _maxZoom);
-			bool zoomChanged = _statusCoordinator.Zoom != constrainedZoom;
+			bool zoomChanged = _statusCoordinator.ZoomPercent != constrainedZoom;
 
 			FontSize = DefaultFontSize * constrainedZoom / 100;
-			_statusCoordinator.Zoom = constrainedZoom;
+			_statusCoordinator.ZoomPercent = constrainedZoom;
 
 			if (zoomChanged)
 				OnZoomChanged(EventArgs.Empty);
@@ -274,7 +353,7 @@ public abstract partial class TextEditorBase
 	public void ResetSelection()
 	{
 		EnsureNotDisposed();
-		TextEditorLineOperations.ResetSelection(this);
+		Select(Document.TextLength, 0);
 	}
 
 	/// <summary>
@@ -294,7 +373,7 @@ public abstract partial class TextEditorBase
 	public void ResetSelectionAt(DocumentLine line)
 	{
 		EnsureNotDisposed();
-		TextEditorLineOperations.ResetSelectionAt(this, line);
+		Select(line.EndOffset, 0);
 	}
 
 	/// <summary>
@@ -305,7 +384,7 @@ public abstract partial class TextEditorBase
 	public int GetOffsetFromPoint(Point point)
 	{
 		EnsureNotDisposed();
-		return EditorNavigationHelper.GetOffsetFromPoint(this, point);
+		return TextEditorNavigationOperations.TryGetOffsetFromPoint(this, point, out int offset) ? offset : -1;
 	}
 
 	/// <summary>
@@ -316,7 +395,7 @@ public abstract partial class TextEditorBase
 	public string? GetWordFromOffset(int offset)
 	{
 		EnsureNotDisposed();
-		return EditorNavigationHelper.GetWordFromOffset(this, offset);
+		return TextAreaNavigationOperations.GetWordFromOffset(this.TextArea, offset);
 	}
 
 	#endregion View operations
@@ -389,6 +468,16 @@ public abstract partial class TextEditorBase
 		_toolTipPresenter.Show(content, border, background);
 	}
 
+	/// <summary>
+	/// Hides the editor tooltip unless the pointer currently hovers it, so a host hover decision can hide
+	/// the tooltip without cutting off a user who is reading it.
+	/// </summary>
+	public void HideToolTip()
+	{
+		EnsureNotDisposed();
+		_toolTipPresenter.Close();
+	}
+
 	#endregion ToolTips
 
 	#region Formatting
@@ -399,7 +488,7 @@ public abstract partial class TextEditorBase
 	public void ConvertSpacesToTabs()
 	{
 		EnsureNotDisposed();
-		Content = WhiteSpaceConverter.ConvertSpacesToTabs(Content, 4);
+			Content = WhitespaceConverter.ConvertIndentationToTabs(Content, 4);
 	}
 
 	/// <summary>
@@ -408,7 +497,7 @@ public abstract partial class TextEditorBase
 	public void ConvertTabsToSpaces()
 	{
 		EnsureNotDisposed();
-		Content = WhiteSpaceConverter.ConvertTabsToSpaces(Content, 4);
+			Content = WhitespaceConverter.ExpandTabs(Content, 4);
 	}
 
 	/// <summary>
@@ -418,7 +507,7 @@ public abstract partial class TextEditorBase
 	public virtual void TidyCode(bool trimOnly = false)
 	{
 		EnsureNotDisposed();
-		s_formattingService.FormatDocument(this, DocumentFormatter, trimOnly);
+		s_formattingService.FormatDocument(this, trimOnly ? TrimTrailingWhitespaceFormatter.Instance : DocumentFormatter);
 	}
 
 	#endregion Formatting

@@ -105,7 +105,7 @@ public class TRXIncompleteJson5ResilienceTests
 		string operation)
 	{
 		string message = $"{operation} changed at offset {offset} in '{fragment}'.";
-		Assert.AreEqual(first.CloseWindow, second.CloseWindow, message);
+		Assert.AreEqual(first.ShouldClose, second.ShouldClose, message);
 		Assert.AreEqual(first.StartOffset, second.StartOffset, message);
 		Assert.AreEqual(first.EndOffset, second.EndOffset, message);
 

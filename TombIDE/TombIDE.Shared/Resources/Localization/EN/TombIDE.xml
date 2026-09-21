@@ -129,6 +129,7 @@
 	<ResetZoom>Reset Zoom</ResetZoom>
 
 	<Severity>Severity</Severity>
+	<Source>Source</Source>
 	<Message>Message</Message>
 	<Errors>Errors</Errors>
 	<Warning>Warning</Warning>

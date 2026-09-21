@@ -1,6 +1,7 @@
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using Nickelony.IDEKit.Core.Indentation;
+using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.IntelliSense.Completion;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,9 @@ public sealed partial class LuaEditor
 {
 	private void CloseCompletionWindow()
 	{
-		CompletionController.InvalidateRequests();
+		// Cancel first so the in-flight provider call stops, then reject its result and close the window.
+		CompletionController.Requests.CancelInFlightRequest();
+		CompletionController.Requests.InvalidateRequests();
 		CompletionController.CloseWindow();
 	}
 
@@ -26,7 +29,7 @@ public sealed partial class LuaEditor
 		=> CompletionController.ScheduleRequest();
 
 	private void CancelPendingCompletionRequest()
-		=> CompletionController.CancelPendingRequest();
+		=> CompletionController.CancelScheduledRequest();
 
 	private Task RequestCompletionAsync(int offset, char? triggerCharacter)
 		=> RequestCompletionAsyncCore(offset, triggerCharacter);
@@ -63,7 +66,11 @@ public sealed partial class LuaEditor
 	private void ScheduleCloseIfEmpty()
 		=> CompletionController.ScheduleCloseIfEmpty();
 
-	private async Task RequestScheduledCompletionAsync()
+	/// <summary>
+	/// Requests completion for the current caret offset when completion is enabled and the editor
+	/// state is a valid completion context.
+	/// </summary>
+	protected override async Task RequestScheduledCompletionAsync()
 	{
 		if (!CompletionEnabled || !IsIntelliSenseAvailable())
 			return;
@@ -76,8 +83,8 @@ public sealed partial class LuaEditor
 
 	private async Task RequestCompletionAsyncCore(int offset, char? triggerCharacter)
 	{
-		int requestToken = CompletionController.BeginRequest();
-		CancellationToken cancellationToken = CompletionController.CurrentRequestCancellationToken;
+		long requestToken = CompletionController.Requests.BeginRequest();
+		CancellationToken cancellationToken = CompletionController.Requests.CurrentRequestCancellationToken;
 		int requestDocumentVersion = _editorDocumentVersion;
 		int requestGeneration = SessionGeneration;
 
@@ -97,7 +104,8 @@ public sealed partial class LuaEditor
 			(int line, int column) = GetPositionFromOffset(offset);
 
 			IReadOnlyList<TextCompletionItem> items = await intelliSenseProvider
-				.GetCompletionItemsAsync(FilePath, Text, line, column, triggerCharacter, cancellationToken)
+				.GetCompletionItemsAsync(new LanguageServerCompletionRequest(FilePath, Text, new TextPosition(line, column),
+					triggerCharacter?.ToString()), cancellationToken)
 				.ConfigureAwait(true);
 
 			if (!IsCompletionRequestCurrent(cancellationToken, requestToken, requestDocumentVersion, requestGeneration))
@@ -126,9 +134,9 @@ public sealed partial class LuaEditor
 		}
 	}
 
-	private bool IsCompletionRequestCurrent(CancellationToken cancellationToken, int requestToken, int requestDocumentVersion, int requestGeneration)
+	private bool IsCompletionRequestCurrent(CancellationToken cancellationToken, long requestToken, int requestDocumentVersion, int requestGeneration)
 	{
-		return CompletionController.IsRequestCurrent(requestToken)
+		return CompletionController.Requests.IsCurrent(requestToken)
 			&& IsAsyncEditorResultCurrent(cancellationToken, requestToken, requestToken, requestDocumentVersion, requestGeneration);
 	}
 
@@ -172,13 +180,13 @@ public sealed partial class LuaEditor
 	{
 		TextDocument document = textArea.Document;
 		DocumentLine line = document.GetLineByOffset(Math.Clamp(replacementOffset, 0, document.TextLength));
-		string currentLineIndentation = IndentationTextHelper.GetLeadingWhitespace(document.GetText(line));
+		string currentLineIndentation = IndentationOperations.GetLeadingWhitespace(document.GetText(line));
 
 		CompletionInsertionResult normalizedInsertion = LuaIndentationStrategy.Instance.NormalizeCompletionInsertion(new CompletionInsertionContext(
 			insertText,
 			insertCaretOffset,
 			currentLineIndentation,
-			IndentationTextHelper.CreateIndentationUnit(
+			IndentationOperations.CreateIndentationUnit(
 				textArea.Options.ConvertTabsToSpaces,
 				textArea.Options.IndentationSize,
 				textArea.Options.IndentationSize)));

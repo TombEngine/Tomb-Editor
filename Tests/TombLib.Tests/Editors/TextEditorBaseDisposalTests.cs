@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Hover;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Navigation;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Hover;
+using Nickelony.IDEKit.Core.Diagnostics;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using Nickelony.IDEKit.IntelliSense.Hover;
 using Nickelony.IDEKit.IntelliSense.Navigation;
@@ -24,6 +24,7 @@ using TombLib.Scripting.UI.Diagnostics;
 using TombLib.Scripting.UI.Documents;
 using TombLib.Scripting.UI.Editors;
 using TombLib.Scripting.UI.Hover;
+using TombLib.Scripting.UI.Navigation;
 
 namespace TombLib.Tests;
 
@@ -531,7 +532,7 @@ public class TextEditorBaseDisposalTests
 		Window hostWindow = WPFTestHelper.ShowInHostWindow(editor);
 
 		editor.RunContentChangedWorker();
-		editor.SetDiagnostics([new TextEditorDiagnostic(TextEditorDiagnosticSeverity.Warning, "warning", 0, 5)]);
+		editor.SetDiagnostics([new TextDiagnostic(TextDiagnosticSeverity.Warning, "warning", 0, 5)]);
 		editor.Dispose();
 		hostWindow.Content = null;
 		hostWindow.Close();
@@ -612,11 +613,11 @@ public class TextEditorBaseDisposalTests
 
 		public void ReinitializeHover()
 			=> InitializeHover(
-				_ => new TextHoverRequestState(false, -1, false, false, null),
+				_ => new TextHoverEvaluationState(false, -1, false, false, null),
 				(_, _) => Task.FromResult<TextHoverInfo?>(null));
 
 		public void ReinitializeDiagnostics()
-			=> InitializeDiagnostics(new Version(1, 0));
+			=> InitializeDiagnostics();
 	}
 
 	private sealed class NavigationAwareTextEditor : TextEditorBase

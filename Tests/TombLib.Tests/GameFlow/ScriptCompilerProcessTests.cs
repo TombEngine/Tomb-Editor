@@ -1,20 +1,21 @@
-using Nickelony.IDEKit.Tooling;
+using Nickelony.IDEKit.Processes;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using TombLib.Scripting.GameFlowScript.Compilers;
 
 namespace TombLib.Tests.GameFlow;
 
 /// <summary>
 /// Direct tests for <see cref="ScriptCompiler"/> process orchestration through the injected
-/// <see cref="IProcessRunner"/> seam: null starts, paused and timed waits, start configuration,
+/// <see cref="IProcessRunner"/> seam: no-handle outcomes, paused and timed waits, start configuration,
 /// and staging-directory cleanup.
 /// </summary>
 [TestClass]
 public class ScriptCompilerProcessTests
 {
 	[TestMethod]
-	public void RunCompileWorkflow_NullProcess_ReturnsFalseAndCleansStagingDirectory()
+	public void RunCompileWorkflow_NoProcessHandle_ReturnsFalseAndCleansStagingDirectory()
 	{
 		(string baseDirectory, string inputDirectory, string gameflowDirectory, string outputDirectory) = CreateWorkflowDirectories();
 
@@ -28,7 +29,7 @@ public class ScriptCompilerProcessTests
 				"tombpc.dat",
 				"gameFlow.exe",
 				pause: false,
-				new FakeProcessRunner(_ => new ProcessRunResult { Started = false }));
+				new FakeProcessRunner(_ => new ProcessRunResult { Outcome = ProcessRunOutcome.NoProcessHandle }));
 
 			Assert.IsFalse(result);
 			Assert.IsFalse(File.Exists(Path.Combine(gameflowDirectory, "compile.bat")));
@@ -49,7 +50,7 @@ public class ScriptCompilerProcessTests
 			var runner = new FakeProcessRunner(_ =>
 			{
 				File.WriteAllText(Path.Combine(gameflowDirectory, "tombpc.dat"), "compiled data");
-				return new ProcessRunResult { Started = true };
+				return new ProcessRunResult { Outcome = ProcessRunOutcome.Exited };
 			});
 
 			bool result = ScriptCompiler.RunCompileWorkflow(
@@ -84,7 +85,7 @@ public class ScriptCompilerProcessTests
 			var runner = new FakeProcessRunner(_ =>
 			{
 				File.WriteAllText(Path.Combine(gameflowDirectory, "tombpc.dat"), "compiled data");
-				return new ProcessRunResult { Started = true };
+				return new ProcessRunResult { Outcome = ProcessRunOutcome.Exited };
 			});
 
 			bool result = ScriptCompiler.RunCompileWorkflow(
@@ -118,7 +119,7 @@ public class ScriptCompilerProcessTests
 		{
 			File.WriteAllText(Path.Combine(gameflowDirectory, "tombpc.dat"), "stale data");
 			File.WriteAllText(Path.Combine(outputDirectory, "tombpc.dat"), "existing project data");
-			var runner = new FakeProcessRunner(_ => new ProcessRunResult { Started = true });
+			var runner = new FakeProcessRunner(_ => new ProcessRunResult { Outcome = ProcessRunOutcome.Exited });
 
 			bool result = ScriptCompiler.RunCompileWorkflow(
 				inputDirectory,
@@ -175,7 +176,7 @@ public class ScriptCompilerProcessTests
 
 		try
 		{
-			var runner = new FakeProcessRunner(_ => new ProcessRunResult { Started = true });
+			var runner = new FakeProcessRunner(_ => new ProcessRunResult { Outcome = ProcessRunOutcome.Exited });
 
 			bool result = ScriptCompiler.RunCompileWorkflow(
 				inputDirectory,
@@ -234,10 +235,13 @@ public class ScriptCompilerProcessTests
 		public bool RunCalled { get; private set; }
 
 		public ProcessRunResult Run(ProcessRunRequest request, CancellationToken cancellationToken = default)
+			=> RunAsync(request, cancellationToken).GetAwaiter().GetResult();
+
+		public Task<ProcessRunResult> RunAsync(ProcessRunRequest request, CancellationToken cancellationToken = default)
 		{
 			RunCalled = true;
 			LastRequest = request;
-			return _run(request);
+			return Task.FromResult(_run(request));
 		}
 
 		public IProcessHandle Start(ProcessRunRequest request)

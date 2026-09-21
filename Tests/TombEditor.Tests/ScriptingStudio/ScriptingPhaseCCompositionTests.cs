@@ -34,7 +34,7 @@ public sealed class ScriptingPhaseCCompositionTests
     private const string MissingExecutableMessage =
         "The bundled Lua language server could not be found. Lua IntelliSense is unavailable.";
     private const string ProviderMissingExecutableMessage =
-        "The Lua language server executable is unavailable, so Lua IntelliSense is disabled until the application provides a valid server installation.";
+        "The Lua language server executable is unavailable, so Lua IntelliSense is disabled until the provider is recreated with a valid executable path.";
 
     [TestMethod]
     public void LuaProviderResolution_DoesNotReportThroughMessageService()
@@ -57,7 +57,7 @@ public sealed class ScriptingPhaseCCompositionTests
 
             using ServiceProvider serviceProvider = services.BuildServiceProvider();
             using IServiceScope scope = serviceProvider.CreateScope();
-            _ = scope.ServiceProvider.GetRequiredService<ILuaIntelliSenseProvider>();
+            _ = scope.ServiceProvider.GetRequiredService<ILuaLanguageServerIntelliSenseProvider>();
 
             messageService.Verify(
                 service => service.ShowError(MissingExecutableMessage, "Lua IntelliSense"),
@@ -99,7 +99,7 @@ public sealed class ScriptingPhaseCCompositionTests
             builder.Build();
 
             builder.Messenger.Send(new LuaStartupFailedMessage(
-                new LanguageServerStartupFailure(MissingExecutableMessage, IsPersistent: true)));
+                new LanguageServerStartupFailure(MissingExecutableMessage, isPersistent: true)));
 
             builder.MessageService.Verify(
                 service => service.ShowError(MissingExecutableMessage, "Lua IntelliSense"),
@@ -151,12 +151,13 @@ public sealed class ScriptingPhaseCCompositionTests
         StaTestHelper.RunInSta(() =>
         {
             using var provider = new LuaLanguageServerIntelliSenseProvider(
-                @"C:\Scripts",
+                [@"C:\Scripts"],
                 serverExecutablePath: null,
+                options: LuaLanguageServerOptions.Default,
                 logger: null);
             var startupFailure = new TaskCompletionSource<LanguageServerStartupFailure>(
                 TaskCreationOptions.RunContinuationsAsynchronously);
-            provider.StartupFailed += startupFailure.SetResult;
+            provider.StartupFailed += (_, eventArgs) => startupFailure.SetResult(eventArgs.Failure);
 
             provider.OpenDocument(@"C:\Scripts\main.lua", "return 1");
 

@@ -1,7 +1,8 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Moq;
 using Nickelony.LanguageServer.Abstractions;
-using Nickelony.LanguageServer.Abstractions;
+using Nickelony.IDEKit.Core.Diagnostics;
+using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using Nickelony.LanguageServer.Lua;
 using System;
@@ -153,7 +154,7 @@ public sealed class ScriptingPhase4TransitionTests
 			harness.Activate(harness.LuaEditor, harness.LuaRegistration);
 			harness.SendLuaDiagnostics("lua-active");
 			harness.ReferenceCompletion.SetResult([
-				new TextReferenceLocation(harness.LuaEditor.FilePath, 1, 1, 1, 5)]);
+				new TextReferenceLocation(harness.LuaEditor.FilePath, new TextPositionRange(new TextPosition(0, 0), new TextPosition(0, 4)))]);
 			StartReferenceSearch(harness.Workbench, harness.LuaEditor).GetAwaiter().GetResult();
 			Assert.AreEqual(1, references.Groups.Count);
 
@@ -187,7 +188,7 @@ public sealed class ScriptingPhase4TransitionTests
 
 			harness.Activate(harness.LuaEditor, harness.LuaRegistration);
 			harness.ReferenceCompletion.SetResult([
-				new TextReferenceLocation(harness.LuaEditor.FilePath, 1, 1, 1, 5)]);
+				new TextReferenceLocation(harness.LuaEditor.FilePath, new TextPositionRange(new TextPosition(0, 0), new TextPosition(0, 4)))]);
 			referenceTask.GetAwaiter().GetResult();
 
 			Assert.AreEqual(0, references.Groups.Count);
@@ -267,8 +268,8 @@ public sealed class ScriptingPhase4TransitionTests
 	private static TextReferencesResultsViewModel GetReferencesViewModel(TextReferencesResultsToolWindow pane)
 		=> (TextReferencesResultsViewModel)((TombLib.Scripting.UI.Presentation.TextReferencesResultsView)pane.Content).DataContext;
 
-	private static TextEditorDiagnostic CreateDiagnostic(string message)
-		=> new(TextEditorDiagnosticSeverity.Error, message, 0, 1);
+	private static TextDiagnostic CreateDiagnostic(string message)
+		=> new(TextDiagnosticSeverity.Error, message, 0, 1);
 
 	private static Task StartReferenceSearch(WorkbenchService workbench, LuaEditor editor)
 	{
@@ -302,7 +303,7 @@ public sealed class ScriptingPhase4TransitionTests
 		{
 			Messenger = new WeakReferenceMessenger();
 			Controller = new Mock<IEditorDocumentController>();
-			ReferencesProvider = new Mock<ITextReferencesProvider>();
+			ReferencesProvider = new Mock<ILanguageServerReferencesProvider>();
 			ReferenceCompletion = new TaskCompletionSource<IReadOnlyList<TextReferenceLocation>>(
 				TaskCreationOptions.RunContinuationsAsynchronously);
 
@@ -343,7 +344,7 @@ public sealed class ScriptingPhase4TransitionTests
 			}
 
 			ITextEditorHost textEditorHost = CreateTextEditorHost();
-			var intellisenseProvider = new Mock<ILuaIntelliSenseProvider>();
+			var intellisenseProvider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
 			intellisenseProvider.Setup(provider => provider.GetDiagnostics(It.IsAny<string>())).Returns([]);
 			intellisenseProvider.Setup(provider => provider.GetSemanticTokens(It.IsAny<string>())).Returns([]);
 			var trackedDocumentState = new LuaTrackedDocumentStateService(textEditorHost, intellisenseProvider.Object);
@@ -379,7 +380,7 @@ public sealed class ScriptingPhase4TransitionTests
 				new FindReplaceService());
 			var luaWorkspaceCommandService = new TextWorkspaceCommandService(
 				new TextWorkspaceEditApplier(textEditorHost),
-				new Mock<ITextEditProvider>().Object);
+				new Mock<ILanguageServerRenameProvider>().Object);
 
 			Workbench = WorkbenchServiceTestFactory.Create(
 				profile,
@@ -417,7 +418,7 @@ public sealed class ScriptingPhase4TransitionTests
 
 		public Mock<IEditorDocumentController> Controller { get; }
 
-		public Mock<ITextReferencesProvider> ReferencesProvider { get; }
+		public Mock<ILanguageServerReferencesProvider> ReferencesProvider { get; }
 
 		public TaskCompletionSource<IReadOnlyList<TextReferenceLocation>> ReferenceCompletion { get; }
 
@@ -567,8 +568,7 @@ public sealed class ScriptingPhase4TransitionTests
 		private static IKeyBindingService<UICommand> CreateKeyBindingService()
 			=> new KeyBindingService<UICommand>(
 				new CommandCatalog<UICommand>([]),
-				new KeyBindingOverrideCollection(),
-				_ => true);
+				new KeyBindingTestStore());
 
 	}
 

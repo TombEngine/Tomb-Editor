@@ -16,6 +16,15 @@ internal static class LuaEditorInteractionRules
 	private static readonly ConditionalWeakTable<TextDocument, DocumentLineStateCache<LuaLineParserState>> LineStartStateCaches = [];
 
 	/// <summary>
+	/// Determines whether hover content may be shown while other transient popups are active.
+	/// </summary>
+	/// <param name="isCompletionWindowOpen">Whether a completion window is currently open.</param>
+	/// <param name="isSignatureHelpOpen">Whether signature help is currently visible.</param>
+	/// <returns><see langword="true"/> if hover may be shown; otherwise, <see langword="false"/>.</returns>
+	public static bool CanShowHover(bool isCompletionWindowOpen, bool isSignatureHelpOpen)
+		=> !isCompletionWindowOpen && !isSignatureHelpOpen;
+
+	/// <summary>
 	/// Attempts to resolve the exact offset that should be used for a hover request.
 	/// </summary>
 	/// <param name="document">The document being inspected.</param>
@@ -157,7 +166,7 @@ internal static class LuaEditorInteractionRules
 			return false;
 
 		var snapshot = new TextDocumentSnapshot(document);
-		TextRange? range = IdentifierHelper.TryGetContainingSpan(snapshot, offset, IdentifierCharacterPolicy.Default);
+		TextRange? range = IdentifierOperations.FindTokenSpan(snapshot, offset, IdentifierCharacterPolicy.Default);
 
 		if (range is null)
 			return false;

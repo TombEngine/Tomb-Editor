@@ -14,7 +14,7 @@ public class LuaEditorDisposalTests
 	{
 		RunInSta(() =>
 		{
-			var provider = new Mock<ILuaIntelliSenseProvider>();
+			var provider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
 			var editor = new LuaEditor(new Version(1, 0))
 			{
 				FilePath = @"C:\Workspace\Scripts\test.lua",
@@ -33,7 +33,7 @@ public class LuaEditorDisposalTests
 	{
 		RunInSta(() =>
 		{
-			var provider = new Mock<ILuaIntelliSenseProvider>();
+			var provider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
 			var editor = new LuaEditor(new Version(1, 0))
 			{
 				FilePath = @"C:\Workspace\Scripts\test.lua",
@@ -83,7 +83,7 @@ public class LuaEditorDisposalTests
 
 	private static WeakReference CreateAndDisposeExercisedEditor()
 	{
-		var provider = new Mock<ILuaIntelliSenseProvider>();
+		var provider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
 		var editor = new LuaEditor(new Version(1, 0))
 		{
 			FilePath = @"C:\Workspace\Scripts\exercised.lua",
@@ -92,7 +92,7 @@ public class LuaEditorDisposalTests
 		};
 		Window hostWindow = ShowInHostWindow(editor);
 
-		editor.SetSemanticTokens([new LuaSemanticToken(0, 6, 5, "variable", [])]);
+		editor.SetSemanticTokens([new SemanticToken(0, 6, 5, "variable", [])]);
 		editor.RunContentChangedWorker();
 		editor.Dispose();
 		hostWindow.Content = null;

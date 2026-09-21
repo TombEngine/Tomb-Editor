@@ -1,5 +1,7 @@
+using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.IntelliSense.Completion;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using Nickelony.IDEKit.IntelliSense.Hover;
 using Nickelony.IDEKit.IntelliSense.Navigation;
 using Nickelony.IDEKit.IntelliSense.Signatures;
@@ -13,7 +15,7 @@ namespace TombLib.Tests;
 public class LuaEditorIntelliSenseStateTests
 {
 	[TestMethod]
-	public void ShouldRefreshSignatureHelpAfterTextInput_ReturnsTrueWhenSignatureHelpIsActiveOrPending()
+	public void ShouldRefreshSignatureHelpAfterTextInput_ReturnsTrueWhenSignatureHelpPresentationIsVisibleOrRequestPending()
 	{
 		bool shouldRefresh = InvokePrivateStaticBooleanMethod(
 			"ShouldRefreshSignatureHelpAfterTextInput",
@@ -279,7 +281,9 @@ public class LuaEditorIntelliSenseStateTests
 		{
 			var provider = new FakeLuaIntellisenseProvider
 			{
-				DefinitionResponse = new TextDefinitionLocation(4, 2, @"C:\Workspace\Definitions\spawn.lua")
+				DefinitionResponse = new TextDefinitionLocation(
+					new TextPositionRange(new TextPosition(4, 2), new TextPosition(4, 2)),
+					@"C:\Workspace\Definitions\spawn.lua")
 			};
 
 			var editor = new LuaEditor(new Version(1, 0))
@@ -306,12 +310,12 @@ public class LuaEditorIntelliSenseStateTests
 			}
 
 			Assert.IsNotNull(navigatedLocation);
-			Assert.AreEqual(provider.DefinitionResponse!.FilePath, navigatedLocation.FilePath);
-			Assert.AreEqual(provider.DefinitionResponse.LineNumber, navigatedLocation.LineNumber);
-			Assert.AreEqual(provider.DefinitionResponse.ColumnNumber, navigatedLocation.ColumnNumber);
+			Assert.AreEqual(provider.DefinitionResponse!.DocumentId, navigatedLocation.DocumentId);
+			Assert.AreEqual(provider.DefinitionResponse.TargetRange, navigatedLocation.TargetRange);
+			Assert.AreEqual(provider.DefinitionResponse.SelectionRange, navigatedLocation.SelectionRange);
 			Assert.AreEqual(1, provider.DefinitionRequests.Count);
-			Assert.AreEqual(0, provider.DefinitionRequests[0].Line);
-			Assert.AreEqual(0, provider.DefinitionRequests[0].Column);
+			Assert.AreEqual(0, provider.DefinitionRequests[0].Position.Line);
+			Assert.AreEqual(0, provider.DefinitionRequests[0].Position.Character);
 		});
 	}
 
@@ -376,8 +380,8 @@ public class LuaEditorIntelliSenseStateTests
 				// The editor routes the caret position to the signature-help provider. Popup
 				// visibility is owned by the shared TextSignatureHelpController (see its tests).
 				Assert.AreEqual(1, provider.SignatureRequests.Count);
-				Assert.AreEqual(0, provider.SignatureRequests[0].Line);
-				Assert.AreEqual(6, provider.SignatureRequests[0].Column);
+				Assert.AreEqual(0, provider.SignatureRequests[0].Position.Line);
+				Assert.AreEqual(6, provider.SignatureRequests[0].Position.Character);
 			}
 			finally
 			{
@@ -393,11 +397,12 @@ public class LuaEditorIntelliSenseStateTests
 		{
 			var provider = new FakeLuaIntellisenseProvider
 			{
-				SignatureResponse = new TextSignatureHelpInfo(
-					"spawn(room)",
-					0,
-					"Spawns an object.",
-					[new TextSignatureParameterInfo("room", "Room id.")])
+				SignatureResponse = new TextSignatureHelp(
+					[new TextSignatureInformation(
+						"spawn(room)",
+						"Spawns an object.",
+						activeParameter: TextSignatureActiveParameter.At(0),
+						parameters: [new TextSignatureParameterInfo("room", "Room id.")])])
 			};
 
 			var editor = new LuaEditor(new Version(1, 0))
@@ -419,8 +424,8 @@ public class LuaEditorIntelliSenseStateTests
 				// The editor routes the caret position to the signature-help provider. Popup
 				// visibility is owned by the shared TextSignatureHelpController (see its tests).
 				Assert.AreEqual(1, provider.SignatureRequests.Count);
-				Assert.AreEqual(0, provider.SignatureRequests[0].Line);
-				Assert.AreEqual(6, provider.SignatureRequests[0].Column);
+				Assert.AreEqual(0, provider.SignatureRequests[0].Position.Line);
+				Assert.AreEqual(6, provider.SignatureRequests[0].Position.Character);
 			}
 			finally
 			{
@@ -453,9 +458,9 @@ public class LuaEditorIntelliSenseStateTests
 		return result;
 	}
 
-	private readonly record struct ProviderRequest(string FilePath, string Content, int Line, int Column);
+	private readonly record struct ProviderRequest(string FilePath, string Content, TextPosition Position);
 
-	private sealed class FakeLuaIntellisenseProvider : ILuaIntelliSenseProvider
+	private sealed class FakeLuaIntellisenseProvider : ILuaLanguageServerIntelliSenseProvider
 	{
 		public bool IsAvailable { get; set; } = true;
 
@@ -464,14 +469,16 @@ public class LuaEditorIntelliSenseStateTests
 		public bool SupportsReferences => false;
 		public bool SupportsRename => false;
 		public bool SupportsFormatting => false;
+		public bool SupportsDocumentSymbols => false;
+		public bool SupportsCodeActions => false;
 
 		public TextHoverInfo? HoverResponse { get; set; }
 
 		public TextDefinitionLocation? DefinitionResponse { get; set; }
 
-		public TextSignatureHelpInfo? SignatureResponse { get; set; }
+		public TextSignatureHelp? SignatureResponse { get; set; }
 
-		public Func<ProviderRequest, CancellationToken, Task<TextSignatureHelpInfo?>>? SignatureHelpHandler { get; set; }
+		public Func<ProviderRequest, CancellationToken, Task<TextSignatureHelp?>>? SignatureHelpHandler { get; set; }
 
 		public IReadOnlyList<TextCompletionItem> CompletionItems { get; set; } = [];
 
@@ -479,39 +486,39 @@ public class LuaEditorIntelliSenseStateTests
 
 		public List<ProviderRequest> SignatureRequests { get; } = [];
 
-		public event Action<string, IReadOnlyList<TextEditorDiagnostic>>? DiagnosticsUpdated
+		public event EventHandler<DiagnosticsUpdatedEventArgs>? DiagnosticsUpdated
 		{
 			add { }
 			remove { }
 		}
 
-		public event Action? CapabilitiesChanged
+		public event EventHandler? CapabilitiesChanged
 		{
 			add { }
 			remove { }
 		}
 
-		public event Action<LanguageServerStartupFailure>? StartupFailed
+		public event EventHandler<StartupFailedEventArgs>? StartupFailed
 		{
 			add { }
 			remove { }
 		}
 
-		public event Action<WorkspaceWatcherFailure>? WorkspaceWatcherFailed
+		public event EventHandler<WorkspaceWatcherFailedEventArgs>? WorkspaceWatcherFailed
 		{
 			add { }
 			remove { }
 		}
 
-		public event Action<string, IReadOnlyList<LuaSemanticToken>>? SemanticTokensUpdated
+		public event EventHandler<SemanticTokensUpdatedEventArgs>? SemanticTokensUpdated
 		{
 			add { }
 			remove { }
 		}
 
-		public IReadOnlyList<TextEditorDiagnostic> GetDiagnostics(string filePath) => [];
+		public IReadOnlyList<TextDiagnostic> GetDiagnostics(string filePath) => [];
 
-		public IReadOnlyList<LuaSemanticToken> GetSemanticTokens(string filePath) => [];
+		public IReadOnlyList<SemanticToken> GetSemanticTokens(string filePath) => [];
 
 		public void OpenDocument(string filePath, string content)
 		{ }
@@ -522,21 +529,25 @@ public class LuaEditorIntelliSenseStateTests
 		public void CloseDocument(string filePath)
 		{ }
 
-		public void RenameDocument(string oldFilePath, string newFilePath, string content)
+		public void MoveDocument(string oldFilePath, string newFilePath, string content)
 		{ }
 
-		public Task<IReadOnlyList<TextCompletionItem>> GetCompletionItemsAsync(string filePath, string content,
-			int line, int column, char? triggerCharacter = null, CancellationToken cancellationToken = default)
+		public Task<IReadOnlyList<TextCodeAction>> GetCodeActionsAsync(LanguageServerCodeActionRequest request,
+			CancellationToken cancellationToken = default)
+			=> Task.FromResult<IReadOnlyList<TextCodeAction>>([]);
+
+		public Task<IReadOnlyList<TextCompletionItem>> GetCompletionItemsAsync(LanguageServerCompletionRequest request,
+			CancellationToken cancellationToken = default)
 			=> Task.FromResult(CompletionItems);
 
 		public Task<TextHoverInfo?> GetHoverAsync(string filePath, string content,
-			int line, int column, CancellationToken cancellationToken = default)
+			TextPosition position, CancellationToken cancellationToken = default)
 			=> Task.FromResult(HoverResponse);
 
 		public Task<TextDefinitionLocation?> GetDefinitionAsync(string filePath, string content,
-			int line, int column, CancellationToken cancellationToken = default)
+			TextPosition position, CancellationToken cancellationToken = default)
 		{
-			DefinitionRequests.Add(new ProviderRequest(filePath, content, line, column));
+			DefinitionRequests.Add(new ProviderRequest(filePath, content, position));
 			return Task.FromResult(DefinitionResponse);
 		}
 
@@ -553,19 +564,25 @@ public class LuaEditorIntelliSenseStateTests
 		public Task<TextWorkspaceEdit?> FormatDocumentAsync(TextFormatRequest request, CancellationToken cancellationToken = default)
 			=> Task.FromResult<TextWorkspaceEdit?>(null);
 
-		public Task<TextSignatureHelpInfo?> GetSignatureHelpAsync(string filePath, string content,
-			int line, int column, CancellationToken cancellationToken = default)
+		public Task<IReadOnlyList<TextDocumentSymbol>> GetDocumentSymbolsAsync(string filePath, string content,
+			CancellationToken cancellationToken = default)
+			=> Task.FromResult<IReadOnlyList<TextDocumentSymbol>>([]);
+
+		public Task<TextSignatureHelp?> GetSignatureHelpAsync(LanguageServerSignatureHelpRequest request,
+			CancellationToken cancellationToken = default)
 		{
-			var request = new ProviderRequest(filePath, content, line, column);
-			SignatureRequests.Add(request);
+			var providerRequest = new ProviderRequest(request.FilePath, request.DocumentText, request.Position);
+			SignatureRequests.Add(providerRequest);
 
 			if (SignatureHelpHandler is not null)
-				return SignatureHelpHandler(request, cancellationToken);
+				return SignatureHelpHandler(providerRequest, cancellationToken);
 
 			return Task.FromResult(SignatureResponse);
 		}
 
 		public void Dispose()
 		{ }
+
+		public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 	}
 }

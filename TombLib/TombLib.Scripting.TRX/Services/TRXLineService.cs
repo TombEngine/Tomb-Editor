@@ -4,27 +4,22 @@ namespace TombLib.Scripting.TRX.Services;
 
 /// <summary>
 /// Default implementation of <see cref="ITRXLineService"/>.
-/// Delegates comment removal and masking to the shared <see cref="TextLineSyntaxService"/>
+/// Delegates comment removal and masking to the shared <see cref="CommentOperations"/>
 /// with a <c>"//"</c> <see cref="CommentSyntax"/>.
 /// </summary>
-public sealed class TRXLineService : TextLineSyntaxService, ITRXLineService
+public sealed class TRXLineService : ITRXLineService
 {
-	/// <summary>
-	/// Initializes a new instance of the <see cref="TRXLineService"/> class.
-	/// </summary>
-	public TRXLineService()
-		: base(new CommentSyntax("//", null, null, StringLiteralStyle.DoubleQuoted))
-	{ }
+	private static readonly CommentSyntax s_commentSyntax = new("//", null, StringLiteralStyle.DoubleQuoted);
 
 	/// <inheritdoc/>
 	public string RemoveComments(string lineText)
-		=> base.RemoveComments(lineText);
+		=> CommentOperations.RemoveComments(lineText, s_commentSyntax);
 
 	/// <inheritdoc/>
 	public string EscapeComments(string lineText)
-		=> base.EscapeComments(lineText);
+		=> CommentOperations.MaskComments(lineText, s_commentSyntax);
 
 	/// <inheritdoc/>
 	public bool IsEmptyOrComments(string? lineText)
-		=> base.IsEmptyOrComments(lineText);
+			=> CommentOperations.IsBlankOrStartsWithLineComment(lineText, s_commentSyntax);
 }

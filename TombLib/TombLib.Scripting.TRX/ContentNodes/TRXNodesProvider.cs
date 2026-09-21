@@ -40,13 +40,15 @@ public sealed class TRXNodesProvider : ITextDocumentSymbolProvider
 		foreach (ITextLine line in source.Lines)
 		{
 			string lineText = source.GetText(line.Offset, line.Length);
-			string? levelNode = GetLevelNode(lineText, request.Filter);
+			string? levelNode = GetLevelNode(lineText, request.FilterText);
 
 			if (levelNode is not null)
 				nodes.Add(levelNode);
 		}
 
-		return DocumentSymbolTreeBuilder.BuildFlatNodes(nodes, node => node);
+		return DocumentSymbolOutlineBuilder.BuildFlatOutline(
+			nodes,
+			new DocumentSymbolProjection<string>(static node => node, static _ => TextDocumentSymbolKind.Variable));
 	}
 
 	private string? GetLevelNode(string lineText, string filter)

@@ -1,6 +1,6 @@
 using ICSharpCode.AvalonEdit.CodeCompletion;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using TombLib.Scripting.UI.Completion;
 
@@ -8,26 +8,6 @@ namespace TombLib.Scripting.UI.Bases;
 
 public abstract partial class TextEditorBase
 {
-	/// <summary>
-	/// Initializes the completion window with the given size.
-	/// </summary>
-	/// <param name="width">The width of the completion window.</param>
-	/// <param name="height">The height of the completion window.</param>
-	public void InitializeCompletionWindow(int width = 300, int height = 300)
-	{
-		EnsureNotDisposed();
-		_completionWindowCoordinator.Initialize(width, height);
-	}
-
-	/// <summary>
-	/// Shows the completion window at the caret position.
-	/// </summary>
-	public void ShowCompletionWindow()
-	{
-		EnsureNotDisposed();
-		_completionWindowCoordinator.Show();
-	}
-
 	internal CompletionWindow? ActiveCompletionWindow => _completionWindowCoordinator.ActiveWindow;
 
 	/// <summary>
@@ -35,8 +15,13 @@ public abstract partial class TextEditorBase
 	/// </summary>
 	protected bool IsCompletionWindowOpen => _completionWindowCoordinator.IsWindowOpen;
 
-	internal void CloseSharedCompletionWindow()
-		=> _completionWindowCoordinator.Close();
+	/// <summary>
+	/// Runs a completion request that was scheduled through
+	/// <see cref="Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Completion.TextCompletionController.ScheduleRequest"/>.
+	/// The base implementation does nothing; editors that use debounced completion override it.
+	/// </summary>
+	/// <returns>A task that completes after the scheduled request concluded.</returns>
+	protected virtual Task RequestScheduledCompletionAsync() => Task.CompletedTask;
 
 	/// <summary>
 	/// Handles Ctrl+Space to trigger completion when completion is enabled.

@@ -124,7 +124,7 @@ public sealed class ScriptingPhase0ConstructionTests
 				_ => true,
 				_ => editor,
 				new(null, ScriptingDocumentConfigurationKind.Lua));
-			var intellisenseProvider = new Mock<ILuaIntelliSenseProvider>();
+			var intellisenseProvider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
 			intellisenseProvider
 				.Setup(provider => provider.GetDiagnostics(It.IsAny<string>()))
 				.Throws(new InvalidOperationException("settings failed"));
@@ -135,11 +135,11 @@ public sealed class ScriptingPhase0ConstructionTests
 			var trackedState = new LuaTrackedDocumentStateService(textEditorHost, intellisenseProvider.Object);
 			var referenceService = new LuaReferenceSearchService(
 				textEditorHost,
-				Mock.Of<ITextReferencesProvider>(),
+				Mock.Of<ILanguageServerReferencesProvider>(),
 				@"C:\Scripts");
 			var workspaceCommandService = new TextWorkspaceCommandService(
 				new TextWorkspaceEditApplier(textEditorHost),
-				Mock.Of<ITextEditProvider>());
+				Mock.Of<ILanguageServerRenameProvider>());
 
 			using var builder = new WorkbenchServiceTestBuilder();
 			builder.WithDockHost(dockHost);

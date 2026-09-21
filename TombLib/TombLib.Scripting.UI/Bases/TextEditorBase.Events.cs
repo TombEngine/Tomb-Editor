@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Nickelony.IDEKit.AvalonEdit.Navigation;
+using TombLib.Scripting.UI.Editors;
 using TombLib.Scripting.UI.Rendering;
 
 namespace TombLib.Scripting.UI.Bases;
@@ -92,8 +93,11 @@ public abstract partial class TextEditorBase
 	}
 
 	private void TextEditor_KeyDown(object? sender, KeyEventArgs e)
-		=> RunLanguageEventHook(() => OnLanguageKeyDown(e));
+		{
+			HandleAutoClosingBackspace(e);
 
+			RunLanguageEventHook(() => OnLanguageKeyDown(e));
+		}
 	private void TextEditor_PreviewMouseLeftButtonDown(object? sender, MouseButtonEventArgs e)
 		=> RunLanguageEventHook(() => OnLanguagePreviewMouseLeftButtonDown(e));
 
@@ -135,18 +139,22 @@ public abstract partial class TextEditorBase
 
 	private void TextEditor_PreviewMouseWheel(object? sender, MouseWheelEventArgs e)
 	{
-		if (Keyboard.Modifiers == ModifierKeys.Control
-			&& _statusCoordinator.TryHandleZoom(e.Delta, MinZoom, MaxZoom, ZoomStepSize, DefaultFontSize, fontSize => FontSize = fontSize))
-		{
+		if (Keyboard.Modifiers != ModifierKeys.Control)
+			return;
+
+		var zoomOptions = new ZoomOptions(MinZoom, MaxZoom, ZoomStepSize, DefaultFontSize);
+
+		if (_statusCoordinator.TryApplyZoomStep(e.Delta, zoomOptions, fontSize => FontSize = fontSize))
 			e.Handled = true;
-		}
 	}
 
 	private void TextEditor_MouseRightButtonDown(object? sender, MouseButtonEventArgs e)
 	{
-		this.TryMoveCaretToMousePosition();
-
-		ContextMenu ??= TextEditorContextMenuFactory.BuildDefault();
+			// A right-click inside an existing selection keeps it so the context menu actions apply to
+			// the selection; the caret moves to the pointer only for a collapsed selection. The
+			// selection policy lives here now because the navigation primitive always moves the caret.
+			if (SelectionLength == 0)
+				this.TryMoveCaretToMousePosition();
 		ContextMenu.IsOpen = true;
 
 		e.Handled = true;

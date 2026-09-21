@@ -1,5 +1,5 @@
 using ICSharpCode.AvalonEdit.Document;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Highlighting;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Highlighting;
 using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.IntelliSense.SemanticTokens;
 using System;
@@ -18,10 +18,10 @@ public sealed partial class LuaEditor
 	/// Replaces the current semantic token set used to colorize the document.
 	/// </summary>
 	/// <param name="tokens">The semantic tokens to apply to the editor.</param>
-	public void SetSemanticTokens(IReadOnlyList<LuaSemanticToken> tokens)
+	public void SetSemanticTokens(IReadOnlyList<SemanticToken> tokens)
 	{
 		EnsureSemanticTokensColorizerAttached();
-		_semanticTokensColorizer.SetTokens(ConvertToOffsetTokens(tokens));
+		_semanticTokensColorizer.SetTokens(SemanticTokenConversion.ToTextSemanticTokens(tokens, TextLineMap.Build(Document.Text)));
 	}
 
 	/// <summary>
@@ -48,35 +48,5 @@ public sealed partial class LuaEditor
 
 		if (!TextArea.TextView.LineTransformers.Contains(_semanticTokensColorizer))
 			TextArea.TextView.LineTransformers.Add(_semanticTokensColorizer);
-	}
-
-	private IReadOnlyList<TextSemanticToken> ConvertToOffsetTokens(IReadOnlyList<LuaSemanticToken> tokens)
-	{
-		var converted = new List<TextSemanticToken>(tokens.Count);
-
-		for (int i = 0; i < tokens.Count; i++)
-		{
-			LuaSemanticToken token = tokens[i];
-			int offset = GetOffsetForToken(token);
-
-			if (offset < 0)
-				continue;
-
-			converted.Add(new TextSemanticToken(new TextRange(offset, token.Length), token.Type, token.Modifiers));
-		}
-
-		return converted;
-	}
-
-	private int GetOffsetForToken(LuaSemanticToken token)
-	{
-		int lineNumber = token.Line + 1;
-
-		if (lineNumber < 1 || lineNumber > Document.LineCount)
-			return -1;
-
-		DocumentLine line = Document.GetLineByNumber(lineNumber);
-		int character = Math.Max(0, token.Character);
-		return line.Offset + Math.Min(character, line.Length);
 	}
 }

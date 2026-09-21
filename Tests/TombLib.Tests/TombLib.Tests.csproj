@@ -20,7 +20,7 @@
   <ItemGroup>
     <PackageReference Include="Nickelony.IDEKit.Core" Version="$(NickelonyIDEKitCoreVersion)" />
     <PackageReference Include="Nickelony.IDEKit.IntelliSense" Version="$(NickelonyIDEKitIntelliSenseVersion)" />
-    <PackageReference Include="Nickelony.IDEKit.Tooling" Version="$(NickelonyIDEKitToolingVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Processes" Version="$(NickelonyIDEKitProcessesVersion)" />
     <ProjectReference Include="..\..\TombIDE\TombIDE.Shared\TombIDE.Shared.csproj" />
     <ProjectReference Include="..\..\TombLib\TombLib.Scripting.ClassicScript\TombLib.Scripting.ClassicScript.csproj" />
     <ProjectReference Include="..\..\TombLib\TombLib.Scripting.GameFlowScript\TombLib.Scripting.GameFlowScript.csproj" />

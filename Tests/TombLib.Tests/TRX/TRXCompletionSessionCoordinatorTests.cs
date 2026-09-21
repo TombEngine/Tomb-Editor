@@ -13,7 +13,7 @@ public class TRXCompletionSessionCoordinatorTests
 	{
 		private readonly IReadOnlyList<TextCompletionItem> _items = items;
 
-		public IReadOnlyList<TextCompletionItem> GetCompletionItems(TextCompletionContext context) => _items;
+		public IReadOnlyList<TextCompletionItem> GetCompletionItems(TextCompletionRequest context) => _items;
 	}
 
 	private static TRXCompletionSessionCoordinator CreateCoordinator(params TextCompletionItem[] items)
@@ -41,12 +41,14 @@ public class TRXCompletionSessionCoordinatorTests
 	}
 
 	[TestMethod]
-	public void GetCtrlSpaceDecision_NoMatchingItems_ReturnsNone()
+	public void GetCtrlSpaceDecision_NoMatchingItems_ReportsNoMatches()
 	{
 		TRXCompletionSessionCoordinator coordinator = CreateCoordinator(new TextCompletionItem("\"title\": "));
 
 		TextCompletionSessionDecision decision = coordinator.GetCtrlSpaceDecision(new TextDocument("\"zz"), 3, false);
 
-		Assert.AreEqual(TextCompletionSessionDecision.None, decision);
+		// The provider returned candidates, but the typed word filtered all of them out, so the
+		// kernel reports the NoMatches state instead of the plain None.
+		Assert.AreEqual(TextCompletionSessionDecision.NoMatches, decision);
 	}
 }

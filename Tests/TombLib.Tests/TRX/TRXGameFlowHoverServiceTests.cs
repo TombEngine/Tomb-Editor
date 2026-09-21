@@ -1,3 +1,4 @@
+using Nickelony.IDEKit.IntelliSense;
 using Nickelony.IDEKit.IntelliSense.Hover;
 using TombLib.Scripting.TRX.Hover;
 using TombLib.Scripting.TRX.Models;
@@ -38,7 +39,7 @@ public class TRXGameFlowHoverServiceTests
 		var result = service.GetHoverInfo(new TextHoverRequest("\"name\":", 2));
 
 		Assert.IsNotNull(result);
-		Assert.AreEqual(TextHoverContentKind.Markdown, result.ContentKind);
+		Assert.AreEqual(TextMarkupKind.Markdown, result.ContentKind);
 		Assert.AreEqual("name", result.SymbolName);
 		Assert.IsTrue(result.Content.Contains("Human-readable display name."));
 	}

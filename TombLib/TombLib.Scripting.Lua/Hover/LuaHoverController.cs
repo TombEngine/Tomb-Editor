@@ -1,5 +1,6 @@
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Hover;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Hover;
+using Nickelony.IDEKit.AvalonEdit.Navigation;
+using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using Nickelony.IDEKit.IntelliSense.Hover;
 using System.Threading;
@@ -28,30 +29,43 @@ public sealed partial class LuaEditor
 			_editor = editor;
 			_controller = new(
 				owner: editor,
-				getOffsetFromPoint: editor.GetOffsetFromPoint,
-				buildRequestState: BuildRequestState,
-				requestHoverAsync: RequestAsync,
-				getCurrentRequestOffset: TryGetCurrentRequestOffset,
-				showDiagnosticToolTip: editor.ShowDiagnosticToolTip,
-				showHoverToolTip: hoverInfo => HoverControllerFactory.ShowStandardHoverToolTip(_editor, hoverInfo),
-				showCombinedToolTip: (hoverInfo, diagnosticInfo) =>
-					HoverControllerFactory.ShowStandardCombinedToolTip(_editor, hoverInfo, diagnosticInfo),
-				applyHoverState: _ => { },
-				sessionGenerationProvider: () => _editor.SessionGeneration);
+				hooks: new TextHoverControllerHooks
+				{
+					GetOffsetFromPoint = point =>
+					{
+						int offset = editor.GetOffsetFromPoint(point);
+						return offset >= 0 ? offset : null;
+					},
+					BuildEvaluationState = BuildRequestState,
+					RequestHoverAsync = RequestAsync,
+					ResolveRequestOffset = TryResolveRequestOffset,
+					ShowTooltip = (hoverInfo, diagnosticInfo) =>
+					{
+						if (hoverInfo is not null && diagnosticInfo is not null)
+							HoverControllerFactory.ShowStandardCombinedToolTip(_editor, hoverInfo, diagnosticInfo);
+						else if (hoverInfo is not null)
+							HoverControllerFactory.ShowStandardHoverToolTip(_editor, hoverInfo);
+						else if (diagnosticInfo is not null)
+							_editor.ShowDiagnosticToolTip(diagnosticInfo);
+						else
+							_editor.HideToolTip();
+					},
+					ContextVersionProvider = () => _editor.SessionGeneration
+				});
 		}
 
 		internal Task HandleMouseHoverAsync(MouseEventArgs e) => _controller.HandleMouseHoverAsync(e);
 
-		internal void CancelPendingRequest() => _controller.CancelPendingRequest();
+		internal void CancelInFlightRequest() => _controller.CancelInFlightRequest();
 
 		internal void InvalidateRequests() => _controller.InvalidateRequests();
 
 		internal void Dispose() => _controller.Dispose();
 
-		private TextHoverRequestState BuildRequestState(int hoveredOffset)
+		private TextHoverEvaluationState BuildRequestState(int hoveredOffset)
 		{
-			_editor.TryGetDiagnosticInfo(hoveredOffset, out TextEditorDiagnostic? diagnosticInfo, allowLineFallback: false);
-			bool canShowToolTip = TextPopupInteractionRules.CanShowHover(_editor.IsCompletionWindowOpen, _editor._signatureHelpController.IsVisible);
+			_editor.TryGetDiagnosticInfo(hoveredOffset, out TextDiagnostic? diagnosticInfo, allowLineFallback: false);
+			bool canShowToolTip = LuaEditorInteractionRules.CanShowHover(_editor.IsCompletionWindowOpen, _editor._signatureHelpController.IsVisible);
 			int hoverOffset = 0;
 			bool shouldRequestHover = false;
 
@@ -59,26 +73,26 @@ public sealed partial class LuaEditor
 				&& canShowToolTip
 				&& LuaEditorInteractionRules.TryGetHoverOffset(_editor.Document, hoveredOffset, out hoverOffset))
 			{
-				shouldRequestHover = !string.IsNullOrWhiteSpace(_editor.GetWordFromOffset(hoverOffset));
+				shouldRequestHover = !string.IsNullOrWhiteSpace(_editor.TextArea.GetWordFromOffset(hoverOffset));
 			}
 
-			return new TextHoverRequestState(
+			return new TextHoverEvaluationState(
 				ShouldRequestHover: shouldRequestHover,
 				RequestOffset: shouldRequestHover ? hoverOffset : 0,
-				CanShowToolTip: canShowToolTip,
+				CanShowHoverContent: canShowToolTip,
 				CanShowDiagnosticFallback: canShowToolTip,
 				DiagnosticInfo: diagnosticInfo);
 		}
 
-		private int? TryGetCurrentRequestOffset(int hoveredOffset)
+		private int? TryResolveRequestOffset(int hoveredOffset)
 		{
-			if (!TextPopupInteractionRules.CanShowHover(_editor.IsCompletionWindowOpen, _editor._signatureHelpController.IsVisible))
+			if (!LuaEditorInteractionRules.CanShowHover(_editor.IsCompletionWindowOpen, _editor._signatureHelpController.IsVisible))
 				return null;
 
 			if (!LuaEditorInteractionRules.TryGetHoverOffset(_editor.Document, hoveredOffset, out int hoverOffset))
 				return null;
 
-			return string.IsNullOrWhiteSpace(_editor.GetWordFromOffset(hoverOffset))
+			return string.IsNullOrWhiteSpace(_editor.TextArea.GetWordFromOffset(hoverOffset))
 				? null
 				: hoverOffset;
 		}
@@ -96,7 +110,7 @@ public sealed partial class LuaEditor
 			(int line, int column) = _editor.GetPositionFromOffset(offset);
 
 			return await intelliSenseProvider
-				.GetHoverAsync(_editor.FilePath, _editor.Text, line, column, cancellationToken)
+				.GetHoverAsync(_editor.FilePath, _editor.Text, new TextPosition(line, column), cancellationToken)
 				.ConfigureAwait(true);
 		}
 	}

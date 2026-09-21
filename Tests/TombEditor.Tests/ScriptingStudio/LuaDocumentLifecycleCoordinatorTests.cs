@@ -23,7 +23,7 @@ public sealed class LuaDocumentLifecycleCoordinatorTests
         StaTestHelper.RunInSta(() =>
         {
             var editor = CreateEditor();
-            var provider = new Mock<ILuaIntelliSenseProvider>();
+            var provider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
             var documentController = CreateDocumentController(editor);
             var trackedState = CreateTrackedState(editor, provider.Object);
             var coordinator = new LuaDocumentLifecycleCoordinator(
@@ -42,7 +42,7 @@ public sealed class LuaDocumentLifecycleCoordinatorTests
                 new DocumentRenamedEventArgs(editor.FilePath, @"C:\Scripts\renamed.lua"));
 
             provider.Verify(item => item.OpenDocument(editor.FilePath, editor.Text), Times.Once);
-            provider.Verify(item => item.RenameDocument(
+            provider.Verify(item => item.MoveDocument(
                 editor.FilePath,
                 @"C:\Scripts\renamed.lua",
                 editor.Text), Times.Once);
@@ -58,7 +58,7 @@ public sealed class LuaDocumentLifecycleCoordinatorTests
         StaTestHelper.RunInSta(() =>
         {
             var editor = CreateEditor();
-            var provider = new Mock<ILuaIntelliSenseProvider>();
+            var provider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
             var documentController = CreateDocumentController(editor);
             var trackedState = CreateTrackedState(editor, provider.Object);
             var coordinator = new LuaDocumentLifecycleCoordinator(
@@ -76,7 +76,7 @@ public sealed class LuaDocumentLifecycleCoordinatorTests
                 new DocumentRenamedEventArgs(editor.FilePath, @"C:\Scripts\renamed.lua"));
 
             provider.Verify(item => item.OpenDocument(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
-            provider.Verify(item => item.RenameDocument(
+            provider.Verify(item => item.MoveDocument(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>()), Times.Never);
@@ -92,7 +92,7 @@ public sealed class LuaDocumentLifecycleCoordinatorTests
         StaTestHelper.RunInSta(() =>
         {
             var editor = CreateEditor();
-            var provider = new Mock<ILuaIntelliSenseProvider>();
+            var provider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
             var documentController = CreateDocumentController(editor);
             var trackedState = CreateTrackedState(editor, provider.Object);
             var coordinator = new LuaDocumentLifecycleCoordinator(
@@ -111,7 +111,7 @@ public sealed class LuaDocumentLifecycleCoordinatorTests
                 new DocumentRenamedEventArgs(editor.FilePath, @"C:\Scripts\renamed.lua"));
 
             provider.Verify(item => item.OpenDocument(editor.FilePath, editor.Text), Times.Once);
-            provider.Verify(item => item.RenameDocument(
+            provider.Verify(item => item.MoveDocument(
                 It.IsAny<string>(),
                 It.IsAny<string>(),
                 It.IsAny<string>()), Times.Once);
@@ -127,7 +127,7 @@ public sealed class LuaDocumentLifecycleCoordinatorTests
         StaTestHelper.RunInSta(() =>
         {
             var editor = CreateEditor();
-            var provider = new Mock<ILuaIntelliSenseProvider>();
+            var provider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
             var documentController = CreateDocumentController(editor);
             var trackedState = CreateTrackedState(editor, provider.Object);
             var coordinator = new LuaDocumentLifecycleCoordinator(
@@ -153,7 +153,7 @@ public sealed class LuaDocumentLifecycleCoordinatorTests
         {
             var firstEditor = CreateEditor();
             var reopenedEditor = CreateEditor();
-            var provider = new Mock<ILuaIntelliSenseProvider>();
+            var provider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
             var openEditors = new List<IEditorControl> { firstEditor };
             var documentController = new Mock<IEditorDocumentController>();
             documentController.Setup(controller => controller.GetOpenEditors()).Returns(() => openEditors);
@@ -193,7 +193,7 @@ public sealed class LuaDocumentLifecycleCoordinatorTests
         {
             var firstEditor = CreateEditor(@"C:\Scripts\first.lua", "local first = 1");
             var secondEditor = CreateEditor(@"C:\Scripts\second.lua", "local second = 2");
-            var provider = new Mock<ILuaIntelliSenseProvider>();
+            var provider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
             var openEditors = new List<IEditorControl> { firstEditor, secondEditor };
             var documentController = new Mock<IEditorDocumentController>();
             documentController.Setup(controller => controller.GetOpenEditors()).Returns(() => openEditors);
@@ -251,7 +251,7 @@ public sealed class LuaDocumentLifecycleCoordinatorTests
 
     private static LuaTrackedDocumentStateService CreateTrackedState(
         LuaEditor editor,
-        ILuaIntelliSenseProvider provider)
+        ILuaLanguageServerIntelliSenseProvider provider)
     {
         var textEditorHost = new Mock<ITextEditorHost>();
         textEditorHost

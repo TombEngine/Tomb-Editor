@@ -1,3 +1,4 @@
+using Nickelony.IDEKit.Core.Diagnostics;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using System.Windows.Media;
 using TombLib.Scripting.UI.Resources;
@@ -22,22 +23,22 @@ public static class TextEditorToolTipHelper
 	/// <summary>
 	/// Resolves diagnostic tooltip border and background colors for the given severity.
 	/// </summary>
-	public static void GetDiagnosticToolTipColors(TextEditorDiagnosticSeverity severity,
+	public static void GetDiagnosticToolTipColors(TextDiagnosticSeverity severity,
 		out SolidColorBrush border, out SolidColorBrush background)
 	{
 		switch (severity)
 		{
-			case TextEditorDiagnosticSeverity.Warning:
+			case TextDiagnosticSeverity.Warning:
 				border = WarningToolTipBorder;
 				background = WarningToolTipBackground;
 				break;
 
-			case TextEditorDiagnosticSeverity.Information:
+			case TextDiagnosticSeverity.Information:
 				border = InformationToolTipBorder;
 				background = InformationToolTipBackground;
 				break;
 
-			case TextEditorDiagnosticSeverity.Hint:
+			case TextDiagnosticSeverity.Hint:
 				border = HintToolTipBorder;
 				background = HintToolTipBackground;
 				break;

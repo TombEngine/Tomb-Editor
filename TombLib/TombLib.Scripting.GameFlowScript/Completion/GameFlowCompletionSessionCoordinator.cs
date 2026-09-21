@@ -1,5 +1,4 @@
 using ICSharpCode.AvalonEdit.Document;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
 using Nickelony.IDEKit.Core.Identifiers;
 using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.IntelliSense.Completion;
@@ -18,7 +17,7 @@ public sealed class GameFlowCompletionSessionCoordinator(GameFlowCompletionProvi
 {
 	private readonly GameFlowCompletionProvider _completionProvider = completionProvider;
 	private readonly IGameFlowScriptLineService _lineService = lineService;
-	private readonly CompletionSessionKernel _kernel = new();
+	private readonly TextCompletionSessionKernel _kernel = new();
 
 	/// <summary>
 	/// Gets the decision for whether a completion session should open at the caret.
@@ -34,14 +33,14 @@ public sealed class GameFlowCompletionSessionCoordinator(GameFlowCompletionProvi
 		if (completionWindowIsOpen || !ShouldShowCompletion(source, caretOffset))
 			return TextCompletionSessionDecision.None;
 
-		CompletionWordInfo? wordInfo = LocateWord(document, caretOffset);
+		TextCompletionWordSpan? wordInfo = LocateWord(document, caretOffset);
 
 		return wordInfo is null
 			? TextCompletionSessionDecision.None
-			: _kernel.GetDecision(source, caretOffset, _completionProvider, wordInfo: wordInfo.Value);
+			: _kernel.GetDecision(source, caretOffset, _completionProvider, wordSpan: wordInfo.Value);
 	}
 
-	private static CompletionWordInfo? LocateWord(TextDocument document, int caretOffset)
+	private static TextCompletionWordSpan? LocateWord(TextDocument document, int caretOffset)
 	{
 		// TextUtilities.GetNextCaretPosition is AvalonEdit-specific and must use TextDocument.
 		int wordStartOffset = TextUtilities.GetNextCaretPosition(document, caretOffset, LogicalDirection.Backward, CaretPositioningMode.WordStartOrSymbol);
@@ -55,9 +54,9 @@ public sealed class GameFlowCompletionSessionCoordinator(GameFlowCompletionProvi
 		// The kernel filters by the identifier prefix before the caret, matching the legacy
 		// FilterByCurrentWord behavior, while the replacement range keeps WordStartOrSymbol
 		// semantics plus the ':' prefix quirk.
-		string filterWord = IdentifierHelper.GetPrefix(document.Text, caretOffset);
+		string filterWord = IdentifierOperations.GetWordEndingAt(document.Text, caretOffset);
 
-		return new CompletionWordInfo(filterWord, new Nickelony.IDEKit.Core.Text.TextRange(startOffset, caretOffset - startOffset));
+		return new TextCompletionWordSpan(filterWord, new Nickelony.IDEKit.Core.Text.TextRange(startOffset, caretOffset - startOffset));
 	}
 
 	private bool ShouldShowCompletion(ITextSnapshot source, int caretOffset)

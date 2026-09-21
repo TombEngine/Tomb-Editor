@@ -22,9 +22,11 @@
     <ProjectReference Include="..\..\DarkUI\DarkUI.WPF\DarkUI.WPF.csproj" />
     <ProjectReference Include="..\..\DarkUI\DarkUI\DarkUI.csproj" />
     <PackageReference Include="Nickelony.IDEKit.AvalonEdit" Version="$(NickelonyIDEKitAvalonEditVersion)" />
-    <PackageReference Include="Nickelony.IDEKit.AvalonEdit.IntelliSense" Version="$(NickelonyIDEKitAvalonEditIntelliSenseVersion)" />
-<PackageReference Include="Nickelony.IDEKit.AvalonEdit.Extras" Version="$(NickelonyIDEKitAvalonEditExtrasVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.AvalonEdit.LanguageFeatures" Version="$(NickelonyIDEKitAvalonEditLanguageFeaturesVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.AvalonEdit.Markdown" Version="$(NickelonyIDEKitAvalonEditMarkdownVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.AvalonEdit.TextMate" Version="$(NickelonyIDEKitAvalonEditTextMateVersion)" />
     <PackageReference Include="Nickelony.IDEKit.Core" Version="$(NickelonyIDEKitCoreVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Workspace" Version="$(NickelonyIDEKitWorkspaceVersion)" />
     <ProjectReference Include="..\TombLib\TombLib.csproj" />
     <ProjectReference Include="..\TombLib.WPF\TombLib.WPF.csproj" />
   </ItemGroup>

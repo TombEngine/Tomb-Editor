@@ -23,7 +23,7 @@ public readonly record struct TextEditorStatusPresentation(
 	bool CanResetZoom,
 	string ResetZoomToolTipText,
 	bool ShowSyntaxPreview,
-	TextSignatureHelpInfo? SyntaxPreview)
+	TextSignatureHelp? SyntaxPreview)
 {
 	/// <summary>
 	/// Creates an empty status presentation with no active editor.

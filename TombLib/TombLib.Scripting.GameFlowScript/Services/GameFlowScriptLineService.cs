@@ -10,29 +10,24 @@ namespace TombLib.Scripting.GameFlowScript.Services;
 /// Provides line-level text operations using Core helpers and, where needed,
 /// regex patterns for the GameFlow section-header syntax.
 /// </summary>
-public sealed class GameFlowScriptLineService : TextLineSyntaxService, IGameFlowScriptLineService
+public sealed class GameFlowScriptLineService : IGameFlowScriptLineService
 {
 	// Regex pattern for the GameFlow section-header syntax.
 	private static readonly Regex SectionHeaderRegex = new(Patterns.Sections, RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-	/// <summary>
-	/// Initializes a new instance of the <see cref="GameFlowScriptLineService"/> class.
-	/// </summary>
-	public GameFlowScriptLineService()
-		: base(new CommentSyntax("//", null, null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.TripleDoubleQuoted))
-	{ }
+	private static readonly CommentSyntax s_commentSyntax = new("//", null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.TripleDoubleQuoted);
 
 	/// <inheritdoc/>
 	public string RemoveComments(string lineText)
-		=> base.RemoveComments(lineText);
+		=> CommentOperations.RemoveComments(lineText, s_commentSyntax);
 
 	/// <inheritdoc/>
 	public string EscapeComments(string lineText)
-		=> base.EscapeComments(lineText);
+		=> CommentOperations.MaskComments(lineText, s_commentSyntax);
 
 	/// <inheritdoc/>
 	public bool IsEmptyOrComments(string? lineText)
-		=> base.IsEmptyOrComments(lineText);
+		=> CommentOperations.IsBlankOrStartsWithLineComment(lineText, s_commentSyntax);
 
 	/// <inheritdoc/>
 	public bool IsSectionHeaderLine(string lineText)

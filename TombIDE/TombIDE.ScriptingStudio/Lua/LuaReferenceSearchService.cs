@@ -18,12 +18,12 @@ namespace TombIDE.ScriptingStudio.Lua;
 
 internal sealed class LuaReferenceSearchService(
 	ITextEditorHost textEditorHost,
-	ITextReferencesProvider referencesProvider,
+	ILanguageServerReferencesProvider referencesProvider,
 	string scriptRootDirectoryPath,
 	IWorkspaceDocumentManager? documentManager = null)
 {
 	private readonly ITextEditorHost _textEditorHost = textEditorHost ?? throw new ArgumentNullException(nameof(textEditorHost));
-	private readonly ITextReferencesProvider _referencesProvider = referencesProvider ?? throw new ArgumentNullException(nameof(referencesProvider));
+	private readonly ILanguageServerReferencesProvider _referencesProvider = referencesProvider ?? throw new ArgumentNullException(nameof(referencesProvider));
 	private readonly string _scriptRootDirectoryPath = scriptRootDirectoryPath ?? string.Empty;
 	private readonly IWorkspaceDocumentManager? _documentManager = documentManager;
 
@@ -38,8 +38,7 @@ internal sealed class LuaReferenceSearchService(
 				new TextReferenceRequest(
 					editor.FilePath,
 					editor.Text,
-					Math.Max(0, editor.CurrentRow - 1),
-					Math.Max(0, editor.CurrentColumn - 1)),
+					new TextPosition(Math.Max(0, editor.CurrentRow - 1), Math.Max(0, editor.CurrentColumn - 1))),
 				cancellationToken)
 			.ConfigureAwait(true);
 
@@ -63,21 +62,17 @@ internal sealed class LuaReferenceSearchService(
 		{
 			var items = new List<TextReferenceListItem>();
 			foreach (TextReferenceLocation reference in fileGroup
-				.OrderBy(reference => reference.StartLineNumber)
-				.ThenBy(reference => reference.StartColumnNumber))
+				.OrderBy(reference => reference.Range.Start.Line)
+				.ThenBy(reference => reference.Range.Start.Character))
 			{
 				items.Add(new TextReferenceListItem(
 					reference.FilePath,
-					new TextDocumentRange(
-						reference.StartLineNumber,
-						reference.StartColumnNumber,
-						reference.EndLineNumber,
-						reference.EndColumnNumber),
-					reference.StartLineNumber,
-					reference.StartColumnNumber,
+					reference.Range,
+					reference.Range.Start.Line + 1,
+					reference.Range.Start.Character + 1,
 					await GetPreviewTextAsync(
 						reference.FilePath,
-						reference.StartLineNumber,
+						reference.Range.Start.Line + 1,
 						snapshotCache,
 						cancellationToken).ConfigureAwait(true)));
 			}
@@ -129,7 +124,7 @@ internal sealed class LuaReferenceSearchService(
 		if (_documentManager is null)
 			return null;
 
-		WorkspaceDocumentOpenResult result = await _documentManager
+WorkspaceDocumentManagerOpenResult result = await _documentManager
 			.OpenAsync(filePath, DefaultWorkspaceOpenOptions, cancellationToken)
 			.ConfigureAwait(true);
 

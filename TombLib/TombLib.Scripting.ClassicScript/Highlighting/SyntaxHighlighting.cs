@@ -22,7 +22,8 @@ public sealed class SyntaxHighlighting : RegexHighlightingDefinition
 	/// </summary>
 	/// <param name="scheme">The color scheme used for the highlighting rules.</param>
 	public SyntaxHighlighting(ColorScheme scheme)
-		: base("ClassicScript Rules", cacheVersion: () => ClassicScriptMnemonicCatalogService.CurrentSnapshotVersion)
+		: base("ClassicScript Rules", new RegexHighlightingDefinitionOptions(
+			CacheVersion: () => ClassicScriptMnemonicCatalogService.CurrentSnapshotVersion))
 	{
 		_scheme = scheme;
 	}

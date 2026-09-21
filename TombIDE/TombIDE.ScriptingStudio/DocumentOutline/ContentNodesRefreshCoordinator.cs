@@ -1,7 +1,7 @@
 #nullable enable
 
 using DarkUI.Controls;
-using Nickelony.IDEKit.Core.Infrastructure;
+using Nickelony.IDEKit.Core.Requests;
 using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using System;
 using System.Collections.Generic;

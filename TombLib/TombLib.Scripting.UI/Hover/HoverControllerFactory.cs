@@ -1,5 +1,5 @@
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Hover;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Presentation;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Hover;
+using Nickelony.IDEKit.Core.Diagnostics;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using Nickelony.IDEKit.IntelliSense.Hover;
 using System;
@@ -24,23 +24,35 @@ public static class HoverControllerFactory
 	/// <param name="editor">The text editor that owns the controller.</param>
 	/// <param name="buildRequestState">Produces the hover request state for a given offset.</param>
 	/// <param name="requestHoverAsync">Resolves hover information asynchronously for a given offset.</param>
-	/// <param name="applyHoverState">Optional callback invoked with the final presentation state after each hover resolution.</param>
 	public static TextHoverController Create(
 		TextEditorBase editor,
-		Func<int, TextHoverRequestState> buildRequestState,
-		Func<int, CancellationToken, Task<TextHoverInfo?>> requestHoverAsync,
-		Action<TextHoverPresentationState>? applyHoverState = null)
+		Func<int, TextHoverEvaluationState> buildRequestState,
+		Func<int, CancellationToken, Task<TextHoverInfo?>> requestHoverAsync)
 	{
 		return new TextHoverController(
 			owner: editor,
-			getOffsetFromPoint: editor.GetOffsetFromPoint,
-			buildRequestState: buildRequestState,
-			requestHoverAsync: requestHoverAsync,
-			getCurrentRequestOffset: hoveredOffset => hoveredOffset,
-			showDiagnosticToolTip: editor.ShowDiagnosticToolTip,
-			showHoverToolTip: hoverInfo => ShowStandardHoverToolTip(editor, hoverInfo),
-			showCombinedToolTip: (hoverInfo, diagnosticInfo) => ShowStandardCombinedToolTip(editor, hoverInfo, diagnosticInfo),
-			applyHoverState: applyHoverState);
+			hooks: new TextHoverControllerHooks
+			{
+				GetOffsetFromPoint = point =>
+				{
+					int offset = editor.GetOffsetFromPoint(point);
+					return offset >= 0 ? offset : null;
+				},
+				BuildEvaluationState = buildRequestState,
+				RequestHoverAsync = requestHoverAsync,
+				ResolveRequestOffset = hoveredOffset => hoveredOffset,
+				ShowTooltip = (hoverInfo, diagnosticInfo) =>
+				{
+					if (hoverInfo is not null && diagnosticInfo is not null)
+						ShowStandardCombinedToolTip(editor, hoverInfo, diagnosticInfo);
+					else if (hoverInfo is not null)
+						ShowStandardHoverToolTip(editor, hoverInfo);
+					else if (diagnosticInfo is not null)
+						editor.ShowDiagnosticToolTip(diagnosticInfo);
+					else
+						editor.HideToolTip();
+				}
+			});
 	}
 
 	/// <summary>
@@ -67,7 +79,7 @@ public static class HoverControllerFactory
 	public static void ShowStandardCombinedToolTip(
 		TextEditorBase editor,
 		TextHoverInfo hoverInfo,
-		TextEditorDiagnostic diagnosticInfo)
+		TextDiagnostic diagnosticInfo)
 	{
 		ArgumentNullException.ThrowIfNull(editor);
 		ArgumentNullException.ThrowIfNull(hoverInfo);
@@ -90,7 +102,7 @@ public static class HoverControllerFactory
 	/// <summary>
 	/// Resolves diagnostic tooltip border and background colors for the given severity.
 	/// </summary>
-	public static (SolidColorBrush Border, SolidColorBrush Background) GetDiagnosticColors(TextEditorDiagnosticSeverity severity)
+	public static (SolidColorBrush Border, SolidColorBrush Background) GetDiagnosticColors(TextDiagnosticSeverity severity)
 	{
 		TextEditorToolTipHelper.GetDiagnosticToolTipColors(severity, out SolidColorBrush border, out SolidColorBrush background);
 		return (border, background);

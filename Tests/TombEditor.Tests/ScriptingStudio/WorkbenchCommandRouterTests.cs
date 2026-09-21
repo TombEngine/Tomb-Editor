@@ -118,15 +118,15 @@ public sealed class WorkbenchCommandRouterTests
 					messenger,
 					new FindReplaceService()));
 
-			var referencesProvider = new Mock<ITextReferencesProvider>();
+			var referencesProvider = new Mock<ILanguageServerReferencesProvider>();
 			referencesProvider.SetupGet(provider => provider.SupportsReferences).Returns(supportsReferences);
-			var editProvider = new Mock<ITextEditProvider>();
+			var editProvider = new Mock<ILanguageServerRenameProvider>();
 			editProvider.SetupGet(provider => provider.SupportsRename).Returns(supportsRename);
 			ITextEditorHost textEditorHost = new Mock<ITextEditorHost>().Object;
 			var luaHostServices = new LuaHostServices(
 				new Mock<ILuaEditorLifecycleService>().Object,
 				new Mock<ILuaIntellisenseBridge>().Object,
-				new LuaTrackedDocumentStateService(textEditorHost, new Mock<ILuaIntelliSenseProvider>().Object),
+				new LuaTrackedDocumentStateService(textEditorHost, new Mock<ILuaLanguageServerIntelliSenseProvider>().Object),
 				new LuaReferenceSearchService(textEditorHost, referencesProvider.Object, @"C:\Scripts"),
 				new TextWorkspaceCommandService(new TextWorkspaceEditApplier(textEditorHost), editProvider.Object));
 

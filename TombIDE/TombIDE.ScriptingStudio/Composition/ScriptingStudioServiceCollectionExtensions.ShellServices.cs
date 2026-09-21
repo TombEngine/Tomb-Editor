@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using MvvmDialogs;
 using Nickelony.IDEKit.KeyBindings;
+using Nickelony.IDEKit.KeyBindings.Wpf;
 using System;
 using TombIDE.ScriptingStudio.ClassicScript;
 using TombIDE.ScriptingStudio.Controls;
@@ -23,6 +24,7 @@ using TombIDE.Shared.Messaging.Scripting;
 using TombIDE.Shared.SharedClasses;
 using TombLib.Scripting.ClassicScript;
 using TombLib.Scripting.GameFlowScript;
+using TombLib.Scripting.Lua.ContentNodes;
 using TombLib.Scripting.TRX;
 using TombLib.Scripting.UI.Editors;
 using Nickelony.IDEKit.Workspace.Documents;
@@ -75,7 +77,13 @@ public static partial class ScriptingStudioServiceCollectionExtensions
 			var classicScriptServices = sp.GetRequiredService<ClassicScriptLanguageServices>();
 			var gameFlowServices = sp.GetRequiredService<GameFlowLanguageServices>();
 			var trxServices = sp.GetRequiredService<TRXLanguageServices>();
-			return ScriptingWorkspaceProfileSelector.Create(projectContext, settingsStore, classicScriptServices, gameFlowServices, trxServices);
+
+			// The Lua outline provider is created per document and resolves the language-server provider
+			// lazily so profiles without an outlined Lua document never construct it.
+			return ScriptingWorkspaceProfileSelector.Create(projectContext, settingsStore, classicScriptServices, gameFlowServices, trxServices,
+				context => context.FilePath is { Length: > 0 } filePath
+					? new LuaDocumentSymbolsProvider(sp.GetRequiredService<ILuaLanguageServerIntelliSenseProvider>(), filePath)
+					: null);
 		});
 
 		// Shortcut binding service (shell-scoped, merges catalog defaults with persisted overrides).
@@ -85,10 +93,13 @@ public static partial class ScriptingStudioServiceCollectionExtensions
 			var settingsStore = sp.GetRequiredService<IScriptingStudioShellSettingsStore>();
 			var profile = sp.GetRequiredService<ScriptingWorkspaceProfile>();
 
-			KeyBindingOverrideCollection overrides = settingsStore.Load(profile).ShortcutOverrides;
-
-			return new KeyBindingService<UICommand>(catalog, overrides, newOverrides =>
-				settingsStore.SaveShortcutOverrides(profile.Kind, newOverrides));
+			return new KeyBindingService<UICommand>(
+				catalog,
+				new ShellOverridesStore(settingsStore, profile),
+				new KeyBindingServiceOptions
+				{
+					DisplayTextFormatter = WindowsKeyComboDisplayTextFormatter.Default
+				});
 		});
 
 		// Chrome services - each owns one builder/view.
@@ -331,5 +342,23 @@ public static partial class ScriptingStudioServiceCollectionExtensions
 			serviceProvider.GetRequiredService<LuaTrackedDocumentStateService>(),
 			serviceProvider.GetRequiredService<LuaReferenceSearchService>(),
 			serviceProvider.GetRequiredService<TextWorkspaceCommandService>());
+	}
+
+	private sealed class ShellOverridesStore : IKeyBindingOverridesStore
+	{
+		private readonly IScriptingStudioShellSettingsStore _settingsStore;
+		private readonly ScriptingWorkspaceProfile _profile;
+
+		public ShellOverridesStore(IScriptingStudioShellSettingsStore settingsStore, ScriptingWorkspaceProfile profile)
+		{
+			_settingsStore = settingsStore;
+			_profile = profile;
+		}
+
+		public KeyBindingOverrides Load()
+			=> _settingsStore.Load(_profile).ShortcutOverrides;
+
+		public bool Save(KeyBindingOverrides snapshot)
+			=> _settingsStore.SaveShortcutOverrides(_profile.Kind, snapshot);
 	}
 }

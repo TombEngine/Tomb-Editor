@@ -3,6 +3,7 @@
 using System;
 using System.Text.RegularExpressions;
 using Nickelony.IDEKit.Core.FindReplace;
+using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.UI.Bases;
 
 namespace TombIDE.ScriptingStudio.FindAndReplace;
@@ -41,7 +42,11 @@ public sealed class FindReplaceService
 			string lineTextBeforeMatch = lineText.Substring(0, match.Index - line.Offset);
 			int matchSegmentIndex = Regex.Matches(lineTextBeforeMatch, Regex.Escape(match.Value)).Count;
 
-			source.Add(new FindReplaceItem(line.LineNumber, lineText, matchSegmentText, matchSegmentIndex));
+			source.Add(new FindReplaceItem(line.LineNumber, lineText, matchSegmentText, matchSegmentIndex)
+			{
+				// The exact match offsets make navigation independent of occurrence-index heuristics.
+				MatchRangeInLine = new TextRange(match.Index - line.Offset, match.Length)
+			});
 		}
 
 		return source;

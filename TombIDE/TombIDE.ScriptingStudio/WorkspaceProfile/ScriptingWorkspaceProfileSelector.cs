@@ -29,7 +29,7 @@ namespace TombIDE.ScriptingStudio.WorkspaceProfile;
 
 public static class ScriptingWorkspaceProfileSelector
 {
-	public static ScriptingWorkspaceProfile Create(IScriptingProjectContext projectContext, IScriptingStudioShellSettingsStore settingsStore, ClassicScriptLanguageServices classicScriptServices, GameFlowLanguageServices gameFlowServices, TRXLanguageServices trxServices)
+	public static ScriptingWorkspaceProfile Create(IScriptingProjectContext projectContext, IScriptingStudioShellSettingsStore settingsStore, ClassicScriptLanguageServices classicScriptServices, GameFlowLanguageServices gameFlowServices, TRXLanguageServices trxServices, Func<ScriptingDocumentContext, ITextDocumentSymbolProvider?>? luaOutlineProviderFactory)
 	{
 		ArgumentNullException.ThrowIfNull(projectContext);
 		ArgumentNullException.ThrowIfNull(settingsStore);
@@ -39,20 +39,20 @@ public static class ScriptingWorkspaceProfileSelector
 
 		return projectContext.Project.GameVersion switch
 		{
-			TRVersion.Game.TR4 or TRVersion.Game.TRNG => CreateClassicScriptProfile(projectContext, settingsStore, classicScriptServices, settingsStore.IsLuaEnabled(ScriptingWorkspaceKind.ClassicScript)),
+			TRVersion.Game.TR4 or TRVersion.Game.TRNG => CreateClassicScriptProfile(projectContext, settingsStore, classicScriptServices, settingsStore.IsLuaEnabled(ScriptingWorkspaceKind.ClassicScript), luaOutlineProviderFactory),
 			TRVersion.Game.TR2 or TRVersion.Game.TR3 => CreateGameFlowProfile(projectContext, settingsStore, gameFlowServices),
-			TRVersion.Game.TR1 or TRVersion.Game.TR2X or TRVersion.Game.TR3X => CreateTrxProfile(projectContext, settingsStore, trxServices, settingsStore.IsLuaEnabled(ScriptingWorkspaceKind.TRX)),
-			TRVersion.Game.TombEngine => CreateLuaProfile(projectContext, settingsStore),
+			TRVersion.Game.TR1 or TRVersion.Game.TR2X or TRVersion.Game.TR3X => CreateTrxProfile(projectContext, settingsStore, trxServices, settingsStore.IsLuaEnabled(ScriptingWorkspaceKind.TRX), luaOutlineProviderFactory),
+			TRVersion.Game.TombEngine => CreateLuaProfile(projectContext, settingsStore, luaOutlineProviderFactory),
 			_ => throw new NotSupportedException($"Unsupported scripting workspace game version: {projectContext.Project.GameVersion}.")
 		};
 	}
 
-	private static ScriptingWorkspaceProfile CreateClassicScriptProfile(IScriptingProjectContext projectContext, IScriptingStudioShellSettingsStore settingsStore, ClassicScriptLanguageServices languageServices, bool supportsLua)
+	private static ScriptingWorkspaceProfile CreateClassicScriptProfile(IScriptingProjectContext projectContext, IScriptingStudioShellSettingsStore settingsStore, ClassicScriptLanguageServices languageServices, bool supportsLua, Func<ScriptingDocumentContext, ITextDocumentSymbolProvider?>? luaOutlineProviderFactory)
 	{
 		return new ScriptingWorkspaceProfile(
 			ScriptingWorkspaceKind.ClassicScript,
 			projectContext.Project.GameVersion,
-			CreateClassicScriptRegistrations(languageServices, supportsLua),
+			CreateClassicScriptRegistrations(languageServices, supportsLua, luaOutlineProviderFactory),
 			PathHelper.GetScriptFilePath(projectContext.ScriptRootDirectoryPath, TRVersion.Game.TR4),
 			CreateClassicScriptViewContributions(supportsLua),
 			CreateSharedStatusStripSegments(),
@@ -97,12 +97,12 @@ public static class ScriptingWorkspaceProfileSelector
 			supportsLuaActivation: false);
 	}
 
-	private static ScriptingWorkspaceProfile CreateTrxProfile(IScriptingProjectContext projectContext, IScriptingStudioShellSettingsStore settingsStore, TRXLanguageServices trxServices, bool supportsLua)
+	private static ScriptingWorkspaceProfile CreateTrxProfile(IScriptingProjectContext projectContext, IScriptingStudioShellSettingsStore settingsStore, TRXLanguageServices trxServices, bool supportsLua, Func<ScriptingDocumentContext, ITextDocumentSymbolProvider?>? luaOutlineProviderFactory)
 	{
 		return new ScriptingWorkspaceProfile(
 			ScriptingWorkspaceKind.TRX,
 			projectContext.Project.GameVersion,
-			CreateTrxRegistrations(trxServices, supportsLua),
+			CreateTrxRegistrations(trxServices, supportsLua, luaOutlineProviderFactory),
 			PathHelper.GetScriptFilePath(projectContext.ScriptRootDirectoryPath, projectContext.Project.GameVersion),
 			CreateTrxViewContributions(supportsLua),
 			CreateSharedStatusStripSegments(),
@@ -118,12 +118,12 @@ public static class ScriptingWorkspaceProfileSelector
 			supportsLuaActivation: true);
 	}
 
-	private static ScriptingWorkspaceProfile CreateLuaProfile(IScriptingProjectContext projectContext, IScriptingStudioShellSettingsStore settingsStore)
+	private static ScriptingWorkspaceProfile CreateLuaProfile(IScriptingProjectContext projectContext, IScriptingStudioShellSettingsStore settingsStore, Func<ScriptingDocumentContext, ITextDocumentSymbolProvider?>? luaOutlineProviderFactory)
 	{
 		return new ScriptingWorkspaceProfile(
 			ScriptingWorkspaceKind.Lua,
 			projectContext.Project.GameVersion,
-			CreateLuaRegistrations(),
+			CreateLuaRegistrations(luaOutlineProviderFactory),
 			PathHelper.GetScriptFilePath(projectContext.ScriptRootDirectoryPath, TRVersion.Game.TombEngine),
 			CreateViewContributions(
 				UICommand.ContentExplorer,
@@ -185,9 +185,10 @@ public static class ScriptingWorkspaceProfileSelector
 
 	private static IReadOnlyList<ScriptingDocumentRegistration> CreateClassicScriptRegistrations(
 		ClassicScriptLanguageServices languageServices,
-		bool supportsLua)
+		bool supportsLua,
+		Func<ScriptingDocumentContext, ITextDocumentSymbolProvider?>? luaOutlineProviderFactory)
 	{
-		DocumentContributionSet contributions = CreateDocumentContributions(languageServices, null, null);
+		DocumentContributionSet contributions = CreateDocumentContributions(languageServices, null, null, luaOutlineProviderFactory);
 		var registrations = new List<ScriptingDocumentRegistration>
 		{
 			new(
@@ -223,7 +224,7 @@ public static class ScriptingWorkspaceProfileSelector
 
 	private static IReadOnlyList<ScriptingDocumentRegistration> CreateGameFlowRegistrations(GameFlowLanguageServices languageServices)
 	{
-		DocumentContributionSet contributions = CreateDocumentContributions(null, languageServices, null);
+		DocumentContributionSet contributions = CreateDocumentContributions(null, languageServices, null, luaOutlineProviderFactory: null);
 		return
 		[
 			new(
@@ -245,9 +246,9 @@ public static class ScriptingWorkspaceProfileSelector
 		];
 	}
 
-	private static IReadOnlyList<ScriptingDocumentRegistration> CreateTrxRegistrations(TRXLanguageServices languageServices, bool supportsLua)
+	private static IReadOnlyList<ScriptingDocumentRegistration> CreateTrxRegistrations(TRXLanguageServices languageServices, bool supportsLua, Func<ScriptingDocumentContext, ITextDocumentSymbolProvider?>? luaOutlineProviderFactory)
 	{
-		DocumentContributionSet contributions = CreateDocumentContributions(null, null, languageServices);
+		DocumentContributionSet contributions = CreateDocumentContributions(null, null, languageServices, luaOutlineProviderFactory);
 		var registrations = new List<ScriptingDocumentRegistration>
 		{
 			new(
@@ -265,8 +266,8 @@ public static class ScriptingWorkspaceProfileSelector
 		return registrations;
 	}
 
-	private static IReadOnlyList<ScriptingDocumentRegistration> CreateLuaRegistrations()
-		=> [CreateLuaRegistration(CreateDocumentContributions(null, null, null).Lua)];
+	private static IReadOnlyList<ScriptingDocumentRegistration> CreateLuaRegistrations(Func<ScriptingDocumentContext, ITextDocumentSymbolProvider?>? luaOutlineProviderFactory)
+		=> [CreateLuaRegistration(CreateDocumentContributions(null, null, null, luaOutlineProviderFactory).Lua)];
 
 	private static ScriptingDocumentRegistration CreateLuaRegistration(ScriptingDocumentContributions contributions)
 		=> new(
@@ -280,7 +281,8 @@ public static class ScriptingWorkspaceProfileSelector
 	private static DocumentContributionSet CreateDocumentContributions(
 		ClassicScriptLanguageServices? classicScriptServices,
 		GameFlowLanguageServices? gameFlowServices,
-		TRXLanguageServices? trxServices)
+		TRXLanguageServices? trxServices,
+		Func<ScriptingDocumentContext, ITextDocumentSymbolProvider?>? luaOutlineProviderFactory)
 	{
 		var outlineFactory = classicScriptServices is not null || gameFlowServices is not null || trxServices is not null
 			? new DocumentOutlineNodesProviderFactory(
@@ -294,28 +296,28 @@ public static class ScriptingWorkspaceProfileSelector
 				ScriptingSettingsPageKind.ClassicScript,
 				ScriptingDocumentConfigurationKind.ClassicScript,
 				TypedDocumentCommandSurfaceProvider.CreateClassicScript(),
-				outlineFactory is null ? null : () => outlineFactory.CreateClassicScript(),
+				outlineFactory is null ? null : _ => outlineFactory.CreateClassicScript(),
 				new ClassicScriptDocumentStatusStripProvider()),
 			CreateContribution(
 				ScriptingSettingsPageKind.ClassicScript,
 				ScriptingDocumentConfigurationKind.ClassicScript,
 				TypedDocumentCommandSurfaceProvider.CreateStrings(),
-				outlineFactory is null ? null : () => outlineFactory.CreateStrings()),
+				outlineFactory is null ? null : _ => outlineFactory.CreateStrings()),
 			CreateContribution(
 				ScriptingSettingsPageKind.GameFlowScript,
 				ScriptingDocumentConfigurationKind.GameFlowScript,
 				TypedDocumentCommandSurfaceProvider.CreateGameFlowScript(),
-				outlineFactory is null ? null : () => outlineFactory.CreateGameFlowScript()),
+				outlineFactory is null ? null : _ => outlineFactory.CreateGameFlowScript()),
 			CreateContribution(
 				ScriptingSettingsPageKind.TRX,
 				ScriptingDocumentConfigurationKind.TRX,
 				TypedDocumentCommandSurfaceProvider.CreateTrx(),
-				outlineFactory is null ? null : () => outlineFactory.CreateTrx()),
+				outlineFactory is null ? null : _ => outlineFactory.CreateTrx()),
 			CreateContribution(
 				ScriptingSettingsPageKind.Lua,
 				ScriptingDocumentConfigurationKind.Lua,
 				TypedDocumentCommandSurfaceProvider.CreateLua(),
-				null),
+				luaOutlineProviderFactory),
 			new(
 				null,
 				ScriptingDocumentConfigurationKind.None,
@@ -326,7 +328,7 @@ public static class ScriptingWorkspaceProfileSelector
 		ScriptingSettingsPageKind settingsPageKind,
 		ScriptingDocumentConfigurationKind configurationKind,
 		IStudioDocumentCommandSurfaceProvider commandSurfaceProvider,
-		Func<ITextDocumentSymbolProvider?>? outlineProviderFactory,
+		Func<ScriptingDocumentContext, ITextDocumentSymbolProvider?>? outlineProviderFactory,
 		IStudioDocumentStatusStripProvider? statusStripProvider = null)
 	{
 		return new ScriptingDocumentContributions(

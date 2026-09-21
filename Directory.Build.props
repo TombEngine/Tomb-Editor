@@ -19,16 +19,19 @@
 
   <PropertyGroup>
     <Version>2.1</Version>
-    <NickelonyIDEKitCoreVersion Condition="'$(NickelonyIDEKitCoreVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitCoreVersion>
-    <NickelonyIDEKitIntelliSenseVersion Condition="'$(NickelonyIDEKitIntelliSenseVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitIntelliSenseVersion>
-    <NickelonyIDEKitWorkspaceVersion Condition="'$(NickelonyIDEKitWorkspaceVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitWorkspaceVersion>
-    <NickelonyIDEKitKeyBindingsVersion Condition="'$(NickelonyIDEKitKeyBindingsVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitKeyBindingsVersion>
-    <NickelonyIDEKitAvalonEditVersion Condition="'$(NickelonyIDEKitAvalonEditVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitAvalonEditVersion>
-    <NickelonyIDEKitAvalonEditIntelliSenseVersion Condition="'$(NickelonyIDEKitAvalonEditIntelliSenseVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitAvalonEditIntelliSenseVersion>
-    <NickelonyIDEKitAvalonEditExtrasVersion Condition="'$(NickelonyIDEKitAvalonEditExtrasVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitAvalonEditExtrasVersion>
-    <NickelonyIDEKitJsonSchemaVersion Condition="'$(NickelonyIDEKitJsonSchemaVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitJsonSchemaVersion>
-    <NickelonyIDEKitToolingVersion Condition="'$(NickelonyIDEKitToolingVersion)' == ''">1.0.0-preview.33</NickelonyIDEKitToolingVersion>
-    <NickelonyLanguageServerVersion Condition="'$(NickelonyLanguageServerVersion)' == ''">1.0.0-preview.33</NickelonyLanguageServerVersion>
+    <NickelonyIDEKitCoreVersion Condition="'$(NickelonyIDEKitCoreVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitCoreVersion>
+    <NickelonyIDEKitIntelliSenseVersion Condition="'$(NickelonyIDEKitIntelliSenseVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitIntelliSenseVersion>
+    <NickelonyIDEKitWorkspaceVersion Condition="'$(NickelonyIDEKitWorkspaceVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitWorkspaceVersion>
+    <NickelonyIDEKitWorkspaceViewsVersion Condition="'$(NickelonyIDEKitWorkspaceViewsVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitWorkspaceViewsVersion>
+    <NickelonyIDEKitKeyBindingsVersion Condition="'$(NickelonyIDEKitKeyBindingsVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitKeyBindingsVersion>
+    <NickelonyIDEKitKeyBindingsWpfVersion Condition="'$(NickelonyIDEKitKeyBindingsWpfVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitKeyBindingsWpfVersion>
+    <NickelonyIDEKitAvalonEditVersion Condition="'$(NickelonyIDEKitAvalonEditVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitAvalonEditVersion>
+    <NickelonyIDEKitAvalonEditLanguageFeaturesVersion Condition="'$(NickelonyIDEKitAvalonEditLanguageFeaturesVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitAvalonEditLanguageFeaturesVersion>
+    <NickelonyIDEKitAvalonEditMarkdownVersion Condition="'$(NickelonyIDEKitAvalonEditMarkdownVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitAvalonEditMarkdownVersion>
+    <NickelonyIDEKitAvalonEditTextMateVersion Condition="'$(NickelonyIDEKitAvalonEditTextMateVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitAvalonEditTextMateVersion>
+    <NickelonyIDEKitJsonSchemaVersion Condition="'$(NickelonyIDEKitJsonSchemaVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitJsonSchemaVersion>
+    <NickelonyIDEKitProcessesVersion Condition="'$(NickelonyIDEKitProcessesVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitProcessesVersion>
+    <NickelonyLanguageServerVersion Condition="'$(NickelonyLanguageServerVersion)' == ''">1.0.0-preview.38</NickelonyLanguageServerVersion>
     <Company>Tomb Engine Team</Company>
     <Copyright>Copyright © Tomb Engine Team 2017 - 2026</Copyright>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>

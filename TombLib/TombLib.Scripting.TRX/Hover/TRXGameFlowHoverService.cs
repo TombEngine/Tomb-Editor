@@ -1,3 +1,4 @@
+using Nickelony.IDEKit.IntelliSense;
 using Nickelony.IDEKit.IntelliSense.Hover;
 using NLog;
 using System;
@@ -45,7 +46,7 @@ public sealed class TRXGameFlowHoverService : ITextHoverProvider
 			string? content = FindHoverInfo(model, propertyName);
 			return string.IsNullOrWhiteSpace(content)
 				? null
-				: new TextHoverInfo(content, TextHoverContentKind.Markdown, propertyName);
+				: new TextHoverInfo(content, TextMarkupKind.Markdown) { SymbolName = propertyName };
 		}
 		catch (Exception exception)
 		{

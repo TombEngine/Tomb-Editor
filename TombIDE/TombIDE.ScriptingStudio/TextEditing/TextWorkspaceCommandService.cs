@@ -3,6 +3,8 @@
 using Nickelony.LanguageServer.Abstractions;
 using Nickelony.IDEKit.AvalonEdit.Editing;
 using Nickelony.IDEKit.Core.Editing;
+using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.Workspace.Editing;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,16 +13,16 @@ using TombLib.Scripting.UI.Editing;
 
 namespace TombIDE.ScriptingStudio.TextEditing;
 
-internal sealed class TextWorkspaceCommandService(TextWorkspaceEditApplier workspaceEditApplier, ITextEditProvider? editProvider = null)
+internal sealed class TextWorkspaceCommandService(TextWorkspaceEditApplier workspaceEditApplier, ILanguageServerRenameProvider? editProvider = null)
 {
-	private readonly ITextEditProvider? _editProvider = editProvider;
+	private readonly ILanguageServerRenameProvider? _editProvider = editProvider;
 	private readonly TextWorkspaceEditApplier _workspaceEditApplier = workspaceEditApplier ?? throw new ArgumentNullException(nameof(workspaceEditApplier));
 
 	public bool SupportsRename => _editProvider?.SupportsRename == true;
 
 	public async Task<TextWorkspaceCommandResult> FormatDocumentAsync(
 		TextEditorBase editor,
-		ITextFormattingProvider formattingProvider,
+		ILanguageServerFormattingProvider formattingProvider,
 		CancellationToken cancellationToken = default)
 	{
 		ArgumentNullException.ThrowIfNull(editor);
@@ -32,19 +34,19 @@ internal sealed class TextWorkspaceCommandService(TextWorkspaceEditApplier works
 				.FormatDocumentAsync(CreateFormatRequest(editor), cancellationToken)
 				.ConfigureAwait(true);
 
-			if (workspaceEdit is null || !workspaceEdit.HasEdits)
+			if (workspaceEdit is null || !workspaceEdit.HasChanges)
 				return TextWorkspaceCommandResult.NoChanges;
 
 			TextWorkspaceEditSelectionState selectionState = TextWorkspaceEditSelectionState.Capture(editor, editor.FilePath);
-			TextWorkspaceEditApplicationResult result = _workspaceEditApplier.Apply(workspaceEdit, selectionState);
+			WorkspaceEditApplicationResult result = _workspaceEditApplier.Apply(workspaceEdit, selectionState);
 
-			return result.Status switch
+			return result.Outcome switch
 			{
-				TextWorkspaceEditApplicationStatus.Completed when result.HasChanges => TextWorkspaceCommandResult.Applied(result),
-				TextWorkspaceEditApplicationStatus.Completed => TextWorkspaceCommandResult.NoChanges,
-				TextWorkspaceEditApplicationStatus.ValidationFailed => TextWorkspaceCommandResult.ValidationFailed(result),
-				TextWorkspaceEditApplicationStatus.PartiallyApplied => TextWorkspaceCommandResult.PartiallyApplied(result),
-				_ => throw new InvalidOperationException($"Unknown workspace edit status: {result.Status}.")
+				WorkspaceEditApplicationOutcome.Completed when result.ChangeSet.HasChanges => TextWorkspaceCommandResult.Applied(result),
+				WorkspaceEditApplicationOutcome.Completed => TextWorkspaceCommandResult.NoChanges,
+				WorkspaceEditApplicationOutcome.ValidationFailed => TextWorkspaceCommandResult.ValidationFailed(result),
+				WorkspaceEditApplicationOutcome.PartiallyApplied => TextWorkspaceCommandResult.PartiallyApplied(result),
+				_ => throw new InvalidOperationException($"Unknown workspace edit status: {result.Outcome}.")
 			};
 		}
 		catch (OperationCanceledException)
@@ -68,21 +70,21 @@ internal sealed class TextWorkspaceCommandService(TextWorkspaceEditApplier works
 		try
 		{
 			TextWorkspaceEdit? workspaceEdit = await _editProvider
-				.RenameSymbolAsync(new TextRenameRequest(editor.FilePath, editor.Text, line, column, newName), cancellationToken)
+				.RenameSymbolAsync(new TextRenameRequest(editor.FilePath, editor.Text, new TextPosition(line, column), newName), cancellationToken)
 				.ConfigureAwait(true);
 
-			if (workspaceEdit is null || !workspaceEdit.HasEdits)
+			if (workspaceEdit is null || !workspaceEdit.HasChanges)
 				return TextWorkspaceCommandResult.NoChanges;
 
-			TextWorkspaceEditApplicationResult result = _workspaceEditApplier.Apply(workspaceEdit);
+			WorkspaceEditApplicationResult result = _workspaceEditApplier.Apply(workspaceEdit);
 
-			return result.Status switch
+			return result.Outcome switch
 			{
-				TextWorkspaceEditApplicationStatus.Completed when result.HasChanges => TextWorkspaceCommandResult.Applied(result),
-				TextWorkspaceEditApplicationStatus.Completed => TextWorkspaceCommandResult.NoChanges,
-				TextWorkspaceEditApplicationStatus.ValidationFailed => TextWorkspaceCommandResult.ValidationFailed(result),
-				TextWorkspaceEditApplicationStatus.PartiallyApplied => TextWorkspaceCommandResult.PartiallyApplied(result),
-				_ => throw new InvalidOperationException($"Unknown workspace edit status: {result.Status}.")
+				WorkspaceEditApplicationOutcome.Completed when result.ChangeSet.HasChanges => TextWorkspaceCommandResult.Applied(result),
+				WorkspaceEditApplicationOutcome.Completed => TextWorkspaceCommandResult.NoChanges,
+				WorkspaceEditApplicationOutcome.ValidationFailed => TextWorkspaceCommandResult.ValidationFailed(result),
+				WorkspaceEditApplicationOutcome.PartiallyApplied => TextWorkspaceCommandResult.PartiallyApplied(result),
+				_ => throw new InvalidOperationException($"Unknown workspace edit status: {result.Outcome}.")
 			};
 		}
 		catch (OperationCanceledException)

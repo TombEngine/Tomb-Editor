@@ -62,6 +62,10 @@
 					Binding="{Binding ColumnNumber}"
 					Header="{Binding ColumnHeader}" />
 				<DataGridTextColumn
+					Width="140"
+					Binding="{Binding Source}"
+					Header="{Binding SourceHeader}" />
+				<DataGridTextColumn
 					Width="*"
 					Binding="{Binding Message}"
 					Header="{Binding MessageHeader}" />

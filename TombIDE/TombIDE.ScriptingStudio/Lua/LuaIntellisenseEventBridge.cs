@@ -14,12 +14,12 @@ internal sealed class LuaIntellisenseEventBridge : ILuaIntellisenseBridge
 {
 	private readonly IAvalonDockHost _dockHost;
 	private readonly IMessenger _messenger;
-	private readonly ILuaIntelliSenseProvider _intellisenseProvider;
+	private readonly ILuaLanguageServerIntelliSenseProvider _intellisenseProvider;
 
 	public LuaIntellisenseEventBridge(
 		IAvalonDockHost dockHost,
 		IMessenger messenger,
-		ILuaIntelliSenseProvider intellisenseProvider)
+		ILuaLanguageServerIntelliSenseProvider intellisenseProvider)
 	{
 		_dockHost = dockHost ?? throw new ArgumentNullException(nameof(dockHost));
 		_messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
@@ -49,20 +49,20 @@ internal sealed class LuaIntellisenseEventBridge : ILuaIntellisenseBridge
 	public void Dispose()
 		=> Detach();
 
-	private void IntellisenseProvider_DiagnosticsUpdated(string filePath, IReadOnlyList<TextEditorDiagnostic> diagnostics)
-		=> DispatchToUi(() => _messenger.Send(new LuaDiagnosticsUpdatedMessage(new LuaDiagnosticsPayload(filePath, diagnostics))));
+	private void IntellisenseProvider_DiagnosticsUpdated(object? sender, DiagnosticsUpdatedEventArgs eventArgs)
+		=> DispatchToUi(() => _messenger.Send(new LuaDiagnosticsUpdatedMessage(new LuaDiagnosticsPayload(eventArgs.FilePath, eventArgs.Diagnostics))));
 
-	private void IntellisenseProvider_SemanticTokensUpdated(string filePath, IReadOnlyList<LuaSemanticToken> semanticTokens)
-		=> DispatchToUi(() => _messenger.Send(new LuaSemanticTokensUpdatedMessage(new LuaSemanticTokensPayload(filePath, semanticTokens))));
+	private void IntellisenseProvider_SemanticTokensUpdated(object? sender, SemanticTokensUpdatedEventArgs eventArgs)
+		=> DispatchToUi(() => _messenger.Send(new LuaSemanticTokensUpdatedMessage(new LuaSemanticTokensPayload(eventArgs.FilePath, eventArgs.SemanticTokens))));
 
-	private void IntellisenseProvider_CapabilitiesChanged()
+	private void IntellisenseProvider_CapabilitiesChanged(object? sender, EventArgs e)
 		=> DispatchToUi(() => _messenger.Send(new ShellUiRefreshMessage()));
 
-	private void IntellisenseProvider_StartupFailed(LanguageServerStartupFailure failure)
-		=> DispatchToUi(() => _messenger.Send(new LuaStartupFailedMessage(failure)));
+	private void IntellisenseProvider_StartupFailed(object? sender, StartupFailedEventArgs eventArgs)
+		=> DispatchToUi(() => _messenger.Send(new LuaStartupFailedMessage(eventArgs.Failure)));
 
-	private void IntellisenseProvider_WorkspaceWatcherFailed(WorkspaceWatcherFailure failure)
-		=> DispatchToUi(() => _messenger.Send(new LuaWorkspaceWatcherFailedMessage(failure)));
+	private void IntellisenseProvider_WorkspaceWatcherFailed(object? sender, WorkspaceWatcherFailedEventArgs eventArgs)
+		=> DispatchToUi(() => _messenger.Send(new LuaWorkspaceWatcherFailedMessage(eventArgs.Failure)));
 
 	private void DispatchToUi(Action action)
 	{

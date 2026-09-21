@@ -1,11 +1,13 @@
 #nullable enable
 
 using System;
-using System.Collections.Generic;
 using ICSharpCode.AvalonEdit.Document;
 using Nickelony.IDEKit.AvalonEdit.Editing;
 using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.Workspace.Documents;
+using TombIDE.ScriptingStudio.Workspace;
+using TombLib.Scripting.UI.Editing;
+using Nickelony.IDEKit.Core.Editing;
 
 namespace TombIDE.ScriptingStudio.TextEditing;
 
@@ -13,7 +15,7 @@ namespace TombIDE.ScriptingStudio.TextEditing;
 /// Projects a workspace document into an AvalonEdit text editor, publishing edits and
 /// acknowledging store mutations while keeping the editor's document as the local view.
 /// </summary>
-internal sealed class TextEditorWorkspaceView : IWorkspaceDocumentView, ITextEditTargetVersion
+internal sealed class TextEditorWorkspaceView : IWorkspaceDocumentDeleteGuardView, ITextEditTarget, ITextEditTargetVersion, IWorkspaceScriptView, IWorkspaceViewPendingEdits
 {
 	private readonly ICSharpCode.AvalonEdit.TextEditor _editor;
 	private readonly IAvalonEditWorkspaceViewHost _host;
@@ -70,14 +72,14 @@ internal sealed class TextEditorWorkspaceView : IWorkspaceDocumentView, ITextEdi
 	public long Version => _version;
 
 	/// <inheritdoc/>
-	public void Apply(IReadOnlyList<TextEditOperation> operations)
+	public void Apply(PreparedTextEdits edits)
 	{
-		ArgumentNullException.ThrowIfNull(operations);
-		if (operations.Count == 0)
+		ArgumentNullException.ThrowIfNull(edits);
+		if (edits.Operations.Count == 0)
 			return;
 
 		using (IDisposable suppression = BeginSuppression())
-			_editTarget.Apply(operations);
+			_editTarget.Apply(edits);
 
 		_host.ProcessContentChange(_text);
 		PublishCurrentContent(_text);
@@ -89,22 +91,22 @@ internal sealed class TextEditorWorkspaceView : IWorkspaceDocumentView, ITextEdi
 		ArgumentNullException.ThrowIfNull(snapshot);
 
 		if (_documentKey is not null)
-			return new WorkspaceDocumentViewOpenResult(WorkspaceDocumentViewOpenStatus.AlreadyOpen);
+			return new WorkspaceDocumentViewOpenResult(WorkspaceDocumentViewOpenOutcome.AlreadyOpen);
 
 		if (_hasPendingEdits || _hasConflict)
-			return new WorkspaceDocumentViewOpenResult(WorkspaceDocumentViewOpenStatus.Unavailable);
+			return new WorkspaceDocumentViewOpenResult(WorkspaceDocumentViewOpenOutcome.Unavailable);
 
 		try
 		{
 			ApplyAttachSnapshot(snapshot);
 			SetViewState(snapshot);
-			return new WorkspaceDocumentViewOpenResult(WorkspaceDocumentViewOpenStatus.Opened);
+			return new WorkspaceDocumentViewOpenResult(WorkspaceDocumentViewOpenOutcome.Opened);
 		}
 		catch (Exception exception)
 		{
 			ClearActiveEditTarget();
 			return new WorkspaceDocumentViewOpenResult(
-				WorkspaceDocumentViewOpenStatus.Unavailable,
+				WorkspaceDocumentViewOpenOutcome.Unavailable,
 				new WorkspaceOperationFailure("OpenFailed", exception.Message, exception));
 		}
 	}
@@ -116,36 +118,36 @@ internal sealed class TextEditorWorkspaceView : IWorkspaceDocumentView, ITextEdi
 
 		if (_documentKey is null)
 			return new WorkspaceDocumentViewRefreshResult(
-				WorkspaceDocumentViewRefreshStatus.UpdateFailed,
+				WorkspaceDocumentViewRefreshOutcome.Failed,
 				new WorkspaceOperationFailure("ViewNotAttached", "The view is not attached."));
 
 		if (snapshot.DocumentKey != _documentKey
 			|| !string.Equals(snapshot.DocumentId, _documentId, StringComparison.Ordinal))
 		{
 			_hasConflict = true;
-			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshStatus.MarkedStale);
+			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshOutcome.MarkedStale);
 		}
 
 		if (snapshot.Version < _version)
-			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshStatus.MarkedStale);
+			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshOutcome.MarkedStale);
 
 		if (_hasPendingEdits || _hasConflict)
 		{
 			_hasConflict = true;
-			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshStatus.MarkedStale);
+			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshOutcome.MarkedStale);
 		}
 
 		try
 		{
 			ApplyRefreshedSnapshot(snapshot);
 			SetViewState(snapshot);
-			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshStatus.Refreshed);
+			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshOutcome.Refreshed);
 		}
 		catch (Exception exception)
 		{
 			_hasConflict = true;
 			return new WorkspaceDocumentViewRefreshResult(
-				WorkspaceDocumentViewRefreshStatus.UpdateFailed,
+				WorkspaceDocumentViewRefreshOutcome.Failed,
 				new WorkspaceOperationFailure("ViewRefreshFailed", exception.Message, exception));
 		}
 	}
@@ -158,7 +160,7 @@ internal sealed class TextEditorWorkspaceView : IWorkspaceDocumentView, ITextEdi
 		if (_documentKey is null
 			|| snapshot.DocumentKey != _documentKey
 			|| !string.Equals(snapshot.DocumentId, _documentId, StringComparison.Ordinal))
-			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshStatus.MarkedStale);
+			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshOutcome.MarkedStale);
 
 		try
 		{
@@ -172,19 +174,19 @@ internal sealed class TextEditorWorkspaceView : IWorkspaceDocumentView, ITextEdi
 			_hasConflict = false;
 			_host.RecordPersistedContent(snapshot.Content);
 			_host.IsContentChanged = snapshot.IsDirty;
-			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshStatus.Refreshed);
+			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshOutcome.Refreshed);
 		}
 		catch (Exception exception)
 		{
 			_hasConflict = true;
 			return new WorkspaceDocumentViewRefreshResult(
-				WorkspaceDocumentViewRefreshStatus.UpdateFailed,
+				WorkspaceDocumentViewRefreshOutcome.Failed,
 				new WorkspaceOperationFailure("ViewDiscardFailed", exception.Message, exception));
 		}
 	}
 
 	/// <inheritdoc/>
-	public WorkspaceDocumentViewIdentityResult AcknowledgeIdentity(WorkspaceDocumentIdentityChange change)
+	public WorkspaceDocumentViewIdentityResult AcknowledgeIdentity(WorkspaceDocumentViewIdentityChange change)
 	{
 		ArgumentNullException.ThrowIfNull(change);
 
@@ -192,7 +194,7 @@ internal sealed class TextEditorWorkspaceView : IWorkspaceDocumentView, ITextEdi
 			|| _documentKey != change.OldDocumentKey
 			|| !string.Equals(_documentId, change.OldDocumentId, StringComparison.Ordinal))
 			return new WorkspaceDocumentViewIdentityResult(
-				WorkspaceDocumentViewIdentityStatus.Failed,
+				WorkspaceDocumentViewIdentityOutcome.Failed,
 				new WorkspaceOperationFailure("ViewIdentityMismatch", "The view is not attached to the expected document identity."));
 
 		try
@@ -201,42 +203,54 @@ internal sealed class TextEditorWorkspaceView : IWorkspaceDocumentView, ITextEdi
 			SetViewState(change.Snapshot);
 			_hasPendingEdits = false;
 			_hasConflict = false;
-			return new WorkspaceDocumentViewIdentityResult(WorkspaceDocumentViewIdentityStatus.Updated);
+			return new WorkspaceDocumentViewIdentityResult(WorkspaceDocumentViewIdentityOutcome.Updated);
 		}
 		catch (Exception exception)
 		{
 			_hasConflict = true;
 			return new WorkspaceDocumentViewIdentityResult(
-				WorkspaceDocumentViewIdentityStatus.Failed,
+				WorkspaceDocumentViewIdentityOutcome.Failed,
 				new WorkspaceOperationFailure("ViewIdentityUpdateFailed", exception.Message, exception));
 		}
 	}
 
 	/// <inheritdoc/>
-	public WorkspaceDocumentViewDeleteGuardResult SetDeleteGuard(bool active)
+	public WorkspaceDocumentViewDeleteGuardResult ApplyDeleteGuard()
 	{
-		if (_deleteGuardActive == active)
-			return new WorkspaceDocumentViewDeleteGuardResult(WorkspaceDocumentViewDeleteGuardStatus.Applied);
+		if (_deleteGuardActive)
+			return new WorkspaceDocumentViewDeleteGuardResult(WorkspaceDocumentViewDeleteGuardOutcome.Succeeded);
 
 		try
 		{
-			if (active)
-			{
-				_wasReadOnly = _editor.IsReadOnly;
-				_editor.IsReadOnly = true;
-			}
-			else
-			{
-				_editor.IsReadOnly = _wasReadOnly;
-			}
-
-			_deleteGuardActive = active;
-			return new WorkspaceDocumentViewDeleteGuardResult(WorkspaceDocumentViewDeleteGuardStatus.Applied);
+			_wasReadOnly = _editor.IsReadOnly;
+			_editor.IsReadOnly = true;
+			_deleteGuardActive = true;
+			return new WorkspaceDocumentViewDeleteGuardResult(WorkspaceDocumentViewDeleteGuardOutcome.Succeeded);
 		}
 		catch (Exception exception)
 		{
 			return new WorkspaceDocumentViewDeleteGuardResult(
-				WorkspaceDocumentViewDeleteGuardStatus.Failed,
+				WorkspaceDocumentViewDeleteGuardOutcome.Failed,
+				new WorkspaceOperationFailure("DeleteBarrierUpdateFailed", exception.Message, exception));
+		}
+	}
+
+	/// <inheritdoc/>
+	public WorkspaceDocumentViewDeleteGuardResult ReleaseDeleteGuard()
+	{
+		if (!_deleteGuardActive)
+			return new WorkspaceDocumentViewDeleteGuardResult(WorkspaceDocumentViewDeleteGuardOutcome.Succeeded);
+
+		try
+		{
+			_editor.IsReadOnly = _wasReadOnly;
+			_deleteGuardActive = false;
+			return new WorkspaceDocumentViewDeleteGuardResult(WorkspaceDocumentViewDeleteGuardOutcome.Succeeded);
+		}
+		catch (Exception exception)
+		{
+			return new WorkspaceDocumentViewDeleteGuardResult(
+				WorkspaceDocumentViewDeleteGuardOutcome.Failed,
 				new WorkspaceOperationFailure("DeleteBarrierUpdateFailed", exception.Message, exception));
 		}
 	}
@@ -248,23 +262,23 @@ internal sealed class TextEditorWorkspaceView : IWorkspaceDocumentView, ITextEdi
 
 		if (_documentKey is null)
 			return new WorkspaceDocumentViewRefreshResult(
-				WorkspaceDocumentViewRefreshStatus.UpdateFailed,
+				WorkspaceDocumentViewRefreshOutcome.Failed,
 				new WorkspaceOperationFailure("ViewNotAttached", "The view is not attached."));
 
-		if (result.Status is not (WorkspaceDocumentMutationStatus.Replaced or WorkspaceDocumentMutationStatus.NoChange)
+		if (result.Outcome is not (WorkspaceDocumentMutationOutcome.Changed or WorkspaceDocumentMutationOutcome.NoChange)
 			|| result.Snapshot is null)
 		{
 			_hasConflict = true;
-			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshStatus.MarkedStale);
+			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshOutcome.MarkedStale);
 		}
 
 		try
 		{
-			if (result.RequestedDocumentKey != _documentKey
-				|| !string.Equals(result.RequestedDocumentId, _documentId, StringComparison.Ordinal))
+			if (result.RequestedIdentity.DocumentKey != _documentKey
+				|| !string.Equals(result.RequestedIdentity.DocumentId, _documentId, StringComparison.Ordinal))
 			{
 				_hasConflict = true;
-				return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshStatus.MarkedStale);
+				return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshOutcome.MarkedStale);
 			}
 
 			if (!string.Equals(Text, result.Snapshot.Content, StringComparison.Ordinal))
@@ -273,13 +287,13 @@ internal sealed class TextEditorWorkspaceView : IWorkspaceDocumentView, ITextEdi
 			SetViewState(result.Snapshot);
 			_hasPendingEdits = false;
 			_hasConflict = false;
-			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshStatus.Refreshed);
+			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshOutcome.Refreshed);
 		}
 		catch (Exception exception)
 		{
 			_hasConflict = true;
 			return new WorkspaceDocumentViewRefreshResult(
-				WorkspaceDocumentViewRefreshStatus.UpdateFailed,
+				WorkspaceDocumentViewRefreshOutcome.Failed,
 				new WorkspaceOperationFailure("ViewAcknowledgeFailed", exception.Message, exception));
 		}
 	}
@@ -288,7 +302,7 @@ internal sealed class TextEditorWorkspaceView : IWorkspaceDocumentView, ITextEdi
 	public void Close()
 	{
 		if (_deleteGuardActive)
-			SetDeleteGuard(false);
+			ReleaseDeleteGuard();
 
 		_editor.Document.Changed -= EditorDocument_Changed;
 		ClearActiveEditTarget();
@@ -322,9 +336,7 @@ internal sealed class TextEditorWorkspaceView : IWorkspaceDocumentView, ITextEdi
 			this,
 			new WorkspaceDocumentViewApplyRequestedEventArgs(
 				new WorkspaceDocumentReplaceRequest(
-					_documentKey,
-					_documentId,
-					_version,
+					new(_documentKey.Value, _documentId, _version),
 					content,
 					_fileFormat)));
 	}
@@ -332,7 +344,7 @@ internal sealed class TextEditorWorkspaceView : IWorkspaceDocumentView, ITextEdi
 	private void ApplyAttachSnapshot(WorkspaceDocumentSnapshot snapshot)
 	{
 		using IDisposable suppression = BeginSuppression();
-		TextWorkspaceEditSelectionState selectionState = TextWorkspaceEditSelectionState.Capture(_editor, _host.FilePath);
+		TextWorkspaceEditSelectionState selectionState = TextWorkspaceEditSelectionState.Capture(_editor, _host.FilePath ?? snapshot.DisplayPath);
 
 		if (string.Equals(Text, snapshot.Content, StringComparison.Ordinal))
 			_host.ApplyAuthoritativeBaseline(snapshot.DisplayPath, snapshot.Content);
@@ -346,7 +358,7 @@ internal sealed class TextEditorWorkspaceView : IWorkspaceDocumentView, ITextEdi
 	private void ApplyRefreshedSnapshot(WorkspaceDocumentSnapshot snapshot)
 	{
 		using IDisposable suppression = BeginSuppression();
-		TextWorkspaceEditSelectionState selectionState = TextWorkspaceEditSelectionState.Capture(_editor, _host.FilePath);
+		TextWorkspaceEditSelectionState selectionState = TextWorkspaceEditSelectionState.Capture(_editor, _host.FilePath ?? snapshot.DisplayPath);
 
 		_host.FilePath = snapshot.DisplayPath;
 		if (!string.Equals(Text, snapshot.Content, StringComparison.Ordinal))

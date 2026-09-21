@@ -26,10 +26,10 @@ public class ClassicScriptSignatureHelpProviderTests
 	public void GetSignatureHelp_InsideKnownCommand_ReturnsSyntaxAndActiveParameter()
 	{
 		const string text = "[Level]\nLegend= ";
-		TextSignatureHelpInfo? info = _signatureHelpProvider.GetSignatureHelp(new TextSignatureHelpRequest(text, text.Length));
+		TextSignatureHelp? info = _signatureHelpProvider.GetSignatureHelp(new TextSignatureHelpRequest(text, text.Length));
 
 		Assert.IsNotNull(info);
-		StringAssert.Contains(info!.Label, "Legend");
+		StringAssert.Contains(info!.ActiveSignature.Label, "Legend");
 		Assert.IsTrue(info.ActiveParameterIndex >= 0);
 	}
 
@@ -37,7 +37,7 @@ public class ClassicScriptSignatureHelpProviderTests
 	public void GetSignatureHelp_OutsideKnownCommand_ReturnsNull()
 	{
 		const string text = "not a command at all";
-		TextSignatureHelpInfo? info = _signatureHelpProvider.GetSignatureHelp(new TextSignatureHelpRequest(text, 5));
+		TextSignatureHelp? info = _signatureHelpProvider.GetSignatureHelp(new TextSignatureHelpRequest(text, 5));
 
 		Assert.IsNull(info);
 	}
@@ -46,7 +46,7 @@ public class ClassicScriptSignatureHelpProviderTests
 	public void GetSignatureHelp_InCommentLine_ReturnsNull()
 	{
 		const string text = "[Level]\n; Legend= commented out";
-		TextSignatureHelpInfo? info = _signatureHelpProvider.GetSignatureHelp(new TextSignatureHelpRequest(text, text.Length));
+		TextSignatureHelp? info = _signatureHelpProvider.GetSignatureHelp(new TextSignatureHelpRequest(text, text.Length));
 
 		Assert.IsNull(info);
 	}

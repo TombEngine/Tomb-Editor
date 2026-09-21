@@ -1,7 +1,9 @@
 using CommunityToolkit.Mvvm.Messaging;
 using Moq;
 using Nickelony.LanguageServer.Abstractions;
+using Nickelony.IDEKit.Core.Diagnostics;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
+using Nickelony.LanguageServer.Client;
 using Nickelony.LanguageServer.Lua;
 using System;
 using System.Collections.Generic;
@@ -27,7 +29,7 @@ public sealed class LuaIntellisenseEventBridgeTests
     {
         StaTestHelper.RunInSta(() =>
         {
-            var provider = new Mock<ILuaIntelliSenseProvider>();
+            var provider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
             var messenger = new WeakReferenceMessenger();
             var recipient = new StatusMessageRecipient();
             messenger.Register<LuaStartupFailedMessage>(recipient);
@@ -37,8 +39,8 @@ public sealed class LuaIntellisenseEventBridgeTests
             var watcherFailure = new WorkspaceWatcherFailure("watcher failed");
 
             bridge.Attach();
-            provider.Raise(item => item.StartupFailed += null, startupFailure);
-            provider.Raise(item => item.WorkspaceWatcherFailed += null, watcherFailure);
+            provider.Raise(item => item.StartupFailed += null, new StartupFailedEventArgs(startupFailure));
+            provider.Raise(item => item.WorkspaceWatcherFailed += null, new WorkspaceWatcherFailedEventArgs(watcherFailure));
 
             Assert.AreEqual(startupFailure, recipient.StartupFailure);
             Assert.AreEqual(watcherFailure, recipient.WorkspaceWatcherFailure);
@@ -52,7 +54,7 @@ public sealed class LuaIntellisenseEventBridgeTests
     {
         StaTestHelper.RunInSta(() =>
         {
-            var provider = new Mock<ILuaIntelliSenseProvider>();
+            var provider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
             var messenger = new WeakReferenceMessenger();
             var recipient = new StatusMessageRecipient();
             messenger.Register<LuaStartupFailedMessage>(recipient);
@@ -61,8 +63,8 @@ public sealed class LuaIntellisenseEventBridgeTests
 
             bridge.Attach();
             bridge.Detach();
-            provider.Raise(item => item.StartupFailed += null, new LanguageServerStartupFailure("startup failed", false));
-            provider.Raise(item => item.WorkspaceWatcherFailed += null, new WorkspaceWatcherFailure("watcher failed"));
+            provider.Raise(item => item.StartupFailed += null, new StartupFailedEventArgs(new LanguageServerStartupFailure("startup failed", false)));
+            provider.Raise(item => item.WorkspaceWatcherFailed += null, new WorkspaceWatcherFailedEventArgs(new WorkspaceWatcherFailure("watcher failed")));
 
             Assert.IsNull(recipient.StartupFailure);
             Assert.IsNull(recipient.WorkspaceWatcherFailure);
@@ -76,7 +78,7 @@ public sealed class LuaIntellisenseEventBridgeTests
     {
         StaTestHelper.RunInSta(() =>
         {
-            var provider = new Mock<ILuaIntelliSenseProvider>();
+            var provider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
             var messenger = new WeakReferenceMessenger();
             var recipient = new StatusMessageRecipient();
             messenger.Register<LuaStartupFailedMessage>(recipient);
@@ -85,8 +87,8 @@ public sealed class LuaIntellisenseEventBridgeTests
 
             bridge.Attach();
             bridge.Dispose();
-            provider.Raise(item => item.StartupFailed += null, new LanguageServerStartupFailure("startup failed", false));
-            provider.Raise(item => item.WorkspaceWatcherFailed += null, new WorkspaceWatcherFailure("watcher failed"));
+            provider.Raise(item => item.StartupFailed += null, new StartupFailedEventArgs(new LanguageServerStartupFailure("startup failed", false)));
+            provider.Raise(item => item.WorkspaceWatcherFailed += null, new WorkspaceWatcherFailedEventArgs(new WorkspaceWatcherFailure("watcher failed")));
 
             provider.Verify(item => item.Dispose(), Times.Never);
             Assert.IsNull(recipient.StartupFailure);
@@ -99,18 +101,18 @@ public sealed class LuaIntellisenseEventBridgeTests
     {
         StaTestHelper.RunInSta(() =>
         {
-            var provider = new Mock<ILuaIntelliSenseProvider>();
+            var provider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
             var messenger = new WeakReferenceMessenger();
             int refreshCount = 0;
             messenger.Register<ShellUiRefreshMessage>(new RefreshRecipient(() => refreshCount++));
             var bridge = CreateBridge(provider.Object, messenger);
 
             bridge.Attach();
-            provider.Raise(item => item.CapabilitiesChanged += null);
+            provider.Raise(item => item.CapabilitiesChanged += null, EventArgs.Empty);
             Assert.AreEqual(1, refreshCount);
 
             bridge.Detach();
-            provider.Raise(item => item.CapabilitiesChanged += null);
+            provider.Raise(item => item.CapabilitiesChanged += null, EventArgs.Empty);
             Assert.AreEqual(1, refreshCount);
 
             bridge.Dispose();
@@ -122,7 +124,7 @@ public sealed class LuaIntellisenseEventBridgeTests
     {
         StaTestHelper.RunInSta(() =>
         {
-            var provider = new Mock<ILuaIntelliSenseProvider>();
+            var provider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
             var messenger = new WeakReferenceMessenger();
             var recipient = new DocumentUpdateRecipient();
             messenger.Register<LuaDiagnosticsUpdatedMessage>(recipient);
@@ -131,16 +133,16 @@ public sealed class LuaIntellisenseEventBridgeTests
             const string filePath = @"C:\Scripts\tracked.lua";
             var diagnostics = new[]
             {
-                new TextEditorDiagnostic(TextEditorDiagnosticSeverity.Warning, "unused", 0, 5)
+                new TextDiagnostic(TextDiagnosticSeverity.Warning, "unused", 0, 5)
             };
             var semanticTokens = new[]
             {
-                new LuaSemanticToken(0, 0, 5, "variable", [])
+                new SemanticToken(0, 0, 5, "variable", [])
             };
 
             bridge.Attach();
-            provider.Raise(item => item.DiagnosticsUpdated += null, filePath, diagnostics);
-            provider.Raise(item => item.SemanticTokensUpdated += null, filePath, semanticTokens);
+            provider.Raise(item => item.DiagnosticsUpdated += null, new DiagnosticsUpdatedEventArgs(filePath, diagnostics));
+            provider.Raise(item => item.SemanticTokensUpdated += null, new SemanticTokensUpdatedEventArgs(filePath, semanticTokens));
 
             Assert.AreEqual(filePath, recipient.Diagnostics?.FilePath);
             CollectionAssert.AreEqual(diagnostics, recipient.Diagnostics?.Diagnostics.ToArray());
@@ -148,8 +150,8 @@ public sealed class LuaIntellisenseEventBridgeTests
             CollectionAssert.AreEqual(semanticTokens, recipient.SemanticTokens?.SemanticTokens.ToArray());
 
             bridge.Detach();
-            provider.Raise(item => item.DiagnosticsUpdated += null, @"C:\Scripts\late.lua", diagnostics);
-            provider.Raise(item => item.SemanticTokensUpdated += null, @"C:\Scripts\late.lua", semanticTokens);
+            provider.Raise(item => item.DiagnosticsUpdated += null, new DiagnosticsUpdatedEventArgs(@"C:\Scripts\late.lua", diagnostics));
+            provider.Raise(item => item.SemanticTokensUpdated += null, new SemanticTokensUpdatedEventArgs(@"C:\Scripts\late.lua", semanticTokens));
 
             Assert.AreEqual(filePath, recipient.Diagnostics?.FilePath);
             Assert.AreEqual(filePath, recipient.SemanticTokens?.FilePath);
@@ -158,7 +160,7 @@ public sealed class LuaIntellisenseEventBridgeTests
     }
 
     private static LuaIntellisenseEventBridge CreateBridge(
-        ILuaIntelliSenseProvider provider,
+        ILuaLanguageServerIntelliSenseProvider provider,
         IMessenger messenger)
     {
         var dockHost = new Mock<IAvalonDockHost>();
@@ -195,7 +197,7 @@ public sealed class LuaIntellisenseEventBridgeTests
 
         Assert.IsNotNull(references);
         StaTestHelper.AssertCollected(references.Editor, nameof(LuaEditor));
-        StaTestHelper.AssertCollected(references.Provider, nameof(ILuaIntelliSenseProvider));
+        StaTestHelper.AssertCollected(references.Provider, nameof(ILuaLanguageServerIntelliSenseProvider));
         StaTestHelper.AssertCollected(references.Bridge, nameof(LuaIntellisenseEventBridge));
         StaTestHelper.AssertCollected(references.Coordinator, nameof(LuaDocumentLifecycleCoordinator));
         StaTestHelper.AssertCollected(references.Messenger, nameof(IMessenger));
@@ -216,7 +218,7 @@ public sealed class LuaIntellisenseEventBridgeTests
         foreach (WorkspaceReferences workspace in references)
         {
             StaTestHelper.AssertCollected(workspace.Editor, nameof(LuaEditor));
-            StaTestHelper.AssertCollected(workspace.Provider, nameof(ILuaIntelliSenseProvider));
+            StaTestHelper.AssertCollected(workspace.Provider, nameof(ILuaLanguageServerIntelliSenseProvider));
             StaTestHelper.AssertCollected(workspace.Bridge, nameof(LuaIntellisenseEventBridge));
             StaTestHelper.AssertCollected(workspace.Coordinator, nameof(LuaDocumentLifecycleCoordinator));
             StaTestHelper.AssertCollected(workspace.Messenger, nameof(IMessenger));
@@ -225,7 +227,7 @@ public sealed class LuaIntellisenseEventBridgeTests
 
     private static WorkspaceReferences CreateAndDisposeWorkspace()
     {
-        var provider = new Mock<ILuaIntelliSenseProvider>();
+        var provider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
         var editor = new LuaEditor(new Version(1, 0))
         {
             FilePath = @"C:\Scripts\exercised.lua",
@@ -265,12 +267,10 @@ public sealed class LuaIntellisenseEventBridgeTests
         documentController.Raise(controller => controller.FileOpened += null, editor, EventArgs.Empty);
         provider.Raise(
             item => item.DiagnosticsUpdated += null,
-            editor.FilePath,
-            Array.Empty<TextEditorDiagnostic>());
+            new DiagnosticsUpdatedEventArgs(editor.FilePath, Array.Empty<TextDiagnostic>()));
         provider.Raise(
             item => item.SemanticTokensUpdated += null,
-            editor.FilePath,
-            new[] { new LuaSemanticToken(0, 6, 5, "variable", Array.Empty<string>()) });
+            new SemanticTokensUpdatedEventArgs(editor.FilePath, new[] { new SemanticToken(0, 6, 5, "variable", Array.Empty<string>()) }));
         Assert.AreEqual(1, updateRecipient.DiagnosticsCount);
         Assert.AreEqual(1, updateRecipient.SemanticTokensCount);
         documentController.Raise(controller => controller.EditorClosed += null, new EditorControlEventArgs(editor));
@@ -278,12 +278,10 @@ public sealed class LuaIntellisenseEventBridgeTests
         coordinator.Dispose();
         provider.Raise(
             item => item.DiagnosticsUpdated += null,
-            editor.FilePath,
-            Array.Empty<TextEditorDiagnostic>());
+            new DiagnosticsUpdatedEventArgs(editor.FilePath, Array.Empty<TextDiagnostic>()));
         provider.Raise(
             item => item.SemanticTokensUpdated += null,
-            editor.FilePath,
-            Array.Empty<LuaSemanticToken>());
+            new SemanticTokensUpdatedEventArgs(editor.FilePath, Array.Empty<SemanticToken>()));
         Assert.AreEqual(1, updateRecipient.DiagnosticsCount);
         Assert.AreEqual(1, updateRecipient.SemanticTokensCount);
         editor.Dispose();

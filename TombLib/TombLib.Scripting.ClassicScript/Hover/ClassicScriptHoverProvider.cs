@@ -73,10 +73,14 @@ public sealed class ClassicScriptHoverProvider : ITextHoverProvider
 		if (type is WordType.MnemonicConstant or WordType.Hexadecimal or WordType.Decimal)
 			return CreateConstantHoverInfo(source, hoveredOffset, hoveredWord, type);
 
-		return new TextHoverInfo($"For more information about the \"{hoveredWord}\" {type}, Press F12.", SymbolName: hoveredWord, Identifier: GetDefinitionIdentifier(type));
+		return new TextHoverInfo($"For more information about the \"{hoveredWord}\" {type}, Press F12.")
+		{
+			SymbolName = hoveredWord,
+			DefinitionDiscriminator = GetDefinitionDiscriminator(type)
+		};
 	}
 
-	private static TextDefinitionDiscriminator? GetDefinitionIdentifier(WordType type)
+	private static TextDefinitionDiscriminator? GetDefinitionDiscriminator(WordType type)
 		=> type == WordType.Header ? new ClassicScriptObjectDiscriminator(ObjectType.Section) : null;
 
 	private TextHoverInfo? CreateConstantHoverInfo(ITextSnapshot source, int hoveredOffset, string hoveredWord, WordType type)
@@ -86,7 +90,7 @@ public sealed class ClassicScriptHoverProvider : ITextHoverProvider
 		if (currentFlagPrefix is null)
 		{
 			return type == WordType.MnemonicConstant
-				? new TextHoverInfo($"For more information about the \"{hoveredWord}\" Constant, Press F12.", SymbolName: hoveredWord, Identifier: null)
+				? new TextHoverInfo($"For more information about the \"{hoveredWord}\" Constant, Press F12.") { SymbolName = hoveredWord }
 				: null;
 		}
 
@@ -95,7 +99,7 @@ public sealed class ClassicScriptHoverProvider : ITextHoverProvider
 
 		string content = $"{flagName}\n{hexValue}\n{decimalValue}\n\nFor more information about the \"{flagName}\" Constant, Press F12.";
 
-		return new TextHoverInfo(content, SymbolName: hoveredWord, Identifier: null);
+		return new TextHoverInfo(content) { SymbolName = hoveredWord };
 	}
 
 	private bool TryGetMnemonicInfo(string hoveredWord, WordType type, string currentFlagPrefix, out string flagName, out string hexValue, out string decimalValue)

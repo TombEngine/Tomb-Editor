@@ -1,7 +1,8 @@
-using Nickelony.IDEKit.Tooling;
+using Nickelony.IDEKit.Processes;
 using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using TombLib.Scripting.ClassicScript.Compilers;
 
 namespace TombLib.Tests;
@@ -36,7 +37,7 @@ public class ClassicScriptCompilerProcessTests
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "LastCompilerLog.txt"), "Compilation complete");
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "Script.dat"), "script data");
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "English.dat"), "english data");
-			return new ProcessRunResult { Started = true };
+			return new ProcessRunResult { Outcome = ProcessRunOutcome.Exited };
 		});
 
 		bool result = NGCompiler.CompileCore(
@@ -63,7 +64,7 @@ public class ClassicScriptCompilerProcessTests
 		{
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "LastCompilerLog.txt"), "ERROR: compiler failure");
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "Script.dat"), "script data");
-			return new ProcessRunResult { Started = true };
+			return new ProcessRunResult { Outcome = ProcessRunOutcome.Exited };
 		});
 
 		bool result = NGCompiler.CompileCore(
@@ -86,7 +87,7 @@ public class ClassicScriptCompilerProcessTests
 		var runner = new FakeProcessRunner(_ =>
 		{
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "LastCompilerLog.txt"), "Compilation complete");
-			return new ProcessRunResult { Started = true };
+			return new ProcessRunResult { Outcome = ProcessRunOutcome.Exited };
 		});
 
 		bool result = NGCompiler.CompileCore(
@@ -109,7 +110,7 @@ public class ClassicScriptCompilerProcessTests
 		{
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "LastCompilerLog.txt"), "Compilation complete");
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "Script.dat"), "script data");
-			return new ProcessRunResult { Started = true };
+			return new ProcessRunResult { Outcome = ProcessRunOutcome.Exited };
 		});
 
 		bool result = NGCompiler.CompileCore(
@@ -134,7 +135,7 @@ public class ClassicScriptCompilerProcessTests
 				Path.Combine(directories.Paths.VGEDirectory, "LastCompilerLog.txt"),
 				Encoding.GetEncoding(1252).GetBytes("Compilation caf\u00E9"));
 			File.WriteAllText(Path.Combine(directories.Paths.VGEDirectory, "Script.dat"), "script data");
-			return new ProcessRunResult { Started = true };
+			return new ProcessRunResult { Outcome = ProcessRunOutcome.Exited };
 		});
 
 		bool result = NGCompiler.CompileCore(
@@ -174,7 +175,7 @@ public class ClassicScriptCompilerProcessTests
 			File.WriteAllText(Path.Combine(directories.Paths.TR4ScriptCompilerDirectory, "logs.txt"), "Compilation complete");
 			File.WriteAllText(Path.Combine(directories.Paths.TR4ScriptCompilerDirectory, "Script.dat"), "script data");
 			File.WriteAllText(Path.Combine(directories.Paths.TR4ScriptCompilerDirectory, "English.dat"), "english data");
-			return new ProcessRunResult { Started = true };
+			return new ProcessRunResult { Outcome = ProcessRunOutcome.Exited };
 		});
 
 		string result = TR4Compiler.CompileCore(
@@ -202,7 +203,7 @@ public class ClassicScriptCompilerProcessTests
 		var runner = new FakeProcessRunner(_ =>
 		{
 			File.WriteAllText(Path.Combine(directories.Paths.TR4ScriptCompilerDirectory, "logs.txt"), "Compilation complete");
-			return new ProcessRunResult { Started = true };
+			return new ProcessRunResult { Outcome = ProcessRunOutcome.Exited };
 		});
 
 		string result = TR4Compiler.CompileCore(
@@ -227,7 +228,7 @@ public class ClassicScriptCompilerProcessTests
 			directories.InputDirectory,
 			directories.OutputDirectory,
 			directories.Paths,
-			new FakeProcessRunner(_ => new ProcessRunResult { Started = true })));
+			new FakeProcessRunner(_ => new ProcessRunResult { Outcome = ProcessRunOutcome.Exited })));
 
 		Assert.IsFalse(File.Exists(Path.Combine(directories.Paths.TR4ScriptCompilerDirectory, "stale-output.tmp")));
 	}
@@ -241,7 +242,7 @@ public class ClassicScriptCompilerProcessTests
 			File.WriteAllBytes(
 				Path.Combine(directories.Paths.TR4ScriptCompilerDirectory, "logs.txt"),
 				Encoding.GetEncoding(1252).GetBytes("Compilation caf\u00E9"));
-			return new ProcessRunResult { Started = true };
+			return new ProcessRunResult { Outcome = ProcessRunOutcome.Exited };
 		});
 
 		string result = TR4Compiler.CompileCore(
@@ -304,10 +305,13 @@ public class ClassicScriptCompilerProcessTests
 		public bool RunCalled { get; private set; }
 
 		public ProcessRunResult Run(ProcessRunRequest request, CancellationToken cancellationToken = default)
+			=> RunAsync(request, cancellationToken).GetAwaiter().GetResult();
+
+		public Task<ProcessRunResult> RunAsync(ProcessRunRequest request, CancellationToken cancellationToken = default)
 		{
 			RunCalled = true;
 			LastRequest = request;
-			return _run(request);
+			return Task.FromResult(_run(request));
 		}
 
 		public IProcessHandle Start(ProcessRunRequest request)

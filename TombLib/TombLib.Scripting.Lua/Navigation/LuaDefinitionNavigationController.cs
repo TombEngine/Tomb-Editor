@@ -1,4 +1,5 @@
-using Nickelony.IDEKit.Core.Infrastructure;
+using Nickelony.IDEKit.Core.Requests;
+using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.IntelliSense.Navigation;
 using System;
 using System.Threading;
@@ -49,9 +50,10 @@ public sealed partial class LuaEditor
 
 			try
 			{
-				return await _latestRequestCoordinator.RunAsync(
+				RequestOutcome outcome = await _latestRequestCoordinator.RunAsync(
 					(intelliSenseProvider, filePath, text, requestDocumentVersion, requestGeneration, line, column),
-					(state, token) => state.intelliSenseProvider.GetDefinitionAsync(state.filePath, state.text, state.line, state.column, token),
+					(state, token) => state.intelliSenseProvider.GetDefinitionAsync(
+						state.filePath, state.text, new TextPosition(state.line, state.column), token),
 					(state, location) => location is not null
 						&& _editor.DocumentVersion == state.requestDocumentVersion
 						&& _editor.SessionGeneration == state.requestGeneration
@@ -62,7 +64,10 @@ public sealed partial class LuaEditor
 						if (location is not null)
 							_editor.DefinitionNavigationRequested?.Invoke(location);
 					},
+					continueOnCapturedContext: true,
 					cancellationToken).ConfigureAwait(true);
+
+				return outcome is RequestOutcome.Completed;
 			}
 			catch (Exception exception)
 			{

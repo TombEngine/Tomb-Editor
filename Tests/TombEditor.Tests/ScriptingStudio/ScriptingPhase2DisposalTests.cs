@@ -106,14 +106,14 @@ public sealed class ScriptingPhase2DisposalTests
 			ITextEditorHost textEditorHost = new Mock<ITextEditorHost>().Object;
 			var trackedDocumentStateService = new LuaTrackedDocumentStateService(
 				textEditorHost,
-				new Mock<ILuaIntelliSenseProvider>().Object);
+				new Mock<ILuaLanguageServerIntelliSenseProvider>().Object);
 			var referenceSearchService = new LuaReferenceSearchService(
 				textEditorHost,
-				new Mock<ITextReferencesProvider>().Object,
+				new Mock<ILanguageServerReferencesProvider>().Object,
 				@"C:\Scripts");
 			var workspaceCommandService = new TextWorkspaceCommandService(
 				new TextWorkspaceEditApplier(textEditorHost),
-				new Mock<ITextEditProvider>().Object);
+				new Mock<ILanguageServerRenameProvider>().Object);
 			builder.WithLuaCapabilities(
 				lifecycleService.Object,
 				intellisenseBridge.Object,

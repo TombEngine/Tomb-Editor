@@ -21,7 +21,7 @@ public sealed class ScriptReplacer
 	{
 		textEditor.TryReplaceFirstMatchingLine(
 			s_levelPropertyRegex,
-			(lineText, _) => TRXLevelNameParser.ExtractTitleName(CommentHelper.RemoveComments(lineText, new CommentSyntax("//", null, null, StringLiteralStyle.DoubleQuoted))),
+			(lineText, _) => TRXLevelNameParser.ExtractTitleName(CommentOperations.RemoveComments(lineText, new CommentSyntax("//", null, StringLiteralStyle.DoubleQuoted))),
 			oldName,
 			newName);
 	}

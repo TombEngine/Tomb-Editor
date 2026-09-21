@@ -1,6 +1,8 @@
 using ICSharpCode.AvalonEdit.CodeCompletion;
+using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.IntelliSense.Completion;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using Nickelony.IDEKit.IntelliSense.Hover;
 using Nickelony.IDEKit.IntelliSense.Navigation;
 using Nickelony.IDEKit.IntelliSense.Signatures;
@@ -25,7 +27,7 @@ public class LuaEditorCompletionWindowTests
 
 			provider.EnqueueCompletionResponse(
 			[
-				new TextCompletionItem("spawn_room", detail: "local variable")
+				new TextCompletionItem("spawn_room") { Detail = "local variable" }
 			]);
 
 			var editor = CreateEditor(provider, "spa");
@@ -44,8 +46,8 @@ public class LuaEditorCompletionWindowTests
 				Assert.AreEqual(3, completionWindow.EndOffset);
 				Assert.IsNotNull(completionWindow.CompletionList.ListBox.SelectedItem);
 				Assert.AreEqual(1, provider.CompletionRequests.Count);
-				Assert.AreEqual(0, provider.CompletionRequests[0].Line);
-				Assert.AreEqual(3, provider.CompletionRequests[0].Column);
+				Assert.AreEqual(0, provider.CompletionRequests[0].Position.Line);
+				Assert.AreEqual(3, provider.CompletionRequests[0].Position.Character);
 			}
 			finally
 			{
@@ -82,7 +84,7 @@ public class LuaEditorCompletionWindowTests
 	}
 
 	[TestMethod]
-	public void RequestCompletionAsync_RefreshClosesPreviousTooltipAndRecreatesWindow()
+	public void RequestCompletionAsync_RefreshKeepsTheOpenWindowAndReplacesItemsAndTooltip()
 	{
 		RunInSta(() =>
 		{
@@ -90,12 +92,12 @@ public class LuaEditorCompletionWindowTests
 
 			provider.EnqueueCompletionResponse(
 			[
-				new TextCompletionItem("spawn_room", detail: "local variable")
+				new TextCompletionItem("spawn_room") { Detail = "local variable" }
 			]);
 
 			provider.EnqueueCompletionResponse(
 			[
-				new TextCompletionItem("spell_room", detail: "global variable")
+				new TextCompletionItem("spell_room") { Detail = "global variable" }
 			]);
 
 			var editor = CreateEditor(provider, "spa");
@@ -109,7 +111,8 @@ public class LuaEditorCompletionWindowTests
 				CompletionWindow? firstWindow = editor.ActiveCompletionWindow;
 				Assert.IsNotNull(firstWindow);
 				ToolTip firstToolTip = GetCompletionToolTip(firstWindow);
-				firstToolTip.Content = new TextBlock { Text = "old tooltip" };
+				var staleToolTipContent = new TextBlock { Text = "old tooltip" };
+				firstToolTip.Content = staleToolTipContent;
 				firstToolTip.IsOpen = true;
 
 				editor.Text = "spe";
@@ -122,8 +125,10 @@ public class LuaEditorCompletionWindowTests
 				Assert.IsNotNull(refreshedWindow);
 				var refreshedItem = (CompletionData)refreshedWindow.CompletionList.CompletionData[0];
 
-				Assert.AreNotSame(firstWindow, refreshedWindow);
-				Assert.IsFalse(firstToolTip.IsOpen);
+				// The replacement start is unchanged, so the window is refreshed in place rather than recreated;
+				// the tooltip of the previous selection must not survive with its stale content.
+				Assert.AreSame(firstWindow, refreshedWindow);
+				Assert.IsFalse(firstToolTip.IsOpen && ReferenceEquals(staleToolTipContent, firstToolTip.Content));
 				Assert.AreEqual("spell_room", refreshedItem.DisplayText);
 			}
 			finally
@@ -143,7 +148,7 @@ public class LuaEditorCompletionWindowTests
 
 			provider.EnqueueCompletionResponse(
 			[
-				new TextCompletionItem("spawn_room", detail: "local variable")
+				new TextCompletionItem("spawn_room") { Detail = "local variable" }
 			]);
 
 			provider.EnqueueCompletionResponse([]);
@@ -169,7 +174,7 @@ public class LuaEditorCompletionWindowTests
 		});
 	}
 
-	private static LuaEditor CreateEditor(ILuaIntelliSenseProvider provider, string text) => new(new Version(1, 0))
+	private static LuaEditor CreateEditor(ILuaLanguageServerIntelliSenseProvider provider, string text) => new(new Version(1, 0))
 	{
 		FilePath = @"C:\Workspace\Scripts\test.lua",
 		Text = text,
@@ -194,9 +199,9 @@ public class LuaEditorCompletionWindowTests
 			?? throw new InvalidOperationException("CompletionWindow private field 'toolTip' returned null."));
 	}
 
-	private readonly record struct CompletionRequest(string FilePath, string Content, int Line, int Column, char? TriggerCharacter);
+	private readonly record struct CompletionRequest(string FilePath, string Content, TextPosition Position, string? TriggerCharacter);
 
-	private sealed class FakeLuaCompletionProvider : ILuaIntelliSenseProvider
+	private sealed class FakeLuaCompletionProvider : ILuaLanguageServerIntelliSenseProvider
 	{
 		private readonly Queue<IReadOnlyList<TextCompletionItem>> _completionResponses = [];
 
@@ -207,34 +212,36 @@ public class LuaEditorCompletionWindowTests
 		public bool SupportsReferences => false;
 		public bool SupportsRename => false;
 		public bool SupportsFormatting => false;
+		public bool SupportsDocumentSymbols => false;
+		public bool SupportsCodeActions => false;
 
 		public List<CompletionRequest> CompletionRequests { get; } = [];
 
-		public event Action<string, IReadOnlyList<TextEditorDiagnostic>>? DiagnosticsUpdated
+		public event EventHandler<DiagnosticsUpdatedEventArgs>? DiagnosticsUpdated
 		{
 			add { }
 			remove { }
 		}
 
-		public event Action? CapabilitiesChanged
+		public event EventHandler? CapabilitiesChanged
 		{
 			add { }
 			remove { }
 		}
 
-		public event Action<LanguageServerStartupFailure>? StartupFailed
+		public event EventHandler<StartupFailedEventArgs>? StartupFailed
 		{
 			add { }
 			remove { }
 		}
 
-		public event Action<WorkspaceWatcherFailure>? WorkspaceWatcherFailed
+		public event EventHandler<WorkspaceWatcherFailedEventArgs>? WorkspaceWatcherFailed
 		{
 			add { }
 			remove { }
 		}
 
-		public event Action<string, IReadOnlyList<LuaSemanticToken>>? SemanticTokensUpdated
+		public event EventHandler<SemanticTokensUpdatedEventArgs>? SemanticTokensUpdated
 		{
 			add { }
 			remove { }
@@ -243,9 +250,9 @@ public class LuaEditorCompletionWindowTests
 		public void EnqueueCompletionResponse(IReadOnlyList<TextCompletionItem> items)
 			=> _completionResponses.Enqueue(items);
 
-		public IReadOnlyList<TextEditorDiagnostic> GetDiagnostics(string filePath) => [];
+		public IReadOnlyList<TextDiagnostic> GetDiagnostics(string filePath) => [];
 
-		public IReadOnlyList<LuaSemanticToken> GetSemanticTokens(string filePath) => [];
+		public IReadOnlyList<SemanticToken> GetSemanticTokens(string filePath) => [];
 
 		public void OpenDocument(string filePath, string content)
 		{ }
@@ -256,23 +263,27 @@ public class LuaEditorCompletionWindowTests
 		public void CloseDocument(string filePath)
 		{ }
 
-		public void RenameDocument(string oldFilePath, string newFilePath, string content)
+		public void MoveDocument(string oldFilePath, string newFilePath, string content)
 		{ }
 
-		public Task<IReadOnlyList<TextCompletionItem>> GetCompletionItemsAsync(string filePath, string content,
-			int line, int column, char? triggerCharacter = null, CancellationToken cancellationToken = default)
+		public Task<IReadOnlyList<TextCodeAction>> GetCodeActionsAsync(LanguageServerCodeActionRequest request,
+			CancellationToken cancellationToken = default)
+			=> Task.FromResult<IReadOnlyList<TextCodeAction>>([]);
+
+		public Task<IReadOnlyList<TextCompletionItem>> GetCompletionItemsAsync(LanguageServerCompletionRequest request,
+			CancellationToken cancellationToken = default)
 		{
-			CompletionRequests.Add(new CompletionRequest(filePath, content, line, column, triggerCharacter));
+			CompletionRequests.Add(new CompletionRequest(request.FilePath, request.DocumentText, request.Position, request.TriggerCharacter));
 			IReadOnlyList<TextCompletionItem> response = _completionResponses.Count > 0 ? _completionResponses.Dequeue() : [];
 			return Task.FromResult(response);
 		}
 
 		public Task<TextHoverInfo?> GetHoverAsync(string filePath, string content,
-			int line, int column, CancellationToken cancellationToken = default)
+			TextPosition position, CancellationToken cancellationToken = default)
 			=> Task.FromResult<TextHoverInfo?>(null);
 
 		public Task<TextDefinitionLocation?> GetDefinitionAsync(string filePath, string content,
-			int line, int column, CancellationToken cancellationToken = default)
+			TextPosition position, CancellationToken cancellationToken = default)
 			=> Task.FromResult<TextDefinitionLocation?>(null);
 
 		public Task<IReadOnlyList<TextReferenceLocation>> GetReferencesAsync(string filePath, string content,
@@ -288,11 +299,17 @@ public class LuaEditorCompletionWindowTests
 		public Task<TextWorkspaceEdit?> FormatDocumentAsync(TextFormatRequest request, CancellationToken cancellationToken = default)
 			=> Task.FromResult<TextWorkspaceEdit?>(null);
 
-		public Task<TextSignatureHelpInfo?> GetSignatureHelpAsync(string filePath, string content,
-			int line, int column, CancellationToken cancellationToken = default)
-			=> Task.FromResult<TextSignatureHelpInfo?>(null);
+		public Task<IReadOnlyList<TextDocumentSymbol>> GetDocumentSymbolsAsync(string filePath, string content,
+			CancellationToken cancellationToken = default)
+			=> Task.FromResult<IReadOnlyList<TextDocumentSymbol>>([]);
+
+		public Task<TextSignatureHelp?> GetSignatureHelpAsync(LanguageServerSignatureHelpRequest request,
+			CancellationToken cancellationToken = default)
+			=> Task.FromResult<TextSignatureHelp?>(null);
 
 		public void Dispose()
 		{ }
+
+		public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 	}
 }

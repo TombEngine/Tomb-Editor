@@ -1,3 +1,4 @@
+using Nickelony.IDEKit.Core.Diagnostics;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -44,14 +45,14 @@ public sealed class ErrorDetector : ITextDiagnosticsProvider
 	/// </summary>
 	/// <param name="request">The diagnostics request.</param>
 	/// <returns>The diagnostics describing the detected errors.</returns>
-	public IReadOnlyList<TextEditorDiagnostic> GetDiagnostics(TextDiagnosticsRequest request)
+	public IReadOnlyList<TextDiagnostic> GetDiagnostics(TextDiagnosticsRequest request)
 		=> DetectErrorLines(new StringTextSnapshot(request.DocumentText));
 
 	// Error line finding
 
-	private List<TextEditorDiagnostic> DetectErrorLines(ITextSnapshot source)
+	private List<TextDiagnostic> DetectErrorLines(ITextSnapshot source)
 	{
-		var errorLines = new List<TextEditorDiagnostic>();
+		var errorLines = new List<TextDiagnostic>();
 
 		bool commandSectionCheckRequired = _commandService.DocumentContainsSections(source);
 
@@ -62,7 +63,7 @@ public sealed class ErrorDetector : ITextDiagnosticsProvider
 			if (_lineService.IsEmptyOrComments(processedLineText))
 				continue;
 
-			TextEditorDiagnostic? error = FindErrorsInLine(source, processedLine, processedLineText, commandSectionCheckRequired);
+			TextDiagnostic? error = FindErrorsInLine(source, processedLine, processedLineText, commandSectionCheckRequired);
 
 			if (error is not null)
 				errorLines.Add(error);
@@ -71,7 +72,7 @@ public sealed class ErrorDetector : ITextDiagnosticsProvider
 		return errorLines;
 	}
 
-	private TextEditorDiagnostic? FindErrorsInLine(ITextSnapshot source, ITextLine line, string lineText, bool commandSectionCheckRequired)
+	private TextDiagnostic? FindErrorsInLine(ITextSnapshot source, ITextLine line, string lineText, bool commandSectionCheckRequired)
 	{
 		if (_lineService.IsSectionHeaderLine(lineText))
 		{
@@ -88,7 +89,7 @@ public sealed class ErrorDetector : ITextDiagnosticsProvider
 		}
 	}
 
-	private TextEditorDiagnostic? FindErrorsInSectionHeaderLine(ITextSnapshot source, ITextLine line, string lineText)
+	private TextDiagnostic? FindErrorsInSectionHeaderLine(ITextSnapshot source, ITextLine line, string lineText)
 	{
 		if (!IsValidSectionName(lineText))
 		{
@@ -99,7 +100,7 @@ public sealed class ErrorDetector : ITextDiagnosticsProvider
 		return null;
 	}
 
-	private TextEditorDiagnostic? FindErrorsInNGStringLine(ITextSnapshot source, ITextLine line, string lineText)
+	private TextDiagnostic? FindErrorsInNGStringLine(ITextSnapshot source, ITextLine line, string lineText)
 	{
 		if (!IsNGStringLineWellFormatted(lineText))
 		{
@@ -111,7 +112,7 @@ public sealed class ErrorDetector : ITextDiagnosticsProvider
 		return null;
 	}
 
-	private TextEditorDiagnostic? FindErrorsInCommandLine(ITextSnapshot source, ITextLine line, string lineText, bool commandSectionCheckRequired)
+	private TextDiagnostic? FindErrorsInCommandLine(ITextSnapshot source, ITextLine line, string lineText, bool commandSectionCheckRequired)
 	{
 		string? commandKey = _commandService.GetCommandKey(source, line.Offset);
 
@@ -151,7 +152,7 @@ public sealed class ErrorDetector : ITextDiagnosticsProvider
 		return null;
 	}
 
-	private TextEditorDiagnostic? CreateArgumentDiagnostic(ITextSnapshot source, ITextLine line, string lineText, string message)
+	private TextDiagnostic? CreateArgumentDiagnostic(ITextSnapshot source, ITextLine line, string lineText, string message)
 	{
 		string errorSegmentText = Regex.Match(_lineService.RemoveComments(lineText), @"=\s*(\b.*)").Groups[1].Value;
 
@@ -161,7 +162,7 @@ public sealed class ErrorDetector : ITextDiagnosticsProvider
 		return CreateDiagnostic(source, line, message, errorSegmentText);
 	}
 
-	private static TextEditorDiagnostic CreateDiagnostic(ITextSnapshot source, ITextLine line, string message, string errorSegmentText)
+	private static TextDiagnostic CreateDiagnostic(ITextSnapshot source, ITextLine line, string message, string errorSegmentText)
 	{
 		string lineText = source.GetText(line.Offset, line.Length);
 		string segmentText = string.IsNullOrWhiteSpace(errorSegmentText)
@@ -182,7 +183,7 @@ public sealed class ErrorDetector : ITextDiagnosticsProvider
 			}
 		}
 
-		return new TextEditorDiagnostic(TextEditorDiagnosticSeverity.Error, message, startOffset, endOffset);
+		return new TextDiagnostic(TextDiagnosticSeverity.Error, message, startOffset, endOffset);
 	}
 
 	// Error detection methods
@@ -265,12 +266,12 @@ public sealed class ErrorDetector : ITextDiagnosticsProvider
 			ITextLine nextLine = source.GetLineByNumber(i);
 			nextLineText = _lineService.EscapeComments(source.GetText(nextLine.Offset, nextLine.Length));
 
-			if ((nextLineText.Contains('>') && !ContinuationHelper.IsValidContinuation(nextLineText, new CommentSyntax(";", null, null, StringLiteralStyle.None), '>')) || nextLineText.Count(c => c == '>') > 1)
+			if ((nextLineText.Contains('>') && !ContinuationOperations.EndsWithContinuationMarker(nextLineText, new CommentSyntax(";", null, StringLiteralStyle.None), '>')) || nextLineText.Count(c => c == '>') > 1)
 				return true;
 
 			i++;
 		}
-		while (ContinuationHelper.IsValidContinuation(nextLineText, new CommentSyntax(";", null, null, StringLiteralStyle.None), '>'));
+		while (ContinuationOperations.EndsWithContinuationMarker(nextLineText, new CommentSyntax(";", null, StringLiteralStyle.None), '>'));
 
 		return false;
 	}

@@ -48,7 +48,7 @@ public interface IScriptingStudioShellSettingsStore
 	/// preserving all other settings (layout, editor config, etc.).
 	/// Returns <see langword="true"/> when the save succeeded.
 	/// </summary>
-	bool SaveShortcutOverrides(ScriptingWorkspaceKind workspaceKind, KeyBindingOverrideCollection overrides);
+	bool SaveShortcutOverrides(ScriptingWorkspaceKind workspaceKind, KeyBindingOverrides overrides);
 }
 
 public sealed class ScriptingStudioShellWorkspaceSettings
@@ -77,7 +77,7 @@ public sealed class ScriptingStudioShellWorkspaceSettings
 
 	public bool UseNewIncludeMethod { get; set; } = true;
 
-	public KeyBindingOverrideCollection ShortcutOverrides { get; set; } = new();
+	public KeyBindingOverrides ShortcutOverrides { get; set; } = new();
 
 	public ScriptingStudioShellWorkspaceSettings Clone() => new()
 	{
@@ -91,26 +91,9 @@ public sealed class ScriptingStudioShellWorkspaceSettings
 		ReindentOnSave = ReindentOnSave,
 		ShowCompilerLogsAfterBuild = ShowCompilerLogsAfterBuild,
 		UseNewIncludeMethod = UseNewIncludeMethod,
-		ShortcutOverrides = CloneShortcutOverrides(ShortcutOverrides)
+		ShortcutOverrides = ShortcutOverrides.Clone()
 	};
 
-	private static KeyBindingOverrideCollection CloneShortcutOverrides(KeyBindingOverrideCollection source)
-	{
-		var clone = new KeyBindingOverrideCollection { Version = source.Version };
-
-		foreach (KeyBindingOverrideEntry entry in source.Overrides)
-		{
-			clone.Overrides.Add(new KeyBindingOverrideEntry
-			{
-				CommandId = entry.CommandId,
-				Bindings = entry.Bindings
-					.Select(b => new KeyBindingSettings { KeyName = b.KeyName, Modifiers = b.Modifiers })
-					.ToList()
-			});
-		}
-
-		return clone;
-	}
 }
 
 public sealed class ScriptingStudioShellSettingsDocument
@@ -252,7 +235,7 @@ internal sealed class XmlScriptingStudioShellSettingsStore : IScriptingStudioShe
 		XmlUtils.WriteXmlFile(_settingsPath, document);
 	}
 
-	public bool SaveShortcutOverrides(ScriptingWorkspaceKind workspaceKind, KeyBindingOverrideCollection overrides)
+	public bool SaveShortcutOverrides(ScriptingWorkspaceKind workspaceKind, KeyBindingOverrides overrides)
 	{
 		ArgumentNullException.ThrowIfNull(overrides);
 

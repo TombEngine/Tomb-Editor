@@ -43,7 +43,9 @@
     <PackageReference Include="Nickelony.IDEKit.Core" Version="$(NickelonyIDEKitCoreVersion)" />
     <PackageReference Include="Nickelony.IDEKit.AvalonEdit" Version="$(NickelonyIDEKitAvalonEditVersion)" />
     <PackageReference Include="Nickelony.IDEKit.Workspace" Version="$(NickelonyIDEKitWorkspaceVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Workspace.Views" Version="$(NickelonyIDEKitWorkspaceViewsVersion)" />
     <PackageReference Include="Nickelony.IDEKit.KeyBindings" Version="$(NickelonyIDEKitKeyBindingsVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.KeyBindings.Wpf" Version="$(NickelonyIDEKitKeyBindingsWpfVersion)" />
     <PackageReference Include="Nickelony.LanguageServer.Abstractions" Version="$(NickelonyLanguageServerVersion)" />
     <PackageReference Include="Nickelony.LanguageServer.Client" Version="$(NickelonyLanguageServerVersion)" />
     <PackageReference Include="Nickelony.LanguageServer.Lua" Version="$(NickelonyLanguageServerVersion)" />

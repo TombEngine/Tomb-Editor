@@ -1,4 +1,4 @@
-using Nickelony.IDEKit.AvalonEdit.Extras.TextMate.Highlighting;
+using Nickelony.IDEKit.AvalonEdit.TextMate.Highlighting;
 using System;
 using TombLib.Scripting.Lua;
 using TombLib.Scripting.Lua.Resources;

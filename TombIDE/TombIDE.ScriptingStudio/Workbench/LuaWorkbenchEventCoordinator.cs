@@ -1,6 +1,7 @@
 #nullable enable
 
 using CommunityToolkit.Mvvm.Messaging;
+using ICSharpCode.AvalonEdit.Document;
 using Nickelony.LanguageServer.Abstractions;
 using Nickelony.IDEKit.AvalonEdit.Navigation;
 using Nickelony.IDEKit.IntelliSense.Navigation;
@@ -100,8 +101,8 @@ internal sealed class LuaWorkbenchEventCoordinator : IDisposable
 	{
 		ArgumentNullException.ThrowIfNull(location);
 
-		string? targetFilePath = !string.IsNullOrWhiteSpace(location.FilePath)
-			? location.FilePath
+		string? targetFilePath = !string.IsNullOrWhiteSpace(location.DocumentId)
+			? location.DocumentId
 			: (_documentController.CurrentEditor as TextEditorBase)?.FilePath;
 
 		if (string.IsNullOrWhiteSpace(targetFilePath))
@@ -111,9 +112,14 @@ internal sealed class LuaWorkbenchEventCoordinator : IDisposable
 
 		if (_documentController.CurrentEditor is TextEditorBase textEditor)
 		{
-			EditorNavigationHelper.ApplyLocation(
-				textEditor,
-				EditorNavigationHelper.CreateDefinitionLocation(textEditor, targetFilePath, location.LineNumber, location.ColumnNumber));
+			// The definition location carries zero-based LSP positions; editor positions are one-based.
+			var position = new TextLocation(
+				location.TargetRange.Start.Line + 1,
+				location.TargetRange.Start.Character + 1);
+
+			TextAreaNavigationOperations.ApplyLocation(
+				textEditor.TextArea,
+				TextAreaNavigationOperations.CreateCaretLocation(textEditor.TextArea, targetFilePath, position));
 		}
 	}
 

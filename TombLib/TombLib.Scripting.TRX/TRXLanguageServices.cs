@@ -43,7 +43,6 @@ public sealed class TRXLanguageServices
 		DefinitionProvider = definitionProvider;
 		CompletionProvider = completionProvider;
 		HoverProvider = hoverProvider;
-		ErrorDetector = new ErrorDetector(lineService);
 	}
 
 	/// <summary>
@@ -77,9 +76,12 @@ public sealed class TRXLanguageServices
 	public ITextHoverProvider HoverProvider { get; }
 
 	/// <summary>
-	/// Gets the error detector used to diagnose TRX documents.
+	/// Creates an error detector for a single editor instance that targets the given engine version.
 	/// </summary>
-	public ErrorDetector ErrorDetector { get; }
+	/// <param name="engineVersion">The engine version whose removed-keyword rules apply.</param>
+	/// <returns>An error detector bound to the engine version.</returns>
+	public ErrorDetector CreateErrorDetector(Version engineVersion)
+		=> new(LineService, engineVersion);
 
 	/// <summary>
 	/// Creates a completion session coordinator for a single editor instance.

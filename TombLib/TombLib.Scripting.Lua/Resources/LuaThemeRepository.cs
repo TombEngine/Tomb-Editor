@@ -68,8 +68,9 @@ public static class LuaThemeRepository
 
 		return new ThemeCatalog<LuaTheme>(
 			themes,
-			static theme => theme.Name,
-			static theme => theme.Aliases,
-			ConfigurationDefaults.SelectedThemeName);
+			new ThemeCatalogOptions<LuaTheme>(
+				GetName: static theme => theme.Name,
+				DefaultThemeName: ConfigurationDefaults.SelectedThemeName,
+				GetAliases: static theme => theme.Aliases));
 	}
 }

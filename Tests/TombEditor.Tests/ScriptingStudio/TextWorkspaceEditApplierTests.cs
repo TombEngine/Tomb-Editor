@@ -7,6 +7,7 @@ using System.Linq;
 using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.AvalonEdit.Editing;
 using Nickelony.IDEKit.Core.Editing;
+using Nickelony.IDEKit.Workspace.Editing;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editors;
 using TombLib.Scripting.UI.Editing;
@@ -36,11 +37,11 @@ public sealed class TextWorkspaceEditApplierTests
 						new TextDocumentEdit(@"C:\Scripts\second.lua", [CreateEdit(1, 1, 1, 7, "updated")])
 					]);
 
-				TextWorkspaceEditApplicationResult result = applier.Apply(workspaceEdit);
+				WorkspaceEditApplicationResult result = applier.Apply(workspaceEdit);
 
-				Assert.AreEqual(TextWorkspaceEditApplicationStatus.Completed, result.Status);
-				Assert.IsTrue(result.HasChanges);
-				Assert.AreEqual(2, result.Targets.Count);
+				Assert.AreEqual(WorkspaceEditApplicationOutcome.Completed, result.Outcome);
+				Assert.IsTrue(result.ChangeSet.HasChanges);
+				Assert.AreEqual(2, result.TargetResults.Count);
 				CollectionAssert.AreEquivalent(
 					new[] { @"C:\Scripts\first.lua", @"C:\Scripts\second.lua" },
 					result.ChangedTargetIds.ToArray());
@@ -84,14 +85,14 @@ public sealed class TextWorkspaceEditApplierTests
 						new TextDocumentEdit(@"C:\Scripts\first.lua", [CreateEdit(1, 1, 1, 6, "changed")])
 					]);
 
-				TextWorkspaceEditApplicationResult result = applier.Apply(workspaceEdit);
+				WorkspaceEditApplicationResult result = applier.Apply(workspaceEdit);
 
 				CollectionAssert.AreEqual(
 					new[] { @"C:\Scripts\first.lua", @"C:\Scripts\second.lua" },
-					result.Targets.Select(target => target.TargetId).ToArray());
+					result.TargetResults.Select(target => target.TargetId).ToArray());
 				CollectionAssert.AreEqual(
 					new[] { @"C:\Scripts\first.lua", @"C:\Scripts\second.lua" },
-					result.ChangeSet.DocumentChanges.Select(change => change.FilePath).ToArray());
+					result.ChangeSet.DocumentChanges.Select(change => change.TargetId).ToArray());
 			}
 			finally
 			{
@@ -119,9 +120,9 @@ public sealed class TextWorkspaceEditApplierTests
 						new TextDocumentEdit(@"C:\Scripts\second.lua", [CreateEdit(2, 1, 2, 2, "invalid")])
 					]);
 
-				TextWorkspaceEditApplicationResult result = applier.Apply(workspaceEdit);
-				Assert.AreEqual(TextWorkspaceEditApplicationStatus.ValidationFailed, result.Status);
-				Assert.IsFalse(result.HasChanges);
+				WorkspaceEditApplicationResult result = applier.Apply(workspaceEdit);
+				Assert.AreEqual(WorkspaceEditApplicationOutcome.ValidationFailed, result.Outcome);
+				Assert.IsFalse(result.ChangeSet.HasChanges);
 				Assert.AreEqual(0, result.ChangedTargetIds.Count);
 				Assert.AreEqual(0, result.UnknownTargetIds.Count);
 				Assert.AreEqual("first", firstEditor.Text);
@@ -154,9 +155,9 @@ public sealed class TextWorkspaceEditApplierTests
 						])
 					]);
 
-				TextWorkspaceEditApplicationResult result = applier.Apply(workspaceEdit);
-				Assert.AreEqual(TextWorkspaceEditApplicationStatus.ValidationFailed, result.Status);
-				Assert.IsFalse(result.HasChanges);
+				WorkspaceEditApplicationResult result = applier.Apply(workspaceEdit);
+				Assert.AreEqual(WorkspaceEditApplicationOutcome.ValidationFailed, result.Outcome);
+				Assert.IsFalse(result.ChangeSet.HasChanges);
 				Assert.AreEqual("abcdef", editor.Text);
 			}
 			finally
@@ -179,12 +180,12 @@ public sealed class TextWorkspaceEditApplierTests
 				var workspaceEdit = new TextWorkspaceEdit(
 					[new TextDocumentEdit(@"C:\Scripts\no-op.lua", [CreateEdit(1, 1, 1, 5, "same")])]);
 
-				TextWorkspaceEditApplicationResult result = applier.Apply(workspaceEdit);
+				WorkspaceEditApplicationResult result = applier.Apply(workspaceEdit);
 
-				Assert.AreEqual(TextWorkspaceEditApplicationStatus.Completed, result.Status);
-				Assert.IsFalse(result.HasChanges);
+				Assert.AreEqual(WorkspaceEditApplicationOutcome.Completed, result.Outcome);
+				Assert.IsFalse(result.ChangeSet.HasChanges);
 				Assert.AreEqual(1, result.PreparedOperationCount);
-				Assert.AreEqual(TextWorkspaceEditTargetStatus.Applied, result.Targets[0].Status);
+				Assert.AreEqual(WorkspaceEditTargetOutcome.Applied, result.TargetResults[0].Outcome);
 				Assert.AreEqual("same", editor.Text);
 			}
 			finally
@@ -238,13 +239,15 @@ public sealed class TextWorkspaceEditApplierTests
 				var workspaceEdit = new TextWorkspaceEdit(
 					[new TextDocumentEdit(@"C:\Scripts\unsupported.lua", [CreateEdit(1, 1, 1, 7, "changed")])]);
 
-				TextWorkspaceEditApplicationResult result = applier.Apply(workspaceEdit);
+				WorkspaceEditApplicationResult result = applier.Apply(workspaceEdit);
 
-				Assert.AreEqual(TextWorkspaceEditApplicationStatus.ValidationFailed, result.Status);
+				Assert.AreEqual(WorkspaceEditApplicationOutcome.ValidationFailed, result.Outcome);
 				Assert.AreEqual("before", editor.Text);
 				Assert.AreEqual("UnsupportedTargetCapability", result.Failure?.Code);
-				Assert.AreEqual(1, result.Targets.Count);
-				Assert.AreEqual(TextWorkspaceEditTargetStatus.NotApplied, result.Targets[0].Status);
+
+				// A pre-mutation validation failure carries no per-target results: the failure and the
+				// diagnostics are the payload (WorkspaceEditApplicationResult.ValidationFailed).
+				Assert.AreEqual(0, result.TargetResults.Count);
 			}
 			finally
 			{
@@ -272,14 +275,14 @@ public sealed class TextWorkspaceEditApplierTests
 						new TextDocumentEdit(@"C:\Scripts\second.lua", [CreateEdit(1, 1, 1, 7, "updated")])
 					]);
 
-				TextWorkspaceEditApplicationResult result = applier.Apply(workspaceEdit);
+				WorkspaceEditApplicationResult result = applier.Apply(workspaceEdit);
 
-				Assert.AreEqual(TextWorkspaceEditApplicationStatus.PartiallyApplied, result.Status);
+				Assert.AreEqual(WorkspaceEditApplicationOutcome.PartiallyApplied, result.Outcome);
 				CollectionAssert.Contains(result.ChangedTargetIds.ToArray(), @"C:\Scripts\first.lua");
 				CollectionAssert.Contains(result.UnknownTargetIds.ToArray(), @"C:\Scripts\second.lua");
 				Assert.AreEqual("changed", firstEditor.Text);
-				Assert.AreEqual(2, result.Targets.Count);
-				Assert.AreEqual(TextWorkspaceEditTargetStatus.Unknown, result.Targets[1].Status);
+				Assert.AreEqual(2, result.TargetResults.Count);
+				Assert.AreEqual(WorkspaceEditTargetOutcome.Unknown, result.TargetResults[1].Outcome);
 				Assert.AreEqual(1, result.ChangeSet.DocumentChanges.Count);
 			}
 			finally
@@ -293,8 +296,11 @@ public sealed class TextWorkspaceEditApplierTests
 	private static LuaEditor CreateEditor(string filePath, string content)
 		=> new(new Version(1, 0)) { FilePath = filePath, Content = content };
 
+	// Test convenience: the parameters use one-based editor coordinates; the contract range is zero-based.
 	private static TextEdit CreateEdit(int startLine, int startColumn, int endLine, int endColumn, string newText)
-		=> new(new TextDocumentRange(startLine, startColumn, endLine, endColumn), newText);
+		=> new(new TextPositionRange(
+			new TextPosition(startLine - 1, startColumn - 1),
+			new TextPosition(endLine - 1, endColumn - 1)), newText);
 
 	private sealed class TestEditorHost(params LuaEditor[] editors) : ITextEditorHost
 	{
@@ -328,7 +334,7 @@ public sealed class TextWorkspaceEditApplierTests
 	{
 		public string Text { get; private set; } = initialText;
 
-		public void Apply(IReadOnlyList<TextEditOperation> operations)
+		public void Apply(PreparedTextEdits edits)
 		{
 			Text = "changed";
 		}
@@ -345,7 +351,7 @@ public sealed class TextWorkspaceEditApplierTests
 
 		public long Version { get; private set; }
 
-		public void Apply(IReadOnlyList<TextEditOperation> operations)
+		public void Apply(PreparedTextEdits edits)
 		{
 			_text = "updated";
 			Version++;

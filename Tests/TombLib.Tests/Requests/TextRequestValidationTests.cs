@@ -77,13 +77,11 @@ public class TextRequestValidationTests
     // ---------------------------------------------------------------------------
 
     [TestMethod]
-    public void DiagnosticsRequest_ValidConstruction_ExposesValues()
+    public void DiagnosticsRequest_ValidConstruction_ExposesDocumentText()
     {
-        var version = new Version(1, 2, 3);
-        var request = new TextDiagnosticsRequest("text", version);
+        var request = new TextDiagnosticsRequest("text");
 
         Assert.AreEqual("text", request.DocumentText);
-        Assert.AreSame(version, request.EngineVersion);
     }
 
     // ---------------------------------------------------------------------------
@@ -91,20 +89,20 @@ public class TextRequestValidationTests
     // ---------------------------------------------------------------------------
 
     [TestMethod]
-    public void DefinitionRequest_DefaultIdentifier_IsNull()
+    public void DefinitionRequest_DefaultDiscriminator_IsNull()
     {
         var request = new TextDefinitionRequest("text", "Level");
 
-        Assert.IsNull(request.Identifier);
+        Assert.IsNull(request.Discriminator);
     }
 
     [TestMethod]
-    public void DefinitionRequest_Identifier_PassesThrough()
+    public void DefinitionRequest_Discriminator_PassesThrough()
     {
-        TextDefinitionDiscriminator identifier = new TestDiscriminator();
-        var request = new TextDefinitionRequest("text", "Level", identifier);
+        TextDefinitionDiscriminator discriminator = new TestDiscriminator();
+        var request = new TextDefinitionRequest("text", "Level", discriminator);
 
-        Assert.AreSame(identifier, request.Identifier);
+        Assert.AreSame(discriminator, request.Discriminator);
     }
 
     private sealed record TestDiscriminator : TextDefinitionDiscriminator;

@@ -118,6 +118,12 @@ internal sealed class LuaThemeBrushSet
 		"Constant" => ConstantBrush,
 		"Parameter" => VariableBrush,
 		"Namespace" => TypeBrush,
+		"Function" or "Constructor" or "Event" => MethodBrush,
+		"Interface" or "Enum" or "Struct" or "TypeParameter" => TypeBrush,
+		"Module" => TypeBrush,
+		"Value" or "Reference" => VariableBrush,
+		"EnumMember" => ConstantBrush,
+		"Snippet" or "Operator" => KeywordBrush,
 		"File" => FileBrush,
 		"Folder" => FileBrush,
 		_ => MiscBrush

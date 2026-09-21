@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
+using Nickelony.IDEKit.Core.Diagnostics;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using MvvmDialogs;
 using Moq;
@@ -117,7 +118,7 @@ public sealed class ScriptingDiagnosticsPhase0Tests
             {
                 Assert.AreEqual(0, viewModel.Diagnostics.Cast<object>().Count());
 
-                TextDiagnosticsCoordinator coordinator = ReplaceDiagnosticsCoordinator(editor, engineVersion);
+                TextDiagnosticsCoordinator coordinator = ReplaceDiagnosticsCoordinator(editor);
                 coordinator.RunErrorCheck(diagnosticContent);
                 PumpUntil(() => !coordinator.IsBusy);
 
@@ -157,8 +158,7 @@ public sealed class ScriptingDiagnosticsPhase0Tests
         var messenger = new WeakReferenceMessenger();
         var keyBindingService = new KeyBindingService<UICommand>(
             new CommandCatalog<UICommand>([]),
-            new KeyBindingOverrideCollection(),
-            _ => true);
+            new KeyBindingTestStore());
         var findAndReplaceViewModel = new FindAndReplaceViewModel(
             documentController,
             messenger,
@@ -208,7 +208,7 @@ public sealed class ScriptingDiagnosticsPhase0Tests
                 DocumentMode.TRX,
                 activeEditor,
                 new(ScriptingSettingsPageKind.TRX, ScriptingDocumentConfigurationKind.TRX));
-            activeEditor.SetDiagnostics([new TextEditorDiagnostic(TextEditorDiagnosticSeverity.Warning, "active", 0, 1)]);
+            activeEditor.SetDiagnostics([new TextDiagnostic(TextDiagnosticSeverity.Warning, "active", 0, 1)]);
 
             var controller = new Mock<IEditorDocumentController>();
             controller.SetupGet(value => value.CurrentEditor).Returns(activeEditor);
@@ -234,7 +234,7 @@ public sealed class ScriptingDiagnosticsPhase0Tests
             {
                 Assert.AreEqual(1, viewModel.Diagnostics.Cast<object>().Count());
 
-                TextDiagnosticsCoordinator coordinator = ReplaceDiagnosticsCoordinator(inactiveEditor, inactiveEditor.EngineVersion);
+                TextDiagnosticsCoordinator coordinator = ReplaceDiagnosticsCoordinator(inactiveEditor);
                 coordinator.RunErrorCheck(diagnosticContent);
                 PumpUntil(() => !coordinator.IsBusy);
 
@@ -336,7 +336,7 @@ public sealed class ScriptingDiagnosticsPhase0Tests
         return (TextDiagnosticsCoordinator)field.GetValue(editor)!;
     }
 
-    private static TextDiagnosticsCoordinator ReplaceDiagnosticsCoordinator(IEditorControl editor, Version engineVersion)
+    private static TextDiagnosticsCoordinator ReplaceDiagnosticsCoordinator(IEditorControl editor)
     {
         FieldInfo? field = typeof(TextEditorBase).GetField(
             "_diagnosticsCoordinator",
@@ -347,7 +347,6 @@ public sealed class ScriptingDiagnosticsPhase0Tests
         currentCoordinator.Dispose();
         var replacementCoordinator = new TextDiagnosticsCoordinator(
             (TextEditorBase)editor,
-            engineVersion,
             new FixedDiagnosticsProvider());
         field.SetValue(editor, replacementCoordinator);
         return replacementCoordinator;
@@ -369,7 +368,7 @@ public sealed class ScriptingDiagnosticsPhase0Tests
 
     private sealed class FixedDiagnosticsProvider : ITextDiagnosticsProvider
     {
-        public IReadOnlyList<TextEditorDiagnostic> GetDiagnostics(TextDiagnosticsRequest request)
-            => [new TextEditorDiagnostic(TextEditorDiagnosticSeverity.Error, "completed", 0, 1)];
+        public IReadOnlyList<TextDiagnostic> GetDiagnostics(TextDiagnosticsRequest request)
+            => [new TextDiagnostic(TextDiagnosticSeverity.Error, "completed", 0, 1)];
     }
 }

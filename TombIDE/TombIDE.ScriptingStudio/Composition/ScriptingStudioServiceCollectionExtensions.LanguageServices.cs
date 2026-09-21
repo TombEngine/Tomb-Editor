@@ -118,7 +118,7 @@ public static partial class ScriptingStudioServiceCollectionExtensions
 		//   subscriptions and detachment only.
 		// Keep workspace automation, references, and workspace edits as host contributions.
 		// They must not dispose the provider or duplicate editor document cleanup.
-		services.AddScoped<ILuaIntelliSenseProvider>(sp =>
+		services.AddScoped<ILuaLanguageServerIntelliSenseProvider>(sp =>
 		{
 			var projectContext = sp.GetRequiredService<IScriptingProjectContext>();
 
@@ -131,21 +131,28 @@ public static partial class ScriptingStudioServiceCollectionExtensions
 				sp.GetRequiredService<ILogger<LuaLanguageServerIntelliSenseProvider>>();
 
 			return new LuaLanguageServerIntelliSenseProvider(
-				projectContext.ScriptRootDirectoryPath, executablePath, logger);
+				[projectContext.ScriptRootDirectoryPath],
+				executablePath,
+				new LuaLanguageServerOptions
+				{
+					// Tomb scripts intentionally redefine table fields in places, so the duplicate-set-field diagnostic is suppressed.
+					DisabledDiagnostics = [@"duplicate-set-field"]
+				},
+				logger);
 		});
 
 		// Lua tracked document state (manages per-document diagnostics and semantic tokens).
 		services.AddScoped<LuaTrackedDocumentStateService>(sp =>
 		{
 			var textEditorHost = sp.GetRequiredService<ITextEditorHost>();
-			var intellisenseProvider = sp.GetRequiredService<ILuaIntelliSenseProvider>();
+			var intellisenseProvider = sp.GetRequiredService<ILuaLanguageServerIntelliSenseProvider>();
 			return new LuaTrackedDocumentStateService(textEditorHost, intellisenseProvider);
 		});
 		services.AddScoped<LuaReferenceSearchService>(sp =>
 		{
 			var projectContext = sp.GetRequiredService<IScriptingProjectContext>();
 			var textEditorHost = sp.GetRequiredService<ITextEditorHost>();
-			var intellisenseProvider = sp.GetRequiredService<ILuaIntelliSenseProvider>();
+			var intellisenseProvider = sp.GetRequiredService<ILuaLanguageServerIntelliSenseProvider>();
 			var documentManager = sp.GetRequiredService<IWorkspaceDocumentManager>();
 			return new LuaReferenceSearchService(
 				textEditorHost,
@@ -157,7 +164,7 @@ public static partial class ScriptingStudioServiceCollectionExtensions
 		services.AddScoped<TextWorkspaceCommandService>(sp =>
 		{
 			var editApplier = sp.GetRequiredService<TextWorkspaceEditApplier>();
-			var intellisenseProvider = sp.GetRequiredService<ILuaIntelliSenseProvider>();
+			var intellisenseProvider = sp.GetRequiredService<ILuaLanguageServerIntelliSenseProvider>();
 			return new TextWorkspaceCommandService(editApplier, intellisenseProvider);
 		});
 
@@ -166,7 +173,7 @@ public static partial class ScriptingStudioServiceCollectionExtensions
 		{
 			var dockHost = sp.GetRequiredService<IAvalonDockHost>();
 			var messenger = sp.GetRequiredService<IMessenger>();
-			var intellisenseProvider = sp.GetRequiredService<ILuaIntelliSenseProvider>();
+			var intellisenseProvider = sp.GetRequiredService<ILuaLanguageServerIntelliSenseProvider>();
 			return new LuaIntellisenseEventBridge(dockHost, messenger, intellisenseProvider);
 		});
 
@@ -175,7 +182,7 @@ public static partial class ScriptingStudioServiceCollectionExtensions
 		{
 			var documentController = sp.GetRequiredService<IEditorDocumentController>();
 			var messenger = sp.GetRequiredService<IMessenger>();
-			var intellisenseProvider = sp.GetRequiredService<ILuaIntelliSenseProvider>();
+			var intellisenseProvider = sp.GetRequiredService<ILuaLanguageServerIntelliSenseProvider>();
 			var trackedDocumentStateService = sp.GetRequiredService<LuaTrackedDocumentStateService>();
 			return new LuaDocumentLifecycleCoordinator(
 				documentController,

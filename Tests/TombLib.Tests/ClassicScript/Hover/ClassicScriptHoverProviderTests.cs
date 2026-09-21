@@ -38,13 +38,13 @@ public class ClassicScriptHoverProviderTests
 	}
 
 	[TestMethod]
-	public void GetHoverInfo_SectionHeader_ReturnsSectionHoverWithTypedIdentifier()
+	public void GetHoverInfo_SectionHeader_ReturnsSectionHoverWithTypedDiscriminator()
 	{
 		const string text = "[Level]";
 		TextHoverInfo? hoverInfo = _hoverProvider.GetHoverInfo(new TextHoverRequest(text, 1));
 
 		Assert.IsNotNull(hoverInfo);
-		Assert.AreEqual(new ClassicScriptObjectDiscriminator(ObjectType.Section), hoverInfo!.Identifier);
+		Assert.AreEqual(new ClassicScriptObjectDiscriminator(ObjectType.Section), hoverInfo!.DefinitionDiscriminator);
 	}
 
 	[TestMethod]

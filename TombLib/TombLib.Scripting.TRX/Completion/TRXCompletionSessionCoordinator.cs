@@ -12,7 +12,7 @@ public sealed class TRXCompletionSessionCoordinator
 	private readonly ITextCompletionProvider _completionProvider;
 	private readonly TextAnalysisService _textAnalysisService;
 	private readonly CompletionManager _completionManager;
-	private readonly CompletionSessionKernel _kernel;
+	private readonly TextCompletionSessionKernel _kernel;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="TRXCompletionSessionCoordinator"/> class.
@@ -28,7 +28,7 @@ public sealed class TRXCompletionSessionCoordinator
 		_completionProvider = completionProvider;
 		_textAnalysisService = textAnalysisService;
 		_completionManager = completionManager;
-		_kernel = new CompletionSessionKernel(filter: completionManager.FilterCompletions);
+		_kernel = new TextCompletionSessionKernel(filter: completionManager.FilterCompletions);
 	}
 
 	/// <summary>
@@ -91,7 +91,7 @@ public sealed class TRXCompletionSessionCoordinator
 		var source = new StringTextSnapshot(document.Text, document.FileName);
 		(int startOffset, int endOffset) = _completionManager.GetCompletionWindowOffsets(source, caretOffset, currentWord);
 
-		var wordInfo = new CompletionWordInfo(currentWord, new TextRange(startOffset, endOffset - startOffset));
-		return _kernel.GetDecision(source, caretOffset, _completionProvider, wordInfo: wordInfo);
+		var wordInfo = new TextCompletionWordSpan(currentWord, new TextRange(startOffset, endOffset - startOffset));
+		return _kernel.GetDecision(source, caretOffset, _completionProvider, wordSpan: wordInfo);
 	}
 }

@@ -180,7 +180,7 @@ public class MixedWorkspaceProfileTests
 		public void Save(ScriptingWorkspaceKind workspaceKind, ScriptingStudioShellWorkspaceSettings settings)
 			=> _document.SetWorkspace(workspaceKind, settings.Clone());
 
-		public bool SaveShortcutOverrides(ScriptingWorkspaceKind workspaceKind, Nickelony.IDEKit.KeyBindings.KeyBindingOverrideCollection overrides)
+		public bool SaveShortcutOverrides(ScriptingWorkspaceKind workspaceKind, Nickelony.IDEKit.KeyBindings.KeyBindingOverrides overrides)
 			=> true;
 
 		public void SetLuaEnabled(ScriptingWorkspaceKind workspaceKind, bool enabled)

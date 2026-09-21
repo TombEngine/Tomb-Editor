@@ -43,7 +43,7 @@ internal sealed class DocumentControllerTextEditorHost : ITextEditorHost, IEdito
 		if (_documentManager is null)
 			throw new InvalidOperationException("Canonical document snapshots require a workspace manager.");
 
-		WorkspaceDocumentOpenResult result = _documentManager
+WorkspaceDocumentManagerOpenResult result = _documentManager
 			.OpenAsync(filePath, DefaultWorkspaceOpenOptions)
 			.GetAwaiter()
 			.GetResult();
@@ -82,23 +82,32 @@ internal sealed class DocumentControllerTextEditorHost : ITextEditorHost, IEdito
 		}
 
 		if (editor is null)
-			return new EditorSessionOpenResult(EditorSessionOpenStatus.Unavailable, null);
+			return EditorSessionOpenResult.Unavailable;
 
 		if (!ReferenceEquals(_documentController.CurrentEditor, editor))
 			_documentController.ActivateEditor(editor);
 
-		return new EditorSessionOpenResult(
-			acquiredView ? EditorSessionOpenStatus.Opened : EditorSessionOpenStatus.AlreadyOpen,
-			new EditorSession(
+		Action activatePreviousEditor = () =>
+		{
+			if (previousEditor is not null && _documentController.ContainsEditor(previousEditor))
+				_documentController.ActivateEditor(previousEditor);
+		};
+
+		IEditorSession session = acquiredView
+			? EditorSession.Open(
 				snapshot,
-				options.Mode,
-				acquiredView,
-				() => _documentController.ContainsEditor(editor) && _documentController.TryCloseEditor(editor),
+				options,
 				() =>
 				{
-					if (previousEditor is not null && _documentController.ContainsEditor(previousEditor))
-						_documentController.ActivateEditor(previousEditor);
-				}));
+					if (_documentController.ContainsEditor(editor))
+						_documentController.TryCloseEditor(editor);
+				},
+				activatePreviousEditor)
+			: EditorSession.Reuse(snapshot, options, activatePreviousEditor);
+
+		return acquiredView
+			? EditorSessionOpenResult.Opened(session)
+			: EditorSessionOpenResult.Reused(session);
 	}
 
 	public IReadOnlyList<IEditorControl> GetOpenEditors(string filePath)

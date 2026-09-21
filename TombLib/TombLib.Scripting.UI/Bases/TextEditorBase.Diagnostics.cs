@@ -1,5 +1,7 @@
 using ICSharpCode.AvalonEdit.Rendering;
 using Nickelony.IDEKit.AvalonEdit.Diagnostics;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Diagnostics;
+using Nickelony.IDEKit.Core.Diagnostics;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -23,7 +25,7 @@ public abstract partial class TextEditorBase
 	/// Sets the diagnostics displayed for the current document.
 	/// </summary>
 	/// <param name="diagnostics">The diagnostics to display.</param>
-	public void SetDiagnostics(IReadOnlyList<TextEditorDiagnostic> diagnostics)
+	public void SetDiagnostics(IReadOnlyList<TextDiagnostic> diagnostics)
 	{
 		EnsureNotDisposed();
 
@@ -67,14 +69,14 @@ public abstract partial class TextEditorBase
 	/// <param name="diagnosticInfo">The diagnostic information, when found.</param>
 	/// <param name="allowLineFallback">Whether to fall back to a line-wide diagnostic.</param>
 	/// <returns><see langword="true"/> if diagnostic information was found; otherwise <see langword="false"/>.</returns>
-	protected bool TryGetDiagnosticInfo(int hoveredOffset, [NotNullWhen(true)] out TextEditorDiagnostic? diagnosticInfo, bool allowLineFallback = true)
+	protected bool TryGetDiagnosticInfo(int hoveredOffset, [NotNullWhen(true)] out TextDiagnostic? diagnosticInfo, bool allowLineFallback = true)
 		=> _diagnosticToolTipService.TryGetDiagnosticInfo(Document, hoveredOffset, IntelliSenseEnabled && LiveErrorUnderlining, allowLineFallback, out diagnosticInfo);
 
 	/// <summary>
 	/// Shows a diagnostic tooltip with the given diagnostic information.
 	/// </summary>
 	/// <param name="diagnosticInfo">The diagnostic information to display.</param>
-	public void ShowDiagnosticToolTip(TextEditorDiagnostic diagnosticInfo)
+	public void ShowDiagnosticToolTip(TextDiagnostic diagnosticInfo)
 	{
 		EnsureNotDisposed();
 
@@ -91,7 +93,7 @@ public abstract partial class TextEditorBase
 	{
 		EnsureNotDisposed();
 
-		if (!TryGetDiagnosticInfo(hoveredOffset, out TextEditorDiagnostic? diagnosticInfo))
+		if (!TryGetDiagnosticInfo(hoveredOffset, out TextDiagnostic? diagnosticInfo))
 			return false;
 
 		ShowDiagnosticToolTip(diagnosticInfo);
@@ -103,18 +105,7 @@ public abstract partial class TextEditorBase
 		if (!IntelliSenseEnabled || !LiveErrorUnderlining)
 			return [];
 
-		return Diagnostics.Select(ToDiagnosticSegment).ToArray();
+		// The projection (and the renderer wiring) is provided by the AvalonEdit IntelliSense package.
+		return TextDiagnosticSegmentFactory.Create(Diagnostics);
 	}
-
-	private static TextDiagnosticSegment ToDiagnosticSegment(TextEditorDiagnostic diagnostic)
-		=> new(diagnostic.StartOffset, diagnostic.EndOffset, MapSeverity(diagnostic.Severity));
-
-	private static TextDiagnosticSeverity MapSeverity(TextEditorDiagnosticSeverity severity)
-		=> severity switch
-		{
-			TextEditorDiagnosticSeverity.Warning => TextDiagnosticSeverity.Warning,
-			TextEditorDiagnosticSeverity.Information => TextDiagnosticSeverity.Information,
-			TextEditorDiagnosticSeverity.Hint => TextDiagnosticSeverity.Hint,
-			_ => TextDiagnosticSeverity.Error,
-		};
 }

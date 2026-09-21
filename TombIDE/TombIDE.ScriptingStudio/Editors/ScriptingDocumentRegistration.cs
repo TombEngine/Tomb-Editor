@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TombIDE.ScriptingStudio.CommandSurface;
+using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.DocumentOutline;
 using TombIDE.ScriptingStudio.Shell;
 using TombIDE.ScriptingStudio.UI;
@@ -28,7 +29,7 @@ public sealed class ScriptingDocumentContributions
 		ScriptingSettingsPageKind? settingsPageKind,
 		ScriptingDocumentConfigurationKind configurationKind,
 		IStudioDocumentCommandSurfaceProvider? commandSurfaceProvider = null,
-		Func<ITextDocumentSymbolProvider?>? outlineProviderFactory = null,
+		Func<ScriptingDocumentContext, ITextDocumentSymbolProvider?>? outlineProviderFactory = null,
 		IStudioDocumentStatusStripProvider? statusStripProvider = null)
 	{
 		SettingsPageKind = settingsPageKind;
@@ -44,7 +45,7 @@ public sealed class ScriptingDocumentContributions
 
 	public IStudioDocumentCommandSurfaceProvider? CommandSurfaceProvider { get; }
 
-	public Func<ITextDocumentSymbolProvider?>? OutlineProviderFactory { get; }
+	public Func<ScriptingDocumentContext, ITextDocumentSymbolProvider?>? OutlineProviderFactory { get; }
 
 	public IStudioDocumentStatusStripProvider? StatusStripProvider { get; }
 

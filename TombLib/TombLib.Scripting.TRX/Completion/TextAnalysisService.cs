@@ -112,12 +112,12 @@ public sealed class TextAnalysisService
 			return string.Empty;
 
 		var snapshot = new TextDocumentSnapshot(document);
-		TextRange? range = IdentifierHelper.TryGetContainingSpan(snapshot, caretOffset, WordPolicy, IdentifierAffinity.BeforeCaret);
+		TextRange? range = IdentifierOperations.FindTokenSpan(snapshot, caretOffset, WordPolicy, IdentifierSpanMode.EndingAtOffset);
 
 		if (range is null)
 			return string.Empty;
 
-		return snapshot.GetText(range.Value.Offset, range.Value.Length);
+			return range.Value.GetTextFrom(snapshot);
 	}
 
 	private static bool IsWhitespaceOrDelimiter(char c)

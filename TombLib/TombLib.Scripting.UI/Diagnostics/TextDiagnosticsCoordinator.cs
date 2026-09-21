@@ -1,5 +1,5 @@
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
-	using Nickelony.IDEKit.Core.Infrastructure;
+	using Nickelony.IDEKit.Core.Requests;
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
@@ -27,12 +27,10 @@ public sealed class TextDiagnosticsCoordinator : IDisposable
 	/// Initializes a new instance of the <see cref="TextDiagnosticsCoordinator"/> class.
 	/// </summary>
 	/// <param name="editor">The editor whose diagnostics are coordinated.</param>
-	/// <param name="engineVersion">The engine version used for error detection.</param>
 	/// <param name="diagnosticsProvider">The optional diagnostics provider.</param>
 	/// <param name="idleDelayInterval">The optional idle debounce interval.</param>
 	public TextDiagnosticsCoordinator(
 		TextEditorBase editor,
-		Version engineVersion,
 		ITextDiagnosticsProvider? diagnosticsProvider = null,
 		TimeSpan? idleDelayInterval = null)
 	{
@@ -41,7 +39,6 @@ public sealed class TextDiagnosticsCoordinator : IDisposable
 		_editor = editor;
 		_worker = new ErrorDetectionWorker(
 			diagnosticsProvider,
-			engineVersion,
 			idleDelayInterval ?? DefaultIdleDelay,
 			() => _editor.ProcessingMode == EditorProcessingMode.Suppressed,
 			() => _editor.SessionGeneration,
@@ -110,7 +107,7 @@ public sealed class TextDiagnosticsCoordinator : IDisposable
 	{
 		// Keep the last known diagnostics when the provider failed; the worker already logged the failure.
 		// While processing is suppressed, discard the completed result instead of publishing it.
-		if (!_isDisposed && _editor.ProcessingMode != EditorProcessingMode.Suppressed && !e.Cancelled && e.Error is null && e.Result is IReadOnlyList<TextEditorDiagnostic> diagnostics)
+		if (!_isDisposed && _editor.ProcessingMode != EditorProcessingMode.Suppressed && !e.Cancelled && e.Error is null && e.Result is IReadOnlyList<TextDiagnostic> diagnostics)
 			_editor.SetDiagnostics(diagnostics);
 	}
 }

@@ -3,6 +3,7 @@
 using System;
 using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.UI.Bases;
+using Nickelony.IDEKit.Core.Editing;
 
 namespace TombIDE.ScriptingStudio.TextEditing;
 

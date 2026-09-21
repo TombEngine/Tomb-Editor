@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using ICSharpCode.AvalonEdit.Document;
+using Nickelony.IDEKit.Core.Diagnostics;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -87,6 +88,11 @@ public sealed partial class TextDiagnosticsViewModel : ObservableObject
 	public string ColumnHeader => _presentation.ColumnHeader;
 
 	/// <summary>
+	/// Gets the localized source column header.
+	/// </summary>
+	public string SourceHeader => _presentation.SourceHeader;
+
+	/// <summary>
 	/// Gets the localized message column header.
 	/// </summary>
 	public string MessageHeader => _presentation.MessageHeader;
@@ -109,7 +115,7 @@ public sealed partial class TextDiagnosticsViewModel : ObservableObject
 	/// <param name="filePath">The path of the document.</param>
 	/// <param name="document">The document the diagnostics belong to.</param>
 	/// <param name="diagnostics">The diagnostics to show.</param>
-	public void ShowDiagnostics(string filePath, TextDocument document, IReadOnlyList<TextEditorDiagnostic> diagnostics)
+	public void ShowDiagnostics(string filePath, TextDocument document, IReadOnlyList<TextDiagnostic> diagnostics)
 	{
 		ArgumentNullException.ThrowIfNull(document);
 		ArgumentNullException.ThrowIfNull(diagnostics);
@@ -150,13 +156,13 @@ public sealed partial class TextDiagnosticsViewModel : ObservableObject
 
 		return diagnostic.Severity switch
 		{
-			TextEditorDiagnosticSeverity.Error => ShowErrors,
-			TextEditorDiagnosticSeverity.Warning => ShowWarnings,
+			TextDiagnosticSeverity.Error => ShowErrors,
+			TextDiagnosticSeverity.Warning => ShowWarnings,
 			_ => ShowMessages
 		};
 	}
 
-	private static TextDiagnosticListItem CreateItem(string filePath, TextDocument document, TextEditorDiagnostic diagnostic)
+	private static TextDiagnosticListItem CreateItem(string filePath, TextDocument document, TextDiagnostic diagnostic)
 	{
 		int documentLength = document.TextLength;
 		int startOffset = document.ClampOffset(diagnostic.StartOffset);
@@ -173,6 +179,7 @@ public sealed partial class TextDiagnosticsViewModel : ObservableObject
 			lineNumber,
 			columnNumber,
 			diagnostic.Message,
+			diagnostic.Source,
 			startOffset,
 			endOffset);
 	}

@@ -1,7 +1,8 @@
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Signatures;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Signatures;
 using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.IntelliSense.Signatures;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -33,7 +34,7 @@ public sealed partial class LuaEditor
 		Margin = new(0.0, 4.0, 0.0, 0.0)
 	};
 
-	private static TextBlock BuildSignatureBlock(TextSignatureHelpInfo signatureInfo, LuaThemeBrushSet brushSet)
+	private static TextBlock BuildSignatureBlock(TextSignatureHelp signatureInfo, LuaThemeBrushSet brushSet)
 	{
 		var textBlock = new TextBlock
 		{
@@ -43,10 +44,11 @@ public sealed partial class LuaEditor
 			Foreground = brushSet.SignatureForeground
 		};
 
-		string label = signatureInfo.Label;
+		TextSignatureInformation activeSignature = signatureInfo.ActiveSignature;
+		string label = activeSignature.Label;
 
-		if (signatureInfo.Parameters.Count == 0
-			|| !TryGetActiveParameterRange(label, signatureInfo, out int activeStart, out int activeEnd))
+		if (activeSignature.Parameters.Count == 0
+			|| !TryGetActiveParameterRange(label, activeSignature.Parameters, signatureInfo.ActiveParameterIndex, out int activeStart, out int activeEnd))
 		{
 			textBlock.Text = label;
 			return textBlock;
@@ -67,17 +69,20 @@ public sealed partial class LuaEditor
 		return textBlock;
 	}
 
-	private static bool TryGetActiveParameterRange(string label, TextSignatureHelpInfo signatureInfo, out int activeStart, out int activeEnd)
+	private static bool TryGetActiveParameterRange(
+		string label,
+		IReadOnlyList<TextSignatureParameterInfo> parameters,
+		int? activeParameterIndex,
+		out int activeStart,
+		out int activeEnd)
 	{
 		activeStart = 0;
 		activeEnd = 0;
 
-		int activeIndex = Math.Min(signatureInfo.ActiveParameterIndex, signatureInfo.Parameters.Count - 1);
-
-		if (activeIndex < 0)
+		if (activeParameterIndex is not int activeIndex)
 			return false;
 
-		string activeLabel = signatureInfo.Parameters[activeIndex].Label;
+		string activeLabel = parameters[activeIndex].Label;
 
 		if (string.IsNullOrEmpty(activeLabel))
 			return false;
@@ -103,7 +108,6 @@ public sealed partial class LuaEditor
 		private readonly LuaEditor _editor;
 		private readonly TextSignatureHelpController _controller;
 		private readonly TextSignatureHelpPopupPresenter _popupPresenter;
-		private CancellationTokenSource? _requestCancellation;
 		private bool _disposed;
 
 		internal LuaSignatureHelpController(LuaEditor editor)
@@ -111,17 +115,18 @@ public sealed partial class LuaEditor
 			_editor = editor;
 			_popupPresenter = new(editor, editor.AttachHostWindowHandlers);
 			_controller = new(
-				getCurrentCaretOffset: () => _editor.CaretOffset,
-				requestSignatureHelpAsync: RequestSignatureHelpAsync,
-				showSignatureHelp: ShowToolTip,
-				dismissSignatureHelp: DismissPopup,
-				cancelInFlightRequest: CancelInFlightRequest,
-				refreshDebounceDelay: TimeSpan.FromMilliseconds(50.0));
+				new TextSignatureHelpControllerHooks
+				{
+					GetCurrentCaretOffset = () => _editor.CaretOffset,
+					RequestSignatureHelpAsync = RequestSignatureHelpAsync,
+					ShowSignatureHelp = ShowToolTip,
+					DismissSignatureHelp = DismissPopup
+				});
 		}
 
 		internal bool IsVisible => _controller.CurrentPresentation.IsVisible;
 
-		internal bool IsActiveOrPending => _controller.CurrentPresentation.IsActiveOrPending;
+		internal bool IsPresentationVisibleOrRequestPending => _controller.CurrentPresentation.IsPresentationVisibleOrRequestPending;
 
 		internal void Dismiss() => _controller.Dismiss();
 
@@ -129,11 +134,11 @@ public sealed partial class LuaEditor
 
 		internal void ScheduleRefresh() => _controller.ScheduleRefresh();
 
-		internal void CancelPendingRefresh() => _controller.CancelPendingRefresh();
+		internal void CancelScheduledRefresh() => _controller.CancelScheduledRefresh();
 
 		internal void InvalidateRequests()
 		{
-			CancelInFlightRequest();
+			_controller.CancelInFlightRequest();
 			_controller.InvalidateRequests();
 		}
 
@@ -143,41 +148,33 @@ public sealed partial class LuaEditor
 				return;
 
 			_disposed = true;
-			CancelInFlightRequest();
 			_controller.Dispose();
 			_popupPresenter.Dispose();
 		}
 
-		private void CancelInFlightRequest()
-		{
-			if (_requestCancellation is null)
-				return;
-
-			_requestCancellation.Cancel();
-			_requestCancellation.Dispose();
-			_requestCancellation = null;
-		}
-
 		private void DismissPopup() => _popupPresenter.Close();
 
-		private void ShowToolTip(TextSignatureHelpInfo signatureInfo)
+		private void ShowToolTip(TextSignatureHelp signatureInfo)
 			=> _popupPresenter.Show(contentMaxWidth => CreatePanel(signatureInfo, contentMaxWidth));
 
-		private StackPanel CreatePanel(TextSignatureHelpInfo signatureInfo, double contentMaxWidth)
+		private StackPanel CreatePanel(TextSignatureHelp signatureInfo, double contentMaxWidth)
 		{
 			LuaThemeBrushSet brushSet = _editor.GetThemeBrushSet();
 			var panel = new StackPanel { MaxWidth = contentMaxWidth };
 			panel.Children.Add(BuildSignatureBlock(signatureInfo, brushSet));
 
-			string? documentation = MarkupTextNormalizer.NormalizeForPlainText(signatureInfo.Documentation);
+			TextSignatureInformation activeSignature = signatureInfo.ActiveSignature;
+			string? documentation = BacktickFenceTextNormalizer.NormalizeForPlainText(activeSignature.Documentation, Environment.NewLine);
 
 			if (documentation is not null)
 				panel.Children.Add(CreateSignatureDocumentationBlock(documentation, brushSet));
 
-			if (signatureInfo.ActiveParameterIndex >= 0 && signatureInfo.ActiveParameterIndex < signatureInfo.Parameters.Count)
+			if (signatureInfo.ActiveParameterIndex is int activeParameterIndex
+				&& activeParameterIndex >= 0
+				&& activeParameterIndex < activeSignature.Parameters.Count)
 			{
-				TextSignatureParameterInfo activeParameter = signatureInfo.Parameters[signatureInfo.ActiveParameterIndex];
-				string? parameterDocumentation = MarkupTextNormalizer.NormalizeForPlainText(activeParameter.Documentation);
+				TextSignatureParameterInfo activeParameter = activeSignature.Parameters[activeParameterIndex];
+				string? parameterDocumentation = BacktickFenceTextNormalizer.NormalizeForPlainText(activeParameter.Documentation, Environment.NewLine);
 
 				if (parameterDocumentation is not null)
 					panel.Children.Add(CreateSignatureDocumentationBlock(activeParameter.Label + ": " + parameterDocumentation, brushSet));
@@ -186,10 +183,13 @@ public sealed partial class LuaEditor
 			return panel;
 		}
 
-		private async Task<TextSignatureHelpInfo?> RequestSignatureHelpAsync(int offset, int requestToken)
+		private async Task<TextSignatureHelp?> RequestSignatureHelpAsync(
+			int offset,
+			TextSignatureHelpContext context,
+			CancellationToken cancellationToken)
 		{
-			// The shared controller performs the authoritative request-token check after the await,
-			// so the token parameter is not needed here. The document-version and request-generation
+			// The shared controller performs the authoritative request-token check after the await, so only
+			// the cancellation token needs to reach the provider. The document-version and request-generation
 			// checks below additionally drop results computed for stale document state.
 			if (!_editor.IsIntelliSenseAvailable())
 				return null;
@@ -199,11 +199,6 @@ public sealed partial class LuaEditor
 			if (intelliSenseProvider is null)
 				return null;
 
-			// A newer request supersedes the previous one, so its in-flight provider call is
-			// cancelled rather than being allowed to complete and then be discarded.
-			CancelInFlightRequest();
-			_requestCancellation = new();
-			CancellationToken cancellationToken = _requestCancellation.Token;
 			int requestDocumentVersion = _editor._editorDocumentVersion;
 			int requestGeneration = _editor.SessionGeneration;
 
@@ -211,8 +206,8 @@ public sealed partial class LuaEditor
 			{
 				(int line, int column) = _editor.GetPositionFromOffset(offset);
 
-				TextSignatureHelpInfo? signatureInfo = await intelliSenseProvider
-					.GetSignatureHelpAsync(_editor.FilePath, _editor.Text, line, column, cancellationToken)
+				TextSignatureHelp? signatureInfo = await intelliSenseProvider
+					.GetSignatureHelpAsync(new LanguageServerSignatureHelpRequest(_editor.FilePath, _editor.Text, new TextPosition(line, column)), cancellationToken: cancellationToken)
 					.ConfigureAwait(true);
 
 				return requestDocumentVersion == _editor._editorDocumentVersion

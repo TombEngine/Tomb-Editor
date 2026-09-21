@@ -1,6 +1,7 @@
 #nullable enable
 
 using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.Core.Editing;
 
 namespace TombIDE.ScriptingStudio.TextEditing;
 

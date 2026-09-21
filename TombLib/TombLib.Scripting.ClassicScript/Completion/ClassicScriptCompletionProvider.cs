@@ -38,23 +38,27 @@ public sealed class ClassicScriptCompletionProvider : ITextCompletionProvider
 	}
 
 	/// <summary>
-	/// Gets the completion items for the given context.
+	/// Gets the completion items for the given request.
 	/// </summary>
-	/// <param name="context">The completion context.</param>
+	/// <param name="request">The completion request.</param>
 	/// <returns>The completion items, or an empty list when no completion applies.</returns>
-	public IReadOnlyList<TextCompletionItem> GetCompletionItems(TextCompletionContext context)
+	public IReadOnlyList<TextCompletionItem> GetCompletionItems(TextCompletionRequest request)
 	{
-		ArgumentNullException.ThrowIfNull(context);
+		ArgumentNullException.ThrowIfNull(request);
 
-		var source = new StringTextSnapshot(context.DocumentText);
+		var source = new StringTextSnapshot(request.DocumentText);
+		TextCompletionTrigger trigger = request.Trigger;
 
-		return context.Trigger switch
-		{
-			TextCompletionTrigger.EmptyLine => GetNewLineCompletionItems(source, context.CaretOffset),
-			TextCompletionTrigger.Contextual => GetContextualCompletionItems(source, context.CaretOffset, context.ArgumentIndex),
-			TextCompletionTrigger.Word => GetWordCompletionItems(context.DocumentText, context.CaretOffset),
-			_ => []
-		};
+		if (trigger == ClassicScriptCompletionTriggers.EmptyLine)
+			return GetNewLineCompletionItems(source, request.CaretOffset);
+
+		if (trigger == ClassicScriptCompletionTriggers.Contextual)
+			return GetContextualCompletionItems(source, request.CaretOffset);
+
+		if (trigger == ClassicScriptCompletionTriggers.Word)
+			return GetWordCompletionItems(request.DocumentText, request.CaretOffset);
+
+		return [];
 	}
 
 	private IReadOnlyList<TextCompletionItem> GetNewLineCompletionItems(ITextSnapshot source, int caretOffset)
@@ -77,7 +81,7 @@ public sealed class ClassicScriptCompletionProvider : ITextCompletionProvider
 		return items;
 	}
 
-	private IReadOnlyList<TextCompletionItem> GetContextualCompletionItems(ITextSnapshot source, int caretOffset, int argumentIndex)
+	private IReadOnlyList<TextCompletionItem> GetContextualCompletionItems(ITextSnapshot source, int caretOffset)
 	{
 		string? syntax = _commandService.GetCommandSyntax(source, caretOffset);
 
@@ -89,8 +93,8 @@ public sealed class ClassicScriptCompletionProvider : ITextCompletionProvider
 
 		string[] arguments = syntax.Split(',');
 
-		if (argumentIndex == -1)
-			argumentIndex = _commandService.GetArgumentIndexAtOffset(source, caretOffset);
+		// The request carries no argument index, so it is always resolved from the caret position.
+		int argumentIndex = _commandService.GetArgumentIndexAtOffset(source, caretOffset);
 
 		if (arguments.Length <= argumentIndex || argumentIndex == -1)
 			return [];
@@ -122,7 +126,7 @@ public sealed class ClassicScriptCompletionProvider : ITextCompletionProvider
 		if (caretOffset <= 0 || caretOffset > documentText.Length)
 			return [];
 
-		string word = IdentifierHelper.GetPrefix(documentText, caretOffset);
+		string word = IdentifierOperations.GetWordEndingAt(documentText, caretOffset);
 
 		if (string.IsNullOrEmpty(word)
 			|| !_mnemonicCatalogService.GetAllFlags().Any(constant => constant.StartsWith(word, StringComparison.OrdinalIgnoreCase)))
@@ -146,7 +150,12 @@ public sealed class ClassicScriptCompletionProvider : ITextCompletionProvider
 	}
 
 	private static TextCompletionItem CreateItem(string label, string insertText, TextCompletionItemKind kind)
-		=> new(label, insertText, kind: kind, detail: GetDetail(kind));
+		=> new(label)
+		{
+			InsertText = insertText,
+			Kind = kind,
+			Detail = GetDetail(kind)
+		};
 
 	private static string GetDetail(TextCompletionItemKind kind) => kind.Identifier switch
 	{

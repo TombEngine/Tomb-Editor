@@ -1,7 +1,6 @@
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Hover;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Navigation;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Presentation;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Completion;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Hover;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Navigation;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using Nickelony.IDEKit.IntelliSense.Hover;
 using Nickelony.IDEKit.IntelliSense.Navigation;
@@ -11,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using TombLib.Scripting.UI.Diagnostics;
 using TombLib.Scripting.UI.Hover;
+using TombLib.Scripting.UI.Navigation;
 
 namespace TombLib.Scripting.UI.Bases;
 
@@ -41,14 +41,12 @@ public abstract partial class TextEditorBase
 	/// </summary>
 	/// <param name="buildRequestState">Builds the hover request state for a hovered offset.</param>
 	/// <param name="requestHoverAsync">Requests the hover content for a hovered offset.</param>
-	/// <param name="applyHoverState">Applies a resolved hover state (optional).</param>
 	protected void InitializeHover(
-		Func<int, TextHoverRequestState> buildRequestState,
-		Func<int, CancellationToken, Task<TextHoverInfo?>> requestHoverAsync,
-		Action<TextHoverPresentationState>? applyHoverState = null)
+		Func<int, TextHoverEvaluationState> buildRequestState,
+		Func<int, CancellationToken, Task<TextHoverInfo?>> requestHoverAsync)
 	{
 		EnsureNotDisposed();
-		TextHoverController hoverController = HoverControllerFactory.Create(this, buildRequestState, requestHoverAsync, applyHoverState);
+		TextHoverController hoverController = HoverControllerFactory.Create(this, buildRequestState, requestHoverAsync);
 
 		_hoverController?.Dispose();
 		_hoverController = hoverController;
@@ -62,14 +60,14 @@ public abstract partial class TextEditorBase
 	/// <summary>
 	/// Builds the standard hover request state that always requests hover for the hovered offset.
 	/// </summary>
-	protected TextHoverRequestState BuildStandardHoverRequestState(int hoveredOffset)
+	protected TextHoverEvaluationState BuildStandardHoverRequestState(int hoveredOffset)
 	{
-		TryGetDiagnosticInfo(hoveredOffset, out TextEditorDiagnostic? diagnosticInfo);
+		TryGetDiagnosticInfo(hoveredOffset, out TextDiagnostic? diagnosticInfo);
 
-		return new TextHoverRequestState(
+		return new TextHoverEvaluationState(
 			ShouldRequestHover: true,
 			RequestOffset: hoveredOffset,
-			CanShowToolTip: true,
+				CanShowHoverContent: true,
 			CanShowDiagnosticFallback: CanShowDiagnosticFallback,
 			DiagnosticInfo: diagnosticInfo);
 	}
@@ -77,12 +75,11 @@ public abstract partial class TextEditorBase
 	/// <summary>
 	/// Initializes background error detection for the language.
 	/// </summary>
-	/// <param name="engineVersion">The engine version diagnostics should target.</param>
 	/// <param name="diagnosticsProvider">The provider used to source diagnostics (optional).</param>
-	protected void InitializeDiagnostics(Version engineVersion, ITextDiagnosticsProvider? diagnosticsProvider = null)
+	protected void InitializeDiagnostics(ITextDiagnosticsProvider? diagnosticsProvider = null)
 	{
 		EnsureNotDisposed();
-		TextDiagnosticsCoordinator diagnosticsCoordinator = new(this, engineVersion, diagnosticsProvider);
+		TextDiagnosticsCoordinator diagnosticsCoordinator = new(this, diagnosticsProvider);
 
 		_diagnosticsCoordinator?.Dispose();
 		_diagnosticsCoordinator = diagnosticsCoordinator;
@@ -161,7 +158,7 @@ public abstract partial class TextEditorBase
 	protected bool GoToDefinition(ITextDefinitionProvider definitionProvider, string objectName, TextDefinitionDiscriminator? identifyingObject = null)
 	{
 		EnsureNotDisposed();
-		return TextDefinitionNavigation.TryGoToObject(this, definitionProvider, objectName, identifyingObject);
+		return TextDefinitionNavigation.TryGoToDefinitionBySymbol(this.TextArea, definitionProvider, objectName, identifyingObject);
 	}
 
 	/// <summary>
@@ -174,7 +171,7 @@ public abstract partial class TextEditorBase
 	protected bool TryGoToDefinition(ITextDefinitionProvider definitionProvider, ITextHoverProvider hoverProvider, int offset)
 	{
 		EnsureNotDisposed();
-		return TextDefinitionNavigation.TryGoToDefinition(this, definitionProvider, hoverProvider, offset);
+		return TextDefinitionNavigation.TryGoToDefinition(this.TextArea, definitionProvider, hoverProvider, offset);
 	}
 
 	#endregion Definition navigation

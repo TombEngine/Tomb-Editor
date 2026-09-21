@@ -34,6 +34,6 @@ public sealed class TextDiagnosticsToolWindow : StudioDockPane
 	public void ShowPending()
 		=> _viewModel.ShowPending();
 
-	public void ShowDiagnostics(string filePath, TextDocument document, IReadOnlyList<TextEditorDiagnostic> diagnostics)
+	public void ShowDiagnostics(string filePath, TextDocument document, IReadOnlyList<TextDiagnostic> diagnostics)
 		=> _viewModel.ShowDiagnostics(filePath, document, diagnostics);
 }

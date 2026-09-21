@@ -2,6 +2,7 @@ using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using Nickelony.IDEKit.Core.Text;
+using Nickelony.IDEKit.IntelliSense;
 using Nickelony.IDEKit.IntelliSense.Completion;
 using System;
 using System.ComponentModel;
@@ -55,7 +56,7 @@ public sealed class CompletionData : ICompletionData, INotifyPropertyChanged
 	/// Initializes a completion item with the given display text, insert text and description.
 	/// </summary>
 	public CompletionData(string text, string insertText, string description = "")
-		: this(new TextCompletionItem(text, insertText, description))
+		: this(new TextCompletionItem(text) { InsertText = insertText, Documentation = description })
 	{ }
 
 	/// <summary>
@@ -137,8 +138,29 @@ public sealed class CompletionData : ICompletionData, INotifyPropertyChanged
 			return;
 
 		TextDocument document = textArea.Document;
-		string insertText = _item.InsertText;
-		int? insertCaretOffset = _item.InsertCaretOffset;
+
+		// The edit payload supersedes the plain insertion text (LSP text-edit semantics), so its
+		// replacement text is what gets committed when the item carries one.
+		string insertText = _item.TextEdit?.NewText ?? _item.InsertText;
+		int? insertCaretOffset = null;
+
+		if (_item.InsertTextFormat == TextCompletionInsertTextFormat.Snippet)
+		{
+			TextSnippetExpansion expansion = TextSnippetExpander.Expand(insertText);
+			insertText = expansion.Text;
+
+			// Land the caret after the final tabstop's text when the snippet carries one; tab
+			// navigation across the remaining placeholders stays host behavior.
+			foreach (TextSnippetPlaceholder placeholder in expansion.Placeholders)
+			{
+				if (placeholder.Index == 0)
+				{
+					insertCaretOffset = placeholder.Range.EndOffset;
+					break;
+				}
+			}
+		}
+
 		(int replacementOffset, int replacementLength) = ResolveCompletionSegment(
 			document,
 			completionSegment.Offset,
@@ -205,7 +227,7 @@ public sealed class CompletionData : ICompletionData, INotifyPropertyChanged
 	/// </summary>
 	public void RebaseForCurrentDocument(int requestDocumentVersion, int requestGeneration)
 	{
-		_item = _item.WithFilteredCommitContext(requestDocumentVersion, requestGeneration);
+		_item = _item.WithRequestContext(requestDocumentVersion, requestGeneration).WithoutTextEdit();
 
 		lock (_resolveSync)
 			_resolveTask = null;
@@ -268,7 +290,7 @@ public sealed class CompletionData : ICompletionData, INotifyPropertyChanged
 	private Border? BuildDescriptionContent()
 	{
 		bool hasDetail = !string.IsNullOrWhiteSpace(_item.Detail);
-		string? descriptionText = MarkupTextNormalizer.NormalizeForPlainText(_item.Description);
+		string? descriptionText = BacktickFenceTextNormalizer.NormalizeForPlainText(_item.Documentation, Environment.NewLine);
 		bool hasDescription = descriptionText is not null;
 
 		if (!hasDetail && !hasDescription)
@@ -296,7 +318,7 @@ public sealed class CompletionData : ICompletionData, INotifyPropertyChanged
 
 		if (descriptionText is string displayDescription)
 		{
-			panel.Children.Add(_item.IsDescriptionMarkdown
+			panel.Children.Add(_item.DocumentationKind == TextMarkupKind.Markdown
 				? MarkdownToolTipRenderer.CreateContent(displayDescription, DescriptionForegroundBrush, DescriptionBackgroundBrush, false)
 				: MarkdownToolTipRenderer.CreatePlainTextContent(displayDescription, DescriptionForegroundBrush, false));
 		}

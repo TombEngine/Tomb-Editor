@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Nickelony.IDEKit.Core.Pathing;
 using Nickelony.IDEKit.Core.Text;
 using TombIDE.ScriptingStudio.ClassicScript;
 using TombIDE.ScriptingStudio.DocumentOutline;
@@ -163,7 +164,7 @@ public class ViewModelTests
 
     [TestMethod]
     [TestCategory("TextEditorBaseModernization")]
-    public void FileExplorerViewModel_DeleteDirectory_UsesWorkspaceBridgeAndRecycleBin()
+    public void FileExplorerViewModel_DeleteDirectory_UsesWorkspaceBridge()
     {
         StaTestHelper.RunInSta(() =>
         {
@@ -199,7 +200,6 @@ public class ViewModelTests
 
                 Assert.IsNotNull(manager.Request);
                 Assert.AreEqual(directoryPath, manager.Request!.DirectoryPath);
-                Assert.IsTrue(manager.Request.UseRecycleBin);
                 Assert.AreEqual(1, manager.DeleteDirectoryCount);
                 Assert.IsTrue(Directory.Exists(directoryPath));
             }
@@ -271,7 +271,7 @@ public class ViewModelTests
                 Assert.AreEqual(1, manager.CommitCount);
                 Assert.AreEqual(1, manager.DeleteCount);
                 Assert.IsNotNull(manager.DeleteRequest);
-                Assert.AreEqual(2, manager.DeleteRequest!.ExpectedVersion);
+                Assert.AreEqual(2, manager.DeleteRequest!.Identity.Version);
             }
             finally
             {
@@ -323,19 +323,18 @@ public class ViewModelTests
 
         public int CommitCount { get; private set; }
 
-        public Task<WorkspaceDocumentOpenResult> OpenAsync(
+        public Task<WorkspaceDocumentManagerOpenResult> OpenAsync(
             string? filePath,
             WorkspaceDocumentOpenOptions options,
             CancellationToken cancellationToken = default)
         {
             OpenCount++;
-            return Task.FromResult(new WorkspaceDocumentOpenResult(
-                WorkspaceDocumentOpenStatus.AlreadyOpen,
+            return Task.FromResult(new WorkspaceDocumentManagerOpenResult(
+                WorkspaceDocumentManagerOpenOutcome.AlreadyOpen,
                 _snapshot));
         }
 
-        public IReadOnlyList<WorkspaceDocumentSnapshot> GetSnapshotsUnderDirectory(string directoryPath)
-            => [];
+        public IWorkspaceDocumentReader Documents { get; } = new EmptyDocumentReader();
 
         public Task<WorkspaceDocumentManagerOpenResult> OpenWithViewAsync(
             string? filePath,
@@ -344,66 +343,65 @@ public class ViewModelTests
             CancellationToken cancellationToken = default)
             => throw new NotSupportedException();
 
-        public Task<WorkspaceDocumentConflictResolutionResult> ResolveExternalConflictAsync(
+        public Task<WorkspaceDocumentManagerConflictResolutionResult> ResolveExternalConflictAsync(
             WorkspaceDocumentConflictResolutionRequest request,
             CancellationToken cancellationToken = default)
             => throw new NotSupportedException();
 
-        public WorkspaceDocumentManagerOpenResult OpenWithView(
-            string? filePath,
-            WorkspaceDocumentOpenOptions options,
-            IWorkspaceDocumentView view,
-            CancellationToken cancellationToken = default)
+        public Task<WorkspaceDocumentManagerMutationResult> ReplaceAsync(WorkspaceDocumentReplaceRequest request)
             => throw new NotSupportedException();
 
-        public WorkspaceDocumentMutationResult Replace(WorkspaceDocumentReplaceRequest request)
+        public Task<WorkspaceDocumentManagerMutationResult> DiscardAsync(WorkspaceDocumentDiscardRequest request)
             => throw new NotSupportedException();
 
-        public WorkspaceDocumentMutationResult Discard(WorkspaceDocumentDiscardRequest request)
-            => throw new NotSupportedException();
-
-        public Task<WorkspaceDocumentRenameResult> RenameAsync(
+        public Task<WorkspaceDocumentManagerRenameResult> RenameAsync(
             WorkspaceDocumentRenameRequest request,
             CancellationToken cancellationToken = default)
             => throw new NotSupportedException();
 
-        public Task<WorkspaceDocumentSaveAsResult> SaveAsAsync(
+        public Task<WorkspaceDocumentManagerSaveAsResult> SaveAsAsync(
             WorkspaceDocumentSaveAsRequest request,
             CancellationToken cancellationToken = default)
             => throw new NotSupportedException();
 
-        public Task<WorkspaceDocumentDeleteResult> DeleteAsync(
+        public Task<WorkspaceDocumentManagerDeleteResult> DeleteAsync(
             WorkspaceDocumentDeleteRequest request,
             CancellationToken cancellationToken = default)
         {
             DeleteCount++;
             DeleteRequest = request;
-            return Task.FromResult(new WorkspaceDocumentDeleteResult(
-                WorkspaceDocumentDeleteStatus.Deleted,
-                request.ExpectedDocumentKey,
-                request.DocumentId,
-                request.ExpectedVersion,
-                _snapshot));
+            WorkspaceDocumentDeleteResult storeResult = new(
+                WorkspaceDocumentDeleteOutcome.Deleted,
+                request.Identity,
+                _snapshot);
+            return Task.FromResult(new WorkspaceDocumentManagerDeleteResult(
+                storeResult,
+                WorkspaceDocumentViewSynchronizationResult.Synchronized,
+                storeResult.Snapshot));
         }
 
-        public Task<WorkspaceDocumentDirectoryRenameResult> RenameDirectoryAsync(
+        public Task<WorkspaceDocumentManagerDirectoryRenameResult> RenameDirectoryAsync(
             WorkspaceDocumentDirectoryRenameRequest request,
             CancellationToken cancellationToken = default)
             => throw new NotSupportedException();
 
-        public Task<WorkspaceDocumentDirectoryDeleteResult> DeleteDirectoryAsync(
+        public Task<WorkspaceDocumentManagerDirectoryDeleteResult> DeleteDirectoryAsync(
             WorkspaceDocumentDirectoryDeleteRequest request,
             CancellationToken cancellationToken = default)
         {
             DeleteDirectoryCount++;
             Request = request;
-            return Task.FromResult(new WorkspaceDocumentDirectoryDeleteResult(
-                WorkspaceDocumentDirectoryDeleteStatus.Deleted,
+            WorkspaceDocumentDirectoryDeleteResult storeResult = new(
+                WorkspaceDocumentDirectoryDeleteOutcome.Deleted,
                 request.DirectoryPath,
-                []));
+                []);
+            return Task.FromResult(new WorkspaceDocumentManagerDirectoryDeleteResult(
+                storeResult,
+                WorkspaceDocumentViewSynchronizationResult.Synchronized,
+                storeResult.Snapshots));
         }
 
-        public Task<WorkspaceDocumentCommitResult> CommitAsync(
+        public Task<WorkspaceDocumentManagerCommitResult> CommitAsync(
             WorkspaceDocumentCommitRequest request,
             CancellationToken cancellationToken = default)
         {
@@ -416,15 +414,17 @@ public class ViewModelTests
                     IsDirty = false
                 };
 
-            return Task.FromResult(new WorkspaceDocumentCommitResult(
-                WorkspaceDocumentCommitStatus.Committed,
-                request.ExpectedDocumentKey,
-                request.DocumentId,
-                request.ExpectedVersion,
-                _snapshot));
+            WorkspaceDocumentCommitResult storeResult = new(
+                WorkspaceDocumentCommitOutcome.Committed,
+                request.Identity,
+                _snapshot);
+            return Task.FromResult(new WorkspaceDocumentManagerCommitResult(
+                storeResult,
+                WorkspaceDocumentViewSynchronizationResult.Synchronized,
+                storeResult.Snapshot));
         }
 
-        public Task<WorkspaceDocumentReloadResult> ReloadAsync(
+        public Task<WorkspaceDocumentManagerReloadResult> ReloadAsync(
             WorkspaceDocumentReloadRequest request,
             CancellationToken cancellationToken = default)
             => throw new NotSupportedException();
@@ -437,5 +437,25 @@ public class ViewModelTests
 
         public ValueTask DisposeAsync()
             => ValueTask.CompletedTask;
+
+        private sealed class EmptyDocumentReader : IWorkspaceDocumentReader
+        {
+            public LocalPathComparisonPolicy PathComparison => LocalPathComparisonPolicy.ForCurrentPlatform;
+
+            public Task<WorkspaceDocumentOpenResult> OpenAsync(
+                string? filePath,
+                WorkspaceDocumentOpenOptions options,
+                CancellationToken cancellationToken = default)
+                => throw new NotSupportedException();
+
+            public IReadOnlyList<WorkspaceDocumentSnapshot> GetSnapshotsUnderDirectory(string? directoryPath)
+                => [];
+
+            public bool TryGetSnapshot(string? filePath, out WorkspaceDocumentSnapshot? snapshot)
+            {
+                snapshot = null;
+                return false;
+            }
+        }
     }
 }

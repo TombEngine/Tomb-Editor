@@ -16,7 +16,10 @@ namespace TombLib.Scripting.Lua.Completion;
 /// owned by this factory and is safe to call from any thread (a concurrent dictionary keyed by
 /// theme and kind plus a volatile theme-name guard). It is invalidated in place whenever the
 /// active theme name changes, so entries stay bounded to the current theme and stale themed
-/// brushes are never returned after a theme switch.
+/// brushes are never returned after a theme switch. Kinds without a dedicated vendored glyph reuse
+/// the closest available glyph, and any remaining kind (for example <c>Text</c>, <c>Color</c>,
+/// <c>Unit</c>, or a custom kind) falls back to a neutral default glyph, so a new completion kind
+/// never fails icon creation.
 /// </remarks>
 internal static class LuaCompletionIconFactory
 {
@@ -66,9 +69,25 @@ internal static class LuaCompletionIconFactory
 		return new GeometryDrawing(brush, null, geometry);
 	}
 
+	private static string GetGlyphIdentifier(string identifier)
+	{
+		// The shared taxonomy preserves every protocol kind, so kinds without a dedicated vendored
+		// glyph reuse the closest available one.
+		return identifier switch
+		{
+			"Function" or "Constructor" or "Event" => "Method",
+			"Interface" or "Enum" or "Struct" or "TypeParameter" => "Class",
+			"Module" => "Namespace",
+			"Value" or "Reference" => "Variable",
+			"EnumMember" => "Constant",
+			"Snippet" or "Operator" => "Keyword",
+			_ => identifier
+		};
+	}
+
 	private static string[] GetPathData(TextCompletionItemKind kind)
 	{
-		return kind.Identifier switch
+		return GetGlyphIdentifier(kind.Identifier) switch
 		{
 			"Variable" =>
 			[

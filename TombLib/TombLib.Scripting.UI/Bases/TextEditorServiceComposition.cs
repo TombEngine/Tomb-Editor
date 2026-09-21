@@ -2,13 +2,11 @@ using Nickelony.IDEKit.AvalonEdit.Bookmarks;
 using Nickelony.IDEKit.AvalonEdit.ChangeMarkers;
 using Nickelony.IDEKit.AvalonEdit.Comments;
 using Nickelony.IDEKit.AvalonEdit.Editing;
-using Nickelony.IDEKit.AvalonEdit.Editors;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
+using Nickelony.IDEKit.Core.Bookmarks;
 using TombLib.Scripting.UI.Diagnostics;
 using TombLib.Scripting.UI.Documents;
 using TombLib.Scripting.UI.Editors;
 using TombLib.Scripting.UI.Presentation;
-using TombLib.Scripting.UI.Resources;
 
 namespace TombLib.Scripting.UI.Bases;
 
@@ -38,10 +36,9 @@ internal sealed class TextEditorServiceComposition
 		BookmarkCoordinator bookmarkCoordinator,
 		IBookmarkStore bookmarkStore,
 		TextLineCommentService commentService,
-		CompletionWindowCoordinator completionWindowCoordinator,
 		ContentPersistenceCoordinator contentPersistenceCoordinator,
 		TextDiagnosticToolTipService diagnosticToolTipService,
-		TextEditorStatusCoordinator statusCoordinator,
+		TextEditorViewStateCoordinator statusCoordinator,
 		EditorToolTipPresenter toolTipPresenter,
 		UnsavedChangesTracker unsavedChangesTracker)
 	{
@@ -49,7 +46,6 @@ internal sealed class TextEditorServiceComposition
 		BookmarkCoordinator = bookmarkCoordinator;
 		BookmarkStore = bookmarkStore;
 		CommentService = commentService;
-		CompletionWindowCoordinator = completionWindowCoordinator;
 		ContentPersistenceCoordinator = contentPersistenceCoordinator;
 		DiagnosticToolTipService = diagnosticToolTipService;
 		StatusCoordinator = statusCoordinator;
@@ -61,10 +57,9 @@ internal sealed class TextEditorServiceComposition
 	public BookmarkCoordinator BookmarkCoordinator { get; }
 	public IBookmarkStore BookmarkStore { get; }
 	public TextLineCommentService CommentService { get; }
-	public CompletionWindowCoordinator CompletionWindowCoordinator { get; }
 	public ContentPersistenceCoordinator ContentPersistenceCoordinator { get; }
 	public TextDiagnosticToolTipService DiagnosticToolTipService { get; }
-	public TextEditorStatusCoordinator StatusCoordinator { get; }
+	public TextEditorViewStateCoordinator StatusCoordinator { get; }
 	public EditorToolTipPresenter ToolTipPresenter { get; }
 	public UnsavedChangesTracker UnsavedChangesTracker { get; }
 
@@ -75,26 +70,24 @@ internal sealed class TextEditorServiceComposition
 	/// <returns>The service composition bound to the editor.</returns>
 	public static TextEditorServiceComposition Create(TextEditorBase editor)
 	{
+		var bookmarkCoordinator = new BookmarkCoordinator(documentProvider: () => editor.Document);
+		bookmarkCoordinator.Changed += (_, _) =>
+		{
+			editor.InvalidateBookmarkMargin();
+			editor.SaveBookmarks();
+		};
+
+		var unsavedChangesTracker = new UnsavedChangesTracker(documentProvider: () => editor.Document);
+		unsavedChangesTracker.Changed += (_, _) => editor.InvalidateChangeMarkerMargin();
+
 		return new TextEditorServiceComposition(
 			autoClosingService: new TextAutoClosingService(),
 
-			bookmarkCoordinator: new BookmarkCoordinator(
-				documentProvider: () => editor.Document,
-				onBookmarksChanged: () =>
-				{
-					editor.InvalidateBookmarkMargin();
-					editor.SaveBookmarks();
-				}),
+			bookmarkCoordinator: bookmarkCoordinator,
 
-			bookmarkStore: new BookmarkSidecarStore(),
+			bookmarkStore: new BookmarkSidecarStore(".bkmrk"),
 
 			commentService: new TextLineCommentService(),
-
-			completionWindowCoordinator: new CompletionWindowCoordinator(
-				host: new CompletionWindowHost(editor.TextArea),
-				defaultBorderBrush: TextEditorColorPalette.ToolTipBorder,
-				defaultBackground: TextEditorColorPalette.ToolTipBackground,
-				defaultForeground: TextEditorColorPalette.ToolTipForeground),
 
 			contentPersistenceCoordinator: new ContentPersistenceCoordinator(
 				contentProvider: () => editor.Content,
@@ -104,15 +97,13 @@ internal sealed class TextEditorServiceComposition
 			diagnosticToolTipService: new TextDiagnosticToolTipService(
 				onDiagnosticsChanged: () => editor.InvalidateDiagnosticLayer()),
 
-			statusCoordinator: new TextEditorStatusCoordinator(
+			statusCoordinator: new TextEditorViewStateCoordinator(
 				textArea: editor.TextArea,
 				raiseStatusChanged: editor.RaiseStatusChanged,
 				raiseZoomChanged: editor.RaiseZoomChanged),
 
 			toolTipPresenter: new EditorToolTipPresenter(editor),
 
-			unsavedChangesTracker: new UnsavedChangesTracker(
-				documentProvider: () => editor.Document,
-				onChanged: () => editor.InvalidateChangeMarkerMargin()));
+			unsavedChangesTracker: unsavedChangesTracker);
 	}
 }

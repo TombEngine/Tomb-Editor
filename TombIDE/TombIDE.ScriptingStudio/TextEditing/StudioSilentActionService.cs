@@ -5,6 +5,7 @@ using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.Shell;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editors;
+using Nickelony.IDEKit.Core.Pathing;
 using Nickelony.IDEKit.Workspace.Documents;
 using Nickelony.IDEKit.Workspace.Editing;
 using Nickelony.IDEKit.Workspace.Views;
@@ -29,7 +30,7 @@ internal sealed class StudioSilentActionService
 	private readonly IScriptingHostOperations _hostOperations;
 	private readonly IEditorViewHost? _viewHost;
 	private readonly IWorkspaceDocumentManager? _documentManager;
-	private readonly WorkspaceEditApplierCore? _workspaceEditApplier;
+	private readonly WorkspaceEditApplier? _workspaceEditApplier;
 
 	public StudioSilentActionService(
 		IEditorDocumentController documentController,
@@ -41,9 +42,12 @@ internal sealed class StudioSilentActionService
 		_hostOperations = hostOperations ?? throw new ArgumentNullException(nameof(hostOperations));
 		_viewHost = viewHost;
 		_documentManager = documentManager;
+		// Host flavor: target ids are Windows file paths, so deduplicate them case-insensitively.
 		_workspaceEditApplier = documentManager is null
 			? null
-			: new WorkspaceEditApplierCore(documentManager.Replace);
+			: new WorkspaceEditApplier(
+				request => documentManager.ReplaceAsync(request).GetAwaiter().GetResult().StoreResult,
+				LocalPathComparisonPolicy.CaseInsensitive);
 	}
 
 	public SilentActionFileState CaptureFileState(string filePath, EditorType editorType = EditorType.Default)
@@ -112,7 +116,7 @@ internal sealed class StudioSilentActionService
 
 	private void ApplyThroughWorkspace(TextEditorBase editor)
 	{
-		WorkspaceDocumentOpenResult openResult = _documentManager!
+			WorkspaceDocumentManagerOpenResult openResult = _documentManager!
 			.OpenAsync(editor.FilePath, DefaultWorkspaceOpenOptions)
 			.GetAwaiter()
 			.GetResult();
@@ -124,14 +128,15 @@ internal sealed class StudioSilentActionService
 		}
 
 		_workspaceEditApplier!.Apply([
-			new WorkspaceEditTargetPreparation(
-				editor.FilePath,
-				snapshot.DocumentKey,
-				snapshot.DocumentId,
-				snapshot.Version,
-				snapshot.Content,
-				editor.Text,
-				snapshot.FileFormat)]);
+			new WorkspaceEditTargetPreparation
+			{
+				TargetId = editor.FilePath,
+				Identity = new(snapshot.DocumentKey, snapshot.DocumentId, snapshot.Version),
+				BeforeContent = snapshot.Content,
+				AfterContent = editor.Text,
+				BeforeFileFormat = snapshot.FileFormat,
+				AfterFileFormat = snapshot.FileFormat
+			}]);
 
 		_documentController.SaveFile(editor);
 	}
@@ -141,7 +146,7 @@ internal sealed class StudioSilentActionService
 		if (_viewHost is null || _documentManager is null)
 			return null;
 
-		WorkspaceDocumentOpenResult result = _documentManager
+WorkspaceDocumentManagerOpenResult result = _documentManager
 			.OpenAsync(filePath, DefaultWorkspaceOpenOptions)
 			.GetAwaiter()
 			.GetResult();

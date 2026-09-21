@@ -1,3 +1,4 @@
+using Nickelony.IDEKit.Core.Diagnostics;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
 
 namespace TombLib.Scripting.UI.Presentation;
@@ -11,14 +12,16 @@ namespace TombLib.Scripting.UI.Presentation;
 /// <param name="LineNumber">The one-based line number of the diagnostic.</param>
 /// <param name="ColumnNumber">The one-based column number of the diagnostic.</param>
 /// <param name="Message">The diagnostic message.</param>
+/// <param name="Source">The optional producer identifier of the diagnostic, or <see langword="null"/> when the producer did not supply one.</param>
 /// <param name="StartOffset">The start offset of the diagnostic in the document.</param>
 /// <param name="EndOffset">The end offset of the diagnostic in the document.</param>
 public sealed record class TextDiagnosticListItem(
 	string FilePath,
-	TextEditorDiagnosticSeverity Severity,
+	TextDiagnosticSeverity Severity,
 	string SeverityLabel,
 	int LineNumber,
 	int ColumnNumber,
 	string Message,
+	string? Source,
 	int StartOffset,
 	int EndOffset);

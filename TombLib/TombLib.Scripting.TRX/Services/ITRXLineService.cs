@@ -3,8 +3,8 @@ namespace TombLib.Scripting.TRX.Services;
 /// <summary>
 /// Provides line-level text operations for TRX gameflow scripts.
 /// The seam is retained deliberately: besides forwarding comment handling to the Core
-/// <c>CommentHelper</c> with a <c>"//"</c> <c>CommentSyntax</c>, it adds the
-/// <see cref="IsEmptyOrComments"/> predicate that <c>CommentHelper</c> does not
+/// <c>CommentOperations</c> with a <c>"//"</c> <c>CommentSyntax</c>, it adds the
+/// <see cref="IsEmptyOrComments"/> predicate that <c>CommentOperations</c> does not
 /// expose, and it is consumed directly by TombIDE composition and TRX editor tests.
 /// </summary>
 public interface ITRXLineService

@@ -54,8 +54,8 @@ internal sealed class WorkbenchServiceTestBuilder : IDisposable
 	private Mock<IAvalonDockHost>? _dockHost;
 	private bool _ownsPaneCatalog;
 	private WorkbenchService? _workbench;
-	private Mock<ITextReferencesProvider> _referencesProvider = new();
-	private Mock<ITextEditProvider> _editProvider = new();
+	private Mock<ILanguageServerReferencesProvider> _referencesProvider = new();
+	private Mock<ILanguageServerRenameProvider> _editProvider = new();
 	private Mock<IMessageService> _messageService = new();
 	private Mock<IDialogService> _dialogService = new();
 	private Mock<IGameProject>? _project;
@@ -91,9 +91,9 @@ internal sealed class WorkbenchServiceTestBuilder : IDisposable
 
 	public IMessenger Messenger => _messenger;
 
-	public Mock<ITextReferencesProvider> ReferencesProvider => _referencesProvider;
+	public Mock<ILanguageServerReferencesProvider> ReferencesProvider => _referencesProvider;
 
-	public Mock<ITextEditProvider> EditProvider => _editProvider;
+	public Mock<ILanguageServerRenameProvider> EditProvider => _editProvider;
 
 	public Mock<IMessageService> MessageService => _messageService;
 
@@ -159,14 +159,14 @@ internal sealed class WorkbenchServiceTestBuilder : IDisposable
 		return this;
 	}
 
-	public WorkbenchServiceTestBuilder WithReferenceProvider(Mock<ITextReferencesProvider> referencesProvider)
+	public WorkbenchServiceTestBuilder WithReferenceProvider(Mock<ILanguageServerReferencesProvider> referencesProvider)
 	{
 		ArgumentNullException.ThrowIfNull(referencesProvider);
 		_referencesProvider = referencesProvider;
 		return this;
 	}
 
-	public WorkbenchServiceTestBuilder WithEditProvider(Mock<ITextEditProvider> editProvider)
+	public WorkbenchServiceTestBuilder WithEditProvider(Mock<ILanguageServerRenameProvider> editProvider)
 	{
 		ArgumentNullException.ThrowIfNull(editProvider);
 		_editProvider = editProvider;
@@ -401,7 +401,7 @@ internal sealed class WorkbenchServiceTestBuilder : IDisposable
 
 	private LuaTrackedDocumentStateService CreateLuaTrackedDocumentStateService(ITextEditorHost textEditorHost)
 	{
-		var intellisenseProvider = new Mock<ILuaIntelliSenseProvider>();
+		var intellisenseProvider = new Mock<ILuaLanguageServerIntelliSenseProvider>();
 		intellisenseProvider.Setup(provider => provider.GetDiagnostics(It.IsAny<string>())).Returns([]);
 		intellisenseProvider.Setup(provider => provider.GetSemanticTokens(It.IsAny<string>())).Returns([]);
 		return new LuaTrackedDocumentStateService(textEditorHost, intellisenseProvider.Object);
@@ -410,7 +410,6 @@ internal sealed class WorkbenchServiceTestBuilder : IDisposable
 	private static IKeyBindingService<UICommand> CreateKeyBindingService()
 		=> new KeyBindingService<UICommand>(
 			new CommandCatalog<UICommand>([]),
-			new KeyBindingOverrideCollection(),
-			_ => true);
+			new KeyBindingTestStore());
 
 }

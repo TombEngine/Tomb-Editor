@@ -22,6 +22,7 @@
     <PackageReference Include="Nickelony.IDEKit.Core" Version="$(NickelonyIDEKitCoreVersion)" />
     <PackageReference Include="Nickelony.IDEKit.AvalonEdit" Version="$(NickelonyIDEKitAvalonEditVersion)" />
     <PackageReference Include="Nickelony.IDEKit.Workspace" Version="$(NickelonyIDEKitWorkspaceVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Workspace.Views" Version="$(NickelonyIDEKitWorkspaceViewsVersion)" />
     <PackageReference Include="Nickelony.IDEKit.KeyBindings" Version="$(NickelonyIDEKitKeyBindingsVersion)" />
     <ProjectReference Include="..\..\TombEditor\TombEditor.csproj" />
     <ProjectReference Include="..\..\TombIDE\TombIDE.ScriptingStudio\TombIDE.ScriptingStudio.csproj" />

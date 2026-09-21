@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Moq;
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.Settings;
 using TombIDE.ScriptingStudio.Shell;
@@ -20,7 +21,8 @@ internal static class ScriptingWorkspaceProfileTestFactory
 		TRVersion.Game gameVersion,
 		bool supportsLua,
 		string scriptDirectoryPath,
-		IScriptingStudioShellSettingsStore? settingsStore = null)
+		IScriptingStudioShellSettingsStore? settingsStore = null,
+		Func<ScriptingDocumentContext, ITextDocumentSymbolProvider?>? luaOutlineProviderFactory = null)
 	{
 		ArgumentNullException.ThrowIfNull(scriptDirectoryPath);
 
@@ -39,7 +41,8 @@ internal static class ScriptingWorkspaceProfileTestFactory
 			settingsStore,
 			ScriptingLanguageServicesTestFactory.CreateClassicScript(),
 			ScriptingLanguageServicesTestFactory.CreateGameFlowScript(),
-			ScriptingLanguageServicesTestFactory.CreateTRX());
+			ScriptingLanguageServicesTestFactory.CreateTRX(),
+			luaOutlineProviderFactory);
 	}
 
 	public static ScriptingWorkspaceProfile CreateLuaProfile(

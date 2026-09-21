@@ -7,6 +7,7 @@ using Nickelony.IDEKit.Workspace.Documents;
 using Nickelony.IDEKit.Workspace.Views;
 using TombIDE.ScriptingStudio.TextEditing;
 using TombLib.Scripting.UI.Bases;
+using Nickelony.IDEKit.Core.Editing;
 
 namespace TombEditor.Tests.ScriptingStudio;
 
@@ -34,7 +35,7 @@ public sealed class TextEditorWorkspaceViewTests
 				version: 4);
 			WorkspaceDocumentViewOpenResult attach = view.Open(initial);
 
-			Assert.AreEqual(WorkspaceDocumentViewOpenStatus.Opened, attach.Status);
+			Assert.AreEqual(WorkspaceDocumentViewOpenOutcome.Opened, attach.Outcome);
 			Assert.AreEqual("initial", editor.Text);
 			Assert.AreEqual(initial.DocumentId, view.DocumentId);
 			Assert.AreEqual(initial.DocumentKey, view.DocumentKey);
@@ -49,15 +50,13 @@ public sealed class TextEditorWorkspaceViewTests
 				documentKey: initial.DocumentKey);
 			WorkspaceDocumentViewRefreshResult refresh = view.Refresh(refreshed);
 
-			Assert.AreEqual(WorkspaceDocumentViewRefreshStatus.Refreshed, refresh.Status);
+			Assert.AreEqual(WorkspaceDocumentViewRefreshOutcome.Refreshed, refresh.Outcome);
 			Assert.AreEqual("refreshed", editor.Text);
 			Assert.AreEqual(0, requests.Count);
 
 			WorkspaceDocumentMutationResult acknowledgement = new(
-				WorkspaceDocumentMutationStatus.Replaced,
-				refreshed.DocumentKey,
-				refreshed.DocumentId,
-				refreshed.Version,
+				WorkspaceDocumentMutationOutcome.Changed,
+				new WorkspaceDocumentRequestIdentity(refreshed.DocumentKey, refreshed.DocumentId, refreshed.Version),
 				CreateSnapshot(
 					"script.txt",
 					"acknowledged",
@@ -65,12 +64,12 @@ public sealed class TextEditorWorkspaceViewTests
 					documentKey: refreshed.DocumentKey));
 			WorkspaceDocumentViewRefreshResult acknowledgedResult = view.AcknowledgeApply(acknowledgement);
 
-			Assert.AreEqual(WorkspaceDocumentViewRefreshStatus.Refreshed, acknowledgedResult.Status);
+			Assert.AreEqual(WorkspaceDocumentViewRefreshOutcome.Refreshed, acknowledgedResult.Outcome);
 			Assert.AreEqual("acknowledged", editor.Text);
 			Assert.AreEqual(0, requests.Count);
 
 			editor.Text = "next";
-			Assert.AreEqual(6, requests[0].ExpectedVersion);
+			Assert.AreEqual(6, requests[0].Identity.Version);
 		});
 
 	[TestMethod]
@@ -87,9 +86,9 @@ public sealed class TextEditorWorkspaceViewTests
 			editor.Text = "changed";
 
 			Assert.AreEqual(1, requests.Count);
-			Assert.AreEqual(initial.DocumentKey, requests[0].ExpectedDocumentKey);
-			Assert.AreEqual(initial.DocumentId, requests[0].DocumentId);
-			Assert.AreEqual(initial.Version, requests[0].ExpectedVersion);
+			Assert.AreEqual(initial.DocumentKey, requests[0].Identity.DocumentKey);
+			Assert.AreEqual(initial.DocumentId, requests[0].Identity.DocumentId);
+			Assert.AreEqual(initial.Version, requests[0].Identity.Version);
 			Assert.AreEqual("changed", requests[0].Content);
 			Assert.IsTrue(view.HasPendingEdits);
 			Assert.IsFalse(view.HasConflict);
@@ -105,7 +104,7 @@ public sealed class TextEditorWorkspaceViewTests
 			view.ApplyRequested += (_, args) => requests.Add(args.Request);
 
 			view.Open(CreateSnapshot("script.txt", "initial", version: 4));
-			view.Apply([new TextEditOperation(0, "initial".Length, "changed", 0)]);
+			view.Apply(new PreparedTextEdits([new TextEditOperation(0, "initial".Length, "changed", 0)]));
 
 			Assert.AreEqual("changed", view.Text);
 			Assert.AreEqual(1, requests.Count);
@@ -135,14 +134,12 @@ public sealed class TextEditorWorkspaceViewTests
 			editor.Text = "local";
 
 			WorkspaceDocumentMutationResult stale = new(
-				WorkspaceDocumentMutationStatus.StaleDocument,
-				initial.DocumentKey,
-				initial.DocumentId,
-				initial.Version,
+				WorkspaceDocumentMutationOutcome.StaleDocument,
+				new WorkspaceDocumentRequestIdentity(initial.DocumentKey, initial.DocumentId, initial.Version),
 				CreateSnapshot("script.txt", "canonical", version: 5, documentKey: initial.DocumentKey));
 			WorkspaceDocumentViewRefreshResult result = view.AcknowledgeApply(stale);
 
-			Assert.AreEqual(WorkspaceDocumentViewRefreshStatus.MarkedStale, result.Status);
+			Assert.AreEqual(WorkspaceDocumentViewRefreshOutcome.MarkedStale, result.Outcome);
 			Assert.AreEqual("local", editor.Text);
 			Assert.IsTrue(view.HasPendingEdits);
 			Assert.IsTrue(view.HasConflict);
@@ -181,7 +178,7 @@ public sealed class TextEditorWorkspaceViewTests
 
 			WorkspaceDocumentViewOpenResult attach = view.Open(CreateSnapshot("script.txt", "canonical", version: 4));
 
-			Assert.AreEqual(WorkspaceDocumentViewOpenStatus.Unavailable, attach.Status);
+			Assert.AreEqual(WorkspaceDocumentViewOpenOutcome.Unavailable, attach.Outcome);
 			Assert.IsNotNull(attach.Failure);
 			Assert.IsNull(host.ActiveEditTarget);
 		});

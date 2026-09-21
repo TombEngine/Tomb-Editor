@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 using Nickelony.IDEKit.KeyBindings;
+using Nickelony.IDEKit.KeyBindings.Wpf;
 using System;
 using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.Messaging;

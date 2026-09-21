@@ -12,6 +12,7 @@ namespace TombLib.Scripting.UI.Presentation;
 /// <param name="SeverityHeader">The severity column header.</param>
 /// <param name="LineHeader">The line column header.</param>
 /// <param name="ColumnHeader">The column column header.</param>
+/// <param name="SourceHeader">The source column header.</param>
 /// <param name="MessageHeader">The message column header.</param>
 public sealed record class TextDiagnosticsPresentation(
 	string NoActiveDocumentText,
@@ -23,4 +24,5 @@ public sealed record class TextDiagnosticsPresentation(
 	string SeverityHeader,
 	string LineHeader,
 	string ColumnHeader,
+	string SourceHeader,
 	string MessageHeader);

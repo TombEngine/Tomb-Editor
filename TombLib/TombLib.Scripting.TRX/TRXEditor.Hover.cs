@@ -1,4 +1,4 @@
-using Nickelony.IDEKit.Core.Infrastructure;
+
 	using Nickelony.IDEKit.IntelliSense.Hover;
 	using System.Threading;
 	using System.Threading.Tasks;
@@ -12,8 +12,10 @@ public sealed partial class TRXEditor
 
 	private Task<TextHoverInfo?> RequestHover(int hoveredOffset, CancellationToken cancellationToken)
 	{
-		return SynchronousRequestAdapter.Adapt(
-			() => _languageServices.HoverProvider.GetHoverInfo(new TextHoverRequest(Document.Text, hoveredOffset)),
-			cancellationToken);
+		// The hover provider is synchronous; the token is honored before the request starts.
+		cancellationToken.ThrowIfCancellationRequested();
+
+		return Task.FromResult(
+			_languageServices.HoverProvider.GetHoverInfo(new TextHoverRequest(Document.Text, hoveredOffset)));
 	}
 }

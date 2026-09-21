@@ -77,8 +77,8 @@ public sealed class TRXGameFlowSchemaService : ITRXGameFlowSchemaService
 		// The schema index classifies only the array shape; the TRX keyword categories
 		// (collections vs properties) derive from that classification here.
 		var keywords = new TRXSchemaKeywords(
-			index.Properties.Where(property => property.IsArray).Select(property => property.Name).ToArray(),
-			index.Properties.Where(property => !property.IsArray).Select(property => property.Name).ToArray(),
+			index.Properties.Where(property => property.IsArrayOnly).Select(property => property.Name).ToArray(),
+			index.Properties.Where(property => !property.IsArrayOnly).Select(property => property.Name).ToArray(),
 			index.Constants.ToArray());
 
 		return new TRXGameFlowSchemaModel(properties, keywords);

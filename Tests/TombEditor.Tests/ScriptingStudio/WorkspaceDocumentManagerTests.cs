@@ -4,14 +4,18 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TombIDE.ScriptingStudio.Composition;
 using TombIDE.ScriptingStudio.Workspace;
 using Nickelony.IDEKit.Workspace.Views;
 using TombIDE.Shared.Messaging;
+using Nickelony.IDEKit.Core.Pathing;
 using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.Workspace.Documents;
+using Nickelony.IDEKit.Core.Editing;
+using Nickelony.IDEKit.Workspace.Documents.FileSystem;
 
 namespace TombEditor.Tests.ScriptingStudio;
 
@@ -28,20 +32,28 @@ public sealed class WorkspaceDocumentManagerTests
 		TextEncodingKind.Utf8,
 		DefaultFormat);
 
+	// The preview.36 store rejects relative paths: document identity is an absolute path, so the
+	// tests derive theirs from a stable per-run temp root.
+	private static readonly string s_testRoot = Path.Combine(
+		Path.GetTempPath(),
+		$"tomb-workspace-manager-tests-{Guid.NewGuid():N}");
+
+	private static string TestPath(params string[] segments) => Path.Combine([s_testRoot, .. segments]);
+
 	[TestMethod]
 	public async Task OpenWithView_OpensUnloadedViewBeforeRegistration()
 	{
 		var fileSystem = new TestFileSystem("initial");
 		await using var store = new WorkspaceDocumentStore(fileSystem);
-		await using var manager = new WorkspaceDocumentManager(store, new ImmediateUiDispatcher().Invoke);
+		await using var manager = new WorkspaceDocumentManager(store, ImmediateDispatch);
 		var view = new TestView("text");
 
 		WorkspaceDocumentManagerOpenResult result = await manager.OpenWithViewAsync(
-			"script.lua",
+			TestPath("script.lua"),
 			OpenOptions,
 			view);
 
-		Assert.AreEqual(WorkspaceDocumentManagerOpenStatus.Opened, result.Status);
+		Assert.AreEqual(WorkspaceDocumentManagerOpenOutcome.Opened, result.Outcome);
 		Assert.IsTrue(view.WasUnloadedWhenAttached);
 		Assert.AreEqual(1, view.OpenCount);
 		Assert.AreEqual(1, view.PublishSubscriberCount);
@@ -53,11 +65,11 @@ public sealed class WorkspaceDocumentManagerTests
 	{
 		var fileSystem = new TestFileSystem("initial");
 		await using var store = new WorkspaceDocumentStore(fileSystem);
-		await using var manager = new WorkspaceDocumentManager(store, new ImmediateUiDispatcher().Invoke);
+		await using var manager = new WorkspaceDocumentManager(store, ImmediateDispatch);
 
 		var pendingView = new TestView("pending") { HasPendingEdits = true };
 		WorkspaceDocumentManagerOpenResult pending = await manager.OpenWithViewAsync(
-			"pending.lua",
+			TestPath("pending.lua"),
 			OpenOptions,
 			pendingView);
 
@@ -66,24 +78,24 @@ public sealed class WorkspaceDocumentManagerTests
 			InitialDocumentKey = new WorkspaceDocumentKey(Guid.NewGuid())
 		};
 		WorkspaceDocumentManagerOpenResult loaded = await manager.OpenWithViewAsync(
-			"loaded.lua",
+			TestPath("loaded.lua"),
 			OpenOptions,
 			loadedView);
 
 		var attachedView = new TestView("attached");
 		WorkspaceDocumentManagerOpenResult attached = await manager.OpenWithViewAsync(
-			"attached.lua",
+			TestPath("attached.lua"),
 			OpenOptions,
 			attachedView);
 		WorkspaceDocumentManagerOpenResult duplicate = await manager.OpenWithViewAsync(
-			"attached.lua",
+			TestPath("attached.lua"),
 			OpenOptions,
 			attachedView);
 
-		Assert.AreEqual(WorkspaceDocumentManagerOpenStatus.ViewInConflictState, pending.Status);
-		Assert.AreEqual(WorkspaceDocumentManagerOpenStatus.ViewInConflictState, loaded.Status);
-		Assert.AreEqual(WorkspaceDocumentManagerOpenStatus.Opened, attached.Status);
-		Assert.AreEqual(WorkspaceDocumentManagerOpenStatus.AlreadyOpen, duplicate.Status);
+		Assert.AreEqual(WorkspaceDocumentManagerOpenOutcome.ViewUnavailable, pending.Outcome);
+		Assert.AreEqual(WorkspaceDocumentManagerOpenOutcome.ViewUnavailable, loaded.Outcome);
+		Assert.AreEqual(WorkspaceDocumentManagerOpenOutcome.Opened, attached.Outcome);
+		Assert.AreEqual(WorkspaceDocumentManagerOpenOutcome.AlreadyOpen, duplicate.Outcome);
 		Assert.AreEqual(1, fileSystem.ReadCount);
 		Assert.AreEqual(0, pendingView.OpenCount);
 		Assert.AreEqual(0, loadedView.OpenCount);
@@ -95,18 +107,18 @@ public sealed class WorkspaceDocumentManagerTests
 	{
 		var fileSystem = new TestFileSystem("initial");
 		await using var store = new WorkspaceDocumentStore(fileSystem);
-		await using var manager = new WorkspaceDocumentManager(store, new ImmediateUiDispatcher().Invoke);
+		await using var manager = new WorkspaceDocumentManager(store, ImmediateDispatch);
 		var view = new TestView("failed")
 		{
-			AttachStatus = WorkspaceDocumentViewOpenStatus.Unavailable
+			AttachStatus = WorkspaceDocumentViewOpenOutcome.Unavailable
 		};
 
 		WorkspaceDocumentManagerOpenResult result = await manager.OpenWithViewAsync(
-			"failed.lua",
+			TestPath("failed.lua"),
 			OpenOptions,
 			view);
 
-		Assert.AreEqual(WorkspaceDocumentManagerOpenStatus.OpenFailed, result.Status);
+		Assert.AreEqual(WorkspaceDocumentManagerOpenOutcome.ViewRejected, result.Outcome);
 		Assert.AreEqual(1, view.DetachCount);
 		Assert.AreEqual(0, view.PublishSubscriberCount);
 	}
@@ -117,20 +129,18 @@ public sealed class WorkspaceDocumentManagerTests
 		var fileSystem = new TestFileSystem("initial");
 		await using var store = new WorkspaceDocumentStore(fileSystem);
 		var actions = new List<string>();
-		await using var manager = new WorkspaceDocumentManager(store, new ImmediateUiDispatcher().Invoke);
+		await using var manager = new WorkspaceDocumentManager(store, ImmediateDispatch);
 		var source = new TestView("source", actions);
 		var peer = new TestView("peer", actions) { ThrowOnRefresh = true };
 
 		WorkspaceDocumentSnapshot initial = (await manager.OpenWithViewAsync(
-			"script.lua",
+			TestPath("script.lua"),
 			OpenOptions,
 			source)).Snapshot!;
-		await manager.OpenWithViewAsync("script.lua", OpenOptions, peer);
+		await manager.OpenWithViewAsync(TestPath("script.lua"), OpenOptions, peer);
 
 		source.RaiseApply(new WorkspaceDocumentReplaceRequest(
-			initial.DocumentKey,
-			initial.DocumentId,
-			initial.Version,
+			new(initial.DocumentKey, initial.DocumentId, initial.Version),
 			"changed",
 			initial.FileFormat));
 
@@ -138,84 +148,82 @@ public sealed class WorkspaceDocumentManagerTests
 		Assert.AreEqual("peer.refresh", actions[1]);
 
 		WorkspaceDocumentSnapshot changed = GetSnapshot(store, initial.DocumentId);
-		WorkspaceDocumentCommitResult blocked = await manager.CommitAsync(new WorkspaceDocumentCommitRequest(
-			changed.DocumentKey,
-			changed.DocumentId,
-			changed.Version,
+		WorkspaceDocumentManagerCommitResult retried = await manager.CommitAsync(new WorkspaceDocumentCommitRequest(
+			new(changed.DocumentKey, changed.DocumentId, changed.Version),
 			changed.OnDiskStamp));
 
-		Assert.AreEqual(WorkspaceDocumentCommitStatus.ViewNotSynchronized, blocked.Status);
-		CollectionAssert.AreEqual(new[] { "peer" }, blocked.BlockingViewIds!.ToArray());
-		Assert.AreEqual(0, fileSystem.CaptureStampCount);
+		// A commit is not blocked by a peer whose only outstanding state is a prior synchronization
+		// failure: the write proceeds and the post-commit refresh retries the failed peer.
+		Assert.IsNotNull(retried.StoreResult);
+		Assert.AreEqual(WorkspaceDocumentCommitOutcome.Committed, retried.Outcome);
+		Assert.AreEqual(WorkspaceDocumentViewSynchronizationOutcome.Unsynchronized, retried.Views.Outcome);
+		CollectionAssert.AreEqual(new[] { "peer" }, retried.Views.Issues.Select(issue => issue.ViewId).ToArray());
+		Assert.IsTrue(fileSystem.ReplacementStarted.Task.IsCompleted, "The retried commit did not write to disk.");
 
 		peer.ThrowOnRefresh = false;
-		WorkspaceDocumentMutationResult refreshed = manager.Replace(new WorkspaceDocumentReplaceRequest(
-			changed.DocumentKey,
-			changed.DocumentId,
-			changed.Version,
+		WorkspaceDocumentSnapshot afterCommit = retried.Snapshot!;
+		WorkspaceDocumentManagerMutationResult refreshed = await manager.ReplaceAsync(new WorkspaceDocumentReplaceRequest(
+			new(afterCommit.DocumentKey, afterCommit.DocumentId, afterCommit.Version),
 			"changed again",
-			changed.FileFormat));
+			afterCommit.FileFormat));
 
-		Assert.AreEqual(WorkspaceDocumentMutationStatus.Replaced, refreshed.Status);
+		Assert.AreEqual(WorkspaceDocumentMutationOutcome.Changed, refreshed.Outcome);
 		WorkspaceDocumentSnapshot current = refreshed.Snapshot!;
-		WorkspaceDocumentCommitResult committed = await manager.CommitAsync(new WorkspaceDocumentCommitRequest(
-			current.DocumentKey,
-			current.DocumentId,
-			current.Version,
+		WorkspaceDocumentManagerCommitResult committed = await manager.CommitAsync(new WorkspaceDocumentCommitRequest(
+			new(current.DocumentKey, current.DocumentId, current.Version),
 			current.OnDiskStamp));
 
-		Assert.AreEqual(WorkspaceDocumentCommitStatus.Committed, committed.Status);
-		Assert.AreEqual(1, fileSystem.CaptureStampCount);
-		Assert.AreEqual(2, peer.RefreshCount);
+		Assert.AreEqual(WorkspaceDocumentCommitOutcome.Committed, committed.Outcome);
+		Assert.AreEqual(WorkspaceDocumentViewSynchronizationOutcome.Synchronized, committed.Views.Outcome);
+
+		// The peer failed once on apply and once on the commit retry; the second replace's refresh
+		// recovered it (commits keep the document version, so the final commit refreshes nothing).
+		Assert.AreEqual(3, peer.RefreshCount);
 	}
 
 	[TestMethod]
-	public async Task ThrowingAcknowledgement_BlocksCommitUntilLaterRefreshSucceeds()
+	public async Task ThrowingAcknowledgement_IsRecoveredByCommitRefresh()
 	{
 		var fileSystem = new TestFileSystem("initial");
 		await using var store = new WorkspaceDocumentStore(fileSystem);
-		await using var manager = new WorkspaceDocumentManager(store, new ImmediateUiDispatcher().Invoke);
+		await using var manager = new WorkspaceDocumentManager(store, ImmediateDispatch);
 		var source = new TestView("source") { ThrowOnAcknowledge = true };
 		var peer = new TestView("peer");
 
 		WorkspaceDocumentSnapshot initial = (await manager.OpenWithViewAsync(
-			"script.lua",
+			TestPath("script.lua"),
 			OpenOptions,
 			source)).Snapshot!;
-		await manager.OpenWithViewAsync("script.lua", OpenOptions, peer);
+		await manager.OpenWithViewAsync(TestPath("script.lua"), OpenOptions, peer);
 
 		source.RaiseApply(new WorkspaceDocumentReplaceRequest(
-			initial.DocumentKey,
-			initial.DocumentId,
-			initial.Version,
+			new(initial.DocumentKey, initial.DocumentId, initial.Version),
 			"changed",
 			initial.FileFormat));
 
 		WorkspaceDocumentSnapshot changed = GetSnapshot(store, initial.DocumentId);
-		WorkspaceDocumentCommitResult blocked = await manager.CommitAsync(new WorkspaceDocumentCommitRequest(
-			changed.DocumentKey,
-			changed.DocumentId,
-			changed.Version,
+		WorkspaceDocumentManagerCommitResult commit = await manager.CommitAsync(new WorkspaceDocumentCommitRequest(
+			new(changed.DocumentKey, changed.DocumentId, changed.Version),
 			changed.OnDiskStamp));
 
-		Assert.AreEqual(WorkspaceDocumentCommitStatus.ViewNotSynchronized, blocked.Status);
-		CollectionAssert.AreEqual(new[] { "source" }, blocked.BlockingViewIds!.ToArray());
-
+		// A throwing acknowledgement marks the source view as unsynchronized instead of blocking the
+		// commit; the post-commit refresh retries the view and clears the state.
+		Assert.IsNotNull(commit.StoreResult);
+		Assert.AreEqual(WorkspaceDocumentCommitOutcome.Committed, commit.Outcome);
+		Assert.AreEqual(WorkspaceDocumentViewSynchronizationOutcome.Synchronized, commit.Views.Outcome);
+		Assert.IsTrue(fileSystem.ReplacementStarted.Task.IsCompleted, "The commit did not write to disk.");
 		source.ThrowOnAcknowledge = false;
-		WorkspaceDocumentMutationResult refreshed = manager.Replace(new WorkspaceDocumentReplaceRequest(
-			changed.DocumentKey,
-			changed.DocumentId,
-			changed.Version,
+		WorkspaceDocumentSnapshot afterCommit = commit.Snapshot!;
+		WorkspaceDocumentManagerMutationResult refreshed = await manager.ReplaceAsync(new WorkspaceDocumentReplaceRequest(
+			new(afterCommit.DocumentKey, afterCommit.DocumentId, afterCommit.Version),
 			"changed again",
-			changed.FileFormat));
+			afterCommit.FileFormat));
 		WorkspaceDocumentSnapshot current = refreshed.Snapshot!;
-		WorkspaceDocumentCommitResult committed = await manager.CommitAsync(new WorkspaceDocumentCommitRequest(
-			current.DocumentKey,
-			current.DocumentId,
-			current.Version,
+		WorkspaceDocumentManagerCommitResult committed = await manager.CommitAsync(new WorkspaceDocumentCommitRequest(
+			new(current.DocumentKey, current.DocumentId, current.Version),
 			current.OnDiskStamp));
 
-		Assert.AreEqual(WorkspaceDocumentCommitStatus.Committed, committed.Status);
+		Assert.AreEqual(WorkspaceDocumentCommitOutcome.Committed, committed.Outcome);
 	}
 
 	[TestMethod]
@@ -225,38 +233,35 @@ public sealed class WorkspaceDocumentManagerTests
 		var pendingReplacement = new TaskCompletionSource<WorkspaceFileReplacementResult>(TaskCreationOptions.RunContinuationsAsynchronously);
 		fileSystem.PendingReplacement = pendingReplacement.Task;
 		await using var store = new WorkspaceDocumentStore(fileSystem);
-		await using var manager = new WorkspaceDocumentManager(store, new ImmediateUiDispatcher().Invoke);
+		await using var manager = new WorkspaceDocumentManager(store, ImmediateDispatch);
 		var source = new TestView("source");
 		var peer = new TestView("peer");
 
 		WorkspaceDocumentSnapshot initial = (await manager.OpenWithViewAsync(
-			"script.lua",
+			TestPath("script.lua"),
 			OpenOptions,
 			source)).Snapshot!;
-		await manager.OpenWithViewAsync("script.lua", OpenOptions, peer);
+		await manager.OpenWithViewAsync(TestPath("script.lua"), OpenOptions, peer);
 		source.RaiseApply(new WorkspaceDocumentReplaceRequest(
-			initial.DocumentKey,
-			initial.DocumentId,
-			initial.Version,
+			new(initial.DocumentKey, initial.DocumentId, initial.Version),
 			"changed",
 			initial.FileFormat));
 
 		WorkspaceDocumentSnapshot changed = GetSnapshot(store, initial.DocumentId);
-		Task<WorkspaceDocumentCommitResult> commit = manager.CommitAsync(new WorkspaceDocumentCommitRequest(
-			changed.DocumentKey,
-			changed.DocumentId,
-			changed.Version,
+		Task<WorkspaceDocumentManagerCommitResult> commit = manager.CommitAsync(new WorkspaceDocumentCommitRequest(
+			new(changed.DocumentKey, changed.DocumentId, changed.Version),
 			changed.OnDiskStamp));
 		await fileSystem.ReplacementStarted.Task;
 		peer.HasPendingEdits = true;
 		pendingReplacement.SetResult(new WorkspaceFileReplacementResult(
-			WorkspaceFileReplacementStatus.Replaced,
+			WorkspaceFileReplacementOutcome.Replaced,
 			new FileStamp(true, 7, DateTime.UnixEpoch.AddMinutes(1), "committed")));
 
-		WorkspaceDocumentCommitResult result = await commit;
+		WorkspaceDocumentManagerCommitResult result = await commit;
 
-		Assert.AreEqual(WorkspaceDocumentCommitStatus.CommittedWithUnsynchronizedView, result.Status);
-		CollectionAssert.AreEqual(new[] { "peer" }, result.BlockingViewIds!.ToArray());
+		Assert.AreEqual(WorkspaceDocumentCommitOutcome.Committed, result.Outcome);
+		Assert.AreEqual(WorkspaceDocumentViewSynchronizationOutcome.Unsynchronized, result.Views.Outcome);
+		CollectionAssert.AreEqual(new[] { "peer" }, result.Views.Issues.Select(issue => issue.ViewId).ToArray());
 	}
 
 	[TestMethod]
@@ -265,36 +270,33 @@ public sealed class WorkspaceDocumentManagerTests
 		var fileSystem = new TestFileSystem("initial");
 		var pendingRead = new TaskCompletionSource<WorkspaceFileReadResult>(TaskCreationOptions.RunContinuationsAsynchronously);
 		await using var store = new WorkspaceDocumentStore(fileSystem);
-		await using var manager = new WorkspaceDocumentManager(store, new ImmediateUiDispatcher().Invoke);
+		await using var manager = new WorkspaceDocumentManager(store, ImmediateDispatch);
 		var source = new TestView("source");
 		var peer = new TestView("peer");
 
-		WorkspaceDocumentSnapshot initial = (await manager.OpenWithViewAsync("script.lua", OpenOptions, source)).Snapshot!;
-		await manager.OpenWithViewAsync("script.lua", OpenOptions, peer);
+		WorkspaceDocumentSnapshot initial = (await manager.OpenWithViewAsync(TestPath("script.lua"), OpenOptions, source)).Snapshot!;
+		await manager.OpenWithViewAsync(TestPath("script.lua"), OpenOptions, peer);
 		fileSystem.ResetReadStarted();
 		fileSystem.PendingRead = pendingRead.Task;
 		source.RaiseApply(new WorkspaceDocumentReplaceRequest(
-			initial.DocumentKey,
-			initial.DocumentId,
-			initial.Version,
+			new(initial.DocumentKey, initial.DocumentId, initial.Version),
 			"changed",
 			initial.FileFormat));
 		WorkspaceDocumentSnapshot changed = GetSnapshot(store, initial.DocumentId);
-		Task<WorkspaceDocumentConflictResolutionResult> resolution = manager.ResolveExternalConflictAsync(
+		Task<WorkspaceDocumentManagerConflictResolutionResult> resolution = manager.ResolveExternalConflictAsync(
 			new WorkspaceDocumentConflictResolutionRequest(
-				changed.DocumentKey,
-				changed.DocumentId,
-				changed.Version,
+				new(changed.DocumentKey, changed.DocumentId, changed.Version),
 				initial.OnDiskStamp,
 				WorkspaceDocumentConflictResolutionChoice.UseDisk));
 		await fileSystem.ReadStarted.Task;
 		peer.HasPendingEdits = true;
 		pendingRead.SetResult(new WorkspaceFileReadResult("disk", DefaultFormat, initial.OnDiskStamp));
 
-		WorkspaceDocumentConflictResolutionResult result = await resolution;
+		WorkspaceDocumentManagerConflictResolutionResult result = await resolution;
 
-		Assert.AreEqual(WorkspaceDocumentConflictResolutionStatus.ResolvedWithUnsynchronizedView, result.Status);
-		CollectionAssert.AreEqual(new[] { "peer" }, result.BlockingViewIds!.ToArray());
+		Assert.AreEqual(WorkspaceDocumentConflictResolutionOutcome.ResolvedWithDisk, result.Outcome);
+		Assert.AreEqual(WorkspaceDocumentViewSynchronizationOutcome.Unsynchronized, result.Views.Outcome);
+		CollectionAssert.AreEqual(new[] { "peer" }, result.Views.Issues.Select(issue => issue.ViewId).ToArray());
 	}
 
 	[TestMethod]
@@ -304,36 +306,33 @@ public sealed class WorkspaceDocumentManagerTests
 		var pendingReplacement = new TaskCompletionSource<WorkspaceFileReplacementResult>(TaskCreationOptions.RunContinuationsAsynchronously);
 		fileSystem.PendingReplacement = pendingReplacement.Task;
 		await using var store = new WorkspaceDocumentStore(fileSystem);
-		await using var manager = new WorkspaceDocumentManager(store, new ImmediateUiDispatcher().Invoke);
+		await using var manager = new WorkspaceDocumentManager(store, ImmediateDispatch);
 		var source = new TestView("source");
 		var peer = new TestView("peer");
 
-		WorkspaceDocumentSnapshot initial = (await manager.OpenWithViewAsync("script.lua", OpenOptions, source)).Snapshot!;
-		await manager.OpenWithViewAsync("script.lua", OpenOptions, peer);
+		WorkspaceDocumentSnapshot initial = (await manager.OpenWithViewAsync(TestPath("script.lua"), OpenOptions, source)).Snapshot!;
+		await manager.OpenWithViewAsync(TestPath("script.lua"), OpenOptions, peer);
 		source.RaiseApply(new WorkspaceDocumentReplaceRequest(
-			initial.DocumentKey,
-			initial.DocumentId,
-			initial.Version,
+			new(initial.DocumentKey, initial.DocumentId, initial.Version),
 			"changed",
 			initial.FileFormat));
 		WorkspaceDocumentSnapshot changed = GetSnapshot(store, initial.DocumentId);
-		Task<WorkspaceDocumentConflictResolutionResult> resolution = manager.ResolveExternalConflictAsync(
+		Task<WorkspaceDocumentManagerConflictResolutionResult> resolution = manager.ResolveExternalConflictAsync(
 			new WorkspaceDocumentConflictResolutionRequest(
-				changed.DocumentKey,
-				changed.DocumentId,
-				changed.Version,
+				new(changed.DocumentKey, changed.DocumentId, changed.Version),
 				new FileStamp(true, 8, DateTime.UnixEpoch.AddMinutes(1), "external"),
 				WorkspaceDocumentConflictResolutionChoice.UseLogical));
 		await fileSystem.ReplacementStarted.Task;
 		peer.HasPendingEdits = true;
 		pendingReplacement.SetResult(new WorkspaceFileReplacementResult(
-			WorkspaceFileReplacementStatus.Replaced,
+			WorkspaceFileReplacementOutcome.Replaced,
 			new FileStamp(true, 7, DateTime.UnixEpoch.AddMinutes(1), "committed")));
 
-		WorkspaceDocumentConflictResolutionResult result = await resolution;
+		WorkspaceDocumentManagerConflictResolutionResult result = await resolution;
 
-		Assert.AreEqual(WorkspaceDocumentConflictResolutionStatus.ResolvedWithUnsynchronizedView, result.Status);
-		CollectionAssert.AreEqual(new[] { "peer" }, result.BlockingViewIds!.ToArray());
+		Assert.AreEqual(WorkspaceDocumentConflictResolutionOutcome.ResolvedWithLogical, result.Outcome);
+		Assert.AreEqual(WorkspaceDocumentViewSynchronizationOutcome.Unsynchronized, result.Views.Outcome);
+		CollectionAssert.AreEqual(new[] { "peer" }, result.Views.Issues.Select(issue => issue.ViewId).ToArray());
 	}
 
 	[TestMethod]
@@ -343,26 +342,24 @@ public sealed class WorkspaceDocumentManagerTests
 		var pendingDelete = new TaskCompletionSource<WorkspaceFileDeleteResult>(TaskCreationOptions.RunContinuationsAsynchronously);
 		fileSystem.PendingDelete = pendingDelete.Task;
 		await using var store = new WorkspaceDocumentStore(fileSystem);
-		await using var manager = new WorkspaceDocumentManager(store, new ImmediateUiDispatcher().Invoke);
+		await using var manager = new WorkspaceDocumentManager(store, ImmediateDispatch);
 		var first = new TestView("first");
 		var second = new TestView("second");
 
-		WorkspaceDocumentSnapshot initial = (await manager.OpenWithViewAsync("script.lua", OpenOptions, first)).Snapshot!;
-		await manager.OpenWithViewAsync("script.lua", OpenOptions, second);
-		Task<WorkspaceDocumentDeleteResult> delete = manager.DeleteAsync(new WorkspaceDocumentDeleteRequest(
-			initial.DocumentKey,
-			initial.DocumentId,
-			initial.Version,
+		WorkspaceDocumentSnapshot initial = (await manager.OpenWithViewAsync(TestPath("script.lua"), OpenOptions, first)).Snapshot!;
+		await manager.OpenWithViewAsync(TestPath("script.lua"), OpenOptions, second);
+		Task<WorkspaceDocumentManagerDeleteResult> delete = manager.DeleteAsync(new WorkspaceDocumentDeleteRequest(
+			new(initial.DocumentKey, initial.DocumentId, initial.Version),
 			initial.OnDiskStamp));
 		await fileSystem.DeleteStarted.Task;
 
 		Assert.IsTrue(first.DeleteBarrierActive);
 		Assert.IsTrue(second.DeleteBarrierActive);
-		pendingDelete.SetResult(new WorkspaceFileDeleteResult(WorkspaceFileDeleteStatus.Deleted));
+		pendingDelete.SetResult(new WorkspaceFileDeleteResult(WorkspaceFileDeleteOutcome.Deleted));
 
-		WorkspaceDocumentDeleteResult result = await delete;
+		WorkspaceDocumentManagerDeleteResult result = await delete;
 
-		Assert.AreEqual(WorkspaceDocumentDeleteStatus.Deleted, result.Status);
+		Assert.AreEqual(WorkspaceDocumentDeleteOutcome.Deleted, result.Outcome);
 		Assert.AreEqual(1, first.DetachCount);
 		Assert.AreEqual(1, second.DetachCount);
 		Assert.IsFalse(first.DeleteBarrierActive);
@@ -374,22 +371,21 @@ public sealed class WorkspaceDocumentManagerTests
 	{
 		var fileSystem = new TestFileSystem("initial");
 		await using var store = new WorkspaceDocumentStore(fileSystem);
-		await using var manager = new WorkspaceDocumentManager(store, new ImmediateUiDispatcher().Invoke);
+		await using var manager = new WorkspaceDocumentManager(store, ImmediateDispatch);
 		var view = new TestView("text");
 		WorkspaceDocumentSnapshot initial = (await manager.OpenWithViewAsync(
-			Path.Combine("folder", "one.lua"),
+			TestPath("folder", "one.lua"),
 			OpenOptions,
 			view)).Snapshot!;
 
-		WorkspaceDocumentDirectoryRenameResult result = await manager.RenameDirectoryAsync(
+		WorkspaceDocumentManagerDirectoryRenameResult result = await manager.RenameDirectoryAsync(
 			new WorkspaceDocumentDirectoryRenameRequest(
-				"folder",
-				"moved",
-				[]));
+				TestPath("folder"),
+				TestPath("moved")));
 
-		Assert.AreEqual(WorkspaceDocumentDirectoryRenameStatus.Renamed, result.Status);
+		Assert.AreEqual(WorkspaceDocumentDirectoryRenameOutcome.Renamed, result.Outcome);
 		WorkspaceDocumentSnapshot renamed = result.Snapshots[0];
-		Assert.AreEqual(Path.GetFullPath(Path.Combine("moved", "one.lua")), renamed.DocumentId);
+		Assert.AreEqual(TestPath("moved", "one.lua"), renamed.DocumentId);
 		Assert.AreEqual(renamed.DocumentId, view.DocumentId);
 		Assert.AreEqual(renamed.DocumentKey, view.DocumentKey);
 		Assert.IsFalse(store.TryGetSnapshot(initial.DocumentId, out _));
@@ -401,21 +397,21 @@ public sealed class WorkspaceDocumentManagerTests
 	{
 		var fileSystem = new TestFileSystem("initial");
 		await using var store = new WorkspaceDocumentStore(fileSystem);
-		await using var manager = new WorkspaceDocumentManager(store, new ImmediateUiDispatcher().Invoke);
+		await using var manager = new WorkspaceDocumentManager(store, ImmediateDispatch);
 		var view = new TestView("text") { ThrowOnIdentityAcknowledge = true };
 		WorkspaceDocumentSnapshot initial = (await manager.OpenWithViewAsync(
-			Path.Combine("folder", "one.lua"),
+			TestPath("folder", "one.lua"),
 			OpenOptions,
 			view)).Snapshot!;
 
-		WorkspaceDocumentDirectoryRenameResult result = await manager.RenameDirectoryAsync(
+		WorkspaceDocumentManagerDirectoryRenameResult result = await manager.RenameDirectoryAsync(
 			new WorkspaceDocumentDirectoryRenameRequest(
-				"folder",
-				"moved",
-				[]));
+				TestPath("folder"),
+				TestPath("moved")));
 
-		Assert.AreEqual(WorkspaceDocumentDirectoryRenameStatus.ViewUpdateFailed, result.Status);
-		CollectionAssert.AreEqual(new[] { "text" }, result.FailedViewIds!.ToArray());
+		Assert.AreEqual(WorkspaceDocumentDirectoryRenameOutcome.Renamed, result.Outcome);
+		Assert.AreEqual(WorkspaceDocumentViewSynchronizationOutcome.Unsynchronized, result.Views.Outcome);
+		CollectionAssert.AreEqual(new[] { "text" }, result.Views.Issues.Select(issue => issue.ViewId).ToArray());
 		WorkspaceDocumentSnapshot renamed = result.Snapshots[0];
 		Assert.IsFalse(store.TryGetSnapshot(initial.DocumentId, out _));
 		Assert.IsTrue(store.TryGetSnapshot(renamed.DocumentId, out _));
@@ -426,18 +422,16 @@ public sealed class WorkspaceDocumentManagerTests
 	{
 		var fileSystem = new TestFileSystem("initial");
 		await using var store = new WorkspaceDocumentStore(fileSystem);
-		await using var manager = new WorkspaceDocumentManager(store, new ImmediateUiDispatcher().Invoke);
+		await using var manager = new WorkspaceDocumentManager(store, ImmediateDispatch);
 		var view = new TestView("text");
-		WorkspaceDocumentSnapshot initial = (await manager.OpenWithViewAsync("script.lua", OpenOptions, view)).Snapshot!;
+		WorkspaceDocumentSnapshot initial = (await manager.OpenWithViewAsync(TestPath("script.lua"), OpenOptions, view)).Snapshot!;
 
-		WorkspaceDocumentRenameResult result = await manager.RenameAsync(new WorkspaceDocumentRenameRequest(
-			initial.DocumentKey,
-			initial.DocumentId,
-			initial.Version,
+		WorkspaceDocumentManagerRenameResult result = await manager.RenameAsync(new WorkspaceDocumentRenameRequest(
+			new(initial.DocumentKey, initial.DocumentId, initial.Version),
 			initial.OnDiskStamp,
-			"renamed.lua"));
+			TestPath("renamed.lua")));
 
-		Assert.AreEqual(WorkspaceDocumentRenameStatus.Renamed, result.Status);
+		Assert.AreEqual(WorkspaceDocumentRenameOutcome.Renamed, result.Outcome);
 		Assert.AreEqual(initial.DocumentKey, result.Snapshot!.DocumentKey);
 		Assert.AreEqual(result.Snapshot.DocumentId, view.DocumentId);
 		Assert.AreEqual(result.Snapshot.DocumentKey, view.DocumentKey);
@@ -448,20 +442,18 @@ public sealed class WorkspaceDocumentManagerTests
 	{
 		var fileSystem = new TestFileSystem("initial");
 		await using var store = new WorkspaceDocumentStore(fileSystem);
-		await using var manager = new WorkspaceDocumentManager(store, new ImmediateUiDispatcher().Invoke);
+		await using var manager = new WorkspaceDocumentManager(store, ImmediateDispatch);
 		var view = new TestView("text");
-		WorkspaceDocumentSnapshot initial = (await manager.OpenWithViewAsync("script.lua", OpenOptions, view)).Snapshot!;
+		WorkspaceDocumentSnapshot initial = (await manager.OpenWithViewAsync(TestPath("script.lua"), OpenOptions, view)).Snapshot!;
 		fileSystem.CapturedStamps.Enqueue(initial.OnDiskStamp);
 		fileSystem.CapturedStamps.Enqueue(FileStamp.Missing);
 
-		WorkspaceDocumentSaveAsResult result = await manager.SaveAsAsync(new WorkspaceDocumentSaveAsRequest(
-			initial.DocumentKey,
-			initial.DocumentId,
-			initial.Version,
+		WorkspaceDocumentManagerSaveAsResult result = await manager.SaveAsAsync(new WorkspaceDocumentSaveAsRequest(
+			new(initial.DocumentKey, initial.DocumentId, initial.Version),
 			initial.OnDiskStamp,
-			"saved-as.lua"));
+			TestPath("saved-as.lua")));
 
-		Assert.AreEqual(WorkspaceDocumentSaveAsStatus.SavedAs, result.Status);
+		Assert.AreEqual(WorkspaceDocumentSaveAsOutcome.SavedAs, result.Outcome);
 		Assert.AreEqual(initial.DocumentKey, result.Snapshot!.DocumentKey);
 		Assert.AreEqual(result.Snapshot.DocumentId, view.DocumentId);
 		Assert.AreEqual(result.Snapshot.DocumentKey, view.DocumentKey);
@@ -473,9 +465,9 @@ public sealed class WorkspaceDocumentManagerTests
 		var fileSystem = new TestFileSystem("initial");
 		await using var store = new WorkspaceDocumentStore(fileSystem);
 		var view = new TestView("text");
-		var manager = new WorkspaceDocumentManager(store, new ImmediateUiDispatcher().Invoke);
+		var manager = new WorkspaceDocumentManager(store, ImmediateDispatch);
 		WorkspaceDocumentSnapshot snapshot = (await manager.OpenWithViewAsync(
-			"script.lua",
+			TestPath("script.lua"),
 			OpenOptions,
 			view)).Snapshot!;
 
@@ -484,9 +476,7 @@ public sealed class WorkspaceDocumentManagerTests
 		await firstStop;
 		await secondStop;
 		view.RaiseApply(new WorkspaceDocumentReplaceRequest(
-			snapshot.DocumentKey,
-			snapshot.DocumentId,
-			snapshot.Version,
+			new(snapshot.DocumentKey, snapshot.DocumentId, snapshot.Version),
 			"late",
 			snapshot.FileFormat));
 
@@ -494,7 +484,7 @@ public sealed class WorkspaceDocumentManagerTests
 		Assert.AreEqual(1, view.DetachCount);
 		Assert.AreEqual(0, view.PublishSubscriberCount);
 		await Assert.ThrowsExceptionAsync<ObjectDisposedException>(() => manager.OpenAsync(
-			"after-stop.lua",
+			TestPath("after-stop.lua"),
 			OpenOptions));
 		await manager.DisposeAsync();
 	}
@@ -517,7 +507,7 @@ public sealed class WorkspaceDocumentManagerTests
 		IWorkspaceDocumentStore secondStore = scope.ServiceProvider.GetRequiredService<IWorkspaceDocumentStore>();
 		var view = new TestView("composition", disposalOrder);
 
-		await firstBridge.OpenWithViewAsync("composition.lua", OpenOptions, view);
+		await firstBridge.OpenWithViewAsync(TestPath("composition.lua"), OpenOptions, view);
 		Assert.AreSame(firstBridge, secondBridge);
 		Assert.AreSame(firstStore, secondStore);
 		Assert.AreSame(trackedStore, firstStore);
@@ -538,6 +528,12 @@ public sealed class WorkspaceDocumentManagerTests
 		return snapshot!;
 	}
 
+	private static Task ImmediateDispatch(Action action)
+	{
+		action();
+		return Task.CompletedTask;
+	}
+
 	private sealed class ImmediateUiDispatcher : IUiDispatcherService
 	{
 		public bool CheckAccess() => true;
@@ -549,7 +545,7 @@ public sealed class WorkspaceDocumentManagerTests
 		}
 	}
 
-	private sealed class TestView : IWorkspaceDocumentView
+	private sealed class TestView : IWorkspaceDocumentDeleteGuardView, ITextEditTarget
 	{
 		private readonly List<string>? _actions;
 		private WorkspaceDocumentKey? _documentKey;
@@ -568,7 +564,7 @@ public sealed class WorkspaceDocumentManagerTests
 
 		public string Text => string.Empty;
 
-		public void Apply(IReadOnlyList<TextEditOperation> operations) { }
+		public void Apply(PreparedTextEdits edits) { }
 
 		public WorkspaceDocumentKey? DocumentKey
 		{
@@ -582,7 +578,7 @@ public sealed class WorkspaceDocumentManagerTests
 
 		public bool HasConflict { get; init; }
 
-		public WorkspaceDocumentViewOpenStatus AttachStatus { get; init; } = WorkspaceDocumentViewOpenStatus.Opened;
+		public WorkspaceDocumentViewOpenOutcome AttachStatus { get; init; } = WorkspaceDocumentViewOpenOutcome.Opened;
 
 		public bool ThrowOnRefresh { get; set; }
 
@@ -608,12 +604,12 @@ public sealed class WorkspaceDocumentManagerTests
 		{
 			WasUnloadedWhenAttached = DocumentKey is null && !HasPendingEdits && !HasConflict;
 			OpenCount++;
-			if (AttachStatus != WorkspaceDocumentViewOpenStatus.Opened)
+			if (AttachStatus != WorkspaceDocumentViewOpenOutcome.Opened)
 				return new WorkspaceDocumentViewOpenResult(AttachStatus);
 
 			DocumentId = snapshot.DocumentId;
 			DocumentKey = snapshot.DocumentKey;
-			return new WorkspaceDocumentViewOpenResult(WorkspaceDocumentViewOpenStatus.Opened);
+			return new WorkspaceDocumentViewOpenResult(WorkspaceDocumentViewOpenOutcome.Opened);
 		}
 
 		public WorkspaceDocumentViewRefreshResult Refresh(WorkspaceDocumentSnapshot snapshot)
@@ -625,33 +621,41 @@ public sealed class WorkspaceDocumentManagerTests
 
 			DocumentId = snapshot.DocumentId;
 			DocumentKey = snapshot.DocumentKey;
-			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshStatus.Refreshed);
+			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshOutcome.Refreshed);
 		}
 
-		public WorkspaceDocumentViewRefreshResult DiscardPendingEdits(WorkspaceDocumentSnapshot snapshot)
-			=> new(WorkspaceDocumentViewRefreshStatus.Refreshed);
-
-		public WorkspaceDocumentViewIdentityResult AcknowledgeIdentity(WorkspaceDocumentIdentityChange change)
+		public WorkspaceDocumentViewIdentityResult AcknowledgeIdentity(WorkspaceDocumentViewIdentityChange change)
 		{
 			if (ThrowOnIdentityAcknowledge)
 				return new WorkspaceDocumentViewIdentityResult(
-					WorkspaceDocumentViewIdentityStatus.Failed,
+					WorkspaceDocumentViewIdentityOutcome.Failed,
 					new WorkspaceOperationFailure("IdentityAcknowledgementFailed", "identity acknowledgement failed"));
 
 			DocumentId = change.Snapshot.DocumentId;
 			DocumentKey = change.Snapshot.DocumentKey;
-			return new WorkspaceDocumentViewIdentityResult(WorkspaceDocumentViewIdentityStatus.Updated);
+			return new WorkspaceDocumentViewIdentityResult(WorkspaceDocumentViewIdentityOutcome.Updated);
 		}
 
-		public WorkspaceDocumentViewDeleteGuardResult SetDeleteGuard(bool active)
+		public WorkspaceDocumentViewDeleteGuardResult ApplyDeleteGuard()
 		{
 			if (ThrowOnDeleteBarrier)
 				return new WorkspaceDocumentViewDeleteGuardResult(
-					WorkspaceDocumentViewDeleteGuardStatus.Failed,
+					WorkspaceDocumentViewDeleteGuardOutcome.Failed,
 					new WorkspaceOperationFailure("DeleteBarrierFailed", "delete guard failed"));
 
-			DeleteBarrierActive = active;
-			return new WorkspaceDocumentViewDeleteGuardResult(WorkspaceDocumentViewDeleteGuardStatus.Applied);
+			DeleteBarrierActive = true;
+			return new WorkspaceDocumentViewDeleteGuardResult(WorkspaceDocumentViewDeleteGuardOutcome.Succeeded);
+		}
+
+		public WorkspaceDocumentViewDeleteGuardResult ReleaseDeleteGuard()
+		{
+			if (ThrowOnDeleteBarrier)
+				return new WorkspaceDocumentViewDeleteGuardResult(
+					WorkspaceDocumentViewDeleteGuardOutcome.Failed,
+					new WorkspaceOperationFailure("DeleteBarrierFailed", "delete guard failed"));
+
+			DeleteBarrierActive = false;
+			return new WorkspaceDocumentViewDeleteGuardResult(WorkspaceDocumentViewDeleteGuardOutcome.Succeeded);
 		}
 
 		public WorkspaceDocumentViewRefreshResult AcknowledgeApply(WorkspaceDocumentMutationResult result)
@@ -663,7 +667,7 @@ public sealed class WorkspaceDocumentManagerTests
 			if (result.Snapshot is not null)
 				DocumentKey = result.Snapshot.DocumentKey;
 
-			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshStatus.Refreshed);
+			return new WorkspaceDocumentViewRefreshResult(WorkspaceDocumentViewRefreshOutcome.Refreshed);
 		}
 
 		public void Close()
@@ -724,15 +728,15 @@ public sealed class WorkspaceDocumentManagerTests
 		}
 
 		public Task<WorkspaceTemporaryFile> WriteTemporaryAsync(
-			string directory,
+			string destinationPath,
 			ReadOnlyMemory<byte> content,
 			CancellationToken cancellationToken)
 			=> Task.FromResult(new WorkspaceTemporaryFile(
-				Path.Combine(directory, "temporary"),
+				destinationPath + ".temporary",
 				content.Length,
 				"written"));
 
-		public async Task<WorkspaceFileReplacementResult> ReplaceAsync(
+		public async Task<WorkspaceFileReplacementResult> ReplaceFileAsync(
 			WorkspaceTemporaryFile temporaryFile,
 			string destinationPath,
 			FileStamp expectedStamp,
@@ -743,7 +747,7 @@ public sealed class WorkspaceDocumentManagerTests
 				return await PendingReplacement.WaitAsync(cancellationToken);
 
 			return new WorkspaceFileReplacementResult(
-				WorkspaceFileReplacementStatus.Replaced,
+				WorkspaceFileReplacementOutcome.Replaced,
 				new FileStamp(true, temporaryFile.Length, DateTime.UnixEpoch, temporaryFile.ContentHash));
 		}
 
@@ -753,14 +757,14 @@ public sealed class WorkspaceDocumentManagerTests
 			FileStamp expectedSourceStamp,
 			CancellationToken cancellationToken)
 			=> Task.FromResult(new WorkspaceFileMoveResult(
-				WorkspaceFileMoveStatus.Moved,
+				WorkspaceFileMoveOutcome.Moved,
 				expectedSourceStamp));
 
 		public Task<WorkspaceFileMoveResult> MoveDirectoryAsync(
 			string sourcePath,
 			string destinationPath,
 			CancellationToken cancellationToken)
-			=> Task.FromResult(new WorkspaceFileMoveResult(WorkspaceFileMoveStatus.Moved));
+			=> Task.FromResult(new WorkspaceFileMoveResult(WorkspaceFileMoveOutcome.Moved));
 
 		public Task DeleteTemporaryAsync(WorkspaceTemporaryFile temporaryFile)
 			=> Task.CompletedTask;
@@ -778,19 +782,17 @@ public sealed class WorkspaceDocumentManagerTests
 		public Task<WorkspaceFileDeleteResult> DeleteAsync(
 			string path,
 			FileStamp expectedStamp,
-			CancellationToken cancellationToken,
-			bool useRecycleBin = false)
+			CancellationToken cancellationToken)
 		{
 			DeleteStarted.TrySetResult(null);
 			return PendingDelete?.WaitAsync(cancellationToken)
-				?? Task.FromResult(new WorkspaceFileDeleteResult(WorkspaceFileDeleteStatus.Deleted));
+				?? Task.FromResult(new WorkspaceFileDeleteResult(WorkspaceFileDeleteOutcome.Deleted));
 		}
 
 		public Task<WorkspaceFileDeleteResult> DeleteDirectoryAsync(
 			string path,
-			CancellationToken cancellationToken,
-			bool useRecycleBin = false)
-			=> Task.FromResult(new WorkspaceFileDeleteResult(WorkspaceFileDeleteStatus.Deleted));
+			CancellationToken cancellationToken)
+			=> Task.FromResult(new WorkspaceFileDeleteResult(WorkspaceFileDeleteOutcome.Deleted));
 	}
 
 	private sealed class TrackingStore : IWorkspaceDocumentStore
@@ -803,7 +805,7 @@ public sealed class WorkspaceDocumentManagerTests
 			_disposalOrder = disposalOrder;
 			_snapshot = new WorkspaceDocumentSnapshot(
 				new WorkspaceDocumentKey(Guid.NewGuid()),
-				Path.GetFullPath("composition.lua"),
+				TestPath("composition.lua"),
 				"composition.lua",
 				0,
 				0,
@@ -819,7 +821,7 @@ public sealed class WorkspaceDocumentManagerTests
 			string? filePath,
 			WorkspaceDocumentOpenOptions options,
 			CancellationToken cancellationToken = default)
-			=> Task.FromResult(new WorkspaceDocumentOpenResult(WorkspaceDocumentOpenStatus.Opened, _snapshot));
+			=> Task.FromResult(new WorkspaceDocumentOpenResult(WorkspaceDocumentOpenOutcome.Opened, _snapshot));
 
 		public bool TryGetSnapshot(string? filePath, out WorkspaceDocumentSnapshot? snapshot)
 		{
@@ -827,30 +829,28 @@ public sealed class WorkspaceDocumentManagerTests
 			return true;
 		}
 
-		public IReadOnlyList<WorkspaceDocumentSnapshot> GetSnapshotsUnderDirectory(string directoryPath)
+		public IReadOnlyList<WorkspaceDocumentSnapshot> GetSnapshotsUnderDirectory(string? directoryPath)
 			=> [_snapshot];
 
-		public WorkspaceDocumentMutationResult TryReplace(WorkspaceDocumentReplaceRequest request)
-			=> new(WorkspaceDocumentMutationStatus.NoChange, request.ExpectedDocumentKey, request.DocumentId, request.ExpectedVersion, _snapshot);
+		public LocalPathComparisonPolicy PathComparison => LocalPathComparisonPolicy.ForCurrentPlatform;
+
+		public WorkspaceDocumentMutationResult Replace(WorkspaceDocumentReplaceRequest request)
+			=> new(WorkspaceDocumentMutationOutcome.NoChange, request.Identity, _snapshot);
 
 		public Task<WorkspaceDocumentCommitResult> CommitAsync(
 			WorkspaceDocumentCommitRequest request,
 			CancellationToken cancellationToken = default)
 			=> Task.FromResult(new WorkspaceDocumentCommitResult(
-				WorkspaceDocumentCommitStatus.Committed,
-				request.ExpectedDocumentKey,
-				request.DocumentId,
-				request.ExpectedVersion,
+				WorkspaceDocumentCommitOutcome.Committed,
+				request.Identity,
 				_snapshot));
 
 		public Task<WorkspaceDocumentReloadResult> ReloadAsync(
 			WorkspaceDocumentReloadRequest request,
 			CancellationToken cancellationToken = default)
 			=> Task.FromResult(new WorkspaceDocumentReloadResult(
-				WorkspaceDocumentReloadStatus.Unchanged,
-				request.ExpectedDocumentKey,
-				request.DocumentId,
-				request.ExpectedVersion,
+				WorkspaceDocumentReloadOutcome.Unchanged,
+				request.Identity,
 				_snapshot));
 
 		public Task<WorkspaceDocumentConflictResolutionResult> ResolveExternalConflictAsync(
@@ -859,7 +859,7 @@ public sealed class WorkspaceDocumentManagerTests
 			=> throw new NotSupportedException();
 
 		public WorkspaceDocumentMutationResult Discard(WorkspaceDocumentDiscardRequest request)
-			=> new(WorkspaceDocumentMutationStatus.NoChange, request.ExpectedDocumentKey, request.DocumentId, request.ExpectedVersion, _snapshot);
+			=> new(WorkspaceDocumentMutationOutcome.NoChange, request.Identity, _snapshot);
 
 		public Task<WorkspaceDocumentRenameResult> RenameAsync(
 			WorkspaceDocumentRenameRequest request,

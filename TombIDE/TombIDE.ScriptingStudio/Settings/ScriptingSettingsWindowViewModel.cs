@@ -174,7 +174,7 @@ public sealed class ScriptingSettingsPageViewModel : ObservableObject
 		+ "end";
 
 	private static readonly string[] LuaPreviewLines = LuaPreviewText.Replace("\r", string.Empty).Split('\n');
-	private static readonly IReadOnlyList<LuaSemanticToken> LuaPreviewTokens = CreateLuaPreviewTokens();
+	private static readonly IReadOnlyList<SemanticToken> LuaPreviewTokens = CreateLuaPreviewTokens();
 
 	private readonly TextEditorConfigBase _config;
 	private readonly int _undoStackSize;
@@ -680,7 +680,7 @@ public sealed class ScriptingSettingsPageViewModel : ObservableObject
 		return true;
 	}
 
-	private static IReadOnlyList<LuaSemanticToken> CreateLuaPreviewTokens()
+	private static IReadOnlyList<SemanticToken> CreateLuaPreviewTokens()
 	{
 		return
 		[
@@ -698,13 +698,13 @@ public sealed class ScriptingSettingsPageViewModel : ObservableObject
 		];
 	}
 
-	private static LuaSemanticToken CreateLuaPreviewToken(int lineIndex, string tokenText, string tokenType, params string[] modifiers)
+	private static SemanticToken CreateLuaPreviewToken(int lineIndex, string tokenText, string tokenType, params string[] modifiers)
 		=> CreateLuaPreviewToken(lineIndex, tokenText, tokenType, 1, modifiers);
 
-	private static LuaSemanticToken CreateLuaPreviewToken(int lineIndex, string tokenText, string tokenType, int occurrence, params string[] modifiers)
+	private static SemanticToken CreateLuaPreviewToken(int lineIndex, string tokenText, string tokenType, int occurrence, params string[] modifiers)
 	{
 		int characterIndex = GetOccurrenceIndex(LuaPreviewLines[lineIndex], tokenText, occurrence);
-		return new LuaSemanticToken(lineIndex, characterIndex, tokenText.Length, tokenType, modifiers);
+		return new SemanticToken(lineIndex, characterIndex, tokenText.Length, tokenType, modifiers);
 	}
 
 	private static int GetOccurrenceIndex(string line, string tokenText, int occurrence)

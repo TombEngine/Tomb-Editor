@@ -1,7 +1,6 @@
 #nullable enable
 
 using ICSharpCode.AvalonEdit.Document;
-using Nickelony.IDEKit.Core.FindReplace;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -53,10 +52,7 @@ internal sealed class WorkbenchPaneCoordinator
 		DocumentMode documentMode = documentContext.Registration?.DocumentMode ?? DocumentMode.None;
 
 		if (_paneCatalog.GetPane<DocumentOutlineToolWindow>(UICommand.ContentExplorer) is DocumentOutlineToolWindow documentOutline)
-		{
-			documentOutline.OutlineProviderFactory = documentContext.Registration?.Contributions.OutlineProviderFactory;
-			documentOutline.EditorControl = currentEditor;
-		}
+			documentOutline.DocumentContext = documentContext;
 
 		if (currentEditor is LuaEditor luaEditor)
 		{
@@ -80,7 +76,7 @@ internal sealed class WorkbenchPaneCoordinator
 	public void ShowLuaDiagnostics(
 		string filePath,
 		TextDocument document,
-		IReadOnlyList<TextEditorDiagnostic> diagnostics)
+		IReadOnlyList<TextDiagnostic> diagnostics)
 	{
 		ArgumentNullException.ThrowIfNull(filePath);
 		ArgumentNullException.ThrowIfNull(document);

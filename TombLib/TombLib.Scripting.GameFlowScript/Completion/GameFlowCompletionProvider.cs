@@ -11,13 +11,13 @@ namespace TombLib.Scripting.GameFlowScript.Completion;
 public sealed class GameFlowCompletionProvider : ITextCompletionProvider
 {
 	/// <summary>
-	/// Gets the completion items for the given context.
+	/// Gets the completion items for the given request.
 	/// </summary>
-	/// <param name="context">The completion context.</param>
+	/// <param name="request">The completion request.</param>
 	/// <returns>The full set of contextually valid completion items.</returns>
-	public IReadOnlyList<TextCompletionItem> GetCompletionItems(TextCompletionContext context)
+	public IReadOnlyList<TextCompletionItem> GetCompletionItems(TextCompletionRequest request)
 	{
-		ArgumentNullException.ThrowIfNull(context);
+		ArgumentNullException.ThrowIfNull(request);
 
 		var items = new List<TextCompletionItem>();
 		var seenInsertionTexts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -41,7 +41,7 @@ public sealed class GameFlowCompletionProvider : ITextCompletionProvider
 			// A name that belongs to more than one category keeps its first insertion text, so the
 			// intended category (sections, special properties, properties, then constants) wins.
 			if (seenInsertionTexts.Add(insertionText))
-				items.Add(new TextCompletionItem(value, insertionText));
+				items.Add(new TextCompletionItem(value) { InsertText = insertionText });
 		}
 	}
 }

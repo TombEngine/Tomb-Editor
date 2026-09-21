@@ -3,13 +3,14 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Nickelony.IDEKit.Core.Formatting;
+using Nickelony.IDEKit.Core.Text;
 
 namespace TombLib.Scripting.UI.Editing;
 
 /// <summary>
 /// Adapts a local document formatter to the shared workspace-edit formatting contract.
 /// </summary>
-public sealed class TextDocumentFormatterProvider : ITextFormattingProvider
+public sealed class TextDocumentFormatterProvider : ILanguageServerFormattingProvider
 {
 	private readonly ITextDocumentFormatter _documentFormatter;
 
@@ -39,12 +40,13 @@ public sealed class TextDocumentFormatterProvider : ITextFormattingProvider
 		ArgumentNullException.ThrowIfNull(request);
 		cancellationToken.ThrowIfCancellationRequested();
 
-		string formattedText = _documentFormatter.FormatDocument(request.DocumentText);
+		string? formattedText = _documentFormatter.FormatDocument(request.DocumentText);
 
-		if (string.Equals(formattedText, request.DocumentText, StringComparison.Ordinal))
+		// A formatter that declines (null) or returns the same text produces no edit.
+		if (formattedText is null || string.Equals(formattedText, request.DocumentText, StringComparison.Ordinal))
 			return Task.FromResult<TextWorkspaceEdit?>(null);
 
-		TextDocumentRange documentRange = CreateDocumentRange(request.DocumentText);
+		TextPositionRange documentRange = CreateDocumentRange(request.DocumentText);
 
 		return Task.FromResult<TextWorkspaceEdit?>(new TextWorkspaceEdit([
 			new TextDocumentEdit(request.FilePath, [
@@ -53,12 +55,12 @@ public sealed class TextDocumentFormatterProvider : ITextFormattingProvider
 		]));
 	}
 
-	private static TextDocumentRange CreateDocumentRange(string content)
+	private static TextPositionRange CreateDocumentRange(string content)
 	{
 		string[] lines = content.Replace("\r", string.Empty).Split('\n');
-		int endLineNumber = lines.Length;
-		int endColumnNumber = lines[^1].Length + 1;
 
-		return new TextDocumentRange(1, 1, endLineNumber, endColumnNumber);
+		return new(
+			new TextPosition(0, 0),
+			new TextPosition(lines.Length - 1, lines[^1].Length));
 	}
 }

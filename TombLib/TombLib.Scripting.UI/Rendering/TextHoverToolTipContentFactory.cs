@@ -1,3 +1,5 @@
+using Nickelony.IDEKit.Core.Diagnostics;
+using Nickelony.IDEKit.IntelliSense;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
 using Nickelony.IDEKit.IntelliSense.Hover;
 using System;
@@ -17,7 +19,7 @@ public static class TextHoverToolTipContentFactory
 	/// </summary>
 	public static FrameworkElement CreateHoverContent(TextHoverInfo hoverInfo, Brush foreground, Brush background)
 	{
-		return hoverInfo.ContentKind == TextHoverContentKind.Markdown
+		return hoverInfo.ContentKind == TextMarkupKind.Markdown
 			? MarkdownToolTipRenderer.CreateContent(hoverInfo.Content, foreground, background)
 			: MarkdownToolTipRenderer.CreatePlainTextContent(hoverInfo.Content, foreground);
 	}
@@ -27,12 +29,12 @@ public static class TextHoverToolTipContentFactory
 	/// </summary>
 	public static FrameworkElement CreateCombinedContent(
 		TextHoverInfo hoverInfo,
-		TextEditorDiagnostic diagnosticInfo,
+		TextDiagnostic diagnosticInfo,
 		Brush foreground,
 		Brush background,
 		double maxWidth,
 		double fontSize,
-		Func<TextEditorDiagnosticSeverity, (SolidColorBrush Border, SolidColorBrush Background)> getDiagnosticColors)
+		Func<TextDiagnosticSeverity, (SolidColorBrush Border, SolidColorBrush Background)> getDiagnosticColors)
 	{
 		(SolidColorBrush diagnosticBorder, SolidColorBrush diagnosticBackground) = getDiagnosticColors(diagnosticInfo.Severity);
 

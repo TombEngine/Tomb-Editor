@@ -1,5 +1,4 @@
 using ICSharpCode.AvalonEdit.Document;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
 using TombLib.Scripting.Lua;
 using TombLib.Scripting.UI.Completion;
 
@@ -83,7 +82,7 @@ public class LuaEditorInteractionRulesTests
 	[TestMethod]
 	public void CanShowHover_ReturnsFalseWhenCompletionWindowIsOpen()
 	{
-		bool result = TextPopupInteractionRules.CanShowHover(true, false);
+		bool result = LuaEditorInteractionRules.CanShowHover(true, false);
 
 		Assert.IsFalse(result);
 	}
@@ -91,7 +90,7 @@ public class LuaEditorInteractionRulesTests
 	[TestMethod]
 	public void CanShowHover_ReturnsFalseWhenSignatureHelpIsOpen()
 	{
-		bool result = TextPopupInteractionRules.CanShowHover(false, true);
+		bool result = LuaEditorInteractionRules.CanShowHover(false, true);
 
 		Assert.IsFalse(result);
 	}

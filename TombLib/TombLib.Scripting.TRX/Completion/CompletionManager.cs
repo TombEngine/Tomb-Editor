@@ -1,4 +1,3 @@
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
 using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.IntelliSense.Completion;
 using System;

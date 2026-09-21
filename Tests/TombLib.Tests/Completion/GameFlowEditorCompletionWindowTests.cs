@@ -1,5 +1,5 @@
 using ICSharpCode.AvalonEdit.CodeCompletion;
-using Nickelony.IDEKit.AvalonEdit.IntelliSense.Completion;
+using Nickelony.IDEKit.AvalonEdit.LanguageFeatures.Completion;
 using System.Windows;
 using System.Windows.Threading;
 using TombLib.Scripting.GameFlowScript;
@@ -28,21 +28,27 @@ public class GameFlowEditorCompletionWindowTests
 	}
 
 	[TestMethod]
-	public void ShowCompletionWindow_ClearsFieldWhenWindowCloses()
+	public void CompletionWindow_ClosingItClearsTheActiveWindow()
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
-			var editor = new GameFlowEditor(new Version(1, 0), CreateLanguageServices());
+			var editor = new GameFlowEditor(new Version(1, 0), CreateLanguageServices())
+			{
+				Text = "test"
+			};
+
 			Window hostWindow = WPFTestHelper.ShowInHostWindow(editor);
 
 			try
 			{
-				editor.InitializeCompletionWindow();
-				editor.ShowCompletionWindow();
+				TextCompletionController completionController = GetCompletionController(editor);
+
+				Assert.IsTrue(completionController.OpenOrRefresh([new CompletionData("Level")], 1, 3));
 				WPFTestHelper.PumpDispatcher(editor.Dispatcher, DispatcherPriority.Background);
 
 				CompletionWindow? completionWindow = editor.ActiveCompletionWindow;
 				Assert.IsNotNull(completionWindow);
+
 				completionWindow.Close();
 				WPFTestHelper.PumpDispatcher(editor.Dispatcher, DispatcherPriority.Background);
 
@@ -56,31 +62,37 @@ public class GameFlowEditorCompletionWindowTests
 	}
 
 	[TestMethod]
-	public void InitializeCompletionWindow_ReplacesVisibleWindowInsteadOfLeavingItOpen()
+	public void OpenOrRefreshCompletionWindow_WithChangedRange_ReplacesTheVisibleWindow()
 	{
 		WPFTestHelper.RunInSta(() =>
 		{
-			var editor = new GameFlowEditor(new Version(1, 0), CreateLanguageServices());
+			var editor = new GameFlowEditor(new Version(1, 0), CreateLanguageServices())
+			{
+				Text = "test"
+			};
+
 			Window hostWindow = WPFTestHelper.ShowInHostWindow(editor);
 
 			try
 			{
-				editor.InitializeCompletionWindow();
-				editor.ShowCompletionWindow();
+				TextCompletionController completionController = GetCompletionController(editor);
+
+				Assert.IsTrue(completionController.OpenOrRefresh([new CompletionData("Level")], 1, 3));
 				WPFTestHelper.PumpDispatcher(editor.Dispatcher, DispatcherPriority.Background);
 
 				CompletionWindow? firstWindow = editor.ActiveCompletionWindow;
 				Assert.IsNotNull(firstWindow);
 
-				editor.InitializeCompletionWindow();
-				editor.ShowCompletionWindow();
+				// A changed replacement start closes the visible window and opens a new one instead of
+				// leaving the old window open.
+				Assert.IsTrue(completionController.OpenOrRefresh([new CompletionData("Level")], 0, 2));
 				WPFTestHelper.PumpDispatcher(editor.Dispatcher, DispatcherPriority.Background);
 
 				CompletionWindow? secondWindow = editor.ActiveCompletionWindow;
 
 				Assert.AreNotSame(firstWindow, secondWindow);
 				Assert.IsFalse(firstWindow.IsVisible);
-				Assert.IsTrue(secondWindow.IsVisible);
+				Assert.IsTrue(secondWindow!.IsVisible);
 			}
 			finally
 			{
@@ -104,11 +116,7 @@ public class GameFlowEditorCompletionWindowTests
 
 			try
 			{
-				var completionController = (TextCompletionController)WPFTestHelper.InvokeInstanceMethod(
-					editor,
-					"get_CompletionController",
-					Type.EmptyTypes)
-					?? throw new InvalidOperationException("Completion controller was not found.");
+				TextCompletionController completionController = GetCompletionController(editor);
 
 				bool opened = completionController.OpenOrRefresh([new CompletionData("Level")], 1, 3);
 
@@ -128,5 +136,13 @@ public class GameFlowEditorCompletionWindowTests
 				hostWindow.Close();
 			}
 		});
+	}
+
+	private static TextCompletionController GetCompletionController(GameFlowEditor editor)
+	{
+		object? controller = WPFTestHelper.InvokeInstanceMethod(editor, "get_CompletionController", Type.EmptyTypes);
+
+		return controller as TextCompletionController
+			?? throw new InvalidOperationException("Completion controller was not found.");
 	}
 }

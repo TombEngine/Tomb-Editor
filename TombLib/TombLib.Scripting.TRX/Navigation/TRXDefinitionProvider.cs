@@ -31,6 +31,12 @@ public sealed class TRXDefinitionProvider : ITextDefinitionProvider
 		var source = new StringTextSnapshot(request.DocumentText);
 		int? lineNumber = _documentService.FindDocumentLineOfLevel(source, request.SymbolName);
 
-		return lineNumber is null ? null : new TextDefinitionLocation(lineNumber.Value);
+		if (lineNumber is null)
+			return null;
+
+		// The finder reports a one-based line; the location record uses zero-based positions.
+		var lineStart = new TextPosition(lineNumber.Value - 1, 0);
+
+		return new TextDefinitionLocation(new TextPositionRange(lineStart, lineStart));
 	}
 }

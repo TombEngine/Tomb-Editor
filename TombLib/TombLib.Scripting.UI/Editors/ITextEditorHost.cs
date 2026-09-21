@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Versioning;
 using Nickelony.IDEKit.AvalonEdit.Editing;
+using Nickelony.IDEKit.Core.Editing;
 using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.UI.Bases;
 

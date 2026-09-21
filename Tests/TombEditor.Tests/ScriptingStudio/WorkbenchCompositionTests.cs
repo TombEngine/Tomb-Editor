@@ -93,11 +93,11 @@ public sealed class WorkbenchCompositionTests
 		var luaHostServices = new LuaHostServices(
 			new Mock<ILuaEditorLifecycleService>().Object,
 			new Mock<ILuaIntellisenseBridge>().Object,
-			new LuaTrackedDocumentStateService(textEditorHost, new Mock<ILuaIntelliSenseProvider>().Object),
-			new LuaReferenceSearchService(textEditorHost, new Mock<ITextReferencesProvider>().Object, @"C:\Scripts"),
+			new LuaTrackedDocumentStateService(textEditorHost, new Mock<ILuaLanguageServerIntelliSenseProvider>().Object),
+			new LuaReferenceSearchService(textEditorHost, new Mock<ILanguageServerReferencesProvider>().Object, @"C:\Scripts"),
 				new TextWorkspaceCommandService(
 					new TextWorkspaceEditApplier(textEditorHost),
-					new Mock<ITextEditProvider>().Object));
+					new Mock<ILanguageServerRenameProvider>().Object));
 
 		return new WorkbenchComposition(
 			NullWhen(nameof(WorkbenchComposition.WorkspaceProfile), workspaceProfile, nullDependency),
@@ -127,8 +127,7 @@ public sealed class WorkbenchCompositionTests
 	private static IKeyBindingService<UICommand> CreateKeyBindingService()
 		=> new KeyBindingService<UICommand>(
 			new CommandCatalog<UICommand>([]),
-			new KeyBindingOverrideCollection(),
-			_ => true);
+			new KeyBindingTestStore());
 
 	private static T NullWhen<T>(string dependencyName, T value, string? nullDependency)
 		where T : class

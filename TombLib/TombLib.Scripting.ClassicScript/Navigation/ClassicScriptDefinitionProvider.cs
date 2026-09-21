@@ -26,12 +26,18 @@ public sealed class ClassicScriptDefinitionProvider : ITextDefinitionProvider
 	/// <returns>The definition location, or <c>null</c> when the object cannot be located.</returns>
 	public TextDefinitionLocation? GetDefinition(TextDefinitionRequest request)
 	{
-		if (request.Identifier is not ClassicScriptObjectDiscriminator discriminator || string.IsNullOrWhiteSpace(request.SymbolName))
+		if (request.Discriminator is not ClassicScriptObjectDiscriminator discriminator || string.IsNullOrWhiteSpace(request.SymbolName))
 			return null;
 
 		var source = new StringTextSnapshot(request.DocumentText);
 		int? lineNumber = _commandService.FindDocumentLineOfObject(source, request.SymbolName, discriminator.ObjectType);
 
-		return lineNumber is null ? null : new TextDefinitionLocation(lineNumber.Value);
+		if (lineNumber is null)
+			return null;
+
+		// The finder reports a one-based line; the location record uses zero-based positions.
+		var lineStart = new TextPosition(lineNumber.Value - 1, 0);
+
+		return new TextDefinitionLocation(new TextPositionRange(lineStart, lineStart));
 	}
 }

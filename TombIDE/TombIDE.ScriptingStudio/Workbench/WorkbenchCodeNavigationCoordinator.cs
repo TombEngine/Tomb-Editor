@@ -17,6 +17,7 @@ using TombLib.Scripting.UI.Presentation;
 using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editors;
 using Nickelony.IDEKit.AvalonEdit.Documents;
+using Nickelony.IDEKit.AvalonEdit.Navigation;
 using TombLib.WPF.Services.Abstract;
 
 namespace TombIDE.ScriptingStudio.Workbench;
@@ -99,7 +100,7 @@ internal sealed class WorkbenchCodeNavigationCoordinator : IDisposable
 		}
 		else if (_documentController.CurrentEditor is TextEditorBase textEditor and INameBasedObjectNavigator navigator)
 		{
-			string? word = textEditor.GetWordFromOffset(textEditor.CaretOffset);
+			string? word = textEditor.TextArea.GetWordFromOffset(textEditor.CaretOffset);
 
 			if (word is not null)
 				navigator.GoToObject(word);
@@ -194,7 +195,7 @@ internal sealed class WorkbenchCodeNavigationCoordinator : IDisposable
 			if (workspaceCommandService is null || !workspaceCommandService.SupportsRename)
 				return;
 
-			string currentName = editor.GetWordFromOffset(editor.CaretOffset) ?? string.Empty;
+			string currentName = editor.TextArea.GetWordFromOffset(editor.CaretOffset) ?? string.Empty;
 			var inputBox = new InputBoxWindowViewModel(
 				title: "Rename Symbol",
 				label: "New name:",

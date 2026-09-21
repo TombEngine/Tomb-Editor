@@ -84,7 +84,7 @@ internal sealed class GameFlowContentNodeService
 		if (!LevelPropertyRegex.IsMatch(lineText))
 			return null;
 
-		string sanitizedLineText = CommentHelper.RemoveComments(lineText, new CommentSyntax("//", null, null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.TripleDoubleQuoted));
+		string sanitizedLineText = CommentOperations.RemoveComments(lineText, new CommentSyntax("//", null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.TripleDoubleQuoted));
 		string levelName = LevelPropertyRegex.Replace(sanitizedLineText, string.Empty);
 
 		if (string.IsNullOrWhiteSpace(levelName) || !levelName.Contains(filter, StringComparison.OrdinalIgnoreCase))

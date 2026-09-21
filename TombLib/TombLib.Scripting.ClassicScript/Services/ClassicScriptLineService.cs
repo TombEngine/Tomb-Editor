@@ -12,7 +12,7 @@ namespace TombLib.Scripting.ClassicScript.Services;
 /// Provides line-level text operations using Core helpers and, where needed,
 /// regex patterns for the ClassicScript section, include, and NG-string syntax.
 /// </summary>
-public sealed class ClassicScriptLineService : TextLineSyntaxService, IClassicScriptLineService
+public sealed class ClassicScriptLineService : IClassicScriptLineService
 {
 	private const char ContinuationMarker = '>';
 
@@ -27,12 +27,7 @@ public sealed class ClassicScriptLineService : TextLineSyntaxService, IClassicSc
 	private static readonly IdentifierCharacterPolicy WordPolicy = IdentifierCharacterPolicy.Create(
 		static c => c is not (',' or '=' or ';' or '+' or '-' or '*' or '/' or '(' or ')' or '\r' or '\n'));
 
-	/// <summary>
-	/// Initializes a new instance of the <see cref="ClassicScriptLineService"/> class.
-	/// </summary>
-	public ClassicScriptLineService()
-		: base(new CommentSyntax(";", null, null, StringLiteralStyle.None))
-	{ }
+	private static readonly CommentSyntax s_commentSyntax = new(";", null, StringLiteralStyle.None);
 
 	/// <inheritdoc/>
 	public string? GetWordAtOffset(ITextSnapshot source, int offset)
@@ -40,7 +35,7 @@ public sealed class ClassicScriptLineService : TextLineSyntaxService, IClassicSc
 		if (offset > source.TextLength)
 			return null;
 
-		TextRange? range = IdentifierHelper.TryGetContainingSpan(source, offset, WordPolicy);
+		TextRange? range = IdentifierOperations.FindTokenSpan(source, offset, WordPolicy);
 
 		if (range is null)
 			return null;
@@ -133,7 +128,7 @@ public sealed class ClassicScriptLineService : TextLineSyntaxService, IClassicSc
 
 	/// <inheritdoc/>
 	public bool IsEmptyOrComments(string? lineText)
-		=> base.IsEmptyOrComments(lineText);
+		=> CommentOperations.IsBlankOrStartsWithLineComment(lineText, s_commentSyntax);
 
 	/// <inheritdoc/>
 	public bool IsValidIncludeLine(string lineText)
@@ -168,11 +163,11 @@ public sealed class ClassicScriptLineService : TextLineSyntaxService, IClassicSc
 
 	/// <inheritdoc/>
 	public string RemoveComments(string lineText)
-		=> base.RemoveComments(lineText);
+		=> CommentOperations.RemoveComments(lineText, s_commentSyntax);
 
 	/// <inheritdoc/>
 	public string EscapeComments(string lineText)
-		=> base.EscapeComments(lineText);
+		=> CommentOperations.MaskComments(lineText, s_commentSyntax);
 
 	/// <inheritdoc/>
 	public string EscapeCommentsAndNewLines(string lineText)

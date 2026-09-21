@@ -129,6 +129,7 @@
 	<ResetZoom>Resetuj powiększenie</ResetZoom>
 
 	<Severity>Poziom</Severity>
+	<Source>Źródło</Source>
 	<Message>Wiadomość</Message>
 	<Errors>Błędy</Errors>
 	<Warning>Ostrzeżenie</Warning>

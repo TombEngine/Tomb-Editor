@@ -19,7 +19,7 @@ public class TRXDefinitionProviderTests
 		TextDefinitionLocation? location = _definitionProvider.GetDefinition(new TextDefinitionRequest(document, "Caves"));
 
 		Assert.IsNotNull(location);
-		Assert.AreEqual(1, location!.LineNumber);
+		Assert.AreEqual(0, location!.TargetRange.Start.Line);
 	}
 
 	[TestMethod]
@@ -29,7 +29,7 @@ public class TRXDefinitionProviderTests
 		TextDefinitionLocation? location = _definitionProvider.GetDefinition(new TextDefinitionRequest(document, "Caves"));
 
 		Assert.IsNotNull(location);
-		Assert.AreEqual(1, location!.LineNumber);
+		Assert.AreEqual(0, location!.TargetRange.Start.Line);
 	}
 
 	[TestMethod]

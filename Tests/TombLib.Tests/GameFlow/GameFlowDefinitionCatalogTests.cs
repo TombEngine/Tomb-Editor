@@ -12,23 +12,23 @@ namespace TombLib.Tests;
 public class GameFlowDefinitionCatalogTests
 {
 	[TestMethod]
-	public void SectionHover_ProvidesDefinitionIdentifier()
+	public void SectionHover_ProvidesDefinitionDiscriminator()
 	{
 		var hoverProvider = new GameFlowHoverProvider();
 		TextHoverInfo? hoverInfo = hoverProvider.GetHoverInfo(new TextHoverRequest("TITLE:\nLEVEL: Caves", 1));
 
 		Assert.IsNotNull(hoverInfo);
-		Assert.AreEqual(new GameFlowObjectDiscriminator(ObjectType.Section), hoverInfo.Identifier);
+		Assert.AreEqual(new GameFlowObjectDiscriminator(ObjectType.Section), hoverInfo.DefinitionDiscriminator);
 
 		var lineService = new GameFlowScriptLineService();
 		var documentService = new GameFlowScriptDocumentService(lineService);
 		var definitionProvider = new GameFlowDefinitionProvider(documentService);
-		var request = new TextDefinitionRequest("TITLE:\nLEVEL: Caves", hoverInfo.SymbolName!, hoverInfo.Identifier as TextDefinitionDiscriminator);
+		var request = new TextDefinitionRequest("TITLE:\nLEVEL: Caves", hoverInfo.SymbolName!, hoverInfo.DefinitionDiscriminator);
 
 		TextDefinitionLocation? definition = definitionProvider.GetDefinition(request);
 
 		Assert.IsNotNull(definition);
-		Assert.AreEqual(1, definition.LineNumber);
+		Assert.AreEqual(0, definition.TargetRange.Start.Line);
 	}
 
 	[TestMethod]
@@ -54,7 +54,7 @@ public class GameFlowDefinitionCatalogTests
 			new TextDefinitionRequest(document, "TITLE", new GameFlowObjectDiscriminator(ObjectType.Section)));
 
 		Assert.IsNotNull(location);
-		Assert.AreEqual(1, location!.LineNumber);
+		Assert.AreEqual(0, location!.TargetRange.Start.Line);
 	}
 
 	private sealed record UnrecognizedDiscriminator : TextDefinitionDiscriminator;

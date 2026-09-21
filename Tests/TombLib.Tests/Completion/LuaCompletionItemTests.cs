@@ -9,33 +9,44 @@ public class LuaCompletionItemTests
 	[TestMethod]
 	public async Task WithRequestContext_PreservesRequestMetadataAcrossResolve()
 	{
-		var item = new TextCompletionItem(
-			"spawn",
-			insertText: "spawn",
-			resolveAsync: _ => Task.FromResult(new TextCompletionItem("spawn", detail: "function", insertCaretOffset: 2)),
-			insertCaretOffset: 2)
-			.WithRequestContext(4, 7);
+		var item = new TextCompletionItem("spawn")
+		{
+			InsertText = "spawn",
+			ResolveCallback = _ => Task.FromResult(new TextCompletionItem("spawn")
+			{
+				Detail = "function",
+				InsertTextFormat = TextCompletionInsertTextFormat.Snippet
+			}),
+			InsertTextFormat = TextCompletionInsertTextFormat.Snippet
+		}
+		.WithRequestContext(4, 7);
 
-		TextCompletionItem resolvedItem = await item.ResolveAsync();
+		TextCompletionItem resolvedItem = item.WithResolvedContent(await item.ResolveAsync());
 
 		Assert.AreEqual(4, resolvedItem.RequestDocumentVersion);
 		Assert.AreEqual(7, resolvedItem.RequestGeneration);
 		Assert.AreEqual("function", resolvedItem.Detail);
-		Assert.AreEqual(2, resolvedItem.InsertCaretOffset);
+		Assert.AreEqual(TextCompletionInsertTextFormat.Snippet, resolvedItem.InsertTextFormat);
 	}
 
 	[TestMethod]
-	public async Task WithFilteredCommitContext_DropsTextEditAndPreservesResolveMetadata()
+	public async Task CommitContext_DropsTextEditAndPreservesRequestStamps()
 	{
 		TextCompletionTextEdit textEdit = new(
 			new TextRange(2, 3));
 
-		var item = new TextCompletionItem(
-			"Color",
-			insertText: "Color",
-			resolveAsync: _ => Task.FromResult(new TextCompletionItem("Color", detail: "enum", textEdit: textEdit)),
-			textEdit: textEdit)
-			.WithFilteredCommitContext(6, 2);
+		var item = new TextCompletionItem("Color")
+		{
+			InsertText = "Color",
+			ResolveCallback = _ => Task.FromResult(new TextCompletionItem("Color")
+			{
+				Detail = "enum",
+				TextEdit = textEdit
+			}),
+			TextEdit = textEdit
+		}
+		.WithRequestContext(6, 2)
+		.WithoutTextEdit();
 
 		Assert.AreEqual(6, item.RequestDocumentVersion);
 		Assert.AreEqual(2, item.RequestGeneration);
@@ -43,9 +54,9 @@ public class LuaCompletionItemTests
 
 		TextCompletionItem resolvedItem = await item.ResolveAsync();
 
+		// The raw resolve path returns the callback result as supplied, including its edit payload;
+		// a commit path that must not use resolved edit data re-applies WithoutTextEdit itself.
 		Assert.AreEqual("enum", resolvedItem.Detail);
-		Assert.IsNull(resolvedItem.TextEdit);
-		Assert.AreEqual(6, resolvedItem.RequestDocumentVersion);
-		Assert.AreEqual(2, resolvedItem.RequestGeneration);
+		Assert.AreEqual(textEdit, resolvedItem.TextEdit);
 	}
 }

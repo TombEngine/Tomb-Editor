@@ -48,6 +48,7 @@ internal sealed class DocumentDiagnosticsPaneProvider : IStudioPaneContributionP
 				Shared.Strings.Default.Severity,
 				Shared.Strings.Default.LineHeader,
 				Shared.Strings.Default.ColumnHeader,
+				Shared.Strings.Default.Source,
 				Shared.Strings.Default.Message),
 			NavigateToDiagnostic);
 
@@ -81,6 +82,6 @@ internal sealed class DocumentDiagnosticsPaneProvider : IStudioPaneContributionP
 		if (location is null)
 			return;
 
-		EditorNavigationHelper.ApplyLocation(textEditor, location.Value);
+		TextAreaNavigationOperations.ApplyLocation(textEditor.TextArea, location.Value);
 	}
 }

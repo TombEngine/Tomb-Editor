@@ -21,12 +21,12 @@ public class ChromeServiceTests
     private static IKeyBindingService<UICommand> CreateKeyBindingService()
     {
         var catalog = new CommandCatalog<UICommand>([
-            new CommandDescriptor<UICommand>(UICommand.Save, nameof(UICommand.Save), isRemappable: true, isHostReserved: false,
-                new KeyCombo(System.Windows.Input.Key.S, System.Windows.Input.ModifierKeys.Control)),
-            new CommandDescriptor<UICommand>(UICommand.Find, nameof(UICommand.Find), isRemappable: true, isHostReserved: false,
-                new KeyCombo(System.Windows.Input.Key.F, System.Windows.Input.ModifierKeys.Control))
+            new CommandDescriptor<UICommand>(UICommand.Save, nameof(UICommand.Save), CommandRemappingPolicy.Remappable,
+                new KeyCombo(KeyCode.S, KeyModifiers.Control)),
+            new CommandDescriptor<UICommand>(UICommand.Find, nameof(UICommand.Find), CommandRemappingPolicy.Remappable,
+                new KeyCombo(KeyCode.F, KeyModifiers.Control))
         ]);
-        return new KeyBindingService<UICommand>(catalog, new KeyBindingOverrideCollection(), _ => true);
+        return new KeyBindingService<UICommand>(catalog, new KeyBindingTestStore());
     }
 
     [TestMethod]

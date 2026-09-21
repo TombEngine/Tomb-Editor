@@ -5,6 +5,7 @@ using TombIDE.ScriptingStudio.WorkspaceProfile;
 using TombIDE.Shared.Messaging.Scripting;
 using Nickelony.IDEKit.Workspace.Documents;
 using TombLib.WPF.Services.Abstract;
+using Nickelony.IDEKit.Workspace.Documents.FileSystem;
 
 namespace TombIDE.ScriptingStudio.Controls;
 

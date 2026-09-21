@@ -25,7 +25,7 @@ public class TRXGameFlowCompletionServiceTests
 
 		var service = new TRXGameFlowCompletionService(new StubSchemaService(model));
 
-		IReadOnlyList<TextCompletionItem> items = service.GetCompletionItems(new TextCompletionContext(string.Empty, 0));
+		IReadOnlyList<TextCompletionItem> items = service.GetCompletionItems(new TextCompletionRequest(string.Empty, 0));
 
 		Assert.IsTrue(items.Any(item => item.InsertText == "\"title\": "));
 		Assert.IsTrue(items.Any(item => item.InsertText == "true"));
@@ -40,7 +40,7 @@ public class TRXGameFlowCompletionServiceTests
 
 		var service = new TRXGameFlowCompletionService(new StubSchemaService(model));
 
-		IReadOnlyList<TextCompletionItem> items = service.GetCompletionItems(new TextCompletionContext("\"tit", 4));
+		IReadOnlyList<TextCompletionItem> items = service.GetCompletionItems(new TextCompletionRequest("\"tit", 4));
 
 		// The provider returns the full candidate set: both schema properties plus the JSON primitives.
 		Assert.AreEqual(5, items.Count);
@@ -53,7 +53,7 @@ public class TRXGameFlowCompletionServiceTests
 	{
 		var service = new TRXGameFlowCompletionService(new StubSchemaService(null));
 
-		IReadOnlyList<TextCompletionItem> items = service.GetCompletionItems(new TextCompletionContext(string.Empty, 0));
+		IReadOnlyList<TextCompletionItem> items = service.GetCompletionItems(new TextCompletionRequest(string.Empty, 0));
 
 		Assert.IsFalse(items.Any(item => item.InsertText == "\"title\": "));
 		Assert.IsTrue(items.Any(item => item.InsertText == "true"));
@@ -66,7 +66,7 @@ public class TRXGameFlowCompletionServiceTests
 	{
 		var service = new TRXGameFlowCompletionService(new StubSchemaService(new TRXGameFlowSchemaModel([], TRXSchemaKeywords.Empty)));
 
-		IReadOnlyList<TextCompletionItem> items = service.GetCompletionItems(new TextCompletionContext(string.Empty, 0));
+		IReadOnlyList<TextCompletionItem> items = service.GetCompletionItems(new TextCompletionRequest(string.Empty, 0));
 
 		Assert.AreEqual(3, items.Count);
 		Assert.IsTrue(items.All(item => item.InsertText is "true" or "false" or "null"));
@@ -79,7 +79,7 @@ public class TRXGameFlowCompletionServiceTests
 
 		var service = new TRXGameFlowCompletionService(new StubSchemaService(model));
 
-		IReadOnlyList<TextCompletionItem> items = service.GetCompletionItems(new TextCompletionContext(string.Empty, 0));
+		IReadOnlyList<TextCompletionItem> items = service.GetCompletionItems(new TextCompletionRequest(string.Empty, 0));
 
 		var item = items.First(candidate => candidate.InsertText == "\"levels\": ");
 		Assert.AreEqual(TextCompletionItemKind.Array, item.Kind);

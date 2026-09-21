@@ -8,7 +8,6 @@ using TombIDE.ScriptingStudio.TextEditing;
 using Nickelony.IDEKit.Core.Text;
 using TombLib.Scripting.UI.Editors;
 using Nickelony.IDEKit.Workspace.Documents;
-using Nickelony.IDEKit.Workspace.Views;
 
 namespace TombEditor.Tests.ScriptingStudio;
 

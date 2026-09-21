@@ -15,6 +15,7 @@ using TombLib.Scripting.UI.Bases;
 using TombLib.Scripting.UI.Editors;
 using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.Workspace.Documents;
+using Nickelony.IDEKit.Core.Editing;
 
 namespace TombEditor.Tests.ScriptingStudio;
 
@@ -45,7 +46,7 @@ public sealed class StringTableViewTests
 
 			WorkspaceDocumentViewOpenResult result = workspaceView.Open(snapshot);
 
-			Assert.AreEqual(WorkspaceDocumentViewOpenStatus.Opened, result.Status);
+			Assert.AreEqual(WorkspaceDocumentViewOpenOutcome.Opened, result.Outcome);
 			Assert.AreEqual(snapshot.Content, workspaceView.Text);
 			Assert.AreEqual(snapshot.Content, view.WorkspaceCanonicalContent);
 			Assert.IsFalse(workspaceView.HasPendingEdits);
@@ -67,11 +68,11 @@ public sealed class StringTableViewTests
 			WorkspaceDocumentSnapshot snapshot = CreateSnapshot("language.txt", "[Strings]\r\nHello", 4);
 			workspaceView.Open(snapshot);
 
-			workspaceView.Apply([new TextEditOperation(11, 16, "Changed", 0)]);
+			workspaceView.Apply(new PreparedTextEdits([new TextEditOperation(11, 16, "Changed", 0)]));
 
 			Assert.AreEqual(1, requests.Count);
-			Assert.AreEqual(snapshot.DocumentKey, requests[0].ExpectedDocumentKey);
-			Assert.AreEqual(snapshot.Version, requests[0].ExpectedVersion);
+			Assert.AreEqual(snapshot.DocumentKey, requests[0].Identity.DocumentKey);
+			Assert.AreEqual(snapshot.Version, requests[0].Identity.Version);
 			Assert.AreEqual("[Strings]\r\nChanged", requests[0].Content);
 			Assert.IsTrue(workspaceView.HasPendingEdits);
 			Assert.IsFalse(workspaceView.HasConflict);
@@ -103,7 +104,7 @@ public sealed class StringTableViewTests
 			var workspaceView = new StringEditorWorkspaceView(view);
 			WorkspaceDocumentSnapshot initial = CreateSnapshot("language.txt", "[Strings]\r\nHello", 4);
 			workspaceView.Open(initial);
-			workspaceView.Apply([new TextEditOperation(11, 16, "Local", 0)]);
+			workspaceView.Apply(new PreparedTextEdits([new TextEditOperation(11, 16, "Local", 0)]));
 			WorkspaceDocumentSnapshot acknowledged = CreateSnapshot(
 				"language.txt",
 				"[Strings]\r\nCanonical",
@@ -111,13 +112,14 @@ public sealed class StringTableViewTests
 				initial.DocumentKey);
 
 			WorkspaceDocumentViewRefreshResult result = workspaceView.AcknowledgeApply(new WorkspaceDocumentMutationResult(
-				WorkspaceDocumentMutationStatus.Replaced,
-				acknowledged.DocumentKey,
-				acknowledged.DocumentId,
-				acknowledged.Version,
+				WorkspaceDocumentMutationOutcome.Changed,
+				new WorkspaceDocumentRequestIdentity(
+					acknowledged.DocumentKey,
+					acknowledged.DocumentId,
+					acknowledged.Version),
 				acknowledged));
 
-			Assert.AreEqual(WorkspaceDocumentViewRefreshStatus.Refreshed, result.Status);
+			Assert.AreEqual(WorkspaceDocumentViewRefreshOutcome.Refreshed, result.Outcome);
 			Assert.AreEqual(acknowledged.Content, workspaceView.Text);
 			Assert.IsFalse(workspaceView.HasPendingEdits);
 			Assert.IsFalse(workspaceView.HasConflict);
@@ -130,12 +132,12 @@ public sealed class StringTableViewTests
 			using var view = new StringEditorView(new Version(1, 0));
 			var workspaceView = new StringEditorWorkspaceView(view);
 			workspaceView.Open(CreateSnapshot("language.txt", "[Strings]\r\nHello", 4));
-			workspaceView.Apply([new TextEditOperation(11, 16, "Local", 0)]);
+			workspaceView.Apply(new PreparedTextEdits([new TextEditOperation(11, 16, "Local", 0)]));
 
 			WorkspaceDocumentViewRefreshResult result = workspaceView.Refresh(
 				CreateSnapshot("language.txt", "[Strings]\r\nCanonical", 5, workspaceView.DocumentKey));
 
-			Assert.AreEqual(WorkspaceDocumentViewRefreshStatus.MarkedStale, result.Status);
+			Assert.AreEqual(WorkspaceDocumentViewRefreshOutcome.MarkedStale, result.Outcome);
 			Assert.IsTrue(workspaceView.HasPendingEdits);
 			Assert.IsTrue(workspaceView.HasConflict);
 			Assert.AreEqual("[Strings]\r\nLocal", workspaceView.Text);
@@ -151,7 +153,7 @@ public sealed class StringTableViewTests
 			WorkspaceDocumentViewOpenResult result = workspaceView.Open(
 				CreateSnapshot("language.txt", "[ExtraNG]\r\nnot a row", 1));
 
-			Assert.AreEqual(WorkspaceDocumentViewOpenStatus.Unavailable, result.Status);
+			Assert.AreEqual(WorkspaceDocumentViewOpenOutcome.Unavailable, result.Outcome);
 			Assert.AreEqual("ParseFailed", result.Failure!.Code);
 			Assert.IsNull(workspaceView.DocumentKey);
 			Assert.IsFalse(view.WorkspaceViewAttached);
@@ -227,30 +229,22 @@ public sealed class StringTableViewTests
 
 		public string? ContentBeforeAttach { get; private set; }
 
-		public Task<WorkspaceDocumentOpenResult> OpenAsync(
+		public Task<WorkspaceDocumentManagerOpenResult> OpenAsync(
 			string? filePath,
 			WorkspaceDocumentOpenOptions options,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public IReadOnlyList<WorkspaceDocumentSnapshot> GetSnapshotsUnderDirectory(string directoryPath)
-			=> [];
+		public IWorkspaceDocumentReader Documents => throw new NotSupportedException();
 
 		public Task<WorkspaceDocumentManagerOpenResult> OpenWithViewAsync(
 			string? filePath,
 			WorkspaceDocumentOpenOptions options,
 			IWorkspaceDocumentView view,
 			CancellationToken cancellationToken = default)
-			=> Task.FromResult(OpenWithView(filePath, options, view, cancellationToken));
-
-		public WorkspaceDocumentManagerOpenResult OpenWithView(
-			string? filePath,
-			WorkspaceDocumentOpenOptions options,
-			IWorkspaceDocumentView view,
-			CancellationToken cancellationToken = default)
 		{
 			OpenCount++;
-			ContentBeforeAttach = view.Text;
+			ContentBeforeAttach = (view as ITextEditTarget)?.Text;
 			WorkspaceDocumentSnapshot snapshot = CreateSnapshot(
 				filePath ?? string.Empty,
 				_content,
@@ -258,56 +252,56 @@ public sealed class StringTableViewTests
 				_documentKey);
 			WorkspaceDocumentViewOpenResult attach = view.Open(snapshot);
 
-			if (attach.Status != WorkspaceDocumentViewOpenStatus.Opened)
-				return new WorkspaceDocumentManagerOpenResult(WorkspaceDocumentManagerOpenStatus.OpenFailed, null);
+			if (attach.Outcome != WorkspaceDocumentViewOpenOutcome.Opened)
+				return Task.FromResult(new WorkspaceDocumentManagerOpenResult(WorkspaceDocumentManagerOpenOutcome.ViewRejected, snapshot));
 
-			return new WorkspaceDocumentManagerOpenResult(
-				WorkspaceDocumentManagerOpenStatus.Opened,
-				snapshot);
+			return Task.FromResult(new WorkspaceDocumentManagerOpenResult(
+				WorkspaceDocumentManagerOpenOutcome.Opened,
+				snapshot));
 		}
 
-		public WorkspaceDocumentMutationResult Replace(WorkspaceDocumentReplaceRequest request)
+		public Task<WorkspaceDocumentManagerMutationResult> ReplaceAsync(WorkspaceDocumentReplaceRequest request)
 			=> throw new NotSupportedException();
 
-		public WorkspaceDocumentMutationResult Discard(WorkspaceDocumentDiscardRequest request)
+		public Task<WorkspaceDocumentManagerMutationResult> DiscardAsync(WorkspaceDocumentDiscardRequest request)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentRenameResult> RenameAsync(
+		public Task<WorkspaceDocumentManagerRenameResult> RenameAsync(
 			WorkspaceDocumentRenameRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentSaveAsResult> SaveAsAsync(
+		public Task<WorkspaceDocumentManagerSaveAsResult> SaveAsAsync(
 			WorkspaceDocumentSaveAsRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentDeleteResult> DeleteAsync(
+		public Task<WorkspaceDocumentManagerDeleteResult> DeleteAsync(
 			WorkspaceDocumentDeleteRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentDirectoryRenameResult> RenameDirectoryAsync(
+		public Task<WorkspaceDocumentManagerDirectoryRenameResult> RenameDirectoryAsync(
 			WorkspaceDocumentDirectoryRenameRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentDirectoryDeleteResult> DeleteDirectoryAsync(
+		public Task<WorkspaceDocumentManagerDirectoryDeleteResult> DeleteDirectoryAsync(
 			WorkspaceDocumentDirectoryDeleteRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentCommitResult> CommitAsync(
+		public Task<WorkspaceDocumentManagerCommitResult> CommitAsync(
 			WorkspaceDocumentCommitRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentReloadResult> ReloadAsync(
+		public Task<WorkspaceDocumentManagerReloadResult> ReloadAsync(
 			WorkspaceDocumentReloadRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();
 
-		public Task<WorkspaceDocumentConflictResolutionResult> ResolveExternalConflictAsync(
+		public Task<WorkspaceDocumentManagerConflictResolutionResult> ResolveExternalConflictAsync(
 			WorkspaceDocumentConflictResolutionRequest request,
 			CancellationToken cancellationToken = default)
 			=> throw new NotSupportedException();

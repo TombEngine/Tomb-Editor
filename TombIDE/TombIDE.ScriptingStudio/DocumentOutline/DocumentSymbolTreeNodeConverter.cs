@@ -35,7 +35,7 @@ internal static class DocumentSymbolTreeNodeConverter
 	{
 		var node = new DarkTreeNode(symbol.Name)
 		{
-			Expanded = symbol.HasChildren,
+			Expanded = symbol.Children.Count > 0,
 			Tag = symbol.Data
 		};
 

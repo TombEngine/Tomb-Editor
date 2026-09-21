@@ -15,5 +15,5 @@ public sealed class LuaDiagnosticsUpdatedMessage(LuaDiagnosticsPayload payload)
 
 public readonly record struct LuaDiagnosticsPayload(
 	string FilePath,
-	IReadOnlyList<TextEditorDiagnostic> Diagnostics
+	IReadOnlyList<TextDiagnostic> Diagnostics
 );

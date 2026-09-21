@@ -1,4 +1,4 @@
-using Nickelony.IDEKit.AvalonEdit.Extras.TextMate.Highlighting;
+using Nickelony.IDEKit.AvalonEdit.TextMate.Highlighting;
 using System.Text.Json;
 using TombLib.Scripting.GameFlowScript;
 using TombLib.Scripting.Lua.Themes;

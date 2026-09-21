@@ -1,6 +1,6 @@
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
-using Nickelony.IDEKit.AvalonEdit.Extras.TextMate.Highlighting;
+using Nickelony.IDEKit.AvalonEdit.TextMate.Highlighting;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;

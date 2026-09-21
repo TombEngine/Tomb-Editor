@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Mvvm.Messaging;
 using Moq;
+using Nickelony.IDEKit.Core.Text;
 using Nickelony.LanguageServer.Abstractions;
 using System;
 using System.Reflection;
@@ -88,7 +89,7 @@ public sealed class ScriptingPhase0AsyncFailureTests
 				"An unrelated shell refresh must not overwrite an in-flight reference request.");
 
 			builder.ReferenceCompletion.SetResult([
-				new TextReferenceLocation(editor.FilePath, 1, 1, 1, 5)
+				new TextReferenceLocation(editor.FilePath, new TextPositionRange(new TextPosition(0, 0), new TextPosition(0, 4)))
 			]);
 			request.GetAwaiter().GetResult();
 			Assert.AreNotEqual(Strings.Default.LuaReferencesLoading, references.StatusText);
@@ -127,7 +128,7 @@ public sealed class ScriptingPhase0AsyncFailureTests
 				"Applying editor settings must not overwrite an in-flight reference request.");
 
 			builder.ReferenceCompletion.SetResult([
-				new TextReferenceLocation(editor.FilePath, 1, 1, 1, 5)
+				new TextReferenceLocation(editor.FilePath, new TextPositionRange(new TextPosition(0, 0), new TextPosition(0, 4)))
 			]);
 			request.GetAwaiter().GetResult();
 			Assert.AreNotEqual(Strings.Default.LuaReferencesLoading, references.StatusText);
@@ -156,7 +157,7 @@ public sealed class ScriptingPhase0AsyncFailureTests
 			Task request = StartReferenceSearch(builder.Workbench, editor);
 			editor.Text = "local value = 2";
 			builder.ReferenceCompletion.SetResult([
-				new TextReferenceLocation(editor.FilePath, 1, 1, 1, 5)
+				new TextReferenceLocation(editor.FilePath, new TextPositionRange(new TextPosition(0, 0), new TextPosition(0, 4)))
 			]);
 			request.GetAwaiter().GetResult();
 

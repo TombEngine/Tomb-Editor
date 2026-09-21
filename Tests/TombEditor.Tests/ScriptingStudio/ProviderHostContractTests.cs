@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Moq;
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using TombIDE.ScriptingStudio.Controls;
 using TombIDE.ScriptingStudio.Editors;
 using TombIDE.ScriptingStudio.Settings;
@@ -59,7 +60,8 @@ public sealed class ProviderHostContractTests
 			try
 			{
 				File.WriteAllText(Path.Combine(scriptDirectoryPath, "gameflow.json5"), string.Empty);
-				var profile = CreateProfile(TRVersion.Game.TR1, supportsLua: true, scriptDirectoryPath);
+				var luaOutlineProviderFactory = new Func<ScriptingDocumentContext, ITextDocumentSymbolProvider?>(_ => null);
+				var profile = CreateProfile(TRVersion.Game.TR1, supportsLua: true, scriptDirectoryPath, luaOutlineProviderFactory);
 				var registrations = new RegistrationCapture();
 
 				profile.RegisterEditors(registrations);
@@ -70,7 +72,10 @@ public sealed class ProviderHostContractTests
 				Assert.AreEqual(ScriptingDocumentConfigurationKind.TRX, trx.ConfigurationKind);
 				Assert.IsNotNull(trx.OutlineProviderFactory);
 				Assert.AreEqual(ScriptingDocumentConfigurationKind.Lua, lua.ConfigurationKind);
-				Assert.IsNull(lua.OutlineProviderFactory);
+
+				// The Lua registration carries the profile-provided outline factory, which resolves the
+				// outline provider from the document context when a Lua document becomes active.
+				Assert.AreSame(luaOutlineProviderFactory, lua.OutlineProviderFactory);
 			}
 			finally
 			{
@@ -104,8 +109,10 @@ public sealed class ProviderHostContractTests
 		});
 	}
 
-	private static ScriptingWorkspaceProfile CreateProfile(TRVersion.Game gameVersion, bool supportsLua, string scriptDirectoryPath)
-		=> ScriptingWorkspaceProfileTestFactory.CreateSelectorProfile(gameVersion, supportsLua, scriptDirectoryPath);
+	private static ScriptingWorkspaceProfile CreateProfile(TRVersion.Game gameVersion, bool supportsLua, string scriptDirectoryPath,
+		Func<ScriptingDocumentContext, ITextDocumentSymbolProvider?>? luaOutlineProviderFactory = null)
+		=> ScriptingWorkspaceProfileTestFactory.CreateSelectorProfile(gameVersion, supportsLua, scriptDirectoryPath,
+			luaOutlineProviderFactory: luaOutlineProviderFactory);
 
 	private sealed class RegistrationCapture : IEditorDocumentController
 	{

@@ -1,4 +1,4 @@
-using Nickelony.IDEKit.Tooling;
+using Nickelony.IDEKit.Processes;
 using NLog;
 using System;
 using System.IO;
@@ -138,7 +138,9 @@ public static class ScriptCompiler
 		{
 			ProcessRunResult result = processRunner.Run(request);
 
-			if (!result.Started || result.TimedOut || result.Cancelled)
+			// Foreign repair (Processes outcome enum migration): preserve the previous
+			// "!Started || TimedOut || Canceled" failure condition, which is exactly "did not exit".
+			if (result.Outcome != ProcessRunOutcome.Exited)
 				return false;
 
 			return FinalizeCompileResult(gameflowDirectory, outputDirectory, compiledScriptFileName);

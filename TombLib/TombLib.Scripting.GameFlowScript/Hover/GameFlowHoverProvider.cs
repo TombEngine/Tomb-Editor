@@ -25,19 +25,26 @@ public sealed class GameFlowHoverProvider : ITextHoverProvider
 			return null;
 
 		if (Contains(GameFlowDefinitionCatalog.Sections, hoveredWord))
-			return new TextHoverInfo($"GameFlow section \"{hoveredWord}\".", SymbolName: hoveredWord, Identifier: new GameFlowObjectDiscriminator(ObjectType.Section));
+			return CreateHoverInfo($"GameFlow section \"{hoveredWord}\".", hoveredWord, ObjectType.Section);
 
 		if (Contains(GameFlowDefinitionCatalog.SpecialProperties, hoveredWord))
-			return new TextHoverInfo($"GameFlow special property \"{hoveredWord}\".", SymbolName: hoveredWord, Identifier: new GameFlowObjectDiscriminator(ObjectType.SpecialProperty));
+			return CreateHoverInfo($"GameFlow special property \"{hoveredWord}\".", hoveredWord, ObjectType.SpecialProperty);
 
 		if (Contains(GameFlowDefinitionCatalog.Properties, hoveredWord))
-			return new TextHoverInfo($"GameFlow property \"{hoveredWord}\".", SymbolName: hoveredWord, Identifier: new GameFlowObjectDiscriminator(ObjectType.Property));
+			return CreateHoverInfo($"GameFlow property \"{hoveredWord}\".", hoveredWord, ObjectType.Property);
 
 		if (Contains(GameFlowDefinitionCatalog.Constants, hoveredWord))
-			return new TextHoverInfo($"GameFlow constant \"{hoveredWord}\".", SymbolName: hoveredWord, Identifier: new GameFlowObjectDiscriminator(ObjectType.Constant));
+			return CreateHoverInfo($"GameFlow constant \"{hoveredWord}\".", hoveredWord, ObjectType.Constant);
 
 		return null;
 	}
+
+	private static TextHoverInfo CreateHoverInfo(string content, string symbolName, ObjectType objectType)
+		=> new(content)
+		{
+			SymbolName = symbolName,
+			DefinitionDiscriminator = new GameFlowObjectDiscriminator(objectType)
+		};
 
 	private static bool Contains(IReadOnlyList<string> values, string value)
 	{
@@ -60,11 +67,11 @@ public sealed class GameFlowHoverProvider : ITextHoverProvider
 			return null;
 
 		var snapshot = new StringTextSnapshot(documentText);
-		TextRange? range = IdentifierHelper.TryGetContainingSpan(snapshot, offset, IdentifierCharacterPolicy.Default);
+		TextRange? range = IdentifierOperations.FindTokenSpan(snapshot, offset, IdentifierCharacterPolicy.Default);
 
 		if (range is null)
 			return null;
 
-		return snapshot.GetText(range.Value.Offset, range.Value.Length).Trim();
+			return range.Value.GetTextFrom(snapshot).Trim();
 	}
 }

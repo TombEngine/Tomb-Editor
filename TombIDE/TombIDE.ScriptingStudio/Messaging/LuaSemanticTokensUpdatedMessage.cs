@@ -14,5 +14,5 @@ public sealed class LuaSemanticTokensUpdatedMessage(LuaSemanticTokensPayload pay
 
 public readonly record struct LuaSemanticTokensPayload(
 	string FilePath,
-	IReadOnlyList<LuaSemanticToken> SemanticTokens
+	IReadOnlyList<SemanticToken> SemanticTokens
 );

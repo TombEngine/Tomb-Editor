@@ -1,5 +1,7 @@
+using Nickelony.IDEKit.Core.Text;
 using Nickelony.IDEKit.IntelliSense.Completion;
 using Nickelony.IDEKit.IntelliSense.Diagnostics;
+using Nickelony.IDEKit.IntelliSense.DocumentSymbols;
 using Nickelony.IDEKit.IntelliSense.Hover;
 using Nickelony.IDEKit.IntelliSense.Navigation;
 using Nickelony.IDEKit.IntelliSense.Signatures;
@@ -133,7 +135,7 @@ public class LuaEditorRequestCancellationTests
 		});
 	}
 
-	private static LuaEditor CreateEditor(ILuaIntelliSenseProvider provider, string text) => new(new Version(1, 0))
+	private static LuaEditor CreateEditor(ILuaLanguageServerIntelliSenseProvider provider, string text) => new(new Version(1, 0))
 	{
 		FilePath = @"C:\Workspace\Scripts\test.lua",
 		Text = text,
@@ -152,10 +154,10 @@ public class LuaEditorRequestCancellationTests
 			?? throw new InvalidOperationException("RequestSignatureHelpAsync returned null."));
 	}
 
-	private sealed class TrackingIntelliSenseProvider : ILuaIntelliSenseProvider
+	private sealed class TrackingIntelliSenseProvider : ILuaLanguageServerIntelliSenseProvider
 	{
 		private readonly TaskCompletionSource<IReadOnlyList<TextCompletionItem>> _completionResponse = new();
-		private readonly TaskCompletionSource<TextSignatureHelpInfo?> _signatureHelpResponse = new();
+		private readonly TaskCompletionSource<TextSignatureHelp?> _signatureHelpResponse = new();
 
 		public bool IsAvailable { get; set; } = true;
 
@@ -164,44 +166,46 @@ public class LuaEditorRequestCancellationTests
 		public bool SupportsReferences => false;
 		public bool SupportsRename => false;
 		public bool SupportsFormatting => false;
+		public bool SupportsDocumentSymbols => false;
+		public bool SupportsCodeActions => false;
 
 		public CancellationToken LastCompletionToken { get; private set; }
 
 		public CancellationToken LastSignatureHelpToken { get; private set; }
 
-		public event Action<string, IReadOnlyList<TextEditorDiagnostic>>? DiagnosticsUpdated
+		public event EventHandler<DiagnosticsUpdatedEventArgs>? DiagnosticsUpdated
 		{
 			add { }
 			remove { }
 		}
 
-		public event Action? CapabilitiesChanged
+		public event EventHandler? CapabilitiesChanged
 		{
 			add { }
 			remove { }
 		}
 
-		public event Action<LanguageServerStartupFailure>? StartupFailed
+		public event EventHandler<StartupFailedEventArgs>? StartupFailed
 		{
 			add { }
 			remove { }
 		}
 
-		public event Action<WorkspaceWatcherFailure>? WorkspaceWatcherFailed
+		public event EventHandler<WorkspaceWatcherFailedEventArgs>? WorkspaceWatcherFailed
 		{
 			add { }
 			remove { }
 		}
 
-		public event Action<string, IReadOnlyList<LuaSemanticToken>>? SemanticTokensUpdated
+		public event EventHandler<SemanticTokensUpdatedEventArgs>? SemanticTokensUpdated
 		{
 			add { }
 			remove { }
 		}
 
-		public IReadOnlyList<TextEditorDiagnostic> GetDiagnostics(string filePath) => [];
+		public IReadOnlyList<TextDiagnostic> GetDiagnostics(string filePath) => [];
 
-		public IReadOnlyList<LuaSemanticToken> GetSemanticTokens(string filePath) => [];
+		public IReadOnlyList<SemanticToken> GetSemanticTokens(string filePath) => [];
 
 		public void OpenDocument(string filePath, string content)
 		{ }
@@ -212,22 +216,26 @@ public class LuaEditorRequestCancellationTests
 		public void CloseDocument(string filePath)
 		{ }
 
-		public void RenameDocument(string oldFilePath, string newFilePath, string content)
+		public void MoveDocument(string oldFilePath, string newFilePath, string content)
 		{ }
 
-		public Task<IReadOnlyList<TextCompletionItem>> GetCompletionItemsAsync(string filePath, string content,
-			int line, int column, char? triggerCharacter = null, CancellationToken cancellationToken = default)
+		public Task<IReadOnlyList<TextCodeAction>> GetCodeActionsAsync(LanguageServerCodeActionRequest request,
+			CancellationToken cancellationToken = default)
+			=> Task.FromResult<IReadOnlyList<TextCodeAction>>([]);
+
+		public Task<IReadOnlyList<TextCompletionItem>> GetCompletionItemsAsync(LanguageServerCompletionRequest request,
+			CancellationToken cancellationToken = default)
 		{
 			LastCompletionToken = cancellationToken;
 			return _completionResponse.Task;
 		}
 
 		public Task<TextHoverInfo?> GetHoverAsync(string filePath, string content,
-			int line, int column, CancellationToken cancellationToken = default)
+			TextPosition position, CancellationToken cancellationToken = default)
 			=> Task.FromResult<TextHoverInfo?>(null);
 
 		public Task<TextDefinitionLocation?> GetDefinitionAsync(string filePath, string content,
-			int line, int column, CancellationToken cancellationToken = default)
+			TextPosition position, CancellationToken cancellationToken = default)
 			=> Task.FromResult<TextDefinitionLocation?>(null);
 
 		public Task<IReadOnlyList<TextReferenceLocation>> GetReferencesAsync(string filePath, string content,
@@ -243,8 +251,12 @@ public class LuaEditorRequestCancellationTests
 		public Task<TextWorkspaceEdit?> FormatDocumentAsync(TextFormatRequest request, CancellationToken cancellationToken = default)
 			=> Task.FromResult<TextWorkspaceEdit?>(null);
 
-		public Task<TextSignatureHelpInfo?> GetSignatureHelpAsync(string filePath, string content,
-			int line, int column, CancellationToken cancellationToken = default)
+		public Task<IReadOnlyList<TextDocumentSymbol>> GetDocumentSymbolsAsync(string filePath, string content,
+			CancellationToken cancellationToken = default)
+			=> Task.FromResult<IReadOnlyList<TextDocumentSymbol>>([]);
+
+		public Task<TextSignatureHelp?> GetSignatureHelpAsync(LanguageServerSignatureHelpRequest request,
+			CancellationToken cancellationToken = default)
 		{
 			LastSignatureHelpToken = cancellationToken;
 			return _signatureHelpResponse.Task;
@@ -258,5 +270,7 @@ public class LuaEditorRequestCancellationTests
 
 		public void Dispose()
 		{ }
+
+		public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 	}
 }
