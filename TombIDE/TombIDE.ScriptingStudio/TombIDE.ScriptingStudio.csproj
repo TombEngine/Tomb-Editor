@@ -1,36 +1,24 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <OutputType>Library</OutputType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Product>TombIDE Scripting Studio Module</Product>
+    <AssemblyTitle>$(Product)</AssemblyTitle>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-    <Configurations>Debug;Release</Configurations>
-    <Platforms>x64;x86</Platforms>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <OutputPath>..\..\Build ($(Platform))\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <OutputPath>..\..\BuildRelease ($(Platform))\</OutputPath>
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='x64'">
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='x86'">
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CustomTabControl">
       <HintPath>..\..\Libs\CustomTabControl.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.AvalonEdit, Version=6.0.1.278, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libs\ICSharpCode.AvalonEdit.dll</HintPath>
-    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Dirkster.AvalonDock" Version="4.74.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.5.0" />
+    <PackageReference Include="StreamJsonRpc" Version="2.25.29" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\GlobalPaths.cs">
@@ -41,99 +29,34 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Update="Settings\Tomb1MainSettingsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Tomb1MainStudio.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="GameFlowScriptStudio.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Settings\GameFlowSettingsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Settings\ClassicScriptSettingsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="ToolWindows\ContentExplorer.cs" />
-    <Compile Update="ToolWindows\SearchResults.cs" />
-    <Compile Update="Controls\EditorTabControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Controls\SearchTextBox.cs" />
-    <Compile Update="ToolStrips\StudioStatusStrip.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="ToolStrips\EditorContextMenu.cs" />
-    <Compile Update="ToolWindows\CompilerLogs.cs" />
-    <Compile Update="ToolWindows\FileExplorer.cs" />
-    <Compile Update="ToolWindows\ReferenceBrowser.cs" />
-    <Compile Update="Controls\SyntaxPreview.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Update="DocumentOutline\DocumentOutlineToolWindow.cs" />
+    <Compile Update="ToolStrips\StudioStatusStrip.cs" />
+    <Compile Update="Build\CompilerLogsToolWindow.cs" />
+    <Compile Update="FileExplorer\FileExplorerToolWindow.cs" />
+    <Compile Update="Navigation\ReferenceBrowserToolWindow.cs" />
     <Compile Update="ToolStrips\StudioMenuStrip.cs" />
     <Compile Update="ToolStrips\StudioToolStrip.cs" />
-    <Compile Update="Bases\StudioBase.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="ClassicScriptStudio.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="LuaStudio.cs">
-      <SubType>Component</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DarkUI\DarkUI.WPF\DarkUI.WPF.csproj" />
     <ProjectReference Include="..\..\DarkUI\DarkUI\DarkUI.csproj" />
+    <PackageReference Include="Nickelony.IDEKit.Core" Version="$(NickelonyIDEKitCoreVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.AvalonEdit" Version="$(NickelonyIDEKitAvalonEditVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Workspace" Version="$(NickelonyIDEKitWorkspaceVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Workspace.Views" Version="$(NickelonyIDEKitWorkspaceViewsVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.KeyBindings" Version="$(NickelonyIDEKitKeyBindingsVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.KeyBindings.Wpf" Version="$(NickelonyIDEKitKeyBindingsWpfVersion)" />
+    <PackageReference Include="Nickelony.LanguageServer.Abstractions" Version="$(NickelonyLanguageServerVersion)" />
+    <PackageReference Include="Nickelony.LanguageServer.Client" Version="$(NickelonyLanguageServerVersion)" />
+    <PackageReference Include="Nickelony.LanguageServer.Lua" Version="$(NickelonyLanguageServerVersion)" />
     <ProjectReference Include="..\..\TombLib\TombLib.Scripting.GameFlowScript\TombLib.Scripting.GameFlowScript.csproj" />
-    <ProjectReference Include="..\..\TombLib\TombLib.Scripting.Tomb1Main\TombLib.Scripting.Tomb1Main.csproj" />
     <ProjectReference Include="..\..\TombLib\TombLib.Scripting.ClassicScript\TombLib.Scripting.ClassicScript.csproj" />
     <ProjectReference Include="..\..\TombLib\TombLib.Scripting.Lua\TombLib.Scripting.Lua.csproj" />
-    <ProjectReference Include="..\..\TombLib\TombLib.Scripting\TombLib.Scripting.csproj" />
+    <ProjectReference Include="..\..\TombLib\TombLib.Scripting.TRX\TombLib.Scripting.TRX.csproj" />
+    <ProjectReference Include="..\..\TombLib\TombLib.Scripting.UI\TombLib.Scripting.UI.csproj" />
     <ProjectReference Include="..\TombIDE.Shared\TombIDE.Shared.csproj" />
     <ProjectReference Include="..\..\TombLib\TombLib.Forms\TombLib.Forms.csproj" />
     <ProjectReference Include="..\..\TombLib\TombLib\TombLib.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="UI\DocumentModePresets\ContextMenus\ClassicScript.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\ContextMenus\GameFlowScript.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\ContextMenus\Lua.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\ContextMenus\PlainText.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\ContextMenus\Strings.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\ContextMenus\Tomb1Main.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\MenuStrips\ClassicScript.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\MenuStrips\GameFlowScript.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\MenuStrips\Lua.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\MenuStrips\PlainText.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\MenuStrips\Strings.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\MenuStrips\Tomb1Main.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\ToolStrips\ClassicScript.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\ToolStrips\GameFlowScript.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\ToolStrips\Lua.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\ToolStrips\PlainText.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\ToolStrips\Strings.xml" />
-    <EmbeddedResource Include="UI\DocumentModePresets\ToolStrips\Tomb1Main.xml" />
-    <EmbeddedResource Include="UI\StudioModePresets\MenuStrips\ClassicScript.xml" />
-    <EmbeddedResource Include="UI\StudioModePresets\MenuStrips\GameFlowScript.xml" />
-    <EmbeddedResource Include="UI\StudioModePresets\MenuStrips\Lua.xml" />
-    <EmbeddedResource Include="UI\StudioModePresets\MenuStrips\Tomb1Main.xml" />
-    <EmbeddedResource Include="UI\StudioModePresets\ToolStrips\ClassicScript.xml" />
-    <EmbeddedResource Include="UI\StudioModePresets\ToolStrips\GameFlowScript.xml" />
-    <EmbeddedResource Include="UI\StudioModePresets\ToolStrips\Lua.xml" />
-    <EmbeddedResource Include="UI\StudioModePresets\ToolStrips\Tomb1Main.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="FileHandling.cs" />
-    <Compile Remove="StudioBase.cs" />
-    <Compile Remove="StudioBase.Designer.cs" />
-    <Compile Remove="UI\DocumentModePresets\MenuStripPresets.cs" />
-    <Compile Remove="UI\DocumentModePresets\ToolStripPresets.cs" />
-    <Compile Remove="UI\StudioModePresets\MenuStripPresets.cs" />
-    <Compile Remove="UI\StudioModePresets\ToolStripPresets.cs" />
-    <Compile Remove="UI\UIElement.cs" />
-    <EmbeddedResource Remove="StudioBase.resx" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">

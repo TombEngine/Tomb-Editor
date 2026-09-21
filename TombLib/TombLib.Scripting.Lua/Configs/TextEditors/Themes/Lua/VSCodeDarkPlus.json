@@ -1,0 +1,69 @@
+{
+	"Name": "VSCode Dark+",
+	"Aliases": [ "VS15", "VSCode", "Dark+" ],
+	"Background": "#202020",
+	"Foreground": "#DCDCDC",
+	"SemanticColors": {
+		"MutedText": "#8C8C8C",
+		"Misc": "#C8C8C8",
+		"Method": "#DCDCAA",
+		"Variable": "#9CDCFE",
+		"Property": "#4FC1FF",
+		"Type": "#4EC9B0",
+		"Keyword": "#C586C0",
+		"LanguageConstant": "#569CD6",
+		"Constant": "#B5CEA8",
+		"File": "#D7BA7D",
+		"SignatureParameterDocumentation": "#B4B4B4",
+		"SignatureActiveParameter": "#56B4EB",
+		"SignatureText": "#DCDCDC"
+	},
+	"TextMateTheme": {
+		"Rules": [
+			{
+				"Scope": "comment",
+				"Foreground": "#6A9955"
+			},
+			{
+				"Scope": "string",
+				"Foreground": "#CE9178"
+			},
+			{
+				"Scope": "constant.numeric",
+				"Foreground": "#B5CEA8"
+			},
+			{
+				"Scope": "constant.character.escape",
+				"Foreground": "#D7BA7D"
+			},
+			{
+				"Scope": "constant.language",
+				"Foreground": "#569CD6"
+			},
+			{
+				"Scope": "keyword, storage",
+				"Foreground": "#C586C0"
+			},
+			{
+				"Scope": "keyword.operator",
+				"Foreground": "#D4D4D4"
+			},
+			{
+				"Scope": "entity.name.function, support.function, support.function.library, support.function.any-method",
+				"Foreground": "#DCDCAA"
+			},
+			{
+				"Scope": "entity.name.class, support.class, support.type, storage.type.generic",
+				"Foreground": "#4EC9B0"
+			},
+			{
+				"Scope": "variable.parameter, entity.other.attribute",
+				"Foreground": "#9CDCFE"
+			},
+			{
+				"Scope": "variable.language.self, entity.name.tag, string.tag, storage.type.annotation",
+				"Foreground": "#569CD6"
+			}
+		]
+	}
+}

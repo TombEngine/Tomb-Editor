@@ -1,0 +1,102 @@
+<Window
+	x:Class="TombIDE.ScriptingStudio.FileExplorer.FileCreationView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:fileExplorer="clr-namespace:TombIDE.ScriptingStudio.FileExplorer"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Title="{Binding Title}"
+	Width="480"
+	Height="400"
+	d:DataContext="{d:DesignInstance Type=fileExplorer:FileCreationViewModel}"
+	Background="{DynamicResource Brush_Background}"
+	ResizeMode="CanResize"
+	Style="{DynamicResource CustomWindowStyle}"
+	WindowStartupLocation="CenterScreen"
+	mc:Ignorable="d">
+
+	<Grid Margin="{x:Static darkUI:Defaults.MediumThickness}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<!--  Location label  -->
+		<Label Grid.Row="0" Content="{Binding ActionLabel}" />
+
+		<!--  Directory tree  -->
+		<TreeView
+			Grid.Row="1"
+			Margin="0,4,0,6"
+			ItemsSource="{Binding RootNodes}">
+			<TreeView.ItemContainerStyle>
+				<Style TargetType="TreeViewItem">
+					<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+				</Style>
+			</TreeView.ItemContainerStyle>
+			<TreeView.ItemTemplate>
+				<HierarchicalDataTemplate DataType="{x:Type fileExplorer:FileCreationDirectoryNode}" ItemsSource="{Binding Children}">
+					<TextBlock Text="{Binding Name}" />
+				</HierarchicalDataTemplate>
+			</TreeView.ItemTemplate>
+		</TreeView>
+
+		<!--  File name and format  -->
+		<Grid Grid.Row="2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<Label
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				Content="File Name:" />
+			<TextBox
+				Grid.Column="1"
+				Margin="6,0"
+				VerticalAlignment="Center"
+				Text="{Binding NewFileName, UpdateSourceTrigger=PropertyChanged}" />
+
+			<Label
+				Grid.Column="2"
+				VerticalAlignment="Center"
+				Content="Format:" />
+			<ComboBox
+				Grid.Column="3"
+				Width="80"
+				Margin="6,0,0,0"
+				SelectedIndex="{Binding SelectedFormatIndex}">
+				<ComboBoxItem Content=".txt" />
+				<ComboBoxItem Content=".json5" />
+				<ComboBoxItem Content=".lua" />
+			</ComboBox>
+		</Grid>
+
+		<!--  Action buttons  -->
+		<controls:SpacedStack
+			Grid.Row="3"
+			Margin="0,10,0,0"
+			HorizontalAlignment="Right"
+			Orientation="Horizontal"
+			Spacing="6">
+			<Button
+				Width="80"
+				Command="{Binding AcceptCommand}"
+				Content="{Binding ActionButtonText}"
+				IsDefault="True" />
+			<Button
+				Width="80"
+				Command="{Binding CancelCommand}"
+				Content="Cancel"
+				IsCancel="True" />
+		</controls:SpacedStack>
+	</Grid>
+</Window>

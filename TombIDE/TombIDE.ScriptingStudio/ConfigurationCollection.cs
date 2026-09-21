@@ -1,23 +1,21 @@
 ﻿using System.Reflection;
-using TombLib.Scripting.Bases;
 using TombLib.Scripting.ClassicScript;
 using TombLib.Scripting.GameFlowScript;
-using TombLib.Scripting.Lua;
-using TombLib.Scripting.Tomb1Main;
+using TombLib.Scripting.TRX;
+using TombLib.Scripting.UI.Bases;
 
-namespace TombIDE.ScriptingStudio
+namespace TombIDE.ScriptingStudio;
+
+public class ConfigurationCollection
 {
-	public class ConfigurationCollection
-	{
-		public ClassicScriptEditorConfiguration ClassicScript = new ClassicScriptEditorConfiguration().Load<ClassicScriptEditorConfiguration>();
-		public LuaEditorConfiguration Lua = new LuaEditorConfiguration().Load<LuaEditorConfiguration>();
-		public GameFlowEditorConfiguration GameFlowScript = new GameFlowEditorConfiguration().Load<GameFlowEditorConfiguration>();
-		public T1MEditorConfiguration Tomb1Main = new T1MEditorConfiguration().Load<T1MEditorConfiguration>();
+	public ClassicScriptEditorConfiguration ClassicScript = ConfigurationBase.Load<ClassicScriptEditorConfiguration>();
+	public LuaEditorConfiguration Lua = ConfigurationBase.Load<LuaEditorConfiguration>();
+	public GameFlowEditorConfiguration GameFlowScript = ConfigurationBase.Load<GameFlowEditorConfiguration>();
+	public TRXEditorConfiguration TRX = ConfigurationBase.Load<TRXEditorConfiguration>();
 
-		public void SaveAllConfigs()
-		{
-			foreach (FieldInfo field in GetType().GetRuntimeFields())
-				(field.GetValue(this) as ConfigurationBase)?.Save();
-		}
+	public void SaveAllConfigs()
+	{
+		foreach (FieldInfo field in GetType().GetRuntimeFields())
+			(field.GetValue(this) as ConfigurationBase)?.Save();
 	}
 }

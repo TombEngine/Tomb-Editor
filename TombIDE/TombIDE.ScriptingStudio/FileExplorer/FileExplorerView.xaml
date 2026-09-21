@@ -1,0 +1,81 @@
+<UserControl
+	x:Class="TombIDE.ScriptingStudio.FileExplorer.FileExplorerView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:fileExplorer="clr-namespace:TombIDE.ScriptingStudio.FileExplorer"
+	xmlns:localControls="clr-namespace:TombIDE.ScriptingStudio.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+	d:DataContext="{d:DesignInstance Type=fileExplorer:FileExplorerViewModel}"
+	md:DialogServiceViews.IsRegistered="True"
+	mc:Ignorable="d">
+
+	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+	</UserControl.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+		<controls:SpacedStack
+			Margin="{x:Static darkUI:Defaults.MediumThickness}"
+			Orientation="Horizontal"
+			Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+			<Button Command="{Binding CreateNewFileRequestedCommand}" Content="{tombLib:Localize NewFileButton}" />
+			<Button Command="{Binding CreateNewFolderRequestedCommand}" Content="{tombLib:Localize NewFolderButton}" />
+		</controls:SpacedStack>
+
+		<Grid Grid.Row="1" Margin="{x:Static darkUI:Defaults.MediumThickness}">
+			<localControls:AlternatingTreeView
+				x:Name="treeView"
+				Background="Transparent"
+				BorderBrush="Transparent"
+				BorderThickness="0"
+				FocusVisualStyle="{x:Null}"
+				ItemsSource="{Binding RootNodes}"
+				MouseDoubleClick="TreeView_MouseDoubleClick"
+				PreviewKeyDown="TreeView_PreviewKeyDown"
+				SelectedItemChanged="TreeView_SelectedItemChanged">
+				<localControls:AlternatingTreeView.ContextMenu>
+					<ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+						<MenuItem Command="{Binding OpenSelectedItemCommand}" Header="{tombLib:Localize ViewInEditor}" />
+						<MenuItem Command="{Binding OpenSourceViewCommand}" Header="{tombLib:Localize ViewCode}" />
+						<Separator />
+						<MenuItem Command="{Binding CreateNewFileRequestedCommand}" Header="{tombLib:Localize NewFile}" />
+						<MenuItem Command="{Binding CreateNewFolderRequestedCommand}" Header="{tombLib:Localize NewFolder}" />
+						<Separator />
+						<MenuItem Command="{Binding RenameSelectedItemCommand}" Header="{tombLib:Localize RenameItem}" />
+						<MenuItem Command="{Binding DeleteSelectedItemCommand}" Header="{tombLib:Localize DeleteItem}" />
+						<Separator />
+						<MenuItem Command="{Binding OpenInExplorerCommand}" Header="{tombLib:Localize OpenInExplorer}" />
+					</ContextMenu>
+				</localControls:AlternatingTreeView.ContextMenu>
+				<localControls:AlternatingTreeView.ItemContainerStyle>
+					<Style BasedOn="{StaticResource {x:Type controls:AlternatingTreeViewItem}}" TargetType="{x:Type localControls:AlternatingTreeViewItem}">
+						<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+						<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+					</Style>
+				</localControls:AlternatingTreeView.ItemContainerStyle>
+				<localControls:AlternatingTreeView.ItemTemplate>
+					<HierarchicalDataTemplate DataType="{x:Type fileExplorer:FileExplorerItemViewModel}" ItemsSource="{Binding Children}">
+						<TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+					</HierarchicalDataTemplate>
+				</localControls:AlternatingTreeView.ItemTemplate>
+			</localControls:AlternatingTreeView>
+
+			<TextBlock
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Foreground="{DynamicResource Brush_Text_Disabled}"
+				Text="{tombLib:Localize EmptyState}"
+				Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibilityConverter}}" />
+		</Grid>
+	</Grid>
+</UserControl>

@@ -1,0 +1,1712 @@
+{
+	"Sections": [
+		"Language",
+		"Level",
+		"Options",
+		"PCExtensions",
+		"PSXExtensions",
+		"Title",
+		"Strings",
+		"PSXStrings",
+		"PCStrings",
+		"ExtraNG"
+	],
+	"Commands": [
+		{
+			"Name": "#DEFINE",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "#DEFINE",
+					"Text": "[Any] #DEFINE {CONSTANT_NAME} {VALUE}"
+				}
+			]
+		},
+		{
+			"Name": "#FIRST_ID",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "#FIRST_ID",
+					"Text": "[Level] #FIRST_ID {COMMAND_NAME}={FIRST_ID}"
+				}
+			]
+		},
+		{
+			"Name": "#INCLUDE",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "#INCLUDE",
+					"Text": "[Any] #INCLUDE \"{FILE_NAME}.TXT\""
+				}
+			]
+		},
+		{
+			"Name": "AddEffect",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "AddEffect",
+					"Text": "[Level] AddEffect= {ID}, {Effect Type (ADD_...)}, {Effect Flag (FADD_...)}, {Joint Type (JOINT_...)}, {ORIGIN_X_DISTANCE}, {ORIGIN_Y_DISTANCE}, {ORIGIN_Z_DISTANCE}, {EMIT_DURATION}, {PAUSE_DURATION}, {Extra Params (*Array*)}"
+				}
+			]
+		},
+		{
+			"Name": "Animation",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Animation",
+					"Text": "[Level] Animation= AnimIndex, (KEY1_...), (KEY2_...), (FAN_...) flags, (ENV_...) Environment, Distance for Env, Extra, StateId (STATE_...) or (-)AnimationIndex (*Array*)"
+				}
+			]
+		},
+		{
+			"Name": "AnimationSlot",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "AnimationSlot",
+					"Text": "[Level] AnimationSlot= Slot, AnimSlotFlags (ASF_...), AnimIndex, (KEY1_...), (KEY2_...), (FAN_...) flags, (ENV_...) Environment, Distance for Env, Extra, StateId (STATE_...) or (-)AnimationIndex (*Array*)"
+				}
+			]
+		},
+		{
+			"Name": "AssignSlot",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "AssignSlot",
+					"Text": "[Level] AssignSlot= MyUsedSlot, OBJ_Type"
+				}
+			]
+		},
+		{
+			"Name": "ColorRGB",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "ColorRGB",
+					"Text": "[Level] ColorRGB= IdColor, Red, Green, Blue"
+				}
+			]
+		},
+		{
+			"Name": "CombineItems",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "CombineItems",
+					"Text": "[Level] CombineItems= FirstItem (slot), SecondItem (slot), FinalItem (slot)"
+				}
+			]
+		},
+		{
+			"Name": "CRS",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "CRS",
+					"Text": "[Options] CRS= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "Customize",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Customize",
+					"Text": "[Level] Customize= {TYPE (CUST_...)}, {Arguments (*Array*)}"
+				}
+			]
+		},
+		{
+			"Name": "CutScene",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "CutScene",
+					"Text": "[Level] CutScene= ENABLED"
+				}
+			]
+		},
+		{
+			"Name": "Damage",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Damage",
+					"Text": "[Level] Damage= Flags (DMG_...), SecondsForDeath, SecondsForBarRestore, BarColor, BarName, BlinkPercentage"
+				}
+			]
+		},
+		{
+			"Name": "DefaultWindowsFont",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "DefaultWindowsFont",
+					"Text": "[Title] DefaultWindowsFont= IdWindowsFont, FLAGS (DWF_...), LineSpacing, MainMenuOffsets, NewGameTitle, LoadGameTitle, NewGameList, LoadGameList, OptionSettings, OptionCmdList, PauseScreen, StatList, InventoryItemName, ExamineText"
+				}
+			]
+		},
+		{
+			"Name": "Demo",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Demo",
+					"Text": "[Level] Demo= DemoFlags (DEMF_...), Parameter, InfoText , DemoLegendText, WaitingTime, DemoIndex (*Array*)"
+				}
+			]
+		},
+		{
+			"Name": "Detector",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Detector",
+					"Text": "[Level] Detector= Flags (DTF_...), MetricScale, MetersOfRange, Target Items (*Array*)"
+				}
+			]
+		},
+		{
+			"Name": "Diagnostic",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Diagnostic",
+					"Text": "[Options] Diagnostic= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "DiagnosticType",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "DiagnosticType",
+					"Text": "[Options] DiagnosticType= DiagnosticType (DGX_...), Extra Dgx flags (EDGX_...)"
+				}
+			]
+		},
+		{
+			"Name": "Diary",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Diary",
+					"Text": "[Level] Diary= Id Diary, SlotDiaryItem, LaraDiaryFlags (LDF_...), BackGroundImageID, Default PageLayout (PL_...), FirstString, TitleWFontId, CommonTextWFontId"
+				}
+			]
+		},
+		{
+			"Name": "Elevator",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Elevator",
+					"Text": "[Level] Elevator= ElevatorIndex, ClickFloorDistance, NumberOfFloors, Elevator flags (EF_...), FirstDoorIndex, InnerKeyPadIndex, Speed, Frame items (*Array*)"
+				}
+			]
+		},
+		{
+			"Name": "Enemy",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Enemy",
+					"Text": "[Level] Enemy= Slot, HP (vitality), (NEF_...) flags, TombFlags (TCF_...), (EXTRA_...) flags, Damage1, Damage2, Damage3"
+				}
+			]
+		},
+		{
+			"Name": "Equipment",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Equipment",
+					"Text": "[Level] Equipment= SLOT item, Amount"
+				}
+			]
+		},
+		{
+			"Name": "FMV",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "FMVLevel",
+					"Text": "[Level] FMV= NumberFmv, EnableEscape"
+				}
+			]
+		},
+		{
+			"Name": "FogRange",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "FogRange",
+					"Text": "[Level] FogRange= StartLimitDistanceFog, EndLimitDistanceFog"
+				}
+			]
+		},
+		{
+			"Name": "ForceBumpMapping",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "ForceBumpMapping",
+					"Text": "[Options] ForceBumpMapping= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "ForceVolumetricFX",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "ForceVolumetricFX",
+					"Text": "[Level] ForceVolumetricFX= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "GlobalTrigger",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "GlobalTrigger",
+					"Text": "[Level] GlobalTrigger= IdGlobalTrigger, Flags Global Trigger (FGT_...), Global Trigger (GT_...), Parameter, IdConditionTriggerGroup, IdPerformTriggerGroup, IdOnFalseTriggerGroup"
+				}
+			]
+		},
+		{
+			"Name": "Image",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Image",
+					"Text": "[Level] Image= IdImageCommand, IdImageFile, ImageFlags (IF_...), EffectTime, AudioTrack, XPosition, YPosition, SizeX, SizeY"
+				}
+			]
+		},
+		{
+			"Name": "ImportFile",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "ImportFile",
+					"Text": "[Options] ImportFile= IdImport, PathFile, FileType (FTYPE_...), ImportType (IMPORT_...)"
+				}
+			]
+		},
+		{
+			"Name": "ItemGroup",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "ItemGroup",
+					"Text": "[Level] ItemGroup= IdGroup, FirstIndexItem, {Other indices for items (*Array*)}"
+				}
+			]
+		},
+		{
+			"Name": "KeyPad",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "KeyPad",
+					"Text": "[Level] KeyPad= AtStartAnimation, FrameStartPopUp, AtEndAnimation, ClickSound"
+				}
+			]
+		},
+		{
+			"Name": "LaraStartPos",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "LaraStartPos",
+					"Text": "[Level] LaraStartPos= RoomOfLSP, OcbOfLSP"
+				}
+			]
+		},
+		{
+			"Name": "LevelFarView",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "LevelFarView",
+					"Text": "[Level] LevelFarView= NumberOfBlocks"
+				}
+			]
+		},
+		{
+			"Name": "LogItem",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "LogItem",
+					"Text": "[Options] LogItem= FlagsLogItem (FLI_...), IndexOfItem"
+				}
+			]
+		},
+		{
+			"Name": "MirrorEffect",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "MirrorEffect",
+					"Text": "[Level] MirrorEffect= InFrontRoom, HiddenRoom, MirrorType (MIR_...), {Animating array + (FMIR_...) flags (*Array*)}"
+				}
+			]
+		},
+		{
+			"Name": "MultEnvCondition",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "MultEnvCondition",
+					"Text": "[Level] MultEnvCondition= IdMultCondition, (ENV_...) condition, DistanceForEnv, Extra field, array of tripled of {(ENV_...) Condition, DistanceForEnv, Extra field}"
+				}
+			]
+		},
+		{
+			"Name": "NewSoundEngine",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "NewSoundEngine",
+					"Text": "[Options] NewSoundEngine= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "Organizer",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Organizer",
+					"Text": "[Level] Organizer= IdOrganizer, Flags Organizer (FO_...), Parameter, FirstTime, PerformFirstIdTriggerGroup, SecondTime, PerformSecondIdTriggerGroup, {Time and TriggerGroup (*Array*)}"
+				}
+			]
+		},
+		{
+			"Name": "Parameters",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Parameters",
+					"Text": "[Level] Parameters= {TYPE (PARAM_...)}, {PARAM_LIST_ID}, {Parameters (*Array*)}"
+				}
+			]
+		},
+		{
+			"Name": "Plugin",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Plugin",
+					"Text": "[Options] Plugin= PluginId, PluginName, MainPluginSettings (MPS_...), {DisableFeature (*Array*)}"
+				}
+			]
+		},
+		{
+			"Name": "PreserveInventory",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "PreserveInventory",
+					"Text": "[Level] PreserveInventory= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "Rain",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Rain",
+					"Text": "[Level] Rain= (RAIN_...) constant"
+				}
+			]
+		},
+		{
+			"Name": "SavegamePanel",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "SavegamePanel",
+					"Text": "[Level] SavegamePanel= SavegamePanelFlags (SPF_...), BackGroundImageId, NumberOfSave, NumberOfVisibleSave, SavegamePanelLayout (SPL_...), InfoFormatString, IdListWindowsFont, IdInfoWindowsFont, InTitleWindowsFont"
+				}
+			]
+		},
+		{
+			"Name": "Settings",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Settings",
+					"Text": "[Options] Settings= (SET_...) constants"
+				}
+			]
+		},
+		{
+			"Name": "ShowLaraInTitle",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "ShowLaraInTitle",
+					"Text": "[Options] ShowLaraInTitle= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "Snow",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Snow",
+					"Text": "[Level] Snow= (SNOW_...) constant"
+				}
+			]
+		},
+		{
+			"Name": "SoundSettings",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "SoundSettings",
+					"Text": "[Options] SoundSettings= Sound Quality (SQ_...), MusicVolume, SoundEffectVolume"
+				}
+			]
+		},
+		{
+			"Name": "StandBy",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "StandBy",
+					"Text": "[Level] StandBy= IdStandBY, Type StandBy (TSB_...), WaitTime, Flags StandBy (FSB_...), Text, NumTexts, AudioTrack, VAngle, RotateSpeed, Distance, IdTriggerGroupBegin, IdTriggerGroupEnd"
+				}
+			]
+		},
+		{
+			"Name": "StaticMIP",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "StaticMIP",
+					"Text": "[Level] StaticMIP= MainStaticSlot, BStaticLimit, BStaticSlot, CStaticLimit, CStaticSlot"
+				}
+			]
+		},
+		{
+			"Name": "Switch",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Switch",
+					"Text": "[Level] Switch= SwitchId, VariablePlaceFolder, FlagsSwitch (SWT_...), {Trigger Group Indices (*Array*)}"
+				}
+			]
+		},
+		{
+			"Name": "TestPosition",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "TestPosition",
+					"Text": "[Level] TestPosition= IdTestPosition, Flags (TPOS_...), Slot Moveable, XDistanceMin, XDistanceMax, YDistanceMin, YDistanceMax, ZDistanceMin, ZDistanceMax,  HOrientDiffMin, HOrientDiffMax, VOrientDiffMin, VOrientDiffMax, ROrientDiffMin, ROrientDiffMax"
+				}
+			]
+		},
+		{
+			"Name": "TextFormat",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "TextFormat",
+					"Text": "[Level] TextFormat= Color (CL_...), FormatFlags (FT_...), BlinkTime, SizeCharacterMenu (SC_...)"
+				}
+			]
+		},
+		{
+			"Name": "TextureSequence",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "TextureSequence",
+					"Text": "[Level] TextureSequence= IdTexSeq, FramePerSec, (SEQ_...) flags, {Tex Indices (*Array*)}"
+				}
+			]
+		},
+		{
+			"Name": "TriggerGroup",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "TriggerGroup",
+					"Text": "[Level] TriggerGroup= IdGroup, ExportValue1 + (TGROUP_...) flags, ExportValue2, ExportValue3, {Other Values 1/2/3 of exported triggers or conditions (*Array*)}"
+				}
+			]
+		},
+		{
+			"Name": "Turbo",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "Turbo",
+					"Text": "[Level] Turbo= Flags (TRB_...), FPStoKeep"
+				}
+			]
+		},
+		{
+			"Name": "WindowsFont",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "WindowsFont",
+					"Text": "[Level] WindowsFont= IdWindowFont, WindowFontName, WindowsFontFlags (WFF_...), SizeFont, ColorRbgId, ShadowColorRgbId"
+				}
+			]
+		},
+		{
+			"Name": "WindowTitle",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "WindowTitle",
+					"Text": "[Level] WindowTitle= NameOfCurrentLevel"
+				}
+			]
+		},
+		{
+			"Name": "WorldFarView",
+			"Kind": "new",
+			"Syntaxes": [
+				{
+					"Key": "WorldFarView",
+					"Text": "[Options] WorldFarView= MaxSectorDistance"
+				}
+			]
+		},
+		{
+			"Name": "AnimatingMIP",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "AnimatingMIP",
+					"Text": "[Level] AnimatingMIP= {SLOT (1-16)}, {DISTANCE (Sectors)}"
+				}
+			]
+		},
+		{
+			"Name": "ColAddHorizon",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "ColAddHorizon",
+					"Text": "[Level] ColAddHorizon= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "DemoDisc",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "DemoDisc",
+					"Text": "[Options] DemoDisc= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "Examine",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Examine",
+					"Text": "[Level] Examine= {TYPE (1-3)}, {NAME}, {HEIGHT}, {SIZE}, {X_ORIENT}, {Y_ORIENT}, {Z_ORIENT}, {BIT_MASK}"
+				}
+			]
+		},
+		{
+			"Name": "FlyCheat",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "FlyCheat",
+					"Text": "[Options] FlyCheat= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "Fog",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Fog",
+					"Text": "[Level] Fog= {RED_VALUE}, {GREEN_VALUE}, {BLUE_VALUE}"
+				}
+			]
+		},
+		{
+			"Name": "Horizon",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Horizon",
+					"Text": "[Level] Horizon= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "InputTimeout",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "InputTimeout",
+					"Text": "[Options] InputTimeout= {NUM_OF_FRAMES}"
+				}
+			]
+		},
+		{
+			"Name": "Key",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Key",
+					"Text": "[Level] Key= {1-12}, {NAME}, {HEIGHT}, {SIZE}, {X_ORIENT}, {Y_ORIENT}, {Z_ORIENT}, {BIT_MASK}"
+				}
+			]
+		},
+		{
+			"Name": "KeyCombo",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "KeyCombo",
+					"Text": "[Level] KeyCombo= {1-8}, {1-2}, {NAME}, {HEIGHT}, {SIZE}, {X_ORIENT}, {Y_ORIENT}, {Z_ORIENT}, {BIT_MASK}"
+				}
+			]
+		},
+		{
+			"Name": "Layer1",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Layer1",
+					"Text": "[Level] Layer1= {RED_VALUE}, {GREEN_VALUE}, {BLUE_VALUE}, {SPEED}"
+				}
+			]
+		},
+		{
+			"Name": "Legend",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Legend",
+					"Text": "[Level] Legend= {MESSAGE_STRING}"
+				}
+			]
+		},
+		{
+			"Name": "LensFlare",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "LensFlare",
+					"Text": "[Level] LensFlare= {GLOBAL_COORD_X}, {GLOBAL_COORD_Y}, {GLOBAL_COORD_Z}, {RED_VALUE}, {GREEN_VALUE}, {BLUE_VALUE}"
+				}
+			]
+		},
+		{
+			"Name": "Level",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "LevelLevel",
+					"Text": "[Level] Level= {LEVEL_PATH}, {SOUND_ID}"
+				},
+				{
+					"Key": "LevelPC",
+					"Text": "[PCExtensions] Level= .TR4 ; Default value"
+				},
+				{
+					"Key": "LevelPSX",
+					"Text": "[PSXExtensions] Level= .PSX ; Default value"
+				}
+			]
+		},
+		{
+			"Name": "Lightning",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Lightning",
+					"Text": "[Level] Lightning= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "LoadCamera",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "LoadCamera",
+					"Text": "[Level] LoadCamera= {SOURCE_X_POS}, {SOURCE_Y_POS}, {SOURCE_Z_POS}, {TARGET_X_POS}, {TARGET_Y_POS}, {TARGET_Z_POS}, {ROOM_NUMBER}"
+				}
+			]
+		},
+		{
+			"Name": "LoadSave",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "LoadSave",
+					"Text": "[Options] LoadSave= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "Mirror",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Mirror",
+					"Text": "[Level] Mirror= {ROOM_NUMBER}, {ROOM_ORIGIN}"
+				}
+			]
+		},
+		{
+			"Name": "Name",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Name",
+					"Text": "[Level] Name= {NAME_STRING}"
+				}
+			]
+		},
+		{
+			"Name": "Pickup",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Pickup",
+					"Text": "[Level] Pickup= {1-4}, {NAME}, {HEIGHT}, {SIZE}, {X_ORIENT}, {Y_ORIENT}, {Z_ORIENT}, {BIT_MASK}"
+				}
+			]
+		},
+		{
+			"Name": "PickupCombo",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "PickupCombo",
+					"Text": "[Level] PickupCombo= {1-4}, {1-2}, {NAME}, {HEIGHT}, {SIZE}, {X_ORIENT}, {Y_ORIENT}, {Z_ORIENT}, {BIT_MASK}"
+				}
+			]
+		},
+		{
+			"Name": "PlayAnyLevel",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "PlayAnyLevel",
+					"Text": "[Options] PlayAnyLevel= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "Puzzle",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Puzzle",
+					"Text": "[Level] Puzzle= {1-12}, {NAME}, {HEIGHT}, {SIZE}, {X_ORIENT}, {Y_ORIENT}, {Z_ORIENT}, {BIT_MASK}"
+				}
+			]
+		},
+		{
+			"Name": "PuzzleCombo",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "PuzzleCombo",
+					"Text": "[Level] PuzzleCombo= {1-8}, {1-2}, {NAME}, {HEIGHT}, {SIZE}, {X_ORIENT}, {Y_ORIENT}, {Z_ORIENT}, {BIT_MASK}"
+				}
+			]
+		},
+		{
+			"Name": "RemoveAmulet",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "RemoveAmulet",
+					"Text": "[Level] RemoveAmulet= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "ResetHUB",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "ResetHUB",
+					"Text": "[Level] ResetHUB= {LEVEL_ID}"
+				}
+			]
+		},
+		{
+			"Name": "ResidentCut",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "ResidentCut",
+					"Text": "[Level] ResidentCut= {TRIGGER_ID}, {CUTSCENE_ID}"
+				}
+			]
+		},
+		{
+			"Name": "Timer",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Timer",
+					"Text": "[Level] Timer= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "Title",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Title",
+					"Text": "[Options] Title= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "Train",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Train",
+					"Text": "[Level] Train= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "UVRotate",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "UVRotate",
+					"Text": "[Level] UVrotate= {SPEED}"
+				}
+			]
+		},
+		{
+			"Name": "YoungLara",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "YoungLara",
+					"Text": "[Level] YoungLara= ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "Cut",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "CutPC",
+					"Text": "[PCExtensions] Cut= .TR4 ; Default value"
+				},
+				{
+					"Key": "CutPSX",
+					"Text": "[PSXExtensions] Cut= .CUT ; Default value"
+				}
+			]
+		},
+		{
+			"Name": "File",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "File",
+					"Text": "[Language] File= {UNIQUE_ID}, {FILE_NAME}.TXT"
+				}
+			]
+		},
+		{
+			"Name": "FMV",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "FMVPC",
+					"Text": "[PCExtensions] FMV= .BIK ; Default value"
+				},
+				{
+					"Key": "FMVPSX",
+					"Text": "[PSXExtensions] FMV= .FMV ; Default value"
+				}
+			]
+		},
+		{
+			"Name": "Layer2",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Layer2",
+					"Text": "[Level] Layer2= {RED_VALUE}, {GREEN_VALUE}, {BLUE_VALUE}, {SPEED}"
+				}
+			]
+		},
+		{
+			"Name": "NoLevel",
+			"Kind": "old",
+			"Syntaxes": []
+		},
+		{
+			"Name": "Pulse",
+			"Kind": "old",
+			"Syntaxes": []
+		},
+		{
+			"Name": "Security",
+			"Kind": "old",
+			"Syntaxes": [
+				{
+					"Key": "Security",
+					"Text": "[Options] Security= ??? ; Not used ?"
+				}
+			]
+		},
+		{
+			"Name": "StarField",
+			"Kind": "old",
+			"Syntaxes": []
+		},
+		{
+			"Name": "Unknown",
+			"Kind": "old",
+			"Syntaxes": []
+		},
+		{
+			"Name": "CUST_ADD_DEATH_ANIMATION",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_ADD_DEATH_ANIMATION",
+					"Text": "[Level] Customize= CUST_ADD_DEATH_ANIMATION, {Creature slot}, {Animation number}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_AMMO",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_AMMO",
+					"Text": "[Level] Customize= CUST_AMMO, {Ammo slot}, {Ammo flags (AMMO_...)}, {Damage}, {Shots in box}, {Shots with weapon}, {Extra}, {ID of TriggerGroup when hit enemy}, {Damage for explosion}, {Speed}, {Gravity}, {ID of AddEffect to ammo}, {ID of TriggerGroup at end}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_BACKGROUND",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_BACKGROUND",
+					"Text": "[Level] Customize= CUST_BACKGROUND, {Background type (BKGDT_...)}, {Flags (BKGDF_...)}, {Parameter}, {Image ID}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_BAR",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_BAR",
+					"Text": "[Level] Customize= CUST_BAR, {Bar type (BAR_...)}, {Flags (FBAR_...)}, {X origin}, {Y origin}, {X size}, {Y size}, {Color1 ID}, {Color2 ID}, {Extra}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_BIKE_VS_ENEMIES",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_BIKE_VS_ENEMIES",
+					"Text": "[Level] Customize= CUST_BIKE_VS_ENEMIES, {Slot + (HIT_...) flags (*Array*)}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_BINOCULARS",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_BINOCULARS",
+					"Text": "[Level] Customize= CUST_BINOCULARS, {Flags (BINF_...)}, {Parameter}, {Compass image}, {Compass rect and flags}, {Sextant image}, {Sextant rect and flags}, {Lightness rect and flags}, {Zoom rect and flags}, {LightSwitch rect and flags}, {Font ID}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_CAMERA",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_CAMERA",
+					"Text": "[Level] Customize= CUST_CAMERA, {Flags (FCAM_...)}, {Distance from ChaseCam}, {V orient of ChaseCam}, {H orient of ChaseCam}, {Distance from CombatCam}, {V orient of CombatCam}, {Distance from LookCam}, {Height of LookCam}, {Camera speed}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_CD_SINGLE_PLAYBACK",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_CD_SINGLE_PLAYBACK",
+					"Text": "[Level] Customize= CUST_CD_SINGLE_PLAYBACK, {CDMode value (CDM_...)}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_DARTS",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_DARTS",
+					"Text": "[Level] Customize= CUST_DARTS, {CustDarts ID}, {Dart flags (DRT_...)}, {AddEffect ID}, {Speed}, {Emitting timer}, {Primary color RGB ID}, {Secondary color RGB ID}, {TriggerGroup ID}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_DISABLE_FORCING_ANIM_96",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_DISABLE_FORCING_ANIM_96",
+					"Text": "[Level] Customize= CUST_DISABLE_FORCING_ANIM_96"
+				}
+			]
+		},
+		{
+			"Name": "CUST_DISABLE_MISSING_SOUNDS",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_DISABLE_MISSING_SOUNDS",
+					"Text": "; Syntax for this command was not specified by its creator"
+				}
+			]
+		},
+		{
+			"Name": "CUST_DISABLE_PUSH_AWAY_ANIMATION",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_DISABLE_PUSH_AWAY_ANIMATION",
+					"Text": "[Level] Customize= CUST_DISABLE_MISSING_SOUNDS"
+				}
+			]
+		},
+		{
+			"Name": "CUST_DISABLE_SCREAMING_HEAD",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_DISABLE_SCREAMING_HEAD",
+					"Text": "[Level] Customize= CUST_DISABLE_SCREAMING_HEAD"
+				}
+			]
+		},
+		{
+			"Name": "CUST_ESCAPE_FLY_CAMERA",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_ESCAPE_FLY_CAMERA",
+					"Text": "[Level] Customize= CUST_ESCAPE_FLY_CAMERA, ENABLED / DISABLED, {Keyboard Scancode}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_FIX_BUGS",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_FIX_BUGS",
+					"Text": "[Level] Customize= CUST_FIX_BUGS, {BugsToFix flags (BUGF_...)}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_FIX_WATER_FOG_BUG",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_FIX_WATER_FOG_BUG",
+					"Text": "[Level] Customize= CUST_FIX_WATER_FOG_BUG, ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "CUST_FLARE",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_FLARE",
+					"Text": "[Level] Customize= CUST_FLARE, {Flags for flare (FFL_...)}, {Life time in seconds}, {Red}, {Green}, {Blue}, {Intensity}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_FMV_CUTSCENE",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_FMV_CUTSCENE",
+					"Text": "[Level] Customize= CUST_FMV_CUTSCENE, {Flags (FMV_...)}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_HAIR_TYPE",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_HAIR_TYPE",
+					"Text": "[Level] Customize= CUST_HAIR_TYPE, {Hair type (HAIR_...)}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_HARPOON",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_HARPOON",
+					"Text": "[Level] Customize= CUST_HARPOON, {Harpoon flags (HRP_...)}, {Top border}, {Distance from cam}, {X orient}, {Y orient}, {Z orient}, {Harpoon speed}, {Harpoon gravity}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_INNER_SCREENSHOT",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_INNER_SCREENSHOT",
+					"Text": "[Level] Customize= CUST_INNER_SCREENSHOT, {Quality of screenshot flags (QSF_...)}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_KEEP_DEAD_ENEMIES",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_KEEP_DEAD_ENEMIES",
+					"Text": "[Level] Customize= CUST_KEEP_DEAD_ENEMIES, ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "CUST_KEEP_LARA_HP",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_KEEP_LARA_HP",
+					"Text": "[Level] Customize= CUST_KEEP_LARA_HP, {Target level}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_LIGHT_OBJECT",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_LIGHT_OBJECT",
+					"Text": "[Level] Customize= CUST_LIGHT_OBJECT 34, {Light slot}, {Red}, {Green}, {Blue}, {Intensity}, {Time} ; Not sure what the author meant with that 34... Probably useless?"
+				}
+			]
+		},
+		{
+			"Name": "CUST_LOOK_TRASPARENT",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_LOOK_TRASPARENT",
+					"Text": "[Level] Customize= CUST_LOOK_TRASPARENT, ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "CUST_NEW_SOUND_ENGINE",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_NEW_SOUND_ENGINE",
+					"Text": "[Level] Customize= CUST_NEW_SOUND_ENGINE, {New sound engine flags (NSE_...)}, {Sound extension (SEXT_...)}, {Long fade-out}, {Short fade-out}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_NO_TIME_IN_SAVELIST",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_NO_TIME_IN_SAVELIST",
+					"Text": "[Level] Customize= CUST_NO_TIME_IN_SAVELIST, ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "CUST_PARALLEL_BARS",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_PARALLEL_BARS",
+					"Text": "[Level] Customize= CUST_PARALLEL_BARS, {Parallel bar flags (PB_...)}, {Speed for slide}, {Max turns}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_PAUSE_FLY_CAMERA",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_PAUSE_FLY_CAMERA",
+					"Text": "[Level] Customize= CUST_PAUSE_FLY_CAMERA, ENABLED / DISABLED, {Keyboard Scancode}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_RAIN",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_RAIN",
+					"Text": "[Level] Customize= CUST_RAIN, {Rain flags (FR_...)}, {Drop size}, {Sprinkler amount}, {Max rain}, {Min rain}, {Float1}, {Float4}, {Float8}, {Float16}, {Extra}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_ROLLINGBALL_PUSHING",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_ROLLINGBALL_PUSHING",
+					"Text": "[Level] Customize= CUST_ROLLINGBALL_PUSHING, {Distance}, {Push animation}, {Failed animation}, {Movement frame}, {Activation frame}, {Invulnerability frame}, {Speed}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_ROLLING_BOAT",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_ROLLING_BOAT",
+					"Text": "[Level] Customize= CUST_ROLLING_BOAT, {Boat slot}, {Rolling boat flags (FRB_...)}, {Swinging speed}, {Pitching speed}, {Rolling SFX}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SAVE_LOCUST",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SAVE_LOCUST",
+					"Text": "[Level] Customize= CUST_SAVE_LOCUST, ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SCREENSHOT_CAPTURE",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SCREENSHOT_CAPTURE",
+					"Text": "[Level] Customize= CUST_SCREENSHOT_CAPTURE, {Duration in seconds}, {Frame gap}, {Quality of screenshot flags (QSF_...)}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SET_CREDITS_LEVEL",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SET_CREDITS_LEVEL",
+					"Text": "[Level] Customize= CUST_SET_CREDITS_LEVEL, {Final level number}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SET_INV_ITEM",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SET_INV_ITEM",
+					"Text": "[Level] Customize= CUST_SET_INV_ITEM, {Item slot}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SET_JEEP_KEY_SLOT",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SET_JEEP_KEY_SLOT",
+					"Text": "[Level] Customize= CUST_SET_JEEP_KEY_SLOT, {Jeep key slot}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SET_OLD_CD_TRIGGER",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SET_OLD_CD_TRIGGER",
+					"Text": "[Level] Customize= CUST_SET_OLD_CD_TRIGGER, ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SET_SECRET_NUMBER",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SET_SECRET_NUMBER",
+					"Text": "[Level] Customize= CUST_SET_SECRET_NUMBER, {Number of secrets}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SET_STATIC_DAMAGE",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SET_STATIC_DAMAGE",
+					"Text": "[Level] Customize= CUST_SET_STATIC_DAMAGE, {Damage}, {Poison intensity}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SET_STILL_COLLISION",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SET_STILL_COLLISION",
+					"Text": "[Level] Customize= CUST_SET_STILL_COLLISION, {Collision flags (COLL_...)}, {Lower height}, {Moveable (*Array*)}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SET_TEXT_COLOR",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SET_TEXT_COLOR",
+					"Text": "[Level] Customize= CUST_SET_TEXT_COLOR, {Text type (TT_...)}, {Text color (CL_...)}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SFX",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SFX",
+					"Text": "[Level] Customize= CUST_SFX, {Sound type (TS_...)}, {Sound effect number}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SHATTER_RANGE",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SHATTER_RANGE",
+					"Text": "[Level] Customize= CUST_SHATTER_RANGE, {First static as shatter}, {Last static as shatter}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SHATTER_SPECIFIC",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SHATTER_SPECIFIC",
+					"Text": "[Level] Customize= CUST_SHATTER_SPECIFIC, {Slot1}, {Slot2}, {Slot3}, {SlotN (*Array*)}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SHOW_AMMO_COUNTER",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SHOW_AMMO_COUNTER",
+					"Text": "[Level] Customize= CUST_SHOW_AMMO_COUNTER, {Color}, {Format flags (FT_...)}, {Blink time}, {Character size (SC_...)}, {Show counter flags (SHOWC_...)}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SLOT_FLAGS",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SLOT_FLAGS",
+					"Text": "[Level] Customize= CUST_SLOT_FLAGS, {Slot}, {Slot flags (FFS_...)}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_SPEED_MOVING",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_SPEED_MOVING",
+					"Text": "[Level] Customize= CUST_SPEED_MOVING, {Speed}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_STATIC_TRANSPARENCY",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_STATIC_TRANSPARENCY",
+					"Text": "[Level] Customize= CUST_STATIC_TRANSPARENCY, {Glass opacity}, {Ice opacity}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_TEXT_ON_FLY_SCREEN",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_TEXT_ON_FLY_SCREEN",
+					"Text": "[Level] Customize= CUST_TEXT_ON_FLY_SCREEN, ENABLED / DISABLED"
+				}
+			]
+		},
+		{
+			"Name": "CUST_TITLE_FMV",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_TITLE_FMV",
+					"Text": "[Level] Customize= CUST_TITLE_FMV, {FMV number}, {Test Multi-Play}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_TR5_UNDERWATER_COLLISIONS",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_TR5_UNDERWATER_COLLISIONS",
+					"Text": "[Level] Customize= CUST_TR5_UNDERWATER_COLLISIONS"
+				}
+			]
+		},
+		{
+			"Name": "CUST_WATERFALL_SPEED",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_WATERFALL_SPEED",
+					"Text": "[Level] Customize= CUST_WATERFALL_SPEED, {Pixel scroll}"
+				}
+			]
+		},
+		{
+			"Name": "CUST_WEAPON",
+			"Kind": "customize",
+			"Syntaxes": [
+				{
+					"Key": "CUST_WEAPON",
+					"Text": "[Level] Customize= CUST_WEAPON, {Weapon slot}, {Weapon flags (WEAP_...)}, {Shot sound}, {Recharge frame}, {Flash duration}, {Extra}, {Max distance for aiming}, {TakeWeapon frame}, {LetWeapon frame}, {Random}, {V position of weapon}, {Unknown}, {Counter frame}, {MinRange frame}, {MaxRange frame}, {X origin}, {Y origin}, {Z origin}, {Origin orient}"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_ACTOR_SPEECH",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_ACTOR_SPEECH",
+					"Text": "[Level] Parameters= PARAM_ACTOR_SPEECH, SpeechId, SpeechFlags (SPCF_...), Parameter, FrameRate, SpeechSlot, HeadSlotMesh, FirstMeshIndex, SpeechMeshAmount, CommandArray"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_BIG_NUMBERS",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_BIG_NUMBERS",
+					"Text": "[Level] Parameters= PARAM_BIG_NUMBERS, Many Numbers separeted by commas"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_CIRCLE",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_CIRCLE",
+					"Text": "[Level] Parameters= PARAM_CIRCLE, IdParamList, xCenter, yCenter, Radius"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_COLOR_ITEM",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_COLOR_ITEM",
+					"Text": "[Level] Parameters= PARAM_COLOR_ITEM, IdParamList, ColorType (COLTYPE_...), ItemIndex, Index1ColorRGB, Index2ColorRGB, SpeedChange"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_INPUT_BOX",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_INPUT_BOX",
+					"Text": "[Level] Parameters= PARAM_INPUT_BOX, InputBoxId, BckImageId, WFontId, MaxChars, SfxSound, Flags (RIB_...), ExtraParam"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_LIGHTNING",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_LIGHTNING",
+					"Text": "[Level] Parameters= PARAM_LIGHTNING, IdParamList, Lightning flags (LGTN_...), SourcePosItem, TargetPosItem, IdColorRGB, Intensity, SoundEffect, Size, ParticleDurate, IntervalTime, Alfa, Beta"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_MOVE_ITEM",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_MOVE_ITEM",
+					"Text": "[Level] Parameters= PARAM_MOVE_ITEM, IdParamList, Flags (FMOV_...), IndexItem, Direction (DIR_...), Distance, Speed, MovingSound, FinalSound, Extra"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_PRINT_TEXT",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_PRINT_TEXT",
+					"Text": "[Level] Parameters= PARAM_PRINT_TEXT, IdPrintText, Color (CL_...), FontType (FT_...), BlinkTime, DurateTime, X_Position, Y_Position"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_QUADRILATERAL",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_QUADRILATERAL",
+					"Text": "[Level] Parameters= PARAM_QUADRILATERAL, IdParamList, Xa, Ya, Xb, Yb, Xc, Yc, Xd, Yd"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_RECT",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_RECT",
+					"Text": "[Level] Parameters= PARAM_RECT, RectId, XOrigin, YOrigin, Width, Height, ForeColor, BackColor"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_ROTATE_ITEM",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_ROTATE_ITEM",
+					"Text": "[Level] Parameters= PARAM_ROTATE_ITEM, IdParamList, FlagsRotation (FROT_...), ItemIndex, DirHRotation (ROTH_...), HRotationAngle, SpeedHRotation, DirVRotation (ROTV_...), VRotationAngle, SpeedVRotation, MovingSound, FinalSound"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_SCALE_ITEM",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_SCALE_ITEM",
+					"Text": "[Level] Parameters= PARAM_SCALE_ITEM, IdScaling, ItemIndex, Flags Scaling (FSCA_...), BeginSizePercentage, FinalSizePercentage, PercentageSpeed"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_SET_CAMERA",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_SET_CAMERA",
+					"Text": "[Level] Parameters= PARAM_SET_CAMERA, IdSetCamera, Flags (FSCAM_...), DistanceCam, VOrientCam, HOrientCam, SpeedCamera"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_SHOW_SPRITE",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_SHOW_SPRITE",
+					"Text": "[Level] Parameters= PARAM_SHOW_SPRITE, IdParamShowSprite, Flags Show Sprites (FSS_...), OriginX, OriginY, Width, Height, SlotSprite, SpriteIndex, IdColorRGB, GridX, GridY, Extra Value"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_SWAP_ANIMATIONS",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_SWAP_ANIMATIONS",
+					"Text": "[Level] Parameters= PARAM_SWAP_ANIMATIONS, ASwapId, SourceFirstAnim, TargetFirstAnim, NumberOfAnimations"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_TRIANGLE",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_TRIANGLE",
+					"Text": "[Level] Parameters= PARAM_TRIANGLE, IdParamList, Xa, Ya, Xb, Yb, Xc, Yc"
+				}
+			]
+		},
+		{
+			"Name": "PARAM_WTEXT",
+			"Kind": "parameter",
+			"Syntaxes": [
+				{
+					"Key": "PARAM_WTEXT",
+					"Text": "[Level] Parameters= PARAM_WTEXT, IdParameter, Flags (WTF_...), WindowsFontId, TimeDurate, Left, Top, Right, Bottom"
+				}
+			]
+		}
+	]
+}

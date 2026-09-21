@@ -1,0 +1,664 @@
+{
+	"Columns": [
+		"variable",
+		"description"
+	],
+	"Rows": [
+		[
+			"#0020",
+			"Text1"
+		],
+		[
+			"#0021",
+			"Text2"
+		],
+		[
+			"#0022",
+			"Text3"
+		],
+		[
+			"#0023",
+			"Text4"
+		],
+		[
+			"#0400",
+			"Last Input Text"
+		],
+		[
+			"#1000",
+			"Big Text"
+		],
+		[
+			"#0070",
+			"Local Long Alfa"
+		],
+		[
+			"#0030",
+			"Global Long Alfa"
+		],
+		[
+			"#0050",
+			"Local Short Alfa1"
+		],
+		[
+			"#0010",
+			"Global Short Alfa1"
+		],
+		[
+			"#0051",
+			"Local Short Alfa2"
+		],
+		[
+			"#0011",
+			"Global Short Alfa2"
+		],
+		[
+			"#0040",
+			"Local Byte Alfa1"
+		],
+		[
+			"#0000",
+			"Global Byte Alfa1"
+		],
+		[
+			"#0041",
+			"Local Byte Alfa2"
+		],
+		[
+			"#0001",
+			"Global Byte Alfa2"
+		],
+		[
+			"#0042",
+			"Local Byte Alfa3"
+		],
+		[
+			"#0002",
+			"Global Byte Alfa3"
+		],
+		[
+			"#0043",
+			"Local Byte Alfa4"
+		],
+		[
+			"#0003",
+			"Global Byte Alfa4"
+		],
+		[
+			"#0071",
+			"Local Long Beta"
+		],
+		[
+			"#0031",
+			"Global Long Beta"
+		],
+		[
+			"#0052",
+			"Local Short Beta1"
+		],
+		[
+			"#0012",
+			"Global Short Beta1"
+		],
+		[
+			"#0053",
+			"Local Short Beta2"
+		],
+		[
+			"#0013",
+			"Global Short Beta2"
+		],
+		[
+			"#0044",
+			"Local Byte Beta1"
+		],
+		[
+			"#0004",
+			"Global Byte Beta1"
+		],
+		[
+			"#0045",
+			"Local Byte Beta2"
+		],
+		[
+			"#0005",
+			"Global Byte Beta2"
+		],
+		[
+			"#0046",
+			"Local Byte Beta3"
+		],
+		[
+			"#0006",
+			"Global Byte Beta3"
+		],
+		[
+			"#0047",
+			"Local Byte Beta4"
+		],
+		[
+			"#0007",
+			"Global Byte Beta4"
+		],
+		[
+			"#0072",
+			"Local Long Delta"
+		],
+		[
+			"#0032",
+			"Global Long Delta"
+		],
+		[
+			"#0054",
+			"Local Short Delta1"
+		],
+		[
+			"#0014",
+			"Global Short Delta1"
+		],
+		[
+			"#0055",
+			"Local Short Delta2"
+		],
+		[
+			"#0015",
+			"Global Short Delta2"
+		],
+		[
+			"#0048",
+			"Local Byte Delta1"
+		],
+		[
+			"#0008",
+			"Global Byte Delta1"
+		],
+		[
+			"#0049",
+			"Local Byte Delta2"
+		],
+		[
+			"#0009",
+			"Global Byte Delta2"
+		],
+		[
+			"#004A",
+			"Local Byte Delta3"
+		],
+		[
+			"#000A",
+			"Global Byte Delta3"
+		],
+		[
+			"#004B",
+			"Local Byte Delta4"
+		],
+		[
+			"#000B",
+			"Global Byte Delta4"
+		],
+		[
+			"#0073",
+			"Local Long Timer"
+		],
+		[
+			"#0033",
+			"Global Long Timer"
+		],
+		[
+			"#0800",
+			"Current Value"
+		],
+		[
+			"#0200",
+			"Last Input Number"
+		],
+		[
+			"#01C0",
+			"Store Long A"
+		],
+		[
+			"#0180",
+			"Store Short A1"
+		],
+		[
+			"#0181",
+			"Store Short A2"
+		],
+		[
+			"#0140",
+			"Store Byte A1"
+		],
+		[
+			"#0141",
+			"Store Byte A2"
+		],
+		[
+			"#0142",
+			"Store Byte A3"
+		],
+		[
+			"#0143",
+			"Store Byte A4"
+		],
+		[
+			"#01C1",
+			"Store Long B"
+		],
+		[
+			"#0182",
+			"Store Short B1"
+		],
+		[
+			"#0183",
+			"Store Short B2"
+		],
+		[
+			"#0144",
+			"Store Byte B1"
+		],
+		[
+			"#0145",
+			"Store Byte B2"
+		],
+		[
+			"#0146",
+			"Store Byte B3"
+		],
+		[
+			"#0147",
+			"Store Byte B4"
+		],
+		[
+			"#01C2",
+			"Store Long C"
+		],
+		[
+			"#0184",
+			"Store Short C1"
+		],
+		[
+			"#0185",
+			"Store Short C2"
+		],
+		[
+			"#0148",
+			"Store Byte C1"
+		],
+		[
+			"#0149",
+			"Store Byte C2"
+		],
+		[
+			"#014A",
+			"Store Byte C3"
+		],
+		[
+			"#014B",
+			"Store Byte C4"
+		],
+		[
+			"#01C3",
+			"Store Long D"
+		],
+		[
+			"#0186",
+			"Store Short D1"
+		],
+		[
+			"#0187",
+			"Store Short D2"
+		],
+		[
+			"#014C",
+			"Store Byte D1"
+		],
+		[
+			"#014D",
+			"Store Byte D2"
+		],
+		[
+			"#014E",
+			"Store Byte D3"
+		],
+		[
+			"#014F",
+			"Store Byte D4"
+		],
+		[
+			"#01C4",
+			"Store Long E"
+		],
+		[
+			"#0188",
+			"Store Short E1"
+		],
+		[
+			"#0189",
+			"Store Short E2"
+		],
+		[
+			"#0150",
+			"Store Byte E1"
+		],
+		[
+			"#0151",
+			"Store Byte E2"
+		],
+		[
+			"#0152",
+			"Store Byte E3"
+		],
+		[
+			"#0153",
+			"Store Byte E4"
+		],
+		[
+			"#01C5",
+			"Store Long F"
+		],
+		[
+			"#018A",
+			"Store Short F1"
+		],
+		[
+			"#018B",
+			"Store Short F2"
+		],
+		[
+			"#0154",
+			"Store Byte F1"
+		],
+		[
+			"#0155",
+			"Store Byte F2"
+		],
+		[
+			"#0156",
+			"Store Byte F3"
+		],
+		[
+			"#0157",
+			"Store Byte F4"
+		],
+		[
+			"#01C6",
+			"Store Long G"
+		],
+		[
+			"#018C",
+			"Store Short G1"
+		],
+		[
+			"#018D",
+			"Store Short G2"
+		],
+		[
+			"#0158",
+			"Store Byte G1"
+		],
+		[
+			"#0159",
+			"Store Byte G2"
+		],
+		[
+			"#015A",
+			"Store Byte G3"
+		],
+		[
+			"#015B",
+			"Store Byte G4"
+		],
+		[
+			"#01C7",
+			"Store Long H"
+		],
+		[
+			"#018E",
+			"Store Short H1"
+		],
+		[
+			"#018F",
+			"Store Short H2"
+		],
+		[
+			"#015C",
+			"Store Byte H1"
+		],
+		[
+			"#015D",
+			"Store Byte H2"
+		],
+		[
+			"#015E",
+			"Store Byte H3"
+		],
+		[
+			"#015F",
+			"Store Byte H4"
+		],
+		[
+			"#01C8",
+			"Store Long I"
+		],
+		[
+			"#0190",
+			"Store Short I1"
+		],
+		[
+			"#0191",
+			"Store Short I2"
+		],
+		[
+			"#0160",
+			"Store Byte I1"
+		],
+		[
+			"#0161",
+			"Store Byte I2"
+		],
+		[
+			"#0162",
+			"Store Byte I3"
+		],
+		[
+			"#0163",
+			"Store Byte I4"
+		],
+		[
+			"#01C9",
+			"Store Long J"
+		],
+		[
+			"#0192",
+			"Store Short J1"
+		],
+		[
+			"#0193",
+			"Store Short J2"
+		],
+		[
+			"#0164",
+			"Store Byte J1"
+		],
+		[
+			"#0165",
+			"Store Byte J2"
+		],
+		[
+			"#0166",
+			"Store Byte J3"
+		],
+		[
+			"#0167",
+			"Store Byte J4"
+		],
+		[
+			"#01CA",
+			"Store Long K"
+		],
+		[
+			"#0194",
+			"Store Short K1"
+		],
+		[
+			"#0195",
+			"Store Short K2"
+		],
+		[
+			"#0168",
+			"Store Byte K1"
+		],
+		[
+			"#0169",
+			"Store Byte K2"
+		],
+		[
+			"#016A",
+			"Store Byte K3"
+		],
+		[
+			"#016B",
+			"Store Byte K4"
+		],
+		[
+			"#01CB",
+			"Store Long L"
+		],
+		[
+			"#0196",
+			"Store Short L1"
+		],
+		[
+			"#0197",
+			"Store Short L2"
+		],
+		[
+			"#016C",
+			"Store Byte L1"
+		],
+		[
+			"#016D",
+			"Store Byte L2"
+		],
+		[
+			"#016E",
+			"Store Byte L3"
+		],
+		[
+			"#016F",
+			"Store Byte L4"
+		],
+		[
+			"#01CC",
+			"Store Long M"
+		],
+		[
+			"#0198",
+			"Store Short M1"
+		],
+		[
+			"#0199",
+			"Store Short M2"
+		],
+		[
+			"#0170",
+			"Store Byte M1"
+		],
+		[
+			"#0171",
+			"Store Byte M2"
+		],
+		[
+			"#0172",
+			"Store Byte M3"
+		],
+		[
+			"#0173",
+			"Store Byte M4"
+		],
+		[
+			"#01CD",
+			"Store Long N"
+		],
+		[
+			"#019A",
+			"Store Short N1"
+		],
+		[
+			"#019B",
+			"Store Short N2"
+		],
+		[
+			"#0174",
+			"Store Byte N1"
+		],
+		[
+			"#0175",
+			"Store Byte N2"
+		],
+		[
+			"#0176",
+			"Store Byte N3"
+		],
+		[
+			"#0177",
+			"Store Byte N4"
+		],
+		[
+			"#01CE",
+			"Store Long O"
+		],
+		[
+			"#019C",
+			"Store Short O1"
+		],
+		[
+			"#019D",
+			"Store Short O2"
+		],
+		[
+			"#0178",
+			"Store Byte O1"
+		],
+		[
+			"#0179",
+			"Store Byte O2"
+		],
+		[
+			"#017A",
+			"Store Byte O3"
+		],
+		[
+			"#017B",
+			"Store Byte O4"
+		],
+		[
+			"#01CF",
+			"Store Long P"
+		],
+		[
+			"#019E",
+			"Store Short P1"
+		],
+		[
+			"#019F",
+			"Store Short P2"
+		],
+		[
+			"#017C",
+			"Store Byte P1"
+		],
+		[
+			"#017D",
+			"Store Byte P2"
+		],
+		[
+			"#017E",
+			"Store Byte P3"
+		],
+		[
+			"#017F",
+			"Store Byte P4"
+		]
+	]
+}

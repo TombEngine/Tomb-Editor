@@ -1,0 +1,73 @@
+{
+	"Name": "Tomorrow",
+	"Aliases": [ "Tomorrow Light" ],
+	"Background": "#FFFFFF",
+	"Foreground": "#4D4D4C",
+	"SemanticColors": {
+		"MutedText": "#8E908C",
+		"Misc": "#666969",
+		"Method": "#4271AE",
+		"Variable": "#C82829",
+		"Property": "#C82829",
+		"Type": "#C99E00",
+		"Keyword": "#8959A8",
+		"LanguageConstant": "#F5871F",
+		"Constant": "#F5871F",
+		"File": "#718C00",
+		"SignatureParameterDocumentation": "#8E908C",
+		"SignatureActiveParameter": "#4271AE",
+		"SignatureText": "#4D4D4C"
+	},
+	"TextMateTheme": {
+		"Rules": [
+			{
+				"Scope": "comment",
+				"Foreground": "#8E908C"
+			},
+			{
+				"Scope": "string",
+				"Foreground": "#718C00"
+			},
+			{
+				"Scope": "constant.numeric",
+				"Foreground": "#F5871F"
+			},
+			{
+				"Scope": "constant.character.escape",
+				"Foreground": "#F5871F"
+			},
+			{
+				"Scope": "constant.language",
+				"Foreground": "#F5871F"
+			},
+			{
+				"Scope": "keyword, storage",
+				"Foreground": "#8959A8"
+			},
+			{
+				"Scope": "keyword.operator",
+				"Foreground": "#3E999F"
+			},
+			{
+				"Scope": "entity.name.function, support.function, support.function.library, support.function.any-method",
+				"Foreground": "#4271AE"
+			},
+			{
+				"Scope": "entity.name.class, support.class, support.type, storage.type.generic",
+				"Foreground": "#C99E00"
+			},
+			{
+				"Scope": "variable.parameter",
+				"Foreground": "#F5871F"
+			},
+			{
+				"Scope": "entity.other.attribute",
+				"Foreground": "#C82829"
+			},
+			{
+				"Scope": "variable.language.self, entity.name.tag, string.tag, storage.type.annotation",
+				"Foreground": "#C82829"
+			}
+		]
+	}
+}

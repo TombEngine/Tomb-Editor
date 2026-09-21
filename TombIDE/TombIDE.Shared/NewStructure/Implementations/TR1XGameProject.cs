@@ -30,7 +30,7 @@ namespace TombIDE.Shared.NewStructure
 		{
 			"TRX.exe",
 			"TR1X.exe", // Legacy name (before TR1X and TR2X were unified into TRX)
-			"Tomb1Main.exe" // Very legacy name (before TR1X rebranding)
+			"Tomb1Main.exe" // Very legacy name (before the TRX family rebranding)
 		};
 
 		public override TRVersion.Game GameVersion => TRVersion.Game.TR1;

@@ -1,266 +1,141 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <LangVersion>12</LangVersion>
-    <OutputType>Library</OutputType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Product>TombIDE Shared Classes</Product>
+    <AssemblyTitle>$(Product)</AssemblyTitle>
     <UseWindowsForms>true</UseWindowsForms>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-    <Configurations>Debug;Release</Configurations>
-    <Platforms>x64;x86</Platforms>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <OutputPath>..\..\Build ($(Platform))\</OutputPath>
+
+  <PropertyGroup>
+    <LuaLanguageServerArchivePath>$(MSBuildProjectDirectory)\TIDE\LuaLS.zip</LuaLanguageServerArchivePath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <OutputPath>..\..\BuildRelease ($(Platform))\</OutputPath>
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='x64'">
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='x86'">
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
+
+  <ItemGroup>
+    <LuaLanguageServerRepresentativeOutput Include="bin\lua-language-server.exe" />
+    <LuaLanguageServerRepresentativeOutput Include="main.lua" />
+    <LuaLanguageServerRepresentativeOutput Include="script\cli\check_worker.lua" />
+    <LuaLanguageServerRepresentativeOutput Include="locale\en-us\script.lua" />
+  </ItemGroup>
+
   <ItemGroup>
     <Compile Include="..\..\GlobalPaths.cs">
       <Link>GlobalPaths.cs</Link>
     </Compile>
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\DarkUI\DarkUI.WPF\DarkUI.WPF.csproj" />
     <ProjectReference Include="..\..\DarkUI\DarkUI\DarkUI.csproj" />
     <ProjectReference Include="..\..\LuaApiBuilder\LuaApiBuilder.csproj" />
     <ProjectReference Include="..\..\TombLib\TombLib\TombLib.csproj" />
   </ItemGroup>
+
   <ItemGroup>
     <Content Include="Resources\Localization\EN\TombIDE.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+
     <Content Include="Resources\Localization\PL\TombIDE.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TIDE\DOS\DOSBox.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\DOS\SDL.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\DOS\SDL_net.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\DOS\TR4\DOS4GW.EXE">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\DOS\TR4\SCRIPT.EXE">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\GFL\gameflow.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\!~~DO_NOT_USE_THIS_NG_CENTER.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\~~!DO_NOT_USE_THIS_NG_CENTER.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\~!~DO_NOT_USE_THIS_NG_CENTER.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\help_new_script_command.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\help_old_script_command.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\NG_Center.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\TRNG\ngle.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\TRNG\ng_Tom2Pc.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\TRNG\Objects.h">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\TRNG\Tomb4.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\TRNG\Tomb_NextGeneration.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\VGE\ngle.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\VGE\NG_Tom2Pc.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\VGE\Objects.h">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\VGE\Script\ENGLISH.TXT">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\VGE\Script\SCRIPT.TXT">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\VGE\sound\LevelSFX Creator\sounds.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\VGE\tomb4.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="TIDE\NGC\VGE\Tomb_NextGeneration.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
+
   <ItemGroup>
-    <None Update="TIDE\GF3\TRGameflow.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\NGC\center_settings.bin">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\NGC\VGE\audio\keep.me">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\NGC\VGE\data\keep.me">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\NGC\VGE\ENGLISH.DAT">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\NGC\VGE\graphics\wads\keep.me">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\NGC\VGE\pix\keep.me">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\NGC\VGE\SCRIPT.DAT">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\NGC\VGE\sound\samples\keep.me">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\NGC\VGE\tools\keep.me">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Defaults\Game Icons\TombEngine.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Defaults\Game Icons\TR1.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Defaults\Game Icons\TR2X.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Defaults\Game Icons\TR2.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Defaults\Game Icons\TR3.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Defaults\Game Icons\TR3X.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Defaults\Game Icons\TR4.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Defaults\Game Icons\TRNG.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Defaults\TR4 Resources\load.bmp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Defaults\TR4 Resources\uklogo.pak">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Engines\TEN.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Engines\TR1.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Engines\TR2.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Engines\TR3.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Engines\TR4.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Engines\TRNG.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Extras\FLEP.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Presets\TEN.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Presets\TR1.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Presets\TR2.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Presets\TR2X.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Presets\TR3.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Presets\TR3X.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Presets\TR4.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Presets\TRNG.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Shared\PLAY.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Shared\splash.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Shared\TEN External DLLs.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Shared\TEN Resources.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Shared\TR4-TEN Shared Audio.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Shared\TR4-TRNG Shared Files.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Sounds\TEN.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Sounds\TR1.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Sounds\TR2.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Sounds\TR3.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\Templates\Sounds\TR4-TRNG.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\TEN\.luarc.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TIDE\TEN\API.xml">
+    <!-- Copy the entire TIDE directory. -->
+    <None Update="TIDE\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+
+  <ItemGroup>
+    <!-- LuaLS is materialized from the archive by the build target below. -->
+    <None Update="TIDE\LuaLS.zip">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+
+    <None Update="TIDE\LuaLS\**\*">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <!-- Extract the vendored LuaLS archive after build.
+       The Outputs list uses a few representative files plus a stamp file so MSBuild
+       can skip this target when the archive has not changed. -->
+  <Target Name="ExtractLuaLanguageServer"
+          AfterTargets="Build"
+          Condition="'$(DesignTimeBuild)' != 'true'"
+          Inputs="$(LuaLanguageServerArchivePath)"
+          Outputs="@(LuaLanguageServerRepresentativeOutput -> '$(TargetDir)TIDE\LuaLS\%(Identity)');$(TargetDir)TIDE\LuaLS\.extracted">
+    <!-- Keep the staging and final output paths separate so we can validate the
+         extracted archive and remove files that no longer exist upstream. -->
+    <PropertyGroup>
+      <LuaLanguageServerOutputDirectory>$(TargetDir)TIDE\LuaLS</LuaLanguageServerOutputDirectory>
+      <LuaLanguageServerStagingDirectory>$(IntermediateOutputPath)LuaLS</LuaLanguageServerStagingDirectory>
+      <LuaLanguageServerExtractionStampFile>$(LuaLanguageServerOutputDirectory)\.extracted</LuaLanguageServerExtractionStampFile>
+    </PropertyGroup>
+
+    <Error Condition="!Exists('$(LuaLanguageServerArchivePath)')"
+           Text="LuaLS archive not found at '$(LuaLanguageServerArchivePath)'." />
+
+    <!-- Extract into staging first so removed upstream files do not linger in the output copy. -->
+    <RemoveDir Directories="$(LuaLanguageServerStagingDirectory)"
+               Condition="Exists('$(LuaLanguageServerStagingDirectory)')" />
+    <MakeDir Directories="$(LuaLanguageServerStagingDirectory)" />
+
+    <ItemGroup>
+      <_LuaLanguageServerArchive Include="$(LuaLanguageServerArchivePath)" />
+    </ItemGroup>
+
+    <Unzip SourceFiles="@(_LuaLanguageServerArchive)"
+           DestinationFolder="$(LuaLanguageServerStagingDirectory)" />
+
+    <!-- Build the lists used by the sync step:
+      - representative staged/output files prove the archive layout is correct
+      - staging files are every file extracted from the archive
+      - expected output files are where those staged files should end up
+      - obsolete output files are current output files no longer present in the archive -->
+    <ItemGroup>
+      <_LuaLanguageServerRepresentativeStagingOutputPath Include="@(LuaLanguageServerRepresentativeOutput -> '$(LuaLanguageServerStagingDirectory)\%(Identity)')" />
+      <_LuaLanguageServerRepresentativeOutputPath Include="@(LuaLanguageServerRepresentativeOutput -> '$(LuaLanguageServerOutputDirectory)\%(Identity)')" />
+      <_LuaLanguageServerStagingFile Include="$(LuaLanguageServerStagingDirectory)\**\*" />
+      <_LuaLanguageServerExpectedOutputFile Include="@(_LuaLanguageServerStagingFile -> '$(LuaLanguageServerOutputDirectory)\%(RecursiveDir)%(Filename)%(Extension)')" />
+      <_LuaLanguageServerExistingOutputFile Include="$(LuaLanguageServerOutputDirectory)\**\*" />
+      <_LuaLanguageServerObsoleteOutputFile Include="@(_LuaLanguageServerExistingOutputFile)" />
+      <_LuaLanguageServerObsoleteOutputFile Remove="@(_LuaLanguageServerExpectedOutputFile)" />
+    </ItemGroup>
+
+    <!-- Fail fast if the archive does not contain the files the runtime expects. -->
+    <Error Condition="!Exists('%(_LuaLanguageServerRepresentativeStagingOutputPath.Identity)')"
+           Text="LuaLS archive '$(LuaLanguageServerArchivePath)' did not produce required file '%(_LuaLanguageServerRepresentativeStagingOutputPath.Identity)'." />
+
+    <!-- Remove files that disappeared from the archive, then copy the staged tree into the real build output. -->
+    <Delete Files="@(_LuaLanguageServerObsoleteOutputFile)" />
+    <MakeDir Directories="$(LuaLanguageServerOutputDirectory)" />
+    <Copy SourceFiles="@(_LuaLanguageServerStagingFile)"
+          DestinationFiles="@(_LuaLanguageServerStagingFile -> '$(LuaLanguageServerOutputDirectory)\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+
+    <!-- Validate the final output again so copy failures surface during build. -->
+    <Error Condition="!Exists('%(_LuaLanguageServerRepresentativeOutputPath.Identity)')"
+           Text="LuaLS output file '%(_LuaLanguageServerRepresentativeOutputPath.Identity)' could not be created from '$(LuaLanguageServerArchivePath)'." />
+
+    <!-- Touch representative files because Unzip preserves archive timestamps.
+         Without this, MSBuild would keep rerunning the target because the archive
+         looks newer than the extracted files. -->
+    <Touch Files="@(_LuaLanguageServerRepresentativeOutputPath)" />
+    <Touch Files="$(LuaLanguageServerExtractionStampFile)"
+           AlwaysCreate="true" />
+
+    <!-- Register extracted files so Clean removes them from the shared output. -->
+    <ItemGroup>
+      <_LuaLanguageServerOutputFiles Include="$(LuaLanguageServerOutputDirectory)\**\*" />
+      <FileWrites Include="@(_LuaLanguageServerOutputFiles)" />
+      <FileWrites Include="$(LuaLanguageServerExtractionStampFile)" />
+    </ItemGroup>
+  </Target>
+
 </Project>

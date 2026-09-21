@@ -10,6 +10,7 @@
 		string FileFormatVersion { get; }
 
 		void EncodeProjectPaths(string trprojFilePath);
+
 		void DecodeProjectPaths(string trprojFilePath);
 
 		void WriteToFile(string filePath);

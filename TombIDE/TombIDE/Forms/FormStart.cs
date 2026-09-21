@@ -10,11 +10,13 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using TombIDE.ScriptingStudio.Composition;
 using TombIDE.Shared;
 using TombIDE.Shared.NewStructure;
 using TombIDE.Shared.NewStructure.Implementations;
 using TombIDE.Shared.SharedClasses;
 using TombLib.LevelData;
+using TombLib.WPF.Services;
 
 namespace TombIDE
 {
@@ -354,7 +356,7 @@ namespace TombIDE
 			SaveSettings();
 			Hide();
 
-			using var form = new FormMain(_ide, _selectedProject);
+			using var form = new FormMain(_ide, _selectedProject, ServiceLocator.ResolveService<IScriptingStudioShellFactory>());
 			DialogResult result = form.ShowDialog(this);
 
 			if (result == DialogResult.OK) // OK means the user wants to switch projects

@@ -97,7 +97,7 @@ namespace TombLib.LevelData
         public static int FromWorld(int worldUnits)
             => (int)Math.Round(worldUnits / (float)Level.FullClickHeight);
 
-        /// <inheritdoc />
+        /// <inheritdoc/>
         public static int FromWorld(int worldUnits, RoundingMethod roundingMethod) => roundingMethod switch
         {
             RoundingMethod.ToFloor => (int)Math.Floor(worldUnits / (float)Level.FullClickHeight),

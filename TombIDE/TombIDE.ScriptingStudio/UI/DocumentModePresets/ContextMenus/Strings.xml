@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<Items>
-	<Item LangKey="Cut" Command="Cut" Icon="Cut_16" />
-	<Item LangKey="Copy" Command="Copy" Icon="Copy_16" />
-	<Item LangKey="Paste" Command="Paste" Icon="Clipboard_16" />
-</Items>

@@ -1,0 +1,68 @@
+{
+	"Name": "Monokai",
+	"Background": "#2C2C2A",
+	"Foreground": "#F8F8F2",
+	"SemanticColors": {
+		"MutedText": "#75715E",
+		"Misc": "#F8F8F2",
+		"Method": "#E6DB74",
+		"Variable": "#FD971F",
+		"Property": "#66D9EF",
+		"Type": "#A6E22E",
+		"Keyword": "#F92672",
+		"LanguageConstant": "#66D9EF",
+		"Constant": "#AE81FF",
+		"File": "#E6DB74",
+		"SignatureParameterDocumentation": "#CFCFC2",
+		"SignatureActiveParameter": "#66D9EF",
+		"SignatureText": "#F8F8F2"
+	},
+	"TextMateTheme": {
+		"Rules": [
+			{
+				"Scope": "comment",
+				"Foreground": "#75715E"
+			},
+			{
+				"Scope": "string",
+				"Foreground": "#E6DB74"
+			},
+			{
+				"Scope": "constant.numeric",
+				"Foreground": "#AE81FF"
+			},
+			{
+				"Scope": "constant.character.escape",
+				"Foreground": "#E6DB74"
+			},
+			{
+				"Scope": "constant.language",
+				"Foreground": "#66D9EF"
+			},
+			{
+				"Scope": "keyword, storage",
+				"Foreground": "#F92672"
+			},
+			{
+				"Scope": "keyword.operator",
+				"Foreground": "#F8F8F2"
+			},
+			{
+				"Scope": "entity.name.function, support.function, support.function.library, support.function.any-method",
+				"Foreground": "#E6DB74"
+			},
+			{
+				"Scope": "entity.name.class, support.class, support.type, storage.type.generic",
+				"Foreground": "#A6E22E"
+			},
+			{
+				"Scope": "variable.parameter, entity.other.attribute",
+				"Foreground": "#FD971F"
+			},
+			{
+				"Scope": "variable.language.self, entity.name.tag, string.tag, storage.type.annotation",
+				"Foreground": "#66D9EF"
+			}
+		]
+	}
+}

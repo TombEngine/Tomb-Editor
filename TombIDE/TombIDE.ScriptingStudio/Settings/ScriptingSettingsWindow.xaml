@@ -1,0 +1,225 @@
+<Window
+	x:Class="TombIDE.ScriptingStudio.Settings.ScriptingSettingsWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:local="clr-namespace:TombIDE.ScriptingStudio.Settings"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Title="{Binding WindowTitle}"
+	Width="960"
+	Height="640"
+	MinWidth="960"
+	MinHeight="640"
+	d:DataContext="{d:DesignInstance Type=local:ScriptingSettingsWindowViewModel}"
+	Background="{DynamicResource Brush_Background}"
+	ResizeMode="CanResize"
+	Style="{DynamicResource CustomWindowStyle}"
+	WindowStartupLocation="CenterOwner"
+	mc:Ignorable="d">
+
+	<Window.Resources>
+		<BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+		<DataTemplate DataType="{x:Type local:ScriptingSettingsPageViewModel}">
+			<controls:SpacedGrid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="2*" />
+				</Grid.ColumnDefinitions>
+
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<controls:SpacedStack Margin="{x:Static darkUI:Defaults.MediumThickness}" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+						<GroupBox Header="Theme">
+							<controls:SpacedStack Margin="{x:Static darkUI:Defaults.MediumThickness}" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+								<ComboBox ItemsSource="{Binding ThemeOptions}" SelectedItem="{Binding SelectedThemeName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							</controls:SpacedStack>
+						</GroupBox>
+
+						<GroupBox Header="Typography">
+							<controls:SpacedGrid
+								Margin="{x:Static darkUI:Defaults.MediumThickness}"
+								ColumnSpacing="{x:Static darkUI:Defaults.LargeThicknessWidth}"
+								RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" />
+								</Grid.ColumnDefinitions>
+								<Grid.RowDefinitions>
+									<RowDefinition Height="Auto" />
+									<RowDefinition Height="Auto" />
+								</Grid.RowDefinitions>
+
+								<TextBlock VerticalAlignment="Center" Text="Font family" />
+								<ComboBox
+									Grid.Column="1"
+									IsTextSearchEnabled="True"
+									ItemsSource="{Binding FontFamilies}"
+									SelectedItem="{Binding FontFamily, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+								<TextBlock
+									Grid.Row="1"
+									VerticalAlignment="Center"
+									Text="Font size" />
+								<controls:NumericUpDown
+									Grid.Row="1"
+									Grid.Column="1"
+									FormatString="F0"
+									Increment="1"
+									Maximum="40"
+									Minimum="8"
+									TextAlignment="Left"
+									Value="{Binding FontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+							</controls:SpacedGrid>
+						</GroupBox>
+
+						<GroupBox Header="IntelliSense">
+							<controls:SpacedStack Margin="{x:Static darkUI:Defaults.MediumThickness}" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+								<CheckBox Content="Enable IntelliSense" IsChecked="{Binding IntelliSenseEnabled}" />
+
+								<controls:SpacedStack IsEnabled="{Binding IntelliSenseEnabled}" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+									<StackPanel.Margin>
+										<Thickness Left="{x:Static darkUI:Defaults.LargeThicknessWidth}" />
+									</StackPanel.Margin>
+
+									<CheckBox Content="Enable completion" IsChecked="{Binding CompletionEnabled}" />
+									<CheckBox
+										Content="Enable diagnostics underlining"
+										IsChecked="{Binding DiagnosticsUnderliningEnabled}"
+										IsEnabled="{Binding SupportsDiagnosticsUnderlining}" />
+									<CheckBox
+										Content="Enable signature help popups"
+										IsChecked="{Binding SignatureHelpPopupsEnabled}"
+										IsEnabled="{Binding SupportsSignatureHelpPopups}" />
+								</controls:SpacedStack>
+							</controls:SpacedStack>
+						</GroupBox>
+
+						<GroupBox Header="Auto-close symbols">
+							<controls:SpacedStack Margin="{x:Static darkUI:Defaults.MediumThickness}" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+								<CheckBox Content="Auto-close parenthesis ( )" IsChecked="{Binding AutoCloseParentheses}" />
+								<CheckBox Content="Auto-close brackets [ ]" IsChecked="{Binding AutoCloseBrackets}" />
+								<CheckBox Content="Auto-close braces { }" IsChecked="{Binding AutoCloseBraces}" />
+								<CheckBox Content="Auto-close double-quotes &quot; &quot;" IsChecked="{Binding AutoCloseDoubleQuotes}" />
+								<CheckBox Content="Auto-close single-quotes ' '" IsChecked="{Binding AutoCloseSingleQuotes}" />
+							</controls:SpacedStack>
+						</GroupBox>
+
+						<GroupBox Header="View and guides">
+							<controls:SpacedStack Margin="{x:Static darkUI:Defaults.MediumThickness}" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+								<CheckBox Content="Enable word wrapping" IsChecked="{Binding WordWrapping}" />
+								<CheckBox Content="Highlight current line" IsChecked="{Binding HighlightCurrentLine}" />
+								<CheckBox Content="Show line numbers" IsChecked="{Binding ShowLineNumbers}" />
+								<CheckBox
+									Content="Show section separators"
+									IsChecked="{Binding ShowSectionSeparators}"
+									IsEnabled="{Binding SupportsSectionSeparators}" />
+								<CheckBox Content="Show visible spaces" IsChecked="{Binding ShowVisibleSpaces}" />
+								<CheckBox Content="Show visible tabs" IsChecked="{Binding ShowVisibleTabs}" />
+							</controls:SpacedStack>
+						</GroupBox>
+
+						<GroupBox Header="Classic script formatting" Visibility="{Binding SupportsClassicFormatting, Converter={StaticResource BoolToVisibilityConverter}}">
+							<controls:SpacedStack Margin="{x:Static darkUI:Defaults.MediumThickness}" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+								<CheckBox Content="Insert space before =" IsChecked="{Binding SpaceBeforeEquals}" />
+								<CheckBox Content="Insert space after =" IsChecked="{Binding SpaceAfterEquals}" />
+								<CheckBox Content="Insert space before ," IsChecked="{Binding SpaceBeforeComma}" />
+								<CheckBox Content="Insert space after ," IsChecked="{Binding SpaceAfterComma}" />
+								<CheckBox Content="Reduce repeated spaces" IsChecked="{Binding CollapseMultipleSpaces}" />
+							</controls:SpacedStack>
+						</GroupBox>
+
+						<GroupBox Header="TRX extras" Visibility="{Binding SupportsAutoAddCommas, Converter={StaticResource BoolToVisibilityConverter}}">
+							<controls:SpacedStack Margin="{x:Static darkUI:Defaults.MediumThickness}" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+								<CheckBox Content="Auto add commas" IsChecked="{Binding AutoAddCommas}" />
+							</controls:SpacedStack>
+						</GroupBox>
+					</controls:SpacedStack>
+				</ScrollViewer>
+
+				<controls:SpacedGrid
+					Grid.Column="1"
+					Margin="{x:Static darkUI:Defaults.MediumThickness}"
+					RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+					</Grid.RowDefinitions>
+
+					<TextBlock FontSize="16" Text="Preview" />
+
+					<ContentControl Grid.Row="1" Content="{Binding PreviewEditor}" />
+				</controls:SpacedGrid>
+			</controls:SpacedGrid>
+		</DataTemplate>
+	</Window.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<Border
+			Margin="{x:Static darkUI:Defaults.MediumThickness}"
+			Padding="{x:Static darkUI:Defaults.MediumThickness}"
+			Background="{DynamicResource Brush_Background_Alternative}"
+			Visibility="{Binding SupportsLuaActivation, Converter={StaticResource BoolToVisibilityConverter}}">
+			<controls:SpacedStack Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+				<CheckBox Content="Enable Lua documents" IsChecked="{Binding LuaEnabled, Mode=TwoWay}" />
+				<TextBlock Text="Lua documents are enabled when the scripting workspace is reopened." TextWrapping="Wrap" />
+			</controls:SpacedStack>
+		</Border>
+
+		<TabControl
+			Grid.Row="1"
+			Margin="{x:Static darkUI:Defaults.MediumThickness}"
+			ItemsSource="{Binding Pages}"
+			SelectedItem="{Binding SelectedPage}"
+			SelectionChanged="TabControl_SelectionChanged"
+			TabStripPlacement="Left">
+			<TabControl.ItemTemplate>
+				<DataTemplate>
+					<Border Padding="{x:Static darkUI:Defaults.LargeThickness}">
+						<TextBlock FontSize="16" Text="{Binding Title}" />
+					</Border>
+				</DataTemplate>
+			</TabControl.ItemTemplate>
+		</TabControl>
+
+		<Border
+			Grid.Row="2"
+			Padding="{x:Static darkUI:Defaults.LargeThickness}"
+			Background="{DynamicResource Brush_Background_Alternative}">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+
+				<Button
+					Width="180"
+					Click="ResetCurrentPageButton_Click"
+					Content="Reset current page to default" />
+
+				<controls:SpacedStack
+					Grid.Column="2"
+					Orientation="Horizontal"
+					Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+					<Button
+						Width="75"
+						Click="SaveButton_Click"
+						Content="Apply"
+						IsDefault="True" />
+					<Button
+						Width="75"
+						Click="CancelButton_Click"
+						Content="Cancel" />
+				</controls:SpacedStack>
+			</Grid>
+		</Border>
+	</Grid>
+</Window>

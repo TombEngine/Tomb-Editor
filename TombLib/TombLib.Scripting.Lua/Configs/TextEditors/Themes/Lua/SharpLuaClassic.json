@@ -1,0 +1,82 @@
+{
+	"Name": "SharpLua Classic",
+	"Aliases": [ "SharpLua" ],
+	"Background": "#2D2D2D",
+	"Foreground": "#CCCCCC",
+	"SemanticColors": {
+		"MutedText": "#999999",
+		"Misc": "#CCCCCC",
+		"Method": "#FFCC66",
+		"Variable": "#E6C8FF",
+		"Property": "#D7B8FF",
+		"Type": "#66CCCC",
+		"Keyword": "#6699CC",
+		"LanguageConstant": "#66CCCC",
+		"Constant": "#99CC99",
+		"File": "#F99157",
+		"SignatureParameterDocumentation": "#999999",
+		"SignatureActiveParameter": "#FFCC66",
+		"SignatureText": "#CCCCCC"
+	},
+	"TextMateTheme": {
+		"Rules": [
+			{
+				"Scope": "comment",
+				"Foreground": "#999999"
+			},
+			{
+				"Scope": "string",
+				"Foreground": "#F99157"
+			},
+			{
+				"Scope": "constant.numeric",
+				"Foreground": "#99CC99"
+			},
+			{
+				"Scope": "constant.character.escape",
+				"Foreground": "#F99157"
+			},
+			{
+				"Scope": "constant.language",
+				"Foreground": "#66CCCC",
+				"FontStyle": "bold"
+			},
+			{
+				"Scope": "keyword, storage",
+				"Foreground": "#6699CC",
+				"FontStyle": "bold"
+			},
+			{
+				"Scope": "keyword.control.goto, keyword.control.return, keyword.control.break",
+				"Foreground": "#CC99CC"
+			},
+			{
+				"Scope": "keyword.control.local",
+				"Foreground": "#F99157",
+				"FontStyle": "bold"
+			},
+			{
+				"Scope": "entity.name.class, support.class, support.type, support.variable, variable.language.self",
+				"Foreground": "#66CCCC",
+				"FontStyle": "bold"
+			},
+			{
+				"Scope": "entity.other.attribute, support.type.property-name",
+				"Foreground": "#D7B8FF"
+			},
+			{
+				"Scope": "variable.parameter, variable.other.object",
+				"Foreground": "#E6C8FF"
+			},
+			{
+				"Scope": "entity.name.function, support.function, support.function.library, support.function.any-method",
+				"Foreground": "#FFCC66",
+				"FontStyle": "bold"
+			},
+			{
+				"Scope": "keyword.operator, punctuation",
+				"Foreground": "#CCCCCC"
+			}
+		]
+	}
+}
