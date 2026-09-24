@@ -4913,15 +4913,21 @@ namespace TombEditor
 
         public static void TryPasteSectors(SectorsClipboardData data, IWin32Window owner)
         {
-            _editor.UndoManager.PushGeometryChanged(_editor.SelectedRoom);
-
             int x0 = _editor.SelectedSectors.Area.X0;
             int z0 = _editor.SelectedSectors.Area.Y0;
             int x1 = Math.Min(_editor.SelectedRoom.NumXSectors - 1, x0 + data.Width);
             int z1 = Math.Min(_editor.SelectedRoom.NumZSectors - 1, z0 + data.Height);
 
+            if (x1 <= x0 || z1 <= z0)
+                return;
+
+            var pastedArea = new RectangleInt2(x0, z0, x1 - 1, z1 - 1);
+            var affectedRooms = _editor.SelectedRoom.GetAdjoiningRoomsFromArea(pastedArea.Inflate(1));
+            affectedRooms.Add(_editor.SelectedRoom);
+
+            _editor.UndoManager.PushGeometryChanged(affectedRooms);
+
             var sectors = data.GetSectors();
-            var portals = new List<PortalInstance>();
 
             for (int x = x0; x < x1; x++)
                 for (int z = z0; z < z1; z++)
@@ -4933,20 +4939,17 @@ namespace TombEditor
                     if (_editor.SelectedSectors.Empty ||
                         _editor.SelectedSectors.Single ||
                         _editor.SelectedSectors.Area.Contains(new VectorInt2(x, z)))
-                    {
-                        portals.AddRange(_editor.SelectedRoom.Sectors[x, z].Portals);
                         _editor.SelectedRoom.Sectors[x, z].ReplaceGeometry(_editor.Level, currentSector);
-                    }
                 }
 
-            // Redraw rooms in portals
-            portals.Select(p => p.AdjoiningRoom).ToList().ForEach(room =>
-            {
-                room.Rebuild(_editor.ShouldRelight, _editor.Configuration.Rendering3D_HighQualityLightPreview);
-                _editor.RoomGeometryChange(room);
-            });
+            SmartBuildGeometry(_editor.SelectedRoom, pastedArea);
 
-            _editor.SelectedRoom.Rebuild(_editor.ShouldRelight, _editor.Configuration.Rendering3D_HighQualityLightPreview);
+            foreach (var affectedRoom in affectedRooms)
+            {
+                if (affectedRoom != _editor.SelectedRoom)
+                    _editor.RoomGeometryChange(affectedRoom);
+            }
+
             _editor.RoomSectorPropertiesChange(_editor.SelectedRoom);
         }
 
