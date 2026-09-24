@@ -24,6 +24,7 @@ Tomb Editor:
  * Fixed occasional exceptions after closing Node Editor.
  * Fixed exception while opening texture lists in Remap Texture dialog.
  * Fixed being unable to use sound IDs in TRX levels above the OG sound map size without defining all lower IDs
+ * Fixed pistol ammo pickups in TR1 and TR2 not being converted to the correct engine type.
 
 WadTool:
  * Added an option to consolidate textures for an object into a single set of texture pages.
