@@ -37,6 +37,7 @@ TombIDE:
 
 TEN nodes:
  * Added a node to unswap a previously swapped mesh.
+ * Added nodes to swap and restore skinned meshes.
  * Added nodes for checking and setting various aspects of creature AI.
  * Added a node to check Lara's traversal mode.
  * Added photo-mode nodes for unlocking accessories, expressions, frames, outfits and poses.
