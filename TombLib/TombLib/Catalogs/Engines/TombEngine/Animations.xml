@@ -2,7 +2,7 @@
     <!--LARA  -->
 	<anim item="0" id="46" name="UNDERWATER_USE_PUZZLE" />
 	<anim item="0" id="99" name="UNDERWATER_USE_KEY" />
-	<anim item="0" id="280" name="TAKE_PUZZLE_UNDERWATER" />
+	<anim item="0" id="280" name="REMOVE_PUZZLE_UNDERWATER" />
     <anim item="0" id="343" name="PUSHABLE_OBJECT_PULL" />
     <anim item="0" id="345" name="PUSHABLE_OBJECT_PUSH" />
     <anim item="0" id="364" name="PUSHABLE_OBJECT_PUSH_EDGE_SLIP" />
@@ -11,6 +11,102 @@
     <anim item="0" id="417" name="PUSHABLE_OBJECT_PUSH_TO_STAND" />
     <anim item="0" id="418" name="PUSHABLE_OBJECT_PULL_TO_STAND" />
     <anim item="0" id="442" name="UNDERWATER_FLOOR_TRAPDOOR_OPEN" />
+	<anim item="0" id="474" name="VAULT_TO_CROUCH_1_STEP" />
+	<anim item="0" id="475" name="VAULT_TO_CROUCH_2_STEP " />
+	<anim item="0" id="476" name="VAULT_TO_CROUCH_3_STEP " />
+	<anim item="0" id="477" name="CRAWL_JUMP_DOWN_1_STEP " />
+	<anim item="0" id="478" name="CRAWL_JUMP_DOWN" />
+	<anim item="0" id="479" name="CRAWL_STEP_UP" />
+	<anim item="0" id="480" name="CRAWL_STEP_DOWN" />
+	<anim item="0" id="481" name="ONWATER_TO_CROUCH_1_STEP" />
+	<anim item="0" id="482" name="ONWATER_TO_CROUCH_0_STEP" />
+	<anim item="0" id="483" name="ONWATER_TO_CROUCH_M1_STEP" />
+	<anim item="0" id="484" name="LADDER_TO_MONKEY" />
+	<anim item="0" id="485" name="ONWATER_TURN_180_START" />
+	<anim item="0" id="486" name="ONWATER_TURN_180_END" />
+	<anim item="0" id="487" name="MONKEY_TO_LADDER_OVERHEAD_START" />
+	<anim item="0" id="488" name="MONKEY_TO_LADDER_OVERHEAD_END" />
+	<anim item="0" id="489" name="JUMP_PREPARE_TO_STAND" />
+	<anim item="0" id="490" name="MONKEY_IDLE_TO_BACK_LEFT" />
+	<anim item="0" id="491" name="MONKEY_IDLE_TO_BACK_RIGHT" />
+	<anim item="0" id="492" name="MONKEY_BACK" />
+	<anim item="0" id="493" name="MONKEY_BACK_TO_IDLE_LEFT" />
+	<anim item="0" id="494" name="MONKEY_BACK_TO_IDLE_RIGHT" />
+	<anim item="0" id="495" name="REACH_TO_HANG_OSCILLATE" />
+	<anim item="0" id="496" name="SWANDIVE_ROLL_TO_RUN" />
+	<anim item="0" id="497" name="LADDER_DISMOUNT_LEFT_START" />
+	<anim item="0" id="498" name="LADDER_DISMOUNT_LEFT_END " />
+	<anim item="0" id="499" name="LADDER_DISMOUNT_RIGHT_START" />
+	<anim item="0" id="500" name="LADDER_DISMOUNT_RIGHT_END" />
+	<anim item="0" id="501" name="ONWATER_TO_LADDER" />
+	<anim item="0" id="502" name="POSE_START" />
+	<anim item="0" id="503" name="POSE_CONTINUE" />
+	<anim item="0" id="504" name="POSE_END" />
+	<anim item="0" id="505" name="OVERHANG_IDLE_LEFT" />
+	<anim item="0" id="506" name="OVERHANG_IDLE_RIGHT" />
+	<anim item="0" id="507" name="OVERHANG_CLIMB_UP_LEFT" />
+	<anim item="0" id="508" name="OVERHANG_CLIMB_UP_RIGHT" />
+	<anim item="0" id="509" name="OVERHANG_CLIMB_DOWN_LEFT" />
+	<anim item="0" id="510" name="OVERHANG_CLIMB_DOWN_RIGHT" />
+	<anim item="0" id="511" name="OVERHANG_DROP_LEFT" />
+	<anim item="0" id="512" name="OVERHANG_DROP_RIGHT" />
+	<anim item="0" id="513" name="OVERHANG_IDLE_2_HANG_LEFT" />
+	<anim item="0" id="514" name="OVERHANG_IDLE_2_HANG_RIGHT" />
+	<anim item="0" id="515" name="OVERHANG_HANG_2_IDLE_LEFT" />
+	<anim item="0" id="516" name="OVERHANG_HANG_2_IDLE_RIGHT" />
+	<anim item="0" id="517" name="OVERHANG_HANG_SWING" />
+	<anim item="0" id="518" name="OVERHANG_HANG_LOOP" />
+	<anim item="0" id="519" name="OVERHANG_HANG_DROP" />
+	<anim item="0" id="520" name="OVERHANG_SHIMMY_LEFT" />
+	<anim item="0" id="521" name="OVERHANG_SHIMMY_LEFT_STOP" />
+	<anim item="0" id="522" name="OVERHANG_SHIMMY_RIGHT" />
+	<anim item="0" id="523" name="OVERHANG_SHIMMY_RIGHT_STOP" />
+	<anim item="0" id="524" name="OVERHANG_LEDGE_VAULT_START" />
+	<anim item="0" id="525" name="OVERHANG_LEDGE_VAULT" />
+	<anim item="0" id="526" name="OVERHANG_LADDER_SLOPE_CONCAVE" />
+	<anim item="0" id="527" name="OVERHANG_SLOPE_LADDER_CONCAVE" />
+	<anim item="0" id="528" name="OVERHANG_LADDER_SLOPE_CONVEX" />
+	<anim item="0" id="529" name="OVERHANG_SLOPE_LADDER_CONVEX_START" />
+	<anim item="0" id="530" name="OVERHANG_SLOPE_LADDER_CONVEX" />
+	<anim item="0" id="531" name="OVERHANG_MONKEY_SLOPE_CONCAVE" />
+	<anim item="0" id="532" name="OVERHANG_SLOPE_MONKEY_CONCAVE" />
+	<anim item="0" id="533" name="OVERHANG_SLOPE_MONKEY_CONCAVE_END" />
+	<anim item="0" id="534" name="OVERHANG_MONKEY_SLOPE_CONVEX" />
+	<anim item="0" id="535" name="OVERHANG_MONKEY_SLOPE_CONVEX_END" />
+	<anim item="0" id="536" name="OVERHANG_SLOPE_MONKEY_CONVEX" />
+	<anim item="0" id="537" name="OVERHANG_EXIT_MONKEY_FORWARD" />
+	<anim item="0" id="538" name="OVERHANG_EXIT_MONKEY_IDLE" />
+	<anim item="0" id="539" name="OVERHANG_EXIT_LADDER" />
+	<anim item="0" id="540" name="OVERHANG_EXIT_VAULT" />
+	<anim item="0" id="541" name="OVERHANG_EXIT_DROP" />
+	<anim item="0" id="542" name="OVERHANG_EXIT_HANG" />
+	<anim item="0" id="543" name="VAULT_TO_STAND_3_STEPS_END" />
+	<anim item="0" id="544" name="RUN_START_LEFT" />
+	<anim item="0" id="545" name="RUN_TO_STAND_LEFT_SOFT" />
+	<anim item="0" id="546" name="RUN_TO_STAND_RIGHT_SOFT" />
+	<anim item="0" id="547" name="MONKEY_JUMP_START" />
+	<anim item="0" id="548" name="MONKEY_JUMP_CONTINUE" />
+	<anim item="0" id="549" name="SPRINT_JUMP_LEFT_START" />
+	<anim item="0" id="550" name="SPRINT_JUMP_LEFT_CONTINUE" />
+	<anim item="0" id="551" name="SPRINT_JUMP_LEFT_TO_REACH_1" />
+	<anim item="0" id="552" name="SPRINT_JUMP_LEFT_TO_REACH_2" />
+	<anim item="0" id="553" name="SPRINT_JUMP_LEFT_TO_REACH_3" />
+	<anim item="0" id="554" name="SPRINT_JUMP_LEFT_TO_REACH_4" />
+	<anim item="0" id="555" name="SPRINT_JUMP_RIGHT_START" />
+	<anim item="0" id="556" name="SPRINT_JUMP_RIGHT_CONTINUE" />
+	<anim item="0" id="557" name="SPRINT_JUMP_RIGHT_TO_REACH_1" />
+	<anim item="0" id="558" name="SPRINT_JUMP_RIGHT_TO_REACH_2" />
+	<anim item="0" id="559" name="SPRINT_JUMP_RIGHT_TO_REACH_3" />
+	<anim item="0" id="560" name="SPRINT_JUMP_RIGHT_TO_REACH_4" />
+	<anim item="0" id="561" name="CROUCH_TURN_180_START" />
+	<anim item="0" id="562" name="CROUCH_TURN_180_END" />
+	<anim item="0" id="563" name="CRAWL_TURN_180_START" />
+	<anim item="0" id="564" name="CRAWL_TURN_180_END" />
+	<anim item="0" id="565" name="LEDGE_JUMP_UP_START" />
+	<anim item="0" id="566" name="LEDGE_JUMP_UP_END" />
+	<anim item="0" id="567" name="LEDGE_JUMP_BACK_START" />
+	<anim item="0" id="568" name="LEDGE_JUMP_BACK_END" />
+	<anim item="0" id="569" name="UNDERWATER_WALL_KICK" />
 
     <!--LARA EXTRA ANIMATIONS -->
     <anim item="1" id="0" name="PULL_DAGGER_FROM_DRAGON" />
