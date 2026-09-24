@@ -130,8 +130,8 @@ end
 -- !Section "Particles"
 -- !Description "Emit an air bubble effect from a chosen moveable. Moveable must be placed underwater"
 -- !Arguments "NewLine, Moveables, 50, Moveable to emit air bubble from."
--- !Arguments "Numerical, 50, [ 0 | 1024 | 0 ], {0}, joint number (optional)"
--- !Arguments "NewLine, Vector3, 50, [ -32000 | 32000 ], { TEN.Vec3(.1,.1,.1) }, offset from joint position (in world units)"
+-- !Arguments "Numerical, 50, [ 0 | 31 | 0 ], {0}, joint number (optional)"
+-- !Arguments "NewLine, Vector3, 50, [ -32000 | 32000 ], { TEN.Vec3(0,0,0) }, offset from joint position (in world units)"
 -- !Arguments "Numerical, 25, [ 0 | 1024 | 0 ], {32}, size"
 -- !Arguments "Numerical, 25, [ 0 | 1024 | 0 ], {32}, oscillation amplitude"
 
@@ -153,8 +153,8 @@ end
 -- !Section "Particles"
 -- !Description "Emit a blood effect from a chosen moveable."
 -- !Arguments "NewLine, Moveables, 75, Moveable to emit blood from."
--- !Arguments "Numerical, 25, [ 0 | 1024 | 0 ], {0}, joint number (optional)"
--- !Arguments "NewLine, Vector3, 75, [ -32000 | 32000 ], { TEN.Vec3(.1,.1,.1) }, offset from joint position (in world units)"
+-- !Arguments "Numerical, 25, [ 0 | 31 | 0 ], {0}, joint number (optional)"
+-- !Arguments "NewLine, Vector3, 75, [ -32000 | 32000 ], { TEN.Vec3(0,0,0) }, offset from joint position (in world units)"
 -- !Arguments "Numerical, 25, [ 0 | 1024 | 0 ], {1}, sprite count per game tick"
 
 LevelFuncs.Engine.Node.EmitBloodMoveable = function(mov, joint, offset, spriteCount)
