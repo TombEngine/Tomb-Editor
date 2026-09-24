@@ -574,7 +574,7 @@ namespace TombLib.Wad.Catalog
                 case TRVersion.Game.TRNG:
                     return "TRNG";
                 case TRVersion.Game.TRNGCE:
-                    return "TRNGCE";
+                    return "TRNG-CE";
                 case TRVersion.Game.TR5:
                     return "Tomb Raider 5";
                 case TRVersion.Game.TombEngine:

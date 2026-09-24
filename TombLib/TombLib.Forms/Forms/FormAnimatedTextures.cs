@@ -387,7 +387,7 @@ namespace TombLib.Forms
 					frameCount += frame.Repeat;
 
 			if (tooManyFramesWarning.Visible = _version.IsNG() && frameCount > _maxLegacyFrames)
-				toolTip.SetToolTip(tooManyFramesWarning, "This animation uses " + frameCount + " frames which is more than " + _maxLegacyFrames + "!\nThis will cause crash in TRNG / TRNGCE!");
+				toolTip.SetToolTip(tooManyFramesWarning, "This animation uses " + frameCount + " frames which is more than " + _maxLegacyFrames + "!\nThis will crash the game!");
 
 			if (comboEffect.Items.Contains(selectedSet.AnimationType))
 				comboEffect.SelectedItem = selectedSet.AnimationType;

@@ -376,7 +376,7 @@ namespace TombLib.LevelData.IO
                     if (level.Settings.GameVersion == TRVersion.Game.TombEngine)
                         progressReporter.ReportWarn("You are trying to convert a project which is already TEN project.");
                     else
-                        progressReporter.ReportWarn("Only TR4, TRNG and TRNGCE projects can be converted to TEN at this time.");
+                        progressReporter.ReportWarn("Only TR4, TRNG and TRNG-CE projects can be converted to TEN at this time.");
 
                     return string.Empty;
                 }

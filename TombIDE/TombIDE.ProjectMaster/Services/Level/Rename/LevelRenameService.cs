@@ -124,7 +124,7 @@ public sealed class LevelRenameService : ILevelRenameService
 			return state;
 		}
 
-		// Handle TR4/TRNG-based engines - both script and language entries
+		// Handle TR4 and NG-based engines - both script and language entries
 		bool scriptDefined = isScriptDefined(level.Name);
 		bool stringDefined = isStringDefined(level.Name);
 

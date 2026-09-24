@@ -14,6 +14,7 @@ using TombIDE.ScriptingStudio.ToolWindows;
 using TombIDE.ScriptingStudio.UI;
 using TombIDE.Shared;
 using TombIDE.Shared.SharedClasses;
+using TombLib.LevelData;
 using TombLib.Scripting.Bases;
 using TombLib.Scripting.ClassicScript;
 using TombLib.Scripting.ClassicScript.Enums;
@@ -436,7 +437,7 @@ namespace TombIDE.ScriptingStudio
 
 			if (IDE.Instance.Project.GameVersion == TombLib.LevelData.TRVersion.Game.TR4)
 				CompileTR4Script();
-			else if (IDE.Instance.Project.GameVersion is TombLib.LevelData.TRVersion.Game.TRNG or TombLib.LevelData.TRVersion.Game.TRNGCE)
+			else if (IDE.Instance.Project.GameVersion.IsNG())
 				CompileTRNGScript();
 		}
 

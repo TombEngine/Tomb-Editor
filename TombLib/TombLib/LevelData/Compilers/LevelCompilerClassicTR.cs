@@ -76,11 +76,16 @@ namespace TombLib.LevelData.Compilers
 
             if (_level.IsNG)
             {
-                ngVersion = DetectTRNGVersion();
-
-                // Plugin support was introduced in TRNG 1.3.0.0, but TRNG derivatives (e.g. TRNGCE)
-                // always support plugins, regardless of their own version scheme.
-                _supportsTRNGPlugins = _level.Settings.GameVersion == TRVersion.Game.TRNGCE || new Version(ngVersion) >= new Version(1, 3, 0, 0);
+                if (_level.Settings.GameVersion == TRVersion.Game.TRNGCE)
+                {
+                    ngVersion = "1.3.0.7";
+                    _supportsTRNGPlugins = true;
+                }
+                else
+                {
+                    ngVersion = DetectTRNGVersion();
+                    _supportsTRNGPlugins = new Version(ngVersion) >= new Version(1, 3, 0, 0);
+                }
             }
 
             ReportProgress(0, "Tomb Raider Level Compiler");
@@ -571,21 +576,16 @@ namespace TombLib.LevelData.Compilers
 
         public string DetectTRNGVersion()
         {
-            bool isTRNGCE = _level.Settings.GameVersion == TRVersion.Game.TRNGCE;
-
-            string dllName = isTRNGCE ? "TRNGCE.dll" : "Tomb_NextGeneration.dll";
-            var buffer = PathC.GetDirectoryNameTry(_level.Settings.MakeAbsolute(_level.Settings.GameExecutableFilePath)) + "\\" + dllName;
-
+            var buffer = PathC.GetDirectoryNameTry(_level.Settings.MakeAbsolute(_level.Settings.GameExecutableFilePath)) + "\\Tomb_NextGeneration.dll";
             if (File.Exists(buffer))
             {
                 buffer = (FileVersionInfo.GetVersionInfo(buffer)).ProductVersion.Replace(",", ".").Replace(" ", string.Empty);
-                _progressReporter.ReportInfo((isTRNGCE ? "TRNGCE" : "TRNG") + " found, version is " + buffer);
+                _progressReporter.ReportInfo("TRNG found, version is " + buffer);
             }
             else
             {
                 buffer = "1.3.0.6";
-                _progressReporter.ReportWarn(dllName + " wasn't found in game directory. Probably you're using " +
-                    (isTRNGCE ? "TRNGCE" : "TRNG") + " target on vanilla TR4/TRLE?");
+                _progressReporter.ReportWarn("Tomb_NextGeneration.dll wasn't found in game directory. Probably you're using TRNG target on vanilla TR4/TRLE?");
             }
 
             return buffer;

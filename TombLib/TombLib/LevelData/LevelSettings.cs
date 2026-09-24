@@ -27,7 +27,7 @@ namespace TombLib.LevelData
         LevelName,
         [Description("The engine.")]
         EngineVersion,
-        [Description("The sound engine (Outputs TR4 for the 'TRNG' engine).")]
+        [Description("The sound engine (Outputs TR4 for TRNG and TRNG-CE engines).")]
         SoundEngineVersion
     }
 

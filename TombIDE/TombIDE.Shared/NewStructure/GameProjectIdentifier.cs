@@ -300,7 +300,7 @@ namespace TombIDE.Shared.NewStructure
 		{
 			FindEngineExecutable(searchingDirectory, out TRVersion.Game version);
 
-			if (version is not TRVersion.Game.TRNG and not TRVersion.Game.TRNGCE)
+			if (!version.IsNG())
 				return null;
 
 			string launcherExecutable = FindLauncherExecutable(searchingDirectory);

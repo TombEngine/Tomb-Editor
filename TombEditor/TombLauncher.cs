@@ -55,7 +55,7 @@ namespace TombEditor
                         {
                             try
                             {
-                                Tomb4ConvinienceImprovements.Do(process2, info.WorkingDirectory, levelPath, settings.GameVersion.IsNG());
+                                Tomb4ConvinienceImprovements.Do(process2, info.WorkingDirectory, levelPath, settings.GameVersion);
                             }
                             catch (Exception exc)
                             {
@@ -143,14 +143,14 @@ namespace TombEditor
             private const int maxTaskBarShowDelay = 5000;
             private const int maxRetryDelay = 300;
 
-            public static void Do(Process process, string tomb4Path, string levelOutputPath, bool isNG)
+            public static void Do(Process process, string tomb4Path, string levelOutputPath, TRVersion.Game version)
             {
-                if (!isNG)
+                if (!version.IsNG())
                 {
                     // Patch binary to allow quick start. This will work for original tomb4.exe.
                     Tomb4Patcher.ApplyPatches(process, tomb4Path, levelOutputPath);
                 }
-                else
+                else if (version == TRVersion.Game.TRNG)
                 {
                     // Avoid the 'Press CTRL window for settings' window of the TRNG
                     // engine, to get into the game quicker.

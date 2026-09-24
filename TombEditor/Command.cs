@@ -2154,7 +2154,7 @@ namespace TombEditor
                 }
             });
 
-            AddCommand("SetRoomCold", "Set room to cold (TRNG only)", CommandType.Rooms, delegate (CommandArgs args)
+            AddCommand("SetRoomCold", "Set room to cold (TRNG and TRNG-CE only)", CommandType.Rooms, delegate (CommandArgs args)
             {
                 if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TR1X, "Cold flag"))
                     return;
@@ -2177,7 +2177,7 @@ namespace TombEditor
                 }
             });
 
-            AddCommand("SetRoomDamage", "Set room to damage (TRNG only)", CommandType.Rooms, delegate (CommandArgs args)
+            AddCommand("SetRoomDamage", "Set room to damage (TRNG and TRNG-CE only)", CommandType.Rooms, delegate (CommandArgs args)
             {
                 if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TR1X, "Damage flag"))
                     return;

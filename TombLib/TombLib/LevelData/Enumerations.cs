@@ -23,7 +23,7 @@ namespace TombLib.LevelData
         }
 
         /// <summary>
-        /// Returns the native (non-TRX, non-TRNG-based) variant of the game version, if applicable.
+        /// Returns the native (non-TRX, non-NG-based) variant of the game version, if applicable.
         /// </summary>
         public static Game Native(this Game ver) => ver switch
         {
@@ -34,12 +34,6 @@ namespace TombLib.LevelData
             Game.TRNGCE => Game.TR4,
             _ => ver
         };
-
-        /// <summary>
-        /// Returns true for the TRNG engine and its derivatives (e.g. TRNGCE), which share its
-        /// level format, scripting interface and plugin ecosystem.
-        /// </summary>
-        public static bool IsNG(this Game ver) => ver is Game.TRNG or Game.TRNGCE;
 
         /// <summary>
         /// Returns all game versions, including TRX variants and TRNG.
@@ -82,6 +76,9 @@ namespace TombLib.LevelData
 
         public static bool SupportsSplits(this Game ver)
             => ver >= Game.TR3;
+
+        public static bool IsNG(this Game ver)
+            => ver is Game.TRNG or Game.TRNGCE;
 
         public static bool IsTRX(this Game ver)
             => ver == Game.TR1X || ver == Game.TR2X || ver == Game.TR3X;

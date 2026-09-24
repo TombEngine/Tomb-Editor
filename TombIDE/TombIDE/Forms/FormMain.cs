@@ -109,7 +109,7 @@ namespace TombIDE
 				levelManager.Initialize(_ide);
 				miscellaneous.Initialize(_ide);
 
-				if (_ide.Project.GameVersion is TRVersion.Game.TRNG or TRVersion.Game.TRNGCE)
+				if (_ide.Project.GameVersion.IsNG())
 					pluginManager.Initialize(_ide);
 
 				sideBar.SelectedIDETabChanged += SideBar_SelectedIDETabChanged;
@@ -242,7 +242,7 @@ namespace TombIDE
 					break;
 
 				case IDETab.PluginManager:
-					if (_ide.Project.GameVersion is TRVersion.Game.TRNG or TRVersion.Game.TRNGCE)
+					if (_ide.Project.GameVersion.IsNG())
 						tablessTabControl.SelectTab(2);
 					else if (_ide.Project.GameVersion == TRVersion.Game.TombEngine)
 						VSCodeUtils.OpenDirectoryInVSCode(this, _ide.IDEConfiguration, _ide.Project.GetScriptRootDirectory());

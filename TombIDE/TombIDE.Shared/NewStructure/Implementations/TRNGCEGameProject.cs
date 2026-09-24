@@ -24,7 +24,7 @@ namespace TombIDE.Shared.NewStructure
 			try
 			{
 				string trngceDllFilePath = Path.Combine(GetEngineRootDirectoryPath(), "TRNGCE.dll");
-				string versionInfo = FileVersionInfo.GetVersionInfo(trngceDllFilePath).ProductVersion;
+				string versionInfo = FileVersionInfo.GetVersionInfo(trngceDllFilePath).FileVersion;
 				return new Version(versionInfo.Replace(" ", string.Empty).Replace(',', '.'));
 			}
 			catch

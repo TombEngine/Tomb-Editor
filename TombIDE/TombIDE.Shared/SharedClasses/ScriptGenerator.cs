@@ -17,7 +17,7 @@ public static class ScriptGenerator
 	/// <param name="dataFileName">The data file name (without extension).</param>
 	/// <param name="gameVersion">The target game version.</param>
 	/// <param name="ambientSoundId">The ambient sound or track ID.</param>
-	/// <param name="horizon">Whether to enable the horizon effect (TR4/TRNG/TombEngine only).</param>
+	/// <param name="horizon">Whether to enable the horizon effect (TR4/TRNG/TRNG-CE/TombEngine only).</param>
 	/// <returns>
 	/// A <see cref="ScriptGenerationResult"/> containing the generated scripts and any additional files to create,
 	/// or <see langword="null"/> if the game version is unsupported.

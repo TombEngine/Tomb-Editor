@@ -5811,7 +5811,7 @@ namespace TombEditor
         {
             if (!_editor.Level.Settings.GameVersion.IsNG())
             {
-                _editor.SendMessage("Itemgroup is TRNG / TRNGCE-only feature.", PopupType.Info);
+                _editor.SendMessage("Itemgroup is available only for TRNG and TRNG-CE.", PopupType.Info);
                 return;
             }
 
