@@ -20,7 +20,7 @@
 		/// <summary>
 		/// Renames the project and its directory if specified.
 		/// </summary>
-		void Rename(string newName, bool renameDirectory = false);
+		void Rename(string newName, bool renameDirectory = false, bool renameTrprojFile = false);
 
 		/// <summary>
 		/// Saves the project's settings.

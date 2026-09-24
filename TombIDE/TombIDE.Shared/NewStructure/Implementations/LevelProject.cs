@@ -80,7 +80,7 @@ namespace TombIDE.Shared.NewStructure.Implementations
 		public bool IsExternal(string relativeToLevelsDirectoryPath)
 			=> !DirectoryPath.StartsWith(relativeToLevelsDirectoryPath, StringComparison.OrdinalIgnoreCase);
 
-		public void Rename(string newName, bool renameDirectory = false)
+		public void Rename(string newName, bool renameDirectory = false, bool renameTrprojFile = false)
 		{
 			if (renameDirectory)
 			{
