@@ -1091,9 +1091,11 @@ namespace TombLib.LevelData
             RayTraceZ(room, (int)position.X, (int)position.Y, (int)position.Z, (int)lightPosition.X, (int)lightPosition.Y, (int)lightPosition.Z));
         }
 
-        private static int GetLightSampleCount(LightInstance light, LightQuality defaultQuality = LightQuality.Low)
+        private static int GetLightSampleCount(LightInstance light, LightQuality defaultQuality, bool overrideIndividualQualitySettings)
         {
-            LightQuality quality = light.Quality == LightQuality.Default ? defaultQuality : light.Quality;
+            LightQuality quality = overrideIndividualQualitySettings || light.Quality == LightQuality.Default
+                ? defaultQuality
+                : light.Quality;
 
             return quality switch
             {
@@ -1144,7 +1146,7 @@ namespace TombLib.LevelData
                 return 1.0f;
 
             int numSamples = highQuality
-                ? GetLightSampleCount(light, room.Level.Settings.DefaultLightQuality)
+                ? GetLightSampleCount(light, room.Level.Settings.DefaultLightQuality, room.Level.Settings.OverrideIndividualLightQualitySettings)
                 : 1;
 
             float result = GetSampleSumFromLightTracing(numSamples, room, position, light);
