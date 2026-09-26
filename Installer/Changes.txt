@@ -41,6 +41,9 @@ TEN nodes:
  * Added a node to unswap a previously swapped mesh.
  * Added nodes for checking and setting various aspects of creature AI.
  * Added a node to check Lara's traversal mode.
+ * Added node to emit weather effects from a volume.
+ * Added node to emit blood from a moveable.
+ * Added node to emit air bubble from a moveable.
  * Added photo-mode nodes for unlocking accessories, expressions, frames, outfits and poses.
  * Updated keypad nodes to use display items and allow conditional numerical input.
  * Fixed CLOCKWORK_BEETLE, EXAMINE and WATERSKIN items not appearing in the inventory nodes.
