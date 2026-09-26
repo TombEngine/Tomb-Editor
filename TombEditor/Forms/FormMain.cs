@@ -21,6 +21,7 @@ namespace TombEditor.Forms
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private readonly Editor _editor;
+        private readonly WpfEditorShortcutBridge _wpfEditorShortcutBridge;
 
         // Dockable tool windows are placed on actual dock panel at runtime.
 
@@ -49,6 +50,7 @@ namespace TombEditor.Forms
         {
             InitializeComponent();
             _editor = editor;
+            _wpfEditorShortcutBridge = new WpfEditorShortcutBridge(this, _editor);
             _editor.EditorEventRaised += EditorEventRaised;
 
             // Initialize everything needed
@@ -96,6 +98,7 @@ namespace TombEditor.Forms
             ClipboardEvents.ClipboardChanged -= ClipboardEvents_ClipboardChanged;
             if (disposing)
             {
+                _wpfEditorShortcutBridge.Dispose();
                 Application.RemoveMessageFilter(dockArea.DockContentDragFilter);
                 Application.RemoveMessageFilter(dockArea.DockResizeFilter);
                 _editor.EditorEventRaised -= EditorEventRaised;
