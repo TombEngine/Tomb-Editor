@@ -18,11 +18,12 @@ namespace TombLib.LevelData
             TR2X = 12,
             TR3X = 13,
             TRNG = 16,
+            TRNGCE = 17,
             TombEngine = 18,
         }
 
         /// <summary>
-        /// Returns the native (non-TRX, non-TRNG) variant of the game version, if applicable.
+        /// Returns the native (non-TRX, non-TRNG-based) variant of the game version, if applicable.
         /// </summary>
         public static Game Native(this Game ver) => ver switch
         {
@@ -30,8 +31,15 @@ namespace TombLib.LevelData
             Game.TR2X => Game.TR2,
             Game.TR3X => Game.TR3,
             Game.TRNG => Game.TR4,
+            Game.TRNGCE => Game.TR4,
             _ => ver
         };
+
+        /// <summary>
+        /// Returns true for the TRNG engine and its derivatives (e.g. TRNGCE), which share its
+        /// level format, scripting interface and plugin ecosystem.
+        /// </summary>
+        public static bool IsNG(this Game ver) => ver is Game.TRNG or Game.TRNGCE;
 
         /// <summary>
         /// Returns all game versions, including TRX variants and TRNG.

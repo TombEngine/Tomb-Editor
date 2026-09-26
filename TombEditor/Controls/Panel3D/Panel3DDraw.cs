@@ -1953,6 +1953,7 @@ namespace TombEditor.Controls.Panel3D
                     break;
 
                 case TRVersion.Game.TRNG:
+                case TRVersion.Game.TRNGCE:
                     lightMode = _editor.Level.Settings.Room32BitLighting ? 0 : 1;
                     break;
             }

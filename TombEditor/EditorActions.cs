@@ -4306,7 +4306,7 @@ namespace TombEditor
             using (var form = new FormOperationDialog("Build level", autoCloseWhenDone, false,
                 (progressReporter, cancelToken) =>
                 {
-                    using (var compiler = level.Settings.GameVersion <= TRVersion.Game.TRNG ?
+                    using (var compiler = level.Settings.GameVersion <= TRVersion.Game.TRNGCE ?
                             (LevelCompiler)(new LevelCompilerClassicTR(level, fileName, progressReporter)) :
                             (LevelCompiler)(new LevelCompilerTombEngine(level, fileName, progressReporter)))
                     {
@@ -4701,10 +4701,10 @@ namespace TombEditor
                 incomingVersion != settings.GameVersion.Native())
             {
                 // HACK: We can't tell the difference between TR4 and TRNG wads for sure. Hence, if incoming
-                // version is TR4 and default game version is TRNG, we force incoming version as TRNG as well.
+                // version is TR4 and default game version is NG-based, we force incoming version as that version as well.
                 if (incomingVersion == TRVersion.Game.TR4 &&
-                    _editor.Configuration.Editor_DefaultProjectGameVersion == TRVersion.Game.TRNG)
-                    incomingVersion = TRVersion.Game.TRNG;
+                    _editor.Configuration.Editor_DefaultProjectGameVersion.IsNG())
+                    incomingVersion = _editor.Configuration.Editor_DefaultProjectGameVersion;
 
                 settings.GameVersion = incomingVersion;
                 settings.ConvertLevelExtension();
@@ -5809,9 +5809,9 @@ namespace TombEditor
 
         public static void MakeQuickItemGroup(IWin32Window owner)
         {
-            if (_editor.Level.Settings.GameVersion != TRVersion.Game.TRNG)
+            if (!_editor.Level.Settings.GameVersion.IsNG())
             {
-                _editor.SendMessage("Itemgroup is TRNG-only feature.", PopupType.Info);
+                _editor.SendMessage("Itemgroup is TRNG / TRNGCE-only feature.", PopupType.Info);
                 return;
             }
 

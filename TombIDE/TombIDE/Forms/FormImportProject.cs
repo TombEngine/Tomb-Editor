@@ -145,6 +145,7 @@ namespace TombIDE
                     TRVersion.Game.TR3X => new TR3XGameProject(projectName, projectDirectory, levelsDirectoryPath),
                     TRVersion.Game.TR4 => new TR4GameProject(projectName, projectDirectory, levelsDirectoryPath, scriptDirectoryPath),
 					TRVersion.Game.TRNG => new TRNGGameProject(projectName, projectDirectory, levelsDirectoryPath, scriptDirectoryPath, ProjectDTO.PluginsDirectoryPath),
+					TRVersion.Game.TRNGCE => new TRNGCEGameProject(projectName, projectDirectory, levelsDirectoryPath, scriptDirectoryPath, ProjectDTO.PluginsDirectoryPath),
 					TRVersion.Game.TombEngine => new TENGameProject(projectName, projectDirectory, levelsDirectoryPath),
 					_ => throw new NotImplementedException("Detected game version doesn't match a supported version.")
 				};
