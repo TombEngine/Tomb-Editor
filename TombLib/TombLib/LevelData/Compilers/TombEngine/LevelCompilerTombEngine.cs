@@ -445,6 +445,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
             _moveablesTable = new Dictionary<MoveableInstance, int>(new ReferenceEqualityComparer<MoveableInstance>());
             _aiObjectsTable = new Dictionary<MoveableInstance, int>(new ReferenceEqualityComparer<MoveableInstance>());
 
+            bool laraPlaced = false;
+
             foreach (Room room in _level.ExistingRooms)
                 foreach (var instance in room.Objects.OfType<MoveableInstance>())
                 {
@@ -453,6 +455,17 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     {
                         _progressReporter.ReportWarn("Moveable '" + instance + "' was not included in the level because it is missing the *.wad file.");
                         continue;
+                    }
+
+                    if (wadMoveable.Id.TypeId == 0)
+                    {
+                        if (laraPlaced)
+                        {
+                            _progressReporter.ReportWarn("Extra Lara was found and removed from room " + instance.Room + " to prevent crashes. Please use only one Lara in level.");
+                            continue;
+                        }
+                        else
+                            laraPlaced = true;
                     }
 
                     Vector3 position = instance.Room.WorldPos + instance.Position;
