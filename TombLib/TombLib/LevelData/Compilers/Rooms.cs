@@ -1761,35 +1761,12 @@ namespace TombLib.LevelData.Compilers
                     (room.OriginalRoom.Properties.LightInterpolationMode == RoomLightInterpolationMode.Interpolate ||
                      otherRoom.OriginalRoom.Properties.LightInterpolationMode == RoomLightInterpolationMode.Interpolate)))
                 {
-                    int x1 = p.Vertices[0].X;
-                    int y1 = p.Vertices[0].Y;
-                    int z1 = p.Vertices[0].Z;
-
-                    int x2 = x1 + 1;
-                    int y2 = y1 + 1;
-                    int z2 = z1 + 1;
-
-                    for (int i = 1; i < 4; i++)
-                    {
-                        if (p.Vertices[i].X < x1)
-                            x1 = p.Vertices[i].X;
-                        else if (p.Vertices[i].X > x2)
-                            x2 = p.Vertices[i].X + 1;
-
-                        if (p.Vertices[i].Y < y1)
-                            y1 = p.Vertices[i].Y;
-                        else if (p.Vertices[i].Y > y2)
-                            y2 = p.Vertices[i].Y + 1;
-
-                        if (p.Vertices[i].Z < z1)
-                            z1 = p.Vertices[i].Z;
-                        else if (p.Vertices[i].Z > z2)
-                            z2 = p.Vertices[i].Z + 1;
-                    }
-
                     for (int i = 0; i < room.Vertices.Count; i++)
                     {
                         var v1 = room.Vertices[i];
+                        if (!PortalShadeMatchHelper.IsCandidate(p.Vertices, v1.Position))
+                            continue;
+
                         var sig = new ShadeMatchSignature()
                         {
                             // NOTE: We keep alternate group and water flag in dictionary as well, this way we only apply vertex colour to
@@ -1799,94 +1776,85 @@ namespace TombLib.LevelData.Compilers
                             Position = new VectorInt3(v1.Position.X + room.Info.X, v1.Position.Y, v1.Position.Z + room.Info.Z)
                         };
 
-                        if (v1.Position.X >= x1 && v1.Position.X <= x2)
-                            if (v1.Position.Y >= y1 && v1.Position.Y <= y2)
-                                if (v1.Position.Z >= z1 && v1.Position.Z <= z2)
+                        v1.IsOnPortal = true;
+                        room.Vertices[i] = v1;
+
+                        for (int j = 0; j < otherRoom.Vertices.Count; j++)
+                        {
+                            uint refColor = 0;
+                            var v2 = otherRoom.Vertices[j];
+                            var isPresentInLookup = _vertexColors.TryGetValue(sig, out refColor);
+
+                            if (!isPresentInLookup)
+                            {
+                                if (_level.Settings.GameVersion != TRVersion.Game.TR5)
                                 {
-                                    v1.IsOnPortal = true;
-                                    room.Vertices[i] = v1;
+                                    if (_level.Settings.GameVersion == TRVersion.Game.TRNG && _level.Settings.Room32BitLighting)
+                                        refColor = UnpackFrom24BitPair(v1.Lighting1, v1.Lighting2);
+                                    else
+                                        refColor = v1.Lighting2;
+                                }
+                                else
+                                    refColor = v1.Color;
+                            }
 
-                                    int otherX = v1.Position.X + room.Info.X - otherRoom.Info.X;
-                                    int otherY = v1.Position.Y;
-                                    int otherZ = v1.Position.Z + room.Info.Z - otherRoom.Info.Z;
+                            if (room.Info.X + v1.Position.X == otherRoom.Info.X + v2.Position.X &&
+                                v1.Position.Y == v2.Position.Y &&
+                                room.Info.Z + v1.Position.Z == otherRoom.Info.Z + v2.Position.Z)
+                            {
+                                uint newColor = 0;
 
-                                    for (int j = 0; j < otherRoom.Vertices.Count; j++)
+                                // NOTE: We DON'T INTERPOLATE colours of both rooms in case we're dealing with alternate room and matched room
+                                // isn't alternate room itself. Instead, we simply copy vertex colour from matched base room.
+                                // This way we don't get sharp-cut half-transitioned vertex colour.
+
+                                if (flipped && otherRoom.AlternateKind != AlternateKind.AlternateRoom)
+                                {
+                                    var baseSig = new ShadeMatchSignature() { IsWater = sig.IsWater, AlternateGroup = -1, Position = sig.Position };
+
+                                    if (!_vertexColors.TryGetValue(baseSig, out newColor))
                                     {
-                                        uint refColor = 0;
-                                        var v2 = otherRoom.Vertices[j];
-                                        var isPresentInLookup = _vertexColors.TryGetValue(sig, out refColor);
-
-                                        if (!isPresentInLookup)
+                                        if (_level.Settings.GameVersion != TRVersion.Game.TR5)
                                         {
-                                            if (_level.Settings.GameVersion != TRVersion.Game.TR5)
-                                            {
-                                                if (_level.Settings.GameVersion == TRVersion.Game.TRNG && _level.Settings.Room32BitLighting)
-                                                    refColor = UnpackFrom24BitPair(v1.Lighting1, v1.Lighting2);
-                                                else
-                                                    refColor = v1.Lighting2;
-                                            }
+                                            if (_level.Settings.GameVersion == TRVersion.Game.TRNG && _level.Settings.Room32BitLighting)
+                                                newColor = UnpackFrom24BitPair(v2.Lighting1, v2.Lighting2);
                                             else
-                                                refColor = v1.Color;
+                                                newColor = v2.Lighting2;
                                         }
-
-                                        if (room.Info.X + v1.Position.X == otherRoom.Info.X + v2.Position.X &&
-                                            v1.Position.Y == v2.Position.Y &&
-                                            room.Info.Z + v1.Position.Z == otherRoom.Info.Z + v2.Position.Z)
-                                        {
-                                            uint newColor = 0;
-
-                                            // NOTE: We DON'T INTERPOLATE colours of both rooms in case we're dealing with alternate room and matched room
-                                            // isn't alternate room itself. Instead, we simply copy vertex colour from matched base room.
-                                            // This way we don't get sharp-cut half-transitioned vertex colour.
-
-                                            if (flipped && otherRoom.AlternateKind != AlternateKind.AlternateRoom)
-                                            {
-                                                var baseSig = new ShadeMatchSignature() { IsWater = sig.IsWater, AlternateGroup = -1, Position = sig.Position };
-
-                                                if (!_vertexColors.TryGetValue(baseSig, out newColor))
-                                                {
-                                                    if (_level.Settings.GameVersion != TRVersion.Game.TR5)
-                                                    {
-                                                        if (_level.Settings.GameVersion == TRVersion.Game.TRNG && _level.Settings.Room32BitLighting)
-                                                            newColor = UnpackFrom24BitPair(v2.Lighting1, v2.Lighting2);
-                                                        else
-                                                            newColor = v2.Lighting2;
-                                                    }
-                                                    else
-                                                        newColor = v2.Color;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                if (grayscale)
-                                                    newColor = (ushort)(8160 - (((8160 - v2.Lighting2) / 2) + ((8160 - refColor) / 2)));
-                                                else if (_level.Settings.GameVersion != TRVersion.Game.TR5)
-                                                {
-                                                    if (_level.Settings.GameVersion == TRVersion.Game.TRNG && _level.Settings.Room32BitLighting)
-                                                    {
-                                                        var color = UnpackFrom24BitPair(v2.Lighting1, v2.Lighting2);
-                                                        newColor = (uint)(0xff000000 | (((((color & 0xff) + (refColor & 0xff)) >> 1) |
-                                                                            256 * (((((color >> 8) & 0xff) + ((refColor >> 8) & 0xff)) >> 1) |
-                                                                                256 * ((((color >> 16) & 0xff) + ((refColor >> 16) & 0xff)) >> 1)))));
-                                                    }
-                                                    else
-                                                        newColor = (ushort)((((v2.Lighting2 & 0x1f) + (refColor & 0x1f)) >> 1) |
-                                                                        32 * (((((v2.Lighting2 >> 5) & 0x1f) + ((refColor >> 5) & 0x1f)) >> 1) |
-                                                                            32 * ((((v2.Lighting2 >> 10) & 0x1f) + ((refColor >> 10) & 0x1f)) >> 1)));
-                                                }
-                                                else
-                                                    newColor = (uint)(0xff000000 | (((((v2.Color & 0xff) + (refColor & 0xff)) >> 1) |
-                                                                        256 * (((((v2.Color >> 8) & 0xff) + ((refColor >> 8) & 0xff)) >> 1) |
-                                                                            256 * ((((v2.Color >> 16) & 0xff) + ((refColor >> 16) & 0xff)) >> 1)))));
-                                            }
-
-                                            if (!isPresentInLookup)
-                                                _vertexColors.TryAdd(sig, newColor);
-                                            else
-                                                _vertexColors[sig] = newColor;
-                                        }
+                                        else
+                                            newColor = v2.Color;
                                     }
                                 }
+                                else
+                                {
+                                    if (grayscale)
+                                        newColor = (ushort)(8160 - (((8160 - v2.Lighting2) / 2) + ((8160 - refColor) / 2)));
+                                    else if (_level.Settings.GameVersion != TRVersion.Game.TR5)
+                                    {
+                                        if (_level.Settings.GameVersion == TRVersion.Game.TRNG && _level.Settings.Room32BitLighting)
+                                        {
+                                            var color = UnpackFrom24BitPair(v2.Lighting1, v2.Lighting2);
+                                            newColor = (uint)(0xff000000 | (((((color & 0xff) + (refColor & 0xff)) >> 1) |
+                                                                256 * (((((color >> 8) & 0xff) + ((refColor >> 8) & 0xff)) >> 1) |
+                                                                    256 * ((((color >> 16) & 0xff) + ((refColor >> 16) & 0xff)) >> 1)))));
+                                        }
+                                        else
+                                            newColor = (ushort)((((v2.Lighting2 & 0x1f) + (refColor & 0x1f)) >> 1) |
+                                                            32 * (((((v2.Lighting2 >> 5) & 0x1f) + ((refColor >> 5) & 0x1f)) >> 1) |
+                                                                32 * ((((v2.Lighting2 >> 10) & 0x1f) + ((refColor >> 10) & 0x1f)) >> 1)));
+                                    }
+                                    else
+                                        newColor = (uint)(0xff000000 | (((((v2.Color & 0xff) + (refColor & 0xff)) >> 1) |
+                                                            256 * (((((v2.Color >> 8) & 0xff) + ((refColor >> 8) & 0xff)) >> 1) |
+                                                                256 * ((((v2.Color >> 16) & 0xff) + ((refColor >> 16) & 0xff)) >> 1)))));
+                                }
+
+                                if (!isPresentInLookup)
+                                    _vertexColors.TryAdd(sig, newColor);
+                                else
+                                    _vertexColors[sig] = newColor;
+                            }
+                        }
                     }
                 }
             }
