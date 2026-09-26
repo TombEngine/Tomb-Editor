@@ -20,10 +20,12 @@ Tomb Editor:
  * Added support for specifying moveable instance names in TRX.
  * Added support for moveable item properties in TRX levels; refer to LostArtefacts documentation.
  * Added level compilation warning for TEN targets if multiple Lara objects are placed in the level.
+ * Added drag and drop support for cameras and sinks into the Node Editor.
  * Fixed "Map animated textures" checkbox not unchecking in Level Settings dialog.
  * Fixed occasional exceptions after closing Node Editor.
  * Fixed exception while opening texture lists in Remap Texture dialog.
  * Fixed being unable to use sound IDs in TRX levels above the OG sound map size without defining all lower IDs
+ * Fixed pistol ammo pickups in TR1 and TR2 not being converted to the correct engine type.
 
 WadTool:
  * Added an option to consolidate textures for an object into a single set of texture pages.
@@ -40,6 +42,9 @@ TEN nodes:
  * Added a node to unswap a previously swapped mesh.
  * Added nodes for checking and setting various aspects of creature AI.
  * Added a node to check Lara's traversal mode.
+ * Added node to emit weather effects from a volume.
+ * Added node to emit blood from a moveable.
+ * Added node to emit air bubble from a moveable.
  * Added photo-mode nodes for unlocking accessories, expressions, frames, outfits and poses.
  * Updated keypad nodes to use display items and allow conditional numerical input.
  * Fixed CLOCKWORK_BEETLE, EXAMINE and WATERSKIN items not appearing in the inventory nodes.

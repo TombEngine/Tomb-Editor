@@ -125,3 +125,81 @@ LevelFuncs.Engine.Node.Shockwave = function(pos, meshnum, innerRadius, outerRadi
 		TEN.Effects.EmitShockwave(origin, radiusInVar, radiusOutVar, color, lifetime, speed, angle, damage)
 	end
 end
+
+-- !Name "Emit air bubble from moveable"
+-- !Section "Particles"
+-- !Description "Emit an air bubble effect from a chosen moveable. Moveable must be placed underwater"
+-- !Arguments "NewLine, Moveables, 50, Moveable to emit air bubble from."
+-- !Arguments "Numerical, 50, [ 0 | 31 | 0 ], {0}, joint number (optional)"
+-- !Arguments "NewLine, Vector3, 50, [ -32000 | 32000 ], { TEN.Vec3(0,0,0) }, offset from joint position (in world units)"
+-- !Arguments "Numerical, 25, [ 0 | 1024 | 0 ], {32}, size"
+-- !Arguments "Numerical, 25, [ 0 | 1024 | 0 ], {32}, oscillation amplitude"
+
+LevelFuncs.Engine.Node.EmitAirBubbleMoveable = function(mov, joint, offset, size, osc)
+	
+	local moveable = TEN.Objects.GetMoveableByName(mov)
+	local moveableRoom = moveable:GetRoom()	
+	local origin = moveable:GetJointPosition(joint, offset) 
+
+	if (moveableRoom:GetFlag(TEN.Objects.RoomFlagID.WATER) == false) then
+		PrintLog("Moveable '" .. mov .. "' must be placed underwater to emit air bubbles.", TEN.Util.LogLevel.WARNING, false)
+		return
+	end
+
+	TEN.Effects.EmitAirBubble(origin, size, osc)
+end
+
+-- !Name "Emit blood from moveable"
+-- !Section "Particles"
+-- !Description "Emit a blood effect from a chosen moveable."
+-- !Arguments "NewLine, Moveables, 75, Moveable to emit blood from."
+-- !Arguments "Numerical, 25, [ 0 | 31 | 0 ], {0}, joint number (optional)"
+-- !Arguments "NewLine, Vector3, 75, [ -32000 | 32000 ], { TEN.Vec3(0,0,0) }, offset from joint position (in world units)"
+-- !Arguments "Numerical, 25, [ 0 | 1024 | 0 ], {1}, sprite count per game tick"
+
+LevelFuncs.Engine.Node.EmitBloodMoveable = function(mov, joint, offset, spriteCount)
+	
+	local moveable = TEN.Objects.GetMoveableByName(mov)
+	local origin = moveable:GetJointPosition(joint, offset) 
+
+	TEN.Effects.EmitBlood(origin,spriteCount)
+end
+
+-- !Name "Emit weather from volume"
+-- !Section "Particles"
+-- !Description "Emit a weather effect from a chosen volume."
+-- !Arguments "NewLine, Volumes, 80,  Volume to emit weather from.\nAutomatically adjusts to the width of the assigned volume."
+-- !Arguments "Enumeration, 20, [ Rain | Snow ], Weather type"
+-- !Arguments "NewLine, Color, { TEN.Color(255,255,255) } , Color of weather effect"
+-- !Arguments "NewLine, Vector3, 50, [ 0 | 64 ], { TEN.Vec3(.1,.1,.1) }, initial velocity"
+-- !Arguments "Numerical, 25, [ 0 | 5 | 1 | 0.1 | 0.5 ], {1.0}, lifetime in seconds"
+-- !Arguments "Numerical, 25, [ 0 | 2 | 1 | 0.1 | 0.5 ], {1.0}, weather strength"
+-- !Arguments "NewLine, Boolean, 50, Enable clustering"
+-- !Arguments "Boolean, 50, Check wind flag"
+
+LevelFuncs.Engine.Node.EmitWeatherVolume = function(vol, weatherType, color, velocity, life, strength, enableClustering, checkWindFlag)
+
+	if weatherType == 0 then
+		weatherType = TEN.Flow.WeatherType.RAIN
+	elseif weatherType == 1 then
+		weatherType = TEN.Flow.WeatherType.SNOW
+	end
+	
+	local volume = TEN.Objects.GetVolumeByName(vol)
+
+	local weatherData =
+	{
+		position = volume:GetPosition(),
+		initialVelocity = velocity,
+		type = weatherType,
+		life = life,
+		strength = strength,
+		enableClustering = enableClustering,
+		checkWindFlag = checkWindFlag,
+		baseColor = color,
+		spawnRange = volume:GetScale(),
+		spawnRotation = volume:GetRotation()
+	}
+
+	TEN.Effects.EmitWeather(weatherData)
+end

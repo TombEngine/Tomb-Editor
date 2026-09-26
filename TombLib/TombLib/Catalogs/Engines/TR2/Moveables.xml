@@ -140,7 +140,7 @@
     <moveable id="161" name="Harpoon gun" id2="139" ten="HARPOON_ITEM"/>
     <moveable id="162" name="M16" id2="140" ten="HK_ITEM"/>
     <moveable id="163" name="Grenade launcher" id2="141" ten="GRENADE_GUN_ITEM"/>
-    <moveable id="164" name="Pistol ammo"  ten="PISTOL_AMMO_ITEM"/>
+    <moveable id="164" name="Pistol ammo" id2="142" ten="PISTOL_AMMO_ITEM"/>
     <moveable id="165" name="Shotgun ammo" id2="143" ten="SHOTGUN_AMMO1_ITEM"/>
     <moveable id="166" name="Auto-pistol ammo" id2="144" ten="PISTOLS_AMMO_ITEM"/>
     <moveable id="167" name="Uzi ammo" id2="145" ten="UZI_AMMO_ITEM"/>
