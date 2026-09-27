@@ -19,7 +19,6 @@ namespace TombLib.Forms
 		public bool MaterialChanged => _saveXml;
 
 		private MaterialData _materialData;
-		private Texture _currentTexture;
 		private string _texturePath;
 
 		private readonly Color _correctColor;
@@ -279,7 +278,6 @@ namespace TombLib.Forms
 				_saveXml = true;
 			}
 
-			_currentTexture = texture;
 			_materialData = material;
 			_texturePath = material.ColorMap;
 
