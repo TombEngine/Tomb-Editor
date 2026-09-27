@@ -260,6 +260,21 @@ LevelFuncs.Engine.Node.DiaryUnlockPages = function(object, index, notification)
 	end
 end
 
+-- !Name "Unlock a single diary page"
+-- !Section "Diary"
+-- !Description "Unlock a single diary page. Pages are unlocked in the order this function is called, and the diary displays them in that order. This sets the diary to per-page unlock mode."
+-- !Arguments "NewLine, 80, WadSlots, [ _ITEM ], {TEN.Objects.ObjID.DIARY_ITEM}, Diary object to unlock a page for" 
+-- !Arguments "Numerical, 20, [ 1 | 65535 ], {1}, Page number to unlock"
+-- !Arguments "NewLine, Boolean, Notification"
+LevelFuncs.Engine.Node.DiaryUnlockPage = function(object, index, notification)
+	
+	local dataName = object .. "_diarydata"
+	if GameVars.Engine.Diaries[dataName] then
+		local diary = CustomDiary.Get(object)
+		diary:UnlockPage(index, notification)
+	end
+end
+
 -- !Name "Clear a diary page"
 -- !Section "Diary"
 -- !Description "Clears the specified diary page."
