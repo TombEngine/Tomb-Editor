@@ -1087,7 +1087,7 @@ namespace TombEditor
                     c =>
                     {
                         room.Properties.AmbientLight = c.ToFloat3Color() * 2.0f;
-                        args.Editor.SelectedRoom.RebuildLighting(args.Editor.Configuration.Rendering3D_HighQualityLightPreview);
+                        args.Editor.UpdateRoomLighting(room);
                         args.Editor.RoomPropertiesChange(room);
                     }, args.Editor.Configuration.UI_ColorScheme))
                 {
@@ -1110,7 +1110,7 @@ namespace TombEditor
                 }
 
                 args.Editor.UndoManager.Push(undo);
-                args.Editor.SelectedRoom.RebuildLighting(args.Editor.Configuration.Rendering3D_HighQualityLightPreview);
+                args.Editor.UpdateRoomLighting(room);
                 args.Editor.RoomPropertiesChange(room);
             });
 

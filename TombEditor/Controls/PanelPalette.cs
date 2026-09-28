@@ -121,12 +121,7 @@ namespace TombEditor.Controls
                     _editor.ToggleHiddenSelection(true);
 
                     var instance = _editor.SelectedObject as IColorable;
-                    instance.Color = SelectedColor.ToFloat3Color() * 2.0f;
-
-                    if (_editor.SelectedObject is LightInstance)
-                        _editor.SelectedObject.Room.RebuildLighting(_editor.Configuration.Rendering3D_HighQualityLightPreview);
-
-                    _editor.ObjectChange(_editor.SelectedObject, ObjectChangeType.Change);
+                    EditorActions.ApplyObjectColor(instance, SelectedColor.ToFloat3Color() * 2.0f);
                 }
 
                 _editor.LastUsedPaletteColourChange(SelectedColor);
