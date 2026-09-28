@@ -50,9 +50,15 @@ namespace TombIDE.Shared.Local
 
 		public string Reindent { get; set; }
 		public string TrimWhitespace { get; set; }
+		public string ToggleComment { get; set; }
 		public string CommentOut { get; set; }
 		public string Uncomment { get; set; }
 		public string ToggleBookmark { get; set; }
+		public string NavigateBack { get; set; }
+		public string NavigateForward { get; set; }
+		public string GoToDefinition { get; set; }
+		public string FindReferences { get; set; }
+		public string RenameSymbol { get; set; }
 		public string PrevBookmark { get; set; }
 		public string NextBookmark { get; set; }
 		public string ClearBookmarks { get; set; }
@@ -73,6 +79,8 @@ namespace TombIDE.Shared.Local
 		public string ReferenceBrowser { get; set; }
 		public string CompilerLogs { get; set; }
 		public string SearchResults { get; set; }
+		public string LuaDiagnostics { get; set; }
+		public string LuaReferencesResults { get; set; }
 		public string ToolStrip { get; set; }
 		public string StatusStrip { get; set; }
 
@@ -102,9 +110,34 @@ namespace TombIDE.Shared.Local
 		public string Row { get; set; }
 		public string Column { get; set; }
 		public string Line { get; set; }
+		public string LineHeader { get; set; }
+		public string ColumnHeader { get; set; }
 		public string Selected { get; set; }
 		public string Zoom { get; set; }
 		public string ResetZoom { get; set; }
+
+		public string Severity { get; set; }
+		public string Source { get; set; }
+		public string Message { get; set; }
+		public string Errors { get; set; }
+		public string Warning { get; set; }
+		public string Warnings { get; set; }
+		public string Information { get; set; }
+		public string Hint { get; set; }
+		public string Messages { get; set; }
+		public string NoDiagnostics { get; set; }
+		public string LuaDiagnosticsNoDocument { get; set; }
+		public string LuaDiagnosticsUpdating { get; set; }
+		public string NoReferencesFound { get; set; }
+		public string LuaReferencesNoDocument { get; set; }
+		public string LuaReferencesUnsupported { get; set; }
+		public string LuaReferencesLoading { get; set; }
+		public string LuaRenameNoDocument { get; set; }
+		public string LuaRenameUnsupported { get; set; }
+		public string LuaRenameNoSymbol { get; set; }
+		public string LuaRenamePromptLabel { get; set; }
+		public string LuaRenameNoChanges { get; set; }
+		public string LuaReformatUnsupported { get; set; }
 
 		public string DecimalValue { get; set; }
 		public string HexadecimalValue { get; set; }

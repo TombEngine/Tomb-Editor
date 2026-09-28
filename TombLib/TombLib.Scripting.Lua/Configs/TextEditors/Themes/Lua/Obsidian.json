@@ -1,0 +1,68 @@
+{
+	"Name": "Obsidian",
+	"Background": "#283032",
+	"Foreground": "#DCDCDC",
+	"SemanticColors": {
+		"MutedText": "#66747B",
+		"Misc": "#DCDCDC",
+		"Method": "#93C763",
+		"Variable": "#8AB7D9",
+		"Property": "#668BB0",
+		"Type": "#93C763",
+		"Keyword": "#A082BD",
+		"LanguageConstant": "#668BB0",
+		"Constant": "#FFCD22",
+		"File": "#D8C57A",
+		"SignatureParameterDocumentation": "#A7B6BD",
+		"SignatureActiveParameter": "#668BB0",
+		"SignatureText": "#DCDCDC"
+	},
+	"TextMateTheme": {
+		"Rules": [
+			{
+				"Scope": "comment",
+				"Foreground": "#66747B"
+			},
+			{
+				"Scope": "string",
+				"Foreground": "#EC7600"
+			},
+			{
+				"Scope": "constant.numeric",
+				"Foreground": "#FFCD22"
+			},
+			{
+				"Scope": "constant.character.escape",
+				"Foreground": "#D8C57A"
+			},
+			{
+				"Scope": "constant.language",
+				"Foreground": "#668BB0"
+			},
+			{
+				"Scope": "keyword, storage",
+				"Foreground": "#A082BD"
+			},
+			{
+				"Scope": "keyword.operator",
+				"Foreground": "#DCDCDC"
+			},
+			{
+				"Scope": "entity.name.function, support.function, support.function.library, support.function.any-method",
+				"Foreground": "#93C763"
+			},
+			{
+				"Scope": "entity.name.class, support.class, support.type, storage.type.generic",
+				"Foreground": "#93C763"
+			},
+			{
+				"Scope": "variable.parameter, entity.other.attribute",
+				"Foreground": "#8AB7D9"
+			},
+			{
+				"Scope": "variable.language.self, entity.name.tag, string.tag, storage.type.annotation",
+				"Foreground": "#668BB0"
+			}
+		]
+	}
+}

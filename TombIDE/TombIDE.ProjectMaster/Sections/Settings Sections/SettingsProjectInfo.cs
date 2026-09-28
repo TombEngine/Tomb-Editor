@@ -34,7 +34,7 @@ public partial class SettingsProjectInfo : UserControl
 
 		checkBox_FullPaths.Checked = _ide.IDEConfiguration.ViewFullFolderPaths;
 
-		if (_ide.Project.GameVersion is TRVersion.Game.TR1 or TRVersion.Game.TR2X or TRVersion.Game.TombEngine)
+		if (_ide.Project.GameVersion is TRVersion.Game.TR1 or TRVersion.Game.TR2X or TRVersion.Game.TR3X or TRVersion.Game.TombEngine)
 		{
 			button_ChangeScriptPath.Visible = false;
 			textBox_ScriptPath.Width = 589;

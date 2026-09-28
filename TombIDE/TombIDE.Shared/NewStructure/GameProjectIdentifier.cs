@@ -13,7 +13,7 @@ namespace TombIDE.Shared.NewStructure
 
 		private static readonly string[] ValidEngineExecutableNames = new string[]
 		{
-			"Tomb1Main.exe", "TR1X.exe", "TR2X.exe", "TRX.exe", "Tomb2.exe", "tomb3.exe", "tomb4.exe", "TombEngine.exe" // Only the ones TIDE currently supports
+			"Tomb1Main.exe", "TR1X.exe", "TR2X.exe", "TRX.exe", "Tomb2.exe", "tomb3.exe", "tomb4.exe", "TombEngine.exe" // Includes legacy TRX executable names for project detection.
 		};
 
 		private static readonly string[] PlatformSpecificDirectories = new string[] // TEN only
@@ -153,7 +153,7 @@ namespace TombIDE.Shared.NewStructure
 
 					break;
 
-				default: // Tomb1Main, TR2, TR3, TR4, TRNG
+				default: // Legacy Tomb1Main/TRX detection, TR2, TR3, TR4, TRNG
 					if (engineDirectoryName.Equals("Engine", StringComparison.OrdinalIgnoreCase))
 					{
 						string parentDirectory = Path.GetDirectoryName(engineDirectory);
@@ -221,7 +221,7 @@ namespace TombIDE.Shared.NewStructure
 
 			switch (version)
 			{
-				case TRVersion.Game.TR1 or TRVersion.Game.TR2X:
+				case TRVersion.Game.TR1 or TRVersion.Game.TR2X or TRVersion.Game.TR3X:
 					scriptsDirectory = Path.Combine(engineDirectory, "cfg");
 
 					if (!Directory.Exists(scriptsDirectory))
@@ -368,7 +368,7 @@ namespace TombIDE.Shared.NewStructure
 		{
 			switch (targetGameVersion)
 			{
-				case TRVersion.Game.TR1 or TRVersion.Game.TR2X:
+				case TRVersion.Game.TR1 or TRVersion.Game.TR2X or TRVersion.Game.TR3X:
 					return true; // File names will change soon, pass validation for now
 
 				case TRVersion.Game.TombEngine:

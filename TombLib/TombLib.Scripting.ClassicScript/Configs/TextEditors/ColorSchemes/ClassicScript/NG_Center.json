@@ -1,0 +1,34 @@
+{
+	"Sections": {
+		"HtmlColor": "Black",
+		"IsBold": true,
+		"IsItalic": false
+	},
+	"Values": {
+		"HtmlColor": "Black",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"References": {
+		"HtmlColor": "Black",
+		"IsBold": false,
+		"IsItalic": true
+	},
+	"StandardCommands": {
+		"HtmlColor": "Black",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"NewCommands": {
+		"HtmlColor": "Black",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Comments": {
+		"HtmlColor": "Gray",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Background": "White",
+	"Foreground": "Black"
+}

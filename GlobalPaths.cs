@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 internal static class DefaultPaths
 {
-	public static string ProgramDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+	public static string ProgramDirectory => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? AppContext.BaseDirectory;
 
 	#region Configs
 
@@ -16,12 +16,13 @@ internal static class DefaultPaths
 	public static string ConfigsDirectory => Path.Combine(ProgramDirectory, "Configs");
 	public static string GeometryIOConfigsDirectory => Path.Combine(ConfigsDirectory, "GeometryIO");
 	public static string TextEditorConfigsDirectory => Path.Combine(ConfigsDirectory, "TextEditors");
+	public static string TextEditorThemesDirectory => Path.Combine(TextEditorConfigsDirectory, "Themes");
 	public static string ColorSchemesDirectory => Path.Combine(TextEditorConfigsDirectory, "ColorSchemes");
 
 	public static string ClassicScriptColorConfigsDirectory => Path.Combine(ColorSchemesDirectory, "ClassicScript");
-	public static string LuaColorConfigsDirectory => Path.Combine(ColorSchemesDirectory, "Lua");
+	public static string LuaThemeConfigsDirectory => Path.Combine(TextEditorThemesDirectory, "Lua");
 	public static string GameFlowColorConfigsDirectory => Path.Combine(ColorSchemesDirectory, "GameFlowScript");
-	public static string T1MColorConfigsDirectory => Path.Combine(ColorSchemesDirectory, "Tomb1Main");
+	public static string TRXColorConfigsDirectory => Path.Combine(ColorSchemesDirectory, "TRX");
 
 	#endregion Configs
 
@@ -107,20 +108,20 @@ internal static class DefaultPaths
 	[DllImport("shell32.dll")]
 	private static extern bool SHGetSpecialFolderPath(IntPtr hwndOwner, [Out] StringBuilder lpszPath, int nFolder, bool fCreate);
 
-    #endregion Native methods
+	#endregion Native methods
 
-    #region Methods
+	#region Methods
 
-    public static bool CheckCatalog(string path)
-    {
-        if (!Directory.Exists(path))
-        {
-            MessageBox.Show("Directory " + path + " is missing. Make sure that Tomb Editor is installed correctly.");
-            return false;
-        }
+	public static bool CheckCatalog(string path)
+	{
+		if (!Directory.Exists(path))
+		{
+			MessageBox.Show("Directory " + path + " is missing. Make sure that Tomb Editor is installed correctly.");
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    #endregion Methods
+	#endregion Methods
 }

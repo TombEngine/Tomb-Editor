@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<Items>
-	<Separator />
-	<Item LangKey="ToggleBookmark" Command="ToggleBookmark" Icon="Bookmark_16" />
-	<Item LangKey="PrevBookmark" Command="PrevBookmark" Icon="PrevBookmark_16" />
-	<Item LangKey="NextBookmark" Command="NextBookmark" Icon="NextBookmark_16" />
-	<Item LangKey="ClearBookmarks" Command="ClearBookmarks" Icon="ClearBookmarks_16" />
-</Items>

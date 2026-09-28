@@ -1,0 +1,1219 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Nickelony.LanguageServer.Abstractions</name>
+    </assembly>
+    <members>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem">
+            <summary>
+            Represents one shared completion entry that can be rendered by any scripting editor.
+            </summary>
+            <remarks>
+            Optional fields drive optional UI regions. Missing detail, description, resolve callbacks,
+            or protocol text-edit metadata should suppress those behaviors rather than requiring a
+            language-specific completion DTO.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.#ctor(System.String,System.String,System.String,System.Double,Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind,System.String,System.String,System.Boolean,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem}},System.Nullable{Nickelony.LanguageServer.Abstractions.Completion.TextCompletionTextEdit},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem"/> class.
+            </summary>
+            <param name="label">The display label shown in the completion list.</param>
+            <param name="insertText">The text inserted when the item is committed.</param>
+            <param name="description">Optional descriptive content for tooltip or detail rendering.</param>
+            <param name="priority">The sort priority used by the completion UI.</param>
+            <param name="kind">The semantic category used for icons and styling.</param>
+            <param name="detail">Optional short detail text shown beside the label.</param>
+            <param name="filterText">The text used to match the item during filtering.</param>
+            <param name="isDescriptionMarkdown">Whether <paramref name="description"/> should be rendered as Markdown.</param>
+            <param name="resolveAsync">An optional asynchronous resolver for lazily loading richer content.</param>
+            <param name="textEdit">Optional protocol-style insert and replace ranges for custom commit behavior.</param>
+            <param name="requestDocumentVersion">The originating document version for staleness checks.</param>
+            <param name="requestGeneration">The originating request generation for staleness checks.</param>
+            <param name="insertCaretOffset">An optional caret position to use after commit.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.Label">
+            <summary>
+            Gets the display label shown in the completion list.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.InsertText">
+            <summary>
+            Gets the text inserted when the item is committed.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.Description">
+            <summary>
+            Gets optional descriptive content for tooltip or detail rendering.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.Priority">
+            <summary>
+            Gets the sort priority used by the completion UI.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.Kind">
+            <summary>
+            Gets the semantic category used for icons and styling.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.Detail">
+            <summary>
+            Gets optional short detail text shown beside or above the label.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.FilterText">
+            <summary>
+            Gets the text used to match the item during filtering.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.IsDescriptionMarkdown">
+            <summary>
+            Gets a value indicating whether <see cref="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.Description"/> should be rendered as Markdown.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.TextEdit">
+            <summary>
+            Gets the optional protocol-style edit payload used when committing the item.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.RequestDocumentVersion">
+            <summary>
+            Gets the originating document version used to reject stale completions.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.RequestGeneration">
+            <summary>
+            Gets the originating request generation used to reject stale completions.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.InsertCaretOffset">
+            <summary>
+            Gets the optional caret offset to place after commit.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.CanResolve">
+            <summary>
+            Gets a value indicating whether this item can be asynchronously resolved.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.ResolveAsync(System.Threading.CancellationToken)">
+            <summary>
+            Resolves the item to richer content when a resolve callback is available.
+            </summary>
+            <param name="cancellationToken">The cancellation token for the resolve request.</param>
+            <returns>The resolved completion item.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.WithResolveCallback(System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem}})">
+            <summary>
+            Creates a copy of the item with a resolve callback attached.
+            </summary>
+            <param name="resolveAsync">The resolve callback to attach.</param>
+            <returns>A completion item with resolve support.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.WithRequestContext(System.Int32,System.Int32)">
+            <summary>
+            Creates a copy stamped with request metadata used to reject stale completions.
+            </summary>
+            <param name="requestDocumentVersion">The originating document version.</param>
+            <param name="requestGeneration">The originating request generation.</param>
+            <returns>A completion item stamped with the supplied request context.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.WithFilteredCommitContext(System.Int32,System.Int32)">
+            <summary>
+            Creates a copy narrowed for commit-time use after filtering out stale text-edit metadata.
+            </summary>
+            <param name="requestDocumentVersion">The originating document version.</param>
+            <param name="requestGeneration">The originating request generation.</param>
+            <returns>A completion item prepared for safe commit against the current document.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem.WithResolvedContent(Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem)">
+            <summary>
+            Creates a copy that merges richer resolved content onto the current item.
+            </summary>
+            <param name="resolvedItem">The resolved completion item carrying richer detail and description.</param>
+            <returns>A merged completion item that preserves the original commit metadata.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind">
+            <summary>
+            Identifies the semantic category of a completion item for icon and styling purposes.
+            </summary>
+            <remarks>
+            Well-known categories cover presentation concepts shared by language providers and editor hosts. Providers and
+            hosts may use <see cref="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.CreateCustom(System.String)"/> for additional categories without changing this assembly. Identifiers
+            are normalized by trimming surrounding whitespace, compared with ordinal case-sensitive equality, and serialized as
+            strings. A renderer that does not recognize a custom identifier should use <see cref="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Generic"/> presentation while
+            preserving the original <see cref="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Identifier"/> value in the model.
+            </remarks>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Generic">
+            <summary>
+            A generic completion item with no specialized category.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Property">
+            <summary>
+            A property-like member.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Array">
+            <summary>
+            An array-like value or container.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Section">
+            <summary>
+            A section header or named block.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Directive">
+            <summary>
+            A directive or pragma-style keyword.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Constant">
+            <summary>
+            A constant value.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Keyword">
+            <summary>
+            A language keyword.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Method">
+            <summary>
+            A callable method or function.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Variable">
+            <summary>
+            A variable.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Field">
+            <summary>
+            A field-like member.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Class">
+            <summary>
+            A type or class.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Parameter">
+            <summary>
+            A parameter.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Namespace">
+            <summary>
+            A namespace or module scope.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.File">
+            <summary>
+            A file system file.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Folder">
+            <summary>
+            A file system folder.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Identifier">
+            <summary>
+            Gets the stable serialized identifier for this completion category.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.IsWellKnown">
+            <summary>
+            Gets a value indicating whether this category is one of the shared well-known categories.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.CreateCustom(System.String)">
+            <summary>
+            Creates a custom completion category.
+            </summary>
+            <param name="identifier">The custom identifier. Letters, digits, underscore, period, hyphen, and colon are allowed.</param>
+            <returns>An immutable custom completion category.</returns>
+            <exception cref="T:System.ArgumentException">The identifier is invalid or reserved for a well-known category.</exception>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.FromIdentifier(System.String)">
+            <summary>
+            Creates a category from a serialized identifier, retaining unknown identifiers as custom categories.
+            </summary>
+            <param name="identifier">The well-known or custom identifier.</param>
+            <returns>The matching well-known category or a new custom category.</returns>
+            <exception cref="T:System.ArgumentException">The identifier is invalid.</exception>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Equals(Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.op_Equality(Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind,Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind)">
+            <summary>
+            Compares completion categories by their normalized ordinal identifiers.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind.op_Inequality(Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind,Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind)">
+            <summary>
+            Compares completion categories by their normalized ordinal identifiers.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKindJsonConverter">
+            <summary>
+            Serializes completion-kind identifiers as strings and recreates unknown values as custom categories.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKindJsonConverter.Read(System.Text.Json.Utf8JsonReader@,System.Type,System.Text.Json.JsonSerializerOptions)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKindJsonConverter.Write(System.Text.Json.Utf8JsonWriter,Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind,System.Text.Json.JsonSerializerOptions)">
+            <inheritdoc/>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionPosition">
+            <summary>
+            Represents a zero-based text position used by completion edit payloads.
+            </summary>
+            <remarks>
+            This DTO mirrors external protocol coordinates such as LSP completion text edits.
+            It is not an AvalonEdit offset and should be converted at the editor boundary.
+            </remarks>
+            <param name="Line">The zero-based line index.</param>
+            <param name="Character">The zero-based character index within the line.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionPosition.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Represents a zero-based text position used by completion edit payloads.
+            </summary>
+            <remarks>
+            This DTO mirrors external protocol coordinates such as LSP completion text edits.
+            It is not an AvalonEdit offset and should be converted at the editor boundary.
+            </remarks>
+            <param name="Line">The zero-based line index.</param>
+            <param name="Character">The zero-based character index within the line.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionPosition.Line">
+            <summary>The zero-based line index.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionPosition.Character">
+            <summary>The zero-based character index within the line.</summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionRange">
+            <summary>
+            Represents a zero-based text range used by completion edit payloads.
+            </summary>
+            <remarks>
+            This range is intended for protocol-boundary completion edits and is converted to offsets
+            only when applied against a concrete editor document snapshot.
+            </remarks>
+            <param name="Start">The start position of the range.</param>
+            <param name="End">The end position of the range.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionRange.#ctor(Nickelony.LanguageServer.Abstractions.Completion.TextCompletionPosition,Nickelony.LanguageServer.Abstractions.Completion.TextCompletionPosition)">
+            <summary>
+            Represents a zero-based text range used by completion edit payloads.
+            </summary>
+            <remarks>
+            This range is intended for protocol-boundary completion edits and is converted to offsets
+            only when applied against a concrete editor document snapshot.
+            </remarks>
+            <param name="Start">The start position of the range.</param>
+            <param name="End">The end position of the range.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionRange.Start">
+            <summary>The start position of the range.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionRange.End">
+            <summary>The end position of the range.</summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionTextEdit">
+            <summary>
+            Describes the insert and replace ranges supplied by a completion item.
+            </summary>
+            <remarks>
+            The contained ranges use zero-based protocol coordinates rather than editor offsets.
+            </remarks>
+            <param name="InsertRange">The insert range for the completion edit.</param>
+            <param name="ReplaceRange">The optional replace range; falls back to <paramref name="InsertRange"/> when <see langword="null"/>.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionTextEdit.#ctor(Nickelony.LanguageServer.Abstractions.Completion.TextCompletionRange,System.Nullable{Nickelony.LanguageServer.Abstractions.Completion.TextCompletionRange})">
+            <summary>
+            Describes the insert and replace ranges supplied by a completion item.
+            </summary>
+            <remarks>
+            The contained ranges use zero-based protocol coordinates rather than editor offsets.
+            </remarks>
+            <param name="InsertRange">The insert range for the completion edit.</param>
+            <param name="ReplaceRange">The optional replace range; falls back to <paramref name="InsertRange"/> when <see langword="null"/>.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionTextEdit.InsertRange">
+            <summary>The insert range for the completion edit.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionTextEdit.ReplaceRange">
+            <summary>The optional replace range; falls back to <paramref name="InsertRange"/> when <see langword="null"/>.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionTextEdit.ReplacementRange">
+            <summary>
+            Gets the effective replacement range, falling back to <see cref="P:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionTextEdit.InsertRange"/>.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnostic">
+            <summary>
+            Represents a single diagnostic produced for a document snapshot.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnostic.#ctor(Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnosticSeverity,System.String,System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnostic"/> class.
+            </summary>
+            <param name="severity">The diagnostic severity.</param>
+            <param name="message">The diagnostic message.</param>
+            <param name="startOffset">The zero-based inclusive start offset.</param>
+            <param name="endOffset">The zero-based exclusive end offset.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnostic.Severity">
+            <summary>
+            Gets the diagnostic severity.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnostic.Message">
+            <summary>
+            Gets the diagnostic message.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnostic.StartOffset">
+            <summary>
+            Gets the zero-based inclusive start offset of the diagnostic span.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnostic.EndOffset">
+            <summary>
+            Gets the zero-based exclusive end offset of the diagnostic span.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnostic.ContainsOffset(System.Int32)">
+            <summary>
+            Determines whether the diagnostic span contains the supplied offset.
+            </summary>
+            <param name="offset">The zero-based offset to check.</param>
+            <returns><see langword="true"/> when the offset falls within the diagnostic span; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnostic.Intersects(System.Int32,System.Int32)">
+            <summary>
+            Determines whether the diagnostic span intersects the supplied range.
+            </summary>
+            <param name="startOffset">The zero-based inclusive start offset of the range.</param>
+            <param name="endOffset">The zero-based exclusive end offset of the range.</param>
+            <returns><see langword="true"/> when the ranges intersect; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnosticSeverity">
+            <summary>
+            Describes the severity of a text-editor diagnostic.
+            </summary>
+        </member>
+        <member name="F:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnosticSeverity.None">
+            <summary>
+            The diagnostic has no severity and is not intended to be displayed to the user.
+            </summary>
+        </member>
+        <member name="F:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnosticSeverity.Error">
+            <summary>
+            The diagnostic is an error.
+            </summary>
+        </member>
+        <member name="F:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnosticSeverity.Warning">
+            <summary>
+            The diagnostic is a warning.
+            </summary>
+        </member>
+        <member name="F:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnosticSeverity.Information">
+            <summary>
+            The diagnostic is informational.
+            </summary>
+        </member>
+        <member name="F:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnosticSeverity.Hint">
+            <summary>
+            The diagnostic is a hint.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnosticSeverityExtensions">
+            <summary>
+            Provides helpers for working with <see cref="T:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnosticSeverity"/> values.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnosticSeverityExtensions.GetLabel(Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnosticSeverity)">
+            <summary>
+            Gets a user-facing label for the supplied severity.
+            </summary>
+            <param name="severity">The severity value.</param>
+            <returns>The display label for the supplied severity.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Editing.ITextEditProvider">
+            <summary>
+            Produces text edits or workspace edits for editor commands such as formatting and rename.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.ITextEditProvider.SupportsRename">
+            <summary>
+            Gets a value indicating whether symbol rename is supported by the current ready session.
+            </summary>
+            <remarks>Returns <see langword="false"/> until the provider is available and the server advertises rename.</remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Editing.ITextEditProvider.RenameSymbolAsync(Nickelony.LanguageServer.Abstractions.Editing.TextRenameRequest,System.Threading.CancellationToken)">
+            <summary>
+            Produces rename edits for the supplied symbol location.
+            </summary>
+            <param name="request">The document, caret position, and replacement name.</param>
+            <param name="cancellationToken">A token that can cancel the request.</param>
+            <returns>The workspace edit to apply, or <see langword="null"/> when rename is unsupported or no changes are available.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Editing.ITextFormattingProvider">
+            <summary>
+            Produces formatting edits for a document.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.ITextFormattingProvider.SupportsFormatting">
+            <summary>
+            Gets a value indicating whether document formatting is supported by the current ready session.
+            </summary>
+            <remarks>Returns <see langword="false"/> until the provider is available and the server advertises formatting.</remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Editing.ITextFormattingProvider.FormatDocumentAsync(Nickelony.LanguageServer.Abstractions.Editing.TextFormatRequest,System.Threading.CancellationToken)">
+            <summary>
+            Produces formatting edits for the supplied document.
+            </summary>
+            <param name="request">The document and formatting options.</param>
+            <param name="cancellationToken">A token that can cancel the request.</param>
+            <returns>The workspace edit to apply, or <see langword="null"/> when formatting is unsupported or no changes are available.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Editing.TextDocumentEdit">
+            <summary>
+            Represents the text edits that should be applied to a single document.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Editing.TextDocumentEdit.#ctor(System.String,System.Collections.Generic.IReadOnlyList{Nickelony.LanguageServer.Abstractions.Editing.TextEdit})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Abstractions.Editing.TextDocumentEdit"/> class.
+            </summary>
+            <param name="filePath">The file to update.</param>
+            <param name="textEdits">The edits to apply.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextDocumentEdit.FilePath">
+            <summary>
+            Gets the file to update.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextDocumentEdit.TextEdits">
+            <summary>
+            Gets the owned immutable snapshot of edits to apply to the file.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Editing.TextDocumentRange">
+            <summary>
+            Identifies a one-based text range inside a document.
+            </summary>
+            <remarks>
+            This DTO is used for document edits and other cross-boundary locations where line and column
+            coordinates need to remain stable without depending on a concrete editor segment instance.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Editing.TextDocumentRange.#ctor(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Abstractions.Editing.TextDocumentRange"/> class.
+            </summary>
+            <param name="startLineNumber">The one-based start line number.</param>
+            <param name="startColumnNumber">The one-based start column number.</param>
+            <param name="endLineNumber">The one-based end line number.</param>
+            <param name="endColumnNumber">The one-based end column number.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextDocumentRange.StartLineNumber">
+            <summary>
+            Gets the one-based start line number.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextDocumentRange.StartColumnNumber">
+            <summary>
+            Gets the one-based start column number.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextDocumentRange.EndLineNumber">
+            <summary>
+            Gets the one-based end line number.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextDocumentRange.EndColumnNumber">
+            <summary>
+            Gets the one-based end column number.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Editing.TextEdit">
+            <summary>
+            Represents a single text replacement inside a document.
+            </summary>
+            <remarks>
+            Text edits intentionally use <see cref="T:Nickelony.LanguageServer.Abstractions.Editing.TextDocumentRange"/> rather than editor-specific segment
+            types so they can describe cross-file or protocol-derived edits without carrying UI dependencies.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Editing.TextEdit.#ctor(Nickelony.LanguageServer.Abstractions.Editing.TextDocumentRange,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Abstractions.Editing.TextEdit"/> class.
+            </summary>
+            <param name="range">The range to replace.</param>
+            <param name="newText">The replacement text.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextEdit.Range">
+            <summary>
+            Gets the range to replace.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextEdit.NewText">
+            <summary>
+            Gets the replacement text.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Editing.TextFormatRequest">
+            <summary>
+            Describes a formatting request against the current document.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Editing.TextFormatRequest.#ctor(System.String,System.String,Nickelony.LanguageServer.Abstractions.Editing.TextFormattingOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Abstractions.Editing.TextFormatRequest"/> class.
+            </summary>
+            <param name="filePath">The current document file path.</param>
+            <param name="documentText">The current document content.</param>
+            <param name="options">The formatting options to apply.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextFormatRequest.FilePath">
+            <summary>
+            Gets the current document file path.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextFormatRequest.DocumentText">
+            <summary>
+            Gets the current document content.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextFormatRequest.Options">
+            <summary>
+            Gets the formatting options.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Editing.TextFormattingOptions">
+            <summary>
+            Represents editor formatting preferences used for a document formatting request.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Editing.TextFormattingOptions.#ctor(System.Int32,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Abstractions.Editing.TextFormattingOptions"/> class.
+            </summary>
+            <param name="tabSize">The preferred indentation width.</param>
+            <param name="insertSpaces"><see langword="true"/> to indent with spaces; otherwise, tabs.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextFormattingOptions.TabSize">
+            <summary>
+            Gets the preferred indentation width.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextFormattingOptions.InsertSpaces">
+            <summary>
+            Gets a value indicating whether indentation should use spaces.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Editing.TextRenameRequest">
+            <summary>
+            Describes a rename request against the current document.
+            </summary>
+            <remarks>
+            Rename requests use zero-based line and column indices to match the editor's internal
+            coordinate system. When converting to or from LSP positions, the provider boundary is
+            responsible for the zero-based to one-based translation.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Editing.TextRenameRequest.#ctor(System.String,System.String,System.Int32,System.Int32,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Abstractions.Editing.TextRenameRequest"/> class.
+            </summary>
+            <param name="filePath">The current document file path.</param>
+            <param name="documentText">The current document content.</param>
+            <param name="line">The zero-based current line index.</param>
+            <param name="column">The zero-based current column index.</param>
+            <param name="newName">The requested replacement name.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextRenameRequest.FilePath">
+            <summary>
+            Gets the current document file path.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextRenameRequest.DocumentText">
+            <summary>
+            Gets the current document content.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextRenameRequest.Line">
+            <summary>
+            Gets the zero-based current line index.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextRenameRequest.Column">
+            <summary>
+            Gets the zero-based current column index.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextRenameRequest.NewName">
+            <summary>
+            Gets the requested replacement name.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Editing.TextWorkspaceEdit">
+            <summary>
+            Represents a workspace-wide set of document edits.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Editing.TextWorkspaceEdit.#ctor(System.Collections.Generic.IReadOnlyList{Nickelony.LanguageServer.Abstractions.Editing.TextDocumentEdit})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Abstractions.Editing.TextWorkspaceEdit"/> class.
+            </summary>
+            <param name="documentEdits">The per-document edits in the workspace change set.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextWorkspaceEdit.DocumentEdits">
+            <summary>
+            Gets the owned immutable snapshot of per-document edits in the workspace change set.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Editing.TextWorkspaceEdit.HasEdits">
+            <summary>
+            Gets a value indicating whether the workspace edit contains any text edits.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Hover.TextHoverContentKind">
+            <summary>
+            Describes how hover content should be interpreted by the editor UI.
+            </summary>
+        </member>
+        <member name="F:Nickelony.LanguageServer.Abstractions.Hover.TextHoverContentKind.PlainText">
+            <summary>
+            Treat the hover content as plain text.
+            </summary>
+        </member>
+        <member name="F:Nickelony.LanguageServer.Abstractions.Hover.TextHoverContentKind.Markdown">
+            <summary>
+            Treat the hover content as Markdown.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Hover.TextHoverInfo">
+            <summary>
+            Represents hover content resolved for a symbol or document location.
+            </summary>
+            <param name="Content">The rendered hover text or markup.</param>
+            <param name="ContentKind">The format used by <paramref name="Content"/>.</param>
+            <param name="SymbolName">The optional symbol name associated with the hover content.</param>
+            <param name="Identifier">An optional provider-specific identifier for follow-up resolution or caching.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Hover.TextHoverInfo.#ctor(System.String,Nickelony.LanguageServer.Abstractions.Hover.TextHoverContentKind,System.String,System.Object)">
+            <summary>
+            Represents hover content resolved for a symbol or document location.
+            </summary>
+            <param name="Content">The rendered hover text or markup.</param>
+            <param name="ContentKind">The format used by <paramref name="Content"/>.</param>
+            <param name="SymbolName">The optional symbol name associated with the hover content.</param>
+            <param name="Identifier">An optional provider-specific identifier for follow-up resolution or caching.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Hover.TextHoverInfo.Content">
+            <summary>The rendered hover text or markup.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Hover.TextHoverInfo.ContentKind">
+            <summary>The format used by <paramref name="Content"/>.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Hover.TextHoverInfo.SymbolName">
+            <summary>The optional symbol name associated with the hover content.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Hover.TextHoverInfo.Identifier">
+            <summary>An optional provider-specific identifier for follow-up resolution or caching.</summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider">
+             <summary>
+             Defines the generic language-service contract used by text editors to provide IntelliSense features.
+             </summary>
+             <remarks>
+             This interface contains the parts of the IntelliSense provider contract that are not specific to any
+             single language. Language-specific concerns such as semantic tokens are layered on top through
+             narrower interfaces like <c>ILuaIntelliSenseProvider</c>.
+            
+             Implementations may raise callbacks from background threads. Consumers that access UI controls must marshal
+             those callbacks to the UI thread. Once disposal begins, no further provider callbacks are raised.
+             Implementations must make <see cref="M:System.IDisposable.Dispose"/> idempotent. A callback that was already admitted before
+             disposal began may finish, but disposal closes callback admission before releasing provider-owned resources.
+             <see cref="E:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.StartupFailed"/> reports startup attempts that returned an unusable server session, including a
+             terminal missing-executable configuration; caller cancellation and provider disposal are not startup failures.
+             <see cref="E:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.WorkspaceWatcherFailed"/> reports only watcher startup or recovery failures that leave external
+             workspace forwarding unavailable. Transient watcher failures that recover automatically are intentionally silent.
+            
+             For asynchronous request members, cancellation from the caller's <see cref="T:System.Threading.CancellationToken"/> propagates as
+             <see cref="T:System.OperationCanceledException"/> and never becomes an ordinary empty or <see langword="null"/> result.
+             Provider disposal, provider-enforced timeouts, and internal transport cancellation or failure use each member's
+             documented fallback result instead. Unsupported capabilities likewise use their documented normal fallback and do
+             not report caller cancellation.
+             </remarks>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.IsAvailable">
+            <summary>
+            Gets a value indicating whether the provider has a ready language-server session and negotiated capabilities.
+            </summary>
+            <remarks>
+            This value is <see langword="false"/> before lazy startup, while the provider is starting or restarting,
+            after a transient transport failure, after terminal startup failure, and after disposal. A request may
+            transition the provider from an unavailable state to a ready state.
+            </remarks>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.State">
+            <summary>
+            Gets the current provider lifecycle state.
+            </summary>
+        </member>
+        <member name="E:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.DiagnosticsUpdated">
+            <summary>
+            Occurs when diagnostics for a document have changed.
+            </summary>
+            <remarks>
+            This callback may be raised from a background thread. UI consumers must marshal to the UI thread before touching
+            controls. Handlers for one event invocation run serially on the raising thread; a failing handler is isolated from
+            later handlers. The diagnostics list is an owned immutable snapshot that remains valid after the callback returns.
+            Once disposal begins, this event will not be raised again.
+            </remarks>
+        </member>
+        <member name="E:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.CapabilitiesChanged">
+            <summary>
+            Occurs when lazy startup, restart, or transport loss may have changed the negotiated capabilities.
+            </summary>
+            <remarks>
+            This callback may be raised from a background thread. UI consumers must marshal to the UI thread before
+            touching controls. Handlers for one event invocation run serially on the raising thread and a failing handler is
+            isolated from later handlers. Consumers should reread <see cref="P:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.IsAvailable"/> and capability properties after
+            this event rather than caching capability values. Once disposal begins, this event will not be raised again.
+            </remarks>
+        </member>
+        <member name="E:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.StartupFailed">
+            <summary>
+            Occurs when the underlying language server fails to start.
+            </summary>
+            <remarks>
+            This callback may be raised from a background thread. UI consumers must marshal to the UI thread before touching
+            controls. Handlers for one event invocation run serially on the raising thread and a failing handler is isolated
+            from later handlers. Once disposal begins, this event will not be raised again.
+            The event is raised at most once for a transient startup-failure period and once for a terminal failure period;
+            a successful restart resets the transient notification state.
+            </remarks>
+        </member>
+        <member name="E:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.WorkspaceWatcherFailed">
+            <summary>
+            Occurs when the workspace file watcher fails.
+            </summary>
+            <remarks>
+            This callback may be raised from a background thread. UI consumers must marshal to the UI thread before touching
+            controls. Handlers for one event invocation run serially on the raising thread and a failing handler is isolated
+            from later handlers. Once disposal begins, this event will not be raised again.
+            Automatic watcher recovery is attempted first. A successful recovery does not raise this event; a missing workspace
+            root is treated as temporarily unavailable; an unresolved startup or recovery failure raises it once until a later
+            successful watcher recovery resets the notification state.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.GetDiagnostics(System.String)">
+            <summary>
+            Gets the latest diagnostics known for a document.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <returns>An owned immutable snapshot of the diagnostics currently cached for the document.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.OpenDocument(System.String,System.String)">
+            <summary>
+            Opens a document in the provider, starts tracking its contents, and synchronizes it with the underlying language service when available.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <param name="content">The initial document content.</param>
+            <remarks>
+            Each call acquires one editor-open reference; repeated calls for the same path require matching calls to
+            <see cref="M:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.CloseDocument(System.String)"/>. The provider normalizes the path and serializes operations for that document.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.UpdateDocument(System.String,System.String)">
+            <summary>
+            Pushes updated content for a document that is already open in the provider so the underlying language service can stay synchronized.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <param name="content">The updated document content.</param>
+            <remarks>
+            This operation does not acquire an editor-open or request reference. When the language service is available,
+            an update may create a tracked, server-open document with no active references; that idle state is eligible for
+            request-only trimming. Updates after a close or rename are serialized against the affected path and can reopen
+            or update the resulting tracked document.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.CloseDocument(System.String)">
+            <summary>
+            Closes a tracked document and releases any provider-side state associated with it.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <remarks>
+            Each call releases one editor-open reference when one exists. A repeated call after the state has already been
+            removed is a no-op; an explicitly idle, server-open record created by an update may be cleaned up by close.
+            The document remains tracked while a request reference is active; otherwise the final cleanup removes the local
+            state, cached results, pending document work, and mirrored server document when it is safe to send the close.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.RenameDocument(System.String,System.String,System.String)">
+            <summary>
+            Rekeys a tracked document to a new path while preserving any provider-side state that still applies.
+            </summary>
+            <param name="oldFilePath">The previous local file path.</param>
+            <param name="newFilePath">The new local file path.</param>
+            <param name="content">The current document content.</param>
+            <remarks>
+            Unknown source paths, equivalent paths, and occupied destination paths are no-ops; they do not create or move
+            destination state. A successful rename preserves references and the tracked content. Cached language results are
+            preserved when the supplied content is unchanged and invalidated when the content changes.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.GetCompletionItemsAsync(System.String,System.String,System.Int32,System.Int32,System.Nullable{System.Char},System.Threading.CancellationToken)">
+            <summary>
+            Requests completion items for a position within a document.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <param name="content">The current document content.</param>
+            <param name="line">The zero-based line index.</param>
+            <param name="column">The zero-based column index.</param>
+            <param name="triggerCharacter">The optional character that triggered completion.</param>
+            <param name="cancellationToken">A token that can cancel the request.</param>
+            <returns>The available completion items for the requested position.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.GetHoverAsync(System.String,System.String,System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Requests hover information for a position within a document.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <param name="content">The current document content.</param>
+            <param name="line">The zero-based line index.</param>
+            <param name="column">The zero-based column index.</param>
+            <param name="cancellationToken">A token that can cancel the request.</param>
+            <returns>The hover information for the requested position, or <see langword="null"/> when unavailable.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.GetDefinitionAsync(System.String,System.String,System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Requests the definition location for a symbol at a position within a document.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <param name="content">The current document content.</param>
+            <param name="line">The zero-based line index.</param>
+            <param name="column">The zero-based column index.</param>
+            <param name="cancellationToken">A token that can cancel the request.</param>
+            <returns>The resolved definition location, or <see langword="null"/> when no definition is available.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider.GetSignatureHelpAsync(System.String,System.String,System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Requests signature help for a function call at a position within a document.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <param name="content">The current document content.</param>
+            <param name="line">The zero-based line index.</param>
+            <param name="column">The zero-based column index.</param>
+            <param name="cancellationToken">A token that can cancel the request.</param>
+            <returns>The signature help information, or <see langword="null"/> when unavailable.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Infrastructure.Provider.LanguageServerProviderState">
+            <summary>
+            Describes the lifecycle state of a language-server-backed provider.
+            </summary>
+        </member>
+        <member name="F:Nickelony.LanguageServer.Abstractions.Infrastructure.Provider.LanguageServerProviderState.Unavailable">
+            <summary>
+            The provider has no ready language-server session. This includes the initial lazy-start state and transient recovery.
+            </summary>
+        </member>
+        <member name="F:Nickelony.LanguageServer.Abstractions.Infrastructure.Provider.LanguageServerProviderState.Starting">
+            <summary>
+            The provider is starting or restarting its language-server session.
+            </summary>
+        </member>
+        <member name="F:Nickelony.LanguageServer.Abstractions.Infrastructure.Provider.LanguageServerProviderState.Ready">
+            <summary>
+            The provider has a ready language-server session and negotiated capabilities.
+            </summary>
+        </member>
+        <member name="F:Nickelony.LanguageServer.Abstractions.Infrastructure.Provider.LanguageServerProviderState.Failed">
+            <summary>
+            Repeated startup failure has permanently disabled the provider for this instance.
+            </summary>
+        </member>
+        <member name="F:Nickelony.LanguageServer.Abstractions.Infrastructure.Provider.LanguageServerProviderState.Disposed">
+            <summary>
+            Disposal has started or completed and the provider cannot accept new work.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Infrastructure.TextDocumentRangeNormalizer">
+            <summary>
+            Normalizes one-based document range coordinates for stable cross-boundary use.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Infrastructure.TextDocumentRangeNormalizer.Normalize(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Clamps coordinates to one and ensures that the end coordinate does not precede the start coordinate.
+            </summary>
+            <param name="startLineNumber">The one-based start line number.</param>
+            <param name="startColumnNumber">The one-based start column number.</param>
+            <param name="endLineNumber">The one-based end line number.</param>
+            <param name="endColumnNumber">The one-based end column number.</param>
+            <returns>
+            The normalized start and end coordinates as <c>(StartLineNumber, StartColumnNumber, EndLineNumber, EndColumnNumber)</c>.
+            </returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.LanguageServerStartupFailure">
+            <summary>
+            Describes a language-server startup failure that should be surfaced to the UI.
+            </summary>
+            <param name="Message">The user-facing failure message.</param>
+            <param name="IsPersistent">Whether the failure is terminal for this provider instance and the host should stop retrying until its configuration or application lifetime changes.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.LanguageServerStartupFailure.#ctor(System.String,System.Boolean)">
+            <summary>
+            Describes a language-server startup failure that should be surfaced to the UI.
+            </summary>
+            <param name="Message">The user-facing failure message.</param>
+            <param name="IsPersistent">Whether the failure is terminal for this provider instance and the host should stop retrying until its configuration or application lifetime changes.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.LanguageServerStartupFailure.Message">
+            <summary>The user-facing failure message.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.LanguageServerStartupFailure.IsPersistent">
+            <summary>Whether the failure is terminal for this provider instance and the host should stop retrying until its configuration or application lifetime changes.</summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.WorkspaceWatcherFailure">
+            <summary>
+            Describes a workspace-watcher failure that should be surfaced to the UI after automatic recovery is unavailable.
+            </summary>
+            <param name="Message">The user-facing failure message. Editor-buffer IntelliSense may remain available while external workspace forwarding is degraded.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.WorkspaceWatcherFailure.#ctor(System.String)">
+            <summary>
+            Describes a workspace-watcher failure that should be surfaced to the UI after automatic recovery is unavailable.
+            </summary>
+            <param name="Message">The user-facing failure message. Editor-buffer IntelliSense may remain available while external workspace forwarding is degraded.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.WorkspaceWatcherFailure.Message">
+            <summary>The user-facing failure message. Editor-buffer IntelliSense may remain available while external workspace forwarding is degraded.</summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Navigation.ITextReferencesProvider">
+            <summary>
+            Resolves symbol reference locations from the current document context.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Navigation.ITextReferencesProvider.SupportsReferences">
+            <summary>
+            Gets a value indicating whether reference lookup is supported by the current ready session.
+            </summary>
+            <remarks>Returns <see langword="false"/> until the provider is available and the server advertises references.</remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Navigation.ITextReferencesProvider.GetReferencesAsync(Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceRequest,System.Threading.CancellationToken)">
+            <summary>
+            Resolves reference locations for the supplied request.
+            </summary>
+            <param name="request">The current document and caret-position request.</param>
+            <param name="cancellationToken">A token that can cancel the request.</param>
+            <returns>The resolved reference locations, or an empty list when references are unsupported or none are available.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Navigation.TextDefinitionLocation">
+            <summary>
+            Identifies a navigable text definition location.
+            </summary>
+            <remarks>
+            Definition locations use one-based line and column coordinates so they can describe targets across
+            documents without relying on an editor-specific offset or segment instance.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Navigation.TextDefinitionLocation.#ctor(System.Int32,System.Int32,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Abstractions.Navigation.TextDefinitionLocation"/> class.
+            </summary>
+            <param name="lineNumber">The one-based line number.</param>
+            <param name="columnNumber">The one-based column number.</param>
+            <param name="filePath">The optional file path for cross-file navigation.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Navigation.TextDefinitionLocation.LineNumber">
+            <summary>
+            Gets the one-based line number of the definition.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Navigation.TextDefinitionLocation.ColumnNumber">
+            <summary>
+            Gets the one-based column number of the definition.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Navigation.TextDefinitionLocation.FilePath">
+            <summary>
+            Gets the optional file path for the definition.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceLocation">
+            <summary>
+            Identifies a source location for a symbol reference.
+            </summary>
+            <remarks>
+            Reference locations use one-based line and column coordinates to match the LSP convention
+            and remain stable across documents without depending on an editor-specific offset or segment
+            instance.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceLocation.#ctor(System.String,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceLocation"/> class.
+            </summary>
+            <param name="filePath">The file containing the reference.</param>
+            <param name="startLineNumber">The one-based start line number.</param>
+            <param name="startColumnNumber">The one-based start column number.</param>
+            <param name="endLineNumber">The one-based end line number.</param>
+            <param name="endColumnNumber">The one-based end column number.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceLocation.FilePath">
+            <summary>
+            Gets the file containing the reference.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceLocation.StartLineNumber">
+            <summary>
+            Gets the one-based start line number.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceLocation.StartColumnNumber">
+            <summary>
+            Gets the one-based start column number.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceLocation.EndLineNumber">
+            <summary>
+            Gets the one-based end line number.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceLocation.EndColumnNumber">
+            <summary>
+            Gets the one-based end column number.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceLocation.IsSingleLine">
+            <summary>
+            Gets a value indicating whether the location is contained on a single line.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceRequest">
+            <summary>
+            Describes a reference lookup request against the current document.
+            </summary>
+            <remarks>
+            Reference requests use zero-based line and column indices to match the editor's internal
+            coordinate system. When converting to or from LSP positions, the provider boundary is
+            responsible for the zero-based to one-based translation.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceRequest.#ctor(System.String,System.String,System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceRequest"/> class.
+            </summary>
+            <param name="filePath">The current document file path.</param>
+            <param name="documentText">The current document content.</param>
+            <param name="line">The zero-based current line index.</param>
+            <param name="column">The zero-based current column index.</param>
+            <param name="includeDeclaration"><see langword="true"/> to include the symbol declaration when available.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceRequest.FilePath">
+            <summary>
+            Gets the current document file path.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceRequest.DocumentText">
+            <summary>
+            Gets the current document content.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceRequest.Line">
+            <summary>
+            Gets the zero-based current line index.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceRequest.Column">
+            <summary>
+            Gets the zero-based current column index.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceRequest.IncludeDeclaration">
+            <summary>
+            Gets a value indicating whether the declaration should be included when available.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Signatures.TextSignatureHelpInfo">
+            <summary>
+            Represents the active signature-help payload for a callable item.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Signatures.TextSignatureHelpInfo.#ctor(System.String,System.Int32,System.String,System.Collections.Generic.IReadOnlyList{Nickelony.LanguageServer.Abstractions.Signatures.TextSignatureParameterInfo})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Abstractions.Signatures.TextSignatureHelpInfo"/> class.
+            </summary>
+            <param name="label">The full signature label shown to the user.</param>
+            <param name="activeParameterIndex">The zero-based active parameter index. Values outside the parameter range are clamped; -1 is retained when no parameters are provided.</param>
+            <param name="documentation">Optional documentation shown beside or below the signature.</param>
+            <param name="parameters">The parameters that compose the signature.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Signatures.TextSignatureHelpInfo.Label">
+            <summary>
+            Gets the full signature label shown to the user.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Signatures.TextSignatureHelpInfo.ActiveParameterIndex">
+            <summary>
+            Gets the zero-based active parameter index. When parameters are provided, the value is clamped to their range; -1 is returned only when no parameters are provided and no parameter is active.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Signatures.TextSignatureHelpInfo.Documentation">
+            <summary>
+            Gets optional documentation for the signature.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Signatures.TextSignatureHelpInfo.Parameters">
+            <summary>
+            Gets the owned immutable snapshot of parameters that compose the signature.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Abstractions.Signatures.TextSignatureParameterInfo">
+            <summary>
+            Represents one parameter entry within a signature-help payload.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Abstractions.Signatures.TextSignatureParameterInfo.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Abstractions.Signatures.TextSignatureParameterInfo"/> class.
+            </summary>
+            <param name="label">The parameter label shown in the signature UI.</param>
+            <param name="documentation">Optional parameter documentation.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Signatures.TextSignatureParameterInfo.Label">
+            <summary>
+            Gets the parameter label shown in the signature UI.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Abstractions.Signatures.TextSignatureParameterInfo.Documentation">
+            <summary>
+            Gets optional documentation for the parameter.
+            </summary>
+        </member>
+    </members>
+</doc>

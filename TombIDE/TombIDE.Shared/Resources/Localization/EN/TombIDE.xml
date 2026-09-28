@@ -59,11 +59,17 @@
 	<TabsToSpaces>Tabs to Spaces</TabsToSpaces>
 	<SpacesToTabs>Spaces to Tabs</SpacesToTabs>
 
-	<Reindent>Reindent Code</Reindent>
+	<Reindent>Reformat</Reindent>
 	<TrimWhitespace>Trim Ending Whitespace</TrimWhitespace>
+	<ToggleComment>Toggle Comment</ToggleComment>
 	<CommentOut>Comment out Selected Lines</CommentOut>
 	<Uncomment>Uncomment Selected Lines</Uncomment>
 	<ToggleBookmark>Toggle Bookmark</ToggleBookmark>
+	<NavigateBack>Navigate Back</NavigateBack>
+	<NavigateForward>Navigate Forward</NavigateForward>
+	<GoToDefinition>Go to Definition</GoToDefinition>
+	<FindReferences>Find References</FindReferences>
+	<RenameSymbol>Rename Symbol</RenameSymbol>
 	<PrevBookmark>Go to Previous Bookmark</PrevBookmark>
 	<NextBookmark>Go to Next Bookmark</NextBookmark>
 	<ClearBookmarks>Clear All Bookmarks...</ClearBookmarks>
@@ -80,11 +86,13 @@
 
 	<RestoreDefaultLayout>Restore Default Layout</RestoreDefaultLayout>
 
-	<ContentExplorer>Content Explorer</ContentExplorer>
+	<ContentExplorer>Document Outline</ContentExplorer>
 	<FileExplorer>File Explorer</FileExplorer>
 	<ReferenceBrowser>Reference Browser</ReferenceBrowser>
 	<CompilerLogs>Compiler Logs</CompilerLogs>
 	<SearchResults>Search Results</SearchResults>
+	<LuaDiagnostics>Lua Diagnostics</LuaDiagnostics>
+	<LuaReferencesResults>Lua References</LuaReferencesResults>
 	<ToolStrip>Tool Strip</ToolStrip>
 	<StatusStrip>Status Strip</StatusStrip>
 
@@ -101,7 +109,7 @@
 
 	<Untitled>Untitled</Untitled>
 
-	<SearchContent>Search Content...</SearchContent>
+	<SearchContent>Search Outline...</SearchContent>
 	<SearchFunctions>Search Functions...</SearchFunctions>
 	<SearchFiles>Search Files...</SearchFiles>
 	<SearchReferences>Search References...</SearchReferences>
@@ -114,9 +122,34 @@
 	<Row>Row: {0}</Row>
 	<Column>Column: {0}</Column>
 	<Line>Line: {0}</Line>
+	<LineHeader>Line</LineHeader>
+	<ColumnHeader>Column</ColumnHeader>
 	<Selected>Selected: {0}</Selected>
 	<Zoom>Zoom: {0}%</Zoom>
 	<ResetZoom>Reset Zoom</ResetZoom>
+
+	<Severity>Severity</Severity>
+	<Source>Source</Source>
+	<Message>Message</Message>
+	<Errors>Errors</Errors>
+	<Warning>Warning</Warning>
+	<Warnings>Warnings</Warnings>
+	<Information>Information</Information>
+	<Hint>Hint</Hint>
+	<Messages>Messages</Messages>
+	<NoDiagnostics>No diagnostics in the active Lua document.</NoDiagnostics>
+	<LuaDiagnosticsNoDocument>Select an active Lua document to view diagnostics.</LuaDiagnosticsNoDocument>
+	<LuaDiagnosticsUpdating>Diagnostics are updating...</LuaDiagnosticsUpdating>
+	<NoReferencesFound>No references found.</NoReferencesFound>
+	<LuaReferencesNoDocument>Select an active Lua document to view references.</LuaReferencesNoDocument>
+	<LuaReferencesUnsupported>The active Lua language server does not support Find References.</LuaReferencesUnsupported>
+	<LuaReferencesLoading>Searching for references...</LuaReferencesLoading>
+	<LuaRenameNoDocument>Select an active Lua document to rename a symbol.</LuaRenameNoDocument>
+	<LuaRenameUnsupported>The active Lua language server does not support Rename Symbol.</LuaRenameUnsupported>
+	<LuaRenameNoSymbol>Select a Lua identifier or place the caret on one first.</LuaRenameNoSymbol>
+	<LuaRenamePromptLabel>New name:</LuaRenamePromptLabel>
+	<LuaRenameNoChanges>No rename changes were returned.</LuaRenameNoChanges>
+	<LuaReformatUnsupported>The active Lua language server does not support document formatting.</LuaReformatUnsupported>
 
 	<DecimalValue>Decimal Value</DecimalValue>
 	<HexadecimalValue>Hexadecimal Value</HexadecimalValue>

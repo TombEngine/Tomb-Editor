@@ -1,36 +1,101 @@
-using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using Nickelony.IDEKit.Core.Comments;
+using Nickelony.IDEKit.IntelliSense.Navigation;
+using NLog;
 using System;
-using System.IO;
-using System.Windows.Media;
-using System.Xml;
-using TombLib.Scripting.Bases;
+using System.Threading;
+using TombLib.Scripting.Lua.Editing;
+using TombLib.Scripting.Lua.Resources;
+using TombLib.Scripting.UI.Bases;
+using TombLib.Scripting.UI.Highlighting;
 
-namespace TombLib.Scripting.Lua
+namespace TombLib.Scripting.Lua;
+
+/// <summary>
+/// Provides a Lua-specific text editor with syntax highlighting, semantic coloring, and language-service integration.
+/// </summary>
+public sealed partial class LuaEditor : TextEditorBase
 {
-	public sealed class LuaEditor : TextEditorBase
+	private static readonly Logger Log = LogManager.GetCurrentClassLogger();
+	private readonly LuaDefinitionNavigationController _definitionNavigationController;
+	private readonly LuaHoverController _hoverController;
+	private readonly LuaSignatureHelpController _signatureHelpController;
+
+	/// <summary>
+	/// Gets the default file extension associated with Lua documents.
+	/// </summary>
+	public override string DefaultFileExtension => ".lua";
+
+	private LuaTextMateInstallation? _textMateHighlighting;
+	private LuaThemeBrushSet? _themeBrushSet;
+	private int _editorDocumentVersion;
+
+	/// <summary>
+	/// Gets or sets the IntelliSense provider used to supply completions, hover text, diagnostics, and navigation results.
+	/// </summary>
+	public ILanguageServerIntelliSenseProvider? IntelliSenseProvider { get; set; }
+
+	/// <summary>
+	/// Gets the monotonically increasing version of the logical document content snapshot. The
+	/// version advances on every text change and is distinct from the session generation (operation
+	/// ownership); the two counters are not interchangeable.
+	/// </summary>
+	public int DocumentVersion => Volatile.Read(ref _editorDocumentVersion);
+
+	/// <summary>
+	/// Occurs when the editor resolves a definition location that should be opened by the host application.
+	/// </summary>
+	public event Action<TextDefinitionLocation>? DefinitionNavigationRequested;
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="LuaEditor"/> class for the specified engine version.
+	/// </summary>
+	/// <param name="engineVersion">The engine version used to configure editor behavior.</param>
+	public LuaEditor(Version engineVersion) : base(engineVersion)
 	{
-		public override string DefaultFileExtension => ".lua";
+		CommentSyntax = new CommentSyntax("--", null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.SingleQuoted);
+		TextArea.IndentationStrategy = new LuaAutoIndentationStrategy(Options);
+		_definitionNavigationController = new(this);
+		InitializeDefinitionNavigation(TryNavigateDefinitionAsync);
+		_hoverController = new(this);
+		_signatureHelpController = new(this);
+		BindLuaIntelliSenseEvents();
+	}
 
-		public LuaEditor(Version engineVersion) : base(engineVersion)
-		{
-			CommentPrefix = "--";
-		}
+	/// <summary>
+	/// Applies the active Lua theme, refreshes syntax highlighting, and updates shared editor settings.
+	/// </summary>
+	/// <param name="configuration">The editor configuration to apply.</param>
+	public override void UpdateSettings(TombLib.Scripting.UI.Bases.ConfigurationBase configuration)
+	{
+		EnsureNotDisposed();
 
-		public override void UpdateSettings(Bases.ConfigurationBase configuration)
-		{
-			var config = configuration as LuaEditorConfiguration;
+		if (configuration is not LuaEditorConfiguration config)
+			return;
 
-			string xmlFile = Path.Combine(DefaultPaths.LuaColorConfigsDirectory, "Default.xml");
+		var theme = config.Theme ?? LuaThemeRepository.GetTheme(ConfigurationDefaults.SelectedThemeName);
+		_themeBrushSet = LuaEditorColorPalette.Create(theme);
+		_textMateHighlighting?.Dispose();
+		_textMateHighlighting = null;
 
-			using (var stream = new FileStream(xmlFile, FileMode.Open, FileAccess.Read))
-			using (var reader = new XmlTextReader(stream))
-				SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+		LuaTextMateSyntaxHighlighting.TryInstall(this, theme.TextMateTheme, out _textMateHighlighting);
+		SyntaxHighlighting = _textMateHighlighting is null
+			? LuaTextMateSyntaxHighlighting.LoadFallbackHighlighting()
+			: null;
 
-			Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#202020"));
-			Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("White"));
+		EnsureSemanticTokensColorizerAttached();
 
-			base.UpdateSettings(configuration);
-		}
+		Background = _themeBrushSet.EditorBackground;
+		Foreground = _themeBrushSet.EditorForeground;
+
+		base.UpdateSettings(configuration);
+
+		if (!SignatureHelpPopupsEnabled)
+			_signatureHelpController.Dismiss();
+	}
+
+	private LuaThemeBrushSet GetThemeBrushSet()
+	{
+		_themeBrushSet ??= LuaEditorColorPalette.Create(LuaThemeRepository.GetTheme(ConfigurationDefaults.SelectedThemeName));
+		return _themeBrushSet;
 	}
 }

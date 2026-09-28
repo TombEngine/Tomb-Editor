@@ -1,1 +1,68 @@
-{}
+{
+	"DocumentOutlineView": {
+		"EmptyState": "No outline items available.",
+		"SearchLabel": "Search",
+		"SearchPlaceholder": "Search"
+	},
+	"DocumentOutlineViewModel": {
+		"Title": "Document Outline"
+	},
+	"FileExplorerView": {
+		"DeleteItem": "Delete",
+		"EmptyState": "No files to show.",
+		"NewFile": "New File",
+		"NewFileButton": "New File",
+		"NewFolder": "New Folder",
+		"NewFolderButton": "New Folder",
+		"OpenInExplorer": "Open In Explorer",
+		"RenameItem": "Rename",
+		"ViewCode": "View Code",
+		"ViewInEditor": "View In Editor"
+	},
+	"FileExplorerViewModel": {
+		"DefaultFolderName": "New Folder",
+		"DeleteFileMessage": "Move file '{0}' to the recycle bin?",
+		"DeleteFolderMessage": "Move folder '{0}' to the recycle bin?",
+		"DeleteTitle": "Are you sure?",
+		"EnterFileName": "Enter a file name.",
+		"EnterFolderName": "Enter a folder name.",
+		"EnterNewName": "Enter a new name.",
+		"ErrorTitle": "Error",
+		"FileAlreadyExistsMessage": "A file with the same name already exists in that directory.",
+		"FolderAlreadyExistsMessage": "A folder with the same name already exists in that directory.",
+		"InvalidNameMessage": "Invalid name.",
+		"ItemAlreadyExistsMessage": "An item with the same name already exists in that directory.",
+		"NewFileTitle": "Create New File",
+		"NewFolderTitle": "Create New Folder",
+		"RenameTitle": "Rename Item",
+		"UnsavedChangesMessage": "Save changes to '{0}' before deleting?",
+		"UnsavedChangesTitle": "Unsaved changes",
+		"Title": "File Explorer"
+	},
+	"ReferenceBrowserView": {
+		"CopyLabel": "Copy",
+		"SearchLabel": "Search",
+		"SearchPlaceholder": "Search"
+	},
+	"ReferenceBrowserViewModel": {
+		"ArgumentRange": "Argument {0} Range",
+		"DecimalValue": "Decimal Value",
+		"Description": "Description",
+		"EnemyDamageValues": "Enemy Damage Values",
+		"ErrorTitle": "Error",
+		"HexadecimalValue": "Hexadecimal Value",
+		"KeyboardScancodes": "Keyboard Scancodes",
+		"Macro": "Macro",
+		"MnemonicConstants": "Mnemonic Constants",
+		"MoveableSlotIndices": "Moveable Slot Indices",
+		"NewCommandsList": "New Commands List",
+		"OCBList": "OCB List",
+		"OldCommandsList": "Old Commands List",
+		"SoundIndices": "Sound Indices",
+		"Sounds": "Sounds",
+		"StaticObjectIndices": "Static Object Indices",
+		"Title": "Reference Browser",
+		"Variable": "Variable",
+		"VariablePlaceholders": "Variable Placeholders"
+	}
+}

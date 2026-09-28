@@ -1,0 +1,76 @@
+<UserControl
+	x:Class="TombIDE.ScriptingStudio.Editors.ClassicScript.StringEditor.StringEditorView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:local="clr-namespace:TombIDE.ScriptingStudio.Editors.ClassicScript.StringEditor"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="450"
+	d:DesignWidth="800"
+	PreviewKeyDown="OnPreviewKeyDown"
+	PreviewMouseWheel="OnPreviewMouseWheel"
+	mc:Ignorable="d">
+	<Grid>
+		<TabControl
+			x:Name="SectionTabs"
+			Grid.Row="0"
+			ItemsSource="{Binding Sections}"
+			SelectedIndex="{Binding SelectedSectionIndex}">
+			<TabControl.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding SectionName}" />
+				</DataTemplate>
+			</TabControl.ItemTemplate>
+			<TabControl.ContentTemplate>
+				<DataTemplate>
+					<DataGrid
+						x:Name="SectionGrid"
+						AutoGenerateColumns="False"
+						BeginningEdit="DataGrid_BeginningEdit"
+						CanUserAddRows="{Binding IsExtraNG}"
+						CanUserDeleteRows="{Binding IsExtraNG}"
+						CanUserReorderColumns="False"
+						CanUserResizeColumns="False"
+						CanUserResizeRows="False"
+						CanUserSortColumns="False"
+						CellEditEnding="DataGrid_CellEditEnding"
+						ClipboardCopyMode="None"
+						EnableColumnVirtualization="True"
+						EnableRowVirtualization="True"
+						InitializingNewItem="DataGrid_InitializingNewItem"
+						ItemsSource="{Binding Rows}"
+						LoadingRow="DataGrid_LoadingRow"
+						PreparingCellForEdit="DataGrid_PreparingCellForEdit"
+						SelectionMode="Single"
+						SelectionUnit="Cell"
+						VirtualizingPanel.VirtualizationMode="Recycling">
+						<DataGrid.ContextMenu>
+							<ContextMenu>
+								<MenuItem Command="Cut" Header="Cut" />
+								<MenuItem Command="Copy" Header="Copy" />
+								<MenuItem Command="Paste" Header="Paste" />
+							</ContextMenu>
+						</DataGrid.ContextMenu>
+						<DataGrid.Columns>
+							<DataGridTextColumn
+								Width="60"
+								Binding="{Binding Id, Mode=OneWay}"
+								Header="ID"
+								IsReadOnly="True" />
+							<DataGridTextColumn
+								Width="60"
+								Binding="{Binding HexValue, Mode=OneWay}"
+								Header="Hex"
+								IsReadOnly="True" />
+							<DataGridTextColumn
+								Width="*"
+								Binding="{Binding StringValue, UpdateSourceTrigger=LostFocus}"
+								Header="String"
+								IsReadOnly="False" />
+						</DataGrid.Columns>
+					</DataGrid>
+				</DataTemplate>
+			</TabControl.ContentTemplate>
+		</TabControl>
+	</Grid>
+</UserControl>

@@ -1,0 +1,34 @@
+{
+	"Comments": {
+		"HtmlColor": "Green",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Constants": {
+		"HtmlColor": "Orchid",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Collections": {
+		"HtmlColor": "SpringGreen",
+		"IsBold": true,
+		"IsItalic": false
+	},
+	"Properties": {
+		"HtmlColor": "MediumAquamarine",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Values": {
+		"HtmlColor": "SteelBlue",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Strings": {
+		"HtmlColor": "LightSalmon",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Background": "#202020",
+	"Foreground": "Gainsboro"
+}

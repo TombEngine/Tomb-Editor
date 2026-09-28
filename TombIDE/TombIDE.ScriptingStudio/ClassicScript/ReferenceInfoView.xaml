@@ -1,0 +1,60 @@
+<Window
+	x:Class="TombIDE.ScriptingStudio.ClassicScript.ReferenceInfoView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:classicScript="clr-namespace:TombIDE.ScriptingStudio.ClassicScript"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Title="{Binding Title}"
+	Width="600"
+	Height="400"
+	d:DataContext="{d:DesignInstance Type=classicScript:ReferenceInfoViewModel}"
+	Background="{DynamicResource Brush_Background}"
+	ResizeMode="CanResize"
+	Style="{DynamicResource CustomWindowStyle}"
+	WindowStartupLocation="CenterScreen"
+	mc:Ignorable="d">
+
+	<Grid Margin="{x:Static darkUI:Defaults.MediumThickness}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<!--  Settings  -->
+		<StackPanel Grid.Row="0" Orientation="Horizontal">
+			<CheckBox Content="Always on Top" IsChecked="{Binding AlwaysOnTop}" />
+			<CheckBox
+				Margin="12,0,0,0"
+				Content="Close Tabs on Close"
+				IsChecked="{Binding CloseTabsOnClose}" />
+		</StackPanel>
+
+		<!--  Tab control  -->
+		<TabControl
+			Grid.Row="1"
+			Margin="0,6,0,0"
+			ItemsSource="{Binding Tabs}"
+			SelectedItem="{Binding SelectedTab}">
+			<TabControl.ItemTemplate>
+				<DataTemplate DataType="{x:Type classicScript:ReferenceInfoTab}">
+					<TextBlock Text="{Binding Keyword}" />
+				</DataTemplate>
+			</TabControl.ItemTemplate>
+			<TabControl.ContentTemplate>
+				<DataTemplate DataType="{x:Type classicScript:ReferenceInfoTab}">
+					<TextBox
+						Background="{DynamicResource Brush_Background}"
+						BorderThickness="0"
+						FontSize="12"
+						IsReadOnly="True"
+						Text="{Binding Description, Mode=OneWay}"
+						TextWrapping="Wrap"
+						VerticalScrollBarVisibility="Auto" />
+				</DataTemplate>
+			</TabControl.ContentTemplate>
+		</TabControl>
+	</Grid>
+</Window>

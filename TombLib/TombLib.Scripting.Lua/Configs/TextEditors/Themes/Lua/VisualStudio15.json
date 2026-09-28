@@ -1,0 +1,69 @@
+{
+	"Name": "Visual Studio 2015",
+	"Aliases": [ "Visual Studio 15", "VS 2015" ],
+	"Background": "#1E1E1E",
+	"Foreground": "#DCDCDC",
+	"SemanticColors": {
+		"MutedText": "#7A7A7A",
+		"Misc": "#DCDCDC",
+		"Method": "#DCDCAA",
+		"Variable": "#9CDCFE",
+		"Property": "#9CDCFE",
+		"Type": "#4EC9B0",
+		"Keyword": "#569CD6",
+		"LanguageConstant": "#569CD6",
+		"Constant": "#B5CEA8",
+		"File": "#D7BA7D",
+		"SignatureParameterDocumentation": "#B4B4B4",
+		"SignatureActiveParameter": "#569CD6",
+		"SignatureText": "#DCDCDC"
+	},
+	"TextMateTheme": {
+		"Rules": [
+			{
+				"Scope": "comment",
+				"Foreground": "#57A64A"
+			},
+			{
+				"Scope": "string",
+				"Foreground": "#D69D85"
+			},
+			{
+				"Scope": "constant.numeric",
+				"Foreground": "#B5CEA8"
+			},
+			{
+				"Scope": "constant.character.escape",
+				"Foreground": "#D7BA7D"
+			},
+			{
+				"Scope": "constant.language",
+				"Foreground": "#569CD6"
+			},
+			{
+				"Scope": "keyword, storage",
+				"Foreground": "#569CD6"
+			},
+			{
+				"Scope": "keyword.operator",
+				"Foreground": "#D4D4D4"
+			},
+			{
+				"Scope": "entity.name.function, support.function, support.function.library, support.function.any-method",
+				"Foreground": "#DCDCAA"
+			},
+			{
+				"Scope": "entity.name.class, support.class, support.type, storage.type.generic",
+				"Foreground": "#4EC9B0"
+			},
+			{
+				"Scope": "variable.parameter, entity.other.attribute",
+				"Foreground": "#9CDCFE"
+			},
+			{
+				"Scope": "variable.language.self, entity.name.tag, string.tag, storage.type.annotation",
+				"Foreground": "#569CD6"
+			}
+		]
+	}
+}

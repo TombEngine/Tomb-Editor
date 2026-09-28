@@ -1,0 +1,991 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Nickelony.LanguageServer.Lua</name>
+    </assembly>
+    <members>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaCompletionItemIdentity">
+            <summary>
+            Captures the completion fields that define whether two parsed Lua completion items should be treated as duplicates.
+            </summary>
+            <param name="Label">The completion label shown to the user.</param>
+            <param name="InsertText">The text inserted when the completion is accepted.</param>
+            <param name="FilterText">The filter text used during completion matching.</param>
+            <param name="Detail">The normalized detail text.</param>
+            <param name="Description">The normalized description text.</param>
+            <param name="Kind">The resolved completion icon kind.</param>
+            <param name="TextEdit">The normalized text-edit identity.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaCompletionItemIdentity.#ctor(System.String,System.String,System.String,System.String,System.String,Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItemKind,Nickelony.LanguageServer.Lua.LuaCompletionTextEditIdentity)">
+            <summary>
+            Captures the completion fields that define whether two parsed Lua completion items should be treated as duplicates.
+            </summary>
+            <param name="Label">The completion label shown to the user.</param>
+            <param name="InsertText">The text inserted when the completion is accepted.</param>
+            <param name="FilterText">The filter text used during completion matching.</param>
+            <param name="Detail">The normalized detail text.</param>
+            <param name="Description">The normalized description text.</param>
+            <param name="Kind">The resolved completion icon kind.</param>
+            <param name="TextEdit">The normalized text-edit identity.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaCompletionItemIdentity.Label">
+            <summary>The completion label shown to the user.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaCompletionItemIdentity.InsertText">
+            <summary>The text inserted when the completion is accepted.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaCompletionItemIdentity.FilterText">
+            <summary>The filter text used during completion matching.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaCompletionItemIdentity.Detail">
+            <summary>The normalized detail text.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaCompletionItemIdentity.Description">
+            <summary>The normalized description text.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaCompletionItemIdentity.Kind">
+            <summary>The resolved completion icon kind.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaCompletionItemIdentity.TextEdit">
+            <summary>The normalized text-edit identity.</summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaCompletionItemIdentity.Create(Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem)">
+            <summary>
+            Creates a duplicate-detection identity from a parsed completion item.
+            </summary>
+            <param name="item">The parsed completion item.</param>
+            <returns>The normalized identity.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaCompletionItemIdentityComparer">
+            <summary>
+            Compares parsed completion items using the case-sensitive identity rules required by Lua identifiers.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaCompletionItemIdentityComparer.Instance">
+            <summary>
+            Gets the shared comparer instance.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaCompletionPriorityWeights">
+            <summary>
+            Defines the scoring weights used when ranking parsed Lua completion items.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaCompletionTextAnalysis">
+            <summary>
+            Captures the scope and icon hints inferred from LuaLS completion detail and description text.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaCompletionTextAnalysis.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Lua.LuaCompletionTextAnalysis"/> struct.
+            </summary>
+            <param name="detail">The normalized completion detail text.</param>
+            <param name="description">The normalized completion description text.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaCompletionTextAnalysis.HasLocalScope">
+            <summary>
+            Gets a value indicating whether the completion text suggests a local-scope symbol.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaCompletionTextAnalysis.HasUpvalueOrParameter">
+            <summary>
+            Gets a value indicating whether the completion text suggests an upvalue or parameter symbol.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaCompletionTextAnalysis.KindOverride">
+            <summary>
+            Gets the icon override inferred from the completion detail text, when one can be resolved.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaCompletionTextEditIdentity">
+            <summary>
+            Normalizes the visible insert and replace ranges that participate in completion-item duplicate detection.
+            </summary>
+            <param name="InsertStart">The start position of the insert range.</param>
+            <param name="InsertEnd">The end position of the insert range.</param>
+            <param name="ReplaceStart">The start position of the replace range, when present.</param>
+            <param name="ReplaceEnd">The end position of the replace range, when present.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaCompletionTextEditIdentity.#ctor(System.Nullable{Nickelony.LanguageServer.Abstractions.Completion.TextCompletionPosition},System.Nullable{Nickelony.LanguageServer.Abstractions.Completion.TextCompletionPosition},System.Nullable{Nickelony.LanguageServer.Abstractions.Completion.TextCompletionPosition},System.Nullable{Nickelony.LanguageServer.Abstractions.Completion.TextCompletionPosition})">
+            <summary>
+            Normalizes the visible insert and replace ranges that participate in completion-item duplicate detection.
+            </summary>
+            <param name="InsertStart">The start position of the insert range.</param>
+            <param name="InsertEnd">The end position of the insert range.</param>
+            <param name="ReplaceStart">The start position of the replace range, when present.</param>
+            <param name="ReplaceEnd">The end position of the replace range, when present.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaCompletionTextEditIdentity.InsertStart">
+            <summary>The start position of the insert range.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaCompletionTextEditIdentity.InsertEnd">
+            <summary>The end position of the insert range.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaCompletionTextEditIdentity.ReplaceStart">
+            <summary>The start position of the replace range, when present.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaCompletionTextEditIdentity.ReplaceEnd">
+            <summary>The end position of the replace range, when present.</summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaCompletionTextEditIdentity.Create(System.Nullable{Nickelony.LanguageServer.Abstractions.Completion.TextCompletionTextEdit})">
+            <summary>
+            Creates a normalized text-edit identity from a parsed completion text edit.
+            </summary>
+            <param name="textEdit">The parsed completion text edit.</param>
+            <returns>The normalized identity.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaLanguageServerCompletionKind">
+            <summary>
+            Defines the completion-item kind values emitted by LuaLS for parsed completion payloads.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaLanguageServerResponseParser">
+            <summary>
+            Parses typed Lua language-server responses into shared editor-facing models (completion items, hover info,
+            definition locations, reference locations, workspace edits, signature help, and formatting edits).
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerResponseParser.ParseCompletionItems(System.Collections.Generic.IEnumerable{Nickelony.LanguageServer.Client.CompletionItemPayload},System.Func{Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem,Nickelony.LanguageServer.Client.CompletionItemPayload,System.Int32,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem}}})">
+            <summary>
+            Parses a sequence of typed completion-item payloads into editor completion entries.
+            </summary>
+            <param name="itemPayloads">The typed completion-item payloads.</param>
+            <param name="resolveFactory">Builds an optional lazy-resolve callback for each item.</param>
+            <returns>The parsed completion items.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerResponseParser.ParseCompletionItem(Nickelony.LanguageServer.Client.CompletionItemPayload,System.Int32,System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem}})">
+            <summary>
+            Parses a single typed LSP completion-item payload into a <see cref="T:Nickelony.LanguageServer.Abstractions.Completion.TextCompletionItem"/>.
+            </summary>
+            <param name="itemPayload">The typed completion-item payload.</param>
+            <param name="itemIndex">The zero-based response index used for priority weighting.</param>
+            <param name="resolveAsync">An optional lazy-resolve callback.</param>
+            <returns>The parsed completion item, or <see langword="null"/> when the payload is invalid.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerResponseParser.StripSnippetPlaceholders(System.String)">
+            <summary>
+            Removes Lua snippet placeholders while preserving the first final-caret location needed by the editor.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerResponseParser.ParseDocumentFormattingEdits(System.Collections.Generic.IReadOnlyList{Nickelony.LanguageServer.Client.TextEditPayload})">
+            <summary>
+            Parses document-formatting edits from a LuaLS formatting response.
+            </summary>
+            <param name="response">The text edit payloads from the formatting response, or <see langword="null"/> when unavailable.</param>
+            <returns>The formatted text edits, or an empty list when no edits are present.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerResponseParser.ParseHoverInfo(Nickelony.LanguageServer.Client.HoverResponse)">
+            <summary>
+            Parses hover content from a LuaLS hover response.
+            </summary>
+            <param name="response">The hover response payload, or <see langword="null"/> when unavailable.</param>
+            <returns>The parsed hover info, or <see langword="null"/> when no usable content is present.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerResponseParser.ParseDefinitionLocation(Nickelony.LanguageServer.Client.DefinitionResponse)">
+            <summary>
+            Parses a definition location from a LuaLS definition response.
+            </summary>
+            <param name="response">The definition response payload.</param>
+            <returns>The resolved definition location, or <see langword="null"/> when the response does not contain a valid file URI.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerResponseParser.ParseReferenceLocations(System.Collections.Generic.IReadOnlyList{Nickelony.LanguageServer.Client.ReferenceResponse})">
+            <summary>
+            Parses reference locations from a LuaLS references response.
+            </summary>
+            <param name="response">The references response payload, or <see langword="null"/> when unavailable.</param>
+            <returns>The resolved reference locations, or an empty list when none are available.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerResponseParser.ParseWorkspaceEdit(System.Nullable{Nickelony.LanguageServer.Client.WorkspaceEditResponse},Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            Parses a workspace edit from a LuaLS rename response.
+            </summary>
+            <param name="response">The workspace edit response payload, or <see langword="null"/> when unavailable.</param>
+            <param name="logger">The logger instance, or <see langword="null"/> for no logging.</param>
+            <returns>The parsed workspace edit, or <see langword="null"/> when no edits are present.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerResponseParser.ParseSignatureHelp(Nickelony.LanguageServer.Client.SignatureHelpResponse)">
+            <summary>
+            Parses signature help metadata from a LuaLS signature-help response.
+            </summary>
+            <param name="response">The signature help response payload, or <see langword="null"/> when unavailable.</param>
+            <returns>The parsed signature help info, or <see langword="null"/> when no signatures are present.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaSnippetPlaceholderResult">
+            <summary>
+            Represents snippet text after placeholder stripping and the resolved caret placement.
+            </summary>
+            <param name="Text">The snippet text with LuaLS placeholder markers removed.</param>
+            <param name="CaretOffset">The zero-based caret offset to apply after insertion, or <see langword="null"/> when no explicit caret position exists.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaSnippetPlaceholderResult.#ctor(System.String,System.Nullable{System.Int32})">
+            <summary>
+            Represents snippet text after placeholder stripping and the resolved caret placement.
+            </summary>
+            <param name="Text">The snippet text with LuaLS placeholder markers removed.</param>
+            <param name="CaretOffset">The zero-based caret offset to apply after insertion, or <see langword="null"/> when no explicit caret position exists.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaSnippetPlaceholderResult.Text">
+            <summary>The snippet text with LuaLS placeholder markers removed.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaSnippetPlaceholderResult.CaretOffset">
+            <summary>The zero-based caret offset to apply after insertion, or <see langword="null"/> when no explicit caret position exists.</summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaLanguageServerDiagnosticsParser">
+            <summary>
+            Parses Lua language-server diagnostics payloads into editor diagnostics tied to tracked document versions.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerDiagnosticsParser.TryParse(Nickelony.LanguageServer.Client.PublishDiagnosticsParams,System.String,System.String,System.Int32,Nickelony.LanguageServer.Lua.LuaPublishedDiagnostics@)">
+            <summary>
+            Parses a LuaLS diagnostics notification into editor diagnostics for a tracked document.
+            </summary>
+            <param name="parameters">The published diagnostics notification payload from the language server.</param>
+            <param name="filePath">The normalized file path of the tracked document.</param>
+            <param name="documentContent">The current document content.</param>
+            <param name="documentVersion">The tracked document version to match against the diagnostics version.</param>
+            <param name="publishedDiagnostics">When this method returns <see langword="true"/>, contains the parsed diagnostics payload.</param>
+            <returns><see langword="true"/> when the payload was parsed; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaPublishedDiagnostics">
+            <summary>
+            Represents a diagnostics payload published by LuaLS for a specific document version.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaPublishedDiagnostics.#ctor(System.String,System.Collections.Generic.IReadOnlyList{Nickelony.LanguageServer.Abstractions.Diagnostics.TextEditorDiagnostic},System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Lua.LuaPublishedDiagnostics"/> class.
+            </summary>
+            <param name="filePath">The normalized file path associated with the diagnostics.</param>
+            <param name="diagnostics">The parsed diagnostics for that file.</param>
+            <param name="version">The synchronized document version that produced the diagnostics.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaPublishedDiagnostics.FilePath">
+            <summary>
+            Gets the normalized file path associated with the diagnostics.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaPublishedDiagnostics.Diagnostics">
+            <summary>
+            Gets the parsed diagnostics payload.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaPublishedDiagnostics.Version">
+            <summary>
+            Gets the synchronized document version that produced the diagnostics.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaDiagnosticsCache">
+            <summary>
+            Caches the latest non-stale diagnostics payload published for a tracked Lua document.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaDiagnosticsCache.Diagnostics">
+            <summary>
+            Gets the currently cached diagnostics.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaDiagnosticsCache.Version">
+            <summary>
+            Gets the synchronized document version associated with the cached diagnostics.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDiagnosticsCache.Clear">
+            <summary>
+            Clears the cached diagnostics state.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDiagnosticsCache.TryStore(Nickelony.LanguageServer.Lua.LuaPublishedDiagnostics)">
+            <summary>
+            Stores a diagnostics payload when its version is not stale relative to the current cache.
+            </summary>
+            <param name="publishedDiagnostics">The diagnostics payload to cache.</param>
+            <returns><see langword="true"/> when the payload was stored; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaDocumentState">
+            <summary>
+            Extends the core tracked-document state with Lua-specific caches for diagnostics and semantic tokens.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDocumentState.#ctor(System.String,System.String,System.String,System.Int32,System.Boolean,System.Int32,System.Int32,System.Int64)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Lua.LuaDocumentState"/> class.
+            </summary>
+            <param name="filePath">The normalized tracked file path.</param>
+            <param name="uri">The mirrored file URI.</param>
+            <param name="content">The latest synchronized document content.</param>
+            <param name="version">The tracked document version.</param>
+            <param name="isOpen">Whether the language server currently considers the document open.</param>
+            <param name="openReferenceCount">The active editor-owned reference count.</param>
+            <param name="requestReferenceCount">The active request-owned reference count.</param>
+            <param name="lastAccessStamp">The access stamp used for request-only eviction ordering.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDocumentState.Touch(System.Int64)">
+            <summary>
+            Updates the request-only eviction stamp for the tracked document.
+            </summary>
+            <param name="lastAccessStamp">The replacement access stamp.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDocumentState.Reopen(System.String)">
+            <summary>
+            Marks the document as reopened with fresh synchronized content.
+            </summary>
+            <param name="content">The reopened content.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDocumentState.UpdateContent(System.String)">
+            <summary>
+            Replaces the tracked content and advances the version.
+            </summary>
+            <param name="content">The replacement content.</param>
+            <returns>The previous tracked content.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDocumentState.RenameTo(System.String,System.String)">
+            <summary>
+            Replaces the tracked file path and URI after a rename.
+            </summary>
+            <param name="filePath">The normalized replacement file path.</param>
+            <param name="uri">The replacement file URI.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDocumentState.MarkClosed">
+            <summary>
+            Marks the tracked server document as closed while preserving cached state.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaDocumentState.DiagnosticsCache">
+            <summary>
+            Gets the cached diagnostics for the tracked document.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaDocumentState.SemanticTokensCache">
+            <summary>
+            Gets the cached semantic token state for the tracked document.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaDocumentStore">
+            <summary>
+            Stores the local document state mirrored to LuaLS, including versions, diagnostics, and semantic token caches.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDocumentStore.GetDiagnostics(System.String)">
+            <summary>
+            Gets the cached diagnostics for the specified file path.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <returns>The cached diagnostics, or an empty list when none are stored.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDocumentStore.GetSemanticTokens(System.String)">
+            <summary>
+            Gets the cached semantic tokens for the specified file path.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <returns>The cached semantic tokens, or an empty list when none are stored.</returns>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaDocumentStore.TrackedDocumentCount">
+            <summary>
+            Gets the number of documents currently tracked by the store.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDocumentStore.TryStoreDiagnostics(Nickelony.LanguageServer.Lua.LuaPublishedDiagnostics,System.Int32)">
+            <summary>
+            Stores a diagnostics payload when it is not stale for the tracked document version.
+            </summary>
+            <param name="publishedDiagnostics">The diagnostics payload to cache.</param>
+            <param name="expectedDocumentVersion">The tracked document version observed when the payload was parsed.</param>
+            <returns><see langword="true"/> when the payload was stored; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDocumentStore.TryStoreSemanticTokens(System.String,System.Int32,System.Collections.Generic.IReadOnlyList{Nickelony.LanguageServer.Lua.LuaSemanticToken})">
+            <summary>
+            Stores semantic tokens when they are not stale for the tracked document version.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <param name="version">The document version associated with the tokens.</param>
+            <param name="semanticTokens">The semantic tokens to cache.</param>
+            <returns><see langword="true"/> when the token set was stored; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDocumentStore.GetSemanticTokensDeltaState(System.String)">
+            <summary>
+            Returns the cached semantic tokens delta state for <paramref name="filePath"/>, if any.
+            Used by the provider to send <c>semanticTokens/full/delta</c> requests with the previous result id.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <returns>The cached delta state, if available.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDocumentStore.StoreSemanticTokensDeltaState(System.String,System.String,System.Int32[])">
+            <summary>
+            Stores the raw <c>data</c> payload returned by <c>semanticTokens/full(/delta)</c> along with the
+            associated <c>resultId</c>, so subsequent requests can ask LuaLS for incremental edits.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <param name="resultId">The server-provided semantic token result id.</param>
+            <param name="data">The cached integer token stream.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDocumentStore.ClearSemanticTokens(System.String)">
+            <summary>
+            Clears the cached semantic tokens for the specified file path.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <returns>The cleared semantic token list, or an empty list when the document is not tracked.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDocumentStore.InvalidateServerSynchronization(System.String)">
+            <summary>
+            Marks the specified document as needing a fresh server-side open/sync before incremental updates can resume.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <returns><see langword="true"/> when the document was found and invalidated; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaDocumentVersionHelper">
+            <summary>
+            Applies the shared version-acceptance rules used by Lua document caches.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaDocumentVersionHelper.TryAccept(System.Int32,System.Int32,System.Int32@)">
+            <summary>
+            Tries to accept an incoming document version relative to the current cached version.
+            </summary>
+            <param name="currentVersion">The version currently cached.</param>
+            <param name="incomingVersion">The incoming version to evaluate.</param>
+            <param name="acceptedVersion">The version that should remain cached after evaluation.</param>
+            <returns><see langword="true"/> when the incoming version is acceptable; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaSemanticTokensCache">
+            <summary>
+            Caches the latest semantic tokens and delta state published for a tracked Lua document.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaSemanticTokensCache.Tokens">
+            <summary>
+            Gets the latest decoded semantic tokens.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaSemanticTokensCache.Version">
+            <summary>
+            Gets the synchronized document version associated with the cached semantic tokens.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaSemanticTokensCache.PreviousData">
+            <summary>
+            Gets the previously cached raw semantic token data stream used for delta requests.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaSemanticTokensCache.PreviousResultId">
+            <summary>
+            Gets the previously cached semantic token result identifier used for delta requests.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaSemanticTokensCache.Clear">
+            <summary>
+            Clears the token cache and all delta-request state.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaSemanticTokensCache.GetDeltaState">
+            <summary>
+            Returns the current semantic token delta state used for incremental refreshes.
+            </summary>
+            <returns>The current delta-request state.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaSemanticTokensCache.InvalidateServerSynchronization">
+            <summary>
+            Drops server-side synchronization state while preserving the last decoded token list.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaSemanticTokensCache.StoreDeltaState(System.String,System.Int32[])">
+            <summary>
+            Stores the raw semantic token delta-request state returned by the language server.
+            </summary>
+            <param name="resultId">The server-provided result identifier.</param>
+            <param name="data">The raw semantic token integer stream.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaSemanticTokensCache.TryStore(System.Int32,System.Collections.Generic.IReadOnlyList{Nickelony.LanguageServer.Lua.LuaSemanticToken})">
+            <summary>
+            Stores decoded semantic tokens when their version is not stale relative to the current cache.
+            </summary>
+            <param name="version">The synchronized document version.</param>
+            <param name="semanticTokens">The decoded semantic tokens.</param>
+            <returns><see langword="true"/> when the token set was stored; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaLanguageServerClientCapabilitiesFactory">
+            <summary>
+            Builds the client-capabilities payload advertised to the external Lua language server during initialization.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerClientCapabilitiesFactory.Create">
+            <summary>
+            Builds LuaLS-specific client capability advertisement for the initialize request.
+            </summary>
+            <returns>An anonymous capabilities object serialized into the initialize request.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaLanguageServerInitializationOptionsFactory">
+            <summary>
+            Builds the initialization-options payload sent to the external Lua language server.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerInitializationOptionsFactory.Create">
+            <summary>
+            Builds LuaLS-specific initialization options.
+            </summary>
+            <returns>An anonymous initialization-options object serialized into the initialize request.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaLanguageServerSettingsFactory">
+            <summary>
+            Builds the workspace-scoped configuration payload sent to the external Lua language server.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerSettingsFactory.Create(System.String)">
+            <summary>
+            Builds the Lua language server settings payload for the active script workspace.
+            </summary>
+            <param name="workspaceRootDirectoryPath">The root directory of the current Lua script workspace.</param>
+            <returns>An anonymous settings object serialized into the LuaLS configuration request.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaMarkupTextHelper">
+            <summary>
+            Normalizes Lua language-server markup payloads into editor-friendly plain text or markdown.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaMarkupTextHelper.ExtractMarkupText(System.Text.Json.JsonElement)">
+            <summary>
+            Extracts and normalizes a markup payload represented as a raw JSON element.
+            </summary>
+            <param name="element">The raw markup payload.</param>
+            <returns>The normalized text, or <see langword="null"/> when the payload is empty.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaMarkupTextHelper.NormalizeMarkupText(System.String)">
+            <summary>
+            Normalizes plain or markdown-like text emitted by LuaLS into the editor's display format.
+            Standalone fenced code-block marker lines are removed, while inline backticks are preserved.
+            </summary>
+            <param name="text">The text to normalize.</param>
+            <returns>The normalized text, or <see langword="null"/> when the input is blank.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaMarkupTextHelper.IsFenceLine(System.String)">
+            <summary>
+            Reports whether one trimmed line is a standalone markdown fence marker.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.ILuaIntelliSenseProvider">
+             <summary>
+             Defines the Lua-specific language-service contract used by the Lua editor to provide IntelliSense features.
+             </summary>
+             <remarks>
+             This interface extends <see cref="T:Nickelony.LanguageServer.Abstractions.ILanguageServerIntelliSenseProvider"/> with Lua-specific concerns such as
+             semantic tokens. The generic document lifecycle, diagnostics, completion, hover, definition, and signature-help
+             contracts are defined on the base interface.
+            
+             Implementations may raise callbacks from background threads. Consumers that access UI controls must marshal those
+             callbacks to the UI thread. Once disposal begins, no further provider callbacks are raised.
+             </remarks>
+        </member>
+        <member name="E:Nickelony.LanguageServer.Lua.ILuaIntelliSenseProvider.SemanticTokensUpdated">
+            <summary>
+            Occurs when semantic tokens for a document have changed.
+            </summary>
+            <remarks>
+            This callback may be raised from a background thread. UI consumers must marshal to the UI thread before touching
+            controls. Handlers for one event invocation run serially on the raising thread; a failing handler is isolated from
+            later handlers. The semantic-token list and each token's modifier list are owned immutable snapshots that remain
+            valid after the callback returns. Once disposal begins, this event will not be raised again.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.ILuaIntelliSenseProvider.GetSemanticTokens(System.String)">
+            <summary>
+            Gets the latest semantic tokens known for a document.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <returns>An owned immutable snapshot of the semantic tokens currently cached for the document.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider">
+            <summary>
+            Implements the Lua IntelliSense provider by synchronizing editor documents with LuaLS and caching its responses.
+            </summary>
+            <remarks>
+            The provider owns the language-server client supplied to its constructor and the workspace watcher created by its
+            workspace coordinator. Dispose the provider when the host/editor no longer needs it; the provider detaches callbacks,
+            cancels provider work, disposes the watcher, and then disposes the client.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.GetCompletionItemsAsync(System.String,System.String,System.Int32,System.Int32,System.Nullable{System.Char},System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.WorkspaceWatchSpecifications">
+            <summary>
+            Gets the workspace file patterns mirrored to the Lua language server for external-change watching.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.IsAvailable">
+            <inheritdoc/>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.State">
+            <inheritdoc/>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.SupportsReferences">
+            <inheritdoc/>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.SupportsRename">
+            <inheritdoc/>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.SupportsFormatting">
+            <inheritdoc/>
+        </member>
+        <member name="E:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.DiagnosticsUpdated">
+            <inheritdoc/>
+        </member>
+        <member name="E:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.SemanticTokensUpdated">
+            <inheritdoc/>
+        </member>
+        <member name="E:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.CapabilitiesChanged">
+            <inheritdoc/>
+        </member>
+        <member name="E:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.StartupFailed">
+            <summary>
+            Occurs when repeated language-server startup failures should be surfaced to the user.
+            </summary>
+            <remarks>
+            Startup-failure notifications may be delivered from background work. Consumers that touch UI controls must marshal
+            to the UI thread. Handlers for one event invocation run serially on the raising thread and a failing handler is
+            isolated from later handlers. Once disposal begins, this event will not be raised again.
+            </remarks>
+        </member>
+        <member name="E:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.WorkspaceWatcherFailed">
+            <summary>
+            Occurs when the external workspace watcher becomes unavailable for the rest of the session.
+            </summary>
+            <remarks>
+            Workspace-watcher notifications may be delivered from background work. Consumers that touch UI controls must
+            marshal to the UI thread. Handlers for one event invocation run serially on the raising thread and a failing handler
+            is isolated from later handlers. Once disposal begins, this event will not be raised again.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.#ctor(System.String,System.String,Microsoft.Extensions.Logging.ILogger{Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider"/> class.
+            </summary>
+            <param name="workspaceRootDirectoryPath">The root directory of the current Lua script workspace.</param>
+            <param name="serverExecutablePath">The LuaLS executable path, or <see langword="null"/> when unavailable.</param>
+            <param name="logger">The logger instance, or <see langword="null"/> for a no-op logger.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.#ctor(System.String,Nickelony.LanguageServer.Client.ILanguageServerClient,System.Nullable{System.TimeSpan},System.Int32,System.Func{System.String,System.Func{Nickelony.LanguageServer.Client.FileChangeBatch,System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Action{Nickelony.LanguageServer.Client.WorkspaceFileWatcher,System.Exception},Nickelony.LanguageServer.Client.WorkspaceFileWatcher},Microsoft.Extensions.Logging.ILogger{Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider"/> class.
+            for testing and dependency injection.
+            </summary>
+            <param name="workspaceRootDirectoryPath">The root directory of the current Lua script workspace.</param>
+            <param name="client">The language server client, or <see langword="null"/> when unavailable.</param>
+            <param name="requestTimeout">The per-request timeout, or <see langword="null"/> for the default.</param>
+            <param name="requestTimeoutRestartThreshold">The consecutive timeout count that triggers an automatic restart.</param>
+            <param name="workspaceFileWatcherFactory">A factory for creating workspace file watchers, used for testing.</param>
+            <param name="logger">The logger instance, or <see langword="null"/> for a no-op logger.</param>
+            <remarks>
+            Ownership of <paramref name="client"/> transfers to the provider. The client is disposed when this provider is
+            disposed, including when construction completed only partially and startup never succeeded.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.GetDiagnostics(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.GetSemanticTokens(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.OpenDocument(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.UpdateDocument(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.CloseDocument(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.RenameDocument(System.String,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.EnsureStartedAsync(System.Threading.CancellationToken)">
+            <summary>
+            Ensures the language-server transport is running and that tracked documents and workspace watching are restored after reconnects.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.Dispose">
+            <inheritdoc/>
+            <remarks>
+            Disposal is idempotent. It first closes callback admission and detaches provider subscribers, then cancels
+            provider-owned work, disposes the workspace watcher/coordinator, and finally disposes the Lua language-server
+            client owned by this provider. A callback already admitted before disposal began may finish; no later callback
+            starts. The provider must not be used after disposal.
+            </remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.GetReferencesAsync(Nickelony.LanguageServer.Abstractions.Navigation.TextReferenceRequest,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.GetHoverAsync(System.String,System.String,System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.GetDefinitionAsync(System.String,System.String,System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.GetReferencesAsync(System.String,System.String,System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Resolves reference locations for a symbol at a position within a document.
+            </summary>
+            <param name="filePath">The local file path of the document.</param>
+            <param name="content">The current document content.</param>
+            <param name="line">The zero-based line index.</param>
+            <param name="column">The zero-based column index.</param>
+            <param name="cancellationToken">A token that can cancel the request.</param>
+            <returns>The resolved reference locations, or an empty list when none are available.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.RenameSymbolAsync(Nickelony.LanguageServer.Abstractions.Editing.TextRenameRequest,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.FormatDocumentAsync(Nickelony.LanguageServer.Abstractions.Editing.TextFormatRequest,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.GetSignatureHelpAsync(System.String,System.String,System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.SendPositionRequestAsync``2(System.String,System.String,System.Int32,System.Int32,System.String,System.Func{Nickelony.LanguageServer.Client.TextDocumentIdentifier,Nickelony.LanguageServer.Client.ProtocolPosition,System.Object},System.Func{``0,``1},``0,``1,System.Threading.CancellationToken)">
+            <summary>
+            Synchronizes the requested document, executes a position-based language-server request,
+            and releases the temporary request tracking afterwards.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.SendBoundedRequestAsync``1(Nickelony.LanguageServer.Client.ILanguageServerClient,System.String,System.Object,``0,System.Threading.CancellationToken)">
+            <summary>
+            Sends a language-server request with timeout tracking and a single retry when the active transport changes or becomes unavailable.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerIntelliSenseProvider.RefreshSemanticTokensAsync(Nickelony.LanguageServer.Client.DocumentSnapshot,System.Threading.CancellationToken)">
+            <summary>
+            Refreshes semantic tokens for a tracked document, falling back to a full refresh when the cached delta chain is no longer usable.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaLanguageServerSemanticTokensDecoder">
+            <summary>
+            Decodes a raw LuaLS semantic token integer stream (already cached on the client) into the typed
+            <see cref="T:Nickelony.LanguageServer.Lua.LuaSemanticToken"/> list expected by the editor's colorizer.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaLanguageServerSemanticTokensDecoder.Decode(System.Int32[],Nickelony.LanguageServer.Client.DocumentSnapshot,System.Collections.Generic.IReadOnlyList{System.String},System.Collections.Generic.IReadOnlyList{System.String})">
+            <summary>
+            Decodes a raw semantic token integer stream into the typed token objects expected by the editor.
+            </summary>
+            <param name="data">The raw LSP semantic token integer stream.</param>
+            <param name="document">The document snapshot associated with the token stream.</param>
+            <param name="tokenTypes">The semantic token types advertised by the server.</param>
+            <param name="tokenModifiers">The semantic token modifiers advertised by the server.</param>
+            <returns>The decoded semantic tokens.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaSemanticToken">
+            <summary>
+            Represents a single semantic token produced by the Lua language service.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaSemanticToken.#ctor(System.Int32,System.Int32,System.Int32,System.String,System.Collections.Generic.IReadOnlyList{System.String})">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Lua.LuaSemanticToken"/> class.
+            </summary>
+            <param name="line">The zero-based line index.</param>
+            <param name="character">The zero-based character index within the line.</param>
+            <param name="length">The token length in characters.</param>
+            <param name="type">The semantic token type.</param>
+            <param name="modifiers">The semantic token modifiers.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaSemanticToken.Line">
+            <summary>
+            Gets the zero-based line index containing the token.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaSemanticToken.Character">
+            <summary>
+            Gets the zero-based character index of the token within its line.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaSemanticToken.Length">
+            <summary>
+            Gets the token length in characters.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaSemanticToken.Type">
+            <summary>
+            Gets the semantic token type.
+            </summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaSemanticToken.Modifiers">
+            <summary>
+            Gets the owned immutable snapshot of semantic token modifiers.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaSemanticToken.HasModifier(System.String)">
+            <summary>
+            Determines whether the token has the specified modifier.
+            </summary>
+            <param name="modifier">The modifier name to check.</param>
+            <returns><see langword="true"/> if the modifier is present; otherwise, <see langword="false"/>.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaSemanticTokensDecodeResult">
+            <summary>
+            Represents the decoded semantic tokens payload and whether the caller should retry with a full refresh.
+            </summary>
+            <param name="Tokens">The decoded semantic tokens ready for the editor.</param>
+            <param name="Data">The raw semantic token integer stream to cache for future delta requests.</param>
+            <param name="ResultId">The server-provided semantic token result identifier.</param>
+            <param name="RetryWithFullRefresh"><see langword="true"/> when the caller should discard delta state and request a full refresh.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaSemanticTokensDecodeResult.#ctor(System.Collections.Generic.IReadOnlyList{Nickelony.LanguageServer.Lua.LuaSemanticToken},System.Int32[],System.String,System.Boolean)">
+            <summary>
+            Represents the decoded semantic tokens payload and whether the caller should retry with a full refresh.
+            </summary>
+            <param name="Tokens">The decoded semantic tokens ready for the editor.</param>
+            <param name="Data">The raw semantic token integer stream to cache for future delta requests.</param>
+            <param name="ResultId">The server-provided semantic token result identifier.</param>
+            <param name="RetryWithFullRefresh"><see langword="true"/> when the caller should discard delta state and request a full refresh.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaSemanticTokensDecodeResult.Tokens">
+            <summary>The decoded semantic tokens ready for the editor.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaSemanticTokensDecodeResult.Data">
+            <summary>The raw semantic token integer stream to cache for future delta requests.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaSemanticTokensDecodeResult.ResultId">
+            <summary>The server-provided semantic token result identifier.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaSemanticTokensDecodeResult.RetryWithFullRefresh">
+            <summary><see langword="true"/> when the caller should discard delta state and request a full refresh.</summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaWorkspaceChangeCoordinator">
+            <summary>
+            Owns the Lua workspace watcher lifecycle and forwards external workspace changes to the language server.
+            Workspace snapshot capture and reconciliation are delegated to a dedicated tracker helper.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaWorkspaceChangeCoordinator.#ctor(System.String,System.Collections.Generic.IReadOnlyList{Nickelony.LanguageServer.Client.WorkspaceWatchSpecification},System.Func{System.String,System.Func{Nickelony.LanguageServer.Client.FileChangeBatch,System.Threading.CancellationToken,System.Threading.Tasks.Task},System.Action{Nickelony.LanguageServer.Client.WorkspaceFileWatcher,System.Exception},Nickelony.LanguageServer.Client.WorkspaceFileWatcher},System.Func{Nickelony.LanguageServer.Client.ILanguageServerClient},System.Func{System.Boolean},System.Func{System.Threading.CancellationToken,System.Threading.Tasks.Task{System.Boolean}},System.Action{System.Int64},System.Action{Nickelony.LanguageServer.Abstractions.WorkspaceWatcherFailure},Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Lua.LuaWorkspaceChangeCoordinator"/> class.
+            </summary>
+            <param name="workspaceRootDirectoryPath">The normalized workspace root directory.</param>
+            <param name="watchSpecifications">The file patterns that should be mirrored to the language server.</param>
+            <param name="workspaceFileWatcherFactory">Builds the low-level workspace watcher.</param>
+            <param name="clientAccessor">Returns the active language-server client when available.</param>
+            <param name="isDisposedAccessor">Returns whether the owner has been disposed.</param>
+            <param name="ensureStartedAsync">Starts the language server on demand before forwarding file changes.</param>
+            <param name="markTransportUnavailable">Marks one observed transport generation unhealthy after forwarding failures.</param>
+            <param name="raiseWorkspaceWatcherFailed">Reports unrecoverable watcher failures to the owner.</param>
+            <param name="logger">The logger instance, or <see langword="null"/> for a no-op logger.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaWorkspaceChangeCoordinator.CurrentWatcher">
+            <summary>
+            Gets the currently active workspace watcher, when one is running.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaWorkspaceChangeCoordinator.EnsureWorkspaceFileWatcherStarted">
+            <summary>
+            Starts the external workspace watcher when the language-server client is available.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaWorkspaceChangeCoordinator.DispatchWorkspaceFileChangesAsync(Nickelony.LanguageServer.Client.FileChangeBatch,System.Threading.CancellationToken)">
+            <summary>
+            Normalizes and forwards a coalesced batch of external workspace changes to the language server.
+            </summary>
+            <param name="batch">The coalesced file change batch.</param>
+            <param name="cancellationToken">Cancels the forwarding operation.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaWorkspaceChangeCoordinator.ReplayDeferredWorkspaceFileChangesAsync(System.Threading.CancellationToken)">
+            <summary>
+            Replays any buffered workspace changes once the language server is ready again.
+            </summary>
+            <param name="cancellationToken">Cancels the replay operation.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaWorkspaceChangeCoordinator.Dispose">
+            <summary>
+            Disposes the active watcher and any buffered forwarding state.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaWorkspaceChangeCoordinator.TryRestartWorkspaceFileWatcher(Nickelony.LanguageServer.Client.WorkspaceFileWatcher)">
+            <summary>
+            Restarts a failed workspace file watcher and reports whether recovery succeeded.
+            </summary>
+            <remarks>This method is used by <c>LuaLanguageServerIntelliSenseProviderTests</c> via reflection. Do not remove without updating the tests.</remarks>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaWorkspaceChangeCoordinator.RecoverWorkspaceFileWatcher(Nickelony.LanguageServer.Client.WorkspaceFileWatcher)">
+            <summary>
+            Attempts to replace a failed watcher, reconcile any missed tracked changes, and classify the recovery outcome.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaWorkspaceChangeCoordinator.ReconcileWorkspaceSnapshotAsync(System.Collections.Generic.Dictionary{System.String,Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotEntry},System.Collections.Generic.Dictionary{System.String,Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotEntry})">
+            <summary>
+            Replays the tracked workspace delta detected while the watcher was unavailable.
+            </summary>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotTracker">
+            <summary>
+            Tracks the subset of workspace paths mirrored to LuaLS so watcher recovery can reconcile missed file changes.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotTracker.#ctor(System.String,System.Collections.Generic.IReadOnlyList{Nickelony.LanguageServer.Client.WorkspaceWatchSpecification},Microsoft.Extensions.Logging.ILogger)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotTracker"/> class.
+            </summary>
+            <param name="workspaceRootDirectoryPath">The normalized workspace root directory.</param>
+            <param name="watchSpecifications">The file patterns that should participate in the tracked snapshot.</param>
+            <param name="logger">The logger instance, or <see langword="null"/> for a no-op logger.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotTracker.CaptureTrackedSnapshot">
+            <summary>
+            Replaces the tracked snapshot with a fresh capture of the current workspace state.
+            </summary>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotTracker.CloneTrackedSnapshot">
+            <summary>
+            Creates a stable clone of the currently tracked workspace snapshot.
+            </summary>
+            <returns>The cloned snapshot.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotTracker.ReplaceTrackedSnapshotWithCurrent">
+            <summary>
+            Captures the current workspace state, replaces the tracked snapshot, and returns the fresh snapshot.
+            </summary>
+            <returns>The newly captured snapshot.</returns>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotTracker.ApplyChanges(System.Collections.Generic.IReadOnlyList{Nickelony.LanguageServer.Client.WorkspaceFileChange})">
+            <summary>
+            Applies a set of already forwarded file changes to the tracked snapshot.
+            </summary>
+            <param name="changes">The normalized forwarded file changes.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotTracker.BuildDeltaBatch(System.Collections.Generic.IReadOnlyDictionary{System.String,Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotEntry},System.Collections.Generic.IReadOnlyDictionary{System.String,Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotEntry})">
+            <summary>
+            Builds a normalized delta batch between two captured workspace snapshots.
+            </summary>
+            <param name="previousSnapshot">The baseline snapshot captured before watcher disruption.</param>
+            <param name="currentSnapshot">The replacement snapshot captured after watcher recovery.</param>
+            <returns>The sorted workspace change batch needed to reconcile the snapshots.</returns>
+        </member>
+        <member name="T:Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotEntry">
+            <summary>
+            Represents the tracked file-system state for a single watched workspace path.
+            </summary>
+            <param name="IsDirectory">Whether the path represents a directory.</param>
+            <param name="LastWriteUtcTicks">The last-write timestamp used for change detection.</param>
+            <param name="Length">The file length used for change detection.</param>
+            <param name="ContentFingerprint">A stable file-content fingerprint used when length and timestamps alone are ambiguous.</param>
+        </member>
+        <member name="M:Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotEntry.#ctor(System.Boolean,System.Int64,System.Int64,System.UInt64)">
+            <summary>
+            Represents the tracked file-system state for a single watched workspace path.
+            </summary>
+            <param name="IsDirectory">Whether the path represents a directory.</param>
+            <param name="LastWriteUtcTicks">The last-write timestamp used for change detection.</param>
+            <param name="Length">The file length used for change detection.</param>
+            <param name="ContentFingerprint">A stable file-content fingerprint used when length and timestamps alone are ambiguous.</param>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotEntry.IsDirectory">
+            <summary>Whether the path represents a directory.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotEntry.LastWriteUtcTicks">
+            <summary>The last-write timestamp used for change detection.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotEntry.Length">
+            <summary>The file length used for change detection.</summary>
+        </member>
+        <member name="P:Nickelony.LanguageServer.Lua.LuaWorkspaceSnapshotEntry.ContentFingerprint">
+            <summary>A stable file-content fingerprint used when length and timestamps alone are ambiguous.</summary>
+        </member>
+    </members>
+</doc>

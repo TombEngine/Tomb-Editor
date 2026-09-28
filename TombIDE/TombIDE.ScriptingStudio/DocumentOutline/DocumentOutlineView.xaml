@@ -1,0 +1,71 @@
+<UserControl
+	x:Class="TombIDE.ScriptingStudio.DocumentOutline.DocumentOutlineView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:documentOutline="clr-namespace:TombIDE.ScriptingStudio.DocumentOutline"
+	xmlns:localControls="clr-namespace:TombIDE.ScriptingStudio.Controls"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+	d:DataContext="{d:DesignInstance Type=documentOutline:DocumentOutlineViewModel}"
+	mc:Ignorable="d">
+
+	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+	</UserControl.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+		<TextBox
+			Margin="{x:Static darkUI:Defaults.MediumThickness}"
+			Padding="2,1,18,1"
+			VerticalContentAlignment="Center"
+			FocusVisualStyle="{x:Null}"
+			FontSize="11"
+			Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=150}">
+			<darkUI:WatermarkService.Watermark>
+				<TextBlock
+					FontSize="11"
+					Foreground="{DynamicResource Brush_Text}"
+					Opacity="0.4"
+					Text="{tombLib:Localize SearchPlaceholder}" />
+			</darkUI:WatermarkService.Watermark>
+		</TextBox>
+
+		<Grid Grid.Row="1" Margin="{x:Static darkUI:Defaults.MediumThickness}">
+			<localControls:AlternatingTreeView
+				x:Name="treeView"
+				Background="Transparent"
+				BorderBrush="Transparent"
+				BorderThickness="0"
+				FocusVisualStyle="{x:Null}"
+				ItemsSource="{Binding Nodes}"
+				SelectedItemChanged="TreeView_SelectedItemChanged">
+				<localControls:AlternatingTreeView.ItemContainerStyle>
+					<Style BasedOn="{StaticResource {x:Type controls:AlternatingTreeViewItem}}" TargetType="{x:Type localControls:AlternatingTreeViewItem}">
+						<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+						<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+					</Style>
+				</localControls:AlternatingTreeView.ItemContainerStyle>
+				<localControls:AlternatingTreeView.ItemTemplate>
+					<HierarchicalDataTemplate DataType="{x:Type documentOutline:DocumentOutlineNodeViewModel}" ItemsSource="{Binding Children}">
+						<TextBlock Text="{Binding Text}" TextTrimming="CharacterEllipsis" />
+					</HierarchicalDataTemplate>
+				</localControls:AlternatingTreeView.ItemTemplate>
+			</localControls:AlternatingTreeView>
+
+			<TextBlock
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				Foreground="{DynamicResource Brush_Text_Disabled}"
+				Text="{tombLib:Localize EmptyState}"
+				Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibilityConverter}}" />
+		</Grid>
+	</Grid>
+</UserControl>

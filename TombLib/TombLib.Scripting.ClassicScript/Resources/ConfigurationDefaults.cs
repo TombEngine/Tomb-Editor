@@ -1,20 +1,42 @@
-﻿namespace TombLib.Scripting.ClassicScript.Resources
+namespace TombLib.Scripting.ClassicScript.Resources;
+
+/// <summary>
+/// Defines default values used by Classic Script editor configuration objects.
+/// </summary>
+public static class ConfigurationDefaults
 {
-	public struct ConfigurationDefaults
-	{
-		public const string ConfigurationFileName = "ClassicScriptConfiguration.xml";
-		public const string ColorSchemeFileExtension = ".cssch";
+	/// <summary>
+	/// Gets the default file name used to persist Classic Script editor configuration.
+	/// </summary>
+	public const string ConfigurationFileName = "ClassicScriptConfiguration.xml";
 
-		public const string SelectedColorSchemeName = "VS15";
+	/// <summary>
+	/// Gets the default state of the section separator display.
+	/// </summary>
+	public const bool ShowSectionSeparators = true;
 
-		public const bool ShowSectionSeparators = true;
+	/// <summary>
+	/// Gets the default state of the space before the equals sign when formatting commands.
+	/// </summary>
+	public const bool SpaceBeforeEquals = false;
 
-		public const bool Tidy_PreEqualSpace = false;
-		public const bool Tidy_PostEqualSpace = true;
+	/// <summary>
+	/// Gets the default state of the space after the equals sign when formatting commands.
+	/// </summary>
+	public const bool SpaceAfterEquals = true;
 
-		public const bool Tidy_PreCommaSpace = false;
-		public const bool Tidy_PostCommaSpace = true;
+	/// <summary>
+	/// Gets the default state of the space before a comma when formatting command arguments.
+	/// </summary>
+	public const bool SpaceBeforeComma = false;
 
-		public const bool Tidy_ReduceSpaces = true;
-	}
+	/// <summary>
+	/// Gets the default state of the space after a comma when formatting command arguments.
+	/// </summary>
+	public const bool SpaceAfterComma = true;
+
+	/// <summary>
+	/// Gets the default state of collapsing multiple spaces into one when formatting commands.
+	/// </summary>
+	public const bool CollapseMultipleSpaces = true;
 }

@@ -1,133 +1,141 @@
-﻿using DarkUI.Controls;
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
+using Nickelony.IDEKit.KeyBindings;
+using TombIDE.ScriptingStudio.CommandSurface;
 using TombIDE.ScriptingStudio.UI;
-using TombIDE.Shared.SharedClasses;
 
-namespace TombIDE.ScriptingStudio.ToolStrips
+namespace TombIDE.ScriptingStudio.ToolStrips;
+
+public sealed class StudioToolStrip
 {
-	public class StudioToolStrip : DarkToolStrip
+	private readonly Dictionary<UICommand, List<StudioCommandSurfaceItemViewModel>> _itemsByCommand = [];
+	private DocumentMode _documentMode;
+
+	public StudioToolStrip()
 	{
-		#region Properties
+		View = new StudioToolStripView();
+	}
 
-		private StudioMode _studioMode;
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public StudioMode StudioMode
+	internal StudioToolStripView View { get; }
+
+	public IKeyBindingService<UICommand>? KeyBindingService { get; set; }
+
+	public IReadOnlyList<StudioToolStripItem> DocumentModeContributionItems { get; set; } = [];
+
+	public IReadOnlyList<StudioToolStripItem> WorkspaceContributionItems { get; set; } = [];
+
+	[Browsable(false)]
+	[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+	public DocumentMode DocumentMode
+	{
+		get => _documentMode;
+		set
 		{
-			get => _studioMode;
-			set
-			{
-				if (value != _studioMode)
-				{
-					_studioMode = value;
-					UpdateItems<StudioMode>();
-
-					OnStudioModeChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		private DocumentMode _documentMode;
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public DocumentMode DocumentMode
-		{
-			get => _documentMode;
-			set
-			{
-				if (value != _documentMode)
-				{
-					_documentMode = value;
-					UpdateItems<DocumentMode>();
-
-					OnDocumentModeChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		#endregion Properties
-
-		#region Events
-
-		public new event EventHandler ItemClicked;
-		private void OnItemClicked(object sender, EventArgs e)
-			=> ItemClicked?.Invoke(sender, e);
-
-		public event EventHandler StudioModeChanged;
-		private void OnStudioModeChanged(EventArgs e)
-			=> StudioModeChanged?.Invoke(this, e);
-
-		public event EventHandler DocumentModeChanged;
-		private void OnDocumentModeChanged(EventArgs e)
-			=> DocumentModeChanged?.Invoke(this, e);
-
-		#endregion Events
-
-		#region Other methods
-
-		private void UpdateItems<T>() where T : Enum
-		{
-			string enumName = typeof(T).Name;
-			Enum modeEnum = GetModeEnum(enumName); // Either StudioMode or DocumentMode
-			string enumValueName = GetEnumValueName(modeEnum);
-
-			ClearRelatedItems(modeEnum);
-
-			if (enumValueName.Equals("None", StringComparison.OrdinalIgnoreCase))
+			if (value == _documentMode)
 				return;
 
-			IEnumerable<StudioToolStripItem> studioItems = GetStudioItems(enumName, enumValueName);
-			IEnumerable<ToolStripItem> toolStripItems = GetToolStripItemsFromStudioItems(studioItems, modeEnum);
-
-			Items.AddRange(toolStripItems.ToArray());
+			_documentMode = value;
+			RebuildAllItems();
 		}
+	}
 
-		private void ClearRelatedItems(Enum modeEnum)
-			=> SharedMethods.DisposeItems(Items.GetTargetItems(modeEnum));
+	public event EventHandler<StudioCommandInvokedEventArgs>? ItemClicked;
 
-		private IEnumerable<ToolStripItem> GetToolStripItemsFromStudioItems(IEnumerable<StudioToolStripItem> studioItems, Enum modeEnum)
+	public event EventHandler? WorkspaceContributionsChanged;
+
+	public bool GetCommandChecked(UICommand command)
+	{
+		if (!TryGetFirstItem(command, out StudioCommandSurfaceItemViewModel? item) || item is null)
+			return false;
+
+		return item.IsChecked;
+	}
+
+	public void RebuildWorkspaceItems()
+	{
+		RebuildAllItems();
+		WorkspaceContributionsChanged?.Invoke(this, EventArgs.Empty);
+	}
+
+	public void RebuildDocumentModeItems()
+		=> RebuildAllItems();
+
+	public void SetCommandChecked(UICommand command, bool isChecked)
+		=> Apply(command, item => item.IsChecked = isChecked);
+
+	public void SetCommandEnabled(UICommand command, bool isEnabled)
+		=> Apply(command, item => item.IsEnabled = isEnabled);
+
+	public void SetCommandText(UICommand command, string text)
+		=> Apply(command, item => item.Text = text);
+
+	public void SetCommandToolTip(UICommand command, string toolTipText)
+		=> Apply(command, item => item.ToolTipText = toolTipText);
+
+	public void SetCommandVisible(UICommand command, bool isVisible)
+		=> Apply(command, item => item.IsVisible = isVisible);
+
+	private void Apply(UICommand command, Action<StudioCommandSurfaceItemViewModel> update)
+	{
+		if (!_itemsByCommand.TryGetValue(command, out List<StudioCommandSurfaceItemViewModel>? items))
+			return;
+
+		foreach (StudioCommandSurfaceItemViewModel item in items)
+			update(item);
+	}
+
+	private void HandleCommandInvoked(UICommand command)
+		=> ItemClicked?.Invoke(this, new StudioCommandInvokedEventArgs(command));
+
+	private void RebuildAllItems()
+	{
+		var builder = new StudioCommandSurfaceBuilder(KeyBindingService);
+		IReadOnlyList<StudioCommandSurfaceItemViewModel> items = builder.BuildToolStripItems(
+			WorkspaceContributionItems,
+			DocumentModeContributionItems,
+			HandleCommandInvoked);
+
+		Reindex(items);
+		View.SetItems(items);
+	}
+
+	private void Reindex(IEnumerable<StudioCommandSurfaceItemViewModel> items)
+	{
+		_itemsByCommand.Clear();
+
+		foreach (StudioCommandSurfaceItemViewModel item in items)
+			ReindexItem(item);
+	}
+
+	private void ReindexItem(StudioCommandSurfaceItemViewModel item)
+	{
+		if (item.Command != UICommand.None)
 		{
-			foreach (StudioToolStripItem studioItem in studioItems)
-				if (studioItem is StudioSeparator)
-					yield return new ToolStripSeparator() { Tag = new UIElementArgs(modeEnum.GetType()) };
-				else
-				{
-					string text = StudioItemParser.GetItemText(studioItem);
-					Image icon = StudioItemParser.FindImageInResources(studioItem.Icon);
-					Keys keys = StudioItemParser.FindPredefinedKeys(studioItem.Keys);
+			if (!_itemsByCommand.TryGetValue(item.Command, out List<StudioCommandSurfaceItemViewModel>? mappedItems))
+			{
+				mappedItems = [];
+				_itemsByCommand[item.Command] = mappedItems;
+			}
 
-					if (studioItem is StudioToolStripButton)
-						yield return new ToolStripDropDownButton(text, icon, OnItemClicked)
-						{
-							DisplayStyle = ToolStripItemDisplayStyle.ImageAndText,
-							TextImageRelation = TextImageRelation.ImageBeforeText,
-							ShowDropDownArrow = false,
-							Tag = new UIElementArgs(modeEnum.GetType(), StudioItemParser.GetCommand(studioItem.Command))
-						};
-					else
-						yield return new ToolStripButton(text, icon, OnItemClicked)
-						{
-							DisplayStyle = ToolStripItemDisplayStyle.Image,
-							CheckOnClick = studioItem.CheckOnClick,
-							Tag = new UIElementArgs(modeEnum.GetType(), StudioItemParser.GetCommand(studioItem.Command))
-						};
-				}
+			mappedItems.Add(item);
 		}
 
-		#endregion Other methods
+		foreach (StudioCommandSurfaceItemViewModel child in item.Items)
+			ReindexItem(child);
+	}
 
-		private Enum GetModeEnum(string enumName)
-			=> GetType().GetProperty(enumName).GetValue(this) as Enum;
+	private bool TryGetFirstItem(UICommand command, out StudioCommandSurfaceItemViewModel? item)
+	{
+		if (_itemsByCommand.TryGetValue(command, out List<StudioCommandSurfaceItemViewModel>? items) && items.Count > 0)
+		{
+			item = items[0];
+			return true;
+		}
 
-		private string GetEnumValueName(Enum @enum)
-			=> @enum.ToString().Split('.').Last();
-
-		private IEnumerable<StudioToolStripItem> GetStudioItems(string enumTypeName, string enumValueName)
-			=> ToolStripXmlReader.GetItemsFromXml($"UI.{enumTypeName}Presets.ToolStrips.{enumValueName}.xml");
+		item = null;
+		return false;
 	}
 }

@@ -1,0 +1,34 @@
+{
+	"Comments": {
+		"HtmlColor": "#66747B",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Sections": {
+		"HtmlColor": "#A082BD",
+		"IsBold": true,
+		"IsItalic": false
+	},
+	"SpecialProperties": {
+		"HtmlColor": "#668BB0",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Properties": {
+		"HtmlColor": "#93C763",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Constants": {
+		"HtmlColor": "#FFCD22",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Values": {
+		"HtmlColor": "LightSalmon",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Background": "#283032",
+	"Foreground": "Gainsboro"
+}

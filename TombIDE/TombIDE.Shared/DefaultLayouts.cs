@@ -1,6 +1,6 @@
-﻿using DarkUI.Docking;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
+using TombIDE.Shared.Docking;
 
 namespace TombIDE.Shared
 {
@@ -122,6 +122,25 @@ namespace TombIDE.Shared
 							VisibleContent = "ReferenceBrowser"
 						}
 					}
+				},
+				new DockRegionState
+				{
+					Area = DarkDockArea.Bottom,
+					Size = new Size(320, 220),
+					Groups = new List<DockGroupState>
+					{
+						new DockGroupState
+						{
+							Contents = new List<string>
+							{
+								"SearchResults",
+								"LuaDiagnostics",
+								"LuaReferencesResults"
+							},
+
+							VisibleContent = "LuaDiagnostics"
+						}
+					}
 				}
 			}
 		};
@@ -205,7 +224,7 @@ namespace TombIDE.Shared
 			}
 		};
 
-		public static readonly DockPanelState Tomb1MainLayout = new DockPanelState
+		public static readonly DockPanelState TRXLayout = new DockPanelState
 		{
 			Regions = new List<DockRegionState>
 			{

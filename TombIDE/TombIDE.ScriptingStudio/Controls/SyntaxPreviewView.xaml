@@ -1,0 +1,24 @@
+<UserControl
+	x:Class="TombIDE.ScriptingStudio.Controls.SyntaxPreviewView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="20"
+	d:DesignWidth="320"
+	mc:Ignorable="d">
+
+	<Border BorderBrush="{DynamicResource Brush_Separator}" BorderThickness="0">
+		<ScrollViewer
+			x:Name="ScrollViewer"
+			HorizontalScrollBarVisibility="Hidden"
+			VerticalScrollBarVisibility="Disabled">
+			<TextBlock
+				x:Name="PreviewTextBlock"
+				FontFamily="Consolas"
+				FontSize="12"
+				FontWeight="Bold"
+				TextWrapping="NoWrap" />
+		</ScrollViewer>
+	</Border>
+</UserControl>
