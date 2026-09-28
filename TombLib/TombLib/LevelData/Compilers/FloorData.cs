@@ -517,7 +517,7 @@ namespace TombLib.LevelData.Compilers
 
                 // Do some warnings in case user switches targets and some incompatible triggers are left behind
 
-                if(_level.Settings.GameVersion != TRVersion.Game.TRNG && setupTrigger.TriggerType == TriggerType.ConditionNg)
+                if(!_level.Settings.GameVersion.IsNG() && setupTrigger.TriggerType == TriggerType.ConditionNg)
                     _progressReporter.ReportWarn("Level uses 'Condition' trigger type, which is not supported in this game engine.");
 
                 if(_level.IsNG && setupTrigger.TriggerType == TriggerType.Monkey)

@@ -107,7 +107,7 @@ namespace TombLib.LevelData.Compilers
                     {
                         if (_vertexColors.ContainsKey(sig))
                         {
-                            if (_level.Settings.GameVersion == TRVersion.Game.TRNG && _level.Settings.Room32BitLighting)
+                            if (_level.Settings.GameVersion.IsNG() && _level.Settings.Room32BitLighting)
                             {
                                 v.Lighting1 = PackTo24BitLow(_vertexColors[sig]);
                                 v.Lighting2 = PackTo24BitHigh(_vertexColors[sig]);
@@ -1051,6 +1051,7 @@ namespace TombLib.LevelData.Compilers
                         break;
 
                     case TRVersion.Game.TRNG:
+                    case TRVersion.Game.TRNGCE:
                         intensity2 = (ushort)instance.Ocb;
                         break;
 
@@ -1820,7 +1821,7 @@ namespace TombLib.LevelData.Compilers
                                         {
                                             if (_level.Settings.GameVersion != TRVersion.Game.TR5)
                                             {
-                                                if (_level.Settings.GameVersion == TRVersion.Game.TRNG && _level.Settings.Room32BitLighting)
+                                                if (_level.Settings.GameVersion.IsNG() && _level.Settings.Room32BitLighting)
                                                     refColor = UnpackFrom24BitPair(v1.Lighting1, v1.Lighting2);
                                                 else
                                                     refColor = v1.Lighting2;
@@ -1847,7 +1848,7 @@ namespace TombLib.LevelData.Compilers
                                                 {
                                                     if (_level.Settings.GameVersion != TRVersion.Game.TR5)
                                                     {
-                                                        if (_level.Settings.GameVersion == TRVersion.Game.TRNG && _level.Settings.Room32BitLighting)
+                                                        if (_level.Settings.GameVersion.IsNG() && _level.Settings.Room32BitLighting)
                                                             newColor = UnpackFrom24BitPair(v2.Lighting1, v2.Lighting2);
                                                         else
                                                             newColor = v2.Lighting2;
@@ -1862,7 +1863,7 @@ namespace TombLib.LevelData.Compilers
                                                     newColor = (ushort)(8160 - (((8160 - v2.Lighting2) / 2) + ((8160 - refColor) / 2)));
                                                 else if (_level.Settings.GameVersion != TRVersion.Game.TR5)
                                                 {
-                                                    if (_level.Settings.GameVersion == TRVersion.Game.TRNG && _level.Settings.Room32BitLighting)
+                                                    if (_level.Settings.GameVersion.IsNG() && _level.Settings.Room32BitLighting)
                                                     {
                                                         var color = UnpackFrom24BitPair(v2.Lighting1, v2.Lighting2);
                                                         newColor = (uint)(0xff000000 | (((((color & 0xff) + (refColor & 0xff)) >> 1) |
@@ -1957,7 +1958,7 @@ namespace TombLib.LevelData.Compilers
             ushort packed1 = 0;
             ushort packed2 = 0;
 
-            if (settings.GameVersion == TRVersion.Game.TRNG && settings.Room32BitLighting)
+            if (settings.GameVersion.IsNG() && settings.Room32BitLighting)
             {
                 packed1 = PackColorTo24BitLow(color);
                 packed2 = PackColorTo24BitHigh(color);

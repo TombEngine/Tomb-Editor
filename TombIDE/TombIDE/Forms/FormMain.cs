@@ -46,13 +46,13 @@ namespace TombIDE
 			miscellaneous = new Miscellaneous { Dock = DockStyle.Fill };
 			tabPage_Misc.Controls.Add(miscellaneous);
 
-			if (_ide.Project.GameVersion == TRVersion.Game.TRNG)
+			if (_ide.Project.GameVersion is TRVersion.Game.TRNG or TRVersion.Game.TRNGCE)
 			{
 				pluginManager = new PluginManager { Dock = DockStyle.Fill };
 				tabPage_Plugins.Controls.Add(pluginManager);
 			}
 
-			if (_ide.Project.GameVersion is TRVersion.Game.TR4 or TRVersion.Game.TRNG)
+			if (_ide.Project.GameVersion is TRVersion.Game.TR4 or TRVersion.Game.TRNG or TRVersion.Game.TRNGCE)
 				scriptingStudio = new ScriptingStudio.ClassicScriptStudio { Parent = this };
 			else if (_ide.Project.GameVersion is TRVersion.Game.TR2 or TRVersion.Game.TR3)
 				scriptingStudio = new ScriptingStudio.GameFlowScriptStudio { Parent = this };
@@ -109,7 +109,7 @@ namespace TombIDE
 				levelManager.Initialize(_ide);
 				miscellaneous.Initialize(_ide);
 
-				if (_ide.Project.GameVersion == TRVersion.Game.TRNG)
+				if (_ide.Project.GameVersion is TRVersion.Game.TRNG or TRVersion.Game.TRNGCE)
 					pluginManager.Initialize(_ide);
 
 				sideBar.SelectedIDETabChanged += SideBar_SelectedIDETabChanged;
@@ -242,7 +242,7 @@ namespace TombIDE
 					break;
 
 				case IDETab.PluginManager:
-					if (_ide.Project.GameVersion == TRVersion.Game.TRNG)
+					if (_ide.Project.GameVersion is TRVersion.Game.TRNG or TRVersion.Game.TRNGCE)
 						tablessTabControl.SelectTab(2);
 					else if (_ide.Project.GameVersion == TRVersion.Game.TombEngine)
 						VSCodeUtils.OpenDirectoryInVSCode(this, _ide.IDEConfiguration, _ide.Project.GetScriptRootDirectory());

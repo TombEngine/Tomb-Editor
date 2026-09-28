@@ -64,7 +64,7 @@ public sealed class PluginServiceFactory : IPluginServiceFactory
 
 		service = gameVersion switch
 		{
-			TRVersion.Game.TRNG when metadataService is not null => new TRNGPluginDiscoveryService(metadataService),
+			TRVersion.Game.TRNG or TRVersion.Game.TRNGCE when metadataService is not null => new TRNGPluginDiscoveryService(metadataService),
 			// Add other game versions here in the future
 			_ => null
 		};
@@ -84,7 +84,7 @@ public sealed class PluginServiceFactory : IPluginServiceFactory
 
 		service = gameVersion switch
 		{
-			TRVersion.Game.TRNG when metadataService is not null => new TRNGPluginInstallationService(metadataService, _fileExtractionService),
+			TRVersion.Game.TRNG or TRVersion.Game.TRNGCE when metadataService is not null => new TRNGPluginInstallationService(metadataService, _fileExtractionService),
 			// Add other game versions here in the future
 			_ => null
 		};
@@ -102,7 +102,7 @@ public sealed class PluginServiceFactory : IPluginServiceFactory
 
 		service = gameVersion switch
 		{
-			TRVersion.Game.TRNG => new TRNGPluginDeploymentService(),
+			TRVersion.Game.TRNG or TRVersion.Game.TRNGCE => new TRNGPluginDeploymentService(),
 			// Add other game versions here in the future
 			_ => null
 		};
@@ -120,7 +120,7 @@ public sealed class PluginServiceFactory : IPluginServiceFactory
 
 		service = gameVersion switch
 		{
-			TRVersion.Game.TRNG => new TRNGPluginMetadataService(),
+			TRVersion.Game.TRNG or TRVersion.Game.TRNGCE => new TRNGPluginMetadataService(),
 			// Add other game versions here in the future
 			_ => null
 		};
@@ -138,7 +138,7 @@ public sealed class PluginServiceFactory : IPluginServiceFactory
 
 		service = gameVersion switch
 		{
-			TRVersion.Game.TRNG => new TRNGPluginInitializationService(),
+			TRVersion.Game.TRNG or TRVersion.Game.TRNGCE => new TRNGPluginInitializationService(),
 			// Add other game versions here in the future
 			_ => null
 		};

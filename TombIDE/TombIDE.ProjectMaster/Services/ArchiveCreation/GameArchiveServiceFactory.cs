@@ -24,7 +24,7 @@ public sealed class GameArchiveServiceFactory : IGameArchiveServiceFactory
 		TRVersion.Game.TR1 or TRVersion.Game.TR1X or TRVersion.Game.TR2X or TRVersion.Game.TR3X => new TRXArchiveService(),
 		TRVersion.Game.TR2 => new TR2ArchiveService(),
 		TRVersion.Game.TR3 => new TR3ArchiveService(),
-		TRVersion.Game.TR4 or TRVersion.Game.TRNG => new TR4ArchiveService(),
+		TRVersion.Game.TR4 or TRVersion.Game.TRNG or TRVersion.Game.TRNGCE => new TR4ArchiveService(),
 		TRVersion.Game.TombEngine => new TombEngineArchiveService(),
 		_ => throw new NotSupportedException($"Archive creation is not supported for {gameVersion}.")
 	};

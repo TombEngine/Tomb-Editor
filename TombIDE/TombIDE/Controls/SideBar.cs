@@ -42,7 +42,7 @@ namespace TombIDE.Controls
 				toolTip.SetToolTip(panel_Icon_Plugins, tip);
 				toolTip.SetToolTip(label_Plugins, tip);
 			}
-			else if (_ide.Project.GameVersion != TRVersion.Game.TRNG)
+			else if (_ide.Project.GameVersion is not TRVersion.Game.TRNG and not TRVersion.Game.TRNGCE)
 			{
 				panel_Icon_Plugins.BackgroundImage = Properties.Resources.ide_plugin_30_disabled;
 				label_Plugins.ForeColor = Color.FromArgb(128, 128, 128);
@@ -392,7 +392,7 @@ namespace TombIDE.Controls
 			{
 				string scriptDatFilePath = string.Empty;
 
-				if (_ide.Project.GameVersion is TRVersion.Game.TR4 or TRVersion.Game.TRNG)
+				if (_ide.Project.GameVersion is TRVersion.Game.TR4 or TRVersion.Game.TRNG or TRVersion.Game.TRNGCE)
 					scriptDatFilePath = Path.Combine(engineRootDirectory, "script.dat");
 				else if (_ide.Project.GameVersion is TRVersion.Game.TR2 or TRVersion.Game.TR3)
 					scriptDatFilePath = Path.Combine(engineRootDirectory, "data", "tombpc.dat");
@@ -453,7 +453,7 @@ namespace TombIDE.Controls
 					break;
 
 				case IDETab.PluginManager:
-					if (_ide.Project.GameVersion == TRVersion.Game.TRNG)
+					if (_ide.Project.GameVersion is TRVersion.Game.TRNG or TRVersion.Game.TRNGCE)
 					{
 						panelButton_LevelManager.BackColor = neutralColor;
 						panelButton_ScriptingStudio.BackColor = neutralColor;

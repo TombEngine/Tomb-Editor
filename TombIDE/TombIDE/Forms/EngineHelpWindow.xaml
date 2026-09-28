@@ -94,6 +94,16 @@
 					</TextBlock>
 				</controls:SpacedStack>
 
+				<controls:SpacedStack Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+					<TextBlock
+						FontSize="{x:Static darkUI:Defaults.H1FontSize}"
+						FontWeight="Bold"
+						Text="Tomb Raider Next-Generation (Community Edition)" />
+					<TextBlock FontSize="{x:Static darkUI:Defaults.LargeFontSize}" TextWrapping="Wrap">
+						This is a community-made edition of the "Tomb Raider Next-Generation" engine, sharing its level format,
+						scripting interface and plugin system. It ships with numerous community-created enhancements and fixes.
+				</controls:SpacedStack>
+
 				<!--<controls:SpacedStack Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
 					<TextBlock
 						FontSize="{x:Static darkUI:Defaults.H1FontSize}"

@@ -40,7 +40,7 @@ public static class ScriptGenerator
 				GameFlowScript = GenerateTR3Script(levelName, dataFileName, ambientSoundId)
 			},
 
-			TRVersion.Game.TR4 or TRVersion.Game.TRNG => new ScriptGenerationResult(dataFileName)
+			TRVersion.Game.TR4 or TRVersion.Game.TRNG or TRVersion.Game.TRNGCE => new ScriptGenerationResult(dataFileName)
 			{
 				GameFlowScript = GenerateTR4Script(levelName, dataFileName, ambientSoundId, horizon)
 			},
