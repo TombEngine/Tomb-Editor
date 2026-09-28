@@ -69,11 +69,23 @@ namespace TombEditor
             return command;
         }
 
-        public static void ExecuteHotkey(CommandArgs args)
+        public static bool ExecuteHotkey(CommandArgs args)
         {
+            bool executed = false;
             var hotkeyForCommands = args.Editor.Configuration.UI_Hotkeys.Where(set => set.Value.Contains(args.KeyData));
+
             foreach (var hotkeyForCommand in hotkeyForCommands)
-                GetCommand(hotkeyForCommand.Key).Execute?.Invoke(args);
+            {
+                var command = GetCommand(hotkeyForCommand.Key);
+
+                if (command.Execute is null)
+                    continue;
+
+                command.Execute.Invoke(args);
+                executed = true;
+            }
+
+            return executed;
         }
 
         public static void AssignCommandsToControls(Editor editor, Control parent, ToolTip toolTip = null, bool onlyToolTips = false)
