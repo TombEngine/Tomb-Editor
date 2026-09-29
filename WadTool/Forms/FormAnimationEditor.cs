@@ -495,15 +495,15 @@ namespace WadTool
                 if (node != null)
                 {
                     tbName.Text = node.WadAnimation.Name;
-                    nudFramerate.Value = node.WadAnimation.FrameRate;
-                    nudEndFrame.Value = node.WadAnimation.EndFrame;
-                    nudNextAnim.Value = node.WadAnimation.NextAnimation;
-                    nudNextFrame.Value = node.WadAnimation.NextFrame;
-                    nudStartVertVel.Value = (decimal)node.WadAnimation.StartVelocity;
-                    nudEndVertVel.Value = (decimal)node.WadAnimation.EndVelocity;
-                    nudStartHorVel.Value = (decimal)node.WadAnimation.StartLateralVelocity;
-                    nudEndHorVel.Value = (decimal)node.WadAnimation.EndLateralVelocity;
-                    nudBlendFrameCount.Value = (decimal)node.WadAnimation.BlendFrameCount;
+                    SetNumericValue(nudFramerate, node.WadAnimation.FrameRate);
+                    SetNumericValue(nudEndFrame, node.WadAnimation.EndFrame);
+                    SetNumericValue(nudNextAnim, node.WadAnimation.NextAnimation);
+                    SetNumericValue(nudNextFrame, node.WadAnimation.NextFrame);
+                    SetNumericValue(nudStartVertVel, (decimal)node.WadAnimation.StartVelocity);
+                    SetNumericValue(nudEndVertVel, (decimal)node.WadAnimation.EndVelocity);
+                    SetNumericValue(nudStartHorVel, (decimal)node.WadAnimation.StartLateralVelocity);
+                    SetNumericValue(nudEndHorVel, (decimal)node.WadAnimation.EndLateralVelocity);
+                    SetNumericValue(nudBlendFrameCount, (decimal)node.WadAnimation.BlendFrameCount);
                     bezierCurveEditor.Value = node.WadAnimation.BlendCurve;
                     cbBlendPreset.SelectedIndex = -1;
 
@@ -544,6 +544,17 @@ namespace WadTool
             panelRendering.Invalidate();
 
             _editor.Tool.AnimationEditorCurrentAnimationChanged(prevAnim, _editor.CurrentAnim);
+        }
+
+        private static void SetNumericValue(DarkNumericUpDown control, decimal value)
+        {
+            if (value < control.Minimum)
+                control.Minimum = value;
+
+            if (value > control.Maximum)
+                control.Maximum = value;
+
+            control.Value = value;
         }
 
         private void UpdateSelection()
@@ -635,7 +646,7 @@ namespace WadTool
                 _frameCount = timeline.Value * _editor.CurrentAnim.WadAnimation.FrameRate;
                 timeline.Minimum = 0;
                 timeline.Maximum = _editor.CurrentAnim.DirectXAnimation.KeyFrames.Count - 1;
-                nudEndFrame.Value = _editor.CurrentAnim.WadAnimation.EndFrame;
+                SetNumericValue(nudEndFrame, _editor.CurrentAnim.WadAnimation.EndFrame);
                 UpdateStatusLabel();
             }
             else
@@ -739,7 +750,7 @@ namespace WadTool
                 InflateFrameBoundingBox(i, value, false);
         }
 
-        public void ResetEndFrame() => nudEndFrame.Value = _editor.GetRealNumberOfFrames() - 1;
+        public void ResetEndFrame() => SetNumericValue(nudEndFrame, _editor.GetRealNumberOfFrames() - 1);
 
         public void UpdateTransform()
         {
@@ -1303,7 +1314,7 @@ namespace WadTool
 
             // Fix visible values
             if (control is DarkTextBox) ((DarkTextBox)control).Text = result.ToString();
-            else if (control is DarkNumericUpDown) ((DarkNumericUpDown)control).Value = (decimal)result;
+            else if (control is DarkNumericUpDown) SetNumericValue((DarkNumericUpDown)control, (decimal)result);
 
             // Don't update if not changed
             if (oldValue == result)
@@ -1325,8 +1336,8 @@ namespace WadTool
                     _editor.CurrentAnim.WadAnimation.NextFrame = (ushort)result;
                     break;
                 case nameof(nudFramerate):
-                    nudEndFrame.Value = (decimal)Math.Round(_editor.CurrentAnim.WadAnimation.EndFrame /
-                                                           (_editor.CurrentAnim.WadAnimation.FrameRate / (float)result));
+                    SetNumericValue(nudEndFrame, (decimal)Math.Round(_editor.CurrentAnim.WadAnimation.EndFrame /
+                                                                     (_editor.CurrentAnim.WadAnimation.FrameRate / (float)result)));
                     _editor.CurrentAnim.WadAnimation.FrameRate = (byte)result;
                     break;
                 case nameof(nudEndFrame):
