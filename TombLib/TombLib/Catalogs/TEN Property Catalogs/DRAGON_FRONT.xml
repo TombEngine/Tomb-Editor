@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<propertyCatalog>
+  <moveable id="DRAGON_FRONT">
+  		<property
+		  internalName="FlameStartColor"
+		  displayName="Flame start color"
+		  type="Color"
+		  defaultValue="TEN.Color(153,63,13)"
+		  hasAlpha = "false"
+		  category="Flame Effects"
+		  description="Starting color of the flame attack."
+		/>
+		<property
+		  internalName="FlameEndColor"
+		  displayName="Flame end color"
+		  type="Color"
+		  defaultValue="TEN.Color(89,38,5)"
+		  hasAlpha = "false"
+		  category="Flame Effects"
+		  description="Ending color of the flame attack."
+		/>
+		<property
+		  internalName="EmberStartColor"
+		  displayName="Ember start color"
+		  type="Color"
+		  defaultValue="TEN.Color(230,102,26)"
+		  hasAlpha = "false"
+		  category="Flame Effects"
+		  description="Starting color of the additional embers during the flame attack."
+		/>
+		<property
+		  internalName="EmberEndColor"
+		  displayName="Ember end color"
+		  type="Color"
+		  defaultValue="TEN.Color(204,153,77)"
+		  hasAlpha = "false"
+		  category="Flame Effects"
+		  description="Ending color of the additional embers during the flame attack."
+		/>
+		<property
+		  internalName="ShockwaveEnabled"
+		  displayName="Shockwave Toggle"
+		  type="Bool"
+		  defaultValue="true"
+		  category="Shockwave Effects"
+		  description="Toggle shockwave from foot stomp attack"
+		/>
+		<property
+		  internalName="PrimaryColor"
+		  displayName="Shockwave Color"
+		  type="Color"
+		  defaultValue="TEN.Color(128,128,128)"
+		  hasAlpha = "false"
+		  category="Shockwave Effects"
+		  description="Foot stomp attack shockwave color (if enabled)"
+		/>
+		<property
+		  internalName="DragonSwipeAttackDamage"
+		  displayName="Stomp attack damage"
+		  type="Int"
+		  defaultValue="250"
+		  minValue = "0"
+		  maxValue = "1000"
+		  category="Creature properties"
+		  description="Swipe attack damage"
+		/>
+		<property
+		  internalName="DragonContactDamage"
+		  displayName="Contact Damage"
+		  type="Int"
+		  defaultValue="10"
+		  minValue = "0"
+		  maxValue = "1000"
+		  category="Creature properties"
+		  description="Damage taken if target collides with Dragon"
+		/>
+		<property
+		  internalName="DragonDeathOption"
+		  displayName="Death option"
+		  type="Enum"
+          entries="Normal, Dagger Pull"
+		  replacesOCB ="true"
+		  category="Creature properties"
+		  description="Normal death: Dragon dies when health is 0\nDagger pull death will only kill dragon once dagger has been pulled"
+		/>
+		<property
+		  internalName="DragonSkeleton"
+		  displayName="Enable skeleton"
+		  type="Bool"
+		  defaultValue="true"
+		  category="Creature properties"
+		  description="Toggle if Dragon dissolves into skeleton when dead."
+		/>
+	</moveable>
+</propertyCatalog>
