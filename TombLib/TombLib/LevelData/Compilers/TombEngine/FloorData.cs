@@ -388,22 +388,49 @@ namespace TombLib.LevelData.Compilers.TombEngine
             public readonly int HeightXpZp;
             public readonly int DiagonalStep;
 
+            private static void FlattenDiagonalWallPart(DiagonalSplit diagonalSplit, ref int heightXnZn, ref int heightXnZp, ref int heightXpZn, ref int heightXpZp)
+            {
+                // Diagonal walls only expose the flat triangle for QA / WS collision in TEN.
+                // The tilted surface on the hidden half is kept as editor-side geometry data as a hack
+                // until wall collision can use extra probes and represent both triangles independently.
+                switch (diagonalSplit)
+                {
+                    case DiagonalSplit.XnZn:
+                        heightXnZp = heightXpZp;
+                        heightXpZn = heightXpZp;
+                        break;
+                    case DiagonalSplit.XnZp:
+                        heightXnZn = heightXpZn;
+                        heightXpZp = heightXpZn;
+                        break;
+                    case DiagonalSplit.XpZn:
+                        heightXnZn = heightXnZp;
+                        heightXpZp = heightXnZp;
+                        break;
+                    case DiagonalSplit.XpZp:
+                        heightXnZp = heightXnZn;
+                        heightXpZn = heightXnZn;
+                        break;
+                }
+            }
+
             public RoomSectorShape(Sector sector, bool floor, Room.RoomConnectionType portalType, bool wall)
             {
                 var surface = floor ? sector.Floor : sector.Ceiling;
+                int heightXnZn = surface.XnZn;
+                int heightXpZn = surface.XpZn;
+                int heightXnZp = surface.XnZp;
+                int heightXpZp = surface.XpZp;
+                int diagonalStep;
 
-                HeightXnZn = surface.XnZn;
-                HeightXpZn = surface.XpZn;
-                HeightXnZp = surface.XnZp;
-                HeightXpZp = surface.XpZp;
                 SplitDirectionIsXEqualsZ = surface.SplitDirectionIsXEqualsZWithDiagonalSplit;
 
                 if (sector.HasGhostBlock && sector.GhostBlock.Valid)
                 {
-                    HeightXnZn += floor ? sector.GhostBlock.Floor.XnZn : sector.GhostBlock.Ceiling.XnZn;
-                    HeightXpZn += floor ? sector.GhostBlock.Floor.XpZn : sector.GhostBlock.Ceiling.XpZn;
-                    HeightXnZp += floor ? sector.GhostBlock.Floor.XnZp : sector.GhostBlock.Ceiling.XnZp;
-                    HeightXpZp += floor ? sector.GhostBlock.Floor.XpZp : sector.GhostBlock.Ceiling.XpZp;
+                    heightXnZn += floor ? sector.GhostBlock.Floor.XnZn : sector.GhostBlock.Ceiling.XnZn;
+                    heightXpZn += floor ? sector.GhostBlock.Floor.XpZn : sector.GhostBlock.Ceiling.XpZn;
+                    heightXnZp += floor ? sector.GhostBlock.Floor.XnZp : sector.GhostBlock.Ceiling.XnZp;
+                    heightXpZp += floor ? sector.GhostBlock.Floor.XpZp : sector.GhostBlock.Ceiling.XpZp;
                 }
 
                 switch (portalType)
@@ -443,35 +470,35 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 switch (surface.DiagonalSplit)
                 {
                     case DiagonalSplit.None:
-                        DiagonalStep = 0;
+                        diagonalStep = 0;
                         SplitWallFirst = wall;
                         SplitWallSecond = wall;
                         break;
                     case DiagonalSplit.XnZn:
-                        DiagonalStep = surface.XpZp - surface.XnZp;
+                        diagonalStep = surface.XpZp - surface.XnZp;
                         SplitWallFirst = wall;
                         SplitWallSecond = false;
                         break;
                     case DiagonalSplit.XnZp:
-                        DiagonalStep = surface.XpZn - surface.XpZp;
+                        diagonalStep = surface.XpZn - surface.XpZp;
 
                         SplitWallFirst = wall;
                         SplitWallSecond = false;
                         break;
                     case DiagonalSplit.XpZn:
-                        DiagonalStep = surface.XnZp - surface.XnZn;
-                        HeightXnZn += DiagonalStep;
-                        HeightXpZp += DiagonalStep;
-                        DiagonalStep = -DiagonalStep;
+                        diagonalStep = surface.XnZp - surface.XnZn;
+                        heightXnZn += diagonalStep;
+                        heightXpZp += diagonalStep;
+                        diagonalStep = -diagonalStep;
 
                         SplitWallFirst = false;
                         SplitWallSecond = wall;
                         break;
                     case DiagonalSplit.XpZp:
-                        DiagonalStep = surface.XnZn - surface.XpZn;
-                        HeightXpZn += DiagonalStep;
-                        HeightXnZp += DiagonalStep;
-                        DiagonalStep = -DiagonalStep;
+                        diagonalStep = surface.XnZn - surface.XpZn;
+                        heightXpZn += diagonalStep;
+                        heightXnZp += diagonalStep;
+                        diagonalStep = -diagonalStep;
 
                         SplitWallFirst = false;
                         SplitWallSecond = wall;
@@ -479,6 +506,18 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+
+                if (wall && surface.DiagonalSplit != DiagonalSplit.None)
+                {
+                    FlattenDiagonalWallPart(surface.DiagonalSplit, ref heightXnZn, ref heightXnZp, ref heightXpZn, ref heightXpZp);
+                    diagonalStep = 0;
+                }
+
+                HeightXnZn = heightXnZn;
+                HeightXpZn = heightXpZn;
+                HeightXnZp = heightXnZp;
+                HeightXpZp = heightXpZp;
+                DiagonalStep = diagonalStep;
             }
 
             public int Max => Math.Max(Math.Max(HeightXnZn, HeightXnZp), Math.Max(HeightXpZn, HeightXpZp));
