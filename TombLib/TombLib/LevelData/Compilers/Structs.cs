@@ -32,6 +32,56 @@ namespace TombLib.LevelData.Compilers
         public override bool Equals(object obj) => GetHashCode() == obj.GetHashCode();
     }
 
+    internal static class PortalShadeMatchHelper
+    {
+        // Tolerance for point-on-segment checks to absorb floating-point error.
+        private const float PortalEdgeEpsilon = 0.001f;
+
+        public static bool IsCandidate(tr_vertex[] portalVertices, tr_vertex vertexPosition)
+        {
+            return IsCandidate(
+                new Vector3(vertexPosition.X, vertexPosition.Y, vertexPosition.Z),
+                new Vector3(portalVertices[0].X, portalVertices[0].Y, portalVertices[0].Z),
+                new Vector3(portalVertices[1].X, portalVertices[1].Y, portalVertices[1].Z),
+                new Vector3(portalVertices[2].X, portalVertices[2].Y, portalVertices[2].Z),
+                new Vector3(portalVertices[3].X, portalVertices[3].Y, portalVertices[3].Z));
+        }
+
+        public static bool IsCandidate(global::TombLib.VectorInt3[] portalVertices, Vector3 vertexPosition)
+        {
+            return IsCandidate(
+                vertexPosition,
+                new Vector3(portalVertices[0].X, portalVertices[0].Y, portalVertices[0].Z),
+                new Vector3(portalVertices[1].X, portalVertices[1].Y, portalVertices[1].Z),
+                new Vector3(portalVertices[2].X, portalVertices[2].Y, portalVertices[2].Z),
+                new Vector3(portalVertices[3].X, portalVertices[3].Y, portalVertices[3].Z));
+        }
+
+        private static bool IsCandidate(Vector3 vertexPosition, Vector3 vertex0, Vector3 vertex1, Vector3 vertex2, Vector3 vertex3)
+        {
+            return IsPointOnSegment(vertexPosition, vertex0, vertex1) ||
+                   IsPointOnSegment(vertexPosition, vertex1, vertex2) ||
+                   IsPointOnSegment(vertexPosition, vertex2, vertex3) ||
+                   IsPointOnSegment(vertexPosition, vertex3, vertex0);
+        }
+
+        private static bool IsPointOnSegment(Vector3 vertexPosition, Vector3 segmentStart, Vector3 segmentEnd)
+        {
+            var segment = segmentEnd - segmentStart;
+            var offset = vertexPosition - segmentStart;
+            var segmentLengthSquared = segment.LengthSquared();
+
+            if (segmentLengthSquared <= float.Epsilon)
+                return false;
+
+            var projection = Vector3.Dot(offset, segment);
+            if (projection < -PortalEdgeEpsilon || projection > segmentLengthSquared + PortalEdgeEpsilon)
+                return false;
+
+            return Vector3.Cross(offset, segment).LengthSquared() <= PortalEdgeEpsilon * PortalEdgeEpsilon * segmentLengthSquared;
+        }
+    }
+
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct tr_color
     {
