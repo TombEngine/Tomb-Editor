@@ -429,6 +429,9 @@
     <None Update="Catalogs\Engines\TR5\States.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Catalogs\TEN Property Catalogs\DRAGON_FRONT.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Catalogs\TEN Property Catalogs\Global\Vehicles.xml">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
