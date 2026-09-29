@@ -42,25 +42,27 @@ namespace TombIDE
 					throw new ArgumentException("Invalid name.");
 
 				bool renameDirectory = checkBox_RenameDirectory.Checked;
+				bool renameTrprojFile = checkBox_RenameTrproj.Checked;
 
-				if (newName == _targetProject.Name)
+				if (newName == _targetProject.Name && !renameDirectory && !renameTrprojFile)
 				{
-					// If the name hasn't changed, but the directory name is different and the user wants to rename it
-					if (Path.GetFileName(_targetProject.DirectoryPath) != newName && renameDirectory)
+					DialogResult = DialogResult.Cancel;
+					return;
+				}
+
+				if (newName == _targetProject.Name && !renameDirectory)
+				{
+					// Only renaming the .trproj file
+				}
+				else if (newName == _targetProject.Name && renameDirectory)
+				{
+					if (!Path.GetFileName(_targetProject.DirectoryPath).Equals(newName, StringComparison.OrdinalIgnoreCase))
 					{
-						if (!Path.GetFileName(_targetProject.DirectoryPath).Equals(newName, StringComparison.OrdinalIgnoreCase))
-						{
-							string newDirectory = Path.Combine(Path.GetDirectoryName(_targetProject.DirectoryPath), newName);
+						string newDirectory = Path.Combine(Path.GetDirectoryName(_targetProject.DirectoryPath), newName);
 
-							if (Directory.Exists(newDirectory))
-								throw new ArgumentException("A directory with the same name already exists in the parent directory.");
-						}
-
-						_targetProject.Rename(newName, true);
-						_targetProject.Save();
+						if (Directory.Exists(newDirectory))
+							throw new ArgumentException("A directory with the same name already exists in the parent directory.");
 					}
-					else
-						DialogResult = DialogResult.Cancel;
 				}
 				else
 				{
@@ -68,9 +70,22 @@ namespace TombIDE
 
 					if (renameDirectory && Directory.Exists(newDirectory) && !newDirectory.Equals(_targetProject.DirectoryPath, StringComparison.OrdinalIgnoreCase))
 						throw new ArgumentException("A directory with the same name already exists in the parent directory.");
+				}
 
-					_targetProject.Rename(newName, renameDirectory);
-					_targetProject.Save();
+				string oldTrprojFilePath = _targetProject.GetTrprojFilePath();
+
+				_targetProject.Rename(newName, renameDirectory, renameTrprojFile);
+				_targetProject.Save();
+
+				// Clean up old .trproj file after successful save
+				if (renameTrprojFile)
+				{
+					// After a directory rename, the old file is now inside the new directory
+					string oldTrprojFileName = Path.GetFileName(oldTrprojFilePath);
+					string oldTrprojPathAfterRename = Path.Combine(_targetProject.DirectoryPath, oldTrprojFileName);
+
+					if (File.Exists(oldTrprojPathAfterRename) && !oldTrprojPathAfterRename.Equals(_targetProject.GetTrprojFilePath(), StringComparison.OrdinalIgnoreCase))
+						File.Delete(oldTrprojPathAfterRename);
 				}
 			}
 			catch (Exception ex)
