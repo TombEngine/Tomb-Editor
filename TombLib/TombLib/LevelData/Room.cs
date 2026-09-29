@@ -1870,6 +1870,8 @@ namespace TombLib.LevelData
 
                         // Apply the transform to the vertex
                         var position = MathC.HomogenousTransform(vertex.Position, worldTransform);
+                        var normal = MathC.HomogenousTransform(vertex.Normal, normalTransform);
+                        normal = Vector3.Normalize(normal);
                         var trVertex = new tr_room_vertex
                         {
                             Position = new tr_vertex
@@ -1880,7 +1882,8 @@ namespace TombLib.LevelData
                             },
                             Lighting1 = 0,
                             Lighting2 = 0,
-                            Attributes = 0
+                            Attributes = 0,
+                            Normal = normal
                         };
 
                         // HACK: Find a vertex with same coordinates and merge with it.
@@ -1896,7 +1899,12 @@ namespace TombLib.LevelData
                         }
                         else
                         {
-                            existingIndex = roomVertices.IndexOf(v => v.Position == trVertex.Position && v.Color == trVertex.Color);
+                            existingIndex = roomVertices.IndexOf(v =>
+                                v.Position == trVertex.Position &&
+                                v.Lighting1 == trVertex.Lighting1 &&
+                                v.Attributes == trVertex.Attributes &&
+                                v.Lighting2 == trVertex.Lighting2 &&
+                                v.Normal == trVertex.Normal);
                             if (existingIndex == -1)
                             {
                                 existingIndex = roomVertices.Count;
