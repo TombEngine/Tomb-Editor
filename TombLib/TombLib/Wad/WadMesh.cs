@@ -451,15 +451,12 @@ namespace TombLib.Wad
                 var textureFileName = name + "_" + i + ".png";
                 var path = Path.Combine(Path.GetDirectoryName(filePath), textureFileName);
 
-                var matOpaque = new IOMaterial(Material.Material_Opaque + "_" + i, pages[i], path, false, false, 0, i);
-                var matOpaqueDoubleSided = new IOMaterial(Material.Material_OpaqueDoubleSided + "_" + i, pages[i], path, false, true, 0, i);
-                var matAdditiveBlending = new IOMaterial(Material.Material_AdditiveBlending + "_" + i, pages[i], path, true, false, 0, i);
-                var matAdditiveBlendingDoubleSided = new IOMaterial(Material.Material_AdditiveBlendingDoubleSided + "_" + i, pages[i], path, true, true, 0, i);
-
-                model.Materials.Add(matOpaque);
-                model.Materials.Add(matOpaqueDoubleSided);
-                model.Materials.Add(matAdditiveBlending);
-                model.Materials.Add(matAdditiveBlendingDoubleSided);
+                foreach (BlendMode mode in Enum.GetValues(typeof(BlendMode)))
+                {
+                    var prefix = Material.GetPrefixForBlendMode(mode);
+                    model.Materials.Add(new IOMaterial(prefix + "_" + i, pages[i], path, mode, false, 0, i));
+                    model.Materials.Add(new IOMaterial(prefix + Material.DoubleSidedSuffix + "_" + i, pages[i], path, mode, true, 0, i));
+                }
             }
 
             int lastIndex = 0;
@@ -531,7 +528,7 @@ namespace TombLib.Wad
                 foreach (var mt in model.Materials)
                     if ((mergeIntoPages && mt.Page == texture.Atlas) ||
                         (!mergeIntoPages && mt.Texture == p.Texture.Texture))
-                            if (mt.AdditiveBlending == (p.Texture.BlendMode >= BlendMode.Additive))
+                            if (mt.BlendMode == p.Texture.BlendMode)
                                 if (mt.DoubleSided == p.Texture.DoubleSided)
                                     if (mt.Shininess == 0)
                                         mat = mt;
@@ -745,7 +742,7 @@ namespace TombLib.Wad
                         }
 
                         area.DoubleSided = tmpSubmesh.Value.Material.DoubleSided;
-                        area.BlendMode = tmpSubmesh.Value.Material.AdditiveBlending ? BlendMode.Additive : BlendMode.Normal;
+                        area.BlendMode = tmpSubmesh.Value.Material.BlendMode;
 
                         poly.Texture = area;
                         poly.ShineStrength = (byte)Math.Min(Math.Round(tmpSubmesh.Value.Material.Shininess / 16.0f, MidpointRounding.ToEven), 63);

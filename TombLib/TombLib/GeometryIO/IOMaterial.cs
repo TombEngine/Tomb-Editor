@@ -6,7 +6,8 @@ namespace TombLib.GeometryIO
     {
         public string Name { get; private set; }
         public Texture Texture { get; set; }
-        public bool AdditiveBlending { get; set; }
+        public BlendMode BlendMode { get; set; }
+        public bool AdditiveBlending => BlendMode >= BlendMode.Additive;
         public bool DoubleSided { get; set; }
         public int Shininess { get; set; }
 
@@ -20,11 +21,11 @@ namespace TombLib.GeometryIO
             Name = name;
         }
 
-        public IOMaterial(string name, Texture texture, string texturePath,bool additiveBlending, bool doubleSided, int shininess, int page)
+        public IOMaterial(string name, Texture texture, string texturePath, BlendMode blendMode, bool doubleSided, int shininess, int page)
         {
             Name = name;
             Texture = texture;
-            AdditiveBlending = additiveBlending;
+            BlendMode = blendMode;
             DoubleSided = doubleSided;
             Shininess = shininess;
             Path = texturePath;

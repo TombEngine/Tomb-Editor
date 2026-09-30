@@ -93,7 +93,8 @@ namespace TombLib.GeometryIO.Importers
 
                                 if (tokens.Length == 4 && float.TryParse(tokens[3], out alpha))
                                 {
-                                    material.AdditiveBlending = (alpha < 1.0f);
+                                    if (alpha < 1.0f)
+                                        material.BlendMode = TombLib.Utils.BlendMode.Additive;
                                 }
                             }
 
