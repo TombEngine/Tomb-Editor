@@ -1,0 +1,12 @@
+<propertyCatalog>    
+	<moveable id="GOLDROSE_ITEM">
+        <property
+          internalName="GenericBool"
+          displayName="Add Secret on Pickup"
+          type="Bool"
+          defaultValue="false"
+          category="Optional"
+          description="Gold rose will count as a secret when picked up"
+        />
+    </moveable>
+</propertyCatalog>
