@@ -15,6 +15,8 @@ public partial class LevelCompilerClassicTR
 {
     private const int _legacyRoomLimit = 255;
     private const int _noRoom = -1;
+    private const int _noAlternate = 255;
+    private const int _maxAlternates = 10;
     private const int _maxSamples = 1000;
     private const int _maxLuaNameLength = 4096;
 
@@ -94,8 +96,9 @@ public partial class LevelCompilerClassicTR
 
     private TRXRoomPropertyEntry GetRoomPropertyEntry(Room teRoom, tr_room trRoom)
     {
+        var alternateGroup = GetRoomAlternateGroup(teRoom);
         if ((teRoom.Properties.Reverberation == 0 || _level.Settings.GameVersion == TRVersion.Game.TR3X)
-            && !teRoom.Properties.FlagCold && !teRoom.Properties.FlagDamage)
+            && !teRoom.Properties.FlagCold && !teRoom.Properties.FlagDamage && alternateGroup == _noAlternate)
         {
             return null;
         }
@@ -115,7 +118,19 @@ public partial class LevelCompilerClassicTR
             RoomIndex = (short)_roomRemapping[teRoom],
             Flags = flags,
             ReverbInfo = teRoom.Properties.Reverberation,
+            AlternateGroup = alternateGroup,
         };
+    }
+
+    private byte GetRoomAlternateGroup(Room room)
+    {
+        if (_level.Settings.TrxUseAlternateGroups && room.AlternateGroup >= _maxAlternates)
+        {
+            _progressReporter.ReportWarn($"Room '{room.Name}' uses alternate group {room.AlternateGroup}; TRX supports only groups 0-{_maxAlternates - 1}.");
+            return _noAlternate;
+        }
+
+        return (byte)(_level.Settings.TrxUseAlternateGroups && room.AlternateGroup >= 0 ? room.AlternateGroup : _noAlternate);
     }
 
     private TrxSectorOverwrite GetSectorOverwrite(Room teRoom, tr_room trRoom, ushort x, ushort z)
