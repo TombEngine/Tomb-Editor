@@ -17,6 +17,8 @@ public partial class LevelCompilerClassicTR
     private const int _noRoom = -1;
     private const int _maxSamples = 1000;
     private const int _maxLuaNameLength = 4096;
+    private const int _legacyOverlapIndexMask = 0x3FFF;
+    private const int _trxOverlapLimit = 0x40000000;
 
     private void WriteLevelTrx()
     {
@@ -45,9 +47,19 @@ public partial class LevelCompilerClassicTR
         injData.ItemNameEdits.AddRange(GenerateTrxItemNameEdits());
         injData.PropertyEdits.AddRange(GenerateTrxGlobalMoveableProperties());
         injData.PropertyEdits.AddRange(GenerateTrxInstanceMoveableProperties());
+        injData.OverlapIndices.AddRange(GenerateTrxOverlapIndices());
 
         using var writer = new BinaryWriterEx(new FileStream(_dest, FileMode.Append));
         TrxInjector.Serialize(injData, writer);
+    }
+
+    private IEnumerable<uint> GenerateTrxOverlapIndices()
+    {
+        if (dec_numOverlaps <= _legacyOverlapIndexMask)
+            yield break;
+
+        for (int i = 0; i < dec_numBoxes; i++)
+            yield return (uint)dec_boxes[i].OverlapIndex;
     }
 
     private IEnumerable<tr4_flyby_camera> GenerateFlybyCameras()

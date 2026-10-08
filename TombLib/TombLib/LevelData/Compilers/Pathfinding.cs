@@ -50,7 +50,7 @@ namespace TombLib.LevelData.Compilers
                     Zmin = (byte)dec_boxes[i].Zmin,
                     Zmax = (byte)dec_boxes[i].Zmax,
                     TrueFloor = (short)-Clicks.ToWorld(dec_boxes[i].TrueFloor),
-                    OverlapIndex = (ushort)((ushort)dec_boxes[i].OverlapIndex | (dec_boxes[i].IsolatedBox ? 0x8000 : 0))
+                    OverlapIndex = (ushort)((dec_boxes[i].OverlapIndex & _legacyOverlapIndexMask) | (dec_boxes[i].IsolatedBox ? 0x8000 : 0))
                 };
                 _zones[i] = new tr_zone()
                 {
@@ -247,7 +247,7 @@ namespace TombLib.LevelData.Compilers
                 var next = stack.Pop();
                 var last = false;
 
-                for (int i = _boxes[next].OverlapIndex & 0x3fff; i < _overlaps.Length && !last; i++)
+                for (int i = dec_boxes[next].OverlapIndex; i < _overlaps.Length && !last; i++)
                 {
                     int overlapIndex = i;
                     last = (_overlaps[overlapIndex] & 0x8000) != 0;
