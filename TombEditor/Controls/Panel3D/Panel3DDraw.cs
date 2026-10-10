@@ -1256,6 +1256,20 @@ namespace TombEditor.Controls.Panel3D
                         }
 
                         DrawOrQueueServiceObject(instance, _littleCube, color, effect, sprites);
+
+                        if (_editor.SelectedObject == instance)
+                        {
+                            var soundInfo = instance.GetSoundInfo(_editor.Level);
+                            if (soundInfo != null && soundInfo.RangeInSectors > 0)
+                            {
+                                DrawSoundRangeSphere(effect, instance, soundInfo.RangeInSectors);
+
+                                // Restore the cube buffers used by subsequent placeholder drawings.
+                                _legacyDevice.SetVertexBuffer(_littleCube.VertexBuffer);
+                                _legacyDevice.SetVertexInputLayout(_littleCube.InputLayout);
+                                _legacyDevice.SetIndexBuffer(_littleCube.IndexBuffer, _littleCube.IsIndex32Bits);
+                            }
+                        }
                     }
 
                 if (ShowMoveables && group.Key == typeof(MoveableInstance))
@@ -1473,6 +1487,21 @@ namespace TombEditor.Controls.Panel3D
             effect.Parameters["Color"].SetValue(color);
             effect.Techniques[0].Passes[0].Apply();
             _legacyDevice.DrawIndexed(PrimitiveType.TriangleList, primitive.IndexBuffer.ElementCount);
+        }
+
+        private void DrawSoundRangeSphere(Effect effect, SoundSourceInstance instance, int rangeInSectors)
+        {
+            _legacyDevice.SetRasterizerState(_rasterizerWireframe);
+            _legacyDevice.SetVertexBuffer(_sphere.VertexBuffer);
+            _legacyDevice.SetVertexInputLayout(_sphere.InputLayout);
+            _legacyDevice.SetIndexBuffer(_sphere.IndexBuffer, _sphere.IsIndex32Bits);
+
+            // The sphere primitive is one sector in diameter, so two units of scale equal one sector of range.
+            var model = Matrix4x4.CreateScale(rangeInSectors * 2.0f) * instance.ObjectMatrix;
+            effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection).ToSharpDX());
+            effect.Parameters["Color"].SetValue(_editor.Configuration.UI_ColorScheme.ColorSelection);
+            effect.CurrentTechnique.Passes[0].Apply();
+            _legacyDevice.DrawIndexed(PrimitiveType.TriangleList, _sphere.IndexBuffer.ElementCount);
         }
 
         private void DrawCardinalDirections(List<Text> textToDraw)
