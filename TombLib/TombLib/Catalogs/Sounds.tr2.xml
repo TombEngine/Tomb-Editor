@@ -14,16 +14,16 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn000_s0.wav</FileName>
+					<FileName>foot01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn000_s1.wav</FileName>
+					<FileName>foot02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn000_s2.wav</FileName>
+					<FileName>foot03.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn000_s3.wav</FileName>
+					<FileName>foot04.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -42,7 +42,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn001_s0.wav</FileName>
+					<FileName>clim_up2.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -61,7 +61,7 @@
 			<LoopBehaviour>OneShotRewound</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn002_s0.wav</FileName>
+					<FileName>lara_no.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -80,7 +80,7 @@
 			<LoopBehaviour>OneShotWait</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn003_s0.wav</FileName>
+					<FileName>landing.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -99,7 +99,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn004_s0.wav</FileName>
+					<FileName>slipping.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -118,7 +118,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn005_s0.wav</FileName>
+					<FileName>clim_up1.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -137,7 +137,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn006_s0.wav</FileName>
+					<FileName>hols_out.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -156,7 +156,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn007_s0.wav</FileName>
+					<FileName>hols_in.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -175,7 +175,7 @@
 			<LoopBehaviour>OneShotRewound</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn008_s0.wav</FileName>
+					<FileName>magnum.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -194,7 +194,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn009_s0.wav</FileName>
+					<FileName>reload.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -213,10 +213,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn010_s0.wav</FileName>
+					<FileName>rico_01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn010_s1.wav</FileName>
+					<FileName>rico_02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -235,7 +235,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn011_s0.wav</FileName>
+					<FileName>flre_ig.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -254,7 +254,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn012_s0.wav</FileName>
+					<FileName>flre_bu.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -273,7 +273,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn015_s0.wav</FileName>
+					<FileName>harp_fr.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -292,7 +292,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn016_s0.wav</FileName>
+					<FileName>harp_lo.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -311,16 +311,16 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn017_s0.wav</FileName>
+					<FileName>fsw1.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn017_s1.wav</FileName>
+					<FileName>fsw2.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn017_s2.wav</FileName>
+					<FileName>fsw3.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn017_s3.wav</FileName>
+					<FileName>fsw4.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -339,10 +339,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn018_s0.wav</FileName>
+					<FileName>wade1.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn018_s1.wav</FileName>
+					<FileName>wade2.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -361,7 +361,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn020_s0.wav</FileName>
+					<FileName>lar_tread.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -380,7 +380,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn021_s0.wav</FileName>
+					<FileName>auto_pistols.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -399,7 +399,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn022_s0.wav</FileName>
+					<FileName>harp_luw.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -418,7 +418,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn023_s0.wav</FileName>
+					<FileName>harp_fuw.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -437,7 +437,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn024_s0.wav</FileName>
+					<FileName>crash.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -456,7 +456,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn025_s0.wav</FileName>
+					<FileName>push_swt.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -475,7 +475,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn026_s0.wav</FileName>
+					<FileName>clim_up3.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -494,10 +494,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn027_s0.wav</FileName>
+					<FileName>body_sl1.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn027_s1.wav</FileName>
+					<FileName>body_sl2.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -516,10 +516,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn028_s0.wav</FileName>
+					<FileName>clsl_01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn028_s1.wav</FileName>
+					<FileName>clsl_02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -538,7 +538,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn029_s0.wav</FileName>
+					<FileName>lar_jmp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -557,7 +557,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn030_s0.wav</FileName>
+					<FileName>f2f_scrm.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -576,10 +576,10 @@
 			<LoopBehaviour>OneShotWait</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn031_s0.wav</FileName>
+					<FileName>takehit1.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn031_s1.wav</FileName>
+					<FileName>takehit2.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -598,7 +598,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn032_s0.wav</FileName>
+					<FileName>lar_roll.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -617,7 +617,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn033_s0.wav</FileName>
+					<FileName>splash.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -636,7 +636,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn034_s0.wav</FileName>
+					<FileName>go_watr.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -655,7 +655,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn035_s0.wav</FileName>
+					<FileName>swim.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -674,7 +674,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn036_s0.wav</FileName>
+					<FileName>breath.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -693,7 +693,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn037_s0.wav</FileName>
+					<FileName>bubbles.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -712,7 +712,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn038_s0.wav</FileName>
+					<FileName>swch_down.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -731,7 +731,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn039_s0.wav</FileName>
+					<FileName>usekey.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -750,7 +750,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn040_s0.wav</FileName>
+					<FileName>obj_clk.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -769,7 +769,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn041_s0.wav</FileName>
+					<FileName>lar_die2.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -788,7 +788,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn042_s0.wav</FileName>
+					<FileName>lar_die1.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -807,7 +807,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn043_s0.wav</FileName>
+					<FileName>uzi_fr.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -826,7 +826,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn044_s0.wav</FileName>
+					<FileName>uzi_stp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -845,7 +845,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn045_s0.wav</FileName>
+					<FileName>shot_gun.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -864,7 +864,7 @@
 			<LoopBehaviour>OneShotRewound</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn046_s0.wav</FileName>
+					<FileName>p&amp;p01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -883,14 +883,14 @@
 			<LoopBehaviour>OneShotRewound</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn047_s0.wav</FileName>
+					<FileName>p&amp;p02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn047_s1.wav</FileName>
+					<FileName>p&amp;p03.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn047_s2.wav</FileName>
-				</WadSample>
+					<FileName>p&amp;p04.wav</FileName>
+				</WadSample>				
 			</Samples>
 			<Global>false</Global>
 			<Indexed>true</Indexed>
@@ -908,7 +908,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn048_s0.wav</FileName>
+					<FileName>click.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -927,7 +927,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn049_s0.wav</FileName>
+					<FileName>lar_hit.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -946,7 +946,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn050_s0.wav</FileName>
+					<FileName>bul_flsh.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -965,7 +965,7 @@
 			<LoopBehaviour>OneShotRewound</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn051_s0.wav</FileName>
+					<FileName>p&amp;p05.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -984,7 +984,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn052_s0.wav</FileName>
+					<FileName>floatswm.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1003,7 +1003,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn053_s0.wav</FileName>
+					<FileName>f2f_hitg.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1022,7 +1022,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn054_s0.wav</FileName>
+					<FileName>back_jm1.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1041,7 +1041,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn055_s0.wav</FileName>
+					<FileName>back_jm3.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1060,7 +1060,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn056_s0.wav</FileName>
+					<FileName>back_jm2.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1079,7 +1079,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn057_s0.wav</FileName>
+					<FileName>swch_up.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1098,7 +1098,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn058_s0.wav</FileName>
+					<FileName>glass_brk.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -1117,7 +1117,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn059_s0.wav</FileName>
+					<FileName>l_wloop.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1136,7 +1136,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn060_s0.wav</FileName>
+					<FileName>undwatr.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -1155,7 +1155,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn061_s0.wav</FileName>
+					<FileName>uw_swt.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1174,7 +1174,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn062_s0.wav</FileName>
+					<FileName>pickup.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1193,7 +1193,7 @@
 			<LoopBehaviour>OneShotRewound</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn063_s0.wav</FileName>
+					<FileName>push_blk.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -1212,7 +1212,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn064_s0.wav</FileName>
+					<FileName>sml_d.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1231,7 +1231,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn065_s0.wav</FileName>
+					<FileName>swing.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1250,7 +1250,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn066_s0.wav</FileName>
+					<FileName>rokfall1.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -1269,7 +1269,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn067_s0.wav</FileName>
+					<FileName>rokfall2.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -1288,7 +1288,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn068_s0.wav</FileName>
+					<FileName>rokfall3.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1307,13 +1307,13 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn069_s0.wav</FileName>
+					<FileName>en_feet01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn069_s1.wav</FileName>
+					<FileName>en_feet02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn069_s2.wav</FileName>
+					<FileName>en_feet03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1332,7 +1332,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn070_s0.wav</FileName>
+					<FileName>en_grunt.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -1351,7 +1351,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn071_s0.wav</FileName>
+					<FileName>en_hit01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -1370,7 +1370,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn072_s0.wav</FileName>
+					<FileName>en_hit02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -1389,7 +1389,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn073_s0.wav</FileName>
+					<FileName>en_death01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1408,7 +1408,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn074_s0.wav</FileName>
+					<FileName>en_jump01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1427,7 +1427,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn075_s0.wav</FileName>
+					<FileName>en_climup.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1446,7 +1446,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn076_s0.wav</FileName>
+					<FileName>en_climdown.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1465,7 +1465,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn077_s0.wav</FileName>
+					<FileName>clatter.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1484,7 +1484,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn078_s0.wav</FileName>
+					<FileName>m16_fire.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -1503,7 +1503,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn079_s0.wav</FileName>
+					<FileName>l_wfall.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -1522,7 +1522,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn080_s0.wav</FileName>
+					<FileName>stat_drp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1541,7 +1541,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn081_s0.wav</FileName>
+					<FileName>stat_lft.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1560,7 +1560,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn082_s0.wav</FileName>
+					<FileName>port.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1579,7 +1579,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn083_s0.wav</FileName>
+					<FileName>port.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1598,7 +1598,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn084_s0.wav</FileName>
+					<FileName>trx_at2.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1617,13 +1617,13 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn085_s0.wav</FileName>
+					<FileName>bod_slm1.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn085_s1.wav</FileName>
+					<FileName>bod_slm2.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn085_s2.wav</FileName>
+					<FileName>bod_slm3.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1642,7 +1642,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn086_s0.wav</FileName>
+					<FileName>dog_bark01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1661,13 +1661,13 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn087_s0.wav</FileName>
+					<FileName>dog_ft01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn087_s1.wav</FileName>
+					<FileName>dog_ft02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn087_s2.wav</FileName>
+					<FileName>dog_ft03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1686,7 +1686,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn088_s0.wav</FileName>
+					<FileName>dog_bark02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1705,13 +1705,13 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn089_s0.wav</FileName>
+					<FileName>dog_death01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn089_s1.wav</FileName>
+					<FileName>dog_death02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn089_s2.wav</FileName>
+					<FileName>dog_death03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1730,7 +1730,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn090_s0.wav</FileName>
+					<FileName>dog_pant.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1749,13 +1749,13 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn091_s0.wav</FileName>
+					<FileName>lprd_ft01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn091_s1.wav</FileName>
+					<FileName>lprd_ft02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn091_s2.wav</FileName>
+					<FileName>lprd_ft03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1774,7 +1774,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn092_s0.wav</FileName>
+					<FileName>lprd_roar.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1793,7 +1793,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn093_s0.wav</FileName>
+					<FileName>lprd_bite.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1812,7 +1812,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn094_s0.wav</FileName>
+					<FileName>lprd_strk.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1831,7 +1831,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn095_s0.wav</FileName>
+					<FileName>lprd_death.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1850,7 +1850,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn096_s0.wav</FileName>
+					<FileName>lprd_grwl.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1869,10 +1869,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn097_s0.wav</FileName>
+					<FileName>rat_atk01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn097_s1.wav</FileName>
+					<FileName>rat_atk02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1891,7 +1891,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn098_s0.wav</FileName>
+					<FileName>rat_die.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1910,7 +1910,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn099_s0.wav</FileName>
+					<FileName>ti_roar.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1929,7 +1929,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn100_s0.wav</FileName>
+					<FileName>ti_bite.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1948,7 +1948,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn101_s0.wav</FileName>
+					<FileName>ti_strk.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1967,7 +1967,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn102_s0.wav</FileName>
+					<FileName>ti_deth.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -1986,7 +1986,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn103_s0.wav</FileName>
+					<FileName>ti_grwl.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2005,7 +2005,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn104_s0.wav</FileName>
+					<FileName>m16_stop.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2024,10 +2024,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn105_s0.wav</FileName>
+					<FileName>explos1.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn105_s1.wav</FileName>
+					<FileName>explos2.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2046,7 +2046,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn106_s0.wav</FileName>
+					<FileName>grl.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2065,7 +2065,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn107_s0.wav</FileName>
+					<FileName>spdr_jmp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2084,7 +2084,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn108_s0.wav</FileName>
+					<FileName>m_rotat.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2103,7 +2103,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn109_s0.wav</FileName>
+					<FileName>home.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2122,7 +2122,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn111_s0.wav</FileName>
+					<FileName>menuin.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2141,7 +2141,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn112_s0.wav</FileName>
+					<FileName>menuout.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2160,7 +2160,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn113_s0.wav</FileName>
+					<FileName>stpwtch.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2179,7 +2179,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn114_s0.wav</FileName>
+					<FileName>m_gurel.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2198,7 +2198,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn115_s0.wav</FileName>
+					<FileName>pass_prt.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2217,7 +2217,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn116_s0.wav</FileName>
+					<FileName>medi_fix.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2236,16 +2236,16 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn117_s0.wav</FileName>
+					<FileName>en_heels01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn117_s1.wav</FileName>
+					<FileName>en_heels02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn117_s2.wav</FileName>
+					<FileName>en_heels03.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn117_s3.wav</FileName>
+					<FileName>en_heels04.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2264,10 +2264,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn118_s0.wav</FileName>
+					<FileName>en_sil01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn118_s1.wav</FileName>
+					<FileName>en_sil02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2286,7 +2286,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn119_s0.wav</FileName>
+					<FileName>en_ah.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2305,7 +2305,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn120_s0.wav</FileName>
+					<FileName>en_oh.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2324,7 +2324,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn121_s0.wav</FileName>
+					<FileName>en_thmp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2343,7 +2343,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn122_s0.wav</FileName>
+					<FileName>spdr_mv.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2362,7 +2362,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn123_s0.wav</FileName>
+					<FileName>mini_lo.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2381,7 +2381,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn124_s0.wav</FileName>
+					<FileName>mini_lck.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2400,7 +2400,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn125_s0.wav</FileName>
+					<FileName>mini_fr.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2419,7 +2419,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn126_s0.wav</FileName>
+					<FileName>spdr_bt.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2438,7 +2438,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn127_s0.wav</FileName>
+					<FileName>slm_door_open.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2457,7 +2457,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn128_s0.wav</FileName>
+					<FileName>slm_door_close.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2476,7 +2476,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn129_s0.wav</FileName>
+					<FileName>eagle_sqwk.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2495,7 +2495,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn130_s0.wav</FileName>
+					<FileName>eagle_flp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2514,7 +2514,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn131_s0.wav</FileName>
+					<FileName>eagle_dth.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2533,7 +2533,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn132_s0.wav</FileName>
+					<FileName>crow_caw.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2552,7 +2552,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn133_s0.wav</FileName>
+					<FileName>crow_flp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2571,7 +2571,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn134_s0.wav</FileName>
+					<FileName>crow_die.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2590,7 +2590,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn135_s0.wav</FileName>
+					<FileName>crow_atk.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2609,7 +2609,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn136_s0.wav</FileName>
+					<FileName>en_cckng.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2628,7 +2628,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn137_s0.wav</FileName>
+					<FileName>en_fire01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2647,7 +2647,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn138_s0.wav</FileName>
+					<FileName>en_twrl.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2666,7 +2666,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn139_s0.wav</FileName>
+					<FileName>en_hlst.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2685,7 +2685,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn140_s0.wav</FileName>
+					<FileName>en_brth01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2704,7 +2704,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn141_s0.wav</FileName>
+					<FileName>en_chckl.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2723,7 +2723,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn142_s0.wav</FileName>
+					<FileName>monk_poy.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2742,7 +2742,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn143_s0.wav</FileName>
+					<FileName>monk_dth.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2761,7 +2761,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn145_s0.wav</FileName>
+					<FileName>lar_spks.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2780,7 +2780,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn146_s0.wav</FileName>
+					<FileName>lar_die3.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2799,7 +2799,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn147_s0.wav</FileName>
+					<FileName>l_rumb.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2818,7 +2818,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn148_s0.wav</FileName>
+					<FileName>sand_snp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2837,7 +2837,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn149_s0.wav</FileName>
+					<FileName>sand_hit.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2856,7 +2856,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn150_s0.wav</FileName>
+					<FileName>l_fire.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2875,7 +2875,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn152_s0.wav</FileName>
+					<FileName>skd_stt.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2894,7 +2894,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn153_s0.wav</FileName>
+					<FileName>skd_idl.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2913,7 +2913,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn154_s0.wav</FileName>
+					<FileName>skd_rev.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2932,7 +2932,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn155_s0.wav</FileName>
+					<FileName>skd_mve.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2951,7 +2951,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn156_s0.wav</FileName>
+					<FileName>skd_stp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -2970,7 +2970,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn157_s0.wav</FileName>
+					<FileName>en_fire02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -2989,7 +2989,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn158_s0.wav</FileName>
+					<FileName>en_death02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3008,7 +3008,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn159_s0.wav</FileName>
+					<FileName>en_brth02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3027,7 +3027,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn160_s0.wav</FileName>
+					<FileName>stck_tap.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3046,7 +3046,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn161_s0.wav</FileName>
+					<FileName>trapd_op.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3065,7 +3065,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn162_s0.wav</FileName>
+					<FileName>trapd_cl.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3084,10 +3084,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn163_s0.wav</FileName>
+					<FileName>yet_grwl01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn163_s1.wav</FileName>
+					<FileName>yet_grwl02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3106,7 +3106,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn164_s0.wav</FileName>
+					<FileName>yet_beat.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3125,7 +3125,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn165_s0.wav</FileName>
+					<FileName>yet_thmp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3144,7 +3144,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn166_s0.wav</FileName>
+					<FileName>yet_grnt01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3163,7 +3163,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn167_s0.wav</FileName>
+					<FileName>yet_scrm.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3182,7 +3182,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn168_s0.wav</FileName>
+					<FileName>yet_die.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3201,7 +3201,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn169_s0.wav</FileName>
+					<FileName>yet_grwl03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3220,7 +3220,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn170_s0.wav</FileName>
+					<FileName>yet_grwl04.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3239,7 +3239,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn171_s0.wav</FileName>
+					<FileName>yet_grnt02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3258,7 +3258,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn172_s0.wav</FileName>
+					<FileName>yet_grwl05.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3277,10 +3277,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn173_s0.wav</FileName>
+					<FileName>yet_ft01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn173_s1.wav</FileName>
+					<FileName>yet_ft02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3299,7 +3299,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn174_s0.wav</FileName>
+					<FileName>en_brth03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3318,7 +3318,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn175_s0.wav</FileName>
+					<FileName>flm_fr.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3337,7 +3337,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn176_s0.wav</FileName>
+					<FileName>flm_scrp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3356,7 +3356,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn177_s0.wav</FileName>
+					<FileName>flm_clk.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3375,7 +3375,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn178_s0.wav</FileName>
+					<FileName>flm_dth.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3394,7 +3394,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn179_s0.wav</FileName>
+					<FileName>flm_fall.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3413,7 +3413,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn180_s0.wav</FileName>
+					<FileName>en_jngl.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3432,7 +3432,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn181_s0.wav</FileName>
+					<FileName>en_wrch.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3451,7 +3451,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn182_s0.wav</FileName>
+					<FileName>ftstp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3470,7 +3470,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn183_s0.wav</FileName>
+					<FileName>ftstp_ht.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3489,7 +3489,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn184_s0.wav</FileName>
+					<FileName>en_shot.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3508,7 +3508,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn186_s0.wav</FileName>
+					<FileName>scub_flp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3527,7 +3527,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn188_s0.wav</FileName>
+					<FileName>scub_brw.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3546,7 +3546,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn190_s0.wav</FileName>
+					<FileName>crane.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3565,7 +3565,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn191_s0.wav</FileName>
+					<FileName>curtain.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3584,7 +3584,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn192_s0.wav</FileName>
+					<FileName>scub_dth.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3603,7 +3603,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn193_s0.wav</FileName>
+					<FileName>scub_div.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3622,7 +3622,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn194_s0.wav</FileName>
+					<FileName>boat_str.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3641,7 +3641,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn195_s0.wav</FileName>
+					<FileName>boat_idl.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3660,7 +3660,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn196_s0.wav</FileName>
+					<FileName>boat_acc.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3679,7 +3679,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn197_s0.wav</FileName>
+					<FileName>boat_mov.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3698,7 +3698,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn198_s0.wav</FileName>
+					<FileName>boat_stp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3717,7 +3717,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn199_s0.wav</FileName>
+					<FileName>boat_sld.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3736,7 +3736,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn200_s0.wav</FileName>
+					<FileName>boat_ht.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3755,7 +3755,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn201_s0.wav</FileName>
+					<FileName>clttr_01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3774,7 +3774,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn202_s0.wav</FileName>
+					<FileName>clttr_02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3793,7 +3793,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn203_s0.wav</FileName>
+					<FileName>clttr_03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3812,7 +3812,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn204_s0.wav</FileName>
+					<FileName>door_sld.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3831,10 +3831,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn205_s0.wav</FileName>
+					<FileName>lar_wnd01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn205_s1.wav</FileName>
+					<FileName>lar_wnd02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3853,7 +3853,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn206_s0.wav</FileName>
+					<FileName>saw_rng.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3872,7 +3872,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn207_s0.wav</FileName>
+					<FileName>saw_stp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3891,7 +3891,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn208_s0.wav</FileName>
+					<FileName>door_chm.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -3910,7 +3910,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn209_s0.wav</FileName>
+					<FileName>chain.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3929,7 +3929,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn210_s0.wav</FileName>
+					<FileName>swinging.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3948,7 +3948,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn211_s0.wav</FileName>
+					<FileName>brk01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3967,7 +3967,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn212_s0.wav</FileName>
+					<FileName>pll_mv.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -3986,7 +3986,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn213_s0.wav</FileName>
+					<FileName>plane_idl.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -4005,7 +4005,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn215_s0.wav</FileName>
+					<FileName>uw_fan.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -4024,7 +4024,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn217_s0.wav</FileName>
+					<FileName>sfan_on.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -4043,7 +4043,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn218_s0.wav</FileName>
+					<FileName>rope.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4062,7 +4062,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn219_s0.wav</FileName>
+					<FileName>pad_up.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4081,7 +4081,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn220_s0.wav</FileName>
+					<FileName>pad_down.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4100,7 +4100,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn221_s0.wav</FileName>
+					<FileName>brk02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4119,7 +4119,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn222_s0.wav</FileName>
+					<FileName>snwbll_rll.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4138,7 +4138,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn223_s0.wav</FileName>
+					<FileName>snwbll_stp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -4157,7 +4157,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn224_s0.wav</FileName>
+					<FileName>rolling01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4176,7 +4176,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn225_s0.wav</FileName>
+					<FileName>roll_stop01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4195,7 +4195,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn226_s0.wav</FileName>
+					<FileName>roll_stop02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4214,7 +4214,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn227_s0.wav</FileName>
+					<FileName>rolling02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4233,7 +4233,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn228_s0.wav</FileName>
+					<FileName>roll_hit.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -4252,7 +4252,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn229_s0.wav</FileName>
+					<FileName>sbld_swg.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4271,7 +4271,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn230_s0.wav</FileName>
+					<FileName>sbld_bck.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4290,7 +4290,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn231_s0.wav</FileName>
+					<FileName>roll_blade.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -4309,7 +4309,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn232_s0.wav</FileName>
+					<FileName>icile_dtch.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4328,7 +4328,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn233_s0.wav</FileName>
+					<FileName>icile_ht.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4347,7 +4347,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn234_s0.wav</FileName>
+					<FileName>handl_ls.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4366,7 +4366,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn235_s0.wav</FileName>
+					<FileName>handl_trn.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4385,7 +4385,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn236_s0.wav</FileName>
+					<FileName>handl_op.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4404,7 +4404,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn237_s0.wav</FileName>
+					<FileName>handl_crk.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4423,16 +4423,16 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn238_s0.wav</FileName>
+					<FileName>monk_ft01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn238_s1.wav</FileName>
+					<FileName>monk_ft02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn238_s2.wav</FileName>
+					<FileName>monk_ft03.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn238_s3.wav</FileName>
+					<FileName>monk_ft04.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4451,7 +4451,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn239_s0.wav</FileName>
+					<FileName>monk_swng01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4470,7 +4470,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn240_s0.wav</FileName>
+					<FileName>monk_swng02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4489,13 +4489,13 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn241_s0.wav</FileName>
+					<FileName>monk_sh01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn241_s1.wav</FileName>
+					<FileName>monk_sh02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn241_s2.wav</FileName>
+					<FileName>monk_sh03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4514,13 +4514,13 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn242_s0.wav</FileName>
+					<FileName>monk_sh04.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn242_s1.wav</FileName>
+					<FileName>monk_sh05.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn242_s2.wav</FileName>
+					<FileName>mon_sh06.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4539,13 +4539,13 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn243_s0.wav</FileName>
+					<FileName>monk_sh07.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn243_s1.wav</FileName>
+					<FileName>monk_sh08.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn243_s2.wav</FileName>
+					<FileName>monk_sh09.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4564,13 +4564,13 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn244_s0.wav</FileName>
+					<FileName>monk_sh10.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn244_s1.wav</FileName>
+					<FileName>monk_sh11.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn244_s2.wav</FileName>
+					<FileName>monk_sh12.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4589,10 +4589,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn245_s0.wav</FileName>
+					<FileName>monk_crnch01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn245_s1.wav</FileName>
+					<FileName>monk_crnch02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -4611,7 +4611,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn246_s0.wav</FileName>
+					<FileName>monk_brth.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4630,7 +4630,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn247_s0.wav</FileName>
+					<FileName>splsh.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4649,7 +4649,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn248_s0.wav</FileName>
+					<FileName>waterfall01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4668,13 +4668,13 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn249_s0.wav</FileName>
+					<FileName>en_feet_snw_01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn249_s1.wav</FileName>
+					<FileName>en_feet_snw_02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn249_s2.wav</FileName>
+					<FileName>en_feet_snw_03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4693,7 +4693,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn250_s0.wav</FileName>
+					<FileName>en_fire03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4712,7 +4712,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn251_s0.wav</FileName>
+					<FileName>en_fire_smauto.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4731,7 +4731,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn252_s0.wav</FileName>
+					<FileName>en_death03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4750,7 +4750,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn253_s0.wav</FileName>
+					<FileName>en_death04.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4769,7 +4769,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn254_s0.wav</FileName>
+					<FileName>crcl_bld.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -4788,16 +4788,16 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn255_s0.wav</FileName>
+					<FileName>knf_ft01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn255_s1.wav</FileName>
+					<FileName>knf_ft02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn255_s2.wav</FileName>
+					<FileName>knf_ft03.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn255_s3.wav</FileName>
+					<FileName>knf_ft04.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4816,7 +4816,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn256_s0.wav</FileName>
+					<FileName>monk_oye.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4835,7 +4835,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn257_s0.wav</FileName>
+					<FileName>monk_awh.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4854,7 +4854,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn258_s0.wav</FileName>
+					<FileName>crcl_bld_ht.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -4873,7 +4873,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn259_s0.wav</FileName>
+					<FileName>knf_wr_ft.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4892,13 +4892,13 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn260_s0.wav</FileName>
+					<FileName>wrrr_swng01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn260_s1.wav</FileName>
+					<FileName>wrrr_swng02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn260_s2.wav</FileName>
+					<FileName>wrrr_swng03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4917,7 +4917,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn261_s0.wav</FileName>
+					<FileName>wrrr_swng04.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4936,10 +4936,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn262_s0.wav</FileName>
+					<FileName>wrrr_grwl01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn262_s1.wav</FileName>
+					<FileName>wrrr_grwl02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4958,7 +4958,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn263_s0.wav</FileName>
+					<FileName>knf_hccp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -4977,13 +4977,13 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn264_s0.wav</FileName>
+					<FileName>wrrr_brp01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn264_s1.wav</FileName>
+					<FileName>wrrr_brp02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn264_s2.wav</FileName>
+					<FileName>wrrr_brp03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5002,7 +5002,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn265_s0.wav</FileName>
+					<FileName>wrrr_grwl01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5021,7 +5021,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn267_s0.wav</FileName>
+					<FileName>wrrr_wk.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5040,7 +5040,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn268_s0.wav</FileName>
+					<FileName>wrrr_grwl02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5059,7 +5059,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn269_s0.wav</FileName>
+					<FileName>sml_swt.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5078,7 +5078,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn278_s0.wav</FileName>
+					<FileName>pulley.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -5097,7 +5097,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn279_s0.wav</FileName>
+					<FileName>cable_gt.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5116,7 +5116,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn280_s0.wav</FileName>
+					<FileName>cable_go.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -5135,7 +5135,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn281_s0.wav</FileName>
+					<FileName>cable_st.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -5154,7 +5154,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn282_s0.wav</FileName>
+					<FileName>bod_slmp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5173,7 +5173,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn283_s0.wav</FileName>
+					<FileName>bowl_tppng.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5192,7 +5192,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn284_s0.wav</FileName>
+					<FileName>bowl_pr.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -5211,7 +5211,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn285_s0.wav</FileName>
+					<FileName>waterfall02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -5230,7 +5230,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn286_s0.wav</FileName>
+					<FileName>elev_op.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5249,7 +5249,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn287_s0.wav</FileName>
+					<FileName>elev_cls.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5268,7 +5268,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn288_s0.wav</FileName>
+					<FileName>minisub_clttr01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5287,7 +5287,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn289_s0.wav</FileName>
+					<FileName>minisub_clttr02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5306,7 +5306,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn290_s0.wav</FileName>
+					<FileName>minisub_clttr03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5325,7 +5325,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn291_s0.wav</FileName>
+					<FileName>bird_scrm.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5344,13 +5344,13 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn292_s0.wav</FileName>
+					<FileName>bird_gsp01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn292_s1.wav</FileName>
+					<FileName>bird_gsp02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn292_s2.wav</FileName>
+					<FileName>bird_gsp03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5369,7 +5369,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn293_s0.wav</FileName>
+					<FileName>bird_brth.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5388,7 +5388,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn294_s0.wav</FileName>
+					<FileName>brd_ft.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5407,7 +5407,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn295_s0.wav</FileName>
+					<FileName>bird_dth.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5426,7 +5426,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn296_s0.wav</FileName>
+					<FileName>bird_scrp.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5445,7 +5445,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn297_s0.wav</FileName>
+					<FileName>l_heli.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -5464,7 +5464,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn298_s0.wav</FileName>
+					<FileName>drag_ft.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -5483,7 +5483,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn299_s0.wav</FileName>
+					<FileName>drag_grwl01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5502,7 +5502,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn300_s0.wav</FileName>
+					<FileName>drag_grwl02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5521,7 +5521,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn301_s0.wav</FileName>
+					<FileName>drag_fall.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5540,7 +5540,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn302_s0.wav</FileName>
+					<FileName>drag_brth.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5559,7 +5559,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn303_s0.wav</FileName>
+					<FileName>drag_grwl03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5578,7 +5578,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn304_s0.wav</FileName>
+					<FileName>drag_grnt.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5597,7 +5597,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn305_s0.wav</FileName>
+					<FileName>drag_fire.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -5616,7 +5616,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn306_s0.wav</FileName>
+					<FileName>drag_lft.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5635,7 +5635,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn307_s0.wav</FileName>
+					<FileName>drag_ht.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5654,10 +5654,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn308_s0.wav</FileName>
+					<FileName>wrrr_swng05.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn308_s1.wav</FileName>
+					<FileName>wrrr_swng06.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5676,7 +5676,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn309_s0.wav</FileName>
+					<FileName>wrrr_fst.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5695,7 +5695,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn311_s0.wav</FileName>
+					<FileName>wrrr_brth.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5714,7 +5714,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn312_s0.wav</FileName>
+					<FileName>wrr_hvr.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -5733,7 +5733,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn313_s0.wav</FileName>
+					<FileName>wrrr_lnd.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5752,7 +5752,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn314_s0.wav</FileName>
+					<FileName>wrrr_clnk.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5771,10 +5771,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn315_s0.wav</FileName>
+					<FileName>wrrr_slc01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn315_s1.wav</FileName>
+					<FileName>wrrr_slc02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5793,10 +5793,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn316_s0.wav</FileName>
+					<FileName>birds01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn316_s1.wav</FileName>
+					<FileName>birds02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -5815,7 +5815,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn317_s0.wav</FileName>
+					<FileName>crunch01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5834,13 +5834,13 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn318_s0.wav</FileName>
+					<FileName>crunch02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn318_s1.wav</FileName>
+					<FileName>crunch03.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn318_s2.wav</FileName>
+					<FileName>crunch04.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -5859,7 +5859,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn319_s0.wav</FileName>
+					<FileName>door_crk.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5878,7 +5878,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn320_s0.wav</FileName>
+					<FileName>brk03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5897,7 +5897,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn321_s0.wav</FileName>
+					<FileName>big_spdr_snrl.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5916,16 +5916,16 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn322_s0.wav</FileName>
+					<FileName>big_spdr_ft01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn322_s1.wav</FileName>
+					<FileName>big_spdr_ft02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn322_s2.wav</FileName>
+					<FileName>big_spdr_ft03.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn322_s3.wav</FileName>
+					<FileName>big_spdr_ft04.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5944,7 +5944,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn323_s0.wav</FileName>
+					<FileName>big_spdr_die.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5963,7 +5963,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn324_s0.wav</FileName>
+					<FileName>trx_roar.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -5982,7 +5982,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn325_s0.wav</FileName>
+					<FileName>trx_feet.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -6001,7 +6001,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn326_s0.wav</FileName>
+					<FileName>trx_grwl01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -6020,7 +6020,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn327_s0.wav</FileName>
+					<FileName>trx_die.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -6039,13 +6039,13 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn329_s0.wav</FileName>
+					<FileName>drips01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn329_s1.wav</FileName>
+					<FileName>drips02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn329_s2.wav</FileName>
+					<FileName>drips03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6064,7 +6064,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn330_s0.wav</FileName>
+					<FileName>backdrop.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6083,7 +6083,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn331_s0.wav</FileName>
+					<FileName>stone_door.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6102,7 +6102,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn332_s0.wav</FileName>
+					<FileName>alarm.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6121,7 +6121,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn333_s0.wav</FileName>
+					<FileName>tick.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -6140,7 +6140,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn334_s0.wav</FileName>
+					<FileName>doorbell.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6159,7 +6159,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn335_s0.wav</FileName>
+					<FileName>alarm_fr.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6178,7 +6178,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn336_s0.wav</FileName>
+					<FileName>boat_eng.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6197,7 +6197,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn337_s0.wav</FileName>
+					<FileName>boat_wat.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6216,7 +6216,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn338_s0.wav</FileName>
+					<FileName>unk01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6235,7 +6235,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn339_s0.wav</FileName>
+					<FileName>unk02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -6254,7 +6254,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn340_s0.wav</FileName>
+					<FileName>unk03.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -6273,7 +6273,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn341_s0.wav</FileName>
+					<FileName>bartoli.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6292,7 +6292,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn342_s0.wav</FileName>
+					<FileName>win_shf.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -6311,7 +6311,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn343_s0.wav</FileName>
+					<FileName>win_ft.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -6330,19 +6330,19 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn344_s0.wav</FileName>
+					<FileName>win_grnt01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn344_s1.wav</FileName>
+					<FileName>win_grnt02.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn344_s2.wav</FileName>
+					<FileName>win_grnt03.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn344_s3.wav</FileName>
+					<FileName>win_grnt04.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn344_s4.wav</FileName>
+					<FileName>win_grnt05.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6361,16 +6361,16 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn345_s0.wav</FileName>
+					<FileName>win_grnt06.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn345_s1.wav</FileName>
+					<FileName>win_grnt07.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn345_s2.wav</FileName>
+					<FileName>win_grnt08.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn345_s3.wav</FileName>
+					<FileName>win_grnt09.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6389,10 +6389,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn346_s0.wav</FileName>
+					<FileName>win_grnt10.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn346_s1.wav</FileName>
+					<FileName>win_grnt11.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6411,10 +6411,10 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn347_s0.wav</FileName>
+					<FileName>win_cps01.wav</FileName>
 				</WadSample>
 				<WadSample>
-					<FileName>sn347_s1.wav</FileName>
+					<FileName>win_cps02.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6433,7 +6433,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn348_s0.wav</FileName>
+					<FileName>gnd_brk.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6452,7 +6452,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn349_s0.wav</FileName>
+					<FileName>spdr_xpld.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>
@@ -6471,7 +6471,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn350_s0.wav</FileName>
+					<FileName>shark_bt.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -6490,7 +6490,7 @@
 			<LoopBehaviour>Looped</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn351_s0.wav</FileName>
+					<FileName>lava_bubs.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -6509,7 +6509,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn352_s0.wav</FileName>
+					<FileName>explos3.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -6528,7 +6528,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn353_s0.wav</FileName>
+					<FileName>burglars.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
@@ -6547,7 +6547,7 @@
 			<LoopBehaviour>None</LoopBehaviour>
 			<Samples>
 				<WadSample>
-					<FileName>sn354_s0.wav</FileName>
+					<FileName>zipper.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>false</Global>
