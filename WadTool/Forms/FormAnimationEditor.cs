@@ -2451,7 +2451,8 @@ namespace WadTool
 
                         case 86: // CRAWL_BACK
                         case 163: // MONKEY_BACK
-                            if (_editor.Wad.GameVersion == TRVersion.Game.TombEngine) {
+                            if (_editor.Wad.GameVersion == TRVersion.Game.TombEngine)
+                            {
                                 startVel.Z = -startVel.Z;
                                 endVel.Z = -endVel.Z;
                             }
