@@ -2469,7 +2469,7 @@ namespace WadTool
                     }
                 }
 
-                var shiftX = Vector3.Lerp(startVel, endVel, (float)_frameCount / (float)realFrameNumber);
+                var shiftX = Vector3.Lerp(startVel, endVel, (float)_frameCount / (float)realRangeNumber);
                 panelRendering.GridPosition += shiftX;
 
                 if (_editor.Tool.Configuration.AnimationEditor_RecoverGridAfterPositionChange)
