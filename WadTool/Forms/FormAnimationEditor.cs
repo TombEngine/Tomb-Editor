@@ -2449,11 +2449,19 @@ namespace WadTool
                             endVel.Z = -endVel.Z;
                             break;
 
+                        case 86: // CRAWL_BACK
+                        case 163: // MONKEY_BACK
+                            if (_editor.Wad.GameVersion == TRVersion.Game.TombEngine) {
+                                startVel.Z = -startVel.Z;
+                                endVel.Z = -endVel.Z;
+                            }
+                            break;
+
                         case 21: // WALK_RIGHT
                         case 26: // JUMP_RIGHT
                         case 31: // SHIMMY_RIGHT
                         case 60: // LADDER_RIGHT
-                        case 78: // MONKEY_LEFT
+                        case 78: // MONKEY_RIGHT
                             startVel = new Vector3(startVel.Z, 0, startVel.X);
                             endVel = new Vector3(endVel.Z, 0, endVel.X);
                             break;
