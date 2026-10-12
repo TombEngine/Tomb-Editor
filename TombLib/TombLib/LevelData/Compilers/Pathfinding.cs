@@ -242,6 +242,9 @@ namespace TombLib.LevelData.Compilers
             // All reachable boxes must have the same water flag and same flipped flag
             var isWater = (_tempRooms[dec_boxes[box].Room].Flags & 0x01) != 0;
 
+            // TR4 keeps the jump and monkey flags above the 11-bit box number.
+            var boxNumberMask = _level.Settings.GameVersion.Native() >= TRVersion.Game.TR4 ? 0x7ff : 0x7fff;
+
             while (stack.Count > 0)
             {
                 var next = stack.Pop();
@@ -252,7 +255,7 @@ namespace TombLib.LevelData.Compilers
                     int overlapIndex = i;
                     last = (_overlaps[overlapIndex] & 0x8000) != 0;
 
-                    var boxIndex = _overlaps[overlapIndex] & 0x7ff;
+                    var boxIndex = _overlaps[overlapIndex] & boxNumberMask;
 
                     var add = false;
 
