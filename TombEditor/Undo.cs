@@ -245,7 +245,7 @@ namespace TombEditor
             else if (UndoObject is FlybyCameraInstance)
             {
                 var uo = (FlybyCameraInstance)UndoObject;
-                Properties = new List<object> { uo.Sequence, uo.Number, uo.Timer, uo.Flags, uo.Speed, uo.Fov, uo.Roll, uo.RotationX, uo.RotationY };
+                Properties = new List<object> { uo.Sequence, uo.Number, uo.Timer, uo.Flags, uo.Speed, uo.Fov, uo.Roll, uo.RotationX, uo.RotationY, uo.DofDistance, uo.DofRange, uo.DofStrength, uo.DofMode };
             }
             else if (UndoObject is LightInstance)
                 Properties = new List<object> { ((LightInstance)UndoObject).Color };
@@ -300,6 +300,10 @@ namespace TombEditor
                     uo.Roll = (float)Properties[6];
                     uo.RotationX = (float)Properties[7];
                     uo.RotationY = (float)Properties[8];
+                    uo.DofDistance = (float)Properties[9];
+                    uo.DofRange = (float)Properties[10];
+                    uo.DofStrength = (float)Properties[11];
+                    uo.DofMode = (DofMode)Properties[12];
                 }
                 else if (UndoObject is LightInstance)
                 {
