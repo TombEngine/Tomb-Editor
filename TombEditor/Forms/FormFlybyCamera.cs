@@ -14,8 +14,8 @@ namespace TombEditor.Forms
     public partial class FormFlybyCamera : DarkForm
     {
         private const float ChangeComparisonEpsilon = 0.0001f;
-        private static readonly Size DefaultWindowSize = new Size(741, 654);
-        private static readonly Size CompactWindowSize = new Size(470, 525);
+        private static readonly Size DefaultWindowSize = new Size(561, 461);
+        private static readonly Size CompactWindowSize = new Size(205, 319);
 
         public bool IsNew { get; set; }
         public bool HasChanges { get; private set; }
