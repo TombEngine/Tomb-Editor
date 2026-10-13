@@ -783,7 +783,7 @@
     <moveable id="1036" name="LENS_FLARE" />
     <moveable id="1037" name="ENERGY_BUBBLES" hidden="true" />
     <moveable id="1038" name="PLANET_EFFECT" />
-    <moveable id="1039" name="BUTTERFLY" />
+    <moveable id="1039" name="PLANET_EFFECT_TARGET" />
     <moveable id="1040" ai="true" name="AI_GUARD" />
     <moveable id="1041" ai="true" name="AI_AMBUSH" />
     <moveable id="1042" ai="true" name="AI_PATROL1" />
