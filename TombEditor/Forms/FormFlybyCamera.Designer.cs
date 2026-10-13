@@ -516,6 +516,7 @@ namespace TombEditor.Forms
             // 
             // comboDofMode
             // 
+comboDofMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             comboDofMode.FormattingEnabled = true;
             comboDofMode.Items.AddRange(new object[] { "None", "Full", "Front", "Back" });
             comboDofMode.Location = new System.Drawing.Point(109, 333);
