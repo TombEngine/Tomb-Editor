@@ -2445,6 +2445,7 @@ namespace WadTool
                         case 23: // ROLL_BACK
                         case 25: // JUMP_BACK
                         case 32: // SLIDE_BACK
+                        case 47: // ONWATER_BACK
                             startVel.Z = -startVel.Z;
                             endVel.Z = -endVel.Z;
                             break;
@@ -2461,6 +2462,7 @@ namespace WadTool
                         case 21: // WALK_RIGHT
                         case 26: // JUMP_RIGHT
                         case 31: // SHIMMY_RIGHT
+                        case 49: // ONWATER_RIGHT
                         case 60: // LADDER_RIGHT
                         case 78: // MONKEY_RIGHT
                             startVel = new Vector3(startVel.Z, 0, startVel.X);
@@ -2470,6 +2472,7 @@ namespace WadTool
                         case 22: // WALK_LEFT
                         case 27: // JUMP_LEFT
                         case 30: // SHIMMY_LEFT
+                        case 48: // ONWATER_LEFT
                         case 58: // LADDER_LEFT
                         case 77: // MONKEY_LEFT
                             startVel = new Vector3(-startVel.Z, 0, -startVel.X);
