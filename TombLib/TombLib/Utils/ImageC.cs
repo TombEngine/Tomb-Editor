@@ -1149,6 +1149,30 @@ namespace TombLib.Utils
             return HasAlpha(version, (int)rect.Start.X, (int)rect.Start.Y, (int)rect.Width, (int)rect.Height);
         }
 
+        // True when every pixel of the region is opaque or transparent black: BC1 compression, with its 1-bit alpha and
+        // transparent pixels decoded as black, then keeps the image as BC3 would.
+        public unsafe bool IsOpaqueOrTransparentBlack(int x, int y, int width, int height)
+        {
+            x = Math.Max(x, 0);
+            y = Math.Max(y, 0);
+            width = Math.Min(width, Width - x);
+            height = Math.Min(height, Height - y);
+
+            fixed (byte* data = _data)
+            {
+                var pixels = (uint*)data;
+                for (int row = y; row < y + height; ++row)
+                {
+                    uint* p = pixels + row * Width + x;
+                    for (int col = 0; col < width; ++col)
+                        if (p[col] != 0 && (p[col] >> 24) != 255)
+                            return false;
+                }
+            }
+
+            return true;
+        }
+
         public void CopyFrom(int toX, int toY, ImageC fromImage)
         {
             CopyFrom(toX, toY, fromImage, 0, 0, fromImage.Width, fromImage.Height);

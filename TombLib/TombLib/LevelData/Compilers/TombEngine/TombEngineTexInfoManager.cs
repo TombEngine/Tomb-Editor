@@ -177,7 +177,7 @@ namespace TombLib.LevelData.Compilers
             public Texture Texture { get; private set; }
             public TextureDestination Destination { get; set; }
             public BlendMode BlendMode { get; set; }
-
+            public bool IsBC1Compatible { get; set; } // Only opaque or transparent black pixels, see ClassifyForBC1.
 
             private Rectangle2 _area;
             public Rectangle2 Area
@@ -1336,6 +1336,18 @@ namespace TombLib.LevelData.Compilers
             });
         }
 
+        // Marks the parent areas whose pixels BC1 compression keeps as BC3 would, so they can share atlas pages.
+        // Padding repeats the border pixels of each area, so the area alone decides.
+        private static void ClassifyForBC1(List<ParentTextureArea> textures)
+        {
+            Parallel.For(0, textures.Count, i =>
+            {
+                var area = textures[i].Area;
+                textures[i].IsBC1Compatible = textures[i].Texture.Image.IsOpaqueOrTransparentBlack(
+                    (int)area.X0, (int)area.Y0, (int)area.Width, (int)area.Height);
+            });
+        }
+
         // Generates list of dummy lookup animated textures.
 
         private void GenerateAnimLookups(List<AnimatedTextureSet> sets, TextureDestination destination)
@@ -1481,8 +1493,24 @@ namespace TombLib.LevelData.Compilers
             if (textures.Count == 0)
                 return 0;
 
+            // Textures come sorted with the BC1 compatible ones first. Packing the others on pages of their own keeps the
+            // compatible pages in BC1, half the size of BC3, but may take one more page: the smaller layout is kept.
+            PackTexturesInPages(textures, true, out int separateSize);
+            int pageCount = PackTexturesInPages(textures, false, out int mixedSize);
+            if (separateSize < mixedSize)
+                pageCount = PackTexturesInPages(textures, true, out _);
+
+            return pageCount;
+        }
+
+        // Returns the page count and the estimated size in pages of BC1 size: pages with a texture that is not BC1
+        // compatible count twice.
+        private int PackTexturesInPages(List<ParentTextureArea> textures, bool separateIncompatible, out int estimatedSize)
+        {
             int currentPage = -1;
+            int firstIncompatiblePage = -1;
             List<RectPacker> texPackers = new List<RectPacker>();
+            List<bool> incompatiblePages = new List<bool>();
 
             for (int i = 0; i < textures.Count; i++)
             {
@@ -1520,7 +1548,16 @@ namespace TombLib.LevelData.Compilers
                 int fitPage;
                 VectorInt2? pos;
 
-                for (ushort j = 0; j <= currentPage; ++j)
+                int firstPage = 0;
+                if (separateIncompatible && !textures[i].IsBC1Compatible)
+                {
+                    if (firstIncompatiblePage < 0)
+                        firstIncompatiblePage = currentPage + 1;
+
+                    firstPage = firstIncompatiblePage;
+                }
+
+                for (int j = firstPage; j <= currentPage; ++j)
                 {
                     pos = texPackers[j].TryAdd(new VectorInt2(w, h));
                     if (pos.HasValue)
@@ -1533,9 +1570,13 @@ namespace TombLib.LevelData.Compilers
                 currentPage++;
                 fitPage = currentPage;
                 texPackers.Add(new RectPackerTree(new VectorInt2(MaxTileSize, MaxTileSize)));
+                incompatiblePages.Add(false);
                 pos = texPackers.Last().TryAdd(new VectorInt2(w, h));
 
             PackNextUsedTexture:
+                if (!textures[i].IsBC1Compatible)
+                    incompatiblePages[fitPage] = true;
+
                 textures[i].Padding[0] = lP;
                 textures[i].Padding[1] = tP;
                 textures[i].Padding[2] = rP;
@@ -1544,6 +1585,7 @@ namespace TombLib.LevelData.Compilers
                 textures[i].PositionInPage = pos.Value;
             }
 
+            estimatedSize = incompatiblePages.Sum(isIncompatible => isIncompatible ? 2 : 1);
             return (currentPage + 1);
         }
 
@@ -2036,19 +2078,27 @@ namespace TombLib.LevelData.Compilers
                 }
             }
 
-            // Sort textures by their TopmostAndUnpadded property (waterfalls first!)
+            // Sort textures by their TopmostAndUnpadded property (waterfalls first!), after the BC1 compatible ones,
+            // which PlaceTexturesInMap may then keep on pages of their own.
+            ClassifyForBC1(roomTextures);
+            ClassifyForBC1(moveablesTextures);
+            ClassifyForBC1(staticsTextures);
+
             roomTextures = roomTextures
-                .OrderBy(item => item.BlendMode)
+                .OrderByDescending(item => item.IsBC1Compatible)
+                .ThenBy(item => item.BlendMode)
                 .ThenByDescending(item => item.Area.Size.X * item.Area.Size.Y)
                 .ToList();
 
             moveablesTextures = moveablesTextures
-               .OrderBy(item => item.BlendMode)
+               .OrderByDescending(item => item.IsBC1Compatible)
+               .ThenBy(item => item.BlendMode)
                .ThenByDescending(item => item.Area.Size.X * item.Area.Size.Y)
                .ToList();
 
             staticsTextures = staticsTextures
-               .OrderBy(item => item.BlendMode)
+               .OrderByDescending(item => item.IsBC1Compatible)
+               .ThenBy(item => item.BlendMode)
                .ThenByDescending(item => item.Area.Size.X * item.Area.Size.Y)
                .ToList();
 

@@ -276,6 +276,14 @@ namespace TombLib.LevelData.Compilers.TombEngine
             }
         }
 
+        // BC1 takes half the space of BC3 and keeps a 1-bit alpha, enough for opaque and alpha tested textures.
+        // Its transparent texels decode as black, so an image qualifies only when every texel is either opaque or
+        // transparent black (magenta keyed texels are replaced with transparent black): BC1 then loses nothing BC3 keeps.
+        private static DXGI_FORMAT GetColorCompressionFormat(ImageC image)
+        {
+            return image.IsOpaqueOrTransparentBlack(0, 0, image.Width, image.Height) ? DXGI_FORMAT.BC1_UNORM : DXGI_FORMAT.BC3_UNORM;
+        }
+
         private unsafe byte[] GetCompressedTexture(ImageC image, DXGI_FORMAT format)
         {
             byte[] pixelData = image.ToByteArray();
@@ -319,14 +327,14 @@ namespace TombLib.LevelData.Compilers.TombEngine
 				writer.Write(atlas.Width);
 				writer.Write(atlas.Height);
 
-				WriteImageFast(writer, atlas, DXGI_FORMAT.BC3_UNORM);
+				WriteImageFast(writer, atlas, GetColorCompressionFormat(atlas));
             }
 
             // Sky texture
             var sky = GetSkyTexture();
 			writer.Write(sky.Width);
 			writer.Write(sky.Height);
-			WriteImageFast(writer, sky, DXGI_FORMAT.BC3_UNORM);
+			WriteImageFast(writer, sky, GetColorCompressionFormat(sky));
 		}
 
         void WriteImageFast(BinaryWriterEx writer, ImageC image, DXGI_FORMAT compressionFormat)
@@ -362,7 +370,7 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 writer.Write(atlas.ColorMap.Width);
                 writer.Write(atlas.ColorMap.Height);
 
-                WriteImageFast(writer, atlas.ColorMap, DXGI_FORMAT.BC3_UNORM);
+                WriteImageFast(writer, atlas.ColorMap, GetColorCompressionFormat(atlas.ColorMap));
 
                 writer.Write(atlas.NormalMap is not null);
                 if (atlas.NormalMap is not null)
@@ -373,13 +381,13 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 writer.Write(atlas.ORSHMap is not null);
                 if (atlas.ORSHMap is not null)
                 {
-                    WriteImageFast(writer, atlas.ORSHMap.Value, DXGI_FORMAT.BC3_UNORM);
+                    WriteImageFast(writer, atlas.ORSHMap.Value, GetColorCompressionFormat(atlas.ORSHMap.Value));
                 }
 
                 writer.Write(atlas.EmissiveMap is not null);
                 if (atlas.EmissiveMap is not null)
                 {
-                    WriteImageFast(writer, atlas.EmissiveMap.Value, DXGI_FORMAT.BC3_UNORM);
+                    WriteImageFast(writer, atlas.EmissiveMap.Value, GetColorCompressionFormat(atlas.EmissiveMap.Value));
                 }
             }
         }
