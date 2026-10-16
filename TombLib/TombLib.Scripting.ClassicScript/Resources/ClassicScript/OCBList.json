@@ -1,0 +1,217 @@
+{
+	"Columns": [
+		"Name"
+	],
+	"Rows": [
+		[
+			"_NEW Animating"
+		],
+		[
+			"_NEW Boats"
+		],
+		[
+			"_NEW Bridges"
+		],
+		[
+			"_NEW Fish Emitter"
+		],
+		[
+			"_NEW Guardian"
+		],
+		[
+			"_NEW Hydra"
+		],
+		[
+			"_NEW Jeep"
+		],
+		[
+			"_NEW Kayak"
+		],
+		[
+			"_NEW KeyPad"
+		],
+		[
+			"_NEW ParallelBars"
+		],
+		[
+			"_NEW Pushable Object"
+		],
+		[
+			"_NEW RollingBall"
+		],
+		[
+			"_NEW SideCar"
+		],
+		[
+			"_NEW Static Objects"
+		],
+		[
+			"_NEW SubMarine"
+		],
+		[
+			"_NEW Switch 1/2/3"
+		],
+		[
+			"_NEW Teeth_Spikes"
+		],
+		[
+			"_NEW Tight-Rope"
+		],
+		[
+			"_NEW WaterfallMist"
+		],
+		[
+			"AI_FOLLOW"
+		],
+		[
+			"Amber light"
+		],
+		[
+			"Animated objects"
+		],
+		[
+			"Baddy 1"
+		],
+		[
+			"Blinking Light"
+		],
+		[
+			"Chain"
+		],
+		[
+			"Clockwork Beetle"
+		],
+		[
+			"Dog"
+		],
+		[
+			"Door Type 1"
+		],
+		[
+			"Door type 2"
+		],
+		[
+			"Door type 3"
+		],
+		[
+			"EarthQuake"
+		],
+		[
+			"Emitters"
+		],
+		[
+			"Enemy Jeep"
+		],
+		[
+			"Falling blocks"
+		],
+		[
+			"Flame Emitter 1"
+		],
+		[
+			"Flame Emitter 2"
+		],
+		[
+			"Flame Emitter 3"
+		],
+		[
+			"Flyby Camera"
+		],
+		[
+			"Guide"
+		],
+		[
+			"Hammer"
+		],
+		[
+			"Helicopter (flying)"
+		],
+		[
+			"Helicopter (Mine)"
+		],
+		[
+			"Horseman"
+		],
+		[
+			"Jump Switch"
+		],
+		[
+			"Lightning conductor"
+		],
+		[
+			"Little Beetles"
+		],
+		[
+			"Locust Emitter"
+		],
+		[
+			"Mummy"
+		],
+		[
+			"Music Scroll's"
+		],
+		[
+			"Pickups Items"
+		],
+		[
+			"Pulley"
+		],
+		[
+			"Puzzle Holes"
+		],
+		[
+			"Raising Block 1"
+		],
+		[
+			"Raising block 2"
+		],
+		[
+			"Scorpion"
+		],
+		[
+			"Sentry Gun"
+		],
+		[
+			"Seth Blade"
+		],
+		[
+			"Skeleton"
+		],
+		[
+			"Smashable Bike Wall"
+		],
+		[
+			"Sphinx (Like a bull)"
+		],
+		[
+			"Steam Emitter"
+		],
+		[
+			"Switch type 7"
+		],
+		[
+			"Teeth Spikes"
+		],
+		[
+			"Trapdoor 1"
+		],
+		[
+			"Troop"
+		],
+		[
+			"TwoBlock Platform"
+		],
+		[
+			"Wall Scarab"
+		],
+		[
+			"Waterfalls"
+		],
+		[
+			"White Light"
+		],
+		[
+			"Wraith 2"
+		]
+	]
+}

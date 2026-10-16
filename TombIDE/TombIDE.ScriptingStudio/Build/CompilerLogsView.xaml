@@ -1,0 +1,23 @@
+<UserControl
+	x:Class="TombIDE.ScriptingStudio.Build.CompilerLogsView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:local="clr-namespace:TombIDE.ScriptingStudio.Build"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DataContext="{d:DesignInstance Type=local:CompilerLogsViewModel}"
+	mc:Ignorable="d">
+
+	<Grid Margin="{x:Static darkUI:Defaults.MediumThickness}">
+		<RichTextBox
+			x:Name="LogTextBox"
+			local:RichTextBoxHelper.BindableDocument="{Binding Document}"
+			Background="{DynamicResource Brush_Background}"
+			BorderThickness="0"
+			IsDocumentEnabled="False"
+			IsReadOnly="True"
+			IsUndoEnabled="False"
+			VerticalScrollBarVisibility="Auto" />
+	</Grid>
+</UserControl>

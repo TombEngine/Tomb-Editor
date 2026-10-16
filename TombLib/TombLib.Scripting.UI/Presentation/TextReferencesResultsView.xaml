@@ -1,0 +1,46 @@
+<UserControl
+	x:Class="TombLib.Scripting.UI.Presentation.TextReferencesResultsView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:presentation="clr-namespace:TombLib.Scripting.UI.Presentation"
+	d:DesignHeight="320"
+	d:DesignWidth="540"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+		<HierarchicalDataTemplate DataType="{x:Type presentation:TextReferenceGroup}" ItemsSource="{Binding Items}">
+			<TextBlock FontWeight="SemiBold" Text="{Binding Header}" />
+		</HierarchicalDataTemplate>
+
+		<DataTemplate DataType="{x:Type presentation:TextReferenceListItem}">
+			<TextBlock
+				Margin="0,2,0,2"
+				Text="{Binding DisplayText}"
+				TextTrimming="CharacterEllipsis" />
+		</DataTemplate>
+	</UserControl.Resources>
+
+	<Grid Margin="8">
+		<TextBlock
+			Margin="0,0,0,8"
+			Text="{Binding StatusText}"
+			TextWrapping="Wrap"
+			Visibility="{Binding HasStatusText, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+		<TreeView
+			x:Name="ReferencesTree"
+			ItemsSource="{Binding Groups}"
+			MouseDoubleClick="ReferencesTree_MouseDoubleClick"
+			PreviewKeyDown="ReferencesTree_PreviewKeyDown"
+			Visibility="{Binding HasResults, Converter={StaticResource BooleanToVisibilityConverter}}">
+			<TreeView.ItemContainerStyle>
+				<Style TargetType="TreeViewItem">
+					<Setter Property="IsExpanded" Value="True" />
+				</Style>
+			</TreeView.ItemContainerStyle>
+		</TreeView>
+	</Grid>
+</UserControl>

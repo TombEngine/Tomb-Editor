@@ -1,6 +1,6 @@
 using System.IO;
 using TombIDE.Shared.NewStructure;
-using TombLib.Scripting.ClassicScript.Resources;
+using TombLib.Scripting.ClassicScript.Mnemonics;
 
 namespace TombIDE.ProjectMaster.Services.Plugins.Deployment;
 
@@ -8,6 +8,7 @@ public sealed class TRNGPluginDeploymentService : IPluginDeploymentService
 {
 	private const string PluginDllPattern = "plugin_*.dll";
 	private const string PluginScriptPattern = "plugin_*.script";
+	private readonly ClassicScriptMnemonicCatalogService _mnemonicCatalogService = new();
 
 	public void DeployPlugins(IGameProject project)
 	{
@@ -44,7 +45,7 @@ public sealed class TRNGPluginDeploymentService : IPluginDeploymentService
 			scriptFile.CopyTo(destinationPath, true);
 		}
 
-		// Refresh mnemonic data
-		MnemonicData.SetupConstants(DefaultPaths.InternalNGCDirectory);
+		// Refresh ClassicScript mnemonic cache after plugin script sync.
+		_mnemonicCatalogService.Reload(DefaultPaths.InternalNGCDirectory);
 	}
 }

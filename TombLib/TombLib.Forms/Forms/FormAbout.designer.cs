@@ -44,6 +44,7 @@
             linkLabel14 = new System.Windows.Forms.LinkLabel();
             linkLabel13 = new System.Windows.Forms.LinkLabel();
             linkLabel8 = new System.Windows.Forms.LinkLabel();
+            linkLabel17 = new System.Windows.Forms.LinkLabel();
             darkLabel13 = new DarkUI.Controls.DarkLabel();
             linkLabel7 = new System.Windows.Forms.LinkLabel();
             darkLabel12 = new DarkUI.Controls.DarkLabel();
@@ -57,6 +58,7 @@
             darkLabel8 = new DarkUI.Controls.DarkLabel();
             linkLabel3 = new System.Windows.Forms.LinkLabel();
             darkLabel7 = new DarkUI.Controls.DarkLabel();
+            darkLabel23 = new DarkUI.Controls.DarkLabel();
             darkLabel16 = new DarkUI.Controls.DarkLabel();
             linkLabel9 = new System.Windows.Forms.LinkLabel();
             darkLabel14 = new DarkUI.Controls.DarkLabel();
@@ -76,7 +78,7 @@
             tableLayoutPanel1.Controls.Add(butOk, 1, 0);
             tableLayoutPanel1.Controls.Add(darkLabel1, 0, 0);
             tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            tableLayoutPanel1.Location = new System.Drawing.Point(0, 390);
+            tableLayoutPanel1.Location = new System.Drawing.Point(0, 403);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -128,6 +130,7 @@
             panel1.Controls.Add(linkLabel14);
             panel1.Controls.Add(linkLabel13);
             panel1.Controls.Add(linkLabel8);
+            panel1.Controls.Add(linkLabel17);
             panel1.Controls.Add(darkLabel13);
             panel1.Controls.Add(linkLabel7);
             panel1.Controls.Add(darkLabel12);
@@ -141,6 +144,7 @@
             panel1.Controls.Add(darkLabel8);
             panel1.Controls.Add(linkLabel3);
             panel1.Controls.Add(darkLabel7);
+            panel1.Controls.Add(darkLabel23);
             panel1.Controls.Add(darkLabel16);
             panel1.Controls.Add(linkLabel9);
             panel1.Controls.Add(darkLabel14);
@@ -149,7 +153,7 @@
             panel1.Dock = System.Windows.Forms.DockStyle.Top;
             panel1.Location = new System.Drawing.Point(0, 64);
             panel1.Name = "panel1";
-            panel1.Size = new System.Drawing.Size(614, 326);
+            panel1.Size = new System.Drawing.Size(614, 339);
             panel1.TabIndex = 8;
             // 
             // tableLayoutPanel2
@@ -282,6 +286,21 @@
             linkLabel8.Text = "nuget.org/packages/AssimpNet";
             linkLabel8.VisitedLinkColor = System.Drawing.Color.FromArgb(184, 163, 233);
             linkLabel8.Click += btnLink_Click;
+            // 
+            // linkLabel17
+            // 
+            linkLabel17.ActiveLinkColor = System.Drawing.Color.FromArgb(184, 163, 233);
+            linkLabel17.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            linkLabel17.AutoEllipsis = true;
+            linkLabel17.LinkColor = System.Drawing.Color.FromArgb(184, 163, 233);
+            linkLabel17.Location = new System.Drawing.Point(319, 266);
+            linkLabel17.Name = "linkLabel17";
+            linkLabel17.Size = new System.Drawing.Size(279, 13);
+            linkLabel17.TabIndex = 54;
+            linkLabel17.TabStop = true;
+            linkLabel17.Text = "github.com/microsoft/vscode-codicons";
+            linkLabel17.VisitedLinkColor = System.Drawing.Color.FromArgb(184, 163, 233);
+            linkLabel17.Click += btnLink_Click;
             // 
             // darkLabel13
             // 
@@ -450,13 +469,24 @@
             darkLabel7.TabIndex = 34;
             darkLabel7.Text = "NCalc is used under MIT license.";
             // 
+            // darkLabel23
+            // 
+            darkLabel23.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            darkLabel23.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            darkLabel23.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            darkLabel23.Location = new System.Drawing.Point(7, 266);
+            darkLabel23.Name = "darkLabel23";
+            darkLabel23.Size = new System.Drawing.Size(267, 13);
+            darkLabel23.TabIndex = 55;
+            darkLabel23.Text = "Codicons are used under MIT license.";
+            // 
             // darkLabel16
             // 
             darkLabel16.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             darkLabel16.AutoSize = true;
             darkLabel16.Font = new System.Drawing.Font("Segoe UI", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             darkLabel16.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            darkLabel16.Location = new System.Drawing.Point(7, 290);
+            darkLabel16.Location = new System.Drawing.Point(7, 303);
             darkLabel16.Name = "darkLabel16";
             darkLabel16.Size = new System.Drawing.Size(377, 24);
             darkLabel16.TabIndex = 28;
@@ -468,7 +498,7 @@
             linkLabel9.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             linkLabel9.AutoSize = true;
             linkLabel9.LinkColor = System.Drawing.Color.FromArgb(184, 163, 233);
-            linkLabel9.Location = new System.Drawing.Point(364, 274);
+            linkLabel9.Location = new System.Drawing.Point(364, 287);
             linkLabel9.Name = "linkLabel9";
             linkLabel9.Size = new System.Drawing.Size(64, 13);
             linkLabel9.TabIndex = 21;
@@ -483,7 +513,7 @@
             darkLabel14.AutoSize = true;
             darkLabel14.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             darkLabel14.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            darkLabel14.Location = new System.Drawing.Point(6, 274);
+            darkLabel14.Location = new System.Drawing.Point(6, 287);
             darkLabel14.Name = "darkLabel14";
             darkLabel14.Size = new System.Drawing.Size(360, 13);
             darkLabel14.TabIndex = 20;
@@ -517,7 +547,7 @@
             AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = butOk;
-            ClientSize = new System.Drawing.Size(614, 422);
+            ClientSize = new System.Drawing.Size(614, 435);
             Controls.Add(panel1);
             Controls.Add(pictureBox);
             Controls.Add(tableLayoutPanel1);
@@ -574,5 +604,7 @@
         private System.Windows.Forms.LinkLabel linkLabel14;
         private DarkUI.Controls.DarkLabel darkLabel22;
         private System.Windows.Forms.LinkLabel linkLabel16;
+        private System.Windows.Forms.LinkLabel linkLabel17;
+        private DarkUI.Controls.DarkLabel darkLabel23;
     }
 }

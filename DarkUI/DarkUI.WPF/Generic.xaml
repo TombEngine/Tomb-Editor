@@ -29,6 +29,7 @@
 		<ResourceDictionary Source="Styles/ToolTip.xaml" />
 		<ResourceDictionary Source="Styles/TreeView.xaml" />
 		<ResourceDictionary Source="Styles/Window.xaml" />
+		<ResourceDictionary Source="Styles/AvalonDock.xaml" />
 
 		<ResourceDictionary Source="Styles/AutoCompleteBox.xaml" />
 	</ResourceDictionary.MergedDictionaries>

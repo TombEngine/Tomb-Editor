@@ -1,0 +1,438 @@
+{
+	"Columns": [
+		"decimal",
+		"flag",
+		"argument1",
+		"argument2",
+		"argument3"
+	],
+	"Rows": [
+		[
+			"32",
+			"JEEP",
+			"-1000 to +1000 (Default: 150) <Collision shock>",
+			"",
+			""
+		],
+		[
+			"35",
+			"SKELETON",
+			"-128 to +127 (Default: 80)",
+			"",
+			""
+		],
+		[
+			"41",
+			"BADDY_1",
+			"-1000 to +1000 (Default: 15) <Uzi>",
+			"-1000 to +1000 (Default: 120) <Sword>",
+			""
+		],
+		[
+			"43",
+			"BADDY_2",
+			"-1000 to +1000 (Default: 15) <Uzi>",
+			"-1000 to +1000 (Default: 120) <Sword>",
+			""
+		],
+		[
+			"45",
+			"SETHA",
+			"-1000 to +1000 (Default: 200)",
+			"-128 to +127 (Default: 250)",
+			""
+		],
+		[
+			"47",
+			"MUMMY",
+			"-128 to +127 (Default: 100)",
+			"",
+			""
+		],
+		[
+			"49",
+			"SPHINX",
+			"-128 to +127 (Default: 200)",
+			"",
+			""
+		],
+		[
+			"51",
+			"CROCODILE",
+			"-128 to +127 (Default: 120)",
+			"",
+			""
+		],
+		[
+			"53",
+			"HORSEMAN",
+			"-128 to +127 (Default: 10)",
+			"-128 to +127 (Default: 20)",
+			"-1000 to +1000 (Default: 150)"
+		],
+		[
+			"55",
+			"SCORPION",
+			"-128 to +127 (Default: 120)",
+			"",
+			""
+		],
+		[
+			"59",
+			"TROOPS",
+			"0 to 255 (Default: 23)",
+			"-128 to +127 (Default: 15)",
+			""
+		],
+		[
+			"61",
+			"KNIGHTS_TEMPLAR",
+			"-128 to +127 (Default: 120)",
+			"",
+			""
+		],
+		[
+			"65",
+			"HORSE",
+			"-128 to +127 (Default: 150)",
+			"-128 to +127 (Default: 250)",
+			"-128 to +127 (Default: 100)"
+		],
+		[
+			"67",
+			"BABOON_NORMAL",
+			"-128 to +127 (Default: 70)",
+			"",
+			""
+		],
+		[
+			"73",
+			"WILD_BOAR",
+			"-128 to +127 (Default: 30)",
+			"",
+			""
+		],
+		[
+			"75",
+			"HARPY",
+			"-128 to +127 (Default: 10)",
+			"-128 to +127 (Default: 100)",
+			""
+		],
+		[
+			"83",
+			"LITTLE_BEETLE",
+			"-1000 to +1000 (Default: 1)",
+			"",
+			""
+		],
+		[
+			"84",
+			"BIG_BEETLE",
+			"-128 to +127 (Default: 50)",
+			"",
+			""
+		],
+		[
+			"86",
+			"WRAITH1",
+			"-1000 to +1000 (Default: <Formula> ExtraFlame= ENABLED)",
+			"",
+			""
+		],
+		[
+			"87",
+			"WRAITH2",
+			"-1000 to +1000 (Default: <Formula> ExtraFlame= DISABLED)",
+			"",
+			""
+		],
+		[
+			"88",
+			"WRAITH3",
+			"-1000 to +1000 (Default: <Formula> ExtraFlame= DISABLED)",
+			"",
+			""
+		],
+		[
+			"89",
+			"WRAITH4",
+			"-1000 to +1000 (Default: <Formula> ExtraFlame= DISABLED)",
+			"",
+			""
+		],
+		[
+			"90",
+			"BAT",
+			"-128 to +127 (Default: 2)",
+			"",
+			""
+		],
+		[
+			"91",
+			"DOG",
+			"-128 to +127 (Default: 10)",
+			"-128 to +127 (Default: 20)",
+			""
+		],
+		[
+			"93",
+			"HAMMERHEAD",
+			"-128 to +127 (Default: 120)",
+			"",
+			""
+		],
+		[
+			"95",
+			"SAS",
+			"0 to 255 (Default: 15) <UZI>",
+			"-1000 to +1000 (Default: 50) <Grenade>",
+			""
+		],
+		[
+			"102",
+			"AHMET",
+			"-128 to +127 (Default: 80)",
+			"-128 to +127 (Default: 120)",
+			""
+		],
+		[
+			"104",
+			"LARA_DOUBLE",
+			"-1000 to +1000 (Default: 1000) <When she dies>",
+			"",
+			""
+		],
+		[
+			"106",
+			"SMALL_SCORPION",
+			"-128 to +127 (Default: 20)",
+			"",
+			""
+		],
+		[
+			"107",
+			"LOCUST_EMITTER",
+			"-128 to +127 (Default: 3)",
+			"",
+			""
+		],
+		[
+			"114",
+			"DARTS",
+			"-128 to +127 (Default: 25)",
+			"",
+			""
+		],
+		[
+			"117",
+			"FALLING_CEILING",
+			"-1000 to +1000 (Default: 300)",
+			"",
+			""
+		],
+		[
+			"130",
+			"ROLLINGBALL",
+			"-128 to +127 (Default: 8) <When lara is on jeep>",
+			"",
+			""
+		],
+		[
+			"132",
+			"TEETH_SPIKES",
+			"-1000 to +1000 (Default: 8)",
+			"",
+			""
+		],
+		[
+			"134",
+			"SLICER_DICER",
+			"0 to 255 (Default: 50)",
+			"",
+			""
+		],
+		[
+			"135",
+			"CHAIN",
+			"0 to 255 (Default: 75)",
+			"0 to 255 (Default: 25)",
+			""
+		],
+		[
+			"136",
+			"PLOUGH",
+			"0 to 255 (Default: 50)",
+			"",
+			""
+		],
+		[
+			"137",
+			"STARGATE",
+			"0 to 255 (Default: 50)",
+			"-128 to +127 (Default: 100)",
+			""
+		],
+		[
+			"138",
+			"HAMMER",
+			"0 to 255 (Default: 150)",
+			"",
+			""
+		],
+		[
+			"139",
+			"BURNING_FLOOR",
+			"0 to 255 (Default: 1)",
+			"",
+			""
+		],
+		[
+			"140",
+			"COG",
+			"-128 to +127 (Default: 10)",
+			"",
+			""
+		],
+		[
+			"141",
+			"SPIKEBALL",
+			"0 to 255 (Default: 150)",
+			"0 to 255 (Default: 50)",
+			""
+		],
+		[
+			"143",
+			"FLAME_EMITTER",
+			"-128 to +127 (Default: 7)",
+			"",
+			""
+		],
+		[
+			"144",
+			"FLAME_EMITTER2",
+			"0 to 255 (Default: 2)",
+			"",
+			""
+		],
+		[
+			"145",
+			"FLAME_EMITTER3",
+			"-128 to +127 (Default: 5)",
+			"",
+			""
+		],
+		[
+			"147",
+			"FIREROPE",
+			"0 to 255 (Default: 150)",
+			"",
+			""
+		],
+		[
+			"162",
+			"SENTRY_GUN",
+			"0 to 255 (Default: 5)",
+			"",
+			""
+		],
+		[
+			"166",
+			"FLOOR_4BLADE",
+			"0 to 255 (Default: 20)",
+			"0 to 255 (Default: 200)",
+			""
+		],
+		[
+			"167",
+			"ROOF_4BLADE",
+			"0 to 255 (Default: 20)",
+			"0 to 255 (Default: 200)",
+			""
+		],
+		[
+			"168",
+			"BIRD_BLADE",
+			"0 to 255 (Default: 100)",
+			"",
+			""
+		],
+		[
+			"169",
+			"CATWALK_BLADE",
+			"0 to 255 (Default: 100)",
+			"0 to 255 (Default: 0) <Blade is within wall>",
+			""
+		],
+		[
+			"170",
+			"MOVING_BLADE",
+			"0 to 255 (Default: 50)",
+			"",
+			""
+		],
+		[
+			"171",
+			"PLINTH_BLADE",
+			"0 to 255 (Default: 0) <Blade is within wall>",
+			"0 to 255 (Default: 200)",
+			""
+		],
+		[
+			"172",
+			"SETH_BLADE",
+			"-1000 to +1000 (Default: 0)",
+			"-1000 to +1000 (Default: 1000)",
+			""
+		],
+		[
+			"174",
+			"ELEMENT_PUZZLE",
+			"0 to 255 (Default: 90)",
+			"",
+			""
+		],
+		[
+			"372",
+			"FLARE_ITEM",
+			"0 to 255 (Default: 1) <Lara picks up burning flare>",
+			"",
+			""
+		],
+		[
+			"382",
+			"STEAM_EMITTER",
+			"-128 to +127 (Default: 2)",
+			"",
+			""
+		],
+		[
+			"484",
+			"HYDRA",
+			"0 to 1000 (Default: 120) <Hydra hits with its beak>",
+			"",
+			""
+		],
+		[
+			"488",
+			"SUB_MARINE_MISSILE",
+			"0 to 1000 (Default: 100)",
+			"",
+			""
+		],
+		[
+			"490",
+			"FROG_MAN_HARPOON",
+			"0 to 1000 (Default: 120)",
+			"",
+			""
+		],
+		[
+			"491",
+			"FISH_EMITTER",
+			"0 to 1000 (Default: 5) <Damage of single fish>",
+			"",
+			""
+		]
+	]
+}

@@ -1,0 +1,34 @@
+{
+	"Comments": {
+		"HtmlColor": "Gray",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Constants": {
+		"HtmlColor": "Black",
+		"IsBold": false,
+		"IsItalic": true
+	},
+	"Collections": {
+		"HtmlColor": "Black",
+		"IsBold": true,
+		"IsItalic": false
+	},
+	"Properties": {
+		"HtmlColor": "Black",
+		"IsBold": true,
+		"IsItalic": false
+	},
+	"Values": {
+		"HtmlColor": "Black",
+		"IsBold": false,
+		"IsItalic": true
+	},
+	"Strings": {
+		"HtmlColor": "Black",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Background": "White",
+	"Foreground": "Black"
+}

@@ -1,4 +1,7 @@
 {
+	"workspace.library": [
+		".API"
+	],
 	"diagnostics": {
 		"disable": [
 			"duplicate-set-field"

@@ -59,11 +59,17 @@
 	<TabsToSpaces>Tabulatory na spacje</TabsToSpaces>
 	<SpacesToTabs>Spacje na tabulatory</SpacesToTabs>
 
-	<Reindent>Uporządkuj białe znaki</Reindent>
+	<Reindent>Przeformatuj</Reindent>
 	<TrimWhitespace>Usuń białe znaki na końcach linii</TrimWhitespace>
+	<ToggleComment>Przelacz komentarz</ToggleComment>
 	<CommentOut>Wstaw zakomentowanie</CommentOut>
 	<Uncomment>Usuń zakomentowanie</Uncomment>
 	<ToggleBookmark>Przełącz zakładkę</ToggleBookmark>
+	<NavigateBack>Przejdź wstecz</NavigateBack>
+	<NavigateForward>Przejdź dalej</NavigateForward>
+	<GoToDefinition>Przejdź do definicji</GoToDefinition>
+	<FindReferences>Znajdź odwołania</FindReferences>
+	<RenameSymbol>Zmień nazwę symbolu</RenameSymbol>
 	<PrevBookmark>Idź do poprzedniej zakładki</PrevBookmark>
 	<NextBookmark>Idź do następnej zakładki</NextBookmark>
 	<ClearBookmarks>Wyczyść wszystkie zakładki...</ClearBookmarks>
@@ -85,6 +91,8 @@
 	<ReferenceBrowser>Wyszukiwarka referencji</ReferenceBrowser>
 	<CompilerLogs>Raport kompilatora</CompilerLogs>
 	<SearchResults>Wyniki wyszukiwania</SearchResults>
+	<LuaDiagnostics>Diagnostyka Lua</LuaDiagnostics>
+	<LuaReferencesResults>Referencje Lua</LuaReferencesResults>
 	<ToolStrip>Pasek narzędzi</ToolStrip>
 	<StatusStrip>Pasek stanu</StatusStrip>
 
@@ -114,9 +122,34 @@
 	<Row>Wiersz: {0}</Row>
 	<Column>Kolumna: {0}</Column>
 	<Line>Linia: {0}</Line>
+	<LineHeader>Linia</LineHeader>
+	<ColumnHeader>Kolumna</ColumnHeader>
 	<Selected>Zaznaczone: {0}</Selected>
 	<Zoom>Powiększenie: {0}%</Zoom>
 	<ResetZoom>Resetuj powiększenie</ResetZoom>
+
+	<Severity>Poziom</Severity>
+	<Source>Źródło</Source>
+	<Message>Wiadomość</Message>
+	<Errors>Błędy</Errors>
+	<Warning>Ostrzeżenie</Warning>
+	<Warnings>Ostrzeżenia</Warnings>
+	<Information>Informacja</Information>
+	<Hint>Wskazówka</Hint>
+	<Messages>Komunikaty</Messages>
+	<NoDiagnostics>Brak diagnostyki dla aktywnego dokumentu Lua.</NoDiagnostics>
+	<LuaDiagnosticsNoDocument>Wybierz aktywny dokument Lua, aby wyświetlić diagnostykę.</LuaDiagnosticsNoDocument>
+	<LuaDiagnosticsUpdating>Diagnostyka jest aktualizowana...</LuaDiagnosticsUpdating>
+	<NoReferencesFound>Nie znaleziono referencji.</NoReferencesFound>
+	<LuaReferencesNoDocument>Wybierz aktywny dokument Lua, aby wyswietlic referencje.</LuaReferencesNoDocument>
+	<LuaReferencesUnsupported>Aktywny serwer jezyka Lua nie obsluguje funkcji Znajdz odwolania.</LuaReferencesUnsupported>
+	<LuaReferencesLoading>Trwa wyszukiwanie referencji...</LuaReferencesLoading>
+	<LuaRenameNoDocument>Wybierz aktywny dokument Lua, aby zmienic nazwe symbolu.</LuaRenameNoDocument>
+	<LuaRenameUnsupported>Aktywny serwer jezyka Lua nie obsluguje funkcji Zmien nazwe symbolu.</LuaRenameUnsupported>
+	<LuaRenameNoSymbol>Wybierz identyfikator Lua lub ustaw na nim kursor.</LuaRenameNoSymbol>
+	<LuaRenamePromptLabel>Nowa nazwa:</LuaRenamePromptLabel>
+	<LuaRenameNoChanges>Nie zwrocono zadnych zmian nazwy.</LuaRenameNoChanges>
+	<LuaReformatUnsupported>Aktywny serwer jezyka Lua nie obsluguje formatowania dokumentu.</LuaReformatUnsupported>
 
 	<DecimalValue>Wartość dziesiętna</DecimalValue>
 	<HexadecimalValue>Wartość szesnastkowa</HexadecimalValue>

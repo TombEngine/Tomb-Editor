@@ -1,128 +1,91 @@
-using ICSharpCode.AvalonEdit.CodeCompletion;
-using ICSharpCode.AvalonEdit.Document;
 using System;
-using System.Windows;
-using System.Windows.Documents;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
-using System.Windows.Media;
-using TombLib.Scripting.Bases;
-using TombLib.Scripting.GameFlowScript.Enums;
-using TombLib.Scripting.GameFlowScript.Objects;
-using TombLib.Scripting.GameFlowScript.Parsers;
-using TombLib.Scripting.GameFlowScript.Utils;
-using TombLib.Scripting.Objects;
+using TombLib.Scripting.GameFlowScript.Completion;
+using TombLib.Scripting.GameFlowScript.Highlighting;
+using Nickelony.IDEKit.Core.Comments;
+using Nickelony.IDEKit.IntelliSense.Navigation;
+	using TombLib.Scripting.UI.Bases;
+	using TombLib.Scripting.UI.Editors;
+	using TombLib.Scripting.UI.Resources;
 
-namespace TombLib.Scripting.GameFlowScript
+namespace TombLib.Scripting.GameFlowScript;
+
+/// <summary>
+/// The GameFlow script editor.
+/// </summary>
+public sealed partial class GameFlowEditor : TextEditorBase, INameBasedObjectNavigator
 {
-	public sealed class GameFlowEditor : TextEditorBase
+	private readonly GameFlowLanguageServices _languageServices;
+	private readonly GameFlowCompletionSessionCoordinator _completionCoordinator;
+
+	/// <inheritdoc/>
+	public override string DefaultFileExtension => ".txt";
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="GameFlowEditor"/> class.
+	/// </summary>
+	/// <param name="engineVersion">The engine version the editor targets.</param>
+	/// <param name="languageServices">The language services used by the editor.</param>
+	public GameFlowEditor(Version engineVersion, GameFlowLanguageServices languageServices) : base(engineVersion)
 	{
-		public override string DefaultFileExtension => ".txt";
+		ArgumentNullException.ThrowIfNull(languageServices);
 
-		public GameFlowEditor(Version engineVersion) : base(engineVersion)
+		_languageServices = languageServices;
+		_completionCoordinator = languageServices.CreateCompletionCoordinator();
+
+		InitializeDefinitionNavigation(TryNavigateDefinition);
+		InitializeHover(BuildStandardHoverRequestState, RequestHover);
+
+		CommentSyntax = new CommentSyntax("//", null, StringLiteralStyle.DoubleQuoted | StringLiteralStyle.TripleDoubleQuoted);
+	}
+
+	/// <inheritdoc/>
+	protected override void OnLanguageTextEntering(TextCompositionEventArgs e)
+	{
+		TryHandleCtrlSpaceCompletion(
+			e,
+			() => CompletionController.ApplyDecision(
+				_completionCoordinator.GetOpenDecision(Document, CaretOffset, CompletionController.ActiveWindow is not null)));
+	}
+
+	/// <inheritdoc/>
+	protected override void OnLanguageTextEntered(TextCompositionEventArgs e)
+	{
+		if (IntelliSenseEnabled && CompletionEnabled)
 		{
-			BindEventMethods();
-
-			CommentPrefix = "//";
-		}
-
-		private void BindEventMethods()
-		{
-			TextArea.TextEntering += TextArea_TextEntering;
-			TextArea.TextEntered += TextEditor_TextEntered;
-		}
-
-		private void TextArea_TextEntering(object sender, TextCompositionEventArgs e)
-		{
-			if (AutocompleteEnabled && e.Text == " " && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
-			{
-				if (_completionWindow == null)
-				{
-					InitializeCompletionWindow();
-
-					int wordStartOffset =
-						TextUtilities.GetNextCaretPosition(Document, CaretOffset, LogicalDirection.Backward, CaretPositioningMode.WordStartOrSymbol);
-
-					string word = Document.GetText(wordStartOffset, CaretOffset - wordStartOffset);
-
-					if (!word.StartsWith(":"))
-						_completionWindow.StartOffset = wordStartOffset;
-
-					foreach (ICompletionData item in Autocomplete.GetAutocompleteData())
-						_completionWindow.CompletionList.CompletionData.Add(item);
-
-					ShowCompletionWindow();
-				}
-
-				e.Handled = true;
-			}
-		}
-
-		private void TextEditor_TextEntered(object sender, TextCompositionEventArgs e)
-		{
-			if (AutocompleteEnabled && _completionWindow == null)
-				HandleAutocomplete();
-		}
-
-		private void HandleAutocomplete()
-		{
-			string currentLineText = LineParser.EscapeComments(Document.GetText(Document.GetLineByOffset(CaretOffset))).Trim();
-
-			if (currentLineText.Length == 1)
-			{
-				InitializeCompletionWindow();
-
-				int wordStartOffset =
-					TextUtilities.GetNextCaretPosition(Document, CaretOffset, LogicalDirection.Backward, CaretPositioningMode.WordStartOrSymbol);
-
-				string word = Document.GetText(wordStartOffset, CaretOffset - wordStartOffset);
-
-				if (!word.StartsWith(":"))
-					_completionWindow.StartOffset = wordStartOffset;
-
-				foreach (ICompletionData item in Autocomplete.GetAutocompleteData())
-					_completionWindow.CompletionList.CompletionData.Add(item);
-
-				ShowCompletionWindow();
-			}
-		}
-
-		public override void TidyCode(bool trimOnly = false)
-		{
-			Vector scrollOffset = TextArea.TextView.ScrollOffset;
-
-			SelectAll();
-			SelectedText = BasicCleaner.TrimEndingWhitespace(Text);
-			ResetSelection();
-
-			ScrollToHorizontalOffset(scrollOffset.X);
-			ScrollToVerticalOffset(scrollOffset.Y);
-		}
-
-		public override void UpdateSettings(Bases.ConfigurationBase configuration)
-		{
-			var config = configuration as GameFlowEditorConfiguration;
-
-			SyntaxHighlighting = new SyntaxHighlighting(config.ColorScheme);
-
-			Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.ColorScheme.Background));
-			Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString(config.ColorScheme.Foreground));
-
-			base.UpdateSettings(configuration);
-		}
-
-		public override void GoToObject(string objectName, object identifyingObject = null)
-		{
-			if (identifyingObject is ObjectType type)
-			{
-				DocumentLine objectLine = DocumentParser.FindDocumentLineOfObject(Document, objectName, type);
-
-				if (objectLine != null)
-				{
-					Focus();
-					ScrollToLine(objectLine.LineNumber);
-					SelectLine(objectLine);
-				}
-			}
+			CompletionController.ApplyDecision(
+				_completionCoordinator.GetOpenDecision(Document, CaretOffset, CompletionController.ActiveWindow is not null));
 		}
 	}
+
+	/// <inheritdoc/>
+	public override void UpdateSettings(TombLib.Scripting.UI.Bases.ConfigurationBase configuration)
+	{
+		EnsureNotDisposed();
+
+		if (configuration is not GameFlowEditorConfiguration config)
+			return;
+
+		SyntaxHighlighting = new SyntaxHighlighting(config.ColorScheme);
+
+		Background = ScriptingColorParser.CreateBrush(config.ColorScheme.Background, ScriptingColorParser.DefaultBackgroundColor);
+		Foreground = ScriptingColorParser.CreateBrush(config.ColorScheme.Foreground, ScriptingColorParser.DefaultForegroundColor);
+
+		base.UpdateSettings(configuration);
+	}
+
+	private Task<bool> TryNavigateDefinition(int offset, CancellationToken cancellationToken)
+	{
+		// The definition provider is synchronous; the token is honored before the request starts.
+		cancellationToken.ThrowIfCancellationRequested();
+
+		return Task.FromResult(
+			TryGoToDefinition(_languageServices.DefinitionProvider, _languageServices.HoverProvider, offset));
+	}
+
+	/// <inheritdoc/>
+	public void GoToObject(string objectName, TextDefinitionDiscriminator? identifyingObject = null)
+		=> GoToDefinition(_languageServices.DefinitionProvider, objectName, identifyingObject);
 }

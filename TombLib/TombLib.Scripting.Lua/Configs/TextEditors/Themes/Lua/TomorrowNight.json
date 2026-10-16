@@ -1,0 +1,73 @@
+{
+	"Name": "Tomorrow Night",
+	"Aliases": [ "TomorrowNight" ],
+	"Background": "#1D1F21",
+	"Foreground": "#C5C8C6",
+	"SemanticColors": {
+		"MutedText": "#969896",
+		"Misc": "#CED1CF",
+		"Method": "#81A2BE",
+		"Variable": "#CC6666",
+		"Property": "#CC6666",
+		"Type": "#F0C674",
+		"Keyword": "#B294BB",
+		"LanguageConstant": "#DE935F",
+		"Constant": "#DE935F",
+		"File": "#B5BD68",
+		"SignatureParameterDocumentation": "#969896",
+		"SignatureActiveParameter": "#81A2BE",
+		"SignatureText": "#C5C8C6"
+	},
+	"TextMateTheme": {
+		"Rules": [
+			{
+				"Scope": "comment",
+				"Foreground": "#969896"
+			},
+			{
+				"Scope": "string",
+				"Foreground": "#B5BD68"
+			},
+			{
+				"Scope": "constant.numeric",
+				"Foreground": "#DE935F"
+			},
+			{
+				"Scope": "constant.character.escape",
+				"Foreground": "#DE935F"
+			},
+			{
+				"Scope": "constant.language",
+				"Foreground": "#DE935F"
+			},
+			{
+				"Scope": "keyword, storage",
+				"Foreground": "#B294BB"
+			},
+			{
+				"Scope": "keyword.operator",
+				"Foreground": "#8ABEB7"
+			},
+			{
+				"Scope": "entity.name.function, support.function, support.function.library, support.function.any-method",
+				"Foreground": "#81A2BE"
+			},
+			{
+				"Scope": "entity.name.class, support.class, support.type, storage.type.generic",
+				"Foreground": "#F0C674"
+			},
+			{
+				"Scope": "variable.parameter",
+				"Foreground": "#DE935F"
+			},
+			{
+				"Scope": "entity.other.attribute",
+				"Foreground": "#CC6666"
+			},
+			{
+				"Scope": "variable.language.self, entity.name.tag, string.tag, storage.type.annotation",
+				"Foreground": "#CC6666"
+			}
+		]
+	}
+}

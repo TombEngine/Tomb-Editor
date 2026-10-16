@@ -1,78 +1,85 @@
-﻿namespace TombIDE.ScriptingStudio.UI
+﻿namespace TombIDE.ScriptingStudio.UI;
+
+public enum UICommand
 {
-	public enum UICommand
-	{
-		None,
+	None,
 
-		// File:
+	// File:
 
-		NewFile,
-		Save,
-		SaveAs,
-		SaveAll,
-		Build,
-		Exit,
+	NewFile,
+	Save,
+	SaveAs,
+	SaveAll,
+	Build,
+	Exit,
 
-		// Edit:
+	// Edit:
 
-		Undo,
-		Redo,
-		Cut,
-		Copy,
-		Paste,
-		Find,
-		SelectAll,
+	Undo,
+	Redo,
+	Cut,
+	Copy,
+	Paste,
+	Find,
+	SelectAll,
 
-		// Document:
+	// Document:
 
-		TabsToSpaces,
-		SpacesToTabs,
+	TabsToSpaces,
+	SpacesToTabs,
 
-		Reindent,
-		TrimWhiteSpace,
-		CommentOut,
-		Uncomment,
-		ToggleBookmark,
-		PrevBookmark,
-		NextBookmark,
-		ClearBookmarks,
+	Reindent,
+	TrimWhiteSpace,
+	ToggleComment,
+	CommentOut,
+	Uncomment,
+	ToggleBookmark,
+	PrevBookmark,
+	NextBookmark,
+	ClearBookmarks,
 
-		PrevSection,
-		NextSection,
-		ClearString,
-		RemoveLastString,
+	PrevSection,
+	NextSection,
+	ClearString,
+	RemoveLastString,
 
-		// Options:
+	// Options:
 
-		UseNewInclude,
-		ShowLogsAfterBuild,
-		ReindentOnSave,
-		Settings,
+	UseNewInclude,
+	ShowLogsAfterBuild,
+	ReindentOnSave,
+	Settings,
 
-		// View:
+	// View:
 
-		RestoreDefaultLayout,
+	RestoreDefaultLayout,
 
-		ToolStrip, // View start
+	ToolStrip, // View start
 
-		ContentExplorer,
-		FileExplorer,
-		ReferenceBrowser,
-		CompilerLogs,
-		SearchResults,
+	ContentExplorer,
+	FileExplorer,
+	ReferenceBrowser,
+	CompilerLogs,
+	SearchResults,
+	LuaDiagnostics,
+	LuaReferencesResults,
 
-		StatusStrip, // View end
+	StatusStrip, // View end
 
-		// Help:
+	// Help:
 
-		ScriptingDocumentation,
-		Tomb3ExtraCommands,
-		LuaBasics,
-		About,
+	ScriptingDocumentation,
+	Tomb3ExtraCommands,
+	LuaBasics,
+	About,
 
-		// Other:
+	// Other:
 
-		TypeFirstAvailableId,
-		NewFileAtCaret
-	}
+	NavigateBack,
+	NavigateForward,
+	GoToDefinition,
+	FindReferences,
+	RenameSymbol,
+	TypeFirstAvailableId,
+	NewFileAtCaret
 }

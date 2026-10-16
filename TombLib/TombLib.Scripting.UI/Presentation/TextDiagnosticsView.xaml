@@ -1,0 +1,75 @@
+<UserControl
+	x:Class="TombLib.Scripting.UI.Presentation.TextDiagnosticsView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DesignHeight="320"
+	d:DesignWidth="540"
+	mc:Ignorable="d">
+	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+	</UserControl.Resources>
+
+	<Grid Margin="8">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+		<controls:SpacedStack Orientation="Horizontal" Spacing="8">
+			<ToggleButton Content="{Binding ErrorsLabel}" IsChecked="{Binding ShowErrors}" />
+			<ToggleButton Content="{Binding WarningsLabel}" IsChecked="{Binding ShowWarnings}" />
+			<ToggleButton Content="{Binding MessagesLabel}" IsChecked="{Binding ShowMessages}" />
+		</controls:SpacedStack>
+
+		<TextBlock
+			Grid.Row="1"
+			Margin="0,8,0,8"
+			Text="{Binding StatusText}"
+			TextWrapping="Wrap"
+			Visibility="{Binding HasStatusText, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+		<DataGrid
+			x:Name="DiagnosticsGrid"
+			Grid.Row="2"
+			AutoGenerateColumns="False"
+			CanUserAddRows="False"
+			CanUserDeleteRows="False"
+			CanUserReorderColumns="False"
+			CanUserResizeRows="False"
+			HeadersVisibility="Column"
+			IsReadOnly="True"
+			ItemsSource="{Binding Diagnostics}"
+			MouseDoubleClick="DiagnosticsGrid_MouseDoubleClick"
+			PreviewKeyDown="DiagnosticsGrid_PreviewKeyDown"
+			SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+			SelectionMode="Single"
+			SelectionUnit="FullRow">
+			<DataGrid.Columns>
+				<DataGridTextColumn
+					Width="120"
+					Binding="{Binding SeverityLabel}"
+					Header="{Binding SeverityHeader}" />
+				<DataGridTextColumn
+					Width="65"
+					Binding="{Binding LineNumber}"
+					Header="{Binding LineHeader}" />
+				<DataGridTextColumn
+					Width="65"
+					Binding="{Binding ColumnNumber}"
+					Header="{Binding ColumnHeader}" />
+				<DataGridTextColumn
+					Width="140"
+					Binding="{Binding Source}"
+					Header="{Binding SourceHeader}" />
+				<DataGridTextColumn
+					Width="*"
+					Binding="{Binding Message}"
+					Header="{Binding MessageHeader}" />
+			</DataGrid.Columns>
+		</DataGrid>
+	</Grid>
+</UserControl>

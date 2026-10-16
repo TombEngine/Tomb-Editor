@@ -1,0 +1,76 @@
+<UserControl
+	x:Class="TombIDE.ScriptingStudio.ToolStrips.StudioStatusStripView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:TombIDE.ScriptingStudio.Controls"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:toolStrips="clr-namespace:TombIDE.ScriptingStudio.ToolStrips"
+	d:DataContext="{d:DesignInstance Type=toolStrips:StudioStatusStripViewModel}"
+	mc:Ignorable="d">
+
+	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+	</UserControl.Resources>
+
+	<Border Padding="6,3" Background="{DynamicResource Brush_Background}">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="12" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<StackPanel Grid.Column="0" Orientation="Horizontal">
+				<TextBlock
+					Margin="0,0,10,0"
+					Foreground="{DynamicResource Brush_Text}"
+					Text="{Binding RowLabelText}"
+					Visibility="{Binding ShowCaretPosition, Converter={StaticResource BooleanToVisibilityConverter}}" />
+				<TextBlock
+					Margin="0,0,10,0"
+					Foreground="{DynamicResource Brush_Text}"
+					Text="{Binding ColumnLabelText}"
+					Visibility="{Binding ShowCaretPosition, Converter={StaticResource BooleanToVisibilityConverter}}" />
+				<TextBlock
+					Foreground="{DynamicResource Brush_Text}"
+					Text="{Binding SelectionLabelText}"
+					Visibility="{Binding ShowSelectionLength, Converter={StaticResource BooleanToVisibilityConverter}}" />
+			</StackPanel>
+
+			<Border
+				Grid.Column="2"
+				Margin="0,0,10,0"
+				BorderBrush="{DynamicResource Brush_Separator}"
+				BorderThickness="1"
+				Visibility="{Binding ShowSyntaxPreviewPanel, Converter={StaticResource BooleanToVisibilityConverter}}">
+				<controls:SyntaxPreviewView
+					x:Name="SyntaxPreview"
+					CurrentArgumentIndex="{Binding CurrentArgumentIndex}"
+					PreviewText="{Binding PreviewText}" />
+			</Border>
+
+			<StackPanel Grid.Column="3" Orientation="Horizontal">
+				<TextBlock
+					Margin="0,0,8,0"
+					VerticalAlignment="Center"
+					Foreground="{DynamicResource Brush_Text}"
+					Text="{Binding ZoomLabelText}"
+					Visibility="{Binding ShowZoom, Converter={StaticResource BooleanToVisibilityConverter}}" />
+				<Button
+					Width="24"
+					Height="20"
+					Command="{Binding ResetZoomCommand}"
+					IsEnabled="{Binding CanResetZoom}"
+					ToolTip="{Binding ResetZoomToolTipText}"
+					Visibility="{Binding ShowZoom, Converter={StaticResource BooleanToVisibilityConverter}}">
+					<TextBlock
+						HorizontalAlignment="Center"
+						VerticalAlignment="Center"
+						Text="R" />
+				</Button>
+			</StackPanel>
+		</Grid>
+	</Border>
+</UserControl>

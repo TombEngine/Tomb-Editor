@@ -1,0 +1,31 @@
+<UserControl
+	x:Class="TombIDE.ScriptingStudio.Shell.StudioAvalonDockHostView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:avalonDock="clr-namespace:AvalonDock;assembly=AvalonDock">
+
+	<Grid>
+		<avalonDock:DockingManager x:Name="DockingManager">
+			<avalonDock:DockingManager.AnchorableHeaderTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+				</DataTemplate>
+			</avalonDock:DockingManager.AnchorableHeaderTemplate>
+			<avalonDock:DockingManager.AnchorableTitleTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+				</DataTemplate>
+			</avalonDock:DockingManager.AnchorableTitleTemplate>
+			<avalonDock:DockingManager.DocumentHeaderTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+				</DataTemplate>
+			</avalonDock:DockingManager.DocumentHeaderTemplate>
+			<avalonDock:DockingManager.DocumentTitleTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+				</DataTemplate>
+			</avalonDock:DockingManager.DocumentTitleTemplate>
+		</avalonDock:DockingManager>
+	</Grid>
+</UserControl>

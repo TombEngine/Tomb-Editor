@@ -1,0 +1,183 @@
+<Window
+	x:Class="TombIDE.ScriptingStudio.FindAndReplace.FindAndReplaceView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:findAndReplace="clr-namespace:TombIDE.ScriptingStudio.FindAndReplace"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Title="Find and Replace"
+	Width="580"
+	d:DataContext="{d:DesignInstance Type=findAndReplace:FindAndReplaceViewModel}"
+	Background="{DynamicResource Brush_Background}"
+	ResizeMode="CanMinimize"
+	SizeToContent="Height"
+	Style="{DynamicResource CustomWindowStyle}"
+	WindowStartupLocation="CenterScreen"
+	mc:Ignorable="d">
+
+	<Grid Margin="{x:Static darkUI:Defaults.MediumThickness}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<!--  Find row  -->
+		<Grid Grid.Row="0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="55" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<Label
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				Content="Find:" />
+			<TextBox
+				Grid.Column="1"
+				Margin="0,0,6,0"
+				VerticalAlignment="Center"
+				Text="{Binding FindText, UpdateSourceTrigger=PropertyChanged}" />
+			<controls:SpacedStack
+				Grid.Column="2"
+				Orientation="Horizontal"
+				Spacing="2">
+				<Button
+					Width="26"
+					Command="{Binding FindPreviousCommand}"
+					Content="&lt;" />
+				<Button
+					Width="70"
+					Command="{Binding FindCommand}"
+					Content="Find" />
+				<Button
+					Width="26"
+					Command="{Binding FindNextCommand}"
+					Content="&gt;" />
+			</controls:SpacedStack>
+		</Grid>
+
+		<!--  Replace row  -->
+		<Grid Grid.Row="1" Margin="0,4,0,0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="55" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<Label
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				Content="Replace:" />
+			<TextBox
+				Grid.Column="1"
+				Margin="0,0,6,0"
+				VerticalAlignment="Center"
+				Text="{Binding ReplaceText, UpdateSourceTrigger=PropertyChanged}" />
+			<controls:SpacedStack
+				Grid.Column="2"
+				Orientation="Horizontal"
+				Spacing="2">
+				<Button
+					Width="26"
+					Command="{Binding ReplacePreviousCommand}"
+					Content="&lt;" />
+				<Button
+					Width="70"
+					Command="{Binding ReplaceCommand}"
+					Content="Replace" />
+				<Button
+					Width="26"
+					Command="{Binding ReplaceNextCommand}"
+					Content="&gt;" />
+			</controls:SpacedStack>
+		</Grid>
+
+		<!--  Options row  -->
+		<Grid Grid.Row="2" Margin="0,8,0,0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<!--  Left: checkboxes  -->
+			<StackPanel Grid.Column="0">
+				<CheckBox Content="Case Sensitive" IsChecked="{Binding CaseSensitive}" />
+				<CheckBox
+					Margin="0,4,0,0"
+					Content="Match Whole Words"
+					IsChecked="{Binding MatchWholeWord}" />
+				<CheckBox
+					Margin="0,4,0,0"
+					Content="Use Regular Expressions"
+					IsChecked="{Binding UseRegex}" />
+			</StackPanel>
+
+			<!--  Right: direction and scope  -->
+			<StackPanel
+				Grid.Column="1"
+				Width="160"
+				Margin="12,0,0,0">
+				<GroupBox Header="Direction" Style="{DynamicResource DarkGroupBoxStyle}">
+					<StackPanel Margin="4">
+						<RadioButton
+							Content="Up"
+							GroupName="Direction"
+							IsChecked="{Binding SearchUp}" />
+						<RadioButton
+							Margin="0,4,0,0"
+							Content="Down"
+							GroupName="Direction"
+							IsChecked="{Binding SearchDown}" />
+					</StackPanel>
+				</GroupBox>
+
+				<GroupBox
+					Margin="0,6,0,0"
+					Header="Where to Look"
+					Style="{DynamicResource DarkGroupBoxStyle}">
+					<StackPanel Margin="4">
+						<RadioButton
+							Content="Current Document"
+							GroupName="Scope"
+							IsChecked="{Binding SearchCurrentDocument}" />
+						<RadioButton
+							Margin="0,4,0,0"
+							Content="All Tabs"
+							GroupName="Scope"
+							IsChecked="{Binding SearchAllTabs}" />
+					</StackPanel>
+				</GroupBox>
+			</StackPanel>
+		</Grid>
+
+		<!--  Action buttons  -->
+		<controls:SpacedStack
+			Grid.Row="3"
+			Margin="0,10,0,0"
+			HorizontalAlignment="Left"
+			Orientation="Horizontal"
+			Spacing="6">
+			<Button
+				Width="140"
+				Command="{Binding FindAllCommand}"
+				Content="Find All" />
+			<Button
+				Width="140"
+				Command="{Binding ReplaceAllCommand}"
+				Content="Replace All" />
+		</controls:SpacedStack>
+
+		<!--  Status bar  -->
+		<TextBlock
+			Grid.Row="4"
+			Margin="0,8,0,0"
+			Padding="4,2"
+			Text="{Binding StatusMessage}" />
+	</Grid>
+</Window>

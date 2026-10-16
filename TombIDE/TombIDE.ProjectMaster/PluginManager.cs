@@ -193,7 +193,7 @@ public partial class PluginManager : UserControl
 		_deploymentService?.DeployPlugins(_ide.Project);
 		_deploymentService?.SynchronizeScriptReferences(_ide.Project);
 
-		_ide.RaiseEvent(new IDE.ScriptEditor_ReloadSyntaxHighlightingEvent());
+		_ide.ScriptEditor_ReloadSyntaxHighlighting();
 
 		UpdatePluginInfoOverview();
 		treeView.Invalidate();

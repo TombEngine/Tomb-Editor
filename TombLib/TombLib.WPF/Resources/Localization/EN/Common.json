@@ -3,5 +3,9 @@
 	"Cancel": "Cancel",
 	"Yes": "Yes",
 	"No": "No",
-	"Apply": "Apply"
+	"Apply": "Apply",
+	"Cut": "Cut",
+	"Copy": "Copy",
+	"Paste": "Paste",
+	"SelectAll": "Select All"
 }

@@ -1,28 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Explicit usings (repository standard; implicit usings are not used). -->
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
-    <OutputType>Library</OutputType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-    <Configurations>Debug;Release</Configurations>
-    <Platforms>x64;x86</Platforms>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <WarningsAsErrors>CS1591</WarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <OutputPath>..\..\Build ($(Platform))\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <OutputPath>..\..\BuildRelease ($(Platform))\</OutputPath>
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='x64'">
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='x86'">
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Resources\Icons\Constant.png" />
     <None Remove="Resources\Icons\Directive.png" />
@@ -30,89 +17,37 @@
     <None Remove="Resources\Icons\OldCommand.png" />
     <None Remove="Resources\Icons\Section.png" />
   </ItemGroup>
+
   <ItemGroup>
-    <Reference Include="ICSharpCode.AvalonEdit, Version=6.1.0.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libs\ICSharpCode.AvalonEdit.dll</HintPath>
-    </Reference>
+    <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nickelony.LanguageServer.Abstractions" Version="$(NickelonyLanguageServerVersion)" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\GlobalPaths.cs">
-      <Link>GlobalPaths.cs</Link>
-    </Compile>
-    <Compile Update="Controls\StringDataGridView.cs" />
-    <Compile Update="StringEditor.cs" />
-    <Compile Update="Workers\ClassicScriptNodesProvider.cs" />
-    <Compile Update="Workers\StringFileNodesProvider.cs" />
+    <PackageReference Include="Nickelony.IDEKit.AvalonEdit" Version="$(NickelonyIDEKitAvalonEditVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Core" Version="$(NickelonyIDEKitCoreVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.IntelliSense" Version="$(NickelonyIDEKitIntelliSenseVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Processes" Version="$(NickelonyIDEKitProcessesVersion)" />
+    <ProjectReference Include="..\TombLib.Scripting.UI\TombLib.Scripting.UI.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Update="Configs\TextEditors\ColorSchemes\ClassicScript\Monokai.cssch">
+    <Content Include="Configs\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Configs\TextEditors\ColorSchemes\ClassicScript\NG_Center.cssch">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Configs\TextEditors\ColorSchemes\ClassicScript\Obsidian.cssch">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Configs\TextEditors\ColorSchemes\ClassicScript\VS15.cssch">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\ClassicScript\Descriptions\Mnemonic Constants.rdda">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\ClassicScript\Descriptions\NEW Commands.rdda">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\ClassicScript\Descriptions\OCBs.rdda">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\ClassicScript\Descriptions\OLD Commands.rdda">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\ClassicScript\TRNG Script Reference Manual.pdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\TombLib.Forms\TombLib.Forms.csproj" />
-    <ProjectReference Include="..\TombLib.Scripting\TombLib.Scripting.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\ClassicScript\EnemyDamageValues.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Configs\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
     </Content>
-    <Content Include="Resources\ClassicScript\KeyboardScancodes.xml">
+    <Content Include="Resources\ClassicScript\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\ClassicScript\MnemonicConstants.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\ClassicScript\MoveableSlotIndices.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\ClassicScript\NewCommandsList.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\ClassicScript\OCBList.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\ClassicScript\OldCommandsList.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\ClassicScript\SoundIndices.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\ClassicScript\StaticObjectIndices.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\ClassicScript\VariablePlaceholders.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Resources\ClassicScript\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
     </Content>
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="CoreCLR-NCalc" Version="2.2.101" />
   </ItemGroup>
+
   <ItemGroup>
     <Resource Include="Resources\Icons\Constant.png" />
     <Resource Include="Resources\Icons\Directive.png" />
@@ -120,4 +55,5 @@
     <Resource Include="Resources\Icons\OldCommand.png" />
     <Resource Include="Resources\Icons\Section.png" />
   </ItemGroup>
+
 </Project>

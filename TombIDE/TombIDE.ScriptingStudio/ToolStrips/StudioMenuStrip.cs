@@ -1,164 +1,138 @@
-﻿using DarkUI.Controls;
+#nullable enable
+
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
+using Nickelony.IDEKit.KeyBindings;
+using TombIDE.ScriptingStudio.CommandSurface;
 using TombIDE.ScriptingStudio.UI;
-using TombIDE.Shared.SharedClasses;
 
-namespace TombIDE.ScriptingStudio.ToolStrips
+namespace TombIDE.ScriptingStudio.ToolStrips;
+
+public sealed class StudioMenuStrip
 {
-	public class StudioMenuStrip : DarkMenuStrip
+	private readonly Dictionary<UICommand, List<StudioCommandSurfaceItemViewModel>> _itemsByCommand = [];
+	private DocumentMode _documentMode;
+
+	public StudioMenuStrip()
 	{
-		#region Properties
+		View = new StudioMenuStripView();
+	}
 
-		private StudioMode _studioMode;
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public StudioMode StudioMode
+	internal StudioMenuStripView View { get; }
+
+	public IKeyBindingService<UICommand>? KeyBindingService { get; set; }
+
+	public IReadOnlyList<StudioToolStripItem> DocumentModeContributionItems { get; set; } = [];
+
+	public IReadOnlyList<StudioToolStripItem> WorkspaceContributionItems { get; set; } = [];
+
+	public DocumentMode DocumentMode
+	{
+		get => _documentMode;
+		set
 		{
-			get => _studioMode;
-			set
-			{
-				if (value != _studioMode)
-				{
-					_studioMode = value;
-					UpdateItems<StudioMode>();
-
-					OnStudioModeChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		private DocumentMode _documentMode;
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public DocumentMode DocumentMode
-		{
-			get => _documentMode;
-			set
-			{
-				if (value != _documentMode)
-				{
-					_documentMode = value;
-					UpdateItems<DocumentMode>();
-
-					OnDocumentModeChanged(EventArgs.Empty);
-				}
-			}
-		}
-
-		#endregion Properties
-
-		#region Events
-
-		public new event EventHandler ItemClicked;
-		private void OnItemClicked(object sender, EventArgs e)
-			=> ItemClicked?.Invoke(sender, e);
-
-		public event EventHandler StudioModeChanged;
-		private void OnStudioModeChanged(EventArgs e)
-			=> StudioModeChanged?.Invoke(this, e);
-
-		public event EventHandler DocumentModeChanged;
-		private void OnDocumentModeChanged(EventArgs e)
-			=> DocumentModeChanged?.Invoke(this, e);
-
-		#endregion Events
-
-		#region Other methods
-
-		private void UpdateItems<T>() where T : Enum
-		{
-			string enumName = typeof(T).Name;
-			Enum modeEnum = GetModeEnum(enumName); // Either StudioMode or DocumentMode
-			string enumValueName = GetEnumValueName(modeEnum);
-
-			ClearRelatedItems(modeEnum);
-
-			if (enumValueName.Equals("None", StringComparison.OrdinalIgnoreCase))
+			if (value == _documentMode)
 				return;
 
-			IEnumerable<StudioToolStripItem> studioItems = GetStudioItems(enumName, enumValueName);
-			IEnumerable<ToolStripMenuItem> menuItems = GetMenuItemsFromStudioItems(studioItems, modeEnum);
-
-			AddMenuItems(menuItems);
+			_documentMode = value;
+			RebuildAllItems();
 		}
+	}
 
-		private void ClearRelatedItems(Enum modeEnum)
+	public event EventHandler<StudioCommandInvokedEventArgs>? ItemClicked;
+
+	public event EventHandler? WorkspaceContributionsChanged;
+
+	public bool GetCommandChecked(UICommand command)
+	{
+		if (!TryGetFirstItem(command, out StudioCommandSurfaceItemViewModel? item) || item is null)
+			return false;
+
+		return item.IsChecked;
+	}
+
+	public void RebuildWorkspaceItems()
+	{
+		RebuildAllItems();
+		WorkspaceContributionsChanged?.Invoke(this, EventArgs.Empty);
+	}
+
+	public void RebuildDocumentModeItems()
+		=> RebuildAllItems();
+
+	public void SetCommandChecked(UICommand command, bool isChecked)
+		=> Apply(command, item => item.IsChecked = isChecked);
+
+	public void SetCommandEnabled(UICommand command, bool isEnabled)
+		=> Apply(command, item => item.IsEnabled = isEnabled);
+
+	public void SetCommandText(UICommand command, string text)
+		=> Apply(command, item => item.Text = text);
+
+	public void SetCommandToolTip(UICommand command, string toolTipText)
+		=> Apply(command, item => item.ToolTipText = toolTipText);
+
+	public void SetCommandVisible(UICommand command, bool isVisible)
+		=> Apply(command, item => item.IsVisible = isVisible);
+
+	private void Apply(UICommand command, Action<StudioCommandSurfaceItemViewModel> update)
+	{
+		if (!_itemsByCommand.TryGetValue(command, out List<StudioCommandSurfaceItemViewModel>? items))
+			return;
+
+		foreach (StudioCommandSurfaceItemViewModel item in items)
+			update(item);
+	}
+
+	private void HandleCommandInvoked(UICommand command)
+		=> ItemClicked?.Invoke(this, new StudioCommandInvokedEventArgs(command));
+
+	private void RebuildAllItems()
+	{
+		var builder = new StudioCommandSurfaceBuilder(KeyBindingService);
+		IReadOnlyList<StudioCommandSurfaceItemViewModel> items = builder.BuildMenuItems(
+			WorkspaceContributionItems,
+			DocumentModeContributionItems,
+			HandleCommandInvoked);
+
+		Reindex(items);
+		View.SetItems(items);
+	}
+
+	private void Reindex(IEnumerable<StudioCommandSurfaceItemViewModel> items)
+	{
+		_itemsByCommand.Clear();
+
+		foreach (StudioCommandSurfaceItemViewModel item in items)
+			ReindexItem(item);
+	}
+
+	private void ReindexItem(StudioCommandSurfaceItemViewModel item)
+	{
+		if (item.Command != UICommand.None)
 		{
-			IEnumerable<ToolStripItem> targetItems = Items.GetTargetItems(modeEnum);
-
-			foreach (ToolStripMenuItem menuItem in targetItems)
-				SharedMethods.DisposeItems(menuItem.GetAllItems());
-
-			SharedMethods.DisposeItems(targetItems);
-		}
-
-		private IEnumerable<ToolStripMenuItem> GetMenuItemsFromStudioItems(IEnumerable<StudioToolStripItem> studioItems, Enum modeEnum)
-		{
-			foreach (StudioToolStripItem studioItem in studioItems)
+			if (!_itemsByCommand.TryGetValue(item.Command, out List<StudioCommandSurfaceItemViewModel>? mappedItems))
 			{
-				var menuItem = new ToolStripMenuItem(StudioItemParser.GetItemText(studioItem))
-				{
-					Name = studioItem.Position,
-					Tag = new UIElementArgs(modeEnum.GetType())
-				};
-
-				menuItem.DropDownItems.AddRange(GetSubMenuItems(studioItem, modeEnum.GetType())?.ToArray());
-
-				yield return menuItem;
+				mappedItems = [];
+				_itemsByCommand[item.Command] = mappedItems;
 			}
+
+			mappedItems.Add(item);
 		}
 
-		private void AddMenuItems(IEnumerable<ToolStripMenuItem> menuItems)
+		foreach (StudioCommandSurfaceItemViewModel child in item.Items)
+			ReindexItem(child);
+	}
+
+	private bool TryGetFirstItem(UICommand command, out StudioCommandSurfaceItemViewModel? item)
+	{
+		if (_itemsByCommand.TryGetValue(command, out List<StudioCommandSurfaceItemViewModel>? items) && items.Count > 0)
 		{
-			foreach (ToolStripMenuItem menuItem in menuItems)
-			{
-				bool hasPositionDefined = int.TryParse(menuItem.Name, out int position);
-
-				if (hasPositionDefined && position < Items.Count)
-					Items.Insert(position, menuItem);
-				else
-					Items.Add(menuItem);
-			}
+			item = items[0];
+			return true;
 		}
 
-		private IEnumerable<ToolStripItem> GetSubMenuItems(StudioToolStripItem root, Type uiModeEnumType)
-		{
-			foreach (StudioToolStripItem item in root.DropDownItems)
-				if (item is StudioSeparator)
-					yield return new ToolStripSeparator();
-				else
-				{
-					string text = StudioItemParser.GetItemText(item);
-					Image icon = StudioItemParser.FindImageInResources(item.Icon);
-					Keys keys = StudioItemParser.FindPredefinedKeys(item.Keys);
-
-					var menuItem = new ToolStripMenuItem(text, icon, OnItemClicked, keys)
-					{
-						ShortcutKeyDisplayString = item.KeysDisplay,
-						CheckOnClick = item.CheckOnClick,
-						Tag = new UIElementArgs(uiModeEnumType, StudioItemParser.GetCommand(item.Command))
-					};
-
-					menuItem.DropDownItems.AddRange(GetSubMenuItems(item, uiModeEnumType)?.ToArray());
-
-					yield return menuItem;
-				}
-		}
-
-		#endregion Other methods
-
-		private Enum GetModeEnum(string enumName)
-			=> GetType().GetProperty(enumName).GetValue(this) as Enum;
-
-		private string GetEnumValueName(Enum @enum)
-			=> @enum.ToString().Split('.').Last();
-
-		private IEnumerable<StudioToolStripItem> GetStudioItems(string enumTypeName, string enumValueName)
-			=> ToolStripXmlReader.GetItemsFromXml($"UI.{enumTypeName}Presets.MenuStrips.{enumValueName}.xml");
+		item = null;
+		return false;
 	}
 }

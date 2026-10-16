@@ -1,32 +1,22 @@
-﻿using ICSharpCode.AvalonEdit.Document;
-using System.Text.RegularExpressions;
-using TombLib.Scripting.Bases;
+using TombLib.Scripting.UI.Bases;
+using TombLib.Scripting.UI.Editing;
 
-namespace TombLib.Scripting.GameFlowScript.Writers
+namespace TombLib.Scripting.GameFlowScript.Writers;
+
+/// <summary>
+/// Writes GameFlow language string entries into an open editor.
+/// </summary>
+/// <remarks>
+/// GameFlow has no NG-string mechanism, so level names are written into the shared stock
+/// language slot used by ClassicScript rather than appending a new numbered string.
+/// </remarks>
+public sealed class LanguageStringWriter
 {
-	public static class LanguageStringWriter
-	{
-		public static void WriteNewLevelNameString(TextEditorBase textEditor, string levelName)
-		{
-			AssignStockLevelNameStringSlot(textEditor, levelName);
-		}
-
-		private static bool AssignStockLevelNameStringSlot(TextEditorBase textEditor, string levelName)
-		{
-			foreach (DocumentLine line in textEditor.Document.Lines)
-			{
-				string lineText = textEditor.Document.GetText(line.Offset, line.Length);
-
-				if (Regex.IsMatch(lineText, @"EMPTY\sSTRING\sSLOT\s\d+"))
-				{
-					textEditor.Select(line.Offset, line.Length);
-					textEditor.SelectedText = levelName;
-
-					return true;
-				}
-			}
-
-			return false;
-		}
-	}
+	/// <summary>
+	/// Writes a new level name string for the given level name.
+	/// </summary>
+	/// <param name="textEditor">The editor to write into.</param>
+	/// <param name="levelName">The level name to write.</param>
+	public void WriteNewLevelNameString(TextEditorBase textEditor, string levelName)
+		=> StockLevelNameWriter.TryAssignStockLevelNameStringSlot(textEditor, levelName);
 }

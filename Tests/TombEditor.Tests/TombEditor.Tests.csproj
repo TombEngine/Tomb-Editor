@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="3.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageReference Include="Moq" Version="4.20.69" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nickelony.IDEKit.Core" Version="$(NickelonyIDEKitCoreVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.AvalonEdit" Version="$(NickelonyIDEKitAvalonEditVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Workspace" Version="$(NickelonyIDEKitWorkspaceVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Workspace.Views" Version="$(NickelonyIDEKitWorkspaceViewsVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.KeyBindings" Version="$(NickelonyIDEKitKeyBindingsVersion)" />
+    <ProjectReference Include="..\..\TombEditor\TombEditor.csproj" />
+    <ProjectReference Include="..\..\TombIDE\TombIDE.ScriptingStudio\TombIDE.ScriptingStudio.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nickelony.LanguageServer.Abstractions" Version="$(NickelonyLanguageServerVersion)" />
+    <PackageReference Include="Nickelony.LanguageServer.Client" Version="$(NickelonyLanguageServerVersion)" />
+    <PackageReference Include="Nickelony.LanguageServer.Lua" Version="$(NickelonyLanguageServerVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+</Project>

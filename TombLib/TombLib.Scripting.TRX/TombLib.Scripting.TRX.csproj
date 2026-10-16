@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Explicit usings (repository standard; implicit usings are not used). -->
+  <PropertyGroup>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <WarningsAsErrors>CS1591</WarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="AvalonEdit" Version="6.3.1.120" />
+    <Compile Update="ContentNodes\TRXNodesProvider.cs">
+      <SubType>Component</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Nickelony.LanguageServer.Abstractions" Version="$(NickelonyLanguageServerVersion)" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Nickelony.IDEKit.AvalonEdit" Version="$(NickelonyIDEKitAvalonEditVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.Core" Version="$(NickelonyIDEKitCoreVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.IntelliSense" Version="$(NickelonyIDEKitIntelliSenseVersion)" />
+    <PackageReference Include="Nickelony.IDEKit.JsonSchema" Version="$(NickelonyIDEKitJsonSchemaVersion)" />
+    <ProjectReference Include="..\TombLib.Scripting.UI\TombLib.Scripting.UI.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Configs\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Configs\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+    </Content>
+    <Content Include="Resources\TRX\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Resources\TRX\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Icons\Constant.png" />
+    <Resource Include="Resources\Icons\Property.png" />
+    <Resource Include="Resources\Icons\Array.png" />
+  </ItemGroup>
+</Project>

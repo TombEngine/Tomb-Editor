@@ -1,0 +1,28 @@
+<UserControl
+	x:Class="TombIDE.ScriptingStudio.FindAndReplace.SearchResultsView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:findAndReplace="clr-namespace:TombIDE.ScriptingStudio.FindAndReplace"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DataContext="{d:DesignInstance Type=findAndReplace:SearchResultsViewModel}"
+	mc:Ignorable="d">
+
+	<Grid Margin="{x:Static darkUI:Defaults.MediumThickness}">
+		<TreeView
+			x:Name="TreeView"
+			ItemsSource="{Binding Sources}"
+			MouseDoubleClick="TreeView_MouseDoubleClick">
+			<TreeView.Resources>
+				<HierarchicalDataTemplate DataType="{x:Type findAndReplace:SearchResultsSourceViewModel}" ItemsSource="{Binding Items}">
+					<TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+				</HierarchicalDataTemplate>
+
+				<DataTemplate DataType="{x:Type findAndReplace:SearchResultsItemViewModel}">
+					<TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" />
+				</DataTemplate>
+			</TreeView.Resources>
+		</TreeView>
+	</Grid>
+</UserControl>

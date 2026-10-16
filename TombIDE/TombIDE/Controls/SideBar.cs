@@ -1,4 +1,5 @@
-﻿using DarkUI.Controls;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using DarkUI.Controls;
 using DarkUI.Forms;
 using System;
 using System.Collections.Generic;
@@ -9,14 +10,17 @@ using System.Linq;
 using System.Windows.Forms;
 using TombIDE.ProjectMaster.Forms;
 using TombIDE.Shared;
+using TombIDE.Shared.Messaging.Scripting;
 using TombIDE.Shared.SharedClasses;
 using TombLib.LevelData;
+using TombLib.WPF.Services;
 
 namespace TombIDE.Controls
 {
 	public partial class SideBar : UserControl
 	{
 		private IDE _ide;
+		private IMessenger _messenger;
 
 		public event EventHandler<IDETab> SelectedIDETabChanged;
 
@@ -30,7 +34,18 @@ namespace TombIDE.Controls
 		public void Initialize(IDE ide)
 		{
 			_ide = ide;
-			_ide.IDEEventRaised += OnIDEEventRaised;
+			_messenger = ServiceLocator.GetService<IMessenger>();
+
+			if (_messenger is not null)
+			{
+				_messenger.Register<SideBar, ScriptingExternalContentChangedMessage>(
+					this,
+					static (recipient, _) => recipient.IndicateScriptingContentChanged());
+			}
+			else
+			{
+				_ide.IDEEventRaised += OnIDEEventRaised;
+			}
 
 			if (_ide.Project.GameVersion == TRVersion.Game.TombEngine)
 			{
@@ -58,7 +73,7 @@ namespace TombIDE.Controls
 			InitializeFLEP();
 			AddPinnedPrograms();
 
-			if (_ide.Project.GameVersion is not TRVersion.Game.TR1 and not TRVersion.Game.TR2X and not TRVersion.Game.TombEngine)
+			if (_ide.Project.GameVersion is not TRVersion.Game.TR1 and not TRVersion.Game.TR2X and not TRVersion.Game.TR3X and not TRVersion.Game.TombEngine)
 				button_Update.Enabled = false;
 		}
 
@@ -97,12 +112,14 @@ namespace TombIDE.Controls
 		private void OnIDEEventRaised(IIDEEvent obj)
 		{
 			if (obj is IDE.ScriptEditor_ContentChangedEvent)
-			{
-				// Indicate changes inside the Scripting Studio
-				panelButton_ScriptingStudio.BackColor = Color.FromArgb(180, 100, 0);
-				timer_ScriptButtonBlinking.Interval = 1;
-				timer_ScriptButtonBlinking.Start();
-			}
+				IndicateScriptingContentChanged();
+		}
+
+		private void IndicateScriptingContentChanged()
+		{
+			panelButton_ScriptingStudio.BackColor = Color.FromArgb(180, 100, 0);
+			timer_ScriptButtonBlinking.Interval = 1;
+			timer_ScriptButtonBlinking.Start();
 		}
 
 		#endregion Initialization

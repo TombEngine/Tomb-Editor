@@ -1,0 +1,57 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework Condition="'$(TargetFramework)' == ''">net8.0-windows</TargetFramework>
+    <LangVersion Condition="'$(LangVersion)' == ''">12</LangVersion>
+    <Configurations Condition="'$(Configurations)' == ''">Debug;Release</Configurations>
+    <Platforms Condition="'$(Platforms)' == ''">x64;x86</Platforms>
+    <Platform Condition="'$(Platform)' == '' or '$(Platform)' == 'Any CPU' or '$(Platform)' == 'AnyCPU'">x64</Platform>
+    <NormalizedPlatform>$(Platform.Replace(' ', ''))</NormalizedPlatform>
+    <NormalizedPlatform Condition="'$(NormalizedPlatform)' == ''">x64</NormalizedPlatform>
+    <UseSharedOutputPath Condition="'$(UseSharedOutputPath)' == ''
+        and '$(MSBuildProjectName)' != 'DarkUI.WPF.Demo'
+        and '$(MSBuildProjectName)' != 'Example'
+        and '$(MSBuildProjectName.EndsWith(`.Tests`))' != 'True'">true</UseSharedOutputPath>
+    <SharedDebugOutputRoot Condition="'$(SharedDebugOutputRoot)' == '' and '$(UseSharedOutputPath)' == 'true'">Build</SharedDebugOutputRoot>
+    <SharedReleaseOutputRoot Condition="'$(SharedReleaseOutputRoot)' == '' and '$(UseSharedOutputPath)' == 'true'">BuildRelease</SharedReleaseOutputRoot>
+    <SharedDebugOutputRoot Condition="'$(UseSharedOutputPath)' == 'true' and '$(MSBuildProjectName)' == 'NgXmlBuilder'">BuildNgXmlBuilder</SharedDebugOutputRoot>
+    <SharedReleaseOutputRoot Condition="'$(UseSharedOutputPath)' == 'true' and '$(MSBuildProjectName)' == 'NgXmlBuilder'">BuildNgXmlBuilderRelease</SharedReleaseOutputRoot>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Version>2.1</Version>
+    <NickelonyIDEKitCoreVersion Condition="'$(NickelonyIDEKitCoreVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitCoreVersion>
+    <NickelonyIDEKitIntelliSenseVersion Condition="'$(NickelonyIDEKitIntelliSenseVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitIntelliSenseVersion>
+    <NickelonyIDEKitWorkspaceVersion Condition="'$(NickelonyIDEKitWorkspaceVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitWorkspaceVersion>
+    <NickelonyIDEKitWorkspaceViewsVersion Condition="'$(NickelonyIDEKitWorkspaceViewsVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitWorkspaceViewsVersion>
+    <NickelonyIDEKitKeyBindingsVersion Condition="'$(NickelonyIDEKitKeyBindingsVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitKeyBindingsVersion>
+    <NickelonyIDEKitKeyBindingsWpfVersion Condition="'$(NickelonyIDEKitKeyBindingsWpfVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitKeyBindingsWpfVersion>
+    <NickelonyIDEKitAvalonEditVersion Condition="'$(NickelonyIDEKitAvalonEditVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitAvalonEditVersion>
+    <NickelonyIDEKitAvalonEditLanguageFeaturesVersion Condition="'$(NickelonyIDEKitAvalonEditLanguageFeaturesVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitAvalonEditLanguageFeaturesVersion>
+    <NickelonyIDEKitAvalonEditMarkdownVersion Condition="'$(NickelonyIDEKitAvalonEditMarkdownVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitAvalonEditMarkdownVersion>
+    <NickelonyIDEKitAvalonEditTextMateVersion Condition="'$(NickelonyIDEKitAvalonEditTextMateVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitAvalonEditTextMateVersion>
+    <NickelonyIDEKitJsonSchemaVersion Condition="'$(NickelonyIDEKitJsonSchemaVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitJsonSchemaVersion>
+    <NickelonyIDEKitProcessesVersion Condition="'$(NickelonyIDEKitProcessesVersion)' == ''">1.0.0-preview.38</NickelonyIDEKitProcessesVersion>
+    <NickelonyLanguageServerVersion Condition="'$(NickelonyLanguageServerVersion)' == ''">1.0.0-preview.38</NickelonyLanguageServerVersion>
+    <Company>Tomb Engine Team</Company>
+    <Copyright>Copyright © Tomb Engine Team 2017 - 2026</Copyright>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug' and '$(UseSharedOutputPath)' == 'true'">
+    <OutputPath>$(MSBuildThisFileDirectory)$(SharedDebugOutputRoot) ($(NormalizedPlatform))\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' and '$(UseSharedOutputPath)' == 'true'">
+    <OutputPath>$(MSBuildThisFileDirectory)$(SharedReleaseOutputRoot) ($(NormalizedPlatform))\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)' == 'x64'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)' == 'x86'">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,34 @@
+{
+	"Sections": {
+		"HtmlColor": "SteelBlue",
+		"IsBold": true,
+		"IsItalic": false
+	},
+	"Values": {
+		"HtmlColor": "LightSalmon",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"References": {
+		"HtmlColor": "Orchid",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"StandardCommands": {
+		"HtmlColor": "MediumAquamarine",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"NewCommands": {
+		"HtmlColor": "SpringGreen",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Comments": {
+		"HtmlColor": "Green",
+		"IsBold": false,
+		"IsItalic": false
+	},
+	"Background": "#202020",
+	"Foreground": "Gainsboro"
+}

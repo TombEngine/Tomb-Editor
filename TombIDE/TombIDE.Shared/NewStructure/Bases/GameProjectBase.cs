@@ -26,6 +26,7 @@ namespace TombIDE.Shared.NewStructure
 		public abstract string GetDefaultGameLanguageFilePath();
 
 		public abstract string GetScriptRootDirectory();
+
 		public abstract void SetScriptRootDirectory(string newDirectoryPath);
 
 		#endregion Abstract region

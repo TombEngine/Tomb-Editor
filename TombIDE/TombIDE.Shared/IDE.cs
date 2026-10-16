@@ -1,6 +1,11 @@
-﻿using System;
+﻿#nullable enable
+
+using CommunityToolkit.Mvvm.Messaging;
+using System;
 using System.Collections.Generic;
 using System.Threading;
+using TombIDE.Shared.Messaging;
+using TombIDE.Shared.Messaging.Scripting;
 using TombIDE.Shared.NewStructure;
 using TombIDE.Shared.SharedClasses;
 
@@ -11,6 +16,9 @@ namespace TombIDE.Shared
 
 	public class IDE : IDisposable
 	{
+		private readonly IMessenger? _messenger;
+		private readonly IUiDispatcherService? _uiDispatcherService;
+
 		/* Initialization */
 
 		public event Action<IIDEEvent> IDEEventRaised;
@@ -64,6 +72,16 @@ namespace TombIDE.Shared
 		/// </summary>
 		public bool CanClose()
 		{
+			ScriptingCanCloseRequestMessage? request = TrySendRequest(static messenger =>
+			{
+				var request = new ScriptingCanCloseRequestMessage();
+				messenger.Send(request);
+				return request;
+			});
+
+			if (request?.HasReceivedResponse == true)
+				return request.Response;
+
 			ProgramClosingEvent closingEvent = new ProgramClosingEvent();
 
 			RaiseEvent(closingEvent);
@@ -72,7 +90,12 @@ namespace TombIDE.Shared
 		}
 
 		public void RequestProgramClose()
-			=> RaiseEvent(new RequestProgramCloseEvent());
+		{
+			if (TryPublish(static messenger => messenger.Send(new ScriptingRequestCloseMessage())))
+				return;
+
+			RaiseEvent(new RequestProgramCloseEvent());
+		}
 
 		#endregion ProgramClosing
 
@@ -168,8 +191,11 @@ namespace TombIDE.Shared
 		/// <summary>
 		/// Sends a request to the Script Editor to append new lines of code at the end of the main script file.
 		/// </summary>
-		public void ScriptEditor_AppendScript(ScriptGenerationResult result) =>
+		public void ScriptEditor_AppendScript(ScriptGenerationResult result)
+		{
+			Publish(static (messenger, payload) => messenger.Send(new ScriptingAppendScriptRequestedMessage(payload)), result);
 			RaiseEvent(new ScriptEditor_AppendScriptEvent { Result = result });
+		}
 
 		#endregion ScriptEditor_AppendScript
 
@@ -180,8 +206,11 @@ namespace TombIDE.Shared
 			public string LevelName { get; internal set; }
 		}
 
-		public void ScriptEditor_AddNewLevelString(string levelName) =>
+		public void ScriptEditor_AddNewLevelString(string levelName)
+		{
+			Publish(static (messenger, payload) => messenger.Send(new ScriptingAddLevelStringRequestedMessage(payload ?? string.Empty)), levelName);
 			RaiseEvent(new ScriptEditor_AddNewLevelStringEvent { LevelName = levelName });
+		}
 
 		#endregion ScriptEditor_AddNewLevelString
 
@@ -192,8 +221,11 @@ namespace TombIDE.Shared
 			public string PluginString { get; internal set; }
 		}
 
-		public void ScriptEditor_AddNewPluginEntry(string pluginString) =>
+		public void ScriptEditor_AddNewPluginEntry(string pluginString)
+		{
+			Publish(static (messenger, payload) => messenger.Send(new ScriptingAddPluginEntryRequestedMessage(payload ?? string.Empty)), pluginString);
 			RaiseEvent(new ScriptEditor_AddNewPluginEntryEvent { PluginString = pluginString });
+		}
 
 		#endregion ScriptEditor_AddNewPluginEntry
 
@@ -208,8 +240,11 @@ namespace TombIDE.Shared
 		/// Sends a request to the Script Editor to add a new ExtraNG string at the end of the main {LANGUAGE}.txt file.
 		/// <para>Note: It automatically adds index prefixes, like "0: {STRING}", "1: {STRING}" etc.</para>
 		/// </summary>
-		public void ScriptEditor_AddNewNGString(string ngString) =>
+		public void ScriptEditor_AddNewNGString(string ngString)
+		{
+			Publish(static (messenger, payload) => messenger.Send(new ScriptingAddNgStringRequestedMessage(payload ?? string.Empty)), ngString);
 			RaiseEvent(new ScriptEditor_AddNewNGStringEvent { NGString = ngString });
+		}
 
 		#endregion ScriptEditor_AddNewNGString
 
@@ -218,8 +253,13 @@ namespace TombIDE.Shared
 		public class ScriptEditor_ContentChangedEvent : IIDEEvent
 		{ }
 
-		public void ScriptEditor_IndicateExternalChange() =>
+		public void ScriptEditor_IndicateExternalChange()
+		{
+			if (TryPublish(static messenger => messenger.Send(new ScriptingExternalContentChangedMessage())))
+				return;
+
 			RaiseEvent(new ScriptEditor_ContentChangedEvent());
+		}
 
 		#endregion ScriptEditor_ContentChanged
 
@@ -232,6 +272,16 @@ namespace TombIDE.Shared
 
 		public bool ScriptEditor_IsScriptDefined(string levelName)
 		{
+			ScriptingIsScriptDefinedRequestMessage? request = TrySendRequest(messenger =>
+			{
+				var request = new ScriptingIsScriptDefinedRequestMessage(levelName ?? string.Empty);
+				messenger.Send(request);
+				return request;
+			});
+
+			if (request?.HasReceivedResponse == true)
+				return request.Response;
+
 			RaiseEvent(new ScriptEditor_ScriptPresenceCheckEvent { LevelName = levelName });
 			return ScriptDefined;
 		}
@@ -243,6 +293,16 @@ namespace TombIDE.Shared
 
 		public bool ScriptEditor_IsStringDefined(string @string)
 		{
+			ScriptingIsStringDefinedRequestMessage? request = TrySendRequest(messenger =>
+			{
+				var request = new ScriptingIsStringDefinedRequestMessage(@string ?? string.Empty);
+				messenger.Send(request);
+				return request;
+			});
+
+			if (request?.HasReceivedResponse == true)
+				return request.Response;
+
 			RaiseEvent(new ScriptEditor_StringPresenceCheckEvent { String = @string });
 			return StringDefined;
 		}
@@ -260,8 +320,11 @@ namespace TombIDE.Shared
 			public string NewName { get; internal set; }
 		}
 
-		public void ScriptEditor_RenameLevel(string targetLevelName, string newName) =>
+		public void ScriptEditor_RenameLevel(string targetLevelName, string newName)
+		{
+			Publish(static (messenger, payload) => messenger.Send(new ScriptingRenameLevelRequestedMessage(payload.OldName ?? string.Empty, payload.NewName ?? string.Empty)), (OldName: targetLevelName, NewName: newName));
 			RaiseEvent(new ScriptEditor_RenameLevelEvent { OldName = targetLevelName, NewName = newName });
+		}
 
 		#endregion ScriptEditor_RenameLevel
 
@@ -270,17 +333,104 @@ namespace TombIDE.Shared
 		public class ScriptEditor_ReloadSyntaxHighlightingEvent : IIDEEvent
 		{ }
 
+		public void ScriptEditor_ReloadSyntaxHighlighting()
+		{
+			Publish(static messenger => messenger.Send(new ScriptingReloadSyntaxHighlightingRequestedMessage()));
+			RaiseEvent(new ScriptEditor_ReloadSyntaxHighlightingEvent());
+		}
+
 		#endregion ScriptEditor_ReloadSyntaxHighlighting
 
 		// Construction and destruction
-		public IDE(IDEConfiguration ideConfiguration, List<IGameProject> availableProjects)
+		public IDE(
+			IDEConfiguration ideConfiguration,
+			List<IGameProject> availableProjects,
+			IMessenger? messenger = null,
+			IUiDispatcherService? uiDispatcherService = null)
 		{
 			IDEConfiguration = ideConfiguration;
 			AvailableProjects = availableProjects;
+			_messenger = messenger;
+			_uiDispatcherService = uiDispatcherService;
 		}
 
 		public void Dispose()
 		{ }
+
+		private static void InvokeAction(Action action)
+		{
+			ArgumentNullException.ThrowIfNull(action);
+			action();
+		}
+
+		private void Publish(Action<IMessenger> publishAction)
+		{
+			ArgumentNullException.ThrowIfNull(publishAction);
+
+			if (_messenger is null)
+				return;
+
+			InvokeOnUiThread(() => publishAction(_messenger));
+		}
+
+		private void Publish<TPayload>(Action<IMessenger, TPayload> publishAction, TPayload payload)
+		{
+			ArgumentNullException.ThrowIfNull(publishAction);
+
+			if (_messenger is null)
+				return;
+
+			InvokeOnUiThread(() => publishAction(_messenger, payload));
+		}
+
+		private bool TryPublish(Action<IMessenger> publishAction)
+		{
+			if (_messenger is null)
+				return false;
+
+			Publish(publishAction);
+			return true;
+		}
+
+		private TResult? TrySendRequest<TResult>(Func<IMessenger, TResult> sendAction)
+			where TResult : class
+		{
+			ArgumentNullException.ThrowIfNull(sendAction);
+
+			if (_messenger is null)
+				return null;
+
+			return InvokeOnUiThread(() => sendAction(_messenger));
+		}
+
+		private T InvokeOnUiThread<T>(Func<T> action)
+		{
+			ArgumentNullException.ThrowIfNull(action);
+
+			if (_uiDispatcherService is null || _uiDispatcherService.CheckAccess())
+				return action();
+
+			(bool HasResult, T Result) state = default;
+			_uiDispatcherService.Invoke(() => state = (true, action()));
+
+			if (!state.HasResult)
+				throw new InvalidOperationException("The UI dispatcher did not return a result.");
+
+			return state.Result;
+		}
+
+		private void InvokeOnUiThread(Action action)
+		{
+			ArgumentNullException.ThrowIfNull(action);
+
+			if (_uiDispatcherService is null || _uiDispatcherService.CheckAccess())
+			{
+				action();
+				return;
+			}
+
+			_uiDispatcherService.Invoke(action);
+		}
 
 		public static IDE Instance;
 	}

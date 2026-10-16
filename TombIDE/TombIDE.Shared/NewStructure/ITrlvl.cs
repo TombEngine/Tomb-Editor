@@ -3,6 +3,7 @@
 	public interface ITrlvl
 	{
 		string FileFormatVersion { get; }
+
 		void WriteToFile(string filePath);
 	}
 }
