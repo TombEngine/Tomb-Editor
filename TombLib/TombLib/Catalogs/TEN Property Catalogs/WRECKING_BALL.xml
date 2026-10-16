@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<propertyCatalog>
+	<moveable id="WRECKING_BALL">
+		<!-- Trap core parameters -->
+		<property
+			internalName="Damage"
+			displayName="Harm damage"
+			type="Int"
+			defaultValue="96"
+			minValue="0"
+			maxValue="1000"
+			category="Trap parameters"
+			description="Damage dealt to Lara when the ball hits her."
+		/>
+		<property
+			internalName="MovementSpeed"
+			displayName="Movement Speed"
+			type="Int"
+			defaultValue="32"
+			minValue="1"
+			maxValue="256"
+			category="Trap parameters"
+			description="Horizontal travel speed of the ball along the ceiling rail, in world units per frame."
+		/>
+		<property
+			internalName="SearchRadius"
+			displayName="Search Radius"
+			type="Int"
+			defaultValue="16"
+			minValue="0"
+			maxValue="64"
+			category="Trap parameters"
+			description="Maximum distance in sectors the ball will travel to seek Lara. Set to 0 for an unlimited search range."
+		/>
+
+		<!-- Shatterable statics -->
+		<property
+			internalName="DropDelay"
+			displayName="Drop Delay"
+			type="Float"
+			defaultValue="1.0"
+			minValue="0.0"
+			maxValue="5.0"
+			category="Trap parameters"
+			description="Seconds the ball hangs over its target before dropping. Set to 0 to drop immediately."
+		/>
+		<property
+			internalName="DropSpeed"
+			displayName="Drop Speed"
+			type="Float"
+			defaultValue="1.0"
+			minValue="0.25"
+			maxValue="3.0"
+			category="Trap parameters"
+			description="Multiplier for how fast the ball falls. Higher values slam down faster."
+		/>
+		<property
+			internalName="ShatterStatics"
+			displayName="Shatter Statics"
+			type="Bool"
+			defaultValue="true"
+			category="Trap parameters"
+			description="Whether the falling ball shatters statics flagged as shatterable on impact."
+		/>
+		<property
+			internalName="KillEnemies"
+			displayName="Kill Enemies"
+			type="Bool"
+			defaultValue="true"
+			category="Trap parameters"
+			description="Whether the falling ball crushes enemies caught beneath it on impact."
+		/>
+
+		<!-- Roaming behavior -->
+		<property
+			internalName="RoamDelay"
+			displayName="Roam Delay"
+			type="Float"
+			defaultValue="1.0"
+			minValue="0.0"
+			maxValue="10.0"
+			category="Roaming"
+			description="Seconds to wait after Lara leaves the reachable area before the ball starts roaming. Set to 0 to roam immediately."
+		/>
+		<property
+			internalName="RoamPauseMin"
+			displayName="Minimum Pause"
+			type="Float"
+			defaultValue="0.5"
+			minValue="0.0"
+			maxValue="5.0"
+			category="Roaming"
+			description="Minimum pause in seconds between roam waypoints."
+		/>
+		<property
+			internalName="RoamPauseMax"
+			displayName="Maximum Pause"
+			type="Float"
+			defaultValue="1.5"
+			minValue="0.0"
+			maxValue="10.0"
+			category="Roaming"
+			description="Maximum pause in seconds between roam waypoints."
+		/>
+
+		<!-- Downward warning spotlight -->
+		<property
+			internalName="DownwardLightEnabled"
+			displayName="Enabled"
+			type="Bool"
+			defaultValue="true"
+			category="Downward Spotlight"
+			description="Toggles the static downward spotlight that warns of the pending drop."
+		/>
+		<property
+			internalName="DownwardLightColor"
+			displayName="Light Color"
+			type="Color"
+			defaultValue="TEN.Color(128, 128, 128)"
+			category="Downward Spotlight"
+			description="Color of the downward warning spotlight."
+		/>
+		<property
+			internalName="DownwardLightIntensity"
+			displayName="Intensity"
+			type="Float"
+			defaultValue="5.0"
+			minValue="0.0"
+			maxValue="20.0"
+			category="Downward Spotlight"
+			description="Brightness of the downward warning spotlight."
+		/>
+		<property
+			internalName="DownwardLightRadius"
+			displayName="Cone Radius"
+			type="Float"
+			defaultValue="0.0"
+			minValue="0.0"
+			maxValue="32.0"
+			category="Downward Spotlight"
+			description="Radius of the light cone, in blocks. Leave 0 for automatic scaling to the distance to the floor."
+		/>
+		<property
+			internalName="DownwardLightDistance"
+			displayName="Light Distance"
+			type="Float"
+			defaultValue="0.0"
+			minValue="0.0"
+			maxValue="64.0"
+			category="Downward Spotlight"
+			description="Reach of the spotlight, in blocks. Leave 0 for automatic scaling to the floor below the ball."
+		/>
+
+		<!-- Rotating alarm spotlight -->
+		<property
+			internalName="AlarmLightEnabled"
+			displayName="Enabled"
+			type="Bool"
+			defaultValue="true"
+			category="Alarm Spotlight"
+			description="Toggles the rotating red alarm spotlight."
+		/>
+		<property
+			internalName="AlarmLightColor"
+			displayName="Light Color"
+			type="Color"
+			defaultValue="TEN.Color(255, 0, 0)"
+			category="Alarm Spotlight"
+			description="Color of the rotating alarm spotlight."
+		/>
+		<property
+			internalName="AlarmLightIntensity"
+			displayName="Intensity"
+			type="Float"
+			defaultValue="2.0"
+			minValue="0.0"
+			maxValue="20.0"
+			category="Alarm Spotlight"
+			description="Brightness of the rotating alarm spotlight."
+		/>
+		<property
+			internalName="AlarmLightRadius"
+			displayName="Cone Radius"
+			type="Float"
+			defaultValue="0.0"
+			minValue="0.0"
+			maxValue="32.0"
+			category="Alarm Spotlight"
+			description="Radius of the light cone, in blocks. Leave 0 for automatic scaling to room size."
+		/>
+		<property
+			internalName="AlarmLightDistance"
+			displayName="Light Distance"
+			type="Float"
+			defaultValue="0.0"
+			minValue="0.0"
+			maxValue="64.0"
+			category="Alarm Spotlight"
+			description="Reach of the spotlight, in blocks. Leave 0 for automatic scaling to room size."
+		/>
+		<property
+			internalName="AlarmLightRotationSpeed"
+			displayName="Rotation Speed"
+			type="Float"
+			defaultValue="0.7"
+			minValue="0.0"
+			maxValue="10.0"
+			category="Alarm Spotlight"
+			description="Rotation speed of the alarm spotlight, in radians per frame."
+		/>
+		<property
+			internalName="AlarmLightBlinkSpeed"
+			displayName="Blink Speed"
+			type="Float"
+			defaultValue="1.0"
+			minValue="0.1"
+			maxValue="10.0"
+			category="Alarm Spotlight"
+			description="Multiplier for the alarm spotlight blink rate. Higher values blink faster."
+		/>
+	</moveable>
+</propertyCatalog>
