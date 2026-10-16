@@ -19,6 +19,7 @@ Tomb Editor:
  * Added support for flyby cameras in TRX.
  * Added support for specifying moveable instance names in TRX.
  * Added support for moveable item properties in TRX levels; refer to LostArtefacts documentation.
+ * Added optional support for multiple flipmaps in TRX levels (Level Settings > TRX > Enable multiple flipmaps).
  * Added level compilation warning for TEN targets if multiple Lara objects are placed in the level.
  * Added drag and drop support for cameras and sinks into the Node Editor.
  * Fixed "Map animated textures" checkbox not unchecking in Level Settings dialog.
@@ -36,8 +37,8 @@ WadTool:
  * Fixed exception when trying to open an object without meshes in the mesh editor.
 
 TombIDE:
- * Added TR3X support and engine preset (1.9.3).
- * Updated TR1X and TR2X presets to TRX 1.9.3.
+ * Added TR3X support and engine preset (1.11.1).
+ * Updated TR1X and TR2X presets to TRX 1.11.1.
 
 TEN nodes:
  * Added a node to unswap a previously swapped mesh.

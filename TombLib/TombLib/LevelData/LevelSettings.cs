@@ -233,6 +233,7 @@ namespace TombLib.LevelData
         // For TRX only
         public TrxTextureBitDepth TrxTextureBitDepth { get; set; } = TrxTextureBitDepth.Default;
         public bool TrxConvertFlybysToCinematicFrames { get; set; } = false;
+        public bool TrxUseAlternateGroups { get; set; } = false;
 
         public LevelSettings Clone()
         {
