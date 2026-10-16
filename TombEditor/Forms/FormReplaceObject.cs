@@ -237,13 +237,13 @@ namespace TombEditor.Forms
 
             // FIXME: These combo boxes should automatically enable or disable based on existence of secondary attrib,
             // but we have complications with light type (thanks TRTomb) and static type (thanks Paolone).
-            // Both search / replacement type is disabled for statics in all game versions except TRNG as statics have OCBs there.
+            // Both search / replacement type is disabled for statics in all game engines except NG-based ones as statics have OCBs there.
             // Sinks and sound sources have no additional parameters, therefore we block search type choice.
             cmbSearchType.Enabled  = !(Source == null ||
                                        Source is SinkInstance ||
                                        Source is SpriteInstance ||
                                        Source is SoundSourceInstance ||
-                                       Source is StaticInstance && _editor.Level.Settings.GameVersion != TRVersion.Game.TRNG);
+                                       Source is StaticInstance && !_editor.Level.Settings.GameVersion.IsNG());
 
             // Additionally, light type can't be changed in runtime (thanks TRTomb?), so we block it as well for replace type choice.
             cmbReplaceType.Enabled = !(Source == null ||
@@ -251,7 +251,7 @@ namespace TombEditor.Forms
                                        Source is SpriteInstance ||
                                        Source is SoundSourceInstance ||
                                        Source is LightInstance ||
-                                       Source is StaticInstance && _editor.Level.Settings.GameVersion != TRVersion.Game.TRNG);
+                                       Source is StaticInstance && !_editor.Level.Settings.GameVersion.IsNG());
 
             // Indicate source / dest light colour, if object type is light.
 

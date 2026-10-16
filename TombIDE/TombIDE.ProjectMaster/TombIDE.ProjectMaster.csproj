@@ -107,6 +107,7 @@
     <Content Include="Resources\TR3_LVL.png" />
     <Content Include="Resources\TR4_LVL.png" />
     <Content Include="Resources\TRNG_LVL.png" />
+    <Content Include="Resources\TRNGCE_LVL.png" />
     <Content Include="Resources\wad_file.ico" />
   </ItemGroup>
   <ItemGroup>

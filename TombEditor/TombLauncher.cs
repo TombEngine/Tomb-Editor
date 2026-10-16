@@ -55,7 +55,7 @@ namespace TombEditor
                         {
                             try
                             {
-                                Tomb4ConvinienceImprovements.Do(process2, info.WorkingDirectory, levelPath, settings.GameVersion == TRVersion.Game.TRNG);
+                                Tomb4ConvinienceImprovements.Do(process2, info.WorkingDirectory, levelPath, settings.GameVersion.IsNG());
                             }
                             catch (Exception exc)
                             {
