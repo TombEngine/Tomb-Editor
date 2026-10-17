@@ -68,9 +68,6 @@ namespace TombLib.LevelData.Compilers
             _limits = new Dictionary<Limit, int>();
             foreach (Limit limit in Enum.GetValues(typeof(Limit)))
                 _limits.Add(limit, TrCatalog.GetLimit(level.Settings.GameVersion, limit));
-
-            if (level.IsTRX)
-                _limits[Limit.OverlapLimit] = _trxOverlapLimit;
         }
 
         public override CompilerStatistics CompileLevel(CancellationToken cancelToken)

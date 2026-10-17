@@ -18,7 +18,6 @@ public partial class LevelCompilerClassicTR
     private const int _maxSamples = 1000;
     private const int _maxLuaNameLength = 4096;
     private const int _legacyOverlapIndexMask = 0x3FFF;
-    private const int _trxOverlapLimit = 0x40000000;
 
     private void WriteLevelTrx()
     {
