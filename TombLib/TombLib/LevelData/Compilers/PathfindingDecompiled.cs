@@ -13,7 +13,7 @@ namespace TombLib.LevelData.Compilers
         public int Xmin;
         public int Xmax;
         public short TrueFloor;
-        public short OverlapIndex;
+        public int OverlapIndex;
         public bool IsolatedBox;
         public bool NotWalkableBox;
         public bool Monkey;
@@ -117,11 +117,17 @@ namespace TombLib.LevelData.Compilers
             Console.WriteLine("Dec_BuildBoxesAndOverlaps() -> Build overlaps: " + watch.ElapsedMilliseconds + " ms, Count = " + dec_numOverlaps);
         }
 
+        private void Dec_ReserveOverlap()
+        {
+            if (dec_numOverlaps == dec_overlaps.Length)
+                Array.Resize(ref dec_overlaps, Math.Min(dec_overlaps.Length * 2, _limits[Limit.OverlapLimit]));
+        }
+
         private bool Dec_BuildOverlaps()
         {
             dec_numOverlaps = 0;
-            dec_overlaps = new ushort[_limits[Limit.OverlapLimit]];
-            var noOverlap = (short)(_limits[Limit.OverlapLimit] - 1);
+            dec_overlaps = new ushort[Math.Min(_limits[Limit.OverlapLimit], 0x4000)];
+            var noOverlap = _limits[Limit.OverlapLimit] - 1;
 
             int i = 0;
             int j = 0;
@@ -169,8 +175,9 @@ namespace TombLib.LevelData.Compilers
                                 if (Dec_BoxesOverlap(ref box1, ref box2))
                                 {
                                     if (dec_numOverlaps >= (_limits[Limit.OverlapLimit] - 2)) return false;
-                                    if (dec_boxes[i].OverlapIndex == noOverlap) dec_boxes[i].OverlapIndex = (short)dec_numOverlaps;
+                                    if (dec_boxes[i].OverlapIndex == noOverlap) dec_boxes[i].OverlapIndex = dec_numOverlaps;
 
+                                    Dec_ReserveOverlap();
                                     dec_overlaps[dec_numOverlaps] = (ushort)j;
 
                                     if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR4 && dec_jump)
@@ -210,8 +217,9 @@ namespace TombLib.LevelData.Compilers
                                     if (Dec_BoxesOverlap(ref box1, ref box2))
                                     {
                                         if (dec_numOverlaps >= (_limits[Limit.OverlapLimit] - 2)) return false;
-                                        if (dec_boxes[i].OverlapIndex == noOverlap) dec_boxes[i].OverlapIndex = (short)dec_numOverlaps;
+                                        if (dec_boxes[i].OverlapIndex == noOverlap) dec_boxes[i].OverlapIndex = dec_numOverlaps;
 
+                                        Dec_ReserveOverlap();
                                         dec_overlaps[dec_numOverlaps] = (ushort)j;
 
                                         if (_level.Settings.GameVersion.Native() >= TRVersion.Game.TR4 && dec_jump)
@@ -266,7 +274,7 @@ namespace TombLib.LevelData.Compilers
             if (boxIndex == -1)
             {
                 boxIndex = dec_numBoxes;
-                box.OverlapIndex = (short)(_limits[Limit.OverlapLimit] - 1);
+                box.OverlapIndex = _limits[Limit.OverlapLimit] - 1;
                 dec_boxes[dec_numBoxes] = box;
                 dec_numBoxes++;
             }

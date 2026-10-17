@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<limits>
+    <limit name="OverlapLimit" value="1073741824" />
+</limits>
