@@ -1563,7 +1563,7 @@ namespace TombEditor
 
         // Construction
         public SynchronizationContext SynchronizationContext { get; }
-        public RenderingDevice RenderingDevice = TombLib.Graphics.DeviceManager.DefaultDeviceManager.Device;
+        public RenderingDevice RenderingDevice => TombLib.Graphics.DeviceManager.DefaultDeviceManager.Device;
 
         public Editor(SynchronizationContext synchronizationContext, Configuration configuration, Level level)
         {
