@@ -1,6 +1,6 @@
 using System.Numerics;
-using System.Reflection;
 using TombLib.LevelData;
+using TombLib.LevelData.SectorEnums;
 
 namespace TombLib.Test;
 
@@ -100,21 +100,48 @@ public class RoomLightingInvalidationTests
         Assert.IsFalse(room.PendingRelight);
     }
 
+    // The "Override individual settings" checkbox in Level Settings has been hidden since 2021
+    // because the code behind it went missing, but the flag is still saved in PRJ2 files,
+    // so old projects can be stuck with it enabled. Lighting must keep ignoring it,
+    // otherwise those levels would silently change in the editor and in the compiled output.
+    // Update this test if the feature is ever implemented properly and its checkbox restored.
     [TestMethod]
-    public void OverrideIndividualLightQualityUsesDefaultQuality()
+    public void OverrideIndividualLightQualityDoesNotAffectLighting()
     {
+        var level = Level.CreateSimpleLevel();
+        var room = level.Rooms[0];
+
+        // A wall slab next to the light creates soft shadow edges, where the number of samples changes the result.
+        for (int x = 12; x < 14; x++)
+            for (int z = 8; z < 12; z++)
+                room.Sectors[x, z].Type = SectorType.Wall;
+
         var light = new LightInstance(LightType.Point)
         {
+            Position = new Vector3(9728.0f, 1536.0f, 10240.0f),
             Quality = LightQuality.High
         };
 
-        var getLightSampleCount = typeof(RoomGeometry).GetMethod("GetLightSampleCount", BindingFlags.NonPublic | BindingFlags.Static);
-        Assert.IsNotNull(getLightSampleCount);
+        level.Settings.DefaultLightQuality = LightQuality.Low;
 
-        var explicitQualitySampleCount = (int)getLightSampleCount!.Invoke(null, [light, LightQuality.Low, false])!;
-        var overriddenQualitySampleCount = (int)getLightSampleCount.Invoke(null, [light, LightQuality.Low, true])!;
+        var isSceneSensitiveToQuality = false;
 
-        Assert.AreEqual(5, explicitQualitySampleCount);
-        Assert.AreEqual(1, overriddenQualitySampleCount);
+        for (float x = 0.0f; x < 20480.0f; x += 256.0f)
+            for (float z = 0.0f; z < 20480.0f; z += 256.0f)
+            {
+                var position = new Vector3(x, 0.0f, z);
+
+                level.Settings.OverrideIndividualLightQualitySettings = false;
+                var individualQuality = RoomGeometry.GetRaytraceResult(room, light, position, highQuality: true);
+                var singleSample = RoomGeometry.GetRaytraceResult(room, light, position, highQuality: false);
+
+                level.Settings.OverrideIndividualLightQualitySettings = true;
+                var overriddenQuality = RoomGeometry.GetRaytraceResult(room, light, position, highQuality: true);
+
+                Assert.AreEqual(individualQuality, overriddenQuality, $"Override changed the result at {position}.");
+                isSceneSensitiveToQuality |= individualQuality != singleSample;
+            }
+
+        Assert.IsTrue(isSceneSensitiveToQuality, "The test scene must produce different results for different sample counts.");
     }
 }
