@@ -61,6 +61,9 @@ namespace TombEditor
         private static List<CommandObj> _commands = new List<CommandObj>();
         public static IEnumerable<CommandObj> Commands => _commands;
 
+        // Hotkeys that stay active while camera preview is on: leaving the preview, history navigation and saving.
+        private static readonly string[] CameraPreviewHotkeyCommands = { "PreviewCamera", "Undo", "Redo", "SaveLevel", "SaveLevelAs" };
+
         public static CommandObj GetCommand(string name)
         {
             CommandObj command = _commands.FirstOrDefault(cmd => cmd.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
@@ -69,24 +72,15 @@ namespace TombEditor
             return command;
         }
 
-        public static bool ExecuteHotkey(CommandArgs args)
+        public static void ExecuteHotkey(CommandArgs args)
         {
-            bool executed = false;
             var hotkeyForCommands = args.Editor.Configuration.UI_Hotkeys.Where(set => set.Value.Contains(args.KeyData));
-
             foreach (var hotkeyForCommand in hotkeyForCommands)
-            {
-                var command = GetCommand(hotkeyForCommand.Key);
-
-                if (command.Execute is null)
-                    continue;
-
-                command.Execute.Invoke(args);
-                executed = true;
-            }
-
-            return executed;
+                GetCommand(hotkeyForCommand.Key).Execute?.Invoke(args);
         }
+
+        public static bool IsHotkeyAllowedInCameraPreview(HotkeySets hotkeys, Keys keyData)
+            => CameraPreviewHotkeyCommands.Any(command => hotkeys[command].Contains(keyData));
 
         public static void AssignCommandsToControls(Editor editor, Control parent, ToolTip toolTip = null, bool onlyToolTips = false)
         {
