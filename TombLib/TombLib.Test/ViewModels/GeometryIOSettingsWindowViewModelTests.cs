@@ -215,7 +215,8 @@ public class GeometryIOSettingsWindowViewModelTests
 		// Arrange
 		var animationSettings = new IOGeometryInternalSettings
 		{
-			ProcessAnimations = true
+			ProcessAnimations = true,
+			ProcessGeometry = false
 		};
 
 		var viewModel = CreateViewModel(internalSettings: animationSettings);

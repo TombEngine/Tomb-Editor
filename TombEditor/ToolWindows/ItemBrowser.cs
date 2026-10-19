@@ -14,6 +14,7 @@ namespace TombEditor.ToolWindows
     {
         private readonly Editor _editor;
         private bool _suppressEditorSync = false;
+        private bool _hideInternalObjects;
 
         public ItemBrowser()
         {
@@ -42,11 +43,18 @@ namespace TombEditor.ToolWindows
 
         private void EditorEventRaised(IEditorEvent obj)
         {
+            // Rebuilding the items list is expensive, so a configuration change (e.g. any view toggle) only
+            // rebuilds it when the option that feeds the list has changed.
+            bool hideInternalObjectsChanged = obj is Editor.ConfigurationChangedEvent &&
+                                              _editor.Configuration.RenderingItem_HideInternalObjects != _hideInternalObjects;
+
             // Update available items combo box
             if (obj is Editor.LoadedWadsChangedEvent ||
                 obj is Editor.GameVersionChangedEvent ||
-                obj is Editor.ConfigurationChangedEvent)
+                hideInternalObjectsChanged)
             {
+                _hideInternalObjects = _editor.Configuration.RenderingItem_HideInternalObjects;
+
                 var allMoveables = _editor.Level.Settings.WadGetAllMoveables();
                 var allStatics   = _editor.Level.Settings.WadGetAllStatics();
 
@@ -111,7 +119,7 @@ namespace TombEditor.ToolWindows
                 obj is Editor.GameVersionChangedEvent ||
                 obj is Editor.LevelChangedEvent ||
                 obj is Editor.LoadedWadsChangedEvent ||
-                obj is Editor.ConfigurationChangedEvent)
+                hideInternalObjectsChanged)
                 FindLaraSkin();
 
             // Update tooltip texts

@@ -45,6 +45,7 @@ namespace TombLib.LevelData.IO
         /**/public static readonly ChunkId TextureCompression = ChunkId.FromString("TeTextureCompression");
         /**/public static readonly ChunkId TrxTextureBitDepth = ChunkId.FromString("TeTrxTextureDepth");
         /**/public static readonly ChunkId TrxConvertFlybysToCinematicFrames = ChunkId.FromString("TeTrxConvertFlybysToCinematicFrames");
+        /**/public static readonly ChunkId TrxUseAlternateGroups = ChunkId.FromString("TeTrxUseAlternateGroups");
         /**/public static readonly ChunkId AgressiveTexturePacking = ChunkId.FromString("TeAgressiveTexturePacking");
         /**/public static readonly ChunkId AgressiveFloordataPacking = ChunkId.FromString("TeAgressiveFloordataPacking");
         /**/public static readonly ChunkId RemapAnimatedTextures = ChunkId.FromString("TeRemapAnimTextures");
