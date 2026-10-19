@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using TombEditor.Controls.FlybyTimeline.Sequence;
 using TombEditor.Forms;
 using TombLib;
 using TombLib.Controls;
@@ -1183,8 +1184,9 @@ namespace TombEditor
             }
             else if (instance is FlybyCameraInstance flybyCamera)
             {
-                var undoInstance = new ChangeObjectPropertyUndoInstance(_editor.UndoManager, flybyCamera);
-                bool hasChanges = false;
+                var undoInstances = FlybySequenceHelper.GetCameras(_editor.Level, flybyCamera.Sequence)
+                    .ToDictionary(camera => camera, camera => new ChangeObjectPropertyUndoInstance(_editor.UndoManager, camera));
+                IReadOnlyList<FlybyCameraInstance> changedCameras = Array.Empty<FlybyCameraInstance>();
 
                 using (var formFlyby = GetObjectSetupWindow(flybyCamera) as FormFlybyCamera)
                 {
@@ -1194,14 +1196,16 @@ namespace TombEditor
                     if (formFlyby.ShowDialog(owner) != DialogResult.OK)
                         return;
 
-                    hasChanges = formFlyby.HasChanges;
+                    changedCameras = formFlyby.ChangedCameras;
 
                     if (formFlyby.HasChanges)
-                        _editor.UndoManager.Push(undoInstance);
+                        _editor.UndoManager.Push(changedCameras
+                            .Select(camera => (UndoRedoInstance)undoInstances[camera])
+                            .ToList());
                 }
 
-                if (hasChanges)
-                    _editor.ObjectChange(instance, ObjectChangeType.Change);
+                foreach (var changedCamera in changedCameras)
+                    _editor.ObjectChange(changedCamera, ObjectChangeType.Change);
             }
             else if (instance is CameraInstance)
             {
