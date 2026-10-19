@@ -1070,7 +1070,7 @@ namespace TombEditor
         {
             return (instance is ObjectGroup group
                 ? group.OfType<LightInstance>().Select(light => light.Room)
-                : instance is LightInstance ? [instance.Room] : [])
+                : (instance is LightInstance) ? [instance.Room] : [])
                 .Distinct();
         }
 
