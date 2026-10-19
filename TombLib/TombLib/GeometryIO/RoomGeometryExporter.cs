@@ -133,15 +133,13 @@ namespace TombLib.GeometryIO
                             var page = new SplitPageReference(tex, y * numXPages + x, x, y, Path.Combine(Path.GetDirectoryName(filePath), textureFileName));
                             splitPages.Add(page);
 
-                            var matOpaque = new IOMaterial(Material.Material_Opaque + "_" + j + "_" + page.Index, tex, page.Path, false, false, 0, page.Index);
-                            var matOpaqueDoubleSided = new IOMaterial(Material.Material_OpaqueDoubleSided + "_" + j + "_" + page.Index, tex, page.Path, false, true, 0, page.Index);
-                            var matAdditiveBlending = new IOMaterial(Material.Material_AdditiveBlending + "_" + j + "_" + page.Index, tex, page.Path, true, false, 0, page.Index);
-                            var matAdditiveBlendingDoubleSided = new IOMaterial(Material.Material_AdditiveBlendingDoubleSided + "_" + j + "_" + page.Index, tex, page.Path, true, true, 0, page.Index);
-
-                            model.Materials.Add(matOpaque);
-                            model.Materials.Add(matOpaqueDoubleSided);
-                            model.Materials.Add(matAdditiveBlending);
-                            model.Materials.Add(matAdditiveBlendingDoubleSided);
+                            foreach (BlendMode mode in Enum.GetValues(typeof(BlendMode)))
+                            {
+                                var prefix = Material.GetPrefixForBlendMode(mode);
+                                var suffix = j + "_" + page.Index;
+                                model.Materials.Add(new IOMaterial(prefix + "_" + suffix, tex, page.Path, mode, false, 0, page.Index));
+                                model.Materials.Add(new IOMaterial(prefix + Material.DoubleSidedSuffix + "_" + suffix, tex, page.Path, mode, true, 0, page.Index));
+                            }
                         }
                     }
                 }
@@ -250,7 +248,7 @@ namespace TombLib.GeometryIO
                                 }
 
                                 var mat = model.GetMaterial(textureArea1.Texture,
-                                                            textureArea1.BlendMode >= BlendMode.Additive,
+                                                            textureArea1.BlendMode,
                                                             textureAreaPage,
                                                             textureArea1.DoubleSided,
                                                             0);
@@ -295,7 +293,7 @@ namespace TombLib.GeometryIO
                                 mesh.Colors.Add(new Vector4(room.RoomGeometry.VertexColors[i + 2], 1.0f));
 
                                 var mat = model.GetMaterial(textureArea.Texture,
-                                                            textureArea.BlendMode >= BlendMode.Additive,
+                                                            textureArea.BlendMode,
                                                             textureAreaPage,
                                                             textureArea.DoubleSided,
                                                             0);
