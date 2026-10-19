@@ -22,7 +22,7 @@ namespace TombEditor.Forms
                 comboCameraMode.Items.RemoveAt((int)CameraInstanceMode.Sniper);
             if (!_instance.Room.Level.Settings.GameVersion.SupportsLockedCameras())
                 comboCameraMode.Items.RemoveAt((int)CameraInstanceMode.Locked);
-            if (_instance.Room.Level.Settings.GameVersion != TRVersion.Game.TRNG)
+            if (!_instance.Room.Level.Settings.GameVersion.IsNG())
                 ckGlideOut.Enabled = false;
             if (_instance.Room.Level.Settings.GameVersion is TRVersion.Game.TR3
                 or TRVersion.Game.TR4 or TRVersion.Game.TR5)

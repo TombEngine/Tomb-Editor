@@ -265,7 +265,7 @@ namespace TombEditor.Forms
 
         private void AllocateNewScriptIds()
         {
-            if (_level.Settings.GameVersion != TRVersion.Game.TRNG)
+            if (!_level.Settings.GameVersion.IsNG())
                 return;
 
             if (paramTarget.Parameter is IHasScriptID && !(paramTarget.Parameter as IHasScriptID).ScriptId.HasValue)

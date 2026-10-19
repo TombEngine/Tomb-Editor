@@ -30,7 +30,7 @@ namespace TombLib.NG
                 yield return TriggerType.HeavyAntitrigger;
             }
 
-            if (levelSettings.GameVersion == TRVersion.Game.TRNG)
+            if (levelSettings.GameVersion.IsNG())
                 yield return TriggerType.ConditionNg;
             else
             {
@@ -78,7 +78,7 @@ namespace TombLib.NG
                 if (levelSettings.GameVersion.Native() >= TRVersion.Game.TR4
                     || (levelSettings.GameVersion.IsTRX() && !levelSettings.TrxConvertFlybysToCinematicFrames))
                     yield return TriggerTargetType.FlyByCamera;
-                if (levelSettings.GameVersion == TRVersion.Game.TRNG)
+                if (levelSettings.GameVersion.IsNG())
                 {
                     yield return TriggerTargetType.ActionNg;
                     yield return TriggerTargetType.FmvNg;
@@ -143,7 +143,7 @@ namespace TombLib.NG
                             return new NgParameterRange(NgParameterKind.FlybyCamerasInLevel);
 
                         case TriggerTargetType.FlipEffect:
-                            if (levelSettings.GameVersion == TRVersion.Game.TRNG)
+                            if (levelSettings.GameVersion.IsNG())
                             {
                                 if (isTombNextGeneration)
                                     return new NgParameterRange(NgCatalog.Instance.FlipEffectTrigger.MainList.DicSelect(e => (TriggerParameterUshort)e.Value));
@@ -250,7 +250,7 @@ namespace TombLib.NG
         {
             isButtons = false;
 
-            if (levelSettings.GameVersion != TRVersion.Game.TRNG)
+            if (!levelSettings.GameVersion.IsNG())
                 return new NgParameterRange(NgParameterKind.Empty);
 
             string trgFilePath = TryGetTRGFilePath(levelSettings, plugin);

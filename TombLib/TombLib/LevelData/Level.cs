@@ -459,7 +459,7 @@ namespace TombLib.LevelData
             return result;
         }
 
-        public bool IsNG => Settings?.GameVersion == TRVersion.Game.TRNG;
+        public bool IsNG => Settings?.GameVersion.IsNG() ?? false;
 
         public bool IsTombEngine => Settings?.GameVersion == TRVersion.Game.TombEngine;
 
