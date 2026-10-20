@@ -46,6 +46,7 @@ WadTool:
  * Added missing TR2 henchman death sound (ID 838) and appropriate TR2-TEN conversion.
  * Added animation blending with a blend curve editor and preview, and root motion support for TEN target.
  * Added property editor for setting default moveable and static properties in wads.
+ * Fixed incorrect grid scroll preview for certain animations in the animation editor.
  * Fixed exception when trying to open an object without meshes in the mesh editor.
 
 TombIDE:
