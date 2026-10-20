@@ -510,7 +510,7 @@ namespace WadTool
                     cbRootPosX.Checked = node.WadAnimation.RootMotion.TranslationX;
                     cbRootPosY.Checked = node.WadAnimation.RootMotion.TranslationY;
                     cbRootPosZ.Checked = node.WadAnimation.RootMotion.TranslationZ;
-                    cbRootRotationX.Checked = node.WadAnimation.RootMotion.RotationY;
+                    cbRootRotationX.Checked = node.WadAnimation.RootMotion.RotationX;
                     cbRootRotationY.Checked = node.WadAnimation.RootMotion.RotationY;
                     cbRootRotationZ.Checked = node.WadAnimation.RootMotion.RotationZ;
 
