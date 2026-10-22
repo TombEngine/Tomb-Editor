@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace DarkUI.Docking
 {
-    public class DockPanelState : IEquatable<DockPanelState>
+    public class DockPanelState : ICloneable, IEquatable<DockPanelState>
     {
         #region Property Region
 
@@ -18,6 +18,17 @@ namespace DarkUI.Docking
         {
             Regions = new List<DockRegionState>();
         }
+
+        #endregion
+
+        #region Clone Region
+
+        public DockPanelState Clone() => new DockPanelState
+        {
+            Regions = Regions.Select(r => r.Clone()).ToList()
+        };
+
+        object ICloneable.Clone() => Clone();
 
         #endregion
 

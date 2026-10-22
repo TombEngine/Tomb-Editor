@@ -406,10 +406,10 @@ namespace TombLib.Wad
                                                 LEB128.Write(chunkIO.Raw, dispatch.InFrame);
                                                 LEB128.Write(chunkIO.Raw, dispatch.OutFrame);
                                                 LEB128.Write(chunkIO.Raw, dispatch.NextAnimation);
-                                                LEB128.Write(chunkIO.Raw, dispatch.NextFrameLow);
+                                                LEB128.Write(chunkIO.Raw, dispatch.NextLowFrame);
 
-                                                LEB128.Write(chunkIO.Raw, dispatch.NextFrameHigh);
-                                                LEB128.Write(chunkIO.Raw, dispatch.BlendFrameCount);
+                                                LEB128.Write(chunkIO.Raw, dispatch.NextHighFrame);
+                                                LEB128.Write(chunkIO.Raw, dispatch.BlendFrames);
 
                                                 chunkIO.WriteChunkVector2(Wad2Chunks.CurveStart, dispatch.BlendCurve.Start);
                                                 chunkIO.WriteChunkVector2(Wad2Chunks.CurveEnd, dispatch.BlendCurve.End);
@@ -438,8 +438,14 @@ namespace TombLib.Wad
                                                                                       animation.EndVelocity,
                                                                                       animation.StartLateralVelocity,
                                                                                       animation.EndLateralVelocity));
+
+                                // Root motion settings
+                                chunkIO.WriteChunkInt(Wad2Chunks.AnimationRootMotion, (int)animation.RootMotion.Flags);
                             });
                         }
+
+                        // Write Lua properties (Level 1)
+                        WriteLuaProperties(chunkIO, m.LuaProperties);
                     });
                 }
             });
@@ -485,6 +491,9 @@ namespace TombLib.Wad
                             chunkIO.WriteChunkVector3(Wad2Chunks.MeshBoundingBoxMin, s.CollisionBox.Minimum);
                             chunkIO.WriteChunkVector3(Wad2Chunks.MeshBoundingBoxMax, s.CollisionBox.Maximum);
                         });
+
+                        // Write Lua properties (Level 1)
+                        WriteLuaProperties(chunkIO, s.LuaProperties);
                     });
                 }
             });
@@ -505,6 +514,25 @@ namespace TombLib.Wad
                 });
 
                 chunkIO.WriteChunkString(Wad2Chunks.UserNotes, wad.UserNotes);
+            });
+        }
+
+        private static void WriteLuaProperties(ChunkWriter chunkIO, LuaProperties.LuaPropertyContainer container)
+        {
+            if (container == null || !container.HasProperties)
+                return;
+
+            chunkIO.WriteChunkWithChildren(Wad2Chunks.LuaProperties, () =>
+            {
+                var sortedProps = container.GetAll().OrderBy(p => p.Key).ToList();
+                foreach (var prop in sortedProps)
+                {
+                    chunkIO.WriteChunkWithChildren(Wad2Chunks.LuaProperty, () =>
+                    {
+                        chunkIO.WriteChunkString(Wad2Chunks.LuaPropertyName, prop.Key);
+                        chunkIO.WriteChunkString(Wad2Chunks.LuaPropertyValue, prop.Value);
+                    });
+                }
             });
         }
     }

@@ -1,5 +1,6 @@
 using Microsoft.IO;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 using System.Reflection;
@@ -98,6 +99,21 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     writer.Write(source.LuaName);
                 }
 
+                // Write materials
+                writer.Write((uint)_materialDictionary.Count);
+                foreach (var material in _materialDictionary)
+                {
+                    writer.Write(material.Value.Name);
+                    writer.Write(material.Value.Type);
+
+                    writer.Write(material.Value.IsNormalMapFound);
+                    writer.Write(material.Value.IsHeightMapFound);
+                    writer.Write(material.Value.IsAmbientOcclusionMapFound);
+                    writer.Write(material.Value.IsRoughnessMapFound);
+                    writer.Write(material.Value.IsSpecularMapFound);
+                    writer.Write(material.Value.IsEmissiveMapFound);
+                }
+
                 // Write event sets
                 int eventSetCount = _level.Settings.GlobalEventSets.Count + _level.Settings.VolumeEventSets.Count;
                 writer.Write((uint)eventSetCount);
@@ -112,6 +128,10 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     foreach (VolumeEventSet set in _level.Settings.VolumeEventSets)
                         set.Write(writer, _level.Settings.VolumeEventSets);
                 }
+
+                // Write Lua property script blob
+                writer.Write(_luaPropertyScriptBlob.Key);
+                writer.Write(_luaPropertyScriptBlob.Value ?? string.Empty);
 
                 dynamicDataBuffer = dynamicDataStream.ToArray();
             }
@@ -242,22 +262,23 @@ namespace TombLib.LevelData.Compilers.TombEngine
                 // Write animated textures
                 _textureInfoManager.WriteAnimatedTextures(writer);
 
-                // Write materials
-                writer.Write((uint)_materialDictionary.Count);
-                foreach (var material in _materialDictionary)
+                // Write material definitions
+                var materialDefinitions = new SortedDictionary<int, MaterialTypeDefinition>();
+                foreach (var material in _materialDictionary.Values)
+                    if (!materialDefinitions.ContainsKey(material.Type))
+                        materialDefinitions.Add(material.Type, material.GetMaterialDefinition());
+
+                writer.Write((uint)materialDefinitions.Count);
+                foreach (var materialDefinition in materialDefinitions.Values)
                 {
-                    writer.Write(material.Key);
-                    writer.Write((int)material.Value.Type);
-                    writer.Write(material.Value.Parameters0);
-                    writer.Write(material.Value.Parameters1);
-                    writer.Write(material.Value.Parameters2);
-                    writer.Write(material.Value.Parameters3);
-                    writer.Write(material.Value.IsNormalMapFound);
-                    writer.Write(material.Value.IsHeightMapFound);
-                    writer.Write(material.Value.IsAmbientOcclusionMapFound);
-                    writer.Write(material.Value.IsRoughnessMapFound);
-                    writer.Write(material.Value.IsSpecularMapFound);
-                    writer.Write(material.Value.IsEmissiveMapFound);
+                    writer.Write(materialDefinition.Id);
+
+                    for (int i = 0; i < MaterialData.PropertyCount; i++)
+                    {
+                        var propertyDefinition = materialDefinition.Properties[i];
+                        writer.Write(propertyDefinition?.Name ?? string.Empty);
+                        writer.Write((int)(propertyDefinition?.Type ?? MaterialPropertyType.None));
+                    }
                 }
 
                 geometryDataBuffer = geometryDataStream.ToArray();

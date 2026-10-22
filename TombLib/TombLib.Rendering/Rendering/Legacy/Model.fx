@@ -32,8 +32,11 @@ float BrushRotation; // Degrees, for rotation indicator line
 float4 BrushCenter; // xyz = world center, w = radius
 float4 BrushColor;
 float BrushLineWidth;
+float4 DofCenterRange; // xyz = camera origin, w = focus range
+float4 DofDirectionDistance; // xyz = normalized view direction, w = focus distance
+float4 DofColorStrength; // xyz = darkening multiplier, w = packed DOF mode
 
-#include "BrushOverlay.hlsli"
+#include "IndicationOverlay.hlsli"
 
 Texture2DArray Texture;
 sampler TextureSampler;
@@ -116,6 +119,7 @@ float4 PS(PixelInputType input) : SV_TARGET
 		discard;
 
     ApplyBrushOverlay(pixel.xyz, pixel.w, false, input.Position, input.WorldPosition, BrushLineWidth);
+    ApplyDofOverlay(pixel.xyz, pixel.w, false, input.WorldPosition);
 
     return pixel;
 }

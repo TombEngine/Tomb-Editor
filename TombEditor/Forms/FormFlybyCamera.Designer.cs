@@ -56,6 +56,10 @@ namespace TombEditor.Forms
             this.label6 = new DarkUI.Controls.DarkLabel();
             this.darkLabel1 = new DarkUI.Controls.DarkLabel();
             this.darkLabel2 = new DarkUI.Controls.DarkLabel();
+            this.labelDofMode = new DarkUI.Controls.DarkLabel();
+            this.labelDofDistance = new DarkUI.Controls.DarkLabel();
+            this.labelDofRange = new DarkUI.Controls.DarkLabel();
+            this.labelDofStrength = new DarkUI.Controls.DarkLabel();
             this.numSequence = new DarkUI.Controls.DarkNumericUpDown();
             this.numNumber = new DarkUI.Controls.DarkNumericUpDown();
             this.numTimer = new DarkUI.Controls.DarkNumericUpDown();
@@ -64,6 +68,10 @@ namespace TombEditor.Forms
             this.numRoll = new DarkUI.Controls.DarkNumericUpDown();
             this.numRotationX = new DarkUI.Controls.DarkNumericUpDown();
             this.numRotationY = new DarkUI.Controls.DarkNumericUpDown();
+            this.comboDofMode = new DarkUI.Controls.DarkComboBox();
+            this.numDofDistance = new DarkUI.Controls.DarkNumericUpDown();
+            this.numDofRange = new DarkUI.Controls.DarkNumericUpDown();
+            this.numDofStrength = new DarkUI.Controls.DarkNumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.numSequence)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numNumber)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTimer)).BeginInit();
@@ -72,6 +80,9 @@ namespace TombEditor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.numRoll)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRotationX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRotationY)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDofDistance)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDofRange)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDofStrength)).BeginInit();
             this.SuspendLayout();
             // 
             // butCancel
@@ -307,6 +318,46 @@ namespace TombEditor.Forms
             this.darkLabel2.TabIndex = 24;
             this.darkLabel2.Text = "Rotation Y:";
             // 
+            // labelDofMode
+            // 
+            this.labelDofMode.AutoSize = true;
+            this.labelDofMode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.labelDofMode.Location = new System.Drawing.Point(12, 230);
+            this.labelDofMode.Name = "labelDofMode";
+            this.labelDofMode.Size = new System.Drawing.Size(62, 13);
+            this.labelDofMode.TabIndex = 30;
+            this.labelDofMode.Text = "DOF mode:";
+            // 
+            // labelDofDistance
+            // 
+            this.labelDofDistance.AutoSize = true;
+            this.labelDofDistance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.labelDofDistance.Location = new System.Drawing.Point(12, 256);
+            this.labelDofDistance.Name = "labelDofDistance";
+            this.labelDofDistance.Size = new System.Drawing.Size(52, 13);
+            this.labelDofDistance.TabIndex = 31;
+            this.labelDofDistance.Text = "Distance:";
+            // 
+            // labelDofRange
+            // 
+            this.labelDofRange.AutoSize = true;
+            this.labelDofRange.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.labelDofRange.Location = new System.Drawing.Point(12, 282);
+            this.labelDofRange.Name = "labelDofRange";
+            this.labelDofRange.Size = new System.Drawing.Size(42, 13);
+            this.labelDofRange.TabIndex = 32;
+            this.labelDofRange.Text = "Range:";
+            // 
+            // labelDofStrength
+            // 
+            this.labelDofStrength.AutoSize = true;
+            this.labelDofStrength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.labelDofStrength.Location = new System.Drawing.Point(12, 308);
+            this.labelDofStrength.Name = "labelDofStrength";
+            this.labelDofStrength.Size = new System.Drawing.Size(50, 13);
+            this.labelDofStrength.TabIndex = 33;
+            this.labelDofStrength.Text = "Strength:";
+            // 
             // numSequence
             // 
             this.numSequence.IncrementAlternate = new decimal(new int[] {
@@ -415,6 +466,7 @@ namespace TombEditor.Forms
             0,
             0});
             this.numRoll.Name = "numRoll";
+            this.numRoll.LoopValues = true;
             this.numRoll.Size = new System.Drawing.Size(71, 22);
             this.numRoll.TabIndex = 5;
             // 
@@ -439,6 +491,7 @@ namespace TombEditor.Forms
             0,
             -2147483648});
             this.numRotationX.Name = "numRotationX";
+            this.numRotationX.LoopValues = true;
             this.numRotationX.Size = new System.Drawing.Size(71, 22);
             this.numRotationX.TabIndex = 6;
             // 
@@ -458,8 +511,87 @@ namespace TombEditor.Forms
             0,
             0});
             this.numRotationY.Name = "numRotationY";
+            this.numRotationY.LoopValues = true;
             this.numRotationY.Size = new System.Drawing.Size(71, 22);
             this.numRotationY.TabIndex = 7;
+            // 
+            // comboDofMode
+            // 
+            this.comboDofMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboDofMode.FormattingEnabled = true;
+            this.comboDofMode.Items.AddRange(new object[] {
+            "None",
+            "Full",
+            "Front",
+            "Back"});
+            this.comboDofMode.Location = new System.Drawing.Point(82, 228);
+            this.comboDofMode.Name = "comboDofMode";
+            this.comboDofMode.Size = new System.Drawing.Size(71, 23);
+            this.comboDofMode.TabIndex = 8;
+            // 
+            // numDofDistance
+            // 
+            this.numDofDistance.DecimalPlaces = 2;
+            this.numDofDistance.Increment = new decimal(new int[] {
+            128,
+            0,
+            0,
+            0});
+            this.numDofDistance.IncrementAlternate = new decimal(new int[] {
+            128,
+            0,
+            0,
+            0});
+            this.numDofDistance.Location = new System.Drawing.Point(82, 254);
+            this.numDofDistance.LoopValues = false;
+            this.numDofDistance.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.numDofDistance.Name = "numDofDistance";
+            this.numDofDistance.Size = new System.Drawing.Size(71, 22);
+            this.numDofDistance.TabIndex = 9;
+            // 
+            // numDofRange
+            // 
+            this.numDofRange.DecimalPlaces = 2;
+            this.numDofRange.Increment = new decimal(new int[] {
+            128,
+            0,
+            0,
+            0});
+            this.numDofRange.IncrementAlternate = new decimal(new int[] {
+            128,
+            0,
+            0,
+            0});
+            this.numDofRange.Location = new System.Drawing.Point(82, 280);
+            this.numDofRange.LoopValues = false;
+            this.numDofRange.Maximum = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            this.numDofRange.Name = "numDofRange";
+            this.numDofRange.Size = new System.Drawing.Size(71, 22);
+            this.numDofRange.TabIndex = 10;
+            // 
+            // numDofStrength
+            // 
+            this.numDofStrength.DecimalPlaces = 2;
+            this.numDofStrength.Increment = new decimal(new int[] { 5, 0, 0, 131072 });
+            this.numDofStrength.IncrementAlternate = new decimal(new int[] { 1, 0, 0, 65536 });
+            this.numDofStrength.Location = new System.Drawing.Point(82, 306);
+            this.numDofStrength.LoopValues = false;
+            this.numDofStrength.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numDofStrength.Name = "numDofStrength";
+            this.numDofStrength.Size = new System.Drawing.Size(71, 22);
+            this.numDofStrength.TabIndex = 11;
             // 
             // FormFlybyCamera
             // 
@@ -468,6 +600,10 @@ namespace TombEditor.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.butCancel;
             this.ClientSize = new System.Drawing.Size(541, 418);
+            this.Controls.Add(this.numDofStrength);
+            this.Controls.Add(this.numDofRange);
+            this.Controls.Add(this.numDofDistance);
+            this.Controls.Add(this.comboDofMode);
             this.Controls.Add(this.numRotationY);
             this.Controls.Add(this.numRotationX);
             this.Controls.Add(this.numRoll);
@@ -476,6 +612,10 @@ namespace TombEditor.Forms
             this.Controls.Add(this.numTimer);
             this.Controls.Add(this.numNumber);
             this.Controls.Add(this.numSequence);
+            this.Controls.Add(this.labelDofStrength);
+            this.Controls.Add(this.labelDofRange);
+            this.Controls.Add(this.labelDofDistance);
+            this.Controls.Add(this.labelDofMode);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.darkLabel2);
@@ -519,6 +659,9 @@ namespace TombEditor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.numRoll)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRotationX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numRotationY)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDofDistance)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDofRange)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numDofStrength)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -552,6 +695,10 @@ namespace TombEditor.Forms
         private DarkLabel label6;
         private DarkLabel darkLabel1;
         private DarkLabel darkLabel2;
+        private DarkLabel labelDofMode;
+        private DarkLabel labelDofDistance;
+        private DarkLabel labelDofRange;
+        private DarkLabel labelDofStrength;
         private DarkNumericUpDown numSequence;
         private DarkNumericUpDown numNumber;
         private DarkNumericUpDown numTimer;
@@ -560,5 +707,9 @@ namespace TombEditor.Forms
         private DarkNumericUpDown numRoll;
         private DarkNumericUpDown numRotationX;
         private DarkNumericUpDown numRotationY;
+        private DarkComboBox comboDofMode;
+        private DarkNumericUpDown numDofDistance;
+        private DarkNumericUpDown numDofRange;
+        private DarkNumericUpDown numDofStrength;
     }
 }

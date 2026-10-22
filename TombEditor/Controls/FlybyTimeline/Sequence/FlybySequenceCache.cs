@@ -37,6 +37,10 @@ public sealed class FlybySequenceCache
         public float RotationX { get; init; }
         public float Roll { get; init; }
         public float Fov { get; init; }
+        public float DofDistance { get; init; }
+        public float DofRange { get; init; }
+        public float DofStrength { get; init; }
+        public DofMode DofMode { get; init; }
     }
 
     /// <summary>
@@ -57,6 +61,10 @@ public sealed class FlybySequenceCache
         public float[] TgtZ { get; init; }
         public float[] RollKnots { get; init; }
         public float[] FovKnots { get; init; }
+        public float[] DofDistanceKnots { get; init; }
+        public float[] DofRangeKnots { get; init; }
+        public float[] DofStrengthKnots { get; init; }
+        public DofMode[] DofModes { get; init; }
 
         public bool IsSingleCamera => NumSegments == 0;
     }
@@ -120,7 +128,11 @@ public sealed class FlybySequenceCache
                 RotationY = camera.RotationY,
                 RotationX = camera.RotationX,
                 Roll = camera.Roll,
-                Fov = camera.Fov
+                Fov = camera.Fov,
+                DofDistance = camera.DofDistance,
+                DofRange = camera.DofRange,
+                DofStrength = camera.DofStrength,
+                DofMode = camera.DofMode
             });
         }
 
@@ -236,8 +248,12 @@ public sealed class FlybySequenceCache
         RotationY = a.RotationY + ((b.RotationY - a.RotationY) * t),
         RotationX = a.RotationX + ((b.RotationX - a.RotationX) * t),
         Roll = a.Roll + ((b.Roll - a.Roll) * t),
-        Fov = a.Fov + ((b.Fov - a.Fov) * t)
-    };
+        Fov = a.Fov + ((b.Fov - a.Fov) * t),
+        DofDistance = a.DofDistance + ((b.DofDistance - a.DofDistance) * t),
+        DofRange = a.DofRange + ((b.DofRange - a.DofRange) * t),
+        DofStrength = a.DofStrength + ((b.DofStrength - a.DofStrength) * t),
+        DofMode = t < 0.5f ? a.DofMode : b.DofMode
+	};
 
     /// <summary>
     /// Returns whether the given frame index lies inside a cut region.
@@ -336,6 +352,11 @@ public sealed class FlybySequenceCache
         float tz = CatmullRomSpline.Evaluate(localT, segment.TgtZ);
         float roll = CatmullRomSpline.Evaluate(localT, segment.RollKnots);
         float fov = CatmullRomSpline.Evaluate(localT, segment.FovKnots);
+        float dofDistance = CatmullRomSpline.Evaluate(localT, segment.DofDistanceKnots);
+        float dofRange = CatmullRomSpline.Evaluate(localT, segment.DofRangeKnots);
+        float dofStrength = CatmullRomSpline.Evaluate(localT, segment.DofStrengthKnots);
+        int dofModeIndex = Math.Clamp((int)MathF.Round(localT), 0, segment.DofModes.Length - 1);
+        var dofMode = segment.DofModes[dofModeIndex];
 
         float dx = tx - px;
         float dy = ty - py;
@@ -357,7 +378,11 @@ public sealed class FlybySequenceCache
             RotationY = yaw,
             RotationX = pitch,
             Roll = MathC.DegToRad(roll),
-            Fov = MathC.DegToRad(fov)
+            Fov = MathC.DegToRad(fov),
+            DofDistance = dofDistance,
+            DofRange = dofRange,
+            DofStrength = dofStrength,
+			DofMode = dofMode
         };
     }
 
@@ -391,7 +416,8 @@ public sealed class FlybySequenceCache
     private static FlybyFrameState BuildCameraFrame(CameraSplineData camera)
     {
         return FlybyFrameState.FromDegrees(
-            camera.WorldPosition, camera.RotationY, camera.RotationX, camera.Roll, camera.Fov);
+            camera.WorldPosition, camera.RotationY, camera.RotationX, camera.Roll, camera.Fov,
+            camera.DofDistance, camera.DofRange, camera.DofStrength, camera.DofMode);
     }
 
     #endregion Parallel spline evaluation
@@ -450,14 +476,20 @@ public sealed class FlybySequenceCache
                 TgtY = [],
                 TgtZ = [],
                 RollKnots = [],
-                FovKnots = []
+                FovKnots = [],
+                DofDistanceKnots = [],
+                DofRangeKnots = [],
+                DofStrengthKnots = [],
+                DofModes = []
             };
         }
 
         BuildKnotArrays(splineData, startIndex, cameraCount,
             out float[] posX, out float[] posY, out float[] posZ,
             out float[] tgtX, out float[] tgtY, out float[] tgtZ,
-            out float[] rollKnots, out float[] fovKnots);
+            out float[] rollKnots, out float[] fovKnots,
+            out float[] dofDistanceKnots, out float[] dofRangeKnots, out float[] dofStrengthKnots,
+            out DofMode[] dofModes);
 
         return new SplineSegment
         {
@@ -472,7 +504,11 @@ public sealed class FlybySequenceCache
             TgtY = tgtY,
             TgtZ = tgtZ,
             RollKnots = rollKnots,
-            FovKnots = fovKnots
+            FovKnots = fovKnots,
+            DofDistanceKnots = dofDistanceKnots,
+            DofRangeKnots = dofRangeKnots,
+            DofStrengthKnots = dofStrengthKnots,
+            DofModes = dofModes
         };
     }
 
@@ -490,13 +526,19 @@ public sealed class FlybySequenceCache
     /// <param name="tgtZ">Receives padded Z target-position spline knots.</param>
     /// <param name="rollKnots">Receives padded roll spline knots in degrees.</param>
     /// <param name="fovKnots">Receives padded field-of-view spline knots in degrees.</param>
+    /// <param name="dofDistanceKnots">Receives padded focus-distance spline knots in world units.</param>
+    /// <param name="dofRangeKnots">Receives padded focus-range spline knots in world units.</param>
+    /// <param name="dofStrengthKnots">Receives padded focus-strength spline knots.</param>
+    /// <param name="dofModes">Receives the discrete DOF mode at each camera knot.</param>
     private static void BuildKnotArrays(
         IReadOnlyList<CameraSplineData> splineData,
         int startIndex,
         int cameraCount,
         out float[] posX, out float[] posY, out float[] posZ,
         out float[] tgtX, out float[] tgtY, out float[] tgtZ,
-        out float[] rollKnots, out float[] fovKnots)
+        out float[] rollKnots, out float[] fovKnots,
+        out float[] dofDistanceKnots, out float[] dofRangeKnots, out float[] dofStrengthKnots,
+        out DofMode[] dofModes)
     {
         var rawPosX = new float[cameraCount];
         var rawPosY = new float[cameraCount];
@@ -506,6 +548,10 @@ public sealed class FlybySequenceCache
         var rawTgtZ = new float[cameraCount];
         var rawRoll = new float[cameraCount];
         var rawFov = new float[cameraCount];
+        var rawDofDistance = new float[cameraCount];
+        var rawDofRange = new float[cameraCount];
+        var rawDofStrength = new float[cameraCount];
+        dofModes = new DofMode[cameraCount];
 
         for (int i = 0; i < cameraCount; i++)
         {
@@ -520,6 +566,10 @@ public sealed class FlybySequenceCache
             rawTgtZ[i] = target.Z;
             rawRoll[i] = camera.Roll;
             rawFov[i] = camera.Fov;
+            rawDofDistance[i] = camera.DofDistance;
+            rawDofRange[i] = camera.DofRange;
+            rawDofStrength[i] = camera.DofStrength;
+            dofModes[i] = camera.DofMode;
         }
 
         UnwrapAngles(rawRoll);
@@ -532,6 +582,9 @@ public sealed class FlybySequenceCache
         tgtZ = CatmullRomSpline.PadKnots(rawTgtZ);
         rollKnots = CatmullRomSpline.PadKnots(rawRoll);
         fovKnots = CatmullRomSpline.PadKnots(rawFov);
+        dofDistanceKnots = CatmullRomSpline.PadKnots(rawDofDistance);
+        dofRangeKnots = CatmullRomSpline.PadKnots(rawDofRange);
+        dofStrengthKnots = CatmullRomSpline.PadKnots(rawDofStrength);
     }
 
     /// <summary>

@@ -21,7 +21,7 @@ public sealed class GameArchiveServiceFactory : IGameArchiveServiceFactory
 {
 	public IGameArchiveService GetArchiveService(TRVersion.Game gameVersion) => gameVersion switch
 	{
-		TRVersion.Game.TR1 or TRVersion.Game.TR1X or TRVersion.Game.TR2X => new TRXArchiveService(),
+		TRVersion.Game.TR1 or TRVersion.Game.TR1X or TRVersion.Game.TR2X or TRVersion.Game.TR3X => new TRXArchiveService(),
 		TRVersion.Game.TR2 => new TR2ArchiveService(),
 		TRVersion.Game.TR3 => new TR3ArchiveService(),
 		TRVersion.Game.TR4 or TRVersion.Game.TRNG => new TR4ArchiveService(),

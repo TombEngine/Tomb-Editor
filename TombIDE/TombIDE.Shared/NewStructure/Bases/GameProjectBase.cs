@@ -290,6 +290,7 @@ namespace TombIDE.Shared.NewStructure
 				TRVersion.Game.TR1 => new TR1XGameProject(trproj, targetTrprojVersion),
 				TRVersion.Game.TR2X => new TR2XGameProject(trproj, targetTrprojVersion),
 				TRVersion.Game.TR2 => new TR2GameProject(trproj, targetTrprojVersion),
+				TRVersion.Game.TR3X => new TR3XGameProject(trproj, targetTrprojVersion),
 				TRVersion.Game.TR3 => new TR3GameProject(trproj, targetTrprojVersion),
 				TRVersion.Game.TR4 => new TR4GameProject(trproj, targetTrprojVersion),
 				TRVersion.Game.TRNG => new TRNGGameProject(trproj, targetTrprojVersion),

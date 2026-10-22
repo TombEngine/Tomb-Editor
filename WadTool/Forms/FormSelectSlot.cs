@@ -18,8 +18,9 @@ namespace WadTool
 
         private Wad2 _wad;
         private List<uint> _additionalObjectsToHide;
+        private HashSet<uint> _allowedObjectIds;
 
-        public FormSelectSlot(Wad2 wad, IWadObjectId currentId, List<uint> additionalObjectsToHide = null)
+        public FormSelectSlot(Wad2 wad, IWadObjectId currentId, List<uint> additionalObjectsToHide = null, IEnumerable<uint> allowedObjectIds = null)
         {
             InitializeComponent();
 
@@ -29,6 +30,7 @@ namespace WadTool
 
             _wad = wad;
             _additionalObjectsToHide = additionalObjectsToHide;
+            _allowedObjectIds = allowedObjectIds == null ? null : new HashSet<uint>(allowedObjectIds);
 
             if (TypeClass == typeof(WadMoveableId))
                 chosenId.Value = ((WadMoveableId)currentId).TypeId;
@@ -48,16 +50,21 @@ namespace WadTool
         {
             // Decide on ID type
             if (TypeClass == typeof(WadMoveableId))
-                PopulateSlots(TrCatalog.GetAllMoveables(GameVersion).Where(item => !_wad.Moveables.Any(moveable => moveable.Key.TypeId == item.Key) && !(_additionalObjectsToHide?.Any(add => add == item.Key) ?? false)).ToList());
+                PopulateSlots(TrCatalog.GetAllMoveables(GameVersion).Where(item => IsAllowedObjectId(item.Key) && !_wad.Moveables.Any(moveable => moveable.Key.TypeId == item.Key) && !(_additionalObjectsToHide?.Any(add => add == item.Key) ?? false)).ToList());
             else if (TypeClass == typeof(WadStaticId))
-                PopulateSlots(TrCatalog.GetAllStatics(GameVersion).Where(item => !_wad.Statics.Any(stat => stat.Key.TypeId == item.Key) && !(_additionalObjectsToHide?.Any(add => add == item.Key) ?? false)).ToList());
+                PopulateSlots(TrCatalog.GetAllStatics(GameVersion).Where(item => IsAllowedObjectId(item.Key) && !_wad.Statics.Any(stat => stat.Key.TypeId == item.Key) && !(_additionalObjectsToHide?.Any(add => add == item.Key) ?? false)).ToList());
             else if (TypeClass == typeof(WadSpriteSequenceId))
-                PopulateSlots(TrCatalog.GetAllSpriteSequences(GameVersion).Where(item => !_wad.SpriteSequences.Any(sprite => sprite.Key.TypeId == item.Key) && !(_additionalObjectsToHide?.Any(add => add == item.Key) ?? false)).ToList());
+                PopulateSlots(TrCatalog.GetAllSpriteSequences(GameVersion).Where(item => IsAllowedObjectId(item.Key) && !_wad.SpriteSequences.Any(sprite => sprite.Key.TypeId == item.Key) && !(_additionalObjectsToHide?.Any(add => add == item.Key) ?? false)).ToList());
             else
                 throw new NotImplementedException("The " + TypeClass + " is not implemented yet.");
 
             // Make sure it redraws
             lstSlots.Invalidate();
+        }
+
+        private bool IsAllowedObjectId(uint objectId)
+        {
+            return _allowedObjectIds == null || _allowedObjectIds.Contains(objectId);
         }
 
         private void PopulateSlots(List<KeyValuePair<uint, string>> objectSlotSuggestions)

@@ -1,4 +1,4 @@
-﻿using DarkUI.Config;
+using DarkUI.Config;
 using DarkUI.Win32;
 using System;
 using System.Collections.Generic;
@@ -28,6 +28,7 @@ namespace DarkUI.Docking
         private bool _prioritizeRight = true;
         private DarkDockContent _activeContent;
         private bool _switchingContent;
+        private bool _isBulkUpdating;
 
         #endregion
 
@@ -148,6 +149,8 @@ namespace DarkUI.Docking
 
         #region Constructor Region
 
+        internal bool IsBulkUpdating => _isBulkUpdating;
+
         public DarkDockPanel()
         {
             Splitters = new List<DarkDockSplitter>();
@@ -190,7 +193,8 @@ namespace DarkUI.Docking
 
             ContentAdded?.Invoke(this, new DockContentEventArgs(dockContent));
 
-            dockContent.Select();
+            if (!_isBulkUpdating)
+                dockContent.Select();
         }
 
         public void InsertContent(DarkDockContent dockContent, DarkDockGroup dockGroup, DockInsertType insertType)
@@ -216,8 +220,12 @@ namespace DarkUI.Docking
             if (_contents.Count == 0)
                 return;
 
-            while(_contents.Count > 0)
+            BeginBulkUpdate();
+
+            while (_contents.Count > 0)
                 RemoveContent(_contents.First());
+
+            EndBulkUpdate();
         }
 
         public void RemoveContent(DarkDockContent dockContent)
@@ -353,7 +361,7 @@ namespace DarkUI.Docking
 
         public void RestoreDockPanelState(DockPanelState state, Func<string, DarkDockContent> getContentBySerializationKey)
         {
-            SuspendLayout();
+            BeginBulkUpdate();
 
             foreach (var region in state.Regions.OrderByDescending(r => r.Area))
             {
@@ -408,7 +416,39 @@ namespace DarkUI.Docking
                 }
             }
 
-            ResumeLayout();
+            EndBulkUpdate();
+        }
+
+        private void BeginBulkUpdate()
+        {
+            _isBulkUpdating = true;
+
+            SuspendLayout();
+
+            foreach (var region in _regions.Values)
+                region.SuspendLayout();
+
+            if (IsHandleCreated)
+                Native.SendMessage(Handle, (uint)WM.SETREDRAW, IntPtr.Zero, IntPtr.Zero);
+        }
+
+        private void EndBulkUpdate()
+        {
+            foreach (var region in _regions.Values)
+                region.FinalizeLayout();
+
+            _isBulkUpdating = false;
+
+            foreach (var region in _regions.Values)
+                region.ResumeLayout(true);
+
+            ResumeLayout(true);
+
+            if (IsHandleCreated)
+            {
+                Native.SendMessage(Handle, (uint)WM.SETREDRAW, (IntPtr)1, IntPtr.Zero);
+                Invalidate(true);
+            }
         }
 
         #endregion

@@ -1,4 +1,5 @@
 using System.Numerics;
+using TombEditor.Controls.FlybyTimeline;
 using TombEditor.Controls.FlybyTimeline.Preview;
 using TombLib;
 using TombLib.Graphics;
@@ -87,5 +88,39 @@ public class FlybyPreviewTests
 
         Assert.IsTrue(preview.IsFinished);
         Assert.AreEqual(preview.Cache.TotalDuration, preview.GetCurrentTimeSeconds(), 0.001f);
+    }
+
+    [TestMethod]
+    public void BuildViewProjection_ClampsFieldOfViewBelowOneEightyDegrees()
+    {
+        var savedCamera = new FreeCamera(Vector3.Zero, 0.0f, 0.0f, -MathF.PI * 0.5f, MathF.PI * 0.5f, MathC.DegToRad(60.0f));
+        using var preview = new FlybyPreview(savedCamera);
+        var previewCamera = new FreeCamera(Vector3.Zero, 0.0f, 0.0f, -MathF.PI * 0.5f, MathF.PI * 0.5f, MathC.DegToRad(60.0f));
+        var frame = new FlybyFrameState
+        {
+            Position = new Vector3(256.0f, 128.0f, 64.0f),
+            RotationY = 0.0f,
+            RotationX = 0.0f,
+            Fov = MathC.DegToRad(220.0f)
+        };
+
+        preview.SetStaticFrame(previewCamera, frame);
+
+        var viewProjection = preview.BuildViewProjection(1920.0f, 1080.0f, MathC.DegToRad(220.0f));
+
+        Assert.AreEqual(FlybyConstants.MaxPreviewFieldOfViewRadians, previewCamera.FieldOfView, 0.001f);
+        Assert.IsTrue(float.IsFinite(viewProjection.M11));
+        Assert.IsTrue(float.IsFinite(viewProjection.M22));
+        Assert.IsTrue(float.IsFinite(viewProjection.M33));
+    }
+
+    [TestMethod]
+    public void FromDegrees_ClampsInvalidFieldOfViewIntoPreviewRange()
+    {
+        var lowFrame = FlybyFrameState.FromDegrees(Vector3.Zero, 0.0f, 0.0f, 0.0f, -15.0f, 1024, 1024, 0.5f, DofMode.Full);
+        var highFrame = FlybyFrameState.FromDegrees(Vector3.Zero, 0.0f, 0.0f, 0.0f, 220.0f, 1024, 1024, 0.5f, DofMode.Full);
+
+        Assert.AreEqual(MathC.DegToRad(FlybyConstants.DefaultPreviewFieldOfViewDegrees), lowFrame.Fov, 0.001f);
+        Assert.AreEqual(FlybyConstants.MaxPreviewFieldOfViewRadians, highFrame.Fov, 0.001f);
     }
 }

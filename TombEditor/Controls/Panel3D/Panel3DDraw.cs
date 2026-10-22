@@ -8,7 +8,6 @@ using TombLib;
 using TombLib.Controls;
 using TombLib.Graphics;
 using TombLib.Graphics.Primitives;
-
 using TombLib.LevelData;
 using TombLib.LevelData.SectorEnums;
 using TombLib.LevelData.SectorEnums.Extensions;
@@ -713,8 +712,9 @@ namespace TombEditor.Controls.Panel3D
                 if (!instance.Valid)
                     continue;
 
-                // Create a vertex array
-                SolidVertex[] vtxs = new SolidVertex[84]; // 78 with diagonal steps
+                // Reuse cached vertex array
+                SolidVertex[] vtxs = _ghostBlockVertices;
+                Array.Clear(vtxs, 0, vtxs.Length);
 
                 // Derive base sector colours
                 var p1c = new Vector4(baseColor.To3() * (selected ? 0.8f : 0.4f), selected ? 0.7f : 0.5f);
@@ -1349,94 +1349,86 @@ namespace TombEditor.Controls.Panel3D
             if (_editor.CameraPreviewMode != CameraPreviewType.None)
                 return;
 
-            // Draw extra flyby cones (hidden during flyby preview)
+            // Draw extra flyby camera pyramids (hidden during flyby preview).
+            DrawFlybyCameraPyramids(effect, roomsWhoseObjectsToDraw);
+        }
 
-            _legacyDevice.SetVertexBuffer(_cone.VertexBuffer);
-            _legacyDevice.SetVertexInputLayout(_cone.InputLayout);
-            _legacyDevice.SetIndexBuffer(_cone.IndexBuffer, _cone.IsIndex32Bits);
+        private void DrawFlybyCameraPyramids(Effect effect, Room[] roomsWhoseObjectsToDraw)
+        {
             _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullNone);
             _legacyDevice.SetBlendState(_legacyDevice.BlendStates.AlphaBlend);
 
-            bool wireframe = false;
             foreach (Room room in roomsWhoseObjectsToDraw)
                 foreach (var instance in room.Objects.OfType<FlybyCameraInstance>())
                 {
                     var color = MathC.GetRandomColorByIndex(instance.Sequence, 32, 0.7f);
-                    Matrix4x4 model;
-
                     if (_highlightedObjects.Contains(instance))
                         color = _editor.Configuration.UI_ColorScheme.ColorSelection;
 
-                    for (int pass = 0; pass < 2; pass++)
-                    {
-                        if (_editor.SelectedObject == instance)
-                        {
-                            float coneAngle = (float)Math.Atan2(512, 1024);
-                            float cutoffScaleH = 1;
-                            float cutoffScaleW = instance.Fov * (float)(Math.PI / 360) / coneAngle * cutoffScaleH;
+                    float distance = Vector3.Distance(instance.WorldPosition, Camera.GetPosition());
+                    if (distance < (_coneRadius * 0.5f))
+                        color.W *= distance / (_coneRadius * 0.5f);
 
-                            if (pass == 0)
-                            {
-                                // Ordinary cone
-                                model = Matrix4x4.CreateScale(cutoffScaleW, cutoffScaleW, cutoffScaleH) * instance.ObjectMatrix;
-                            }
-                            else
-                            {
-                                // Roll pointer
-                                var step = 1 / _coneRadius;
-                                var scale = _littleCubeRadius * 2;
-                                var pScale = _littleCubeRadius / 5;
-                                var vOffset = -cutoffScaleW / 2 * _coneRadius - scale;
-                                var hOffset = cutoffScaleH * _coneRadius;
+                    if (color.W <= 0.0f)
+                        continue;
 
-                                model = Matrix4x4.CreateScale(step * pScale, step * pScale, step * scale) *
-                                        Matrix4x4.CreateTranslation(new Vector3(0, hOffset, vOffset)) *
-                                        Matrix4x4.CreateRotationX((float)(Math.PI / 2)) *
-                                        instance.ObjectMatrix;
-                            }
+                    bool selected = _editor.SelectedObject == instance;
+                    float pyramidLength = selected ? _coneRadius * _flybyPyramidSelectedLengthScale : _flybyPyramidInactiveLength;
+                    float pyramidHalfHeight = selected ? GetFlybyPyramidDefaultHalfSize(pyramidLength) : _flybyPyramidInactiveBaseHeight * 0.5f;
+                    float pyramidHalfWidth = GetFlybyPyramidHalfWidth(instance.Fov, pyramidLength, pyramidHalfHeight, selected);
+                    var scaleMatrix = Matrix4x4.CreateScale(pyramidHalfWidth, pyramidHalfHeight, pyramidLength);
+                    var transform = selected ? instance.RotationPositionMatrix : BuildFlybyMarkerMatrix(instance, pyramidLength);
+                    var model = scaleMatrix * transform;
 
-                            if (!wireframe)
-                            {
-                                _legacyDevice.SetRasterizerState(_rasterizerWireframe);
-                                wireframe = true;
-                            }
-                        }
-                        else
-                        {
-                            // Don't do second pass for non-selected flybys
-                            if (pass == 1)
-                                break;
+                    if (!selected)
+                        DrawFlybyPyramidBuffer(effect, _flybyPyramidSolidVertexBuffer, PrimitiveType.TriangleList, model, color);
 
-                            // Push unselected cone further away in sprite mode for neatness
-                            model = _editor.Configuration.Rendering3D_UseSpritesForServiceObjects
-                                ? Matrix4x4.CreateTranslation(new Vector3(0, 0, -_coneRadius * 0.5f))
-                                : Matrix4x4.Identity;
-
-                            model *= Matrix4x4.CreateTranslation(new Vector3(0, 0, -_coneRadius * 1.2f)) *
-                                        Matrix4x4.CreateRotationY((float)Math.PI) *
-                                        Matrix4x4.CreateScale(1 / _coneRadius * _littleCubeRadius * 2.0f) *
-                                        instance.ObjectMatrix;
-
-                            if (wireframe)
-                            {
-                                _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullNone);
-                                wireframe = false;
-                            }
-                        }
-
-                        // Apply distance-based fade for nearby flyby cameras.
-                        float distance = Vector3.Distance(instance.WorldPosition, Camera.GetPosition());
-                        if (distance < (_coneRadius * 0.5f))
-                            color.W *= distance / (_coneRadius * 0.5f);
-
-                        effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection).ToSharpDX());
-                        effect.Parameters["Color"].SetValue(color);
-                        effect.CurrentTechnique.Passes[0].Apply();
-                        _legacyDevice.DrawIndexed(PrimitiveType.TriangleList, _cone.IndexBuffer.ElementCount);
-                    }
+                    DrawFlybyPyramidBuffer(effect,
+                        selected ? _flybyPyramidWireVertexBuffer : _flybyPyramidAccentVertexBuffer,
+                        PrimitiveType.LineList,
+                        model,
+                        color);
                 }
 
             _legacyDevice.SetBlendState(_legacyDevice.BlendStates.Opaque);
+            _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullBack);
+        }
+
+        private void DrawFlybyPyramidBuffer(Effect effect, Buffer<SolidVertex> buffer, PrimitiveType primitiveType, Matrix4x4 model, Vector4 color)
+        {
+            _legacyDevice.SetVertexBuffer(buffer);
+            _legacyDevice.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, buffer));
+            effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection).ToSharpDX());
+            effect.Parameters["Color"].SetValue(color);
+            effect.CurrentTechnique.Passes[0].Apply();
+            _legacyDevice.Draw(primitiveType, buffer.ElementCount);
+        }
+
+        private Matrix4x4 BuildFlybyMarkerMatrix(FlybyCameraInstance instance, float pyramidLength)
+        {
+            var model = _editor.Configuration.Rendering3D_UseSpritesForServiceObjects
+                ? Matrix4x4.CreateTranslation(new Vector3(0.0f, 0.0f, -pyramidLength * 0.5f))
+                : Matrix4x4.Identity;
+
+            return model *
+                   Matrix4x4.CreateTranslation(new Vector3(0.0f, 0.0f, -pyramidLength * 1.2f)) *
+                   Matrix4x4.CreateRotationY((float)Math.PI) *
+                   instance.RotationPositionMatrix;
+        }
+
+        private static float GetFlybyPyramidDefaultHalfSize(float pyramidLength)
+        {
+            return MathF.Tan(_flybyPyramidReferenceFov * (float)(Math.PI / 360.0f)) * pyramidLength * _flybyPyramidSelectedBaseScale;
+        }
+
+        private static float GetFlybyPyramidHalfWidth(float fov, float pyramidLength, float pyramidHalfHeight, bool selected)
+        {
+            float clampedHalfAngle = Math.Clamp(fov, 1.0f, 179.0f) * (float)(Math.PI / 360.0f);
+
+            if (selected)
+                return MathF.Tan(clampedHalfAngle) * pyramidLength * _flybyPyramidSelectedBaseScale;
+
+            return pyramidHalfHeight;
         }
 
         private void DrawOrQueueServiceObject(ISpatial instance, GeometricPrimitive primitive, Vector4 color, Effect effect, List<Sprite> sprites)
@@ -1950,7 +1942,7 @@ namespace TombEditor.Controls.Panel3D
                     lightMode = 2;
                     break;
 
-                case TRVersion.Game.TR3:
+                case TRVersion.Game.TR3 or TRVersion.Game.TR3X:
                 case TRVersion.Game.TR4:
                     lightMode = 1;
                     break;
@@ -1974,6 +1966,7 @@ namespace TombEditor.Controls.Panel3D
 
             // Determine brush overlay state.
             var brushState = ComputeBrushOverlay();
+            bool drawFlybyDof = TryGetFlybyDofOverlayState(out FlybyDofOverlayState flybyDofState);
 
             // In ObjectPlacement (brush) mode, use only the brush-specific ShowTextures flag,
             // the global white-lighting override is ignored so it doesn't bleed into brush mode.
@@ -1992,7 +1985,10 @@ namespace TombEditor.Controls.Panel3D
                 BrushShape = brushState.Shape,
                 BrushCenter = brushState.Center,
                 BrushColor = brushState.Color,
-                BrushRotation = brushState.Rotation
+                BrushRotation = brushState.Rotation,
+                DofCenterRange = drawFlybyDof ? flybyDofState.CenterRange : Vector4.Zero,
+                DofDirectionDistance = drawFlybyDof ? flybyDofState.DirectionDistance : Vector4.Zero,
+                DofColorStrength = drawFlybyDof ? flybyDofState.ColorStrength : Vector4.Zero
             });
 
             var renderArgs = new RenderingDrawingRoom.RenderArgs

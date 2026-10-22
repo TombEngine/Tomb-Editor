@@ -199,7 +199,8 @@ public sealed class FlybyPreview : IDisposable
 
         return FlybyFrameState.FromDegrees(
             camera.Position + camera.Room.WorldPos,
-            camera.RotationY, camera.RotationX, camera.Roll, camera.Fov);
+            camera.RotationY, camera.RotationX, camera.Roll, camera.Fov,
+            camera.DofDistance, camera.DofRange, camera.DofStrength, camera.DofMode);
     }
 
     /// <summary>
@@ -212,7 +213,7 @@ public sealed class FlybyPreview : IDisposable
         camera.Position = frame.Position;
         camera.RotationY = frame.RotationY;
         camera.RotationX = frame.RotationX;
-        camera.FieldOfView = frame.Fov;
+        camera.FieldOfView = FlybyHelpers.ClampPreviewFieldOfViewRadians(frame.Fov);
 
         var rotation = CreateFrameRotation(frame);
         var look = MathC.HomogenousTransform(Vector3.UnitZ, rotation);
@@ -254,10 +255,8 @@ public sealed class FlybyPreview : IDisposable
         }
 
         var target = frame.Position + (Level.SectorSizeUnit * look);
-        float fov = frame.Fov > FlybyConstants.PreviewMinFieldOfView ? frame.Fov : defaultFov;
-
-        if (fov < FlybyConstants.PreviewMinFieldOfView)
-            fov = MathC.DegToRad(80);
+        float fov = FlybyHelpers.ClampPreviewFieldOfViewRadians(
+            frame.Fov > FlybyConstants.PreviewMinFieldOfViewRadians ? frame.Fov : defaultFov);
 
         var view = MathC.Matrix4x4CreateLookAtLH(frame.Position, target, up);
         float aspectRatio = height != 0.0f ? width / height : 1.0f;
@@ -271,6 +270,5 @@ public sealed class FlybyPreview : IDisposable
     /// </summary>
     private static Matrix4x4 CreateFrameRotation(FlybyFrameState frame)
         => Matrix4x4.CreateFromYawPitchRoll(frame.RotationY, frame.RotationX, 0);
-
     #endregion Static frame helpers
 }

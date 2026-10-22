@@ -102,6 +102,9 @@ namespace DarkUI.Controls
         {
             SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             ClampDimensions();
+
+            AutoScaleMode = AutoScaleMode.None;
+            AutoScaleDimensions = new SizeF(96.0f, 96.0f);
         }
 
         private void FixPosition()

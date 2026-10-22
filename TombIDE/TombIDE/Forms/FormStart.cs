@@ -390,7 +390,7 @@ namespace TombIDE
 				case TRVersion.Game.TombEngine: node.ExtraIcon = Properties.Resources.TEN_LVL; break;
 				case TRVersion.Game.TRNG: node.ExtraIcon = Properties.Resources.TRNG_LVL; break;
 				case TRVersion.Game.TR4: node.ExtraIcon = Properties.Resources.TR4_LVL; break;
-				case TRVersion.Game.TR3: node.ExtraIcon = Properties.Resources.TR3_LVL; break;
+				case TRVersion.Game.TR3 or TRVersion.Game.TR3X: node.ExtraIcon = Properties.Resources.TR3_LVL; break;
 				case TRVersion.Game.TR2 or TRVersion.Game.TR2X: node.ExtraIcon = Properties.Resources.TR2_LVL; break;
 				case TRVersion.Game.TR1 or TRVersion.Game.TR1X: node.ExtraIcon = Properties.Resources.TR1_LVL; break;
 			}

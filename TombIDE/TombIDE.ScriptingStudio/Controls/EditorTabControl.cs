@@ -484,9 +484,7 @@ namespace TombIDE.ScriptingStudio.Controls
 
 				if (editor != null && !File.Exists(editor.FilePath))
 				{
-					if (editor.IsContentChanged)
-						editor.FilePath = null;
-					else
+					if (!editor.IsContentChanged)
 						yield return tab;
 				}
 			}

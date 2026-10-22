@@ -1,0 +1,705 @@
+<?xml version="1.0" encoding="utf-8"?>
+<propertyCatalog>
+    <moveable id="BIG_RAT">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="5"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="WOLF">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="6"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="BEAR">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="20"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="APE">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="22"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="WINGED_MUMMY">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="50"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="CENTAUR_MUTANT">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="120"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="SKATEBOARD_KID">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="125"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="COWBOY">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="150"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="KOLD">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="200"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="NATLA">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="400"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="GIANT_MUTANT">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="500"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="COBRA, MONKEY">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="8"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="COMPSOGNATHUS">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="10"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="CIVVY">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="15"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="SCUBA_DIVER, WINSTON, PUNK">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="20"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="TIGER, WASP_MUTANT">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="24"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="OILRED">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="25"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="SWAT_GUN, LONDON_MERCENARY">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="26"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="TRIBESMAN_WITH_AX, TRIBESMAN_WITH_DARTS, MP_WITH_STICK, MP_WITH_GUN, TWIN_AUTO_GUN">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="28"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="WHITE_SOLDIER">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="30"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="PRISONER">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="34"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="FLAMETHROWER_BADDY, LIZARD">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="36"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="SEAL_MUTANT">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="50"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="HYBRID_MUTANT">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="90"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="RAPTOR, SHIVA, TONY_BOSS">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="100"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="CLAW_MUTANT">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="130"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="PUNA_BOSS">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="200"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="SOPHIA_LEIGH_BOSS">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="300"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="TYRANNOSAUR">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="800"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="SMALL_SPIDER, RAT">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="5"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="BARRACUDA">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="12"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="CROW">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="15"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="EAGLE, WORKER_MACHINEGUN, WORKER_FLAMETHROWER">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="20"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="GOON_SILENCER1-GOON_SILENCER3,WORKER_SHOTGUN">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="25"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="SHARK, YETI">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="30"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="BIG_SPIDER">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="40"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="MERCENARY_UZI">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="45"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="MERCENARY_AUTOPISTOLS1,MERCENARY_AUTOPISTOLS2,MONK1,MONK2">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="50"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="KNIFETHROWER">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="60"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="SWORD_GUARDIAN">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="80"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="SPEAR_GUARDIAN,SNOWMOBILE_GUN">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="100"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="WORKER_DUAL_REVOLVER">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="150"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="BIRDMONSTER">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="200"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="DRAGON_FRONT">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="300"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="BAT">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="5"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="SMALL_SCORPION, HAMMERHEAD">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="8"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="VON_CROY, SKELETON, MUMMY, KNIGHT_TEMPLAR">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="15"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="DOG">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="18"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="BADDY1, BADDY2, HORSEMAN">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="25"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="BABOON_NORMAL, BABOON_INV, BABOON_SILENT, BIG_BEETLE, SENTRY_GUN">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="30"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="CROCODILE">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="36"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="WILD_BOAR, SAS_CAIRO, TROOPS, ENEMY_JEEP">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="40"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="HARPY">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="60"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="BIG_SCORPION, AHMET">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="80"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <!-- HP 200: Demigod 1-3 (260-262) -->
+    <moveable id="DEMIGOD1-DEMIGOD3">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="200"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="SETHA">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="500"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="SPHINX, LARA_DOUBLE">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="1000"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="REAPER">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="10"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="IMP">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="12"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="DOBERMAN">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="18"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="GLADIATOR">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="20"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="HUSKIE, SWAT, SWAT_PLUS, GUARD1, GUARD_LASER, MAFIA, GUARD2, GUARD3, SCIENTIST">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="24"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="MAFIA2">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="26"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="HYDRA">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="30"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="SNIPER, CHEF">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="35"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="SAS, LION">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="40"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="CYBORG">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="50"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="LARSON, PIERRE">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="60"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="BROWN_BEAST, ATTACK_SUB, LAGOON_WITCH">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="100"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <!-- HP 300: Roman God 1-2 (287-288) -->
+    <moveable id="ROMAN_GOD1, ROMAN_GOD2">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="300"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+</propertyCatalog>

@@ -60,31 +60,7 @@ namespace TombEditor
                 obj.CopyDependentLevelSettings(
                     new Room.CopyDependentLevelSettingsArgs(null, newLevelSettings, loadedObjects.Settings, true));
 
-                // A little workaround to detect collisions
-
-                if (obj is IHasScriptID)
-                {
-                    try
-                    {
-                        editor.SelectedRoom.AddObject(editor.Level, obj);
-                        editor.SelectedRoom.RemoveObject(editor.Level, obj);
-                    }
-                    catch (ScriptIdCollisionException)
-                    {
-                        ((IHasScriptID)obj).ScriptId = null;
-                    }
-                }
-
-                if (obj is IHasLuaName)
-                {
-                    editor.SelectedRoom.AddObject(editor.Level, obj);
-                    var luaObj = obj as IHasLuaName;
-
-                    if (!luaObj.CanSetLuaName(luaObj.LuaName))
-                        luaObj.LuaName = string.Empty;
-
-                    editor.SelectedRoom.RemoveObject(editor.Level, obj);
-                }
+                ResolveIdentifierCollisions(editor, obj);
 
                 if (obj is VolumeInstance)
                 {
@@ -111,6 +87,30 @@ namespace TombEditor
                 var unpackedChildren = unpackedObjects.OfType<PositionBasedObjectInstance>().ToList();
                 return new ObjectGroup(unpackedChildren);
             }
+        }
+
+        private static void ResolveIdentifierCollisions(Editor editor, ObjectInstance obj)
+        {
+            ResetCollidingScriptId(editor, obj);
+            ResetCollidingLuaName(editor, obj);
+        }
+
+        private static void ResetCollidingScriptId(Editor editor, ObjectInstance obj)
+        {
+            if (obj is not IHasScriptID scriptObject || !scriptObject.ScriptId.HasValue)
+                return;
+
+            if (editor.Level.GlobalScriptingIdsTable[(int)scriptObject.ScriptId.Value] != null)
+                scriptObject.ScriptId = null;
+        }
+
+        private static void ResetCollidingLuaName(Editor editor, ObjectInstance obj)
+        {
+            if (obj is not IHasLuaName luaObject || string.IsNullOrEmpty(luaObject.LuaName))
+                return;
+
+            if (editor.Level.GetAllObjects().OfType<IHasLuaName>().Any(existingObject => existingObject.LuaName == luaObject.LuaName))
+                luaObject.LuaName = string.Empty;
         }
 
         private static void NormalizePastedFlybyCameras(Editor editor, IReadOnlyCollection<ObjectInstance> unpackedObjects)

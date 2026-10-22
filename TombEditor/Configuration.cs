@@ -1,4 +1,5 @@
-﻿using DarkUI.Docking;
+using DarkUI.Docking;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
@@ -13,6 +14,7 @@ namespace TombEditor
     // They will be loaded and saved automatically.
     public class Configuration : ConfigurationBase
     {
+        public const int MaxWindowLayouts = 10;
         public override string ConfigName { get { return "TombEditorConfiguration.xml"; } }
 
         // Global editor options
@@ -61,9 +63,6 @@ namespace TombEditor
         public bool Rendering3D_InvertMouseZoom { get; set; } = false;
         public float Rendering3D_LineWidth { get; set; } = 10.0f;
         public float Rendering3D_FieldOfView { get; set; } = 50.0f;
-        public bool Rendering3D_ToolboxVisible { get; set; } = true;
-        public Point Rendering3D_ToolboxPosition { get; set; } = new Point(15, 15);
-        public Point Rendering3D_ObjectBrushToolboxPosition { get; set; } = new Point(50, 15);
         public bool Rendering3D_DisablePickingForImportedGeometry { get; set; } = false;
         public bool Rendering3D_DisablePickingForHiddenRooms { get; set; } = false;
         public bool Rendering3D_ShowPortals { get; set; } = false;
@@ -188,8 +187,6 @@ namespace TombEditor
 
         // User interface options
 
-        public bool UI_ShowStats { get; set; } = true;
-        public bool UI_ShowFlybyTimeline { get; set; } = true;
         public bool UI_AutoFillTriggerTypesForSwitchAndKey { get; set; } = true;
         public bool UI_AutoSwitchRoomToOutsideOnAppliedInvisibleTexture { get; set; } = false;
         public bool UI_DiscardSelectionOnModeSwitch { get; set; } = false;
@@ -296,10 +293,12 @@ namespace TombEditor
         public Size Window_FormTransform_Size { get; set; } = new Size(345, 171);
         public bool Window_FormTransform_Maximized { get; set; } = false;
         public Point Window_FormMaterialEditor_Position { get; set; } = new Point(-1);
-        public Size Window_FormMaterialEditor_Size { get; set; } = new Size(537, 560);
+        public Size Window_FormMaterialEditor_Size { get; set; } = new Size(537, 724);
         public bool Window_FormMaterialEditor_Maximized { get; set; } = false;
 
-        public DockPanelState Window_Layout { get; set; } = Window_LayoutDefault;
+        public NamedLayout Window_Layout { get; set; } = new NamedLayout { State = Window_LayoutDefault.Clone() };
+        public List<NamedLayout> Window_CustomLayouts { get; set; } = new List<NamedLayout>();
+        public string Window_ActiveLayoutName { get; set; } = string.Empty;
 
         public void EnsureDefaults()
         {
@@ -388,7 +387,7 @@ namespace TombEditor
                     {
                         new DockGroupState
                         {
-                            Contents = new List<string> { "TexturePanel" },
+                            Contents = new List<string> { "TexturePanel", "ItemProperties" },
                             VisibleContent = "TexturePanel",
                             Order = 0,
                             Size = new Size(286,700)
@@ -419,5 +418,29 @@ namespace TombEditor
                 }
             }
         };
+    }
+
+    public class NamedLayout : ICloneable
+    {
+        public string Name { get; set; } = string.Empty;
+        public DockPanelState State { get; set; } = Configuration.Window_LayoutDefault.Clone();
+        public Point ToolboxPosition { get; set; } = new Point(15, 15);
+        public Point ObjectBrushToolboxPosition { get; set; } = new Point(50, 15);
+        public bool ShowToolbox { get; set; } = true;
+        public bool ShowStats { get; set; } = true;
+        public bool ShowFlybyTimeline { get; set; } = true;
+
+        public NamedLayout Clone() => new NamedLayout
+        {
+            Name = Name,
+            State = State.Clone(),
+            ToolboxPosition = ToolboxPosition,
+            ObjectBrushToolboxPosition = ObjectBrushToolboxPosition,
+            ShowToolbox = ShowToolbox,
+            ShowStats = ShowStats,
+            ShowFlybyTimeline = ShowFlybyTimeline
+        };
+
+        object ICloneable.Clone() => Clone();
     }
 }

@@ -937,7 +937,7 @@ namespace TombEditor
 
             AddCommand("ShowFlybyTimeline", "Flyby timeline", CommandType.Windows, delegate (CommandArgs args)
             {
-                args.Editor.Configuration.UI_ShowFlybyTimeline = !args.Editor.Configuration.UI_ShowFlybyTimeline;
+                args.Editor.Configuration.Window_Layout.ShowFlybyTimeline = !args.Editor.Configuration.Window_Layout.ShowFlybyTimeline;
                 args.Editor.ConfigurationChange();
             });
 
@@ -1087,7 +1087,7 @@ namespace TombEditor
                     c =>
                     {
                         room.Properties.AmbientLight = c.ToFloat3Color() * 2.0f;
-                        args.Editor.SelectedRoom.RebuildLighting(args.Editor.Configuration.Rendering3D_HighQualityLightPreview);
+                        args.Editor.UpdateRoomLighting(room);
                         args.Editor.RoomPropertiesChange(room);
                     }, args.Editor.Configuration.UI_ColorScheme))
                 {
@@ -1110,7 +1110,7 @@ namespace TombEditor
                 }
 
                 args.Editor.UndoManager.Push(undo);
-                args.Editor.SelectedRoom.RebuildLighting(args.Editor.Configuration.Rendering3D_HighQualityLightPreview);
+                args.Editor.UpdateRoomLighting(room);
                 args.Editor.RoomPropertiesChange(room);
             });
 
@@ -1293,13 +1293,13 @@ namespace TombEditor
 
             AddCommand("GenerateObjectNames", "Generate Lua names for unnamed objects", CommandType.Objects, delegate (CommandArgs args)
             {
-                if (!EditorActions.VersionCheck(args.Editor.Level.IsTombEngine, "Object naming"))
+                if (!EditorActions.VersionCheck(args.Editor.Level.IsTombEngine || args.Editor.Level.IsTRX, "Object naming"))
                     return;
 
                 int count = 0;
 
-                foreach (var obj in args.Editor.Level.GetAllObjects().OfType<PositionAndScriptBasedObjectInstance>())
-                    if (string.IsNullOrEmpty(obj.LuaName))
+                foreach (var obj in args.Editor.Level.GetAllObjects().OfType<IHasLuaName>())
+                    if (obj.SupportsLuaName() && string.IsNullOrEmpty(obj.LuaName))
                     {
                         obj.AllocateNewLuaName();
                         count++;
@@ -1727,12 +1727,20 @@ namespace TombEditor
             AddCommand("ShowTexturePanel", "Show texture panel", CommandType.Windows, (CommandArgs args) => args.Editor.ToggleToolWindow(typeof(TexturePanel)));
             AddCommand("ShowObjectList", "Show object list", CommandType.Windows, (CommandArgs args) => args.Editor.ToggleToolWindow(typeof(ObjectList)));
             AddCommand("ShowToolPalette", "Show tool palette", CommandType.Windows, (CommandArgs args) => args.Editor.ToggleToolWindow(typeof(ToolPalette)));
+            AddCommand("ShowItemProperties", "Show item properties", CommandType.Windows, (CommandArgs args) => args.Editor.ToggleToolWindow(typeof(ItemProperties)));
 
             AddCommand("ShowStatistics", "Statistics display", CommandType.Windows, delegate (CommandArgs args)
             {
-                args.Editor.Configuration.UI_ShowStats = !args.Editor.Configuration.UI_ShowStats;
+                args.Editor.Configuration.Window_Layout.ShowStats = !args.Editor.Configuration.Window_Layout.ShowStats;
                 args.Editor.ConfigurationChange();
             });
+
+            for (int i = 0; i < Configuration.MaxWindowLayouts; i++)
+            {
+                int currentLayoutIndex = i;
+                int visibleLayoutIndex = i + 1;
+                AddCommand("SwitchLayout" + visibleLayoutIndex, "Switch to layout " + visibleLayoutIndex, CommandType.Windows, (CommandArgs args) => args.Editor.SwitchLayout(currentLayoutIndex));
+            }
 
             AddCommand("DrawPortals", "Draw portals", CommandType.View, delegate (CommandArgs args)
             {
@@ -2076,20 +2084,20 @@ namespace TombEditor
                 EditorActions.SetDiagonalWall(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area);
             });
 
-            AddCommand("SetBeetleCheckpoint", "Set beetle checkpoint / minecart right (TR3)", CommandType.Sectors, delegate (CommandArgs args)
+            AddCommand("SetBeetleCheckpoint", "Set beetle checkpoint / minecart right (TR3/TRX)", CommandType.Sectors, delegate (CommandArgs args)
             {
                 if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
                     return;
-                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion.Native() >= TRVersion.Game.TR3, "This flag"))
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TR3, "This flag"))
                     return;
                 EditorActions.ToggleSectorFlag(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorFlags.Beetle);
             });
 
-            AddCommand("SetTriggerTriggerer", "Set trigger triggerer / minecart left (TR3)", CommandType.Sectors, delegate (CommandArgs args)
+            AddCommand("SetTriggerTriggerer", "Set trigger triggerer / minecart left (TR3/TRX)", CommandType.Sectors, delegate (CommandArgs args)
             {
                 if (!EditorActions.CheckForRoomAndSectorSelection(args.Window))
                     return;
-                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion.Native() >= TRVersion.Game.TR3, "This flag"))
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TR3, "This flag"))
                     return;
                 EditorActions.ToggleSectorFlag(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, SectorFlags.TriggerTriggerer);
             });
@@ -2148,7 +2156,7 @@ namespace TombEditor
 
             AddCommand("SetRoomCold", "Set room to cold (TRNG only)", CommandType.Rooms, delegate (CommandArgs args)
             {
-                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TRNG, "Cold flag"))
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TR1X, "Cold flag"))
                     return;
                 if (args.Editor.SelectedRoom != null)
                 {
@@ -2171,7 +2179,7 @@ namespace TombEditor
 
             AddCommand("SetRoomDamage", "Set room to damage (TRNG only)", CommandType.Rooms, delegate (CommandArgs args)
             {
-                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TRNG, "Damage flag"))
+                if (!EditorActions.VersionCheck(args.Editor.Level.Settings.GameVersion >= TRVersion.Game.TR1X, "Damage flag"))
                     return;
                 if (args.Editor.SelectedRoom != null)
                 {

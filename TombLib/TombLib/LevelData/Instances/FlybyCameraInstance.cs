@@ -3,6 +3,14 @@ using System.Linq;
 
 namespace TombLib.LevelData
 {
+    public enum DofMode
+    {
+        None = 0,
+        Full = 1,
+        Front = 2,
+        Back = 3
+    }
+
     public class FlybyCameraInstance : PositionAndScriptBasedObjectInstance, IRotateableYXRoll
     {
         public const float MaxFlybySpeed = 65535.0f / 655.0f;
@@ -17,6 +25,10 @@ namespace TombLib.LevelData
         private float _roll { get; set; }
         private float _rotationX { get; set; }
         private float _rotationY { get; set; }
+        private float _dofDistance { get; set; }
+        private float _dofRange { get; set; }
+        private float _dofStrength { get; set; }
+        private DofMode _dofMode { get; set; }
 
         public int TimerToFrames => ((int)Timer >> 4);
 
@@ -44,6 +56,10 @@ namespace TombLib.LevelData
                 RotationX = prevCam.RotationX;
                 RotationY = prevCam.RotationY;
                 Roll = prevCam.Roll;
+                DofDistance = prevCam.DofDistance;
+                DofRange = prevCam.DofRange;
+                DofStrength = prevCam.DofStrength;
+                DofMode = prevCam.DofMode;
             }
         }
 
@@ -80,6 +96,34 @@ namespace TombLib.LevelData
         {
             get { return _rotationY; }
             set { _rotationY = (float)(value - Math.Floor(value / 360.0) * 360.0); }
+        }
+
+        /// <summary> World units in the range [0, +inf). </summary>
+        public float DofDistance
+        {
+            get { return _dofDistance; }
+            set { _dofDistance = float.IsFinite(value) ? Math.Max(0.0f, value) : 0.0f; }
+        }
+
+        /// <summary> World units in the range [0, +inf). </summary>
+        public float DofRange
+        {
+            get { return _dofRange; }
+            set { _dofRange = float.IsFinite(value) ? Math.Max(0.0f, value) : 0.0f; }
+        }
+
+        /// <summary> Raw renderer strength in the range [0, +inf). </summary>
+        public float DofStrength
+        {
+            get { return _dofStrength; }
+            set { _dofStrength = float.IsFinite(value) ? Math.Min(1.0f, Math.Max(0.0f, value)) : 0.0f; }
+        }
+
+        /// <summary> DOF mode. </summary>
+        public DofMode DofMode
+        {
+            get { return _dofMode; }
+            set { _dofMode = value; }
         }
 
         public override bool CopyToAlternateRooms => false;

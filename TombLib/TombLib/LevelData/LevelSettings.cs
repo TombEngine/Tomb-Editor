@@ -7,8 +7,6 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using TombLib.LevelData.IO;
-using TombLib.NG;
 using TombLib.Utils;
 using TombLib.Wad;
 using ImportedGeometryUpdateInfo = System.Collections.Generic.KeyValuePair<TombLib.LevelData.ImportedGeometry, TombLib.LevelData.ImportedGeometryInfo>;
@@ -204,6 +202,8 @@ namespace TombLib.LevelData
         public List<AnimatedTextureSet> AnimatedTextureSets { get; set; } = new List<AnimatedTextureSet>();
         public List<EventSet> GlobalEventSets { get; set; } = new List<EventSet>();
         public List<EventSet> VolumeEventSets { get; set; } = new List<EventSet>();
+        public HashSet<string> CollapsedGlobalEventSetFolders { get; set; } = new HashSet<string>();
+        public HashSet<string> CollapsedVolumeEventSetFolders { get; set; } = new HashSet<string>();
         public List<ColorC> Palette { get; set; } = LoadPalette(ResourcesC.ResourcesC.palette);
         public HashSet<string> Favorites { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -232,6 +232,8 @@ namespace TombLib.LevelData
 
         // For TRX only
         public TrxTextureBitDepth TrxTextureBitDepth { get; set; } = TrxTextureBitDepth.Default;
+        public bool TrxConvertFlybysToCinematicFrames { get; set; } = false;
+        public bool TrxUseAlternateGroups { get; set; } = false;
 
         public LevelSettings Clone()
         {
@@ -243,7 +245,9 @@ namespace TombLib.LevelData
             result.AnimatedTextureSets = AnimatedTextureSets.ConvertAll(set => set.Clone());
             result.ImportedGeometries = ImportedGeometries.ConvertAll(geometry => geometry.Clone());
             result.AutoStaticMeshMerges = AutoStaticMeshMerges.ConvertAll(entry => entry.Clone());
-            return result;
+			result.CollapsedGlobalEventSetFolders = new HashSet<string>(CollapsedGlobalEventSetFolders);
+			result.CollapsedVolumeEventSetFolders = new HashSet<string>(CollapsedVolumeEventSetFolders);
+			return result;
         }
 
         object ICloneable.Clone()

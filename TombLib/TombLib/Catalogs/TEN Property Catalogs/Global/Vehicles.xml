@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<propertyCatalog>
+  <moveable id="SNOWMOBILE,QUAD,SPEEDBOAT,KAYAK,UPV,MINECART,JEEP,MOTORBIKE,RUBBER_BOAT">
+  		<property
+		  internalName="VehicleWakeEnable"
+		  displayName="Render wake"
+		  type="Bool"
+		  defaultValue="true"
+		  category="Vehicle Effects"
+		  description="Add wake effect"
+		/>
+		<property
+		  internalName="VehicleWakeStartColor"
+		  displayName="Wake start color"
+		  type="Color"
+		  defaultValue="TEN.Color(191,191,191,191)"
+		  hasAlpha = "true"
+		  category="Vehicle Effects"
+		  description="Vehicle wake starting color."
+		/>
+		<property
+		  internalName="VehicleWakeEndColor"
+		  displayName="Wake end color"
+		  type="Color"
+		  defaultValue="TEN.Color(0,0,0,0)"
+		  hasAlpha = "true"
+		  category="Vehicle Effects"
+		  description="Vehicle wake ending color."
+		/>
+	</moveable>
+	
+	<moveable id="SPEEDBOAT,UPV,RUBBER_BOAT">
+		<property
+		  internalName="VehicleMist"
+		  displayName="Render mist"
+		  type="Bool"
+		  replacesOCB ="true"
+		  defaultValue="true"
+		  category="Vehicle Effects"
+		  description="Add mist effect."
+		/>
+		<property
+		  internalName="VehicleMistStartColor"
+		  displayName="Mist start color"
+		  type="Color"
+		  defaultValue="TEN.Color(0,0,0)"
+		  category="Vehicle Effects"
+		  description="Starting color of mist particles."
+		/>		
+		<property
+		  internalName="VehicleMistEndColor"
+		  displayName="Mist end color"
+		  type="Color"
+		  defaultValue="TEN.Color(64,64,64)"
+		  category="Vehicle Effects"
+		  description="Ending color of mist particles."
+		/>
+	</moveable>
+	
+	<moveable id="QUAD">
+		<property
+		  internalName="VehicleSmokeStartColor"
+		  displayName="Exhaust start color"
+		  type="Color"
+		  defaultValue="TEN.Color(0,0,0)"
+		  category="Vehicle Effects"
+		  description="Vehicle exhaust particle starting color."
+		/>
+		<property
+		  internalName="VehicleSmokeEndColor"
+		  displayName="Exhaust end color"
+		  type="Color"
+		  defaultValue="TEN.Color(64,64,64)"
+		  category="Vehicle Effects"
+		  description="Vehicle exhaust particle ending color."
+		/>
+	</moveable>
+	
+	<moveable id="UPV">
+		<property
+		  internalName="SpotLightEnabled"
+		  displayName="Render light"
+		  type="Bool"
+		  defaultValue="true"
+		  category="Vehicle Light"
+		  description="Render light"
+		/>
+		<property
+		  internalName="SpotLightColor"
+		  displayName="Light color"
+		  type="Color"
+		  defaultValue="TEN.Color(255,255,255)"
+		  category="Vehicle Light"
+		  description="Light color"
+		/>
+		<property
+		  internalName="SpotLightIntensity"
+		  displayName="Light intensity"
+		  type="Float"
+		  defaultValue="0.5"
+		  category="Vehicle Light"
+		  description="Light intensity"
+		/>
+		<property
+		  internalName="SpotLightRadius"
+		  displayName="Light radius"
+		  type="Int"
+		  defaultValue="4"
+		  minValue = "0"
+		  maxValue = "10"
+		  category="Vehicle Light"
+		  description="Light radius (in blocks)"
+		/>
+		<property
+		  internalName="SpotLightFalloff"
+		  displayName="Light falloff"
+		  type="Int"
+		  defaultValue="2"
+		  minValue = "0"
+		  maxValue = "10"
+		  category="Vehicle Light"
+		  description="Light falloff (in blocks)"
+		/>
+		<property
+		  internalName="SpotLightDistance"
+		  displayName="Light distance"
+		  type="Int"
+		  defaultValue="10"
+		  minValue = "0"
+		  maxValue = "100"
+		  category="Vehicle Light"
+		  description="Light distance (in blocks)"
+		/>
+		<property
+		  internalName="SpotLightCastShadow"
+		  displayName="Light shadow cast"
+		  type="Bool"
+		  defaultValue="true"
+		  category="Vehicle Light"
+		  description="Determines whether the vehicle light casts a dynamic shadow"
+		/>
+	</moveable>
+	
+	<moveable id="MOTORBIKE">
+		<property
+		  internalName="SpotLightEnabled"
+		  displayName="Render light"
+		  type="Bool"
+		  defaultValue="true"
+		  category="Vehicle Light"
+		  description="Render light"
+		/>
+		<property
+		  internalName="SpotLightColor"
+		  displayName="Headlight color"
+		  type="Color"
+		  defaultValue="TEN.Color(255,170,0)"
+		  category="Vehicle Light"
+		  description="Light color"
+		/>
+		<property
+		  internalName="SpotLightIntensity"
+		  displayName="Headlight intensity"
+		  type="Float"
+		  minValue = "0"
+		  maxValue = "2.0"
+		  defaultValue="1.0"
+		  category="Vehicle Light"
+		  description="Light intensity"
+		/>
+		<property
+		  internalName="SpotLightRadius"
+		  displayName="Headlight radius"
+		  type="Int"
+		  defaultValue="4"
+		  minValue = "0"
+		  maxValue = "10"
+		  category="Vehicle Light"
+		  description="Light radius (in blocks)"
+		/>
+		<property
+		  internalName="SpotLightFalloff"
+		  displayName="Headlight falloff"
+		  type="Int"
+		  defaultValue="2"
+		  minValue = "0"
+		  maxValue = "10"
+		  category="Vehicle Light"
+		  description="Light falloff (in blocks)"
+		/>
+		<property
+		  internalName="SpotLightDistance"
+		  displayName="Headlight distance"
+		  type="Int"
+		  defaultValue="10"
+		  minValue = "0"
+		  maxValue = "100"
+		  category="Vehicle Light"
+		  description="Light distance (in blocks)"
+		/>
+		<property
+		  internalName="SpotLightCastShadow"
+		  displayName="Light shadow cast"
+		  type="Bool"
+		  defaultValue="true"
+		  category="Vehicle Light"
+		  description="Determines whether the vehicle light casts a dynamic shadow"
+		/>
+	</moveable>
+	
+	<moveable id="JEEP">
+		<property
+		  internalName="SpotLightEnabled"
+		  displayName="Render headlight"
+		  type="Bool"
+		  defaultValue="false"
+		  category="Vehicle Light"
+		  description="Render light"
+		/>
+		<property
+		  internalName="SpotLightColor"
+		  displayName="Headlight color"
+		  type="Color"
+		  defaultValue="TEN.Color(200,200,200)"
+		  category="Vehicle Light"
+		  description="Light color"
+		/>
+		<property
+		  internalName="SpotLightIntensity"
+		  displayName="Headlight intensity"
+		  type="Float"
+		  minValue = "0"
+		  maxValue = "2.0"
+		  defaultValue="1.0"
+		  category="Vehicle Light"
+		  description="Light intensity"
+		/>
+		<property
+		  internalName="SpotLightRadius"
+		  displayName="Headlight radius"
+		  type="Int"
+		  defaultValue="4"
+		  minValue = "0"
+		  maxValue = "10"
+		  category="Vehicle Light"
+		  description="Light radius (in blocks)"
+		/>
+		<property
+		  internalName="SpotLightFalloff"
+		  displayName="Headlight falloff"
+		  type="Int"
+		  defaultValue="2"
+		  minValue = "0"
+		  maxValue = "10"
+		  category="Vehicle Light"
+		  description="Light falloff (in blocks)"
+		/>
+		<property
+		  internalName="SpotLightDistance"
+		  displayName="Headlight distance"
+		  type="Int"
+		  defaultValue="10"
+		  minValue = "0"
+		  maxValue = "100"
+		  category="Vehicle Light"
+		  description="Light distance (in blocks)"
+		/>
+		<property
+		  internalName="SpotLightCastShadow"
+		  displayName="Light shadow cast"
+		  type="Bool"
+		  defaultValue="true"
+		  category="Vehicle Light"
+		  description="Determines whether the vehicle light casts a dynamic shadow"
+		/>
+	</moveable>
+	
+	<moveable id="SPEEDBOAT">
+		<property
+		  internalName="VehicleFoam"
+		  displayName="Render foam"
+		  type="Bool"
+		  replacesOCB ="true"
+		  defaultValue="false"
+		  category="Vehicle Effects"
+		  description="Add foam effect"
+		/>
+	</moveable>
+</propertyCatalog>

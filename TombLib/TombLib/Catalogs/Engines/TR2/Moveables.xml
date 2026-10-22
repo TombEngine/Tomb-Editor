@@ -56,13 +56,13 @@
     <moveable id="54" name="Monk with knife-end stick" essential="false" ten="MONK2" />
     <moveable id="55" name="Collapsible floor" essential="false" ten="CRUMBLING_FLOOR" />
     <moveable id="57" name="Loose boards" essential="false" ten="CRUMBLING_FLOOR" />
-    <moveable id="58" name="Swinging sandbag / spiky ball" essential="false" ten="SPIKEBALL" />
+    <moveable id="58" name="Swinging sandbag / spiky ball" essential="false" ten="SWINGING_SANDBAG,SWINGING_SPIKE_BAG" />
     <moveable id="59" name="Spikes / Glass shards" essential="false" ten="TEETH_SPIKES" />
     <moveable id="60" name="Boulder" essential="false" ten="CLASSIC_ROLLINGBALL" />
-    <moveable id="61" name="Disk (like dart)" hidden="true" />
-    <moveable id="62" name="Wall-mounted disk shooter (like dartgun)" essential="false" />
+    <moveable id="61" name="Disk (like dart)" hidden="true" ten="DISK" />
+    <moveable id="62" name="Wall-mounted disk shooter (like dartgun)" essential="false" ten="DISK_SHOOTER" />
     <moveable id="63" name="Drawbridge" essential="false" />
-    <moveable id="64" name="Slamming door" essential="false" />
+    <moveable id="64" name="Slamming door" essential="false" ten="SLAMMING_DOORS" />
     <moveable id="65" name="Elevator" essential="false" ten="LIFT" />
     <moveable id="66" name="Minisub" essential="false" />
     <moveable id="67" name="Movable cubical block (pushable)"   essential="false" ten="PUSHABLE_OBJECT_CLIMBABLE1" />
@@ -72,15 +72,15 @@
     <moveable id="71" name="Big bowl (Ice Palace)" essential="false" ten="ANIMATING1" />
     <moveable id="72" name="Breakable window (can shoot out)" essential="false" ten="SMASH_OBJECT1" />
     <moveable id="73" name="Breakable window (must jump through)" essential="false" ten="SMASH_OBJECT2" />
-    <moveable id="76" name="Airplane propeller" essential="false" ten="MOVING_BLADE" />
-    <moveable id="77" name="Power saw" essential="false" ten="MOVING_BLADE" />
-    <moveable id="78" name="Overhead pulley hook" essential="false" ten="MOVING_BLADE" />
-    <moveable id="79" name="Sandbag / Ceiling fragments" essential="false" ten="FALLING_CEILING" />
+    <moveable id="76" name="Airplane propeller" essential="false" ten="AIRPLANE_PROPELLER" />
+    <moveable id="77" name="Power saw" essential="false" ten="CIRCULAR_SAW" />
+    <moveable id="78" name="Overhead pulley hook" essential="false" ten="OVERHEAD_PULLEY_HOOK" />
+    <moveable id="79" name="Sandbag / Ceiling fragments" essential="false" ten="FALLING_CEILING,FALLING_SANDBAG" />
     <moveable id="80" name="Rolling spindle" essential="false" ten="ROLLING_SPINDLE" />
     <moveable id="81" name="Wall-mounted knife blade" essential="false" ten="WALL_MOUNTED_BLADE" />
     <moveable id="82" name="Statue with knife blade" essential="false" ten="STATUE_WITH_BLADE" />
-    <moveable id="83" name="Multiple boulders / snowballs" essential="false" ten="CLASSIC_ROLLINGBALL" />
-    <moveable id="84" name="Detachable icicles" essential="false" ten="FALLING_CEILING" />
+    <moveable id="83" name="Multiple boulders / snowballs" essential="false" ten="MULTIPLE_BOULDERS" />
+    <moveable id="84" name="Detachable icicles" essential="false" ten="FALLING_SPIKES" />
     <moveable id="85" name="Spiky moveable wall" essential="false" ten="SPIKY_WALL" />
     <moveable id="86" name="Bounce pad" essential="false" ten="SPRINGBOARD" />
     <moveable id="87" name="Spiky ceiling segment" essential="false" ten="SPIKY_CEILING" />
@@ -88,14 +88,14 @@
     <moveable id="91" name="Lara and a snowmobile" ten="SNOWMOBILE_LARA_ANIMS" />
     <moveable id="92" name="Wheel knob" essential="false" ten="SWITCH_TYPE1" />
     <moveable id="93" name="Above-water switch" essential="false" ten="SWITCH_TYPE2" />
-    <moveable id="94" name="Underwater propeller" essential="false" ten="PROPELLER_H" />
+    <moveable id="94" name="Underwater propeller" essential="false" ten="LARGE_FAN" />
     <moveable id="95" name="Air fan" essential="false" ten="ANIMATING1" />
-    <moveable id="96" name="Swinging box / spiky ball" essential="false" ten="SPIKEBALL" />
+    <moveable id="96" name="Swinging box / spiky ball" essential="false" ten="SWINGING_BOX,SWINGING_SPIKE_BAG" />
     <moveable id="97" name="Cutscene Object 1" ten="ANIMATING101" />
     <moveable id="98" name="Cutscene Object 2" ten="ANIMATING102" />
     <moveable id="99" name="Cutscene Object 3" ten="ANIMATING103" />
     <moveable id="100" name="Cutscene Object 4" ten="ANIMATING104" />
-    <moveable id="101" name="Rolling storage drums" essential="false" ten="CLASSIC_ROLLINGBALL" />
+    <moveable id="101" name="Rolling storage drums" essential="false" ten="ROLLING_BARRELS" />
     <moveable id="102" name="Zipline handle" essential="false" ten="ZIPLINE_HANDLE" />
     <moveable id="103" name="Above-water switch" essential="false" ten="SWITCH_TYPE3" />
     <moveable id="104" name="Above-water/underwater switch" essential="false" ten="SWITCH_TYPE4" />
@@ -140,7 +140,7 @@
     <moveable id="161" name="Harpoon gun" id2="139" ten="HARPOON_ITEM"/>
     <moveable id="162" name="M16" id2="140" ten="HK_ITEM"/>
     <moveable id="163" name="Grenade launcher" id2="141" ten="GRENADE_GUN_ITEM"/>
-    <moveable id="164" name="Pistol ammo"  ten="PISTOL_AMMO_ITEM"/>
+    <moveable id="164" name="Pistol ammo" id2="142" ten="PISTOL_AMMO_ITEM"/>
     <moveable id="165" name="Shotgun ammo" id2="143" ten="SHOTGUN_AMMO1_ITEM"/>
     <moveable id="166" name="Auto-pistol ammo" id2="144" ten="PISTOLS_AMMO_ITEM"/>
     <moveable id="167" name="Uzi ammo" id2="145" ten="UZI_AMMO_ITEM"/>

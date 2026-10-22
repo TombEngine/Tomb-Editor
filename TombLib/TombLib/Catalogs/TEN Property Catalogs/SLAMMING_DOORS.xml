@@ -1,0 +1,12 @@
+<propertyCatalog>    
+	<moveable id="SLAMMING_DOORS">
+        <property
+          internalName="SparkEffect"
+          displayName="Spark Effect"
+          type="Bool"
+          defaultValue="false"
+          category="Trap parameters"
+          description="Adds a spark effect to the Slamming Doors"
+        />
+    </moveable>
+</propertyCatalog>

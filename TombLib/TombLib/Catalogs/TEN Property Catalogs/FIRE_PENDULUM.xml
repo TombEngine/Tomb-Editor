@@ -1,0 +1,28 @@
+<propertyCatalog>    
+	<moveable id="FIRE_PENDULUM">
+        <property
+          internalName="EffectMeshID"
+          displayName="Flame Mesh"
+          type="Int"
+          defaultValue="4"
+          category="Trap parameters"
+          description="Mesh to display the flame effect"
+        />
+		<property 
+		  internalName="EffectColor"
+          displayName="Flame Color"
+          type="Color"
+          defaultValue="TEN.Color(0, 0, 0)"
+          category="Appearance"
+          description="Color tint applied to the flame effect. (0, 0, 0) = real flame color" 
+		/>
+		<property
+          internalName="FxFogEffect"
+          displayName="Fog Effect"
+          type="Bool"
+          defaultValue="false"
+          category="Trap parameters"
+          description="Adds a light FX fog effect to the Pendulum"
+        />
+    </moveable>
+</propertyCatalog>

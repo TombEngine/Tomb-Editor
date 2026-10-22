@@ -67,10 +67,10 @@ namespace TombLib.Controls.VisualScripting
 
         protected override void Dispose(bool disposing)
         {
-            DisposeUI();
-
             if (disposing)
             {
+                DisposeUI();
+
                 MouseDown -= Ctrl_RightClick;
                 cbFunction.MouseDown -= Ctrl_RightClick;
             }
@@ -162,6 +162,10 @@ namespace TombLib.Controls.VisualScripting
 
         public void SpawnUIElements()
         {
+            // AI-suggested safeguard against null reference exceptions.
+            if (IsDisposed || Disposing)
+                return;
+
             var func = cbFunction.SelectedItem as NodeFunction;
 
             if (func == null)

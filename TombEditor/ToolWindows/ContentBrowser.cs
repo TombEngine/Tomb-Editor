@@ -29,6 +29,7 @@ public partial class ContentBrowser : DarkToolWindow
 	private bool _suppressEditorSync;
 
 	private bool _refreshPending;
+	private bool _hideInternalObjects;
 
 	private const int ThumbnailBatchSize = 10;
 
@@ -151,7 +152,7 @@ public partial class ContentBrowser : DarkToolWindow
 			return;
 
 		if (selected.WadObject is ImportedGeometry)
-			_editor.Action = new EditorActionPlace(false, (l, r) => new ImportedGeometryInstance());
+			CommandHandler.GetCommand("AddImportedGeometry").Execute?.Invoke(new CommandArgs { Editor = _editor, Window = FindForm() });
 		else
 			CommandHandler.GetCommand("AddItem").Execute?.Invoke(new CommandArgs { Editor = _editor, Window = FindForm() });
 
@@ -319,8 +320,9 @@ public partial class ContentBrowser : DarkToolWindow
 			_refreshPending = true;
 		}
 
-		// Also refresh on configuration change (game version display may change).
-		if (obj is Editor.ConfigurationChangedEvent)
+		// Rebuilding the asset list is expensive, so a configuration change (e.g. any view toggle) only refreshes it
+		// when the option that feeds the list has changed.
+		if (obj is Editor.ConfigurationChangedEvent && _editor.Configuration.RenderingItem_HideInternalObjects != _hideInternalObjects)
 			_refreshPending = true;
 
 		// Sync selection when items are chosen from other tool windows.
@@ -369,7 +371,8 @@ public partial class ContentBrowser : DarkToolWindow
 		if (settings is null)
 			return;
 
-		_viewModel.RefreshAssets(settings, _editor.Configuration.RenderingItem_HideInternalObjects);
+		_hideInternalObjects = _editor.Configuration.RenderingItem_HideInternalObjects;
+		_viewModel.RefreshAssets(settings, _hideInternalObjects);
 	}
 
 	private void ViewModel_SelectedItemsChanged(object sender, IReadOnlyList<AssetItemViewModel> items)

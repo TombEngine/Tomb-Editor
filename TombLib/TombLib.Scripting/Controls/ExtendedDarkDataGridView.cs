@@ -38,6 +38,10 @@ namespace TombLib.Scripting.Controls
 					_editingControl.Copy();
 					keyData = Keys.None;
 				}
+				else if (keyData == Keys.Delete)
+				{
+					keyData = Keys.None;
+				}
 			}
 			else
 			{

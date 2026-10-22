@@ -31,35 +31,35 @@
     <moveable id="28" name="Tiger" essential="false" ten="TIGER"/>
     <moveable id="29" name="Vulture" essential="false" ten="EAGLE"/>
     <moveable id="30" name="Assault-course target" essential="false" ten="SHOOT_SWITCH1" />
-    <moveable id="31" name="Crawler mutant in closet" essential="false" ten="ANIMATING108"/>
+    <moveable id="31" name="Crawler mutant in closet (Boo mutant)" essential="false" ten="BOO_MUTANT"/>
     <moveable id="32" name="Crocodile (in water)" essential="false" />
     <moveable id="34" name="Compsognathus" essential="false" ten="COMPSOGNATHUS"/>
     <moveable id="35" name="Lizard thing" essential="false" ten="LIZARD"/>
     <moveable id="36" name="Puna guy" essential="false" ten="PUNA_BOSS"/>
-    <moveable id="37" name="Mercenary" essential="false"  ten="TROOPS"/>
+    <moveable id="37" name="Mercenary" essential="false"  ten="MERCENARY"/>
     <moveable id="38" name="Raptor hung by rope (fish bait)" essential="false" ten="SHOOT_SWITCH2" />
-    <moveable id="39" name="RX-Tech guy in red jacket" essential="false" ten="MP_WITH_GUN" /> 
-    <moveable id="40" name="RX-Tech guy with gun" essential="false"  ten="SAS_CAIRO" /> 
+    <moveable id="39" name="RX-Tech guy in red jacket" essential="false" ten="OILRED" /> 
+    <moveable id="40" name="RX-Tech guy with gun" essential="false"  ten="WHITE_SOLDIER" /> 
     <moveable id="41" name="Dog (Antarctica)" essential="false" ten="HUSKIE"/>
     <moveable id="42" name="Crawler mutant" essential="false" ten="SEAL_MUTANT" /> 
     <moveable id="44" name="Tinnos wasp" essential="false" ten="WASP_MUTANT" /> 
     <moveable id="45" name="Tinnos monster" essential="false" ten="CLAW_MUTANT" />
-    <moveable id="46" name="Brute mutant (with claw)" essential="false" /> 
-    <moveable id="47" name="Tinnos wasp respawn point" essential="false" />
+    <moveable id="46" name="Brute mutant (with claw)" essential="false" ten="HYBRID_MUTANT" /> 
+    <moveable id="47" name="Tinnos wasp emitter" essential="false" ten="WASP_MUTANT_EMITTER" />
     <moveable id="48" name="Raptor respawn point" />
     <moveable id="49" name="Willardspider" essential="false" ten="WILLARD" /> 
     <moveable id="50" name="RX-Tech flamethrower guy" essential="false" ten="FLAMETHROWER_BADDY" /> 
-    <moveable id="51" name="London goon" essential="false" ten="SAS_CAIRO"/> 
-    <moveable id="53" name="'Damned' stick-wielding goon" essential="false" ten="MP_WITH_STICK" /> 
+    <moveable id="51" name="London goon" essential="false" ten="LONDON_MERCENARY"/> 
+    <moveable id="53" name="'Damned' stick-wielding goon" essential="false" ten="PUNK" /> 
     <moveable id="56" name="London guard" essential="false" ten="MP_WITH_GUN" /> 
     <moveable id="57" name="Sophia-Leigh" essential="false" ten="SOPHIA_LEIGH_BOSS"/>
     <moveable id="58" name="Thames Wharf machine" essential="false" ten="ELECTRIC_CLEANER" /> 
     <moveable id="60" name="MP with stick" essential="false" ten="MP_WITH_STICK" />
     <moveable id="61" name="MP with gun" essential="false" ten="MP_WITH_GUN" />
-    <moveable id="62" name="Prisoner" essential="false" ten="CIVVY" />
-    <moveable id="63" name="MP with sighted gun and night sight" essential="false" ten="SAS_CAIRO" /> 
+    <moveable id="62" name="Prisoner" essential="false" ten="PRISONER" />
+    <moveable id="63" name="MP with sighted gun and night sight (Swat gun)" essential="false" ten="SWAT_GUN" /> 
     <moveable id="64" name="Gun turret" essential="false" ten="TWIN_AUTO_GUN"/>
-    <moveable id="65" name="Dam guard" essential="false" ten="MP_WITH_STICK" /> 
+    <moveable id="65" name="Civvy" essential="false" ten="CIVVY" /> 
     <moveable id="66" name="Tripwire" essential="false" ten="LASER_BEAM" />
     <moveable id="67" name="Electrified wire" essential="false" ten="ELECTRIC_FENCE" /> 
     <moveable id="68" name="Killer tripwire" essential="false" ten="LASER_BEAM"/> 
@@ -77,13 +77,13 @@
     <moveable id="81" ai="true" name="AI Check" essential="false" ten="AI_X2"/>
     <moveable id="82" name="Unknown Id #82" essential="false" />
     <moveable id="83" name="Collapsible floor" essential="false" ten="CRUMBLING_FLOOR" />
-    <moveable id="86" name="Heavy swinging thing / Drill bit / Swinging brazier" essential="false" ten="FIRE_PENDULUM" />  
-    <moveable id="87" name="Spikes / Barbed wire" essential="false" ten="TEETH_SPIKES" />
+    <moveable id="86" name="Heavy swinging thing / Drill bit / Swinging brazier" essential="false" ten="SWINGING_IRON_ANCHOR, DRILL_BIT, FIRE_PENDULUM" />
+    <moveable id="87" name="Spikes / Barbed wire" essential="false" ten="TEETH_SPIKES" /> 
     <moveable id="88" name="Boulder / Barrel" essential="false" ten="CLASSIC_ROLLINGBALL" />
     <moveable id="89" name="Giant boulder (Temple of Puna)" essential="false" ten="BIG_ROLLINGBALL" /> 
-    <moveable id="90" name="Disk (like dart)" hidden="true" ten="DART" />
+    <moveable id="90" name="Disk (like dart)" essential="false" ten="DARTS,DISK" />
     <moveable id="91" name="Dart emitter" essential="false" ten="DART_EMITTER" />
-    <moveable id="94" name="Spiked frame / Slamming door" essential="false" ten="SLAMMING_DOORS" />
+    <moveable id="94" name="Spiked frame / Slamming door" essential="false" ten="SPIKED_FRAME, SLAMMING_DOOR" />
     <moveable id="97" name="Movable cubical block (pushable)" essential="false" ten="PUSHABLE_OBJECT_CLIMBABLE1" />
     <moveable id="98" name="Movable cubical block (pushable)" essential="false" ten="PUSHABLE_OBJECT_CLIMBABLE2"/>
 	<moveable id="99" name="Movable cubical block (pushable)" essential="false" ten="PUSHABLE_OBJECT_CLIMBABLE3"/>
@@ -94,15 +94,15 @@
     <moveable id="107" name="Falling fragments" essential="false" ten="FALLING_CEILING" />
     <moveable id="108" name="Rolling spindle" essential="false" ten="ROLLING_SPINDLE" />
     <moveable id="110" name="Subway train" essential="false" ten="TRAIN" />
-    <moveable id="111" name="Wall-mounted knife blade / Knife disk" essential="false" ten="WALL_MOUNTED_BLADE" />
+    <moveable id="111" name="Wall-mounted knife blade / Knife disk" essential="false" ten="WALL_MOUNTED_BLADE,ROTATING_KNIFE_DISK"/>
     <moveable id="113" name="Detachable stalacites" essential="false" ten="FALLING_BLOCK" />
     <moveable id="114" name="Spiky moveable wall" essential="false" ten="SPIKY_WALL" />
-    <moveable id="116" name="Spiky moveable vertical wall / Tunnel borer" essential="false" ten="SPIKY_CEILING" />
+    <moveable id="116" name="Spiky moveable vertical wall / Tunnel borer" essential="false" ten="SPIKY_CEILING,TUNNEL_BORER"/>
     <moveable id="117" name="Valve wheel / Pulley" essential="false" ten="SWITCH_TYPE1"/>
     <moveable id="118" name="Switch / Pullable book" essential="false" ten="SWITCH_TYPE2"/>
     <moveable id="119" name="Underwater propeller / Diver sitting on block / Underwater rotating knives / Meteorite" essential="false" ten="TURNING_CEILING_BLADE" /> 
-    <moveable id="120" name="Fan" essential="false" />
-    <moveable id="121" name="Heavy stamper / Grinding drum / Underwater rotating knives" essential="false" ten="TURNING_WALL_BLADE" />
+    <moveable id="120" name="Fan" essential="false" ten="FAN"/>
+    <moveable id="121" name="Heavy stamper / Grinding drum / Underwater rotating knives" essential="false" ten="TURNING_WALL_BLADE"/>
     <moveable id="122" name="Temple statue (original petrified state)" essential="false" ten="SHIVA_STATUE"/>
     <moveable id="123" name="Monkey with medipack" use_body_from="71" ten="MESHSWAP_MONKEY_MEDIPACK"/> 
     <moveable id="124" name="Monkey with key" use_body_from="71" ten="MESHSWAP_MONKEY_KEY"/> 
@@ -284,5 +284,5 @@
     <moveable id="366" name="Yellow shell casing" hidden="true" />
     <moveable id="367" name="Red shell casing" hidden="true" />
     <moveable id="370" name="Tinnos light shaft" essential="false" ten="WATERFALL1" />
-    <moveable id="373" name="Electrical switch box" essential="false" ten="SHOOT_SWITCH2" /> 
+    <moveable id="373" name="Electrical switch box" essential="false" ten="FUSEBOX_SWITCH" /> 
 </moveables>

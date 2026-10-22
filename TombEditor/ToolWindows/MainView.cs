@@ -50,7 +50,7 @@ namespace TombEditor.ToolWindows
 
         public void AddToolbox(DarkFloatingToolbox toolbox)
         {
-            if(!panel3D.Contains(toolbox))
+            if (!panel3D.Contains(toolbox))
                 panel3D.Controls.Add(toolbox);
         }
 
@@ -106,17 +106,8 @@ namespace TombEditor.ToolWindows
             if (obj is Editor.StepHeightChangedEvent)
                 UpdateStepHeightCombo();
 
-            if (obj is Editor.StatisticsChangedEvent ||
-                obj is Editor.ConfigurationChangedEvent)
-            {
+            if (obj is Editor.StatisticsChangedEvent)
                 UpdateStatistics();
-
-                if (obj is Editor.ConfigurationChangedEvent)
-                {
-                    panelStepHeightOptions.Visible = _editor.IsPreciseGeometryAllowed;
-                    UpdateBottomPanelVisibility();
-                }
-            }
 
             if (obj is Editor.ConfigurationChangedEvent)
             {
@@ -132,6 +123,7 @@ namespace TombEditor.ToolWindows
                 }
 
                 RefreshControls(_editor.Configuration);
+                UpdateBottomPanelVisibility(_editor.Configuration);
             }
             
             // Gray out menu options that do not apply
@@ -175,20 +167,21 @@ namespace TombEditor.ToolWindows
                 butOpacityNone.Enabled =
                 butOpacitySolidFaces.Enabled =
                 butOpacityTraversableFaces.Enabled = portal != null;
-				butMirror.Enabled = portal != null && _editor.Level.IsTombEngine;
+                butMirror.Enabled = portal != null && _editor.Level.IsTombEngine;
 
                 butOpacityNone.Checked = portal != null && portal.Opacity == PortalOpacity.None;
                 butOpacitySolidFaces.Checked = portal != null && portal.Opacity == PortalOpacity.SolidFaces;
                 butOpacityTraversableFaces.Checked = portal != null && portal.Opacity == PortalOpacity.TraversableFaces;
 
-				butMirror.Checked = portal != null && portal.Effect == PortalEffectType.ClassicMirror;
+                butMirror.Checked = portal != null && portal.Effect == PortalEffectType.ClassicMirror;
             }
 
             // Dismiss any messages
             if (obj is Editor.LevelChangedEvent)
-            {
                 popup.Hide();
-            }
+
+            if (obj is Editor.LayoutSwitchedEvent)
+                RefreshControls(_editor.Configuration);
 
             // Update version-specific controls
             if (obj is Editor.InitEvent ||
@@ -200,8 +193,7 @@ namespace TombEditor.ToolWindows
                 butDrawVolumes.Enabled     = _editor.Level.IsTombEngine; // We may safely hide it because it's not customizable
                 butAddSprite.Enabled       = _editor.Level.Settings.GameVersion.Native() <= TRVersion.Game.TR2;
 
-                panelStepHeightOptions.Visible = _editor.IsPreciseGeometryAllowed;
-                UpdateBottomPanelVisibility();
+                UpdateBottomPanelVisibility(_editor.Configuration);
                 UpdateStepHeightCombo();
             }
 
@@ -282,15 +274,23 @@ namespace TombEditor.ToolWindows
 
             panel3D.Invalidate();
 
-            panelFlybyTimeline.Visible = settings.UI_ShowFlybyTimeline;
-            tbStats.Visible = settings.UI_ShowStats;
-            UpdateBottomPanelVisibility();
+            UpdateBottomPanelVisibility(settings);
         }
 
-        private void UpdateBottomPanelVisibility()
+        private void UpdateBottomPanelVisibility(Configuration settings)
         {
-            panelBottomStatus.Visible = tbStats.Visible || panelStepHeightOptions.Visible;
-            panelBottom.Visible = panelFlybyTimeline.Visible || panelBottomStatus.Visible;
+            bool bottomPanelVisible = settings.Window_Layout.ShowStats || _editor.IsPreciseGeometryAllowed;
+            bool timelinePanelVisible = settings.Window_Layout.ShowFlybyTimeline;
+
+            UpdateStatistics();
+
+            panelBottom.Visible = timelinePanelVisible || bottomPanelVisible;
+            panelBottomStatus.Visible = bottomPanelVisible;
+
+            panelStepHeightOptions.Visible = _editor.IsPreciseGeometryAllowed;
+            tbStats.Visible = settings.Window_Layout.ShowStats;
+
+            panelFlybyTimeline.Visible = settings.Window_Layout.ShowFlybyTimeline;
         }
 
         private void UpdateToolStripLayout()
@@ -396,7 +396,7 @@ namespace TombEditor.ToolWindows
 
         private void UpdateStatistics()
         {
-            if (_editor == null || _editor.Level == null || !_editor.Configuration.UI_ShowStats)
+            if (_editor == null || _editor.Level == null || !_editor.Configuration.Window_Layout.ShowStats)
                 return;
 
             var summary = _editor.Stats;

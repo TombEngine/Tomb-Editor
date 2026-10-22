@@ -192,13 +192,13 @@
 			<Button
 				Width="80"
 				Command="{Binding ConfirmCommand}"
-				Content="{tombLib:Localize ~Common.OK}" />
+				Content="{tombLib:Localize ~Common.OK}"
+				IsDefault="True" />
 			<Button
 				Width="80"
 				Command="{Binding CancelCommand}"
 				Content="{tombLib:Localize ~Common.Cancel}"
-				IsCancel="True"
-				IsDefault="True" />
+				IsCancel="True" />
 		</controls:SpacedStack>
 	</sg:SpacedGrid>
 </Window>

@@ -54,8 +54,11 @@ namespace TombLib.LevelData.IO
             if (sourceVersion == TRVersion.Game.TombEngine)
                 return moveable;
 
-            string newSlotName = TrCatalog.GetMoveableTombEngineSlot(sourceVersion, moveable.Id.TypeId);
+            var compatibleSlots = TrCatalog.GetMoveableTombEngineSlots(sourceVersion, moveable.Id.TypeId);
+            if (compatibleSlots.Count == 0)
+                return moveable;
 
+            string newSlotName = TrCatalog.GetMoveableName(TRVersion.Game.TombEngine, compatibleSlots.First());
             switch (newSlotName)
             {
                 // We need to copy mesh 14 to 7 for {WEAPON}_ANIM for back weapons
@@ -401,26 +404,18 @@ namespace TombLib.LevelData.IO
                     {
                         uint newSlot;
                         string oldId = TrCatalog.GetMoveableName(TRVersion.Game.TR4, moveable.Key.TypeId);
-                        string newId = TrCatalog.GetMoveableTombEngineSlot(TRVersion.Game.TR4, moveable.Key.TypeId);
+                        var tombEngineSlots = TrCatalog.GetMoveableTombEngineSlots(TRVersion.Game.TR4, moveable.Key.TypeId);
 
-                        if (string.IsNullOrEmpty(newId))
+                        if (tombEngineSlots.Count == 0)
                         {
                             newSlot = remappedObjectIndex;
-                            newId = TrCatalog.GetMoveableName(TRVersion.Game.TombEngine, newSlot);
-                            progressReporter.ReportWarn("    Slot " + oldId + " is not supported by TombEngine and it will be remapped to " + newId);
+                            string newIdName = TrCatalog.GetMoveableName(TRVersion.Game.TombEngine, newSlot);
+                            progressReporter.ReportWarn("    Slot " + oldId + " is not supported by TombEngine and it will be remapped to " + newIdName);
                             remappedObjectIndex++;
                         }
                         else
                         {
-                            uint? found = TrCatalog.GetItemIndex(TRVersion.Game.TombEngine, newId, out isMoveable);
-                            if (!found.HasValue)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                newSlot = found.Value;
-                            }
+                            newSlot = tombEngineSlots.First();
                         }
 
                         string newSlotName = TrCatalog.GetMoveableName(TRVersion.Game.TombEngine, newSlot);
@@ -495,24 +490,16 @@ namespace TombLib.LevelData.IO
                         cancelToken.ThrowIfCancellationRequested();
                         uint newSlot;
                         string oldId = TrCatalog.GetMoveableName(TRVersion.Game.TR4, sequence.Key.TypeId);
-                        string newId = TrCatalog.GetMoveableTombEngineSlot(TRVersion.Game.TR4, sequence.Key.TypeId);
+                        uint? newId = TrCatalog.GetSpriteSequenceTombEngineSlot(TRVersion.Game.TR4, sequence.Key.TypeId);
 
-                        if (string.IsNullOrEmpty(newId))
+                        if (!newId.HasValue)
                         {
                             newSlot = remappedObjectIndex;
                             remappedObjectIndex++;
                         }
                         else
                         {
-                            uint? found = TrCatalog.GetItemIndex(TRVersion.Game.TombEngine, newId, out isMoveable);
-                            if (!found.HasValue)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                newSlot = found.Value;
-                            }
+                            newSlot = newId.Value;
                         }
 
                         string newSlotName = TrCatalog.GetSpriteSequenceName(TRVersion.Game.TombEngine, newSlot);

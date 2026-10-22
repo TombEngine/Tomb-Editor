@@ -11,6 +11,9 @@ cbuffer WorldData
 	float BrushRotation; // Degrees, for rotation indicator line
 	float4 BrushCenter; // xyz = world center, w = radius
 	float4 BrushColor;
+	float4 DofCenterRange; // xyz = camera origin, w = focus range
+	float4 DofDirectionDistance; // xyz = normalized view direction, w = focus distance
+	float4 DofColorStrength; // xyz = darkening multiplier, w = packed DOF mode
 };
 
 struct PixelInputType
@@ -40,7 +43,7 @@ float ddAny(float value)
     return length(float2(ddx(value), ddy(value)));
 }
 
-#include "../Legacy/BrushOverlay.hlsli"
+#include "../Legacy/IndicationOverlay.hlsli"
 
 float4 main(PixelInputType input) : SV_TARGET
 {
@@ -171,6 +174,7 @@ float4 main(PixelInputType input) : SV_TARGET
 	result *= input.Overlay.w;
 
 	// Draw brush outline projected onto room geometry.
+	ApplyDofOverlay(result.xyz, result.w, true, input.WorldPosition);
 	ApplyBrushOverlay(result.xyz, result.w, true, input.Position, input.WorldPosition, RoomGridLineWidth);
 
     if ((result.x + result.y + result.z + result.w) < 0.02f)

@@ -53,11 +53,12 @@ namespace TombEditor.ToolWindows
                 bool supportsReverb = _editor.Level.Settings.GameVersion.SupportsReverberation();
                 bool isTR1 = _editor.Level.Settings.GameVersion.Native() == TRVersion.Game.TR1;
                 bool isTEN = _editor.Level.Settings.GameVersion is TRVersion.Game.TombEngine;
+                bool isTRX = _editor.Level.Settings.GameVersion.IsTRX();
 
-                cbHorizon.Enabled = !isTR1 || _editor.Level.IsTRX;
-                cbFlagOutside.Enabled = !isTR1 || _editor.Level.IsTRX;
-                cbFlagCold.Enabled = isNGorTEN;
-                cbFlagDamage.Enabled = isNGorTEN;
+                cbHorizon.Enabled = !isTR1 || isTRX;
+                cbFlagOutside.Enabled = !isTR1 || isTRX;
+                cbFlagCold.Enabled = isNGorTEN || isTRX;
+                cbFlagDamage.Enabled = isNGorTEN || isTRX;
                 cbFlagNoCaustics.Enabled = isTEN;
                 cbNoLensflare.Enabled = supportsLensflare;
                 comboReverberation.Enabled = supportsReverb;

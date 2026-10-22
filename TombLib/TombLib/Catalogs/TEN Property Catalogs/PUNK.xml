@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<propertyCatalog>
+
+  <moveable name="PUNK">
+
+    <property
+      internalName="FlameEnabled"
+      displayName="Flame Enabled"
+      type="Bool"
+      defaultValue="false"
+      category="Visual"
+      description="If true, the punk's flare is lit."
+      replacesOCB="true" />
+
+    <property
+      internalName="FlameAttackHitCount"
+      displayName="Flame Attack Hit Count"
+      type="Int"
+      defaultValue="0"
+      minValue="0"
+      maxValue="100"
+      category="Damage"
+      description="Number of the landed hit that sets Lara on fire (that hit and later ones burn her). 0 means she is never set on fire. Requires Flame Enabled."
+      replacesOCB="true" />
+
+  </moveable>
+
+</propertyCatalog>

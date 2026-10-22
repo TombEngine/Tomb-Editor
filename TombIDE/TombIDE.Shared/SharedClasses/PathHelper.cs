@@ -29,7 +29,7 @@ namespace TombIDE.Shared.SharedClasses
 
 			switch (version)
 			{
-				case TRVersion.Game.TR1 or TRVersion.Game.TR1X or TRVersion.Game.TR2X:
+				case TRVersion.Game.TR1 or TRVersion.Game.TR1X or TRVersion.Game.TR2X or TRVersion.Game.TR3X:
 					targetFile = "gameflow.json5";
 					targetExtension = "*.json5";
 					break;

@@ -103,7 +103,7 @@ namespace TombEditor.Controls
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.Selectable, true);
             UpdateStyles();
 
-            if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
+            if (Editor.Instance is not null)
             {
                 _editor = Editor.Instance;
                 _editor.EditorEventRaised += EditorEventRaised;
@@ -117,13 +117,14 @@ namespace TombEditor.Controls
 
                 UpdateBrushes();
                 ResetView();
-                }
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (disposing && _editor is not null)
                 _editor.EditorEventRaised -= EditorEventRaised;
+
             _movementTimer?.Dispose();
             _insertionContourLineData = null;
             _currentContextMenu?.Dispose();

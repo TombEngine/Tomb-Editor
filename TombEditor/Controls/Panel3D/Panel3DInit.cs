@@ -1,17 +1,38 @@
 ﻿using SharpDX.Toolkit.Graphics;
+using System;
+using System.Collections.Generic;
 using System.Numerics;
-using TombLib.Graphics.Primitives;
-using TombLib.Graphics;
 using TombLib;
+using TombLib.Controls;
+using TombLib.Graphics;
+using TombLib.Graphics.Primitives;
 using TombLib.LevelData;
 using TombLib.Rendering;
-using TombLib.Controls;
-using System;
 
 namespace TombEditor.Controls.Panel3D
 {
     public partial class Panel3D
     {
+        private Buffer<SolidVertex> _flybyPyramidSolidVertexBuffer;
+        private Buffer<SolidVertex> _flybyPyramidAccentVertexBuffer;
+        private Buffer<SolidVertex> _flybyPyramidWireVertexBuffer;
+
+        private const float _flybyPyramidReferenceFov = 80.0f;
+        private const float _flybyPyramidSelectedLengthScale = 1.5f;
+        private const float _flybyPyramidSelectedBaseScale = 0.5f;
+        private const float _flybyPyramidInactiveLength = 300.0f;
+        private const float _flybyPyramidInactiveBaseHeight = 200.0f;
+        private const float _flybyPyramidNormalizedHalfWidth = 1.0f;
+        private const float _flybyPyramidNormalizedHalfHeight = 1.0f;
+        private const float _flybyPyramidNormalizedLength = 1.0f;
+        private const int _flybyPyramidPerimeterSegments = 5;
+        private const int _flybyPyramidStripeLineCount = 8;
+        private const float _flybyPyramidStripeStart = 0.95f;
+        private const float _flybyPyramidStripeEnd = 1.0f;
+        private static readonly SolidVertex[] _flybyPyramidSolidVertices = BuildFlybyPyramidSolidVertices();
+        private static readonly SolidVertex[] _flybyPyramidAccentVertices = BuildFlybyPyramidLineVertices(false);
+        private static readonly SolidVertex[] _flybyPyramidWireVertices = BuildFlybyPyramidLineVertices(true);
+
         public override void InitializeRendering(RenderingDevice device, bool antialias, ObjectRenderingQuality objectQuality)
         {
             base.InitializeRendering(device, antialias, objectQuality);
@@ -42,8 +63,8 @@ namespace TombEditor.Controls.Panel3D
                 int atlasSize = objectQuality switch
                 {
                     ObjectRenderingQuality.High => 4096,
-					ObjectRenderingQuality.Medium => 1024,
-					_ => 512
+                    ObjectRenderingQuality.Medium => 1024,
+                    _ => 512
                 };
 
                 int maxAllocationSize = objectQuality switch
@@ -57,6 +78,9 @@ namespace TombEditor.Controls.Panel3D
                 // Initialize vertex buffers
                 _ghostBlockVertexBuffer = SharpDX.Toolkit.Graphics.Buffer.Vertex.New<SolidVertex>(_legacyDevice, 84);
                 _boxVertexBuffer = new BoundingBox(new Vector3(-_littleCubeRadius), new Vector3(_littleCubeRadius)).GetVertexBuffer(_legacyDevice);
+                _flybyPyramidSolidVertexBuffer = SharpDX.Toolkit.Graphics.Buffer.Vertex.New(_legacyDevice, _flybyPyramidSolidVertices, SharpDX.Direct3D11.ResourceUsage.Dynamic);
+                _flybyPyramidAccentVertexBuffer = SharpDX.Toolkit.Graphics.Buffer.Vertex.New(_legacyDevice, _flybyPyramidAccentVertices, SharpDX.Direct3D11.ResourceUsage.Dynamic);
+                _flybyPyramidWireVertexBuffer = SharpDX.Toolkit.Graphics.Buffer.Vertex.New(_legacyDevice, _flybyPyramidWireVertices, SharpDX.Direct3D11.ResourceUsage.Dynamic);
 
                 // Maybe I could use this as bounding box, scaling it properly before drawing
                 _linesCube = GeometricPrimitive.LinesCube.New(_legacyDevice, 128, 128, 128);
@@ -129,6 +153,101 @@ namespace TombEditor.Controls.Panel3D
                         TextureAllocator = _renderingTextures,
                         SectorTextureGet = sectorTextures.Get
                     });
+        }
+
+        private static SolidVertex[] BuildFlybyPyramidSolidVertices()
+        {
+            var vertices = new List<SolidVertex>();
+            var apex = Vector3.Zero;
+            var baseCorners = GetFlybyPyramidBaseCorners();
+
+            for (int i = 0; i < baseCorners.Length; i++)
+                AddFlybyPyramidTriangle(vertices, apex, baseCorners[i], baseCorners[(i + 1) % baseCorners.Length]);
+
+            AddFlybyPyramidTriangle(vertices, baseCorners[0], baseCorners[1], baseCorners[2]);
+            AddFlybyPyramidTriangle(vertices, baseCorners[0], baseCorners[2], baseCorners[3]);
+            return vertices.ToArray();
+        }
+
+        private static SolidVertex[] BuildFlybyPyramidLineVertices(bool includeOutline)
+        {
+            var vertices = new List<SolidVertex>();
+            var perimeterPoints = BuildFlybyPyramidPerimeterPoints();
+
+            foreach (var point in perimeterPoints)
+                AddFlybyPyramidLine(vertices, Vector3.Zero, point);
+
+            if (includeOutline)
+                for (int i = 0; i < perimeterPoints.Count; i++)
+                    AddFlybyPyramidLine(vertices, perimeterPoints[i], perimeterPoints[(i + 1) % perimeterPoints.Count]);
+
+            AddFlybyPyramidTopStripe(vertices);
+            return vertices.ToArray();
+        }
+
+        private static Vector3[] GetFlybyPyramidBaseCorners()
+        {
+            return new[]
+            {
+                CreateFlybyPyramidBasePoint(-1.0f, 1.0f),
+                CreateFlybyPyramidBasePoint(1.0f, 1.0f),
+                CreateFlybyPyramidBasePoint(1.0f, -1.0f),
+                CreateFlybyPyramidBasePoint(-1.0f, -1.0f)
+            };
+        }
+
+        private static List<Vector3> BuildFlybyPyramidPerimeterPoints()
+        {
+            var points = new List<Vector3>(_flybyPyramidPerimeterSegments * 4);
+
+            AddFlybyPyramidEdgePoints(points, new Vector2(-1.0f, 1.0f), new Vector2(1.0f, 1.0f));
+            AddFlybyPyramidEdgePoints(points, new Vector2(1.0f, 1.0f), new Vector2(1.0f, -1.0f));
+            AddFlybyPyramidEdgePoints(points, new Vector2(1.0f, -1.0f), new Vector2(-1.0f, -1.0f));
+            AddFlybyPyramidEdgePoints(points, new Vector2(-1.0f, -1.0f), new Vector2(-1.0f, 1.0f));
+
+            return points;
+        }
+
+        private static void AddFlybyPyramidEdgePoints(List<Vector3> points, Vector2 start, Vector2 end)
+        {
+            for (int i = 0; i < _flybyPyramidPerimeterSegments; i++)
+            {
+                float interpolation = i / (float)_flybyPyramidPerimeterSegments;
+                var point = Vector2.Lerp(start, end, interpolation);
+                points.Add(CreateFlybyPyramidBasePoint(point.X, point.Y));
+            }
+        }
+
+        private static void AddFlybyPyramidTopStripe(List<SolidVertex> vertices)
+        {
+            int segmentCount = Math.Max(_flybyPyramidStripeLineCount - 1, 1);
+
+            for (int i = 0; i < _flybyPyramidStripeLineCount; i++)
+            {
+                float interpolation = i / (float)segmentCount;
+                float depth = _flybyPyramidStripeStart + ((_flybyPyramidStripeEnd - _flybyPyramidStripeStart) * interpolation);
+                AddFlybyPyramidLine(vertices,
+                    new Vector3(-_flybyPyramidNormalizedHalfWidth * depth, _flybyPyramidNormalizedHalfHeight * depth, _flybyPyramidNormalizedLength * depth),
+                    new Vector3(_flybyPyramidNormalizedHalfWidth * depth, _flybyPyramidNormalizedHalfHeight * depth, _flybyPyramidNormalizedLength * depth));
+            }
+        }
+
+        private static Vector3 CreateFlybyPyramidBasePoint(float x, float y)
+        {
+            return new Vector3(x * _flybyPyramidNormalizedHalfWidth, y * _flybyPyramidNormalizedHalfHeight, _flybyPyramidNormalizedLength);
+        }
+
+        private static void AddFlybyPyramidTriangle(List<SolidVertex> vertices, Vector3 p0, Vector3 p1, Vector3 p2)
+        {
+            vertices.Add(new SolidVertex(p0));
+            vertices.Add(new SolidVertex(p1));
+            vertices.Add(new SolidVertex(p2));
+        }
+
+        private static void AddFlybyPyramidLine(List<SolidVertex> vertices, Vector3 start, Vector3 end)
+        {
+            vertices.Add(new SolidVertex(start));
+            vertices.Add(new SolidVertex(end));
         }
     }
 }

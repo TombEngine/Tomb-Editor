@@ -2,7 +2,7 @@
 -- !Section "Inventory"
 -- !Description "Add item to the inventory."
 -- !Description "A count of 0 will add the default pickup amount of that item."
--- !Arguments "NewLine, 80, WadSlots, [ _ITEM ], Object to add to Lara's inventory."
+-- !Arguments "NewLine, 80, WadSlots, [ CLOCKWORK | EXAMINE | _ITEM | WATERSKIN ], Object to add to Lara's inventory."
 -- !Arguments "20, Numerical, [ 0 | 1000 ], Amount of items to add (0 to give default amount)."
 -- !Arguments "NewLine, Boolean , 100, Display the item in the pickup summary"
 
@@ -13,7 +13,7 @@ end
 -- !Name "Remove item from inventory"
 -- !Section "Inventory"
 -- !Description "Removes specified item count from the inventory.\nA count of 0 will completely remove the item from the inventory."
--- !Arguments "NewLine, 80, WadSlots, [ _ITEM ], Object to add to Lara's inventory."
+-- !Arguments "NewLine, 80, WadSlots, [ CLOCKWORK | EXAMINE | _ITEM | WATERSKIN ], Object to remove from Lara's inventory."
 -- !Arguments "20, Numerical, [ 0 | 1000 ], Amount of items to remove (0 to remove all)."
 
 LevelFuncs.Engine.Node.RemoveInventoryItem = function(item, count)
@@ -30,7 +30,7 @@ end
 -- !Name "Set item count in inventory"
 -- !Section "Inventory"
 -- !Description "Set item count for an item in the inventory."
--- !Arguments "NewLine, 80, WadSlots, [ _ITEM ], Object to set count of an item in Lara's inventory."
+-- !Arguments "NewLine, 80, WadSlots, [ CLOCKWORK | EXAMINE | _ITEM | WATERSKIN ], Object to set count of an item in Lara's inventory."
 -- !Arguments "20, Numerical, [ -1 | 1000 ], Amount of item to set (0 to give default amount, -1 is infinite)."
 LevelFuncs.Engine.Node.SetInventoryItemCount = function(item, count)
     TEN.Inventory.SetItemCount(item, count)
@@ -46,7 +46,7 @@ end
 -- !Name "Use an item"
 -- !Section "Inventory"
 -- !Description "Attempts to use a specified item. If conditions are not applicable for the usage of the item, 'No' sound will play."
--- !Arguments "NewLine, WadSlots, [ _ITEM ], Item to check"
+-- !Arguments "NewLine, WadSlots, [ CLOCKWORK | EXAMINE | _ITEM | WATERSKIN ], Item to check"
 
 LevelFuncs.Engine.Node.UseItem = function(item)
     TEN.Inventory.UseItem(item)
@@ -55,7 +55,7 @@ end
 -- !Name "Set last used item"
 -- !Section "Inventory"
 -- !Description "Sets last used inventory item. If item will not be handled by the engine, 'No' sound will play."
--- !Arguments "NewLine, WadSlots, [ _ITEM ], Item to check"
+-- !Arguments "NewLine, WadSlots, [ CLOCKWORK | EXAMINE | _ITEM | WATERSKIN ], Item to check"
 
 LevelFuncs.Engine.Node.SetUsedItem = function(item)
     TEN.Inventory.SetUsedItem(item)
@@ -73,7 +73,7 @@ end
 -- !Section "Inventory"
 -- !Description "Checks if specified inventory item is present."
 -- !Conditional "True"
--- !Arguments "NewLine, WadSlots, [ _ITEM ], Item to check"
+-- !Arguments "NewLine, WadSlots, [ CLOCKWORK | EXAMINE | _ITEM | WATERSKIN ], Item to check"
 
 LevelFuncs.Engine.Node.TestInventoryItem = function(item)
     return (TEN.Inventory.GetItemCount(item) > 0)
@@ -83,7 +83,7 @@ end
 -- !Section "Inventory"
 -- !Description "Checks specified inventory item count."
 -- !Conditional "True"
--- !Arguments "NewLine, 58, WadSlots, [ _ITEM ], Item to check"
+-- !Arguments "NewLine, 58, WadSlots, [ CLOCKWORK | EXAMINE | _ITEM | WATERSKIN ], Item to check"
 -- !Arguments "CompareOperator, 29, Kind of check"
 -- !Arguments "Numerical, 13, Inventory item count, [ 0 | 1000 ]"
 
@@ -95,7 +95,7 @@ end
 -- !Section "Inventory"
 -- !Description "Checks last used inventory item. If condition is met and item is recognized, it will be automatically cleared."
 -- !Conditional "True"
--- !Arguments "NewLine, WadSlots, [ _ITEM ], Item to check"
+-- !Arguments "NewLine, WadSlots, [ CLOCKWORK | EXAMINE | _ITEM | WATERSKIN ], Item to check"
 
 LevelFuncs.Engine.Node.TesttUsedItem = function(item)
     local itemWasUsed = (TEN.Inventory.GetUsedItem() == item)

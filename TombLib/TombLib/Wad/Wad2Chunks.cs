@@ -120,6 +120,7 @@ namespace TombLib.Wad
         /********/public static readonly ChunkId Animation3 = ChunkId.FromString("W2Ani3");
         /**********/public static readonly ChunkId AnimationVelocities = ChunkId.FromString("W2AniV");
         /**********/public static readonly ChunkId AnimationName = ChunkId.FromString("W2AnmName");
+        /**********/public static readonly ChunkId AnimationRootMotion = ChunkId.FromString("W2AniRM");
         /**********/public static readonly ChunkId StateChanges = ChunkId.FromString("W2StChs");
         /************/public static readonly ChunkId StateChange = ChunkId.FromString("W2StCh");
         /**************/public static readonly ChunkId Dispatches = ChunkId.FromString("W2Disps");
@@ -151,6 +152,11 @@ namespace TombLib.Wad
         /******/public static readonly ChunkId StaticLightIntensity = ChunkId.FromString("W2StaticLightI");
         /******/public static readonly ChunkId StaticShatter = ChunkId.FromString("W2StaticShatter");
         /******/public static readonly ChunkId StaticShatterSound = ChunkId.FromString("W2StaticShatterSound");
+        // Lua property containers (Level 1 global properties)
+        public static readonly ChunkId LuaProperties = ChunkId.FromString("W2LuaProps");
+        /**/public static readonly ChunkId LuaProperty = ChunkId.FromString("W2LuaProp");
+        /****/public static readonly ChunkId LuaPropertyName = ChunkId.FromString("W2LuaPrN");
+        /****/public static readonly ChunkId LuaPropertyValue = ChunkId.FromString("W2LuaPrV");
         /**/public static readonly ChunkId AnimatedTextureSets = ChunkId.FromString("W2AnimatedTextureSets");
         /******/public static readonly ChunkId AnimatedTextureSet = ChunkId.FromString("W2AnimatedTextureSet");
         /**********/public static readonly ChunkId AnimatedTextureSetName = ChunkId.FromString("W2AnimatedTextureSetName");

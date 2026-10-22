@@ -1,8 +1,42 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TombLib.Types;
 
 namespace TombLib.Wad
 {
+    [Flags]
+    public enum WadAnimRootMotionFlags
+    {
+        None            = 0,
+        TranslationX    = 1 << 0,
+        TranslationY    = 1 << 1,
+        TranslationZ    = 1 << 2,
+        RotationX       = 1 << 3,
+        RotationY       = 1 << 4,
+        RotationZ       = 1 << 5,
+        RootMotionCycle = 1 << 6  // Internally set in TEN.
+}
+
+    public struct WadAnimRootMotionSettings
+    {
+		public WadAnimRootMotionFlags Flags;
+
+        public bool TranslationX { get => Flags.HasFlag(WadAnimRootMotionFlags.TranslationX); set => SetFlag(WadAnimRootMotionFlags.TranslationX, value); }
+        public bool TranslationY { get => Flags.HasFlag(WadAnimRootMotionFlags.TranslationY); set => SetFlag(WadAnimRootMotionFlags.TranslationY, value); }
+        public bool TranslationZ { get => Flags.HasFlag(WadAnimRootMotionFlags.TranslationZ); set => SetFlag(WadAnimRootMotionFlags.TranslationZ, value); }
+        public bool RotationX    { get => Flags.HasFlag(WadAnimRootMotionFlags.RotationX);    set => SetFlag(WadAnimRootMotionFlags.RotationX, value); }
+        public bool RotationY    { get => Flags.HasFlag(WadAnimRootMotionFlags.RotationY);    set => SetFlag(WadAnimRootMotionFlags.RotationY, value); }
+        public bool RotationZ    { get => Flags.HasFlag(WadAnimRootMotionFlags.RotationZ);    set => SetFlag(WadAnimRootMotionFlags.RotationZ, value); }
+
+        private void SetFlag(WadAnimRootMotionFlags flag, bool enabled)
+        {
+            if (enabled)
+				Flags |= flag;
+            else
+				Flags &= ~flag;
+        }
+    }
+
     public class WadAnimation
     {
         public byte FrameRate { get; set; } = 1;
@@ -23,6 +57,9 @@ namespace TombLib.Wad
         // New parameters for animation blending (TEN only).
         public ushort BlendFrameCount { get; set; }
         public BezierCurve2 BlendCurve { get; set; } = BezierCurve2.Linear.Clone();
+
+        // Root motion settings (TEN only).
+        public WadAnimRootMotionSettings RootMotion { get; set; }
 
         public List<WadKeyFrame> KeyFrames { get; private set; } = new List<WadKeyFrame>();
         public List<WadStateChange> StateChanges { get; private set; } = new List<WadStateChange>();

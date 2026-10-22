@@ -69,7 +69,7 @@ namespace TombEditor.Controls.Panel3D
 
         private void FlyModeTimer_Tick(object sender, EventArgs e)
         {
-            if (_lastWindow != GetForegroundWindow() || filter.IsKeyPressed(Keys.Escape))
+            if (_lastWindow != GetForegroundWindow() || _filter.IsKeyPressed(Keys.Escape))
             {
                 ToggleFlyMode(false);
                 _lastWindow = GetForegroundWindow();
@@ -93,22 +93,22 @@ namespace TombEditor.Controls.Panel3D
             else if (ModifierKeys.HasFlag(Keys.Control))
                 cameraMoveSpeed /= 2;
 
-            if (filter.IsKeyPressed(Keys.W))
+            if (_filter.IsKeyPressed(Keys.W))
                 newCameraPos.Z -= cameraMoveSpeed;
 
-            if (filter.IsKeyPressed(Keys.A))
+            if (_filter.IsKeyPressed(Keys.A))
                 newCameraPos.X += cameraMoveSpeed;
 
-            if (filter.IsKeyPressed(Keys.S))
+            if (_filter.IsKeyPressed(Keys.S))
                 newCameraPos.Z += cameraMoveSpeed;
 
-            if (filter.IsKeyPressed(Keys.D))
+            if (_filter.IsKeyPressed(Keys.D))
                 newCameraPos.X -= cameraMoveSpeed;
 
-            if (filter.IsKeyPressed(Keys.E))
+            if (_filter.IsKeyPressed(Keys.E))
                 newCameraPos.Y += cameraMoveSpeed;
 
-            if (filter.IsKeyPressed(Keys.Q))
+            if (_filter.IsKeyPressed(Keys.Q))
                 newCameraPos.Y -= cameraMoveSpeed;
 
             Camera.MoveCameraPlane(newCameraPos);

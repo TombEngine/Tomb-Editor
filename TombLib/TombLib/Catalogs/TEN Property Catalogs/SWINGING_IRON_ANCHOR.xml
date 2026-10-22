@@ -1,0 +1,12 @@
+<propertyCatalog>    
+	<moveable id="SWINGING_IRON_ANCHOR">
+        <property
+          internalName="Damage"
+          displayName="Harm damage"
+          type="Int"
+          defaultValue="75"
+          category="Trap parameters"
+          description="Harm damage"
+        />
+    </moveable>
+</propertyCatalog>

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using TombLib.IO;
+using TombLib.LuaProperties;
 using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.LevelData.VisualScripting;
@@ -316,6 +317,10 @@ namespace TombLib.LevelData.IO
                     settings.CompressTextures = chunkIO.ReadChunkBool(chunkSize);
                 else if (id == Prj2Chunks.TrxTextureBitDepth)
                     settings.TrxTextureBitDepth = (TrxTextureBitDepth)chunkIO.ReadChunkInt(chunkSize);
+                else if (id == Prj2Chunks.TrxConvertFlybysToCinematicFrames)
+                    settings.TrxConvertFlybysToCinematicFrames = chunkIO.ReadChunkBool(chunkSize);
+                else if (id == Prj2Chunks.TrxUseAlternateGroups)
+                    settings.TrxUseAlternateGroups = chunkIO.ReadChunkBool(chunkSize);
                 else if (id == Prj2Chunks.RearrangeRooms)
                     settings.RearrangeVerticalRooms = chunkIO.ReadChunkBool(chunkSize);
                 else if (id == Prj2Chunks.RemoveUnusedObjects)
@@ -532,6 +537,8 @@ namespace TombLib.LevelData.IO
                                 eventSetIndex = chunkIO.ReadChunkInt(chunkSize3);
                             else if (id3 == Prj2Chunks.EventSetName)
                                 eventSet.Name = chunkIO.ReadChunkString(chunkSize3);
+                            else if (id3 == Prj2Chunks.EventSetFolder)
+                                eventSet.Folder = chunkIO.ReadChunkString(chunkSize3);
                             else if (id3 == Prj2Chunks.EventSetLastUsedEventIndex)
                                 eventSet.LastUsedEvent = (EventType)chunkIO.ReadChunkInt(chunkSize3);
                             else if (id3 == Prj2Chunks.EventSetActivators)
@@ -726,6 +733,22 @@ namespace TombLib.LevelData.IO
                         if (id2 == Prj2Chunks.Favorite)
                         {
                             settings.Favorites.Add(chunkIO.ReadChunkString(chunkSize2));
+                            return true;
+                        }
+                        else return false;
+                    });
+                }
+                else if (id == Prj2Chunks.CollapsedGlobalEventSetFolders ||
+                         id == Prj2Chunks.CollapsedVolumeEventSetFolders)
+                {
+                    var target = id == Prj2Chunks.CollapsedGlobalEventSetFolders ? settings.CollapsedGlobalEventSetFolders : settings.CollapsedVolumeEventSetFolders;
+
+                    target.Clear();
+                    chunkIO.ReadChunks((id2, chunkSize2) =>
+                    {
+                        if (id2 == Prj2Chunks.CollapsedEventSetFolder)
+                        {
+                            target.Add(chunkIO.ReadChunkString(chunkSize2));
                             return true;
                         }
                         else return false;
@@ -1261,7 +1284,8 @@ namespace TombLib.LevelData.IO
                     addObject(instance);
                     newObjects.TryAdd(objectID, instance);
                 }
-                else if (id3 == Prj2Chunks.ObjectMovableTombEngine2)
+                else if (id3 == Prj2Chunks.ObjectMovableTombEngine2 ||
+                         id3 == Prj2Chunks.ObjectMovableTombEngine3)
                 {
                     var instance = new MoveableInstance();
                     instance.Position = chunkIO.Raw.ReadVector3();
@@ -1276,8 +1300,28 @@ namespace TombLib.LevelData.IO
                     instance.CodeBits = chunkIO.Raw.ReadByte();
                     instance.Color = chunkIO.Raw.ReadVector3();
                     instance.LuaName = chunkIO.Raw.ReadStringUTF8();
+
+                    if (id3 == Prj2Chunks.ObjectMovableTombEngine3)
+                        ReadLuaProperties(chunkIO, instance.LuaProperties);
+
                     addObject(instance);
                     newObjects.TryAdd(objectID, instance);
+                }
+                else if (id3 == Prj2Chunks.ObjectMovableTRX)
+                {
+                    var instance = new MoveableInstance();
+                    instance.Position = chunkIO.Raw.ReadVector3();
+                    instance.RotationY = chunkIO.Raw.ReadSingle();
+                    instance.WadObjectId = new WadMoveableId(chunkIO.Raw.ReadUInt32());
+                    instance.Ocb = chunkIO.Raw.ReadInt16();
+                    instance.Invisible = chunkIO.Raw.ReadBoolean();
+                    instance.ClearBody = chunkIO.Raw.ReadBoolean();
+                    instance.CodeBits = chunkIO.Raw.ReadByte();
+                    instance.Color = chunkIO.Raw.ReadVector3();
+                    instance.LuaName = chunkIO.Raw.ReadStringUTF8();
+                    addObject(instance);
+                    newObjects.TryAdd(objectID, instance);
+                    ReadLuaProperties(chunkIO, instance.LuaProperties);
                 }
                 else if (id3 == Prj2Chunks.ObjectStatic ||
                          id3 == Prj2Chunks.ObjectStatic2)
@@ -1318,7 +1362,8 @@ namespace TombLib.LevelData.IO
                     instance.LuaName = chunkIO.Raw.ReadStringUTF8();
                     addObject(instance);
                 }
-                else if (id3 == Prj2Chunks.ObjectStaticTombEngine2)
+                else if (id3 == Prj2Chunks.ObjectStaticTombEngine2 ||
+                         id3 == Prj2Chunks.ObjectStaticTombEngine3)
                 {
                     var instance = new StaticInstance();
                     newObjects.TryAdd(objectID, instance);
@@ -1332,6 +1377,10 @@ namespace TombLib.LevelData.IO
                     instance.Color = chunkIO.Raw.ReadVector3();
                     instance.Ocb = chunkIO.Raw.ReadInt16();
                     instance.LuaName = chunkIO.Raw.ReadStringUTF8();
+
+                    if (id3 == Prj2Chunks.ObjectStaticTombEngine3)
+                        ReadLuaProperties(chunkIO, instance.LuaProperties);
+
                     addObject(instance);
                 }
                 else if (id3 == Prj2Chunks.ObjectCamera)
@@ -1441,6 +1490,27 @@ namespace TombLib.LevelData.IO
                         }
                         return false;
                     });
+
+                    addObject(instance);
+                    newObjects.TryAdd(objectID, instance);
+                }
+                else if (id3 == Prj2Chunks.ObjectFlyBy3)
+                {
+                    var instance = new FlybyCameraInstance();
+                    instance.Position = chunkIO.Raw.ReadVector3();
+                    instance.SetArbitaryRotationsYX(chunkIO.Raw.ReadSingle(), chunkIO.Raw.ReadSingle());
+                    instance.Roll = chunkIO.Raw.ReadSingle();
+                    instance.ScriptId = ReadOptionalLEB128Int(chunkIO.Raw);
+                    instance.Speed = chunkIO.Raw.ReadSingle();
+                    instance.Fov = chunkIO.Raw.ReadSingle();
+                    instance.Flags = LEB128.ReadUShort(chunkIO.Raw);
+                    instance.Number = LEB128.ReadUShort(chunkIO.Raw);
+                    instance.Sequence = LEB128.ReadUShort(chunkIO.Raw);
+                    instance.Timer = LEB128.ReadShort(chunkIO.Raw);
+                    instance.DofDistance = chunkIO.Raw.ReadSingle();
+                    instance.DofRange = chunkIO.Raw.ReadSingle();
+                    instance.DofStrength = chunkIO.Raw.ReadSingle();
+                    instance.DofMode = (DofMode)chunkIO.Raw.ReadInt32();
 
                     addObject(instance);
                     newObjects.TryAdd(objectID, instance);
@@ -2027,6 +2097,20 @@ namespace TombLib.LevelData.IO
                 return uint.MaxValue;
             else
                 return (uint)read;
+        }
+
+        private static void ReadLuaProperties(ChunkReader chunkIO, LuaPropertyContainer container)
+        {
+            int count = chunkIO.Raw.ReadInt32();
+
+            for (int i = 0; i < count; i++)
+            {
+                string name = chunkIO.Raw.ReadStringUTF8();
+                string value = chunkIO.Raw.ReadStringUTF8();
+
+                if (!string.IsNullOrEmpty(name) && value != null)
+                    container.SetValue(name, value);
+            }
         }
 
         private static void TryAdd<K, T>(this Dictionary<K, T> this_, K key, T value)

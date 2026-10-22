@@ -24,7 +24,7 @@ namespace TombEditor.Controls.ContextMenus
                     Items.Add(new ToolStripSeparator());
                 }
 
-                if (_editor.Level.IsTombEngine)
+                if (targetObject is IHasLuaName luaTarget && luaTarget.SupportsLuaName())
                 {
                     Items.Add(new ToolStripMenuItem("Rename object", Properties.Resources.general_edit_16, (o, e) =>
                     {
@@ -153,7 +153,7 @@ namespace TombEditor.Controls.ContextMenus
                 }));
             }
 
-            if (targetObject is PositionAndScriptBasedObjectInstance && _editor.Level.Settings.GameVersion == TRVersion.Game.TombEngine)
+            if (targetObject is IHasLuaName luaObject && luaObject.SupportsLuaName())
             {
                 Items.Add(new ToolStripMenuItem("Copy Lua name to clipboard", null, (o, e) =>
                 {

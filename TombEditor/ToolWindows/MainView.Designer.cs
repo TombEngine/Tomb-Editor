@@ -86,6 +86,7 @@ namespace TombEditor.ToolWindows
 			panelStepHeightOptions = new System.Windows.Forms.Panel();
 			comboStepHeight = new DarkUI.Controls.DarkComboBox();
 			panelFlybyTimeline = new System.Windows.Forms.Panel();
+			panelFlybyTimelineDivider = new System.Windows.Forms.Panel();
 			flybyTimelineHost = new System.Windows.Forms.Integration.ElementHost();
 			flybyTimelineView = new Controls.FlybyTimeline.UI.FlybyTimelineView();
 			panelMainView = new System.Windows.Forms.Panel();
@@ -876,12 +877,22 @@ namespace TombEditor.ToolWindows
 			// panelFlybyTimeline
 			// 
 			panelFlybyTimeline.Controls.Add(flybyTimelineHost);
+			panelFlybyTimeline.Controls.Add(panelFlybyTimelineDivider);
 			panelFlybyTimeline.Dock = System.Windows.Forms.DockStyle.Top;
 			panelFlybyTimeline.Location = new System.Drawing.Point(5, 5);
 			panelFlybyTimeline.Name = "panelFlybyTimeline";
 			panelFlybyTimeline.Size = new System.Drawing.Size(1495, 68);
 			panelFlybyTimeline.TabIndex = 17;
 			panelFlybyTimeline.Visible = false;
+			// 
+			// panelFlybyTimelineDivider
+			// 
+			panelFlybyTimelineDivider.BackColor = System.Drawing.Color.FromArgb(81, 81, 81);
+			panelFlybyTimelineDivider.Dock = System.Windows.Forms.DockStyle.Bottom;
+			panelFlybyTimelineDivider.Location = new System.Drawing.Point(0, 67);
+			panelFlybyTimelineDivider.Name = "panelFlybyTimelineDivider";
+			panelFlybyTimelineDivider.Size = new System.Drawing.Size(1495, 1);
+			panelFlybyTimelineDivider.TabIndex = 1;
 			// 
 			// flybyTimelineHost
 			// 
@@ -1010,6 +1021,7 @@ namespace TombEditor.ToolWindows
         private DarkUI.Controls.DarkLabel lblStepHeight;
         private DarkUI.Controls.DarkComboBox comboStepHeight;
         private System.Windows.Forms.Panel panelFlybyTimeline;
+        private System.Windows.Forms.Panel panelFlybyTimelineDivider;
         private System.Windows.Forms.Integration.ElementHost flybyTimelineHost;
         private Controls.FlybyTimeline.UI.FlybyTimelineView flybyTimelineView;
 		private System.Windows.Forms.ToolStripButton butMirror;

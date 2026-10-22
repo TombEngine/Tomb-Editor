@@ -7,6 +7,9 @@ cbuffer WorldData
 	bool ShowExtraBlendingModes;
 	bool ShowLightingWhiteTextureOnly;
 	int LightMode;
+	float4 DofCenterRange;
+	float4 DofDirectionDistance;
+	float4 DofColorStrength;
 };
 
 struct VertexInputType

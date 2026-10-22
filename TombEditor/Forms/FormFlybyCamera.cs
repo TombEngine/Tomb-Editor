@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using TombEditor.Controls.FlybyTimeline;
 using TombEditor.Controls.FlybyTimeline.Sequence;
 using TombLib;
 using TombLib.LevelData;
@@ -30,6 +31,10 @@ namespace TombEditor.Forms
         private float _originalRoll;
         private float _originalRotationX;
         private float _originalRotationY;
+        private float _originalDofDistance;
+        private float _originalDofRange;
+        private float _originalDofStrength;
+        private DofMode _originalDofMode;
 
         private bool _isLoading;
         private bool _ownedPreview;
@@ -41,6 +46,7 @@ namespace TombEditor.Forms
             _editor = Editor.Instance;
 
             InitializeComponent();
+            numFOV.Maximum = (decimal)FlybyConstants.MaxFlybyFieldOfViewDegrees;
 
             LoadWindowState();
         }
@@ -72,6 +78,12 @@ namespace TombEditor.Forms
             numRoll.Value = ClampNumericValue(_flyByCamera.Roll, numRoll);
             numRotationX.Value = ClampNumericValue(_flyByCamera.RotationX, numRotationX);
             numRotationY.Value = ClampNumericValue(_flyByCamera.RotationY, numRotationY);
+            numDofDistance.Value = ClampNumericValue(_flyByCamera.DofDistance, numDofDistance);
+            numDofRange.Value = ClampNumericValue(_flyByCamera.DofRange, numDofRange);
+            numDofStrength.Value = ClampNumericValue(_flyByCamera.DofStrength, numDofStrength);
+            comboDofMode.SelectedIndex = (int)_flyByCamera.DofMode;
+
+            SetDofControlsVisible();
 
             if (_editor.Level.Settings.GameVersion is TRVersion.Game.TR5 or TRVersion.Game.TombEngine)
             {
@@ -88,6 +100,10 @@ namespace TombEditor.Forms
             numRoll.ValueChanged += PreviewParameter_Changed;
             numRotationX.ValueChanged += PreviewParameter_Changed;
             numRotationY.ValueChanged += PreviewParameter_Changed;
+            numDofDistance.ValueChanged += PreviewParameter_Changed;
+            numDofRange.ValueChanged += PreviewParameter_Changed;
+            numDofStrength.ValueChanged += PreviewParameter_Changed;
+            comboDofMode.SelectedIndexChanged += PreviewParameter_Changed;
 
             // Start live camera preview. Only toggle if preview is not already active
             // (e.g. flyby timeline may have entered preview before this form was opened).
@@ -145,6 +161,10 @@ namespace TombEditor.Forms
             _flyByCamera.Roll = (float)numRoll.Value;
             _flyByCamera.RotationX = (float)numRotationX.Value;
             _flyByCamera.RotationY = (float)numRotationY.Value;
+            _flyByCamera.DofDistance = (float)numDofDistance.Value;
+            _flyByCamera.DofRange = (float)numDofRange.Value;
+            _flyByCamera.DofStrength = (float)numDofStrength.Value;
+            _flyByCamera.DofMode = (DofMode)comboDofMode.SelectedIndex;
 
             _editor.CameraPreviewUpdated(_flyByCamera);
         }
@@ -181,6 +201,9 @@ namespace TombEditor.Forms
             if (_editor.Level is null)
                 return false;
 
+            if (_editor.Level.IsTRX)
+                return _editor.Level.Settings.TrxConvertFlybysToCinematicFrames;
+
             return _editor.Level.Settings.GameVersion.Native() <= TRVersion.Game.TR3;
         }
 
@@ -195,6 +218,10 @@ namespace TombEditor.Forms
             _originalRoll = _flyByCamera.Roll;
             _originalRotationX = _flyByCamera.RotationX;
             _originalRotationY = _flyByCamera.RotationY;
+            _originalDofDistance = _flyByCamera.DofDistance;
+            _originalDofRange = _flyByCamera.DofRange;
+            _originalDofStrength = _flyByCamera.DofStrength;
+            _originalDofMode = _flyByCamera.DofMode;
         }
 
         private void RestoreOriginalValues()
@@ -208,6 +235,10 @@ namespace TombEditor.Forms
             _flyByCamera.Roll = _originalRoll;
             _flyByCamera.RotationX = _originalRotationX;
             _flyByCamera.RotationY = _originalRotationY;
+            _flyByCamera.DofDistance = _originalDofDistance;
+            _flyByCamera.DofRange = _originalDofRange;
+            _flyByCamera.DofStrength = _originalDofStrength;
+            _flyByCamera.DofMode = _originalDofMode;
         }
 
         private bool HasPendingChanges()
@@ -223,7 +254,11 @@ namespace TombEditor.Forms
                 !MathC.WithinEpsilon(pendingCamera.Fov, _originalFov, ChangeComparisonEpsilon) ||
                 !MathC.WithinEpsilon(pendingCamera.Roll, _originalRoll, ChangeComparisonEpsilon) ||
                 !MathC.WithinEpsilon(pendingCamera.RotationX, _originalRotationX, ChangeComparisonEpsilon) ||
-                !MathC.WithinEpsilon(pendingCamera.RotationY, _originalRotationY, ChangeComparisonEpsilon);
+                !MathC.WithinEpsilon(pendingCamera.RotationY, _originalRotationY, ChangeComparisonEpsilon) ||
+                !MathC.WithinEpsilon(pendingCamera.DofDistance, _originalDofDistance, ChangeComparisonEpsilon) ||
+                !MathC.WithinEpsilon(pendingCamera.DofRange, _originalDofRange, ChangeComparisonEpsilon) ||
+                !MathC.WithinEpsilon(pendingCamera.DofStrength, _originalDofStrength, ChangeComparisonEpsilon) ||
+                pendingCamera.DofMode != _originalDofMode;
         }
 
         private void ApplyPendingValues(FlybyCameraInstance camera)
@@ -237,6 +272,28 @@ namespace TombEditor.Forms
             camera.Roll = (float)numRoll.Value;
             camera.RotationX = (float)numRotationX.Value;
             camera.RotationY = (float)numRotationY.Value;
+            camera.DofDistance = (float)numDofDistance.Value;
+            camera.DofRange = (float)numDofRange.Value;
+            camera.DofStrength = (float)numDofStrength.Value;
+            camera.DofMode = (DofMode)comboDofMode.SelectedIndex;
+        }
+
+        private void SetDofControlsVisible()
+        {
+            Control[] dofControls =
+            [
+                labelDofMode,
+                labelDofDistance,
+                labelDofRange,
+                labelDofStrength,
+                comboDofMode,
+                numDofDistance,
+                numDofRange,
+                numDofStrength
+            ] ;
+
+            foreach (var control in dofControls)
+                control.Visible = _editor.Level.IsTombEngine;
         }
 
         private static decimal ClampNumericValue(float value, NumericUpDown numeric)

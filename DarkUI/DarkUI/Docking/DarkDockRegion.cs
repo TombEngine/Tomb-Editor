@@ -1,4 +1,4 @@
-﻿using DarkUI.Config;
+using DarkUI.Config;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -90,8 +90,11 @@ namespace DarkUI.Docking
                 CreateSplitter();
             }
 
-            RebuildGroupSplitters();
-            PositionGroups();
+            if (!DockPanel.IsBulkUpdating)
+            {
+                RebuildGroupSplitters();
+                PositionGroups();
+            }
         }
 
         internal void InsertContent(DarkDockContent dockContent, DarkDockGroup dockGroup, DockInsertType insertType)
@@ -136,8 +139,11 @@ namespace DarkUI.Docking
                 RemoveSplitter();
             }
 
-            RebuildGroupSplitters();
-            PositionGroups();
+            if (!DockPanel.IsBulkUpdating)
+            {
+                RebuildGroupSplitters();
+                PositionGroups();
+            }
         }
 
         public List<DarkDockContent> GetContents()
@@ -457,6 +463,12 @@ namespace DarkUI.Docking
         {
             if (_splitter != null && DockPanel.Splitters.Contains(_splitter))
                 DockPanel.Splitters.Remove(_splitter);
+        }
+
+        internal void FinalizeLayout()
+        {
+            RebuildGroupSplitters();
+            PositionGroups();
         }
 
         private void RebuildGroupSplitters()

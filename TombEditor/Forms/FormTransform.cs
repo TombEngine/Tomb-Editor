@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Numerics;
 using System.Windows.Forms;
 using DarkUI.Forms;
@@ -18,6 +19,8 @@ namespace TombEditor.Forms
 
         private bool _loading = false;
         private bool _undoSaved = false;
+        private bool _lightingUpdatePending = false;
+        private bool _dataRestored = false;
 
         public FormTransform(PositionBasedObjectInstance instance)
         {
@@ -39,6 +42,7 @@ namespace TombEditor.Forms
 
             _backupPosition = _instance.Position;
             _backupScale = _instance is IScaleable scaleable ? new Vector3(scaleable.Scale) : Vector3.One;
+
             _backupRotation = new Vector3(
                 _instance is IRotateableYX rotateableYX ? rotateableYX.RotationX : 0.0f,
                 _instance is IRotateableY rotateableY ? rotateableY.RotationY : 0.0f,
@@ -47,8 +51,10 @@ namespace TombEditor.Forms
 
         private void RestoreData()
         {
-            if (_instance == null)
+            if (_instance == null || _dataRestored)
                 return;
+
+            bool changed = HasTransformChangedFromBackup();
 
             _instance.Position = _backupPosition;
 
@@ -60,6 +66,28 @@ namespace TombEditor.Forms
                 rotateableYX.RotationX = _backupRotation.X;
             if (_instance is IRotateableYXRoll rotateableYXRoll)
                 rotateableYXRoll.Roll = _backupRotation.Z;
+
+            if (changed && _editor.ShouldRelight)
+                EditorActions.RebuildLightsForObject(_instance);
+
+            _lightingUpdatePending = false;
+            _dataRestored = true;
+        }
+
+        private bool HasPendingChanges()
+        {
+            if (_instance == null)
+                return false;
+
+            var position = new Vector3((float)nudTransX.Value - _instance.Room.Position.X * (int)Level.SectorSizeUnit,
+                                       (float)-nudTransY.Value - _instance.Room.Position.Y,
+                                       (float)nudTransZ.Value - _instance.Room.Position.Z * (int)Level.SectorSizeUnit);
+
+            return _instance.Position != position ||
+                   _instance is IScaleable scaleable && scaleable.Scale != (float)nudScaleX.Value ||
+                   _instance is IRotateableY rotateableY && rotateableY.RotationY != (float)nudRotY.Value ||
+                   _instance is IRotateableYX rotateableYX && rotateableYX.RotationX != (float)nudRotX.Value ||
+                   _instance is IRotateableYXRoll rotateableYXRoll && rotateableYXRoll.Roll != (float)nudRotZ.Value;
         }
 
         private void SaveData()
@@ -71,17 +99,52 @@ namespace TombEditor.Forms
                                              (float)-nudTransY.Value - _instance.Room.Position.Y,
                                              (float)nudTransZ.Value - _instance.Room.Position.Z * (int)Level.SectorSizeUnit);
 
-            if (_instance is IRotateableY rotateableY)
-                rotateableY.RotationY = (float)nudRotY.Value;
+            if (_instance is IRotateableY currentRotateableY)
+                currentRotateableY.RotationY = (float)nudRotY.Value;
 
-            if (_instance is IRotateableYX rotateableYX)
-                rotateableYX.RotationX = (float)nudRotX.Value;
+            if (_instance is IRotateableYX currentRotateableYX)
+                currentRotateableYX.RotationX = (float)nudRotX.Value;
 
-            if (_instance is IRotateableYXRoll rotateableYXRoll)
-                rotateableYXRoll.Roll = (float)nudRotZ.Value;
+            if (_instance is IRotateableYXRoll currentRotateableYXRoll)
+                currentRotateableYXRoll.Roll = (float)nudRotZ.Value;
 
-            if (_instance is IScaleable scaleable)
-                scaleable.Scale = (float)nudScaleX.Value;
+            if (_instance is IScaleable currentScaleable)
+                currentScaleable.Scale = (float)nudScaleX.Value;
+        }
+
+        private bool HasTransformChangedFromBackup()
+        {
+            return _instance.Position != _backupPosition ||
+                   _instance is IScaleable scaleable && scaleable.Scale != _backupScale.X ||
+                   _instance is IRotateableY rotateableY && rotateableY.RotationY != _backupRotation.Y ||
+                   _instance is IRotateableYX rotateableYX && rotateableYX.RotationX != _backupRotation.X ||
+                   _instance is IRotateableYXRoll rotateableYXRoll && rotateableYXRoll.Roll != _backupRotation.Z;
+        }
+
+        private void ApplyData()
+        {
+            if (!HasPendingChanges())
+                return;
+
+            if (!_undoSaved)
+            {
+                _editor.UndoManager.PushObjectTransformed(_instance);
+                _undoSaved = true;
+            }
+
+            SaveData();
+
+            if (_editor.ShouldRelight)
+            {
+                EditorActions.RebuildLightsForObject(_instance);
+                _lightingUpdatePending = false;
+            }
+            else if (EditorActions.GetLightingRoomsForObject(_instance).Any())
+            {
+                _lightingUpdatePending = true;
+            }
+
+            _editor.ObjectChange(_instance, ObjectChangeType.Change);
         }
 
         private void UpdateUI()
@@ -138,14 +201,7 @@ namespace TombEditor.Forms
             if (_loading)
                 return;
 
-            if (!_undoSaved)
-            {
-                _editor.UndoManager.PushObjectTransformed(_instance);
-                _undoSaved = true;
-            }
-
-            SaveData();
-            _editor.ObjectChange(_instance, ObjectChangeType.Change);
+            ApplyData();
         }
 
         private void nudScaleX_Validated(object sender, EventArgs e)
@@ -157,9 +213,21 @@ namespace TombEditor.Forms
             ValidateInstance(sender, e);
         }
 
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (DialogResult != DialogResult.OK)
+            {
+                DialogResult = DialogResult.Cancel;
+                RestoreData();
+            }
+
+            base.OnFormClosing(e);
+        }
+
         private void butCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
+
             RestoreData();
             Close();
         }
@@ -167,7 +235,20 @@ namespace TombEditor.Forms
         private void butOk_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
-            SaveData();
+            bool changed = HasTransformChangedFromBackup();
+
+            ApplyData();
+
+            if (!changed)
+            {
+                _lightingUpdatePending = false;
+            }
+            else if (_lightingUpdatePending)
+            {
+                EditorActions.RebuildLightsForObject(_instance);
+                _lightingUpdatePending = false;
+            }
+
             Close();
         }
     }

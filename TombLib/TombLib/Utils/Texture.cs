@@ -56,7 +56,8 @@ namespace TombLib.Utils
         Normal = 0,
         AlphaTest = 1,
         Additive = 2,
-        NoZTest = 4,
+		Distortion = 3,
+		NoZTest = 4,
         Subtract = 5,
         Wireframe = 6,
         Exclude = 8,
@@ -115,7 +116,8 @@ namespace TombLib.Utils
                 case 4: result = BlendMode.Screen; break;
                 case 5: result = BlendMode.Lighten; break;
                 case 6: result = BlendMode.AlphaTest; break;
-            }
+				case 7: result = BlendMode.Distortion; break;
+			}
             return result;
         }
 
@@ -132,6 +134,7 @@ namespace TombLib.Utils
                 case BlendMode.Screen: result = 4; break;
                 case BlendMode.Lighten: result = 5; break;
                 case BlendMode.AlphaTest: result = 6; break;
+                case BlendMode.Distortion: result = 7; break;
             }
             return result;
         }
@@ -150,7 +153,7 @@ namespace TombLib.Utils
             // For TR4, TRNG and TombEngine we can add all types (if extra blending modes are enabled)
             if (settings.GameVersion == TRVersion.Game.TombEngine)
             {
-                blendCount = 7;
+                blendCount = 8;
             }
             else if (enableExtraModes && settings.GameVersion.Native() == TRVersion.Game.TR4)
             {

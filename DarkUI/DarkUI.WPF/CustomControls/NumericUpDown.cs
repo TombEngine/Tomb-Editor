@@ -112,7 +112,7 @@ public class NumericUpDown : Control
 			TextBox.Text = Value.ToString(FormatString);
 			TextBox.TextAlignment = TextAlignment;
 			TextBox.PreviewTextInput += TextBox_PreviewTextInput;
-			TextBox.PreviewKeyUp += TextBox_PreviewKeyUp;
+			TextBox.KeyDown += TextBox_KeyDown;
 			TextBox.LostFocus += TextBox_LostFocus;
 		}
 
@@ -162,25 +162,25 @@ public class NumericUpDown : Control
 		e.Handled = true;
 	}
 
-	private void TextBox_PreviewKeyUp(object sender, KeyEventArgs e)
+	private void TextBox_KeyDown(object sender, KeyEventArgs e)
 	{
 		if (e.Key == Key.Enter)
-		{
-			if (double.TryParse(TextBox!.Text, out double value))
-				Value = Math.Min(Math.Max(value, Minimum), Maximum);
-			else
-				TextBox.Text = Value.ToString(FormatString);
-		}
+			ApplyTextBoxValue();
 	}
 
 	private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
 	{
-		// Prevent character input, but allow the current culture's decimal separator
-		if (!double.TryParse(e.Text, out _) && e.Text != CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
+		// Allow digits, the current culture's decimal separator, and minus sign.
+		if (!double.TryParse(e.Text, out _)
+			&& e.Text != CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator
+			&& e.Text != CultureInfo.CurrentCulture.NumberFormat.NegativeSign)
 			e.Handled = true;
 	}
 
 	private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+		=> ApplyTextBoxValue();
+
+	private void ApplyTextBoxValue()
 	{
 		if (double.TryParse(TextBox!.Text, out double value))
 			Value = Math.Min(Math.Max(value, Minimum), Maximum);

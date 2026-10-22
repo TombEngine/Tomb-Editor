@@ -267,84 +267,165 @@ namespace TombLib.Wad
             new FileFormat("Tomb Raider Chronicles level", "trc")
         };
 
-        public static List<WadTexture> PackTexturesForExport(Dictionary<Hash, WadTexture.AtlasReference> texturesToPack, int padding)
+        private class PackedTexturePlacement
+        {
+            public WadTexture.AtlasReference TextureReference { get; set; }
+            public VectorInt2 Position { get; set; }
+            public int PaddingX { get; set; }
+            public int PaddingY { get; set; }
+        }
+
+        private class PackedTexturePage
+        {
+            public int Scale { get; set; }
+            public List<PackedTexturePlacement> Placements { get; } = new List<PackedTexturePlacement>();
+        }
+
+        public static List<WadTexture> PackTexturesForExport(Dictionary<Hash, WadTexture.AtlasReference> texturesToPack, int padding, int texturePageSize)
         {
             var textures = new List<WadTexture>();
-            var scale = 256;
+            var scale = Math.Clamp(texturePageSize, 1, 2048);
 
-            var packer = new RectPackerTree(new TombLib.VectorInt2(scale, scale));
-            var atlas = new WadTexture(ImageC.CreateNew(scale, scale));
-            atlas.Image.Fill(new ColorC(0, 0, 0, 0));
-            textures.Add(atlas);
+            var remainingTextures = texturesToPack.Values.ToList();
 
-            for (int i = 0; i < texturesToPack.Count; i++)
+            while (remainingTextures.Count > 0)
             {
-                var textureRef = texturesToPack.ElementAt(i).Value;
+                var page = PackTexturePage(remainingTextures, padding, scale);
+                if (page == null || page.Placements.Count == 0)
+                    throw new InvalidOperationException("Unable to pack textures into the requested export page size.");
 
-                int paddingX = padding;
-                if (textureRef.Texture.Image.Width + 2 * paddingX >= scale)
-                    paddingX = (int)Math.Floor((float)(scale - textureRef.Texture.Image.Width) / 2);
-                int paddingY = padding;
-                if (textureRef.Texture.Image.Height + 2 * paddingY >= scale)
-                    paddingY = (int)Math.Floor((float)(scale - textureRef.Texture.Image.Height) / 2);
+                var atlasImage = ImageC.CreateNew(page.Scale, page.Scale);
+                atlasImage.Fill(new ColorC(0, 0, 0, 0));
 
-                VectorInt2 size = textureRef.Texture.Image.Size + new VectorInt2(paddingX * 2, paddingY * 2);
-
-                var result = packer.TryAdd(size);
-
-                if (!result.HasValue)
+                foreach (var placement in page.Placements)
                 {
-                    atlas = new WadTexture(ImageC.CreateNew(scale, scale));
-                    atlas.Image.Fill(new ColorC(0, 0, 0, 0));
-                    textures.Add(atlas);
-                    packer = new RectPackerTree(new TombLib.VectorInt2(scale, scale));
-                    result = packer.TryAdd(size);
+                    DrawTextureToAtlas(atlasImage, placement);
+                    placement.TextureReference.Position = new VectorInt2(placement.Position.X + placement.PaddingX, placement.Position.Y + placement.PaddingY);
+                    placement.TextureReference.Atlas = textures.Count;
                 }
 
-                // West
-                for (int p = 0; p < paddingX; p++)
-                    atlas.Image.CopyFrom(result.Value.X + p, result.Value.Y + paddingY, textureRef.Texture.Image, 0, 0, 1, textureRef.Texture.Image.Height);
-
-                // East
-                for (int p = 0; p < paddingX; p++)
-                    atlas.Image.CopyFrom(result.Value.X + paddingX + textureRef.Texture.Image.Width + p, result.Value.Y + paddingY, textureRef.Texture.Image, textureRef.Texture.Image.Width - 1, 0, 1, textureRef.Texture.Image.Height);
-
-                // North
-                for (int p = 0; p < paddingY; p++)
-                    atlas.Image.CopyFrom(result.Value.X + paddingX, result.Value.Y + p, textureRef.Texture.Image, 0, 0, textureRef.Texture.Image.Width, 1);
-
-                // South
-                for (int p = 0; p < paddingY; p++)
-                    atlas.Image.CopyFrom(result.Value.X + paddingX, result.Value.Y + paddingY + textureRef.Texture.Image.Height + p, textureRef.Texture.Image, 0, textureRef.Texture.Image.Height - 1, textureRef.Texture.Image.Width, 1);
-
-                // Corners
-                var color = textureRef.Texture.Image.GetPixel(0, 0);
-                for (int px = 0; px < paddingX; px++)
-                    for (int py = 0; py < paddingY; py++)
-                        atlas.Image.SetPixel(result.Value.X + px, result.Value.Y + py, color);
-
-                color = textureRef.Texture.Image.GetPixel(textureRef.Texture.Image.Width - 1, 0);
-                for (int px = 0; px < paddingX; px++)
-                    for (int py = 0; py < paddingY; py++)
-                        atlas.Image.SetPixel(result.Value.X + textureRef.Texture.Image.Width + paddingX + px, result.Value.Y + py, color);
-
-                color = textureRef.Texture.Image.GetPixel(textureRef.Texture.Image.Width - 1, textureRef.Texture.Image.Height - 1);
-                for (int px = 0; px < paddingX; px++)
-                    for (int py = 0; py < paddingY; py++)
-                        atlas.Image.SetPixel(result.Value.X + textureRef.Texture.Image.Width + paddingX + px, result.Value.Y + textureRef.Texture.Image.Height + paddingY + py, color);
-
-                color = textureRef.Texture.Image.GetPixel(0, textureRef.Texture.Image.Height - 1);
-                for (int px = 0; px < paddingX; px++)
-                    for (int py = 0; py < paddingY; py++)
-                        atlas.Image.SetPixel(result.Value.X + px, result.Value.Y + textureRef.Texture.Image.Height + paddingY + py, color);
-
-                atlas.Image.CopyFrom(result.Value.X + paddingX, result.Value.Y + paddingY, textureRef.Texture.Image);
-
-                textureRef.Position = new TombLib.VectorInt2(result.Value.X + paddingX, result.Value.Y + paddingY);
-                textureRef.Atlas = textures.Count - 1;
+                var atlas = new WadTexture(atlasImage);
+                textures.Add(atlas);
+                remainingTextures.RemoveRange(0, page.Placements.Count);
             }
 
             return textures;
+        }
+
+        private static PackedTexturePage PackTexturePage(IReadOnlyList<WadTexture.AtlasReference> texturesToPack, int padding, int maxScale)
+        {
+            PackedTexturePage bestPage = null;
+
+            foreach (var candidateScale in GetCandidateScales(maxScale))
+            {
+                var candidatePage = TryPackTexturePage(texturesToPack, padding, candidateScale);
+                if (candidatePage.Placements.Count == 0)
+                    continue;
+
+                if (bestPage == null ||
+                    candidatePage.Placements.Count > bestPage.Placements.Count ||
+                    (candidatePage.Placements.Count == bestPage.Placements.Count && candidatePage.Scale < bestPage.Scale))
+                    bestPage = candidatePage;
+            }
+
+            return bestPage;
+        }
+
+        private static PackedTexturePage TryPackTexturePage(IReadOnlyList<WadTexture.AtlasReference> texturesToPack, int padding, int scale)
+        {
+            var page = new PackedTexturePage { Scale = scale };
+            var packer = new RectPackerTree(new VectorInt2(scale, scale));
+
+            for (int i = 0; i < texturesToPack.Count; i++)
+            {
+                var textureRef = texturesToPack[i];
+                var size = GetPaddedTextureSize(textureRef.Texture, padding, scale, out int paddingX, out int paddingY);
+                var result = packer.TryAdd(size);
+
+                if (!result.HasValue)
+                    break;
+
+                page.Placements.Add(new PackedTexturePlacement
+                {
+                    TextureReference = textureRef,
+                    Position = result.Value,
+                    PaddingX = paddingX,
+                    PaddingY = paddingY
+                });
+            }
+
+            return page;
+        }
+
+        private static VectorInt2 GetPaddedTextureSize(WadTexture texture, int padding, int scale, out int paddingX, out int paddingY)
+        {
+            paddingX = padding;
+            if (texture.Image.Width + 2 * paddingX >= scale)
+                paddingX = Math.Max(0, (int)Math.Floor((float)(scale - texture.Image.Width) / 2));
+
+            paddingY = padding;
+            if (texture.Image.Height + 2 * paddingY >= scale)
+                paddingY = Math.Max(0, (int)Math.Floor((float)(scale - texture.Image.Height) / 2));
+
+            return texture.Image.Size + new VectorInt2(paddingX * 2, paddingY * 2);
+        }
+
+        private static IEnumerable<int> GetCandidateScales(int maxScale)
+        {
+            yield return maxScale;
+
+            for (int candidateScale = GetPreviousPowerOfTwo(maxScale); candidateScale > 0; candidateScale /= 2)
+                if (candidateScale != maxScale)
+                    yield return candidateScale;
+        }
+
+        private static int GetPreviousPowerOfTwo(int value)
+        {
+            int result = 1;
+
+            while (result <= value / 2)
+                result *= 2;
+
+            return result;
+        }
+
+        private static void DrawTextureToAtlas(ImageC atlasImage, PackedTexturePlacement placement)
+        {
+            var texture = placement.TextureReference.Texture;
+
+            for (int p = 0; p < placement.PaddingX; p++)
+                atlasImage.CopyFrom(placement.Position.X + p, placement.Position.Y + placement.PaddingY, texture.Image, 0, 0, 1, texture.Image.Height);
+
+            for (int p = 0; p < placement.PaddingX; p++)
+                atlasImage.CopyFrom(placement.Position.X + placement.PaddingX + texture.Image.Width + p, placement.Position.Y + placement.PaddingY, texture.Image, texture.Image.Width - 1, 0, 1, texture.Image.Height);
+
+            for (int p = 0; p < placement.PaddingY; p++)
+                atlasImage.CopyFrom(placement.Position.X + placement.PaddingX, placement.Position.Y + p, texture.Image, 0, 0, texture.Image.Width, 1);
+
+            for (int p = 0; p < placement.PaddingY; p++)
+                atlasImage.CopyFrom(placement.Position.X + placement.PaddingX, placement.Position.Y + placement.PaddingY + texture.Image.Height + p, texture.Image, 0, texture.Image.Height - 1, texture.Image.Width, 1);
+
+            var color = texture.Image.GetPixel(0, 0);
+            for (int px = 0; px < placement.PaddingX; px++)
+                for (int py = 0; py < placement.PaddingY; py++)
+                    atlasImage.SetPixel(placement.Position.X + px, placement.Position.Y + py, color);
+
+            color = texture.Image.GetPixel(texture.Image.Width - 1, 0);
+            for (int px = 0; px < placement.PaddingX; px++)
+                for (int py = 0; py < placement.PaddingY; py++)
+                    atlasImage.SetPixel(placement.Position.X + texture.Image.Width + placement.PaddingX + px, placement.Position.Y + py, color);
+
+            color = texture.Image.GetPixel(texture.Image.Width - 1, texture.Image.Height - 1);
+            for (int px = 0; px < placement.PaddingX; px++)
+                for (int py = 0; py < placement.PaddingY; py++)
+                    atlasImage.SetPixel(placement.Position.X + texture.Image.Width + placement.PaddingX + px, placement.Position.Y + texture.Image.Height + placement.PaddingY + py, color);
+
+            color = texture.Image.GetPixel(0, texture.Image.Height - 1);
+            for (int px = 0; px < placement.PaddingX; px++)
+                for (int py = 0; py < placement.PaddingY; py++)
+                    atlasImage.SetPixel(placement.Position.X + px, placement.Position.Y + texture.Image.Height + placement.PaddingY + py, color);
+
+            atlasImage.CopyFrom(placement.Position.X + placement.PaddingX, placement.Position.Y + placement.PaddingY, texture.Image);
         }
     }
 }

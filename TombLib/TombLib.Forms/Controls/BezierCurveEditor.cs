@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Numerics;
 using System.Windows.Forms;
 using TombLib.Types;
@@ -71,18 +72,13 @@ namespace WadTool.Controls
 
         private void AdjustHandlesForLinearCurve()
         {
-            if (_bezierCurve.StartHandle == _bezierCurve.Start)
-            {
+            if (_bezierCurve.StartHandle != _bezierCurve.Start || _bezierCurve.EndHandle != _bezierCurve.End)
+                return;
 
-                _controlPoints[0] = new Vector2(0, Height);
-                _controlPoints[1] = new Vector2(Width / 3.0f, Height * 2.0f / 3.0f);
-            }
-
-            if (_bezierCurve.EndHandle == _bezierCurve.End)
-            {
-                _controlPoints[2] = new Vector2(2 * Width / 3.0f, Height / 3.0f);
-                _controlPoints[3] = new Vector2(Width, 0);
-            }
+            _controlPoints[0] = new Vector2(0, Height);
+            _controlPoints[1] = new Vector2(Width / 3.0f, Height * 2.0f / 3.0f);
+            _controlPoints[2] = new Vector2(2 * Width / 3.0f, Height / 3.0f);
+            _controlPoints[3] = new Vector2(Width, 0);
         }
 
         private Vector2 TransformToBezier(Vector2 point)
@@ -232,6 +228,35 @@ namespace WadTool.Controls
                 InitializeControlPoints();
                 ValueChanged?.Invoke(this, e);
                 Invalidate();
+            }
+        }
+
+        public static void DrawPreview(Graphics g, Rectangle rect, BezierCurve2 curve, int padding = 2)
+        {
+            int x = rect.X + padding;
+            int y = rect.Y + padding;
+            int w = rect.Width - padding * 2;
+            int h = rect.Height - padding * 2;
+
+            if (w <= 0 || h <= 0)
+                return;
+
+            using (var pen = new Pen(Colors.LightText, 1.0f))
+            {
+                pen.StartCap = LineCap.Round;
+                pen.EndCap = LineCap.Round;
+
+                int steps = Math.Max(w / 2, 8);
+                var points = new PointF[steps + 1];
+                for (int i = 0; i <= steps; i++)
+                {
+                    float alpha = (float)i / steps;
+                    var p = curve.GetPoint(alpha);
+                    points[i] = new PointF(x + p.X * w, y + (1.0f - p.Y) * h);
+                }
+
+                g.SmoothingMode = SmoothingMode.AntiAlias;
+                g.DrawLines(pen, points);
             }
         }
 

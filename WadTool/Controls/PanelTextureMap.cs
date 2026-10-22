@@ -52,7 +52,7 @@ namespace WadTool.Controls
         {
             base.OnPaint(e);
 
-            var externalTextureMissing = !string.IsNullOrEmpty(VisibleTexture.AbsolutePath) && !File.Exists(VisibleTexture.AbsolutePath);
+            var externalTextureMissing = !string.IsNullOrEmpty(VisibleTexture?.AbsolutePath) && !File.Exists(VisibleTexture?.AbsolutePath);
 
             if (!externalTextureMissing)
                 return;

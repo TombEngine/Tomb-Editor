@@ -425,12 +425,16 @@ namespace TombEditor.Controls.Panel3D
         internal void ApplyBrushToModelEffect(Effect effect, bool reset = false)
         {
             var overlay = ComputeBrushOverlay(reset);
+            bool drawFlybyDof = TryGetFlybyDofOverlayState(out FlybyDofOverlayState flybyDofState);
 
             effect.Parameters["BrushShape"].SetValue(overlay.Shape);
             effect.Parameters["BrushCenter"].SetValue(overlay.Center);
             effect.Parameters["BrushColor"].SetValue(overlay.Color);
             effect.Parameters["BrushRotation"].SetValue(overlay.Rotation);
             effect.Parameters["BrushLineWidth"].SetValue(_editor.Configuration.Rendering3D_LineWidth);
+            effect.Parameters["DofCenterRange"].SetValue(drawFlybyDof ? flybyDofState.CenterRange : Vector4.Zero);
+            effect.Parameters["DofDirectionDistance"].SetValue(drawFlybyDof ? flybyDofState.DirectionDistance : Vector4.Zero);
+            effect.Parameters["DofColorStrength"].SetValue(drawFlybyDof ? flybyDofState.ColorStrength : Vector4.Zero);
         }
 
         #endregion

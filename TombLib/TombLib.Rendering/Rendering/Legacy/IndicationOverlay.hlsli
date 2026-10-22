@@ -69,3 +69,48 @@ void ApplyBrushOverlay(inout float3 rgb, inout float alpha, bool updateAlpha, fl
             alpha = max(alpha, lineAlpha);
     }
 }
+
+void ApplyDofOverlay(inout float3 rgb, inout float alpha, bool updateAlpha, float3 worldPos)
+{
+    int dofMode = (int)round(DofColorStrength.w);
+
+    if (dofMode == 0)
+        return;
+
+    float3 viewDirection = DofDirectionDistance.xyz;
+    float directionLength = length(viewDirection);
+
+    if (directionLength <= 0.0001f)
+        return;
+
+    viewDirection /= directionLength;
+
+    float3 focusPoint = DofCenterRange.xyz + viewDirection * DofDirectionDistance.w;
+    float signedDepth = dot(worldPos - focusPoint, viewDirection);
+
+    if (dofMode == 2)
+    {
+        if (signedDepth >= 0.0f)
+            return;
+
+        signedDepth = -signedDepth;
+    }
+    else if (dofMode == 3)
+    {
+        if (signedDepth <= 0.0f)
+            return;
+    }
+    else
+    {
+        signedDepth = abs(signedDepth);
+    }
+
+    float focusRange = max(DofCenterRange.w, 1.0f);
+    float gradient = saturate(signedDepth / focusRange);
+
+    if (gradient <= 0.0f)
+        return;
+
+    float3 darkening = lerp(float3(1.0f, 1.0f, 1.0f), DofColorStrength.xyz, gradient);
+    rgb *= darkening;
+}

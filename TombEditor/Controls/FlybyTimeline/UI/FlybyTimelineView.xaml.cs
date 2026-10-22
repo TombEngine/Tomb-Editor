@@ -17,6 +17,7 @@ public partial class FlybyTimelineView : UserControl
 {
     private FlybyTimelineViewModel? _viewModel;
     private bool _zoomToFitQueued;
+    private bool _initialZoomToFitApplied;
 
     /// <summary>
     /// Creates the timeline host control.
@@ -59,6 +60,7 @@ public partial class FlybyTimelineView : UserControl
         _viewModel.Cleanup();
         DataContext = null;
         _viewModel = null;
+        _initialZoomToFitApplied = false;
     }
 
     /// <summary>
@@ -168,7 +170,8 @@ public partial class FlybyTimelineView : UserControl
         Dispatcher.BeginInvoke(DispatcherPriority.Background, new System.Action(() =>
         {
             _zoomToFitQueued = false;
-            timelineControl.ZoomToFit();
+            timelineControl.ZoomToFit(_initialZoomToFitApplied);
+            _initialZoomToFitApplied = true;
         }));
     }
 

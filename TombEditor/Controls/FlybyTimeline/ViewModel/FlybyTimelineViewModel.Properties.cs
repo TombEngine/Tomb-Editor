@@ -52,7 +52,7 @@ public partial class FlybyTimelineViewModel
     /// Applies a field-of-view edit to the selected camera.
     /// </summary>
     partial void OnCameraFovChanged(float value)
-        => ApplyPropertyToCamera(c => c.Fov = value, invalidateSequenceTiming: false, refreshTimeline: false);
+        => ApplyPropertyToCamera(c => c.Fov = FlybyHelpers.ClampFlybyFieldOfViewDegrees(value), invalidateSequenceTiming: false, refreshTimeline: false);
 
     /// <summary>
     /// Applies a roll edit to the selected camera.

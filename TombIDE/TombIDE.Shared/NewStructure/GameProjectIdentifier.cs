@@ -323,6 +323,7 @@ namespace TombIDE.Shared.NewStructure
 				"TOMB1MAIN" => TRVersion.Game.TR1,
 				"TR1X" => TRVersion.Game.TR1,
 				"TR2X" => TRVersion.Game.TR2X,
+				"TR3X" => TRVersion.Game.TR3X,
 				"TRX" => TRVersion.Game.TR1, // TODO: Distinguish between TR1X and TR2X later
 				"TOMB2" => TRVersion.Game.TR2,
 				"TOMB3" => TRVersion.Game.TR3,

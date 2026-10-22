@@ -1,0 +1,12 @@
+<propertyCatalog>    
+	<moveable id="LARGE_FAN">
+        <property
+          internalName="Damage"
+          displayName="Fan damage"
+          type="Int"
+          defaultValue="1000"
+          category="Trap parameters"
+          description="Fan damage"
+        />
+    </moveable>
+</propertyCatalog>

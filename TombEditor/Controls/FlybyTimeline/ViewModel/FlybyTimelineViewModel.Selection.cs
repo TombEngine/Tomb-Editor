@@ -179,7 +179,7 @@ public partial class FlybyTimelineViewModel
     }
 
     /// <summary>
-    /// Pushes current timeline selection into <see cref="Editor.SelectedObject"/> as an <see cref="ObjectGroup"/>.
+    /// Pushes current timeline selection into <see cref="Editor.SelectedObject"/>.
     /// </summary>
     private void SyncEditorSelection()
     {
@@ -190,7 +190,7 @@ public partial class FlybyTimelineViewModel
 
         try
         {
-            SetEditorSelection(GetMergedEditorSelection());
+            SetEditorSelection([.. _selectedCameras]);
         }
         finally
         {
@@ -304,39 +304,16 @@ public partial class FlybyTimelineViewModel
     }
 
     /// <summary>
-    /// Merges timeline-selected cameras with non-flyby editor selection objects.
-    /// </summary>
-    private IReadOnlyList<PositionBasedObjectInstance> GetMergedEditorSelection()
-    {
-        var mergedSelection = GetEditorSelectionObjects()
-            .Where(objectInstance => objectInstance is not FlybyCameraInstance)
-            .ToList();
-
-        mergedSelection.AddRange(_selectedCameras);
-
-        return [.. mergedSelection.Distinct()];
-    }
-
-    /// <summary>
-    /// Returns the current editor selection as position-based objects.
-    /// </summary>
-    private IReadOnlyList<PositionBasedObjectInstance> GetEditorSelectionObjects()
-    {
-        if (_editor.SelectedObject is ObjectGroup group)
-            return [.. group.Cast<PositionBasedObjectInstance>()];
-
-        if (_editor.SelectedObject is PositionBasedObjectInstance positionBased)
-            return [positionBased];
-
-        return [];
-    }
-
-    /// <summary>
     /// Applies a new selection back into the editor.
     /// </summary>
     private void SetEditorSelection(IReadOnlyList<PositionBasedObjectInstance> selectedObjects)
     {
-        var currentSelection = GetEditorSelectionObjects();
+        IReadOnlyList<PositionBasedObjectInstance> currentSelection = _editor.SelectedObject switch
+        {
+            ObjectGroup group => [.. group.Cast<PositionBasedObjectInstance>()],
+            PositionBasedObjectInstance positionBased => [positionBased],
+            _ => []
+        };
 
         if (currentSelection.Count == selectedObjects.Count && currentSelection.All(selectedObjects.Contains))
             return;

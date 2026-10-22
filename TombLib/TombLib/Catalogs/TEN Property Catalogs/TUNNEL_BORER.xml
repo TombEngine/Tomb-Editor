@@ -1,0 +1,20 @@
+<propertyCatalog>    
+	<moveable id="TUNNEL_BORER">
+        <property
+          internalName="VerticalVelocity"
+          displayName="Vertical velocity"
+          type="Int"
+          defaultValue="5"
+          category="Trap parameters"
+          description="Adds a slight vertical movement"
+        />
+		<property
+          internalName="Damage"
+          displayName="Harm damage"
+          type="Int"
+          defaultValue="75"
+          category="Trap parameters"
+          description="Damage caused by the object"
+        />
+    </moveable>
+</propertyCatalog>

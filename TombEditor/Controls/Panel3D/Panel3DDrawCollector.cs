@@ -144,12 +144,14 @@ namespace TombEditor.Controls.Panel3D
             // Collect rooms to draw
             var camPos = Camera.GetPosition();
             var roomsToDraw = CollectRoomsToDraw(_editor.SelectedRoom).ToArray();
-            var roomsToDrawDistanceSquared = new float[roomsToDraw.Length];
+
+            if (_roomsDistanceCache == null || _roomsDistanceCache.Length < roomsToDraw.Length)
+                _roomsDistanceCache = new float[roomsToDraw.Length];
 
             for (int i = 0; i < roomsToDraw.Length; ++i)
-                roomsToDrawDistanceSquared[i] = Vector3.DistanceSquared(camPos, roomsToDraw[i].WorldPos + roomsToDraw[i].GetLocalCenter());
+                _roomsDistanceCache[i] = Vector3.DistanceSquared(camPos, roomsToDraw[i].WorldPos + roomsToDraw[i].GetLocalCenter());
 
-            Array.Sort(roomsToDrawDistanceSquared, roomsToDraw);
+            Array.Sort(_roomsDistanceCache, roomsToDraw, 0, roomsToDraw.Length);
             Array.Reverse(roomsToDraw);
 
             return roomsToDraw;

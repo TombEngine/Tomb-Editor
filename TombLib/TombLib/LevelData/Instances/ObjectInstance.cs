@@ -453,7 +453,7 @@ namespace TombLib.LevelData
         {
             string prefix;
             if (this is MoveableInstance moveable)
-                prefix = moveable.WadObjectId.ShortName(TRVersion.Game.TombEngine).ToLower() + "_";
+                prefix = moveable.WadObjectId.ShortName(Room.Level.Settings.GameVersion.Native()).ToLower() + "_";
             else if (this is StaticInstance)
                 prefix = "static_mesh_";
             else if (this is SinkInstance)
@@ -481,6 +481,13 @@ namespace TombLib.LevelData
             }
         }
 
+        public bool SupportsLuaName()
+        {
+            if (Room?.Level == null)
+                return false;
+            return Room.Level.IsTombEngine || (Room.Level.IsTRX && this is MoveableInstance);
+        }
+
         public bool CanSetLuaName(string newName)
         {
             return (string.IsNullOrEmpty(newName) ||
@@ -494,12 +501,21 @@ namespace TombLib.LevelData
             if (Room == null)
                 return " <NO ROOM>";
 
-            if (shortened)
-                return (Room.Level.IsNG ? (ScriptId.HasValue ? " <" + ScriptId.Value + ">" : "") : "") +
-                       (Room.Level.IsTombEngine ? (!string.IsNullOrEmpty(LuaName) ? " [" + LuaName + "]" : "") : "");
-            else
-                return (Room.Level.IsNG ? (ScriptId.HasValue ? ", Script ID = " + ScriptId.Value : "") : "") +
-                       (Room.Level.IsTombEngine ? (!string.IsNullOrEmpty(LuaName) ? ", Lua name = " + LuaName : "") : "");
+            if (Room.Level.IsNG && ScriptId.HasValue)
+            {
+                return shortened
+                    ? $" <{ScriptId.Value}>"
+                    : $", Script ID = {ScriptId.Value}";
+            }
+            
+            if ((Room.Level.IsTombEngine || Room.Level.IsTRX) && !string.IsNullOrEmpty(LuaName))
+            {
+                return shortened
+                    ? $" [{LuaName}]"
+                    : $", Lua name = {LuaName}";
+            }
+
+            return string.Empty;
         }
     }
 

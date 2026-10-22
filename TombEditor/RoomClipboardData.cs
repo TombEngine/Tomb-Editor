@@ -115,8 +115,8 @@ namespace TombEditor
             editor.SelectRoomsAndResetCamera(newRooms);
 
             // Refresh script IDs for all pasted objects
-            if (editor.Level.IsTombEngine)
-                newRooms.ForEach(r => r.Objects.Where(ob => ob is PositionAndScriptBasedObjectInstance).ToList().ForEach(i => ((PositionAndScriptBasedObjectInstance)i).AllocateNewLuaName()));
+            if (editor.Level.IsTombEngine || editor.Level.IsTRX)
+                newRooms.SelectMany(r => r.Objects.OfType<IHasLuaName>().Where(ob => ob.SupportsLuaName())).ToList().ForEach(i => i.AllocateNewLuaName());
             if (editor.Level.IsNG)
                 newRooms.ForEach(r => r.Objects.Where(ob => ob is PositionAndScriptBasedObjectInstance).ToList().ForEach(i => ((PositionAndScriptBasedObjectInstance)i).AllocateNewScriptId()));
         }

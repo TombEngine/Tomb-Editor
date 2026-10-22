@@ -170,19 +170,19 @@ namespace TombEditor.ToolWindows
         private void cbLightIsDynamicallyUsed_CheckedChanged(object sender, EventArgs e)
         {
             EditorActions.UpdateLight<bool>((light, value) => light.IsDynamicallyUsed == value, (light, value) => light.IsDynamicallyUsed = value,
-                light => cbLightIsDynamicallyUsed.Checked);
+                light => cbLightIsDynamicallyUsed.Checked, updateLighting: false);
         }
 
         private void cbLightIsUsedForImportedGeometry_CheckedChanged(object sender, EventArgs e)
         {
             EditorActions.UpdateLight<bool>((light, value) => light.IsUsedForImportedGeometry == value, (light, value) => light.IsUsedForImportedGeometry = value,
-                light => cbLightIsUsedForImportedGeometry.Checked);
+                light => cbLightIsUsedForImportedGeometry.Checked, updateLighting: false);
         }
 
         private void cbLightCastsShadow_CheckedChanged(object sender, EventArgs e)
         {
             EditorActions.UpdateLight<bool>((light, value) => light.CastDynamicShadows == value, (light, value) => light.CastDynamicShadows = value,
-                light => cbLightCastsShadow.Checked);
+                light => cbLightCastsShadow.Checked, updateLighting: false);
         }
 
         private static bool Compare(float firstValue, float secondValue, NumericUpDown control)

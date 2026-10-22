@@ -277,8 +277,8 @@ public partial class FlybyTimelineControl
     /// <summary>
     /// Expands the viewport to show the full sequence range.
     /// </summary>
-    public void ZoomToFit()
-        => ApplyViewport(0.0f, _totalDurationSeconds * FlybyConstants.TimelineZoomOutScale, FlybyConstants.TimelineSmoothZoomEnabled);
+    public void ZoomToFit(bool smooth = FlybyConstants.TimelineSmoothZoomEnabled)
+        => ApplyViewport(0.0f, _totalDurationSeconds * FlybyConstants.TimelineZoomOutScale, smooth);
 
     /// <summary>
     /// Pans the viewport left by one configured step.

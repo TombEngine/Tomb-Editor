@@ -47,13 +47,6 @@
 			picPreviewEmissiveMap = new System.Windows.Forms.PictureBox();
 			darkLabel4 = new DarkUI.Controls.DarkLabel();
 			darkLabel5 = new DarkUI.Controls.DarkLabel();
-			tabcontainerParameters = new Controls.DarkTabbedContainer();
-			tabPage1 = new System.Windows.Forms.TabPage();
-			nmSpecularIntensity = new DarkUI.Controls.DarkNumericUpDown();
-			darkLabel6 = new DarkUI.Controls.DarkLabel();
-			nmNormalMapStrength = new DarkUI.Controls.DarkNumericUpDown();
-			lblScale = new DarkUI.Controls.DarkLabel();
-			tabPage2 = new System.Windows.Forms.TabPage();
 			statusStrip = new DarkUI.Controls.DarkStatusStrip();
 			lblResult = new System.Windows.Forms.ToolStripStatusLabel();
 			lblXmlMaterialFile = new System.Windows.Forms.ToolStripStatusLabel();
@@ -64,7 +57,7 @@
 			picPreviewRoughnessMap = new System.Windows.Forms.PictureBox();
 			darkLabel7 = new DarkUI.Controls.DarkLabel();
 			panelTextureSelect = new DarkUI.Controls.DarkPanel();
-			comboTexture = new Controls.DarkSearchableComboBox();
+			comboTexture = new TombLib.Controls.DarkSearchableComboBox();
 			darkLabel8 = new DarkUI.Controls.DarkLabel();
 			comboMaterialType = new DarkUI.Controls.DarkComboBox();
 			panel6 = new System.Windows.Forms.Panel();
@@ -73,6 +66,17 @@
 			tbHeightMapPath = new DarkUI.Controls.DarkTextBox();
 			picPreviewHeightMap = new System.Windows.Forms.PictureBox();
 			darkLabel10 = new DarkUI.Controls.DarkLabel();
+			propertyEditor4 = new TombLib.Controls.VisualScripting.ArgumentEditor();
+			propertyEditor3 = new TombLib.Controls.VisualScripting.ArgumentEditor();
+			propertyEditor2 = new TombLib.Controls.VisualScripting.ArgumentEditor();
+			propertyEditor1 = new TombLib.Controls.VisualScripting.ArgumentEditor();
+			lblProp4 = new DarkUI.Controls.DarkLabel();
+			lblProp3 = new DarkUI.Controls.DarkLabel();
+			lblProp2 = new DarkUI.Controls.DarkLabel();
+			lblProp1 = new DarkUI.Controls.DarkLabel();
+			darkLabel6 = new DarkUI.Controls.DarkLabel();
+			darkTextBox1 = new DarkUI.Controls.DarkTextBox();
+			propGroupBox = new DarkUI.Controls.DarkGroupBox();
 			panelSky.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)picPreviewColorMap).BeginInit();
 			panel1.SuspendLayout();
@@ -83,23 +87,20 @@
 			((System.ComponentModel.ISupportInitialize)picPreviewAmbientOcclusionMap).BeginInit();
 			panel4.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)picPreviewEmissiveMap).BeginInit();
-			tabcontainerParameters.SuspendLayout();
-			tabPage1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)nmSpecularIntensity).BeginInit();
-			((System.ComponentModel.ISupportInitialize)nmNormalMapStrength).BeginInit();
 			statusStrip.SuspendLayout();
 			panel5.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)picPreviewRoughnessMap).BeginInit();
 			panelTextureSelect.SuspendLayout();
 			panel6.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)picPreviewHeightMap).BeginInit();
+			propGroupBox.SuspendLayout();
 			SuspendLayout();
 			// 
 			// butOK
 			// 
 			butOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
 			butOK.Checked = false;
-			butOK.Location = new System.Drawing.Point(349, 458);
+			butOK.Location = new System.Drawing.Point(349, 622);
 			butOK.Name = "butOK";
 			butOK.Size = new System.Drawing.Size(80, 23);
 			butOK.TabIndex = 16;
@@ -111,7 +112,7 @@
 			butCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
 			butCancel.Checked = false;
 			butCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			butCancel.Location = new System.Drawing.Point(435, 458);
+			butCancel.Location = new System.Drawing.Point(435, 622);
 			butCancel.Name = "butCancel";
 			butCancel.Size = new System.Drawing.Size(80, 23);
 			butCancel.TabIndex = 17;
@@ -429,106 +430,18 @@
 			darkLabel5.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
 			darkLabel5.AutoSize = true;
 			darkLabel5.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-			darkLabel5.Location = new System.Drawing.Point(6, 425);
+			darkLabel5.Location = new System.Drawing.Point(6, 24);
 			darkLabel5.Name = "darkLabel5";
 			darkLabel5.Size = new System.Drawing.Size(77, 13);
 			darkLabel5.TabIndex = 25;
 			darkLabel5.Text = "Material type:";
-			// 
-			// tabcontainerParameters
-			// 
-			tabcontainerParameters.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			tabcontainerParameters.Controls.Add(tabPage1);
-			tabcontainerParameters.Controls.Add(tabPage2);
-			tabcontainerParameters.Location = new System.Drawing.Point(9, 486);
-			tabcontainerParameters.Name = "tabcontainerParameters";
-			tabcontainerParameters.SelectedIndex = 0;
-			tabcontainerParameters.Size = new System.Drawing.Size(506, 53);
-			tabcontainerParameters.TabIndex = 26;
-			tabcontainerParameters.Visible = false;
-			// 
-			// tabPage1
-			// 
-			tabPage1.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
-			tabPage1.Controls.Add(nmSpecularIntensity);
-			tabPage1.Controls.Add(darkLabel6);
-			tabPage1.Controls.Add(nmNormalMapStrength);
-			tabPage1.Controls.Add(lblScale);
-			tabPage1.Location = new System.Drawing.Point(4, 22);
-			tabPage1.Name = "tabPage1";
-			tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			tabPage1.Size = new System.Drawing.Size(498, 27);
-			tabPage1.TabIndex = 0;
-			tabPage1.Text = "tabPage1";
-			// 
-			// nmSpecularIntensity
-			// 
-			nmSpecularIntensity.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			nmSpecularIntensity.DecimalPlaces = 4;
-			nmSpecularIntensity.Increment = new decimal(new int[] { 25, 0, 0, 131072 });
-			nmSpecularIntensity.IncrementAlternate = new decimal(new int[] { 5, 0, 0, 65536 });
-			nmSpecularIntensity.Location = new System.Drawing.Point(135, 31);
-			nmSpecularIntensity.LoopValues = false;
-			nmSpecularIntensity.Maximum = new decimal(new int[] { 2048, 0, 0, 0 });
-			nmSpecularIntensity.Minimum = new decimal(new int[] { 1, 0, 0, 262144 });
-			nmSpecularIntensity.Name = "nmSpecularIntensity";
-			nmSpecularIntensity.Size = new System.Drawing.Size(360, 22);
-			nmSpecularIntensity.TabIndex = 11;
-			nmSpecularIntensity.Value = new decimal(new int[] { 1, 0, 0, 0 });
-			nmSpecularIntensity.ValueChanged += nmSpecularIntensity_ValueChanged;
-			// 
-			// darkLabel6
-			// 
-			darkLabel6.AutoSize = true;
-			darkLabel6.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-			darkLabel6.Location = new System.Drawing.Point(6, 34);
-			darkLabel6.Name = "darkLabel6";
-			darkLabel6.Size = new System.Drawing.Size(101, 13);
-			darkLabel6.TabIndex = 10;
-			darkLabel6.Text = "Specular intensity:";
-			// 
-			// nmNormalMapStrength
-			// 
-			nmNormalMapStrength.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-			nmNormalMapStrength.DecimalPlaces = 4;
-			nmNormalMapStrength.Increment = new decimal(new int[] { 25, 0, 0, 131072 });
-			nmNormalMapStrength.IncrementAlternate = new decimal(new int[] { 5, 0, 0, 65536 });
-			nmNormalMapStrength.Location = new System.Drawing.Point(135, 3);
-			nmNormalMapStrength.LoopValues = false;
-			nmNormalMapStrength.Maximum = new decimal(new int[] { 2048, 0, 0, 0 });
-			nmNormalMapStrength.Minimum = new decimal(new int[] { 1, 0, 0, 262144 });
-			nmNormalMapStrength.Name = "nmNormalMapStrength";
-			nmNormalMapStrength.Size = new System.Drawing.Size(360, 22);
-			nmNormalMapStrength.TabIndex = 9;
-			nmNormalMapStrength.Value = new decimal(new int[] { 1, 0, 0, 0 });
-			nmNormalMapStrength.ValueChanged += nmNormalMapStrength_ValueChanged;
-			// 
-			// lblScale
-			// 
-			lblScale.AutoSize = true;
-			lblScale.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-			lblScale.Location = new System.Drawing.Point(6, 6);
-			lblScale.Name = "lblScale";
-			lblScale.Size = new System.Drawing.Size(123, 13);
-			lblScale.TabIndex = 1;
-			lblScale.Text = "Normap map strength:";
-			// 
-			// tabPage2
-			// 
-			tabPage2.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
-			tabPage2.Location = new System.Drawing.Point(4, 22);
-			tabPage2.Name = "tabPage2";
-			tabPage2.Padding = new System.Windows.Forms.Padding(3);
-			tabPage2.Size = new System.Drawing.Size(498, 27);
-			tabPage2.TabIndex = 1;
-			tabPage2.Text = "tabPage2";
 			// 
 			// statusStrip
 			// 
 			statusStrip.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
 			statusStrip.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
 			statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { lblResult, lblXmlMaterialFile });
-			statusStrip.Location = new System.Drawing.Point(6, 487);
+			statusStrip.Location = new System.Drawing.Point(6, 651);
 			statusStrip.Name = "statusStrip";
 			statusStrip.Padding = new System.Windows.Forms.Padding(2, 5, 0, 3);
 			statusStrip.Size = new System.Drawing.Size(509, 28);
@@ -649,9 +562,9 @@
 			// 
 			comboMaterialType.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
 			comboMaterialType.FormattingEnabled = true;
-			comboMaterialType.Location = new System.Drawing.Point(89, 422);
+			comboMaterialType.Location = new System.Drawing.Point(123, 18);
 			comboMaterialType.Name = "comboMaterialType";
-			comboMaterialType.Size = new System.Drawing.Size(426, 23);
+			comboMaterialType.Size = new System.Drawing.Size(380, 23);
 			comboMaterialType.TabIndex = 31;
 			comboMaterialType.SelectedIndexChanged += comboMaterialType_SelectedIndexChanged;
 			// 
@@ -721,21 +634,138 @@
 			darkLabel10.TabIndex = 1;
 			darkLabel10.Text = "Height map:";
 			// 
+			// propertyEditor4
+			// 
+			propertyEditor4.AllowDrop = true;
+			propertyEditor4.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			propertyEditor4.Location = new System.Drawing.Point(123, 164);
+			propertyEditor4.Margin = new System.Windows.Forms.Padding(1);
+			propertyEditor4.Name = "propertyEditor4";
+			propertyEditor4.Size = new System.Drawing.Size(380, 24);
+			propertyEditor4.TabIndex = 16;
+			propertyEditor4.ValueChanged += PropertyEditor_ValueChanged;
+			// 
+			// propertyEditor3
+			// 
+			propertyEditor3.AllowDrop = true;
+			propertyEditor3.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			propertyEditor3.Location = new System.Drawing.Point(123, 134);
+			propertyEditor3.Margin = new System.Windows.Forms.Padding(1);
+			propertyEditor3.Name = "propertyEditor3";
+			propertyEditor3.Size = new System.Drawing.Size(380, 24);
+			propertyEditor3.TabIndex = 15;
+			propertyEditor3.ValueChanged += PropertyEditor_ValueChanged;
+			// 
+			// propertyEditor2
+			// 
+			propertyEditor2.AllowDrop = true;
+			propertyEditor2.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			propertyEditor2.Location = new System.Drawing.Point(123, 104);
+			propertyEditor2.Margin = new System.Windows.Forms.Padding(1);
+			propertyEditor2.Name = "propertyEditor2";
+			propertyEditor2.Size = new System.Drawing.Size(380, 24);
+			propertyEditor2.TabIndex = 14;
+			propertyEditor2.ValueChanged += PropertyEditor_ValueChanged;
+			// 
+			// propertyEditor1
+			// 
+			propertyEditor1.AllowDrop = true;
+			propertyEditor1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			propertyEditor1.Location = new System.Drawing.Point(123, 75);
+			propertyEditor1.Margin = new System.Windows.Forms.Padding(1);
+			propertyEditor1.Name = "propertyEditor1";
+			propertyEditor1.Size = new System.Drawing.Size(380, 23);
+			propertyEditor1.TabIndex = 13;
+			propertyEditor1.ValueChanged += PropertyEditor_ValueChanged;
+			// 
+			// lblProp4
+			// 
+			lblProp4.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+			lblProp4.Location = new System.Drawing.Point(6, 171);
+			lblProp4.Name = "lblProp4";
+			lblProp4.Size = new System.Drawing.Size(100, 17);
+			lblProp4.TabIndex = 12;
+			lblProp4.Text = "Property 4:";
+			// 
+			// lblProp3
+			// 
+			lblProp3.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+			lblProp3.Location = new System.Drawing.Point(6, 141);
+			lblProp3.Name = "lblProp3";
+			lblProp3.Size = new System.Drawing.Size(100, 17);
+			lblProp3.TabIndex = 11;
+			lblProp3.Text = "Property 3:";
+			// 
+			// lblProp2
+			// 
+			lblProp2.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+			lblProp2.Location = new System.Drawing.Point(6, 111);
+			lblProp2.Name = "lblProp2";
+			lblProp2.Size = new System.Drawing.Size(100, 17);
+			lblProp2.TabIndex = 10;
+			lblProp2.Text = "Property 2:";
+			// 
+			// lblProp1
+			// 
+			lblProp1.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+			lblProp1.Location = new System.Drawing.Point(6, 80);
+			lblProp1.Name = "lblProp1";
+			lblProp1.Size = new System.Drawing.Size(100, 17);
+			lblProp1.TabIndex = 9;
+			lblProp1.Text = "Property 1:";
+			// 
+			// darkLabel6
+			// 
+			darkLabel6.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+			darkLabel6.Location = new System.Drawing.Point(6, 52);
+			darkLabel6.Name = "darkLabel6";
+			darkLabel6.Size = new System.Drawing.Size(100, 17);
+			darkLabel6.TabIndex = 1;
+			darkLabel6.Text = "Material name:";
+			// 
+			// darkTextBox1
+			// 
+			darkTextBox1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			darkTextBox1.Location = new System.Drawing.Point(123, 47);
+			darkTextBox1.Name = "darkTextBox1";
+			darkTextBox1.ReadOnly = true;
+			darkTextBox1.Size = new System.Drawing.Size(380, 22);
+			darkTextBox1.TabIndex = 8;
+			// 
+			// propGroupBox
+			// 
+			propGroupBox.Controls.Add(propertyEditor4);
+			propGroupBox.Controls.Add(comboMaterialType);
+			propGroupBox.Controls.Add(propertyEditor3);
+			propGroupBox.Controls.Add(darkLabel5);
+			propGroupBox.Controls.Add(propertyEditor2);
+			propGroupBox.Controls.Add(darkTextBox1);
+			propGroupBox.Controls.Add(propertyEditor1);
+			propGroupBox.Controls.Add(darkLabel6);
+			propGroupBox.Controls.Add(lblProp4);
+			propGroupBox.Controls.Add(lblProp1);
+			propGroupBox.Controls.Add(lblProp3);
+			propGroupBox.Controls.Add(lblProp2);
+			propGroupBox.Location = new System.Drawing.Point(6, 420);
+			propGroupBox.Name = "propGroupBox";
+			propGroupBox.Size = new System.Drawing.Size(509, 195);
+			propGroupBox.TabIndex = 34;
+			propGroupBox.TabStop = false;
+			propGroupBox.Text = "Properties";
+			// 
 			// FormMaterialEditor
 			// 
 			AcceptButton = butOK;
 			AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			CancelButton = butCancel;
-			ClientSize = new System.Drawing.Size(521, 521);
-			Controls.Add(comboMaterialType);
+			ClientSize = new System.Drawing.Size(521, 685);
+			Controls.Add(propGroupBox);
 			Controls.Add(panel5);
 			Controls.Add(butCancel);
 			Controls.Add(butOK);
 			Controls.Add(panel1);
 			Controls.Add(statusStrip);
-			Controls.Add(tabcontainerParameters);
-			Controls.Add(darkLabel5);
 			Controls.Add(panel4);
 			Controls.Add(panel3);
 			Controls.Add(panel6);
@@ -745,7 +775,7 @@
 			FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			MaximizeBox = false;
 			MinimizeBox = false;
-			MinimumSize = new System.Drawing.Size(537, 560);
+			MinimumSize = new System.Drawing.Size(537, 724);
 			Name = "FormMaterialEditor";
 			Padding = new System.Windows.Forms.Padding(6);
 			ShowIcon = false;
@@ -767,11 +797,6 @@
 			panel4.ResumeLayout(false);
 			panel4.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)picPreviewEmissiveMap).EndInit();
-			tabcontainerParameters.ResumeLayout(false);
-			tabPage1.ResumeLayout(false);
-			tabPage1.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)nmSpecularIntensity).EndInit();
-			((System.ComponentModel.ISupportInitialize)nmNormalMapStrength).EndInit();
 			statusStrip.ResumeLayout(false);
 			statusStrip.PerformLayout();
 			panel5.ResumeLayout(false);
@@ -781,8 +806,9 @@
 			panel6.ResumeLayout(false);
 			panel6.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)picPreviewHeightMap).EndInit();
+			propGroupBox.ResumeLayout(false);
+			propGroupBox.PerformLayout();
 			ResumeLayout(false);
-			PerformLayout();
 		}
 
 		#endregion
@@ -814,13 +840,6 @@
 		private System.Windows.Forms.PictureBox picPreviewEmissiveMap;
 		private DarkUI.Controls.DarkLabel darkLabel4;
 		private DarkUI.Controls.DarkLabel darkLabel5;
-		private Controls.DarkTabbedContainer tabcontainerParameters;
-		private System.Windows.Forms.TabPage tabPage1;
-		private System.Windows.Forms.TabPage tabPage2;
-		private DarkUI.Controls.DarkLabel lblScale;
-		private DarkUI.Controls.DarkNumericUpDown nmSpecularIntensity;
-		private DarkUI.Controls.DarkLabel darkLabel6;
-		private DarkUI.Controls.DarkNumericUpDown nmNormalMapStrength;
 		private DarkUI.Controls.DarkLabel AAA;
 		private DarkUI.Controls.DarkButton butClearSpecularMap;
 		private DarkUI.Controls.DarkButton butClearNormalMap;
@@ -845,5 +864,16 @@
         private DarkUI.Controls.DarkTextBox tbHeightMapPath;
         private System.Windows.Forms.PictureBox picPreviewHeightMap;
         private DarkUI.Controls.DarkLabel darkLabel10;
-    }
+		private TombLib.Controls.VisualScripting.ArgumentEditor propertyEditor4;
+		private TombLib.Controls.VisualScripting.ArgumentEditor propertyEditor3;
+		private TombLib.Controls.VisualScripting.ArgumentEditor propertyEditor2;
+		private TombLib.Controls.VisualScripting.ArgumentEditor propertyEditor1;
+		private DarkUI.Controls.DarkLabel lblProp4;
+		private DarkUI.Controls.DarkLabel lblProp3;
+		private DarkUI.Controls.DarkLabel lblProp2;
+		private DarkUI.Controls.DarkLabel lblProp1;
+		private DarkUI.Controls.DarkLabel darkLabel6;
+		private DarkUI.Controls.DarkTextBox darkTextBox1;
+		private DarkUI.Controls.DarkGroupBox propGroupBox;
+	}
 }

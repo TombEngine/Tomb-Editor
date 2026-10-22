@@ -1,20 +1,28 @@
-﻿using System.IO;
+﻿using System;
+using System.Globalization;
+using System.IO;
 using System.Numerics;
 using System.Xml.Serialization;
 using TombLib.Utils;
 
 namespace TombLib.LevelData
 {
-	public enum MaterialType : byte
-	{
-		Default,
-		Reflective,
-		SkyboxReflective
-	}
-
 	public class MaterialData
 	{
-		public MaterialType Type { get; set; }
+		public const int PropertyCount = MaterialPropertyDefinition.MaxPropertyCount;
+		public const string DefaultMaterialName = "DefaultMaterial";
+
+		[XmlIgnore]
+		public int Type { get; set; }
+
+		[XmlElement("Type")]
+		public string SerializedType
+		{
+			get => Type.ToString(CultureInfo.InvariantCulture);
+			set => MaterialCatalog.ParseMaterialType(this, value);
+		}
+
+		public string Name { get; set; }
 		public string ColorMap { get; set; }
 		public string NormalMap { get; set; }
 		public string HeightMap { get; set; }
@@ -25,10 +33,7 @@ namespace TombLib.LevelData
 		public string AdditionalColorMap { get; set; }
 		public string EmissiveMap { get; set; }
 
-		public Vector4 Parameters0 { get; set; }
-		public Vector4 Parameters1 { get; set; }
-		public Vector4 Parameters2 { get; set; }
-		public Vector4 Parameters3 { get; set; }
+		public string[] Properties { get; set; }
 
 		[XmlIgnore]
 		public bool IsNormalMapFound { get; private set; }
@@ -52,12 +57,10 @@ namespace TombLib.LevelData
 
 		public MaterialData()
 		{
-			// Default material has:
-			// Normal intensity = 1.0
-			// Specular intensity = 1.0f
-			// Glow intensity = 1.0f
-			Type = MaterialType.Default;
-			Parameters0 = new Vector4(1.0f, 1.0f, 1.0f, 0.0f);
+			Type = 0;
+			Name = string.Empty;
+			Properties = new string[PropertyCount];
+			ApplyDefinitionDefaults();
 		}
 
 		public static MaterialData ReadFromXml(string filename)
@@ -92,6 +95,8 @@ namespace TombLib.LevelData
 			(materialData.RoughnessMap, materialData.IsRoughnessMapFound) = LoadPath(materialData.RoughnessMap);
 			(materialData.AmbientOcclusionMap, materialData.IsAmbientOcclusionMapFound) = LoadPath(materialData.AmbientOcclusionMap);
 
+			materialData.Normalize();
+
 			return materialData;
 		}
 
@@ -121,6 +126,7 @@ namespace TombLib.LevelData
 			materialData.EmissiveMap = MakeRelative(materialData.EmissiveMap);
 			materialData.AmbientOcclusionMap = MakeRelative(materialData.AmbientOcclusionMap);
 			materialData.RoughnessMap = MakeRelative(materialData.RoughnessMap);
+			materialData.Normalize();
 
 			XmlUtils.WriteXmlFile(filename, materialData);
 			return true;
@@ -159,8 +165,96 @@ namespace TombLib.LevelData
 			(materialData.AmbientOcclusionMap, materialData.IsAmbientOcclusionMapFound) = CreateSidecar("_AO");
 			(materialData.RoughnessMap, materialData.IsRoughnessMapFound) = CreateSidecar("_R");
 			(materialData.EmissiveMap, materialData.IsEmissiveMapFound) = CreateSidecar("_E");
+			materialData.Normalize();
 
 			return materialData;
+		}
+
+		public static MaterialData TryLoadForTexture(Texture texture, string textureAbsolutePath = null)
+		{
+			var resolvedTexturePath = textureAbsolutePath ?? texture?.AbsolutePath;
+			if (string.IsNullOrEmpty(resolvedTexturePath) && texture != null)
+				resolvedTexturePath = texture.Image.FileName;
+
+			return TrySidecarLoadOrLoadExisting(resolvedTexturePath);
+		}
+
+		public MaterialTypeDefinition GetMaterialDefinition()
+		{
+			return MaterialCatalog.GetDefinition(Type);
+		}
+
+		public Vector4 GetPropertyVector(int index)
+		{
+			var property = GetPropertyDefinition(index);
+			if (property == null || property.Type == MaterialPropertyType.None)
+				return Vector4.Zero;
+
+			return MaterialCatalog.UnboxValue(property.Type, Properties[index]);
+		}
+
+		public MaterialPropertyDefinition GetPropertyDefinition(int index)
+		{
+			if (index < 0 || index >= PropertyCount)
+				return null;
+
+			return GetMaterialDefinition().Properties[index];
+		}
+
+		public void SetPropertyValue(int index, string value)
+		{
+			if (index < 0 || index >= PropertyCount)
+				return;
+
+			Properties[index] = value ?? string.Empty;
+		}
+
+		public void Normalize()
+		{
+			Properties ??= new string[PropertyCount];
+
+			if (Properties.Length != PropertyCount)
+			{
+				var properties = Properties;
+				Array.Resize(ref properties, PropertyCount);
+				Properties = properties;
+			}
+
+			if (string.IsNullOrWhiteSpace(Name))
+				Name = GetDefaultMaterialName();
+
+			var definition = GetMaterialDefinition();
+
+			for (int i = 0; i < PropertyCount; i++)
+			{
+				var property = definition.Properties[i];
+				if (property == null || property.Type == MaterialPropertyType.None)
+				{
+					Properties[i] = string.Empty;
+					continue;
+				}
+
+				if (string.IsNullOrWhiteSpace(Properties[i]))
+					Properties[i] = MaterialCatalog.GetDefaultValue(property);
+			}
+		}
+
+		public void ApplyDefinitionDefaults()
+		{
+			var definition = MaterialCatalog.GetDefinition(Type);
+			for (int i = 0; i < PropertyCount; i++)
+			{
+				var property = definition.Properties[i];
+				Properties[i] = MaterialCatalog.GetDefaultValue(property);
+			}
+		}
+
+		private string GetDefaultMaterialName()
+		{
+			if (!string.IsNullOrWhiteSpace(ColorMap))
+				return Path.GetFileNameWithoutExtension(ColorMap);
+
+			return DefaultMaterialName;
 		}
 	}
 }

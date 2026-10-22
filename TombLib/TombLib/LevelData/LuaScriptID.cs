@@ -6,6 +6,7 @@ namespace TombLib.LevelData
     {
         string LuaName { get; set; }
         void AllocateNewLuaName();
+        bool SupportsLuaName();
         bool CanSetLuaName(string newScriptId);
     }
 }

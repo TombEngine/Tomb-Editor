@@ -28,7 +28,8 @@ public sealed class EngineUpdateServiceFactory : IEngineUpdateServiceFactory
 		TRVersion.Game.TombEngine => new TombEngineUpdateService(_fileExtractionService),
 		TRVersion.Game.TR1 or
 		TRVersion.Game.TR1X or
-		TRVersion.Game.TR2X => new TRXUpdateService(_fileExtractionService, gameVersion),
+		TRVersion.Game.TR2X or
+		TRVersion.Game.TR3X => new TRXUpdateService(_fileExtractionService, gameVersion),
 		_ => null
 	};
 }
