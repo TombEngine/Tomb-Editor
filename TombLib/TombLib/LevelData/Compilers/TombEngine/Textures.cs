@@ -79,9 +79,8 @@ namespace TombLib.LevelData.Compilers.TombEngine
             // Add a generic material (to use for example with embedded Wad2 textures).
             // It is given a distinctive name so it can't collide with a material that gets its name
             // derived from a level texture file (e.g. the "default.png" placeholder texture).
-            const string defaultMaterialName = "defaultMaterial";
-            _materialDictionary.Add(defaultMaterialName, new MaterialData { Name = defaultMaterialName });
-            _materialNames.Add(defaultMaterialName);
+            _materialDictionary.Add(MaterialData.DefaultMaterialName, new MaterialData { Name = MaterialData.DefaultMaterialName });
+            _materialNames.Add(MaterialData.DefaultMaterialName);
 
             // Sidecar load level textures
             foreach (var texture in _level.Settings.Textures)

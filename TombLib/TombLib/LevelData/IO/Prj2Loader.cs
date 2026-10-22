@@ -319,6 +319,8 @@ namespace TombLib.LevelData.IO
                     settings.TrxTextureBitDepth = (TrxTextureBitDepth)chunkIO.ReadChunkInt(chunkSize);
                 else if (id == Prj2Chunks.TrxConvertFlybysToCinematicFrames)
                     settings.TrxConvertFlybysToCinematicFrames = chunkIO.ReadChunkBool(chunkSize);
+                else if (id == Prj2Chunks.TrxUseAlternateGroups)
+                    settings.TrxUseAlternateGroups = chunkIO.ReadChunkBool(chunkSize);
                 else if (id == Prj2Chunks.RearrangeRooms)
                     settings.RearrangeVerticalRooms = chunkIO.ReadChunkBool(chunkSize);
                 else if (id == Prj2Chunks.RemoveUnusedObjects)

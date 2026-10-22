@@ -19,27 +19,52 @@ Tomb Editor:
  * Added support for flyby cameras in TRX.
  * Added support for specifying moveable instance names in TRX.
  * Added support for moveable item properties in TRX levels; refer to LostArtefacts documentation.
+ * Added optional support for multiple flipmaps in TRX levels (Level Settings > TRX > Enable multiple flipmaps).
+ * Added level compilation warning for TEN targets if multiple Lara objects are placed in the level.
+ * Added drag and drop support for cameras and sinks into the Node Editor.
+ * Added Item Properties window for editing moveable and static parameters without using OCBs.
+ * Improved performance when working in Geometry mode.
+ * Increased the maximum texture size per face from 256 to 1024 pixels for TEN target.
  * Fixed "Map animated textures" checkbox not unchecking in Level Settings dialog.
  * Fixed occasional exceptions after closing Node Editor.
  * Fixed exception while opening texture lists in Remap Texture dialog.
  * Fixed being unable to use sound IDs in TRX levels above the OG sound map size without defining all lower IDs
+ * Fixed pistol ammo pickups in TR1 and TR2 not being converted to the correct engine type.
+ * Fixed problems with vertical portals in TRX levels that have more than 255 rooms.
+ * Fixed incorrect lighting brightness in compiled TEN levels.
+ * Fixed numerous memory leaks in Tomb Editor and WadTool.
+ * Fixed being able to paste moveables into flipped rooms.
+ * Fixed floating toolboxes appearing misplaced on high-DPI monitors.
+ * Fixed Scale value in Import Settings not being applied when pressing Enter.
+ * Fixed missing hit sounds for TR1 creatures in TEN levels.
+ * Fixed turn switch flickering in the default TEN wad.
 
 WadTool:
  * Added an option to consolidate textures for an object into a single set of texture pages.
  * Added support for choosing the destination slot when copying classic objects into a TEN wad if a classic slot maps to multiple objects.
  * Added mesh name display in the skeleton editor.
  * Added missing TR2 henchman death sound (ID 838) and appropriate TR2-TEN conversion.
+ * Added animation blending with a blend curve editor and preview, and root motion support for TEN target.
+ * Added property editor for setting default moveable and static properties in wads.
+ * Fixed incorrect grid scroll preview for certain animations in the animation editor.
  * Fixed exception when trying to open an object without meshes in the mesh editor.
 
 TombIDE:
- * Added TR3X support and engine preset (1.9.3).
- * Updated TR1X and TR2X presets to TRX 1.9.3.
+ * Added TR3X support and engine preset (1.11.1).
+ * Updated TR1X and TR2X presets to TRX 1.11.1.
+ * Fixed exceptions after deleting an open unsaved file in the script editor.
 
 TEN nodes:
  * Added a node to unswap a previously swapped mesh.
  * Added nodes to swap and restore skinned meshes.
  * Added nodes for checking and setting various aspects of creature AI.
  * Added a node to check Lara's traversal mode.
+ * Added node to emit weather effects from a volume.
+ * Added node to emit blood from a moveable.
+ * Added node to emit air bubble from a moveable.
+ * Added photo-mode nodes for unlocking accessories, expressions, frames, outfits and poses.
+ * Added nodes to show end of level and end of game statistics.
+ * Added a node to unlock a single diary page.
  * Updated keypad nodes to use display items and allow conditional numerical input.
  * Fixed CLOCKWORK_BEETLE, EXAMINE and WATERSKIN items not appearing in the inventory nodes.
  
