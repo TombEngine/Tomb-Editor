@@ -27,6 +27,7 @@ Tomb Editor:
  * Improved performance when working in Geometry mode.
  * Increased the maximum texture size per face from 256 to 1024 pixels for TEN target.
  * Fixed "Map animated textures" checkbox not unchecking in Level Settings dialog.
+ * Fixed wads not always reloading after external changes when opening a new level.
  * Fixed occasional exceptions after closing Node Editor.
  * Fixed exception while opening texture lists in Remap Texture dialog.
  * Fixed being unable to use sound IDs in TRX levels above the OG sound map size without defining all lower IDs

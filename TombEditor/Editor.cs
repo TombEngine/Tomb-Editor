@@ -1103,9 +1103,7 @@ namespace TombEditor
             if (lightQualityChanged && Configuration.Rendering3D_HighQualityLightPreview)
                 UpdateRoomsLighting(_level.ExistingRooms);
 
-            // Update file watchers
-            if (importedGeometryChanged || texturesChanged || wadsChanged || soundsChanged)
-                _levelSettingsWatcher?.WatchLevelSettings(_level.Settings);
+            _levelSettingsWatcher?.WatchLevelSettings(_level.Settings);
 
             HasUnsavedChanges = true;
         }
