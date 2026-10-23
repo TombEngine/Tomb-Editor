@@ -1,4 +1,3 @@
-===========
 Version 2.0
 ===========
 
@@ -50,14 +49,14 @@ WadTool:
  * Added property editor for setting default moveable and static properties in wads.
  * Fixed incorrect grid scroll preview for certain animations in the animation editor.
  * Fixed exception when trying to open an object without meshes in the mesh editor.
+ 
+SoundTool:
+ * Updated TR2 Override with fixes to the sounds for explosive weapons and flares.
 
 TombIDE:
  * Added TR3X support and engine preset (1.11.1).
  * Updated TR1X and TR2X presets to TRX 1.11.1.
  * Fixed exceptions after deleting an open unsaved file in the script editor.
- 
- SoundTool:
- * Updated TR2 Override with fixes to the sounds for explosive weapons and flares.
 
 TEN nodes:
  * Added a node to unswap a previously swapped mesh.
