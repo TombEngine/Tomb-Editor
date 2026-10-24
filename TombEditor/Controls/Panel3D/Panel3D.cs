@@ -305,9 +305,9 @@ namespace TombEditor.Controls.Panel3D
             }
 
             // Update rooms
-            if (obj is IEditorRoomChangedEvent)
+            if (obj is IEditorRoomEvent)
             {
-                var room = ((IEditorRoomChangedEvent)obj).Room;
+                var room = ((IEditorRoomEvent)obj).Room;
 
                 _renderingCachedRooms.Remove(room);
                 if (obj is Editor.RoomGeometryChangedEvent || obj is Editor.RoomPositionChangedEvent)
@@ -344,7 +344,7 @@ namespace TombEditor.Controls.Panel3D
             if (_editor.Mode != EditorMode.Map2D)
                 if (obj is IEditorObjectChangedEvent ||
                     obj is Editor.SelectedObjectChangedEvent ||
-                    obj is IEditorRoomChangedEvent ||
+                    obj is IEditorRoomEvent ||
                     obj is SectorColoringManager.ChangeSectorColoringInfoEvent ||
                     obj is Editor.ConfigurationChangedEvent ||
                     obj is Editor.SelectedSectorsChangedEvent ||

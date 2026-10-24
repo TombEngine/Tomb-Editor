@@ -101,6 +101,10 @@ namespace TombEditor
 
                 ReferencedWad newWad = Wad.Clone();
                 newWad.Reload(settings);
+
+                if (newWad.LoadException != null)
+                    throw newWad.LoadException;
+
                 Parent.SynchronizationContext.Post(unused =>
                 {
                     Wad.Assign(newWad);
@@ -112,7 +116,7 @@ namespace TombEditor
             {
                 var result = new List<string>() { Parent.Settings?.MakeAbsolute(Wad.Path) };
 
-                if (result[0] != null && result[0].EndsWith(".wad", StringComparison.InvariantCultureIgnoreCase))
+                if (!string.IsNullOrEmpty(result[0]) && result[0].EndsWith(".wad", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var wasPath = Path.ChangeExtension(result[0], ".was");
                     var swdPath = Path.ChangeExtension(result[0], ".swd");
@@ -153,7 +157,7 @@ namespace TombEditor
             {
                 var result = new List<string>() { Parent.Settings?.MakeAbsolute(ImportedGeometry.Info.Path) };
 
-                if (result[0].EndsWith(".obj", StringComparison.InvariantCultureIgnoreCase))
+                if (!string.IsNullOrEmpty(result[0]) && result[0].EndsWith(".obj", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var mtlPath = Path.ChangeExtension(result[0], ".mtl");
                     if (File.Exists(mtlPath)) result.Add(mtlPath);

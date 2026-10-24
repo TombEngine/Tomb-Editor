@@ -15,6 +15,8 @@ public partial class LevelCompilerClassicTR
 {
     private const int _legacyRoomLimit = 255;
     private const int _noRoom = -1;
+    private const int _noAlternate = 255;
+    private const int _maxAlternates = 10;
     private const int _maxSamples = 1000;
     private const int _maxLuaNameLength = 4096;
 
@@ -94,8 +96,9 @@ public partial class LevelCompilerClassicTR
 
     private TRXRoomPropertyEntry GetRoomPropertyEntry(Room teRoom, tr_room trRoom)
     {
+        var alternateGroup = GetRoomAlternateGroup(teRoom);
         if ((teRoom.Properties.Reverberation == 0 || _level.Settings.GameVersion == TRVersion.Game.TR3X)
-            && !teRoom.Properties.FlagCold && !teRoom.Properties.FlagDamage)
+            && !teRoom.Properties.FlagCold && !teRoom.Properties.FlagDamage && alternateGroup == _noAlternate)
         {
             return null;
         }
@@ -115,14 +118,29 @@ public partial class LevelCompilerClassicTR
             RoomIndex = (short)_roomRemapping[teRoom],
             Flags = flags,
             ReverbInfo = teRoom.Properties.Reverberation,
+            AlternateGroup = alternateGroup,
         };
+    }
+
+    private byte GetRoomAlternateGroup(Room room)
+    {
+        if (_level.Settings.TrxUseAlternateGroups && room.AlternateGroup >= _maxAlternates)
+        {
+            _progressReporter.ReportWarn($"Room '{room.Name}' uses alternate group {room.AlternateGroup}; TRX supports only groups 0-{_maxAlternates - 1}.");
+            return _noAlternate;
+        }
+
+        return (byte)(_level.Settings.TrxUseAlternateGroups && room.AlternateGroup >= 0 ? room.AlternateGroup : _noAlternate);
     }
 
     private TrxSectorOverwrite GetSectorOverwrite(Room teRoom, tr_room trRoom, ushort x, ushort z)
     {
         var teSector = teRoom.Sectors[x, z];
-        var roomBelow = GetPortalRoom(teSector.FloorPortal);
-        var roomAbove = GetPortalRoom(teSector.CeilingPortal);
+        var pos = new VectorInt2(x, z);
+        var roomBelow = GetPortalRoom(teSector.FloorPortal,
+            teRoom.GetFloorRoomConnectionInfo(pos, true).TraversableType);
+        var roomAbove = GetPortalRoom(teSector.CeilingPortal,
+            teRoom.GetCeilingRoomConnectionInfo(pos, true).TraversableType);
         
         if (roomBelow < _legacyRoomLimit && roomAbove < _legacyRoomLimit)
         {
@@ -140,9 +158,10 @@ public partial class LevelCompilerClassicTR
         };
     }
 
-    private int GetPortalRoom(PortalInstance portal)
+    private int GetPortalRoom(PortalInstance portal, Room.RoomConnectionType connType)
     {
         return portal != null && portal.Opacity != PortalOpacity.SolidFaces
+            && connType != Room.RoomConnectionType.NoPortal
             ? _roomRemapping[portal.AdjoiningRoom]
             : _noRoom;
     }
@@ -497,6 +516,15 @@ public partial class LevelCompilerClassicTR
                     X = (int)vec[0],
                     Y = (int)vec[1],
                     Z = (int)vec[2],
+                };
+            case LuaPropertyType.Color:
+                var rgb = LuaValueParser.UnboxColor(propertyValue);
+                return new TrxRGBProperty
+                {
+                    Name = propertyName,
+                    R = rgb[0],
+                    G = rgb[1],
+                    B = rgb[2],
                 };
             default:
                 return null;
