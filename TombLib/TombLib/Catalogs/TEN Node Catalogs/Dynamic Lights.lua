@@ -18,7 +18,7 @@ LevelFuncs.Engine.Node.MoveableLight = function(moveable, meshnumber, lightcolor
 	TEN.Effects.EmitLight(offset, lightcolor, range, shadow, name)
 end
 
--- !Name "Add point light to static"
+-- !Name "Add point light to static mesh"
 -- !Section "Dynamic lights"
 -- !Description "Add a point light to a static object."
 -- !Description "Updated for TombEngine Version 1.6 and above."
@@ -92,7 +92,7 @@ end
 -- !Arguments "NewLine, Moveables, 50, Select source moveable to attach light to."
 -- !Arguments "Moveables, 50, Select target moveable for the light to aim at."
 -- !Arguments "NewLine, Numerical, 20, [ 0 | 100 | 0 ] , Select mesh number of moveable. \nThis can be found in the Animation Editor within Wadtool."
--- !Arguments "Color, 50, { TEN.Color(128,128,128) }, Light color."
+-- !Arguments "Color, 30, { TEN.Color(128,128,128) }, Light color."
 -- !Arguments "Boolean, 50, Casts dynamic shadow"
 -- !Arguments "NewLine, Numerical, 33, [ 0 | 100 | 0 ], { 5 }, Light falloff (in clicks of 256 world units)."
 -- !Arguments "Numerical, 33, [ 0 | 100 | 0 ], { 20 }, Light distance (in clicks of 256 world units)."
@@ -134,7 +134,7 @@ LevelFuncs.Engine.Node.MoveableFogBulb = function(moveable, meshnumber, lightcol
 	TEN.Effects.EmitFogBulb(offset, radius, density, lightcolor, name)
 end
 
--- !Name "Add fog bulb to static"
+-- !Name "Add fog bulb to static mesh"
 -- !Section "Dynamic lights"
 -- !Description "Add a fog bulb light to a static object."
 -- !Arguments "NewLine, Statics, 100, Select static to attach effect to."
