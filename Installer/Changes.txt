@@ -62,9 +62,13 @@ TEN nodes:
  * Added a node to unswap a previously swapped mesh.
  * Added nodes for checking and setting various aspects of creature AI.
  * Added a node to check Lara's traversal mode.
+ * Added node to emit a spotlight that aims at a given target.
  * Added node to emit weather effects from a volume.
  * Added node to emit blood from a moveable.
  * Added node to emit air bubble from a moveable.
+ * Added nodes to emit a fog bulb from a moveable, static or volume.
+ * Added nodes to emit a point light from a volume.
+ * Added rotation field to "Add spotlight to a moveable" node.
  * Added photo-mode nodes for unlocking accessories, expressions, frames, outfits and poses.
  * Added nodes to show end of level and end of game statistics.
  * Added a node to unlock a single diary page.
