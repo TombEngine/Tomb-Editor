@@ -6,7 +6,7 @@
 -- !Arguments "Numerical, 20, [ 0 | 100 | 0 ] , Select mesh number of moveable. \nThis can be found in the Animation Editor within Wadtool."
 -- !Arguments "NewLine, Color, 20, { TEN.Color(128,128,128) }, Light color."
 -- !Arguments "Numerical, 20, [ 0 | 100 | 0 ], { 20 }, (Optional) Light radius (in clicks of 256 world units)."
--- !Arguments "Vector3, 60, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(.1,.1,.1) }, Offset (relative)"
+-- !Arguments "Vector3, 60, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(0,0,0) }, Position offset (x y z)"
 -- !Arguments "NewLine, Boolean, 50, Casts Dynamic Shadow"
 -- !Arguments "String, 50, [ NoMultiline ], (Optional) A unique name for the light.\nTo enable interpolation in high framerate mode the light must have a unique name.\nIf the source moveable does not move significantly this field is not required."
 
@@ -20,12 +20,12 @@ end
 
 -- !Name "Add point light to static mesh"
 -- !Section "Dynamic lights"
--- !Description "Add a point light to a static object."
+-- !Description "Add a point light to a static mesh."
 -- !Description "Updated for TombEngine Version 1.6 and above."
 -- !Arguments "NewLine, Statics, 80, Select static to attach light to."
 -- !Arguments "Color, 20, { TEN.Color(128,128,128) }, Light color."
 -- !Arguments "NewLine, Numerical, 40, [ 0 | 100 | 0 ], { 20 }, (Optional) Light radius (in clicks of 256 world units)."
--- !Arguments "Vector3, 60, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(.1,.1,.1) }, Offset (relative)"
+-- !Arguments "Vector3, 60, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(0,0,0) }, Position offset (x y z)"
 -- !Arguments "NewLine, Boolean, 50, Casts Dynamic Shadow"
 -- !Arguments "String, 50, [ NoMultiline ], (Optional) A unique name for the light.\nTo enable interpolation in high framerate mode the light must have a unique name.\nIf the source moveable does not move significantly this field is not required."
 
@@ -40,9 +40,9 @@ end
 -- !Name "Add point light to volume"
 -- !Section "Dynamic lights"
 -- !Description "Add a point light to a volume."
--- !Arguments "NewLine, Volumes, 100, Select volume to attach light to.\nLight range automatically scales with volume."
--- !Arguments "NewLine, Color, 50, { TEN.Color(128,128,128) }, Light color."
--- !Arguments "Vector3, 50, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(.1,.1,.1) }, Offset (relative)"
+-- !Arguments "NewLine, Volumes, 80, Select volume to attach light to.\nLight range automatically scales with volume."
+-- !Arguments "Color, 20, { TEN.Color(128,128,128) }, Light color."
+-- !Arguments "NewLine, Vector3, 100, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(0,0,0) }, Position offset (x y z)"
 -- !Arguments "NewLine, Boolean, 50, Casts Dynamic Shadow"
 -- !Arguments "String, 50, [ NoMultiline ], (Optional) A unique name for the light.\nTo enable interpolation in high framerate mode the light must have a unique name.\nIf the source moveable does not move significantly this field is not required."
 
@@ -67,16 +67,16 @@ end
 -- !Description "Adds a spotlight to a moveable."
 -- !Arguments "NewLine, Moveables, 80, Select moveable to attach light to."
 -- !Arguments "Numerical, 20, [ 0 | 100 | 0 ] , Select mesh number of moveable. \nThis can be found in the Animation Editor within Wadtool."
--- !Arguments "NewLine, Color, 50, { TEN.Color(128,128,128) }, Light color."
--- !Arguments "Boolean, 50, Cast dynamic shadow"
--- !Arguments "NewLine, Numerical, 25, [ 0 | 100 | 0 ], { 5 }, Light falloff (in clicks of 256 world units)."
--- !Arguments "Numerical, 25, [ 0 | 100 | 0 ], { 20 }, Light distance (in clicks of 256 world units)."
--- !Arguments "Numerical, 25, [ 0 | 100 | 0 ], { 10 }, Light radius (in clicks of 256 world units)."
--- !Arguments "String, 25, [ NoMultiline ], A unique name for the light.\nTo enable interpolation in high framerate mode the light must have a unique name.\nIf the source moveable does not move significantly this field is not required."
--- !Arguments "NewLine, Vector3, 50, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(.1,.1,.1) }, Position offset (x y z)"
--- !Arguments "Vector3, 50, [ -360 | 360 | 0 | 5 | 45 ], { TEN.Vec3(0,0,0) }, Rotation (x y z)"
+-- !Arguments "NewLine, Color, 20, { TEN.Color(128,128,128) }, Light color."
+-- !Arguments "Numerical, 20, [ 0 | 100 | 0 ], { 10 }, Light radius (in clicks of 256 world units)."
+-- !Arguments "Vector3, 60, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(0,0,0) }, Position offset (x y z)"
+-- !Arguments "NewLine, Numerical, 20, [ 0 | 100 | 0 ], { 5 }, Light falloff (in clicks of 256 world units)."
+-- !Arguments "Numerical, 20, [ 0 | 100 | 0 ], { 20 }, Light distance (in clicks of 256 world units)."
+-- !Arguments "Vector3, 60, [ -360 | 360 | 0 | 5 | 45 ], { TEN.Vec3(0,0,0) }, Rotation (x y z)"
+-- !Arguments "NewLine, Boolean, 50, Casts Dynamic Shadow"
+-- !Arguments "String, 50, [ NoMultiline ], A unique name for the light.\nTo enable interpolation in high framerate mode the light must have a unique name.\nIf the source moveable does not move significantly this field is not required."
 
-LevelFuncs.Engine.Node.MoveableSpotLight = function(moveable, meshnumber, color, shadow, falloff, distance, radius, name, effectOffset, rotation)
+LevelFuncs.Engine.Node.MoveableSpotLight = function(moveable, meshnumber, color, radius, effectOffset, falloff, distance, rotation, shadow, name)
 
 	local entityPos = TEN.Objects.GetMoveableByName(moveable):GetJointPosition(meshnumber)
 	local offset = entityPos + (effectOffset or Vec3(0, 0, 0))
@@ -89,18 +89,18 @@ end
 -- !Name "Add dynamic aiming spotlight to moveable"
 -- !Section "Dynamic lights"
 -- !Description "Adds a spotlight to a moveable, aiming it at a target moveable."
--- !Arguments "NewLine, Moveables, 50, Select source moveable to attach light to."
--- !Arguments "Moveables, 50, Select target moveable for the light to aim at."
--- !Arguments "NewLine, Numerical, 20, [ 0 | 100 | 0 ] , Select mesh number of moveable. \nThis can be found in the Animation Editor within Wadtool."
--- !Arguments "Color, 30, { TEN.Color(128,128,128) }, Light color."
--- !Arguments "Boolean, 50, Casts dynamic shadow"
--- !Arguments "NewLine, Numerical, 33, [ 0 | 100 | 0 ], { 5 }, Light falloff (in clicks of 256 world units)."
--- !Arguments "Numerical, 33, [ 0 | 100 | 0 ], { 20 }, Light distance (in clicks of 256 world units)."
--- !Arguments "Numerical, 34, [ 0 | 100 | 0 ], { 10 }, Light radius (in clicks of 256 world units)."
--- !Arguments "NewLine, 50, Vector3, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(.1,.1,.1) }, Offset"
+-- !Arguments "NewLine, Moveables, 80, Select source moveable to attach light to."
+-- !Arguments "Numerical, 20, [ 0 | 100 | 0 ] , Select mesh number of moveable. \nThis can be found in the Animation Editor within Wadtool."
+-- !Arguments "NewLine, Moveables, 80, Select target moveable for the light to aim at."
+-- !Arguments "Color, 20, { TEN.Color(128,128,128) }, Light color."
+-- !Arguments "NewLine, Numerical, 15, [ 0 | 100 | 0 ], { 10 }, Light radius (in clicks of 256 world units)."
+-- !Arguments "Numerical, 15, [ 0 | 100 | 0 ], { 5 }, Light falloff (in clicks of 256 world units)."
+-- !Arguments "Numerical, 15, [ 0 | 100 | 0 ], { 20 }, Light distance (in clicks of 256 world units)."
+-- !Arguments "Vector3, 55, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(0,0,0) }, Position offset (x y z)"
+-- !Arguments "NewLine, Boolean, 50, Casts Dynamic Shadow"
 -- !Arguments "String, 50, [ NoMultiline ], A unique name for the light.\nTo enable interpolation in high framerate mode the light must have a unique name.\nIf the source moveable does not move significantly this field is not required."
 
-LevelFuncs.Engine.Node.MoveableSpotLightToTarget = function(moveable, target, meshnumber, color, shadow, falloff, distance, radius, effectOffset, name)
+LevelFuncs.Engine.Node.MoveableSpotLightToTarget = function(moveable, meshnumber, target, color, radius, falloff, distance, effectOffset, shadow, name)
 
 	local entityPos = TEN.Objects.GetMoveableByName(moveable):GetJointPosition(meshnumber)
 	local offset = entityPos + (effectOffset or Vec3(0, 0, 0))
@@ -120,11 +120,11 @@ end
 -- !Description "Add a fog bulb to a moveable."
 -- !Arguments "NewLine, Moveables, 80, Select moveable to attach effect to."
 -- !Arguments "Numerical, 20, [ 0 | 100 | 0 ] , Select mesh number of moveable. \nThis can be found in the Animation Editor within Wadtool."
--- !Arguments "NewLine, Color, 50, { TEN.Color(128,128,128) }, Light color."
--- !Arguments "Numerical, 25, [ 0 | 100 | 0 ], { 20 }, (Optional) Light radius (in clicks of 256 world units)."
--- !Arguments "Numerical, 25, [ 0 | 255 | 0 ], { 128 }, (Optional) Effect density."
--- !Arguments "NewLine, Vector3, 50, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(.1,.1,.1) }, Offset (relative)"
--- !Arguments "String, 50, [ NoMultiline ], (Optional) A unique name for the light.\nTo enable interpolation in high framerate mode the light must have a unique name.\nIf the source moveable does not move significantly this field is not required."
+-- !Arguments "NewLine, Color, 15, { TEN.Color(128,128,128) }, Fog color."
+-- !Arguments "Numerical, 15, [ 0 | 100 | 0 ], { 20 }, (Optional) Fog radius (in clicks of 256 world units)."
+-- !Arguments "Numerical, 15, [ 0 | 255 | 0 ], { 128 }, (Optional) Fog density."
+-- !Arguments "Vector3, 55, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(0,0,0) }, Position offset (x y z) (relative)"
+-- !Arguments "NewLine, String, 100, [ NoMultiline ], (Optional) A unique name for the Fog.\nTo enable interpolation in high framerate mode the fog must have a unique name.\nIf the source moveable does not move significantly this field is not required."
 
 LevelFuncs.Engine.Node.MoveableFogBulb = function(moveable, meshnumber, lightcolor, radius, density, effectOffset, name)
 
@@ -136,13 +136,13 @@ end
 
 -- !Name "Add fog bulb to static mesh"
 -- !Section "Dynamic lights"
--- !Description "Add a fog bulb light to a static object."
--- !Arguments "NewLine, Statics, 100, Select static to attach effect to."
--- !Arguments "NewLine, Color, 50, { TEN.Color(128,128,128) }, Light color."
--- !Arguments "Numerical, 25, [ 0 | 100 | 0 ], { 20 }, (Optional) Light radius (in clicks of 256 world units)."
--- !Arguments "Numerical, 25, [ 0 | 255 | 0 ], { 128 }, (Optional) Effect density."
--- !Arguments "NewLine, Vector3, 50, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(.1,.1,.1) }, Offset (relative)"
--- !Arguments "String, 50, [ NoMultiline ], (Optional) A unique name for the light.\nTo enable interpolation in high framerate mode the light must have a unique name.\nIf the source moveable does not move significantly this field is not required."
+-- !Description "Add a fog bulb light to a static mesh."
+-- !Arguments "NewLine, Statics, 80, Select static to attach effect to."
+-- !Arguments "Color, 20, { TEN.Color(128,128,128) }, Fog color."
+-- !Arguments "NewLine, Numerical, 20, [ 0 | 100 | 0 ], { 20 }, (Optional) Fog radius (in clicks of 256 world units)."
+-- !Arguments "Numerical, 20, [ 0 | 255 | 0 ], { 128 }, (Optional) Fog density."
+-- !Arguments "Vector3, 60, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(0,0,0) }, Position offset (x y z)"
+-- !Arguments "NewLine, String, 100, [ NoMultiline ], (Optional) A unique name for the fog.\nTo enable interpolation in high framerate mode the fog must have a unique name.\nIf the source moveable does not move significantly this field is not required."
 
 LevelFuncs.Engine.Node.StaticFogBulb = function(static, lightcolor, radius, density, effectOffset, name)
 
@@ -155,11 +155,11 @@ end
 -- !Name "Add fog bulb to volume"
 -- !Section "Dynamic lights"
 -- !Description "Add a fog bulb light to volume."
--- !Arguments "NewLine, Volumes, 100, Select volume to attach effect to.\nFog bulb range automatically scales with volume."
--- !Arguments "NewLine, Color, 50, { TEN.Color(128,128,128) }, Light color."
--- !Arguments "Numerical, 50, [ 0 | 255 | 0 ], { 128 }, (Optional) Effect density."
--- !Arguments "NewLine, Vector3, 50, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(.1,.1,.1) }, Offset (relative)"
--- !Arguments "String, 50, [ NoMultiline ], (Optional) A unique name for the light.\nTo enable interpolation in high framerate mode the light must have a unique name.\nIf the source moveable does not move significantly this field is not required."
+-- !Arguments "NewLine, Volumes, 80, Select volume to attach effect to.\nFog bulb range automatically scales with volume."
+-- !Arguments "Color, 20, { TEN.Color(128,128,128) }, Fog color."
+-- !Arguments "NewLine, Numerical, 20, [ 0 | 255 | 0 ], { 128 }, (Optional) Fog density."
+-- !Arguments "Vector3, 80, [ -1000000 | 1000000 |  | 1 | 32 ], { TEN.Vec3(0,0,0) }, Position offset (x y z)"
+-- !Arguments "NewLine, String, 100, [ NoMultiline ], (Optional) A unique name for the fog.\nTo enable interpolation in high framerate mode the fog must have a unique name.\nIf the source moveable does not move significantly this field is not required."
 
 LevelFuncs.Engine.Node.VolumeFogBulb = function(volume, lightcolor, density, effectOffset, name)
 
