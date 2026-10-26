@@ -368,6 +368,12 @@ namespace TombLib.LevelData.Compilers.TombEngine
 
                                 newAnimation.CommandData.Add((int)command.Parameter1); // Frame number
                                 break;
+
+                            case WadAnimCommandType.DetachFromParent:
+                                newAnimation.CommandData.Add(8);
+
+                                newAnimation.CommandData.Add((int)command.Parameter1); // Frame number
+                                break;
                         }
                     }
 
