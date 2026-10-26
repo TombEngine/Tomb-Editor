@@ -176,6 +176,7 @@ namespace TombLib.LevelData.IO
                 chunkIO.WriteChunkBool(Prj2Chunks.TextureCompression, settings.CompressTextures);
                 chunkIO.WriteChunkInt(Prj2Chunks.TrxTextureBitDepth, (int)settings.TrxTextureBitDepth);
                 chunkIO.WriteChunkBool(Prj2Chunks.TrxConvertFlybysToCinematicFrames, settings.TrxConvertFlybysToCinematicFrames);
+                chunkIO.WriteChunkBool(Prj2Chunks.TrxUseAlternateGroups, settings.TrxUseAlternateGroups);
                 chunkIO.WriteChunkBool(Prj2Chunks.AgressiveFloordataPacking, settings.AgressiveFloordataPacking);
                 chunkIO.WriteChunkVector3(Prj2Chunks.DefaultAmbientLight, settings.DefaultAmbientLight);
                 chunkIO.WriteChunkInt(Prj2Chunks.DefaultLightQuality, (long)settings.DefaultLightQuality);
