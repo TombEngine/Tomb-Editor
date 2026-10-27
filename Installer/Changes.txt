@@ -1,3 +1,20 @@
+Version 2.1
+===========
+
+Tomb Editor:
+
+WadTool:
+
+SoundTool:
+
+TombIDE:
+
+TEN nodes:
+
+TEN property system updates:
+
+TEN base WAD
+
 Version 2.0
 ===========
 
