@@ -1,9 +1,8 @@
-﻿using DarkUI.Forms;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
+using TombEditor.Controls.FlybyTimeline;
 using TombLib.IO;
 using TombLib.LevelData;
 using TombLib.LevelData.IO;
@@ -52,7 +51,7 @@ namespace TombEditor
         {
             var newLevelSettings = editor.Level.Settings.Clone();
             var loadedObjects = CreateObjects(editor.Level);
-            
+
             if (loadedObjects.Objects.Count == 0)
                 return null;
 
@@ -61,39 +60,7 @@ namespace TombEditor
                 obj.CopyDependentLevelSettings(
                     new Room.CopyDependentLevelSettingsArgs(null, newLevelSettings, loadedObjects.Settings, true));
 
-                // A little workaround to detect collisions
-
-                if (obj is IHasScriptID)
-                {
-                    try
-                    {
-                        editor.SelectedRoom.AddObject(editor.Level, obj);
-                        editor.SelectedRoom.RemoveObject(editor.Level, obj);
-                    }
-                    catch (ScriptIdCollisionException)
-                    {
-                        ((IHasScriptID)obj).ScriptId = null;
-                    }
-                }
-
-                if (obj is IHasLuaName)
-                {
-                    editor.SelectedRoom.AddObject(editor.Level, obj);
-                    var luaObj = obj as IHasLuaName;
-
-                    if (!luaObj.CanSetLuaName(luaObj.LuaName))
-                        luaObj.LuaName = string.Empty;
-
-                    editor.SelectedRoom.RemoveObject(editor.Level, obj);
-                }
-
-                if (obj is FlybyCameraInstance)
-                {
-                    var flyby = obj as FlybyCameraInstance;
-                    var existingItems = editor.Level.GetAllObjects().OfType<FlybyCameraInstance>().Where(f => f.Sequence == flyby.Sequence).ToList();
-                    if (existingItems.Count > 0 && existingItems.Any(f => f.Number == flyby.Number))
-                        flyby.Number = (ushort)(existingItems.Max(f => f.Number) + 1);
-                }
+                ResolveIdentifierCollisions(editor, obj);
 
                 if (obj is VolumeInstance)
                 {
@@ -106,8 +73,10 @@ namespace TombEditor
                 return obj;
             })
             .ToList();
-                
-			editor.UpdateLevelSettings(newLevelSettings);
+
+            NormalizePastedFlybyCameras(editor, unpackedObjects);
+
+            editor.UpdateLevelSettings(newLevelSettings);
 
             if (unpackedObjects.Count == 0)
                 return null;
@@ -117,6 +86,76 @@ namespace TombEditor
             {
                 var unpackedChildren = unpackedObjects.OfType<PositionBasedObjectInstance>().ToList();
                 return new ObjectGroup(unpackedChildren);
+            }
+        }
+
+        private static void ResolveIdentifierCollisions(Editor editor, ObjectInstance obj)
+        {
+            ResetCollidingScriptId(editor, obj);
+            ResetCollidingLuaName(editor, obj);
+        }
+
+        private static void ResetCollidingScriptId(Editor editor, ObjectInstance obj)
+        {
+            if (obj is not IHasScriptID scriptObject || !scriptObject.ScriptId.HasValue)
+                return;
+
+            if (editor.Level.GlobalScriptingIdsTable[(int)scriptObject.ScriptId.Value] != null)
+                scriptObject.ScriptId = null;
+        }
+
+        private static void ResetCollidingLuaName(Editor editor, ObjectInstance obj)
+        {
+            if (obj is not IHasLuaName luaObject || string.IsNullOrEmpty(luaObject.LuaName))
+                return;
+
+            if (editor.Level.GetAllObjects().OfType<IHasLuaName>().Any(existingObject => existingObject.LuaName == luaObject.LuaName))
+                luaObject.LuaName = string.Empty;
+        }
+
+        private static void NormalizePastedFlybyCameras(Editor editor, IReadOnlyCollection<ObjectInstance> unpackedObjects)
+        {
+            var pastedFlybys = unpackedObjects.OfType<FlybyCameraInstance>().ToList();
+
+            if (pastedFlybys.Count == 0)
+                return;
+
+            // Reassign all pasted cameras to the currently visible sequence, or sequence 0 when none exists.
+            ushort targetSequence = editor.SelectedFlybySequence ?? 0;
+
+            foreach (var camera in pastedFlybys)
+                camera.Sequence = targetSequence;
+
+            var nextNumberBySequence = editor.Level.GetAllObjects()
+                .OfType<FlybyCameraInstance>()
+                .GroupBy(camera => camera.Sequence)
+                .ToDictionary(group => group.Key, group => group.Max(camera => (int)camera.Number) + 1);
+
+            foreach (var sequenceGroup in pastedFlybys.GroupBy(camera => camera.Sequence))
+            {
+                // Start numbering for the target sequence from the next available number, or 0 when no existing cameras are present.
+                nextNumberBySequence.TryGetValue(sequenceGroup.Key, out int nextNumber);
+
+                var remappedNumbers = new Dictionary<ushort, ushort>();
+                var orderedSequenceGroup = sequenceGroup.OrderBy(camera => camera.Number).ToList();
+
+                foreach (var camera in orderedSequenceGroup)
+                {
+                    ushort originalNumber = camera.Number;
+                    ushort remappedNumber = (ushort)nextNumber++;
+
+                    camera.Number = remappedNumber;
+                    remappedNumbers[originalNumber] = remappedNumber;
+                }
+
+                foreach (var camera in orderedSequenceGroup)
+                {
+                    if ((camera.Flags & FlybyConstants.FlagCameraCut) != 0 &&
+                        remappedNumbers.TryGetValue((ushort)camera.Timer, out ushort remappedTarget))
+                    {
+                        camera.Timer = (short)remappedTarget;
+                    }
+                }
             }
         }
     }

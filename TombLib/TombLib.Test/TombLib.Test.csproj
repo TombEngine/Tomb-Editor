@@ -23,6 +23,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="ICSharpCode.AvalonEdit, Version=6.1.0.0, Culture=neutral, PublicKeyToken=9cc39be672370310, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libs\ICSharpCode.AvalonEdit.dll</HintPath>
+    </Reference>
     <PackageReference Include="coverlet.collector" Version="3.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
@@ -31,6 +35,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\TombIDE\TombIDE.Shared\TombIDE.Shared.csproj" />
+    <ProjectReference Include="..\TombLib.Scripting.Lua\TombLib.Scripting.Lua.csproj" />
     <ProjectReference Include="..\TombLib\TombLib.csproj" />
     <ProjectReference Include="..\TombLib.Forms\TombLib.Forms.csproj" />
   </ItemGroup>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using TombIDE.Shared.NewStructure;
+using TombIDE.Shared.SharedClasses;
 
 namespace TombIDE.Shared
 {
@@ -157,20 +158,20 @@ namespace TombIDE.Shared
 
 		/* Script Editor Events */
 
-		#region ScriptEditor_AppendScriptLines
+		#region ScriptEditor_AppendScript
 
-		public class ScriptEditor_AppendScriptLinesEvent : IIDEEvent
+		public class ScriptEditor_AppendScriptEvent : IIDEEvent
 		{
-			public List<string> Lines { get; internal set; }
+			public ScriptGenerationResult Result { get; internal set; }
 		}
 
 		/// <summary>
 		/// Sends a request to the Script Editor to append new lines of code at the end of the main script file.
 		/// </summary>
-		public void ScriptEditor_AppendScriptLines(List<string> lines) =>
-			RaiseEvent(new ScriptEditor_AppendScriptLinesEvent { Lines = lines });
+		public void ScriptEditor_AppendScript(ScriptGenerationResult result) =>
+			RaiseEvent(new ScriptEditor_AppendScriptEvent { Result = result });
 
-		#endregion ScriptEditor_AppendScriptLines
+		#endregion ScriptEditor_AppendScript
 
 		#region ScriptEditor_AddNewLevelString
 

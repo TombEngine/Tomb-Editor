@@ -1,0 +1,12 @@
+<propertyCatalog>    
+	<moveable id="FALLING_SPIKES">
+        <property
+          internalName="HorizontalVelocity"
+          displayName="Horizontal velocity"
+          type="Bool"
+          defaultValue="false"
+          category="Trap parameters"
+          description="Adds a slight horizontal movement"
+        />
+    </moveable>
+</propertyCatalog>

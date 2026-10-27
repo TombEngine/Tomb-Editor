@@ -24,7 +24,7 @@ namespace TombLib.NG
             yield return TriggerType.Dummy;
             yield return TriggerType.Antitrigger;
 
-            if (levelSettings.GameVersion.Native() >= TRVersion.Game.TR4)
+            if (levelSettings.GameVersion >= TRVersion.Game.TR4)
             {
                 yield return TriggerType.HeavySwitch;
                 yield return TriggerType.HeavyAntitrigger;
@@ -34,7 +34,7 @@ namespace TombLib.NG
                 yield return TriggerType.ConditionNg;
             else
             {
-                if (levelSettings.GameVersion.Native() >= TRVersion.Game.TR4)
+                if (levelSettings.GameVersion >= TRVersion.Game.TR4)
                     yield return TriggerType.Monkey;
 
                 if (levelSettings.GameVersion == TRVersion.Game.TR5)
@@ -43,6 +43,12 @@ namespace TombLib.NG
                 if (levelSettings.GameVersion is TRVersion.Game.TR5 or TRVersion.Game.TombEngine)
                 {
                     yield return TriggerType.TightRope;
+                    yield return TriggerType.Crawl;
+                    yield return TriggerType.Climb;
+                }
+
+                if (levelSettings.GameVersion.IsTRX())
+                {
                     yield return TriggerType.Crawl;
                     yield return TriggerType.Climb;
                 }
@@ -69,7 +75,8 @@ namespace TombLib.NG
                 yield return TriggerTargetType.FlipEffect;
                 yield return TriggerTargetType.Secret;
 
-                if (levelSettings.GameVersion.Native() >= TRVersion.Game.TR4)
+                if (levelSettings.GameVersion.Native() >= TRVersion.Game.TR4
+                    || (levelSettings.GameVersion.IsTRX() && !levelSettings.TrxConvertFlybysToCinematicFrames))
                     yield return TriggerTargetType.FlyByCamera;
                 if (levelSettings.GameVersion == TRVersion.Game.TRNG)
                 {

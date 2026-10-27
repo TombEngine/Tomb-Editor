@@ -19,28 +19,13 @@ namespace DarkUI.Collections
 
         #endregion
 
-        #region Destructor Region
-
-        ~ObservableList()
-        {
-            Dispose(false);
-        }
-
-        #endregion
-
         #region Dispose Region
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
+        public virtual void Dispose()
         {
             if (_disposed)
                 return;
-            
+
             ItemsAdded = null;
             ItemsRemoved = null;
 
@@ -65,6 +50,13 @@ namespace DarkUI.Collections
             base.AddRange(list);
 
             ItemsAdded?.Invoke(this, new ObservableListModified<T>(list));
+        }
+
+        public new void Insert(int index, T item)
+        {
+            base.Insert(index, item);
+
+            ItemsAdded?.Invoke(this, new ObservableListModified<T>(new List<T> { item }));
         }
 
         public new void Remove(T item)

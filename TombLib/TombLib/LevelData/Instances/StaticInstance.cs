@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using TombLib.LuaProperties;
 using TombLib.Wad;
 
 namespace TombLib.LevelData
@@ -53,5 +54,7 @@ namespace TombLib.LevelData
             set { _scale = value; }
         }
         private float _scale = 1.0f;
+
+        public LuaPropertyContainer LuaProperties { get; set; } = new LuaPropertyContainer();
     }
 }

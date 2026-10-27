@@ -13,6 +13,9 @@ namespace TombEditor.Controls.Panel3D
             if (matrix.TransformPerspectively(new Vector3()).Z > 1.0f)
                 return null; // Discard text on the back
 
+            if (_editor.CameraPreviewMode != CameraPreviewType.None)
+                return null;
+
             return new Text
             {
                 Font = _fontDefault,

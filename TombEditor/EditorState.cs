@@ -7,7 +7,7 @@ namespace TombEditor
 {
     public enum EditorMode
     {
-        Geometry, Map2D, FaceEdit, Lighting
+        Geometry, Map2D, FaceEdit, Lighting, ObjectPlacement
     }
 
     public enum EditorToolType
@@ -15,12 +15,18 @@ namespace TombEditor
         None, Selection, Brush, Pencil,
         Fill, Group, GridPaint,
         Shovel, Smooth, Flatten,
-        Drag, Ramp, QuarterPipe, HalfPipe, Bowl, Pyramid, Terrain, PortalDigger /* Do not modify enum order after drag tool! */
+        Drag, Ramp, QuarterPipe, HalfPipe, Bowl, Pyramid, Terrain, PortalDigger, /* Do not modify enum order after drag tool! */
+        Line, Eraser, ObjectSelection, ObjectDeselection
     }
 
     public enum PaintGridSize
     {
         Grid2x2, Grid3x3, Grid4x4
+    }
+
+    public enum ObjectBrushShape
+    {
+        Circle, Square
     }
 
     public class EditorTool

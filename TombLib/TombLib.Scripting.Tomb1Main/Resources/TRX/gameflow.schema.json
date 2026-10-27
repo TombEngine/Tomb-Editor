@@ -1,30 +1,51 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "TRX gameflow schema",
+  "$defs": {
+    "path": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      ]
+    }
+  },
   "type": "object",
   "properties": {
+    "name": {
+      "type": "string",
+      "description": "Human-readable display name for this mod, shown in the Switch Game menu."
+    },
+    "engine": {
+      "type": "integer",
+      "enum": [1, 2, 3, 4],
+      "description": "Engine version this mod runs on (1 = TR1, 2 = TR2, 3 = TR3, 4 = TR4)."
+    },
+    "extends": {
+      "type": "string",
+      "description": "Directory name of the base mod this mod extends. Used for asset fallback."
+    },
     "main_menu_picture": {
       "type": "string",
-      "description": "Path to the main menu background image."
-    },
-    "main_script": {
-      "type": "string",
-      "description": "Path to a global Lua script to execute after game initialization, before the first level loads."
+      "description": "Path to the main menu background image. Omit it to run the title level live behind the menu instead."
     },
     "savegame_file_fmt": {
       "type": "string",
       "description": "Path pattern to look for the savegame files."
-    },
-    "demo_version": {
-      "type": "boolean",
-      "description": "Legacy demo version flag (scheduled for removal)."
     },
     "title": {
       "$ref": "#/definitions/title",
       "description": "Configuration for the title screen."
     },
     "sfx_path": {
-      "type": "string",
+      "$ref": "#/$defs/path",
       "description": "Path to the sound effects (.sfx) file to use in the game."
     },
     "injections": {
@@ -97,6 +118,22 @@
       "type": "number",
       "description": "The distance (in tiles) at which objects and the world are clipped away."
     },
+    "fog_color": {
+      "description": "Fog color (R, G, B) or `#RRGGBB`. 1.0 or `FF` means pass-through, 0.0 or `00` means completely black color.",
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
     "water_color": {
       "description": "Water color (R, G, B) or `#RRGGBB`. 1.0 or `FF` means pass-through, 0.0 or `00` means completely black color.",
       "oneOf": [
@@ -122,7 +159,7 @@
     }
   },
   "required": [
-    "main_menu_picture",
+    "engine",
     "savegame_file_fmt",
     "levels"
   ],
@@ -150,10 +187,14 @@
       "type": "object",
       "properties": {
         "path": {
-          "type": "string"
+          "$ref": "#/$defs/path"
         },
         "music_track": {
           "type": "integer"
+        },
+        "lara_outfit": {
+          "type": "string",
+          "description": "Outfit Lara wears in the title level's cutscenes. Only outfits whose meshes the title level holds can be worn."
         },
         "inherit_injections": {
           "type": "boolean"
@@ -183,12 +224,8 @@
         "type": {
           "type": "string"
         },
-        "script": {
-          "type": "string",
-          "description": "Path to a Lua script executed after loading this level."
-        },
         "path": {
-          "type": "string"
+          "$ref": "#/$defs/path"
         },
         "music_track": {
           "type": "integer"
@@ -204,12 +241,13 @@
           ],
           "description": "Enables a per-level weather effect."
         },
-        "cold_water": {
-          "type": "boolean"
+        "water_particles": {
+          "type": "boolean",
+          "description": "Enables PSX-style underwater water particles in this level. TR4 shows them in every water room and ignores this property."
         },
         "death_tile": {
           "type": "string",
-          "description": "Defines death-tile behavior (for TR3 only).",
+          "description": "Defines death-tile behavior.",
           "enum": [
             "lava",
             "rapids",
@@ -245,11 +283,30 @@
           "minItems": 3,
           "maxItems": 3
         },
+        "fog_color": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
         "fog_start": {
           "type": "number"
         },
         "fog_end": {
           "type": "number"
+        },
+        "fog_bulbs": {
+          "description": "Whether to render the level's volumetric fog bulbs (TR4). The OG engine disables them on some levels, e.g. the Desert Railroad.",
+          "type": "boolean"
         },
         "unobtainable_pickups": {
           "type": "integer"
@@ -280,8 +337,7 @@
       "else": {
         "required": [
           "path",
-          "sequence",
-          "lara_outfit"
+          "sequence"
         ]
       },
       "additionalProperties": false
@@ -345,10 +401,14 @@
       "type": "object",
       "properties": {
         "path": {
-          "type": "string"
+          "$ref": "#/$defs/path"
         },
         "legal": {
           "type": "boolean"
+        },
+        "intro": {
+          "type": "boolean",
+          "description": "Marks this FMV as the opening story FMV, whose playback timing is controlled by the intro_fmv_mode setting."
         }
       },
       "required": [
@@ -407,16 +467,31 @@
           "$ref": "#/definitions/seq_remove_flares"
         },
         {
+          "$ref": "#/definitions/seq_remove_binoculars"
+        },
+        {
+          "$ref": "#/definitions/seq_reset_hub"
+        },
+        {
           "$ref": "#/definitions/seq_play_cutscene"
         },
         {
           "$ref": "#/definitions/seq_enable_sunset"
         },
         {
-          "$ref": "#/definitions/seq_set_lara_start_anim"
+          "$ref": "#/definitions/seq_setup_horizon"
         },
         {
-          "$ref": "#/definitions/seq_setup_bacon_lara"
+          "$ref": "#/definitions/seq_setup_uv_rotate"
+        },
+        {
+          "$ref": "#/definitions/seq_setup_lens_flare"
+        },
+        {
+          "$ref": "#/definitions/seq_enable_lightning"
+        },
+        {
+          "$ref": "#/definitions/seq_set_lara_start_anim"
         },
         {
           "$ref": "#/definitions/seq_disable_floor"
@@ -503,7 +578,7 @@
           "const": "display_picture"
         },
         "path": {
-          "type": "string"
+          "$ref": "#/$defs/path"
         },
         "display_time": {
           "type": "number"
@@ -692,6 +767,23 @@
       ],
       "additionalProperties": false
     },
+    "seq_reset_hub": {
+      "type": "object",
+      "description": "Takes Lara's keys, puzzle items, pickup items and examine items away as she leaves this level for the given one. This only applies where the `inventory.keep_plot_items` rule is on, as it is in TR4.",
+      "properties": {
+        "type": {
+          "const": "reset_hub"
+        },
+        "level_idx": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "level_idx"
+      ],
+      "additionalProperties": false
+    },
     "seq_remove_scions": {
       "type": "object",
       "description": "Any combination of these sequences can be used to modify Lara's inventory at the start of a level. `remove_weapons` does not remove the ammo for those guns, and `remove_ammo` does not remove the guns. Item removal is performed first, followed by addition.",
@@ -718,12 +810,144 @@
       ],
       "additionalProperties": false
     },
+    "seq_remove_binoculars": {
+      "type": "object",
+      "description": "Any combination of these sequences can be used to modify Lara's inventory at the start of a level. `remove_weapons` does not remove the ammo for those guns, and `remove_ammo` does not remove the guns. Item removal is performed first, followed by addition.",
+      "properties": {
+        "type": {
+          "const": "remove_binoculars"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
     "seq_enable_sunset": {
       "type": "object",
       "description": "Enables the sunset effect, like in Bartoli's Hideout. At present, this feature is hardcoded to gradually darken the game 40 minutes into playing a level.",
       "properties": {
         "type": {
           "const": "enable_sunset"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "seq_setup_horizon": {
+      "type": "object",
+      "description": "Configures a TR4 flat sky layer drawn behind the skybox mesh. Layer 0 scrolls opaquely; layer 1 is drawn additively over it. `color_add` switches the skybox mesh itself to additive blending. TR4 only.",
+      "properties": {
+        "type": {
+          "const": "setup_horizon"
+        },
+        "layer": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "color": {
+          "description": "Layer color (R, G, B) or `#RRGGBB`.",
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "speed": {
+          "type": "integer",
+          "description": "Signed per-frame scroll speed."
+        },
+        "color_add": {
+          "type": "boolean"
+        },
+        "fog_gradient": {
+          "type": "boolean",
+          "description": "Blends the skybox mesh's bottom edge into the level fog color, like OG's desert (jeep/train) levels."
+        }
+      },
+      "required": [
+        "type",
+        "color"
+      ],
+      "additionalProperties": false
+    },
+    "seq_setup_uv_rotate": {
+      "type": "object",
+      "description": "Sets the scroll speed of the level's UV-rotating animated textures (waterfalls etc.). The sign controls the scroll direction; when the event is absent or the speed is 0, the affected textures frame-swap like regular animated textures. Equivalent to the OG TR4 script's `UVrotate` command. TR4 only.",
+      "properties": {
+        "type": {
+          "const": "setup_uv_rotate"
+        },
+        "speed": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "speed"
+      ],
+      "additionalProperties": false
+    },
+    "seq_setup_lens_flare": {
+      "type": "object",
+      "description": "Enables the TR4 sun lens flare: a halo of additive ghost sprites along the line from the sun through the screen center, plus a full-screen flash when looking straight at it. The coordinates describe a far-away direction point in the OG script's 256-unit steps; equivalent to the OG TR4 script's `LensFlare` command. TR4 only.",
+      "properties": {
+        "type": {
+          "const": "setup_lens_flare"
+        },
+        "x": {
+          "type": "integer"
+        },
+        "y": {
+          "type": "integer",
+          "description": "Negative values point above the horizon."
+        },
+        "z": {
+          "type": "integer"
+        },
+        "color": {
+          "description": "Flare color (R, G, B) or `#RRGGBB`.",
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            {
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "required": [
+        "type",
+        "x",
+        "y",
+        "z",
+        "color"
+      ],
+      "additionalProperties": false
+    },
+    "seq_enable_lightning": {
+      "type": "object",
+      "description": "Enables the sky lightning flash and thunder rumble on the TR4 flat sky layers.",
+      "properties": {
+        "type": {
+          "const": "enable_lightning"
         }
       },
       "required": [
@@ -745,23 +969,6 @@
       "required": [
         "type",
         "anim"
-      ],
-      "additionalProperties": false
-    },
-    "seq_setup_bacon_lara": {
-      "type": "object",
-      "description": "Sets the room number in which Bacon Lara will be anchored to enable correct mirroring behaviour with Lara.",
-      "properties": {
-        "type": {
-          "const": "setup_bacon_lara"
-        },
-        "anchor_room": {
-          "type": "integer"
-        }
-      },
-      "required": [
-        "type",
-        "anchor_room"
       ],
       "additionalProperties": false
     },

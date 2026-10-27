@@ -74,6 +74,17 @@ public readonly struct SectorFaceData
 		IsTriangle = false;
 	}
 
+	/// <summary>
+	/// Creates a vertical floor wall face (quad or triangle) from two horizontal wall splits.
+	/// The <paramref name="faceStartSplit"/> defines the top edge (higher Y) and
+	/// <paramref name="faceEndSplit"/> defines the bottom edge (lower Y).
+	/// Returns <see langword="null"/> if the height differences don't form a valid polygon.
+	/// </summary>
+	/// <param name="sectorFace">The face identifier (e.g. QA, extra floor split).</param>
+	/// <param name="wallStartPoint">The (X, Z) sector coordinate of the wall's start corner.</param>
+	/// <param name="wallEndPoint">The (X, Z) sector coordinate of the wall's end corner.</param>
+	/// <param name="faceStartSplit">The upper split defining the top edge of the face.</param>
+	/// <param name="faceEndSplit">The lower split defining the bottom edge of the face.</param>
 	public static SectorFaceData? CreateVerticalFloorFaceData(SectorFace sectorFace, (int X, int Z) wallStartPoint, (int X, int Z) wallEndPoint, WallSplitData faceStartSplit, WallSplitData faceEndSplit)
 	{
 		if (faceStartSplit.StartY > faceEndSplit.StartY && faceStartSplit.EndY > faceEndSplit.EndY) // Is quad
@@ -107,6 +118,17 @@ public readonly struct SectorFaceData
 		}
 	}
 
+	/// <summary>
+	/// Creates a vertical ceiling wall face (quad or triangle) from two horizontal wall splits.
+	/// The <paramref name="faceStartSplit"/> defines the bottom edge (lower Y) and
+	/// <paramref name="faceEndSplit"/> defines the top edge (higher Y).
+	/// Returns <see langword="null"/> if the height differences don't form a valid polygon.
+	/// </summary>
+	/// <param name="sectorFace">The face identifier (e.g. WS, extra ceiling split).</param>
+	/// <param name="wallStartPoint">The (X, Z) sector coordinate of the wall's start corner.</param>
+	/// <param name="wallEndPoint">The (X, Z) sector coordinate of the wall's end corner.</param>
+	/// <param name="faceStartSplit">The lower split defining the bottom edge of the face.</param>
+	/// <param name="faceEndSplit">The upper split defining the top edge of the face.</param>
 	public static SectorFaceData? CreateVerticalCeilingFaceData(SectorFace sectorFace, (int X, int Z) wallStartPoint, (int X, int Z) wallEndPoint, WallSplitData faceStartSplit, WallSplitData faceEndSplit)
 	{
 		if (faceStartSplit.StartY < faceEndSplit.StartY && faceStartSplit.EndY < faceEndSplit.EndY) // Is quad
@@ -140,6 +162,17 @@ public readonly struct SectorFaceData
 		}
 	}
 
+	/// <summary>
+	/// Creates a vertical middle wall face (quad or triangle) between the floor and ceiling portions.
+	/// The <paramref name="faceStartSplit"/> defines the bottom edge (QA level) and
+	/// <paramref name="faceEndSplit"/> defines the top edge (WS level).
+	/// Returns <see langword="null"/> if both split endpoints are equal (zero-area face).
+	/// </summary>
+	/// <param name="sectorFace">The middle face identifier.</param>
+	/// <param name="wallStartPoint">The (X, Z) sector coordinate of the wall's start corner.</param>
+	/// <param name="wallEndPoint">The (X, Z) sector coordinate of the wall's end corner.</param>
+	/// <param name="faceStartSplit">The lower split (QA-clamped) defining the bottom edge.</param>
+	/// <param name="faceEndSplit">The upper split (WS-clamped) defining the top edge.</param>
 	public static SectorFaceData? CreateVerticalMiddleFaceData(SectorFace sectorFace, (int X, int Z) wallStartPoint, (int X, int Z) wallEndPoint, WallSplitData faceStartSplit, WallSplitData faceEndSplit)
 	{
 		if (faceStartSplit.StartY != faceEndSplit.StartY && faceStartSplit.EndY != faceEndSplit.EndY) // Is quad

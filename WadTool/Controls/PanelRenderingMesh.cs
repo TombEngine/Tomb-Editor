@@ -353,6 +353,7 @@ namespace WadTool.Controls
                 _bigSphere?.Dispose();
                 _plane?.Dispose();
                 _wadRenderer?.Dispose();
+                _fontDefault?.Dispose();
             }
             base.Dispose(disposing);
         }

@@ -44,6 +44,8 @@ namespace TombLib.LevelData.IO
         /**/public static readonly ChunkId TexturePadding = ChunkId.FromString("TeTexturePadding");
         /**/public static readonly ChunkId TextureCompression = ChunkId.FromString("TeTextureCompression");
         /**/public static readonly ChunkId TrxTextureBitDepth = ChunkId.FromString("TeTrxTextureDepth");
+        /**/public static readonly ChunkId TrxConvertFlybysToCinematicFrames = ChunkId.FromString("TeTrxConvertFlybysToCinematicFrames");
+        /**/public static readonly ChunkId TrxUseAlternateGroups = ChunkId.FromString("TeTrxUseAlternateGroups");
         /**/public static readonly ChunkId AgressiveTexturePacking = ChunkId.FromString("TeAgressiveTexturePacking");
         /**/public static readonly ChunkId AgressiveFloordataPacking = ChunkId.FromString("TeAgressiveFloordataPacking");
         /**/public static readonly ChunkId RemapAnimatedTextures = ChunkId.FromString("TeRemapAnimTextures");
@@ -94,6 +96,7 @@ namespace TombLib.LevelData.IO
         /******/public static readonly ChunkId EventSet = ChunkId.FromString("TeEventSet");
         /********/public static readonly ChunkId EventSetIndex = ChunkId.FromString("TeEventSetIndex");
         /********/public static readonly ChunkId EventSetName = ChunkId.FromString("TeEventSetName");
+        /********/public static readonly ChunkId EventSetFolder = ChunkId.FromString("TeEventSetFolder");
         /********/public static readonly ChunkId EventSetLastUsedEventIndex = ChunkId.FromString("TeEventSetLUEI");
         /********/public static readonly ChunkId EventSetActivators = ChunkId.FromString("TeEventSetActivators");
         /********/public static readonly ChunkId EventSetOnEnter = ChunkId.FromString("TeEventSetOnEnter");
@@ -176,12 +179,15 @@ namespace TombLib.LevelData.IO
         /**********/public static readonly ChunkId ObjectMovable4 = ChunkId.FromString("TeMov4");
         /**********/public static readonly ChunkId ObjectMovableTombEngine = ChunkId.FromString("TeMovTen");
         /**********/public static readonly ChunkId ObjectMovableTombEngine2 = ChunkId.FromString("TeMovTen2");
+        /**********/public static readonly ChunkId ObjectMovableTombEngine3 = ChunkId.FromString("TeMovTn3");
+        /**********/public static readonly ChunkId ObjectMovableTRX = ChunkId.FromString("TeMovTrx");
         /**********/public static readonly ChunkId ObjectItemLuaId = ChunkId.FromString("TeItLuaId"); // DEPRECATED
         /**********/public static readonly ChunkId ObjectStatic = ChunkId.FromString("TeSta");
         /**********/public static readonly ChunkId ObjectStatic2 = ChunkId.FromString("TeSta2");
         /**********/public static readonly ChunkId ObjectStatic3 = ChunkId.FromString("TeSta3");
         /**********/public static readonly ChunkId ObjectStaticTombEngine = ChunkId.FromString("TeStaTen");
         /**********/public static readonly ChunkId ObjectStaticTombEngine2 = ChunkId.FromString("TeStaTen2");
+        /**********/public static readonly ChunkId ObjectStaticTombEngine3 = ChunkId.FromString("TeStaTn3");
         /**********/public static readonly ChunkId ObjectCamera = ChunkId.FromString("TeCam");
         /**********/public static readonly ChunkId ObjectCamera2 = ChunkId.FromString("TeCam2");
         /**********/public static readonly ChunkId ObjectCamera3 = ChunkId.FromString("TeCam3");
@@ -191,6 +197,7 @@ namespace TombLib.LevelData.IO
         /**********/public static readonly ChunkId ObjectSprite3 = ChunkId.FromString("TeSpr3");
         /**********/public static readonly ChunkId ObjectFlyBy = ChunkId.FromString("TeFly");
         /**********/public static readonly ChunkId ObjectFlyBy2 = ChunkId.FromString("TeFly2");
+        /**********/public static readonly ChunkId ObjectFlyBy3 = ChunkId.FromString("TeFly3");
         /**********/public static readonly ChunkId ObjectFlyBy2LuaScript = ChunkId.FromString("TeFly2Lua");
         /**********/public static readonly ChunkId ObjectMemo = ChunkId.FromString("TeMemo");
         /**********/public static readonly ChunkId ObjectMemo2 = ChunkId.FromString("TeMemo2");
@@ -246,5 +253,10 @@ namespace TombLib.LevelData.IO
         /****/public static readonly ChunkId AutoMergeStaticMeshEntry3 = ChunkId.FromString("TeMergeStaticsEntry3");
         /**/public static readonly ChunkId EmbeddedSoundInfoWad = ChunkId.FromString("TeEmbeddedSoundInfoWad"); // DEPRECATED
         /**/public static readonly ChunkId Palette = ChunkId.FromString("TePalette");
+        /**/public static readonly ChunkId Favorites = ChunkId.FromString("TeFavorites");
+        /****/public static readonly ChunkId Favorite = ChunkId.FromString("TeFavorite");
+        /**/public static readonly ChunkId CollapsedGlobalEventSetFolders = ChunkId.FromString("TeCollapsedGlbEvtFolders");
+        /**/public static readonly ChunkId CollapsedVolumeEventSetFolders = ChunkId.FromString("TeCollapsedVolEvtFolders");
+        /****/public static readonly ChunkId CollapsedEventSetFolder = ChunkId.FromString("TeCollapsedEvtFolder");
     }
 }

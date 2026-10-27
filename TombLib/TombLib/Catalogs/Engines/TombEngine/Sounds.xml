@@ -701,6 +701,7 @@
 			<sound id="681" name="TR2_SLAM_DOOR_CLOSE" ten="681" />
 			<sound id="682" name="TR2_SWINGING" ten="682" />
 			<sound id="683" name="TR2_SWINGING_TRAP" ten="683" />
+			<sound id="838" name="TR2_HENCHMAN_DEATH4" ten="838" />
 			<sound id="1145" name="TR2_DRAGON_FALL" ten="1145" />
 			<sound id="1146" name="TR2_MARCO_BARTOLLI_TRANSFORM" ten="1146" />
 			
@@ -860,7 +861,6 @@
 			<sound id="835" name="TR3_CLEANER_FUSEBOX" ten="835" />
 			<sound id="836" name="TR3_CLEANER_LOOP" ten="836" />
 			<sound id="837" name="TR3_CRICKET_LOOP" ten="837" />
-			<sound id="838" name="TR3_EMPTY1" ten="838" />
 			<sound id="839" name="TR3_DOORBELL" ten="839" />
 			<sound id="840" name="TR3_DRILL_BIT_1" ten="840" />
 			<sound id="841" name="TR3_GASMETER" ten="841" />

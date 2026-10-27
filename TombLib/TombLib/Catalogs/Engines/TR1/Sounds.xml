@@ -118,8 +118,8 @@
     <sound id="124" name="ATLANTEAN_BALL" ten="428" />
     <sound id="125" name="ATLANTEAN_WINGS" ten="429" />
     <sound id="126" name="ATLANTEAN_WING_FEET" ten="430" />
-    <sound id="127" name="SLAMDOOR_CLOSE" ten="1144" />
-    <sound id="128" name="SLAMDOOR_OPEN" ten="1143" />
+    <sound id="127" name="SLAMDOOR_CLOSE" ten="681" />
+    <sound id="128" name="SLAMDOOR_OPEN" ten="680" />
     <sound id="129" name="SKATEBOARD_MOVE" ten="446" />
     <sound id="130" name="SKATEBOARD_STOP" ten="447" />
     <sound id="131" name="SKATEBOARD_SHOOT" ten="448" />

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<materialCatalog>
+  <material id="2" name="Skybox Reflective">
+    <property
+      slot="0"
+      name="Color"
+      type="Color"
+      defaultValue="TEN.Color(255,255,255)"
+      description="Multiplier applied to the sampled skybox reflection color." />
+    <property
+      slot="1"
+      name="VerticalOffset"
+      type="Float"
+      defaultValue="0.0"
+      description="World-space height at which the skybox reflection fades out." />
+    <property
+      slot="2"
+      name="VerticalBias"
+      type="Float"
+      defaultValue="0.0"
+      description="Signed vertical reflection feather in world units. Negative values apply reflections from the top, positive values from the bottom, and absolute value controls the feather distance." />
+  </material>
+</materialCatalog>

@@ -208,7 +208,7 @@ namespace TombLib.LevelData.Compilers
 
             // Properly identify game version to swap light mode, quicksand and no lensflare flags
             bool isTR2  = room.Level.Settings.GameVersion.Native() == TRVersion.Game.TR2;
-            bool isTR23 = isTR2 || room.Level.Settings.GameVersion == TRVersion.Game.TR3;
+            bool isTR23 = isTR2 || room.Level.Settings.GameVersion.Native() == TRVersion.Game.TR3;
             bool isNL   = room.Level.Settings.GameVersion.Native() >= TRVersion.Game.TR4;
             bool isNG   = room.Level.IsNG;
 
@@ -366,7 +366,7 @@ namespace TombLib.LevelData.Compilers
                                     continue;
                                 }
 
-                                if((shape == FaceShape.Triangle && texture.TriangleCoordsOutOfBounds) || (shape == FaceShape.Quad && texture.QuadCoordsOutOfBounds))
+                                if((shape == FaceShape.Triangle && texture.AreTriangleCoordsOutOfBounds(256.0f)) || (shape == FaceShape.Quad && texture.AreQuadCoordsOutOfBounds(256.0f)))
                                 {
                                     _progressReporter.ReportWarn("Texture is out of bounds at sector (" + x + "," + z + ") in room " + room.Name + ". Wrong or resized texture file?");
                                     continue;

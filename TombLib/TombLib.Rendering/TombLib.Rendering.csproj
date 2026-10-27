@@ -1,4 +1,4 @@
-﻿<Project InitialTargets="FxCompileEx" Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
@@ -63,7 +63,7 @@
   <ItemGroup>
     <ProjectReference Include="..\TombLib\TombLib.csproj" />
   </ItemGroup>
-  <Target Name="EmbedShaderFilesTarget" AfterTargets="FxCompileEx;FxExport" BeforeTargets="EmbeddedResource">
+  <Target Name="EmbedShaderFilesTarget" AfterTargets="CompileHlslShaders" BeforeTargets="EmbeddedResource">
     <ItemGroup>
       <EmbeddedResource Include="$(IntermediateOutputPath)$([System.IO.Path]::ChangeExtension('%(VertexShader.Identity)', '.cso'))" Condition="'%(VertexShader.Identity)'!=''">
         <LogicalName>DxShaders.$([System.IO.Path]::GetFileNameWithoutExtension('%(Identity)'))</LogicalName>
@@ -141,6 +141,9 @@
     <EmbeddedResource Include="Rendering\ServiceObjectTextures\ghost_block.png" />
     <EmbeddedResource Include="Rendering\ServiceObjectTextures\unknown.png" />
     <EmbeddedResource Include="Rendering\ServiceObjectTextures\camera.png" />
+    <Content Include="Rendering\Legacy\IndicationOverlay.hlsli">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Rendering\Legacy\Model.fx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -163,9 +166,7 @@
     <EmbeddedResource Include="Rendering\ServiceObjectTextures\sprite.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.HLSL.CSharpVB" Version="1.0.2" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="17.2.0" />
     <PackageReference Include="NLog" Version="5.0.0" />
   </ItemGroup>
-  <Import Project="FxCompileEx.targets" />
+  <Import Project="HlslShaderCompile.targets" />
 </Project>

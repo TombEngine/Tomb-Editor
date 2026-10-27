@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using TombLib.LevelData;
 using TombLib.LevelData.VisualScripting;
 
 namespace TombLib.Utils
@@ -32,6 +33,7 @@ namespace TombLib.Utils
         public const string TimeTypePrefix = "TEN.Time";
         public const string Vec2TypePrefix = "TEN.Vec2";
         public const string Vec3TypePrefix = "TEN.Vec3";
+        public const string RotationTypePrefix = "TEN.Rotation";
         public const string ObjectIDPrefix = "TEN.Objects.ObjID";
         public const string ReservedFunctionPrefix = "__";
 
@@ -44,7 +46,7 @@ namespace TombLib.Utils
         private const int _maxRecursionDepth = 32;
 
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        private static readonly string[] _reservedNames = { "OnStart", "OnEnd", "OnLoad", "OnSave", "OnControlPhase", "OnLoop", "OnUseItem", "OnFreeze" };
+        private static readonly string[] _reservedNames = { "OnStart", "OnEnd", "OnLoad", "OnSave", "OnControlPhase", "OnLoop", "OnUseItem", "OnPickup", "OnVehicleEnter", "OnVehicleLeave", "OnFreeze" };
 
         private const string _metadataPrefix = "!";
         private const string _enumSplitterStart = "[";
@@ -59,6 +61,8 @@ namespace TombLib.Utils
         private const string _nodeTypeId = _metadataPrefix + "condition";
         private const string _nodeArgumentId = _metadataPrefix + "arguments";
         private const string _nodeDescriptionId = _metadataPrefix + "description";
+        private const string _nodeSupportedId = _metadataPrefix + "supported";
+        private const string _nodeUnsupportedId = _metadataPrefix + "unsupported";
         private const string _nodeLayoutNewLine = "newline";
 
         public static string GameNodeScriptPath = Path.Combine("Scripts", "Engine", "NodeCatalogs");
@@ -154,6 +158,16 @@ namespace TombLib.Utils
 
                                  nodeFunction.Arguments.Add(argLayout);
                             }
+                            continue;
+                        }
+                        else if (comment.StartsWith(_nodeSupportedId, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            ParseEventTypeList(comment, _nodeSupportedId, nodeFunction.SupportedEvents);
+                            continue;
+                        }
+                        else if (comment.StartsWith(_nodeUnsupportedId, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            ParseEventTypeList(comment, _nodeUnsupportedId, nodeFunction.UnsupportedEvents);
                             continue;
                         }
                     }
@@ -255,6 +269,16 @@ namespace TombLib.Utils
             }
 
             return result.OrderBy(n => n.Section).ToList();
+        }
+
+        private static void ParseEventTypeList(string comment, string tagId, List<EventType> targetList)
+        {
+            var values = TextExtensions.ExtractValues(comment.Substring(tagId.Length));
+            foreach (var v in values)
+            {
+                if (Enum.TryParse(v.Trim(), true, out EventType eventType) && !targetList.Contains(eventType))
+                    targetList.Add(eventType);
+            }
         }
 
         public static List<string> GetAllFunctionNames(string path, List<string> list = null, int depth = 0)

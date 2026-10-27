@@ -17,7 +17,7 @@ public readonly struct SectorFaceIdentity : IEquatable<SectorFaceIdentity>, ICom
 		Face = face;
 	}
 
-	public override readonly bool Equals(object other) => other is SectorFaceIdentity identity && identity.Equals(other);
+	public override readonly bool Equals(object other) => other is SectorFaceIdentity identity && Equals(identity);
 	public readonly bool Equals(SectorFaceIdentity other) => Position == other.Position && Face == other.Face;
 	public override int GetHashCode() => Position.GetHashCode() ^ (1200049507 * (int)Face); // Random prime
 

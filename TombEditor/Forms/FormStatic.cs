@@ -37,6 +37,7 @@ namespace TombEditor.Forms
             // Disable mesh-specific controls
             var canBeColored = _staticMesh.CanBeColored();
             Size = new System.Drawing.Size(Size.Width, canBeColored ? 422 : 393);
+            ConfigurationBase.ClampWindowLocation(this);
             lblColor.Visible = canBeColored;
             panelColor.Visible = canBeColored;
         }

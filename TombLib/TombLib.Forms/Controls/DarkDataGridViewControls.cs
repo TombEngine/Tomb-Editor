@@ -80,15 +80,14 @@ namespace TombLib.Controls
             selectedRowIndices.Sort();
             selectedRowIndices.Reverse();
 
-            //Remove rows
+            DataGridView.CurrentCell = null;
+            DataGridView.ClearSelection();
+
+            // Remove rows
             var rows = DataGridView.EditableRowCollection;
             foreach (var selectedRowIndex in selectedRowIndices)
-                if (selectedRowIndex < rows.Count)
+                if (selectedRowIndex >= 0 && selectedRowIndex < rows.Count)
                     rows.RemoveAt(selectedRowIndex);
-
-            //Remove selection
-            foreach (var selectedRow in DataGridView.SelectedRows.Cast<DataGridViewRow>().ToList())
-                selectedRow.Selected = false;
         }
 
         private void butUp_Click(object sender, EventArgs e)

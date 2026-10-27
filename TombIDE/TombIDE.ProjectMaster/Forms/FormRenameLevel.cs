@@ -1,89 +1,66 @@
 ﻿using DarkUI.Forms;
 using System;
-using System.IO;
 using System.Windows.Forms;
+using TombIDE.ProjectMaster.Services.Level.Rename;
 using TombIDE.Shared;
-using TombIDE.Shared.SharedClasses;
 
 namespace TombIDE.ProjectMaster
 {
 	public partial class FormRenameLevel : DarkForm
 	{
-		private IDE _ide;
+		private readonly IDE _ide;
+		private readonly ILevelRenameService _levelRenameService;
+		private readonly LevelRenameState _initialState;
 
 		#region Initialization
 
-		public FormRenameLevel(IDE ide)
+		public FormRenameLevel(IDE ide, ILevelRenameService levelRenameService)
 		{
 			_ide = ide;
+			_levelRenameService = levelRenameService;
 
 			InitializeComponent();
 
-			// Disable renaming external level folders (level folders which are outside of the project's /Levels/ folder)
-			if (_ide.SelectedLevel.IsExternal(_ide.Project.LevelsDirectoryPath))
-			{
-				checkBox_RenameDirectory.Text = "Can't rename external level folders";
-				checkBox_RenameDirectory.Checked = false;
-				checkBox_RenameDirectory.Enabled = false;
-			}
+			_initialState = _levelRenameService.GetInitialRenameState(
+				_ide.SelectedLevel,
+				_ide.Project,
+				_ide.ScriptEditor_IsScriptDefined,
+				_ide.ScriptEditor_IsStringDefined);
 
-			if (_ide.Project.GameVersion == TombLib.LevelData.TRVersion.Game.TombEngine)
-			{
-				checkBox_RenameScriptEntry.Text = "Rename language entry as well (Recommended)";
+			ApplyInitialState();
+		}
 
-				if (!_ide.ScriptEditor_IsStringDefined(_ide.SelectedLevel.Name))
-				{
-					checkBox_RenameScriptEntry.Checked = false;
-					checkBox_RenameScriptEntry.Enabled = false;
-					label_LanguageError.Visible = true;
-				}
-			}
-			else if (_ide.Project.GameVersion
-				is TombLib.LevelData.TRVersion.Game.TR1
-				or TombLib.LevelData.TRVersion.Game.TR2X
-				or TombLib.LevelData.TRVersion.Game.TR2
-				or TombLib.LevelData.TRVersion.Game.TR3)
-			{
-				checkBox_RenameScriptEntry.Text = "Rename script entry as well (Recommended)";
+		private void ApplyInitialState()
+		{
+			// Configure directory rename checkbox
+			checkBox_RenameDirectory.Text = _initialState.DirectoryRenameText;
+			checkBox_RenameDirectory.Enabled = _initialState.CanRenameDirectory;
+			checkBox_RenameDirectory.Checked = _initialState.CanRenameDirectory && _initialState.ShouldRenameDirectory;
 
-				if (!_ide.ScriptEditor_IsScriptDefined(_ide.SelectedLevel.Name))
-				{
-					checkBox_RenameScriptEntry.Checked = false;
-					checkBox_RenameScriptEntry.Enabled = false;
-					label_ScriptError.Visible = true;
-				}
-			}
-			else
-			{
-				// Check if there are errors in the script
-				if (!_ide.ScriptEditor_IsScriptDefined(_ide.SelectedLevel.Name) || !_ide.ScriptEditor_IsStringDefined(_ide.SelectedLevel.Name))
-				{
-					// Disable the checkBox if so
-					checkBox_RenameScriptEntry.Checked = false;
-					checkBox_RenameScriptEntry.Enabled = false;
+			// Configure script rename checkbox
+			checkBox_RenameScriptEntry.Text = _initialState.ScriptRenameText;
+			checkBox_RenameScriptEntry.Enabled = _initialState.CanRenameScript;
+			checkBox_RenameScriptEntry.Checked = _initialState.CanRenameScript && _initialState.ShouldRenameScript;
 
-					// Display ScriptError + LanguageError
-					if (!_ide.ScriptEditor_IsScriptDefined(_ide.SelectedLevel.Name) && !_ide.ScriptEditor_IsStringDefined(_ide.SelectedLevel.Name))
-					{
-						label_ScriptError.Visible = true;
-						label_LanguageError.Visible = true;
-					}
-					// Display ScriptError only
-					else if (!_ide.ScriptEditor_IsScriptDefined(_ide.SelectedLevel.Name) && _ide.ScriptEditor_IsStringDefined(_ide.SelectedLevel.Name))
-					{
-						Height = 212;
-						label_ScriptError.Visible = true;
-					}
-					// Display LanguageError only
-					else if (_ide.ScriptEditor_IsScriptDefined(_ide.SelectedLevel.Name) && !_ide.ScriptEditor_IsStringDefined(_ide.SelectedLevel.Name))
-					{
-						Height = 212;
-						label_LanguageError.Visible = true;
-					}
-				}
-				else // No errors
-					Height = 193;
-			}
+			// Configure error labels
+			label_ScriptError.Visible = _initialState.ShowScriptError;
+			label_LanguageError.Visible = _initialState.ShowLanguageError;
+
+			// Adjust form height based on error state
+			AdjustFormHeight();
+		}
+
+		private void AdjustFormHeight()
+		{
+			bool showNoErrors = !_initialState.ShowScriptError && !_initialState.ShowLanguageError;
+			bool showOneError = _initialState.ShowScriptError != _initialState.ShowLanguageError;
+
+			if (showNoErrors)
+				Height = 193;
+			else if (showOneError)
+				Height = 212;
+
+			// Default height for both errors
 		}
 
 		protected override void OnShown(EventArgs e)
@@ -102,41 +79,28 @@ namespace TombIDE.ProjectMaster
 		{
 			try
 			{
-				string newName = PathHelper.RemoveIllegalPathSymbols(textBox_NewName.Text.Trim());
-				newName = LevelHandling.RemoveIllegalNameSymbols(newName);
-
-				bool renameDirectory = checkBox_RenameDirectory.Checked;
-				bool renameScriptEntry = checkBox_RenameScriptEntry.Checked;
-
-				if (newName == _ide.SelectedLevel.Name)
+				var options = new LevelRenameOptions
 				{
-					// If the name hasn't changed, but the directory name is different and the user wants to rename it
-					if (Path.GetFileName(_ide.SelectedLevel.DirectoryPath) != newName && renameDirectory)
-					{
-						string newDirectory = Path.Combine(Path.GetDirectoryName(_ide.SelectedLevel.DirectoryPath) ?? string.Empty, newName);
+					NewName = textBox_NewName.Text,
+					RenameDirectory = checkBox_RenameDirectory.Checked,
+					RenameScriptEntry = checkBox_RenameScriptEntry.Checked
+				};
 
-						if (Directory.Exists(newDirectory))
-							throw new ArgumentException("A directory with the same name already exists in the parent directory.");
+				LevelRenameResult result = _levelRenameService.RenameLevel(
+					_ide.SelectedLevel,
+					_ide.Project,
+					options);
 
-						_ide.SelectedLevel.Rename(newName, true);
-						_ide.RaiseEvent(new IDE.SelectedLevelSettingsChangedEvent());
-					}
-					else
-						DialogResult = DialogResult.Cancel;
-				}
-				else
+				if (!result.ChangesMade)
 				{
-					string newDirectory = Path.Combine(Path.GetDirectoryName(_ide.SelectedLevel.DirectoryPath) ?? string.Empty, newName);
-
-					if (renameDirectory && Directory.Exists(newDirectory) && !newDirectory.Equals(_ide.SelectedLevel.DirectoryPath, StringComparison.OrdinalIgnoreCase))
-						throw new ArgumentException("A directory with the same name already exists in the parent directory.");
-
-					if (renameScriptEntry)
-						_ide.ScriptEditor_RenameLevel(_ide.SelectedLevel.Name, newName);
-
-					_ide.SelectedLevel.Rename(newName, renameDirectory);
-					_ide.RaiseEvent(new IDE.SelectedLevelSettingsChangedEvent());
+					DialogResult = DialogResult.Cancel;
+					return;
 				}
+
+				if (result.ScriptRenameNeeded && result.OldName is not null && result.NewName is not null)
+					_ide.ScriptEditor_RenameLevel(result.OldName, result.NewName);
+
+				_ide.RaiseEvent(new IDE.SelectedLevelSettingsChangedEvent());
 			}
 			catch (Exception ex)
 			{
@@ -147,62 +111,26 @@ namespace TombIDE.ProjectMaster
 
 		private void textBox_NewName_TextChanged(object sender, EventArgs e)
 		{
-			string textBoxContent = PathHelper.RemoveIllegalPathSymbols(textBox_NewName.Text.Trim());
-			textBoxContent = LevelHandling.RemoveIllegalNameSymbols(textBoxContent);
+			LevelRenameState state = _levelRenameService.GetRenameStateForText(
+				_ide.SelectedLevel,
+				_ide.Project,
+				textBox_NewName.Text,
+				_initialState.ShowScriptError,
+				_initialState.ShowLanguageError);
 
-			// If the name hasn't changed, but the level folder name is different
-			if (textBoxContent == _ide.SelectedLevel.Name && Path.GetFileName(_ide.SelectedLevel.DirectoryPath) != textBoxContent)
+			// Update directory checkbox
+			if (_initialState.CanRenameDirectory) // Only update if initially allowed (not external)
 			{
-				// If the level is not an external level
-				if (!_ide.SelectedLevel.IsExternal(_ide.Project.LevelsDirectoryPath))
-				{
-					checkBox_RenameDirectory.Enabled = true;
-					checkBox_RenameDirectory.Checked = true;
-				}
-
-				checkBox_RenameScriptEntry.Checked = false;
-				checkBox_RenameScriptEntry.Enabled = false;
-			}
-			// If the name changed, but the level folder name is the same
-			else if (textBoxContent != _ide.SelectedLevel.Name && Path.GetFileName(_ide.SelectedLevel.DirectoryPath) == textBoxContent)
-			{
-				checkBox_RenameDirectory.Checked = false;
-				checkBox_RenameDirectory.Enabled = false;
-
-				// If there are no errors in the script (in this case, if no errors are displayed)
-				if (!label_ScriptError.Visible && !label_LanguageError.Visible)
-				{
-					checkBox_RenameScriptEntry.Enabled = true;
-					checkBox_RenameScriptEntry.Checked = true;
-				}
-			}
-			// If the name hasn't changed and the level folder name is the same
-			else if (textBoxContent == _ide.SelectedLevel.Name)
-			{
-				checkBox_RenameDirectory.Checked = false;
-				checkBox_RenameDirectory.Enabled = false;
-
-				checkBox_RenameScriptEntry.Checked = false;
-				checkBox_RenameScriptEntry.Enabled = false;
-			}
-			else // Basically every other scenario
-			{
-				// If the level is not an external level
-				if (!_ide.SelectedLevel.IsExternal(_ide.Project.LevelsDirectoryPath))
-				{
-					checkBox_RenameDirectory.Enabled = true;
-					checkBox_RenameDirectory.Checked = true;
-				}
-
-				// If there are no errors in the script (in this case, if no errors are displayed)
-				if (!label_ScriptError.Visible && !label_LanguageError.Visible)
-				{
-					checkBox_RenameScriptEntry.Enabled = true;
-					checkBox_RenameScriptEntry.Checked = true;
-				}
+				checkBox_RenameDirectory.Enabled = state.CanRenameDirectory;
+				checkBox_RenameDirectory.Checked = state.ShouldRenameDirectory;
 			}
 
-			button_Apply.Enabled = !string.IsNullOrWhiteSpace(textBoxContent);
+			// Update script checkbox
+			checkBox_RenameScriptEntry.Enabled = state.CanRenameScript;
+			checkBox_RenameScriptEntry.Checked = state.ShouldRenameScript;
+
+			// Update apply button
+			button_Apply.Enabled = _levelRenameService.CanApply(textBox_NewName.Text);
 		}
 
 		#endregion Events

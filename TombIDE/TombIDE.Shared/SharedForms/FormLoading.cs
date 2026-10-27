@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows.Forms;
 using TombIDE.Shared.NewStructure;
 using TombIDE.Shared.NewStructure.Implementations;
-using TombIDE.Shared.SharedClasses;
 
 namespace TombIDE.Shared.SharedForms
 {
@@ -122,7 +121,7 @@ namespace TombIDE.Shared.SharedForms
 			foreach (string filePath in Directory.GetFiles(levelProject.DirectoryPath, "*.prj2", SearchOption.TopDirectoryOnly))
 			{
 				if (!Prj2Helper.IsBackupFile(filePath))
-					LevelHandling.UpdatePrj2GameSettings(filePath, _ide.Project);
+					Prj2Helper.UpdateGameSettings(filePath, _ide.Project);
 			}
 		}
 	}

@@ -61,7 +61,6 @@
             this.comboSourceTexture.Name = "comboSourceTexture";
             this.comboSourceTexture.Size = new System.Drawing.Size(327, 23);
             this.comboSourceTexture.TabIndex = 0;
-            this.comboSourceTexture.DropDown += new System.EventHandler(this.comboSourceTexture_DropDown);
             this.comboSourceTexture.SelectedValueChanged += new System.EventHandler(this.comboSourceTexture_SelectedValueChanged);
             // 
             // tableLayoutPanel1
@@ -141,7 +140,6 @@
             this.comboDestinationTexture.Name = "comboDestinationTexture";
             this.comboDestinationTexture.Size = new System.Drawing.Size(327, 23);
             this.comboDestinationTexture.TabIndex = 0;
-            this.comboDestinationTexture.DropDown += new System.EventHandler(this.comboDestinationTexture_DropDown);
             this.comboDestinationTexture.SelectedValueChanged += new System.EventHandler(this.comboDestinationTexture_SelectedValueChanged);
             // 
             // cbRestrictToSelectedRooms

@@ -1628,7 +1628,7 @@ namespace TombLib.LevelData.Compilers
 
         private class SidecarLoadingCacheEntry
         {
-            public MaterialType MaterialType { get; set; } = MaterialType.Default;
+            public int MaterialType { get; set; }
             public string NormalMapPath { get; set; }
             public string HeightMapPath { get; set; }
             public string SpecularMapPath { get; set; }
@@ -1707,7 +1707,7 @@ namespace TombLib.LevelData.Compilers
                         textureAbsolutePath = ((WadTexture)p.Texture).AbsolutePath;
 
                     var cacheEntry = new SidecarLoadingCacheEntry();
-                    var materialData = MaterialData.TrySidecarLoadOrLoadExisting(textureAbsolutePath);
+					var materialData = MaterialData.TryLoadForTexture(p.Texture, textureAbsolutePath);
 
                     void TryLoadMap(string mapName, bool isFound, Func<MaterialData, string> pathSelector, Action<ImageC> assignImage, Action<string> assignPath)
                     {
@@ -1899,8 +1899,7 @@ namespace TombLib.LevelData.Compilers
                 else
                 {
                     // In this case, for reflective materials, let's create a dummy white specular map on the fly
-                    if (currentCacheEntry.MaterialType == MaterialType.Reflective || 
-                        currentCacheEntry.MaterialType == MaterialType.SkyboxReflective)
+						if (MaterialCatalog.IsReflectiveType(currentCacheEntry.MaterialType))
                     {
                         var dummySpecularMap = ImageC.CreateNew(width, height);
                         dummySpecularMap.Fill(new ColorC(128, 128, 128));

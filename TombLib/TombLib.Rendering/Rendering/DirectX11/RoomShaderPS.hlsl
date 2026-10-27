@@ -7,6 +7,13 @@ cbuffer WorldData
 	bool ShowExtraBlendingModes;
 	bool ShowLightingWhiteTextureOnly;
 	int LightMode;
+	int BrushShape; // 0=none, 1=circle, 2=square
+	float BrushRotation; // Degrees, for rotation indicator line
+	float4 BrushCenter; // xyz = world center, w = radius
+	float4 BrushColor;
+	float4 DofCenterRange; // xyz = camera origin, w = focus range
+	float4 DofDirectionDistance; // xyz = normalized view direction, w = focus distance
+	float4 DofColorStrength; // xyz = darkening multiplier, w = packed DOF mode
 };
 
 struct PixelInputType
@@ -18,6 +25,7 @@ struct PixelInputType
 	int BlendMode : BLENDMODE;
     float2 EditorUv : EDITORUV;
 	int EditorSectorTexture : EDITORSECTORTEXTURE;
+	float3 WorldPosition : WORLDPOSITION;
 };
 
 Texture2DArray RoomTexture : register(t0);
@@ -34,6 +42,8 @@ float ddAny(float value)
 {
     return length(float2(ddx(value), ddy(value)));
 }
+
+#include "../Legacy/IndicationOverlay.hlsli"
 
 float4 main(PixelInputType input) : SV_TARGET
 {
@@ -162,6 +172,10 @@ float4 main(PixelInputType input) : SV_TARGET
 	
 	// Use overlay's alpha as global alpha for any mode (needed for hidden rooms), as we've run out of flag space.
 	result *= input.Overlay.w;
+
+	// Draw brush outline projected onto room geometry.
+	ApplyDofOverlay(result.xyz, result.w, true, input.WorldPosition);
+	ApplyBrushOverlay(result.xyz, result.w, true, input.Position, input.WorldPosition, RoomGridLineWidth);
 
     if ((result.x + result.y + result.z + result.w) < 0.02f)
         discard;

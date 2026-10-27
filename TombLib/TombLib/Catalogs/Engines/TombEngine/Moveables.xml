@@ -38,6 +38,7 @@
     <moveable id="36" name="LARA_TORCH_ANIM" use_body_from="12" hidden="true" />
     <moveable id="37" name="HAIR_PRIMARY" hidden="true" />
     <moveable id="38" name="HAIR_SECONDARY" hidden="true" />
+    <moveable id="39" name="PHOTOMODE_ANIMS" use_body_from="12" hidden="true" />
     <moveable id="49" name="SNOWMOBILE_TRACKS" hidden="true" />
     <moveable id="50" name="SNOWMOBILE_LARA_ANIMS" use_body_from="12" hidden="true" />
     <moveable id="51" name="SNOWMOBILE" />
@@ -101,6 +102,7 @@
     <moveable id="137" name="HAMMERHEAD" />
     <moveable id="138" name="CROCODILE_GOD" />
     <moveable id="139" name="LOCUSTS_EMITTER" />
+	<moveable id="140" name="BATS_EMITTER_TR3" />
     <moveable id="150" name="SCUBA_HARPOON" />
     <moveable id="151" name="SCUBA_DIVER" />
     <moveable id="152" name="GOON_SILENCER1" />
@@ -227,6 +229,15 @@
     <moveable id="297" name="SKATEBOARD_KID" />
     <moveable id="298" name="WINSTON" />
 	<moveable id="299" name="SEAL_MUTANT" />
+	<moveable id="300" name="BOO_MUTANT" />
+	<moveable id="301" name="HYBRID_MUTANT" />
+	<moveable id="302" name="OILRED" />
+	<moveable id="303" name="WHITE_SOLDIER" />
+	<moveable id="304" name="PUNK" />
+	<moveable id="305" name="LONDON_MERCENARY" />
+	<moveable id="306" name="SWAT_GUN" />
+	<moveable id="307" name="PRISONER" />
+	<moveable id="308" name="WASP_MUTANT_EMITTER" />
     <moveable id="320" name="SPRINGBOARD" />
     <moveable id="321" name="ROLLING_SPINDLE" />
     <moveable id="322" name="DISK_SHOOTER" />
@@ -366,6 +377,25 @@
     <moveable id="456" name="TURNING_WALL_BLADE" />
     <moveable id="457" name="TURNING_CEILING_BLADE" />
     <moveable id="458" name="FIRE_PENDULUM" />
+	<moveable id="459" name="HEAVY_STAMPER" />
+	<moveable id="460" name="DRILL_BIT" />
+	<moveable id="461" name="SPIKED_FRAME" />
+	<moveable id="462" name="SWINGING_SANDBAG" />
+	<moveable id="463" name="SWINGING_BOX" />
+	<moveable id="464" name="OVERHEAD_PULLEY_HOOK" />
+	<moveable id="465" name="SWINGING_IRON_ANCHOR" />
+	<moveable id="466" name="SWINGING_SPIKE_BAG" />
+	<moveable id="467" name="CIRCULAR_SAW" />
+	<moveable id="468" name="ROLLING_BARRELS" />
+	<moveable id="469" name="MULTIPLE_BOULDERS" />
+	<moveable id="470" name="FAN" />
+	<moveable id="471" name="LARGE_FAN" />	
+	<moveable id="472" name="FALLING_SPIKES" />	
+	<moveable id="473" name="TUNNEL_BORER" />	
+	<moveable id="474" name="AIRPLANE_PROPELLER" />
+	<moveable id="475" name="ROTATING_KNIFE_DISK" />
+	<moveable id="476" name="UNDERWATER_MINE" />
+	<moveable id="477" name="FALLING_SANDBAG" />
     <moveable id="500" name="PUZZLE_ITEM1" />
     <moveable id="501" name="PUZZLE_ITEM2" />
     <moveable id="502" name="PUZZLE_ITEM3" />
@@ -631,6 +661,7 @@
     <moveable id="830" name="PULLEY" />
     <moveable id="831" name="CROWDOVE_SWITCH" />
     <moveable id="832" name="MINECART_SWITCH" />
+    <moveable id="833" name="FUSEBOX_SWITCH" />
     <moveable id="850" name="DOOR_TYPE1" />
     <moveable id="851" name="DOOR_TYPE2" />
     <moveable id="852" name="DOOR_TYPE3" />

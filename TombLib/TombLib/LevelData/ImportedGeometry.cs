@@ -16,9 +16,11 @@ using Texture = TombLib.Utils.Texture;
 
 namespace TombLib.LevelData
 {
-    public class ImportedGeometryTexture : Texture
+    public class ImportedGeometryTexture : Texture, IDisposable
     {
         public Texture2D DirectXTexture { get; private set; }
+
+        private bool _disposed;
 
         public ImportedGeometryTexture(string absolutePath)
         {
@@ -31,22 +33,39 @@ namespace TombLib.LevelData
             if (SynchronizationContext.Current == null)
                 DirectXTexture = TextureLoad.Load(ImportedGeometry.Device, Image);
             else
-                SynchronizationContext.Current.Post(unused => // Synchronize DirectX, we can't 'send' because that may deadlock with the level settings reloader
-                DirectXTexture = TextureLoad.Load(ImportedGeometry.Device, Image), null);
+                SynchronizationContext.Current.Post(unused => {
+                    if (_disposed)
+                        return;
+
+                    DirectXTexture = TextureLoad.Load(ImportedGeometry.Device, Image);
+                }, null);
         }
 
         private ImportedGeometryTexture(ImportedGeometryTexture other)
         {
-            DirectXTexture = other.DirectXTexture;
             AbsolutePath = other.AbsolutePath;
             Image = other.Image;
         }
 
         public void Assign(ImportedGeometryTexture other)
         {
+            // Dispose old GPU texture if it differs from the new one.
+            if (DirectXTexture != null && DirectXTexture != other.DirectXTexture)
+                DirectXTexture.Dispose();
+
             AbsolutePath = other.AbsolutePath;
             Image = other.Image;
             DirectXTexture = other.DirectXTexture;
+
+            _disposed = false;
+        }
+
+        public void Dispose()
+        {
+            _disposed = true;
+
+            DirectXTexture?.Dispose();
+            DirectXTexture = null;
         }
 
         public override Texture Clone() => new ImportedGeometryTexture(this);

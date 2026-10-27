@@ -428,7 +428,7 @@
 			comboBox_EngineType.Dock = System.Windows.Forms.DockStyle.Fill;
 			comboBox_EngineType.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			comboBox_EngineType.FormattingEnabled = true;
-			comboBox_EngineType.Items.AddRange(new object[] { "- Select -", "Tomb Raider 1 (TR1X)", "Tomb Raider 2 (TR2X)", "Tomb Raider 2 (TR2Main)", "Tomb Raider 3 (tomb3)", "Tomb Raider 4 (Original TRLE)", "Tomb Raider Next-Generation", "Tomb Engine" });
+			comboBox_EngineType.Items.AddRange(new object[] { "- Select -", "Tomb Raider 1 (TR1X)", "Tomb Raider 2 (TR2X)", "Tomb Raider 2 (TR2Main)", "Tomb Raider 3 (TR3X)", "Tomb Raider 3 (tomb3)", "Tomb Raider 4 (Original TRLE)", "Tomb Raider Next-Generation", "Tomb Engine" });
 			comboBox_EngineType.Location = new System.Drawing.Point(0, 210);
 			comboBox_EngineType.Margin = new System.Windows.Forms.Padding(0);
 			comboBox_EngineType.Name = "comboBox_EngineType";

@@ -1,4 +1,4 @@
-﻿using NLog;
+using NLog;
 using DarkUI.Config;
 using System;
 using System.Collections.Generic;
@@ -31,16 +31,19 @@ namespace TombEditor.Forms
             new RoomOptions(),
             new ItemBrowser(),
             new ImportedGeometryBrowser(),
+            new ContentBrowser(),
             new SectorOptions(),
             new Lighting(),
             new Palette(),
             new TexturePanel(),
             new ObjectList(),
-            new ToolPalette()
+            new ToolPalette(),
+            new ItemProperties()
         };
 
         // Floating tool boxes are placed on 3D view at runtime
         private readonly ToolPaletteFloating ToolBox = new ToolPaletteFloating();
+        private readonly Controls.ObjectBrush.ObjectBrushToolbox ObjectBrushSettings = new Controls.ObjectBrush.ObjectBrushToolbox();
 
         public FormMain(Editor editor)
         {
@@ -138,9 +141,9 @@ namespace TombEditor.Forms
 
                 addBoxVolumeToolStripMenuItem.Visible =
                 addSphereVolumeToolStripMenuItem.Visible =
-                generateObjectNamesToolStripMenuItem.Visible =
                 editEventSetsToolStripMenuItem.Visible =
                 editGlobalEventSetsToolStripMenuItem.Visible = _editor.Level.IsTombEngine;
+                generateObjectNamesToolStripMenuItem.Visible = _editor.Level.IsTombEngine || _editor.Level.IsTRX;
 
                 increaseStepHeightToolStripMenuItem.Visible =
                 decreaseStepHeightToolStripMenuItem.Visible =
@@ -183,6 +186,23 @@ namespace TombEditor.Forms
                 gridWallsIn3SquaresToolStripMenuItem.Enabled = validSectorSelection;
                 gridWallsIn5SquaresToolStripMenuItem.Enabled = validSectorSelection;
                 splitSectorObjectOnSelectionToolStripMenuItem.Enabled = _editor.SelectedObject is SectorBasedObjectInstance && validSectorSelection;
+            }
+
+            // Show/hide object brush settings toolbox based on active mode.
+            if (obj is Editor.ToolChangedEvent || obj is Editor.ModeChangedEvent || obj is Editor.InitEvent)
+            {
+                bool showBrushToolbox = _editor.Mode == EditorMode.ObjectPlacement;
+
+                if (showBrushToolbox && ObjectBrushSettings.Parent == null)
+                {
+                    GetWindow<MainView>().AddToolbox(ObjectBrushSettings);
+                    ObjectBrushSettings.Location = _editor.Configuration.Window_Layout.ObjectBrushToolboxPosition;
+                }
+                else if (!showBrushToolbox && ObjectBrushSettings.Parent != null)
+                {
+                    _editor.Configuration.Window_Layout.ObjectBrushToolboxPosition = ObjectBrushSettings.Location;
+                    GetWindow<MainView>().RemoveToolbox(ObjectBrushSettings);
+                }
             }
 
             // Update autosave status
@@ -317,6 +337,15 @@ namespace TombEditor.Forms
             if (obj is Editor.ToolWindowToggleEvent)
                 ToolWindow_Toggle(GetWindow((obj as Editor.ToolWindowToggleEvent).ContentType.FullName) as DarkToolWindow);
 
+            if (obj is Editor.SwitchLayoutEvent layoutEvent)
+            {
+                var layouts = _editor.Configuration.Window_CustomLayouts;
+                if (layoutEvent.LayoutIndex >= 0 && layoutEvent.LayoutIndex < layouts.Count)
+                    Layout_SwitchTo(layouts[layoutEvent.LayoutIndex].Name);
+                else if (layoutEvent.LayoutIndex <= -1)
+                    Layout_RestoreDefault();
+            }
+
             if (obj is Editor.LevelFileNameChangedEvent)
                 RefreshRecentProjectsList();
 
@@ -347,7 +376,8 @@ namespace TombEditor.Forms
         {
             ShowRealTintForObjectsToolStripMenuItem.Checked = _editor.Configuration.Rendering3D_ShowRealTintForObjects;
             drawWhiteTextureLightingOnlyToolStripMenuItem.Checked = _editor.Configuration.Rendering3D_ShowLightingWhiteTextureOnly;
-            statisticsToolStripMenuItem.Checked = _editor.Configuration.UI_ShowStats;
+            statisticsToolStripMenuItem.Checked = _editor.Configuration.Window_Layout.ShowStats;
+            flybyTimelineToolStripMenuItem.Checked = _editor.Configuration.Window_Layout.ShowFlybyTimeline;
         }
 
         private void RefreshRecentProjectsList()
@@ -485,18 +515,22 @@ namespace TombEditor.Forms
         private void LoadWindowLayout(Configuration configuration)
         {
             dockArea.RemoveContent();
-            dockArea.RestoreDockPanelState(configuration.Window_Layout, GetWindow);
+            dockArea.RestoreDockPanelState(configuration.Window_Layout.State, GetWindow);
 
-            floatingToolStripMenuItem.Checked = configuration.Rendering3D_ToolboxVisible;
-            ToolBox.Location = configuration.Rendering3D_ToolboxPosition;
+            floatingToolStripMenuItem.Checked = configuration.Window_Layout.ShowToolbox;
+            ToolBox.Location = configuration.Window_Layout.ToolboxPosition;
+            ObjectBrushSettings.Location = configuration.Window_Layout.ObjectBrushToolboxPosition;
+            statisticsToolStripMenuItem.Checked = configuration.Window_Layout.ShowStats;
+            flybyTimelineToolStripMenuItem.Checked = configuration.Window_Layout.ShowFlybyTimeline;
+
+            ToolWindow_BuildMenu();
+            _editor.RaiseEvent(new Editor.LayoutSwitchedEvent());
         }
 
         private void SaveWindowLayout(Configuration configuration)
         {
-            configuration.Window_Layout = dockArea.GetDockPanelState();
-
-            configuration.Rendering3D_ToolboxVisible = floatingToolStripMenuItem.Checked;
-            configuration.Rendering3D_ToolboxPosition = ToolBox.Location;
+            SaveCurrentStateToLayout(configuration.Window_Layout);
+            SaveCurrentStateToActiveLayout();
         }
 
         protected override bool ProcessDialogKey(Keys keyData)
@@ -513,6 +547,19 @@ namespace TombEditor.Forms
             // Disable all hotkeys in fly mode except ToggleFlyMode
             if (_editor.FlyMode && !_editor.Configuration.UI_Hotkeys["ToggleFlyMode"].Contains(keyData))
                 return base.ProcessCmdKey(ref msg, keyData);
+
+            if (_editor.CameraPreviewMode != CameraPreviewType.None)
+            {
+                if (keyData == Keys.Escape)
+                {
+                    _editor.ToggleCameraPreview(false);
+                    return true;
+                }
+
+                // Disable all hotkeys in camera preview mode except PreviewCamera
+                if (!_editor.Configuration.UI_Hotkeys["PreviewCamera"].Contains(keyData))
+                    return true;
+            }
 
             // Don't process reserved camera keys
             if (WinFormsUtils.DirectionalCameraKeys.Contains(keyData))
@@ -536,9 +583,135 @@ namespace TombEditor.Forms
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private void restoreDefaultLayoutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void layoutsToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
         {
-            LoadWindowLayout(new Configuration());
+            layoutsToolStripMenuItem.DropDownItems.Clear();
+
+            var config = _editor.Configuration;
+            bool hasCustomLayouts = config.Window_CustomLayouts.Count > 0;
+
+            // Default layout entry.
+            var defaultItem = new ToolStripMenuItem("Default");
+            defaultItem.Click += (s, ev) => _editor.SwitchLayout(-1);
+            layoutsToolStripMenuItem.DropDownItems.Add(defaultItem);
+
+            // Custom layout entries.
+            if (hasCustomLayouts)
+            {
+                layoutsToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
+
+                for (int i = 0; i < config.Window_CustomLayouts.Count; i++)
+                {
+                    var layout = config.Window_CustomLayouts[i];
+                    var item = new ToolStripMenuItem(layout.Name);
+                    item.Checked = layout.Name == config.Window_ActiveLayoutName;
+
+                    if (i < Configuration.MaxWindowLayouts)
+                    {
+                        var hotkeyName = "SwitchLayout" + (i + 1);
+                        if (config.UI_Hotkeys.Any(h => h.Key == hotkeyName))
+                            item.ShortcutKeyDisplayString = string.Join(", ", config.UI_Hotkeys[hotkeyName].Select(h => h.ToString()).Where(str => !string.IsNullOrWhiteSpace(str)));
+                    }
+
+                    int layoutIndex = i;
+                    item.Click += (s, ev) => _editor.SwitchLayout(layoutIndex);
+                    layoutsToolStripMenuItem.DropDownItems.Add(item);
+                }
+            }
+
+            // Management entries.
+            layoutsToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
+
+            var saveAsItem = new ToolStripMenuItem("Save layout as...");
+            saveAsItem.Click += (s, ev) => Layout_SaveAs();
+            layoutsToolStripMenuItem.DropDownItems.Add(saveAsItem);
+
+            var deleteItem = new ToolStripMenuItem("Delete layout");
+            deleteItem.Enabled = !string.IsNullOrEmpty(config.Window_ActiveLayoutName);
+            deleteItem.Click += (s, ev) => Layout_Delete();
+            layoutsToolStripMenuItem.DropDownItems.Add(deleteItem);
+        }
+
+        private void Layout_RestoreDefault()
+        {
+            SaveCurrentStateToActiveLayout();
+            _editor.Configuration.Window_ActiveLayoutName = string.Empty;
+            _editor.Configuration.Window_Layout = new NamedLayout();
+
+            LoadWindowLayout(_editor.Configuration);
+        }
+
+        private void Layout_SwitchTo(string name)
+        {
+            var layout = _editor.Configuration.Window_CustomLayouts.FirstOrDefault(l => l.Name == name);
+            if (layout == null)
+                return;
+
+            SaveCurrentStateToActiveLayout();
+            _editor.Configuration.Window_ActiveLayoutName = name;
+            _editor.Configuration.Window_Layout = layout.Clone();
+            LoadWindowLayout(_editor.Configuration);
+        }
+
+        private void Layout_SaveAs()
+        {
+            using (var form = new FormInputBox("Save layout", "Enter layout name:"))
+            {
+                if (form.ShowDialog(this) != DialogResult.OK || string.IsNullOrWhiteSpace(form.Result))
+                    return;
+
+                string name = form.Result.Trim();
+                var config = _editor.Configuration;
+
+                if (config.Window_CustomLayouts.Any(l => l.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
+                {
+                    DarkMessageBox.Show(this, "A layout with this name already exists.", "Save layout",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var newLayout = new NamedLayout { Name = name };
+                SaveCurrentStateToLayout(newLayout);
+
+                config.Window_CustomLayouts.Add(newLayout);
+                config.Window_ActiveLayoutName = name;
+                config.Window_Layout = newLayout.Clone();
+            }
+        }
+
+        private void Layout_Delete()
+        {
+            var config = _editor.Configuration;
+            var layout = config.Window_CustomLayouts.FirstOrDefault(l => l.Name == config.Window_ActiveLayoutName);
+            if (layout == null)
+                return;
+
+            config.Window_CustomLayouts.Remove(layout);
+            Layout_RestoreDefault();
+        }
+
+        private void SaveCurrentStateToLayout(NamedLayout target)
+        {
+            target.State = dockArea.GetDockPanelState();
+            target.ShowToolbox = floatingToolStripMenuItem.Checked;
+            target.ToolboxPosition = ToolBox.Location;
+            target.ShowStats = statisticsToolStripMenuItem.Checked;
+            target.ShowFlybyTimeline = flybyTimelineToolStripMenuItem.Checked;
+            if (ObjectBrushSettings.Parent != null)
+                target.ObjectBrushToolboxPosition = ObjectBrushSettings.Location;
+        }
+
+        private void SaveCurrentStateToActiveLayout()
+        {
+            var config = _editor.Configuration;
+            if (string.IsNullOrEmpty(config.Window_ActiveLayoutName))
+                return;
+
+            var layout = _editor.Configuration.Window_CustomLayouts.FirstOrDefault(l => l.Name == _editor.Configuration.Window_ActiveLayoutName);
+            if (layout == null)
+                return;
+
+            SaveCurrentStateToLayout(layout);
         }
 
         private void ToolWindow_Toggle(DarkToolWindow toolWindow)
@@ -558,11 +731,13 @@ namespace TombEditor.Forms
             roomOptionsToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<RoomOptions>());
             itemBrowserToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<ItemBrowser>());
             importedGeometryBrowserToolstripMenuItem.Checked = dockArea.ContainsContent(GetWindow<ImportedGeometryBrowser>());
+            contentBrowserToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<ContentBrowser>());
             triggerListToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<TriggerList>());
             objectListToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<ObjectList>());
             lightingToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<Lighting>());
             paletteToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<Palette>());
             texturePanelToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<TexturePanel>());
+            luaPropertiesToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<ItemProperties>());
             dockableToolStripMenuItem.Checked = dockArea.ContainsContent(GetWindow<ToolPalette>());
         }
 

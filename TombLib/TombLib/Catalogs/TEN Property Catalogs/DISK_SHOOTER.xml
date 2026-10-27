@@ -1,0 +1,28 @@
+<propertyCatalog>    
+	<moveable id="DISK_SHOOTER">
+        <property
+          internalName="Poisonous"
+          displayName="Poisonous Disks"
+          type="Bool"
+          defaultValue="false"
+          category="Trap parameters"
+          description="Adds poison damage, if checked"
+        />
+        <property
+          internalName="Damage"
+          displayName="Disk Harm Damage"
+          type="Int"
+          defaultValue="45"
+          category="Trap parameters"
+          description="Disk damage"
+        />
+        <property
+          internalName="Delay"
+          displayName="Disk Delay"
+          type="Int"
+          defaultValue="32"
+          category="Trap parameters"
+          description="Delay"
+        />
+    </moveable>
+</propertyCatalog>

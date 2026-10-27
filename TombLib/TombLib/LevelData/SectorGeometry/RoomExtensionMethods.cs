@@ -4,8 +4,25 @@ using TombLib.LevelData.SectorEnums.Extensions;
 
 namespace TombLib.LevelData.SectorGeometry;
 
+/// <summary>
+/// Extension methods on <see cref="Room"/> for computing per-sector wall geometry data
+/// (<see cref="SectorWallData"/>) in each cardinal and diagonal direction.
+/// <para>
+/// Each method gathers the floor/ceiling heights from the sector and its neighbor (or adjoining
+/// portal room), applies diagonal split corrections, and optionally normalizes the result to
+/// prevent overdraw artifacts.
+/// </para>
+/// </summary>
 public static class RoomExtensionMethods
 {
+	/// <summary>
+	/// Computes the wall data for the +Z (north-facing) edge of sector (<paramref name="x"/>, <paramref name="z"/>).
+	/// The wall runs from corner (x+1, z+1) to (x, z+1), facing toward the +Z neighbor.
+	/// </summary>
+	/// <param name="room">The room containing the sector.</param>
+	/// <param name="x">Sector X coordinate.</param>
+	/// <param name="z">Sector Z coordinate.</param>
+	/// <param name="normalize">Whether to normalize splits to prevent overdraw.</param>
 	public static SectorWallData GetPositiveZWallData(this Room room, int x, int z, bool normalize)
 	{
 		Sector sector = room.Sectors[x, z];
@@ -54,25 +71,6 @@ public static class RoomExtensionMethods
 			{
 				adjoiningRoom = adjoiningRoom.AlternateRoom;
 			}
-
-			// Get the near sector in current room
-			Sector nearSector = room.Sectors[x, 1];
-
-			int qaNearStart = nearSector.Floor.XpZn;
-			int qaNearEnd = nearSector.Floor.XnZn;
-
-			if (nearSector.Floor.DiagonalSplit is DiagonalSplit.XpZp)
-				qaNearStart = qaNearEnd;
-			else if (nearSector.Floor.DiagonalSplit is DiagonalSplit.XnZp)
-				qaNearEnd = qaNearStart;
-
-			int wsNearStart = nearSector.Ceiling.XpZn;
-			int wsNearEnd = nearSector.Ceiling.XnZn;
-
-			if (nearSector.Ceiling.DiagonalSplit is DiagonalSplit.XpZp)
-				wsNearStart = wsNearEnd;
-			else if (nearSector.Ceiling.DiagonalSplit is DiagonalSplit.XnZp)
-				wsNearEnd = wsNearStart;
 
 			// Now get the facing sector on the adjoining room and calculate the correct heights
 			int facingX = x + (room.Position.X - adjoiningRoom.Position.X);
@@ -213,6 +211,14 @@ public static class RoomExtensionMethods
 			: wall;
 	}
 
+	/// <summary>
+	/// Computes the wall data for the -Z (south-facing) edge of sector (<paramref name="x"/>, <paramref name="z"/>).
+	/// The wall runs from corner (x, z) to (x+1, z), facing toward the -Z neighbor.
+	/// </summary>
+	/// <param name="room">The room containing the sector.</param>
+	/// <param name="x">Sector X coordinate.</param>
+	/// <param name="z">Sector Z coordinate.</param>
+	/// <param name="normalize">Whether to normalize splits to prevent overdraw.</param>
 	public static SectorWallData GetNegativeZWallData(this Room room, int x, int z, bool normalize)
 	{
 		Sector sector = room.Sectors[x, z];
@@ -261,25 +267,6 @@ public static class RoomExtensionMethods
 			{
 				adjoiningRoom = adjoiningRoom.AlternateRoom;
 			}
-
-			// Get the near sector in current room
-			Sector nearSector = room.Sectors[x, room.NumZSectors - 2];
-
-			int qaNearStart = nearSector.Floor.XnZp;
-			int qaNearEnd = nearSector.Floor.XpZp;
-
-			if (nearSector.Floor.DiagonalSplit is DiagonalSplit.XnZn)
-				qaNearStart = qaNearEnd;
-			else if (nearSector.Floor.DiagonalSplit is DiagonalSplit.XpZn)
-				qaNearEnd = qaNearStart;
-
-			int wsNearStart = nearSector.Ceiling.XnZp;
-			int wsNearEnd = nearSector.Ceiling.XpZp;
-
-			if (nearSector.Ceiling.DiagonalSplit is DiagonalSplit.XnZn)
-				wsNearStart = wsNearEnd;
-			else if (nearSector.Ceiling.DiagonalSplit is DiagonalSplit.XpZn)
-				wsNearEnd = wsNearStart;
 
 			// Now get the facing sector on the adjoining room and calculate the correct heights
 			int facingX = x + (room.Position.X - adjoiningRoom.Position.X);
@@ -420,6 +407,14 @@ public static class RoomExtensionMethods
 			: wall;
 	}
 
+	/// <summary>
+	/// Computes the wall data for the +X (east-facing) edge of sector (<paramref name="x"/>, <paramref name="z"/>).
+	/// The wall runs from corner (x+1, z) to (x+1, z+1), facing toward the +X neighbor.
+	/// </summary>
+	/// <param name="room">The room containing the sector.</param>
+	/// <param name="x">Sector X coordinate.</param>
+	/// <param name="z">Sector Z coordinate.</param>
+	/// <param name="normalize">Whether to normalize splits to prevent overdraw.</param>
 	public static SectorWallData GetPositiveXWallData(this Room room, int x, int z, bool normalize)
 	{
 		Sector sector = room.Sectors[x, z];
@@ -468,25 +463,6 @@ public static class RoomExtensionMethods
 			{
 				adjoiningRoom = adjoiningRoom.AlternateRoom;
 			}
-
-			// Get the near sector in current room
-			Sector nearSector = room.Sectors[1, z];
-
-			int qaNearStart = nearSector.Floor.XnZn;
-			int qaNearEnd = nearSector.Floor.XnZp;
-
-			if (nearSector.Floor.DiagonalSplit is DiagonalSplit.XpZn)
-				qaNearStart = qaNearEnd;
-			else if (nearSector.Floor.DiagonalSplit is DiagonalSplit.XpZp)
-				qaNearEnd = qaNearStart;
-
-			int wsNearStart = nearSector.Ceiling.XnZn;
-			int wsNearEnd = nearSector.Ceiling.XnZp;
-
-			if (nearSector.Ceiling.DiagonalSplit is DiagonalSplit.XpZn)
-				wsNearStart = wsNearEnd;
-			else if (nearSector.Ceiling.DiagonalSplit is DiagonalSplit.XpZp)
-				wsNearEnd = wsNearStart;
 
 			// Now get the facing sector on the adjoining room and calculate the correct heights
 			int facingZ = z + (room.Position.Z - adjoiningRoom.Position.Z);
@@ -627,6 +603,14 @@ public static class RoomExtensionMethods
 			: wall;
 	}
 
+	/// <summary>
+	/// Computes the wall data for the -X (west-facing) edge of sector (<paramref name="x"/>, <paramref name="z"/>).
+	/// The wall runs from corner (x, z+1) to (x, z), facing toward the -X neighbor.
+	/// </summary>
+	/// <param name="room">The room containing the sector.</param>
+	/// <param name="x">Sector X coordinate.</param>
+	/// <param name="z">Sector Z coordinate.</param>
+	/// <param name="normalize">Whether to normalize splits to prevent overdraw.</param>
 	public static SectorWallData GetNegativeXWallData(this Room room, int x, int z, bool normalize)
 	{
 		Sector sector = room.Sectors[x, z];
@@ -675,25 +659,6 @@ public static class RoomExtensionMethods
 			{
 				adjoiningRoom = adjoiningRoom.AlternateRoom;
 			}
-
-			// Get the near sector in current room
-			Sector nearSector = room.Sectors[room.NumXSectors - 2, z];
-
-			int qaNearStart = nearSector.Floor.XpZp;
-			int qaNearEnd = nearSector.Floor.XpZn;
-
-			if (nearSector.Floor.DiagonalSplit is DiagonalSplit.XnZp)
-				qaNearStart = qaNearEnd;
-			else if (nearSector.Floor.DiagonalSplit is DiagonalSplit.XnZn)
-				qaNearEnd = qaNearStart;
-
-			int wsNearStart = nearSector.Ceiling.XpZp;
-			int wsNearEnd = nearSector.Ceiling.XpZn;
-
-			if (nearSector.Ceiling.DiagonalSplit is DiagonalSplit.XnZp)
-				wsNearStart = wsNearEnd;
-			else if (nearSector.Ceiling.DiagonalSplit is DiagonalSplit.XnZn)
-				wsNearEnd = wsNearStart;
 
 			// Now get the facing sector on the adjoining room and calculate the correct heights
 			int facingZ = z + (room.Position.Z - adjoiningRoom.Position.Z);
@@ -834,6 +799,17 @@ public static class RoomExtensionMethods
 			: wall;
 	}
 
+	/// <summary>
+	/// Computes the wall data for a diagonal edge of sector (<paramref name="x"/>, <paramref name="z"/>).
+	/// The diagonal direction is determined by the sector's floor or ceiling <see cref="DiagonalSplit"/>.
+	/// Overdraw is always disabled for diagonal walls since the logic differs from cardinal walls.
+	/// </summary>
+	/// <param name="room">The room containing the sector.</param>
+	/// <param name="x">Sector X coordinate.</param>
+	/// <param name="z">Sector Z coordinate.</param>
+	/// <param name="isDiagonalCeiling">If <see langword="true"/>, uses the ceiling's diagonal split;
+	/// otherwise uses the floor's diagonal split.</param>
+	/// <param name="normalize">Whether to normalize splits to prevent overdraw.</param>
 	public static SectorWallData GetDiagonalWallData(this Room room, int x, int z, bool isDiagonalCeiling, bool normalize)
 	{
 		Sector sector = room.Sectors[x, z];
@@ -1068,6 +1044,16 @@ public static class RoomExtensionMethods
 			: wall;
 	}
 
+	/// <summary>
+	/// Determines whether the wall at the given sector and direction is allowed to "overdraw" —
+	/// i.e., extend face geometry beyond the strict floor/ceiling bounds.
+	/// <para>
+	/// Overdraw is allowed when:<br/>
+	/// • The sector is not a wall (non-portal case), OR<br/>
+	/// • The sector has a wall portal with <see cref="PortalOpacity.None"/>, and the adjoining
+	///   sector is not a solid wall (or is a diagonal wall whose split faces toward this direction).
+	/// </para>
+	/// </summary>
 	private static bool CanOverdraw(Sector sector, Direction direction, Sector adjoiningSector)
 	{
 		if (sector.WallPortal is not null)

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace DarkUI.Docking
 {
-    public class DockGroupState : IEquatable<DockGroupState>
+    public class DockGroupState : ICloneable, IEquatable<DockGroupState>
     {
         #region Property Region
 
@@ -27,6 +27,20 @@ namespace DarkUI.Docking
             Order = 0;
             Size = new Size(100, 100);
         }
+
+        #endregion
+
+        #region Clone Region
+
+        public DockGroupState Clone() => new DockGroupState
+        {
+            Contents = new List<string>(Contents),
+            VisibleContent = VisibleContent,
+            Order = Order,
+            Size = Size
+        };
+
+        object ICloneable.Clone() => Clone();
 
         #endregion
 

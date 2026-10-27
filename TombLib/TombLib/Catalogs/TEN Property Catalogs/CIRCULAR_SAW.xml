@@ -1,0 +1,12 @@
+<propertyCatalog>    
+	<moveable id="CIRCULAR_SAW">
+        <property
+          internalName="SparkEffect"
+          displayName="Spark Effect"
+          type="Bool"
+          defaultValue="false"
+          category="Trap parameters"
+          description="Adds a spark effect to the saw"
+        />
+    </moveable>
+</propertyCatalog>

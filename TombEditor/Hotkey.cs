@@ -251,6 +251,7 @@ namespace TombEditor
             this["SwitchGeometryMode"] = new SortedSet<Hotkey> { Keys.F2 };
             this["SwitchFaceEditMode"] = new SortedSet<Hotkey> { Keys.F3 };
             this["SwitchLightingMode"] = new SortedSet<Hotkey> { Keys.F4 };
+            this["SwitchObjectPlacementMode"] = new SortedSet<Hotkey> { Keys.F7 };
             this["ResetCamera"] = new SortedSet<Hotkey> { Keys.F6 };
             this["AddTrigger"] = new SortedSet<Hotkey> { Keys.T };
             this["AddTriggerWithBookmark"] = new SortedSet<Hotkey> { Keys.T | Keys.Shift };
@@ -349,6 +350,7 @@ namespace TombEditor
             this["NewRoomDown"] = new SortedSet<Hotkey> { Keys.D | Keys.Control | Keys.Shift };
             this["AddCamera"] = new SortedSet<Hotkey> { Keys.C | Keys.Alt };
             this["AddFlybyCamera"] = new SortedSet<Hotkey> { Keys.M | Keys.Alt };
+            this["PreviewCamera"] = new SortedSet<Hotkey> { Keys.F8 };
             this["AddSink"] = new SortedSet<Hotkey> { Keys.K | Keys.Alt };
             this["AddSoundSource"] = new SortedSet<Hotkey> { Keys.X | Keys.Alt };
             this["AddImportedGeometry"] = new SortedSet<Hotkey> { Keys.I | Keys.Alt };

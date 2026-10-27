@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Threading;
 using System.Threading.Tasks;
 using TombLib;
 using TombLib.LevelData;
@@ -17,6 +17,34 @@ namespace TombEditor
 
         public Room Room { get; internal set; }
         protected EditorUndoRedoInstance(EditorUndoManager parent, Room room) { Parent = parent; Room = room; }
+    }
+
+    public class EditorUndoRedoBatch : EditorUndoRedoInstance
+    {
+        private readonly List<EditorUndoRedoInstance> _instances;
+
+        public EditorUndoRedoBatch(EditorUndoManager parent, IEnumerable<EditorUndoRedoInstance> instances) : base(parent, null)
+        {
+            _instances = [.. instances];
+
+            Valid = () => _instances.All(instance => instance.Valid == null || instance.Valid());
+            UndoAction = () => Execute(() => _instances.ForEach(instance => instance.UndoAction?.Invoke()));
+            RedoInstance = () => new EditorUndoRedoBatch(Parent, _instances.Select(instance => (EditorUndoRedoInstance)instance.RedoInstance()));
+        }
+
+        private void Execute(Action action)
+        {
+            Parent.BeginLightingBatch();
+
+            try
+            {
+                action();
+            }
+            finally
+            {
+                Parent.EndLightingBatch();
+            }
+        }
     }
 
     public class AddSectorBasedObjectUndoInstance : EditorUndoRedoInstance
@@ -86,7 +114,7 @@ namespace TombEditor
         private PositionBasedObjectInstance UndoObject;
         private bool Created;
 
-        public AddRemoveObjectUndoInstance(EditorUndoManager parent, PositionBasedObjectInstance obj, bool created) : base(parent, obj.Room)
+        public AddRemoveObjectUndoInstance(EditorUndoManager parent, PositionBasedObjectInstance obj, bool created, Room room = null) : base(parent, room ?? obj.Room)
         {
             Created = created;
             UndoObject = obj;
@@ -122,8 +150,10 @@ namespace TombEditor
                 else
                 {
                     var backupPos = obj.Position; // Preserve original position and reassign it after placement
-                    EditorActions.PlaceObjectWithoutUpdate(Room, obj.SectorPosition, UndoObject);
-                    EditorActions.MoveObject(UndoObject, backupPos);
+                    EditorActions.PlaceObjectWithoutUpdate(Room, obj.SectorPosition, UndoObject, updateLighting: false);
+                    UndoObject.Position = backupPos;
+                    EditorActions.RebuildLightsForObject(UndoObject);
+                    Parent.Editor.ObjectChange(UndoObject, ObjectChangeType.Change);
                 }
             };
 
@@ -165,10 +195,11 @@ namespace TombEditor
             UndoAction = () =>
             {
                 bool roomChanged = false;
+                Room oldRoom = null;
 
                 if (UndoObject.Room != Room)
                 {
-                    var oldRoom = UndoObject.Room;
+                    oldRoom = UndoObject.Room;
                     oldRoom.RemoveObject(Parent.Editor.Level, UndoObject);
                     Parent.Editor.ObjectChange(UndoObject, ObjectChangeType.Remove, oldRoom);
 
@@ -187,7 +218,12 @@ namespace TombEditor
 
                 // Rebuild lighting!
                 if (UndoObject is LightInstance)
-                    Room.BuildGeometry();
+                {
+                    if (roomChanged)
+                        Parent.UpdateRoomsLighting([oldRoom, Room]);
+                    else
+                        Parent.UpdateRoomLighting(Room);
+                }
 
                 // Move origin of object group, if it contains object
                 if (Parent.Editor.SelectedObject is ObjectGroup)
@@ -237,6 +273,11 @@ namespace TombEditor
                 var uo = (SpriteInstance)UndoObject;
                 Properties = new List<object> { uo.Sequence, uo.Frame };
             }
+            else if (UndoObject is FlybyCameraInstance)
+            {
+                var uo = (FlybyCameraInstance)UndoObject;
+                Properties = new List<object> { uo.Sequence, uo.Number, uo.Timer, uo.Flags, uo.Speed, uo.Fov, uo.Roll, uo.RotationX, uo.RotationY };
+            }
             else if (UndoObject is LightInstance)
                 Properties = new List<object> { ((LightInstance)UndoObject).Color };
             else if (UndoObject is SinkInstance)
@@ -278,10 +319,23 @@ namespace TombEditor
                     uo.Sequence = (int)Properties[0];
                     uo.Frame    = (int)Properties[1];
                 }
+                else if (UndoObject is FlybyCameraInstance)
+                {
+                    var uo = ((FlybyCameraInstance)UndoObject);
+                    uo.Sequence = (ushort)Properties[0];
+                    uo.Number = (ushort)Properties[1];
+                    uo.Timer = (short)Properties[2];
+                    uo.Flags = (ushort)Properties[3];
+                    uo.Speed = (float)Properties[4];
+                    uo.Fov = (float)Properties[5];
+                    uo.Roll = (float)Properties[6];
+                    uo.RotationX = (float)Properties[7];
+                    uo.RotationY = (float)Properties[8];
+                }
                 else if (UndoObject is LightInstance)
                 {
                     ((LightInstance)UndoObject).Color = (Vector3)Properties[0];
-                    UndoObject.Room.RebuildLighting(parent.Editor.Configuration.Rendering3D_HighQualityLightPreview);
+                    parent.UpdateRoomLighting(UndoObject.Room);
                 }
                 else if (UndoObject is SinkInstance)
                     ((SinkInstance)UndoObject).Strength = (short)Properties[0];
@@ -368,7 +422,7 @@ namespace TombEditor
                 bool rebuildLighting = Room.Properties.AmbientLight != Properties.AmbientLight;
                 Room.Properties = Properties;
                 if (rebuildLighting)
-                    Room.RebuildLighting(parent.Editor.Configuration.Rendering3D_HighQualityLightPreview);
+                    parent.Editor.UpdateRoomLighting(Room);
                 Parent.Editor.RoomPropertiesChange(Room);
             };
             RedoInstance = () => new RoomPropertyUndoInstance(Parent, Room);
@@ -401,12 +455,12 @@ namespace TombEditor
                     for (int z = Area.Y0, j = 0; z < Area.Y1; z++, j++)
                         Room.Sectors[x, z].ReplaceGeometry(Parent.Editor.Level, Sectors[i, j]);
 
-                Room.BuildGeometry();
+                Room.Rebuild(parent.Editor.ShouldRelight, parent.Editor.Configuration.Rendering3D_HighQualityLightPreview);
                 Parent.Editor.RoomGeometryChange(Room);
                 Parent.Editor.RoomSectorPropertiesChange(Room);
                 var relevantRooms = room.Portals.Select(p => p.AdjoiningRoom).Distinct();
-                Parallel.ForEach(relevantRooms, r => r.BuildGeometry());
-                
+                Parallel.ForEach(relevantRooms, r => r.Rebuild(parent.Editor.ShouldRelight, parent.Editor.Configuration.Rendering3D_HighQualityLightPreview));
+
 
                 foreach (Room relevantRoom in relevantRooms)
                     Parent.Editor.RoomGeometryChange(relevantRoom);
@@ -420,6 +474,7 @@ namespace TombEditor
     public class EditorUndoManager : UndoManager
     {
         public Editor Editor;
+        private HashSet<Room> _lightingBatchRooms;
 
         public EditorUndoManager(Editor editor, int undoDepth) : base(undoDepth)
         {
@@ -427,6 +482,46 @@ namespace TombEditor
 
             UndoStackChanged += (s, e) => Editor.UndoStackChanged();
             MessageSent += (s, e) => Editor.SendMessage(e.Message, TombLib.Forms.PopupType.Warning);
+        }
+
+        internal void BeginLightingBatch()
+        {
+            _lightingBatchRooms = [];
+        }
+
+        internal void EndLightingBatch()
+        {
+            var rooms = _lightingBatchRooms;
+            _lightingBatchRooms = null;
+
+            Editor.UpdateRoomsLighting(rooms);
+        }
+
+        internal void UpdateRoomLighting(Room room)
+        {
+            if (_lightingBatchRooms is not null)
+            {
+                _lightingBatchRooms.Add(room);
+                return;
+            }
+
+            Editor.UpdateRoomLighting(room);
+        }
+
+        internal void UpdateRoomsLighting(IEnumerable<Room> rooms)
+        {
+            if (_lightingBatchRooms is not null)
+            {
+                foreach (var room in rooms)
+                {
+                    if (room is not null)
+                        _lightingBatchRooms.Add(room);
+                }
+
+                return;
+            }
+
+            Editor.UpdateRoomsLighting(rooms);
         }
 
         public void PushRoomCreated(Room room) => Push(new AddRoomUndoInstance(this, room));
@@ -447,7 +542,7 @@ namespace TombEditor
         public void PushObjectPropertyChanged(PositionBasedObjectInstance obj)
         {
             if (obj is ObjectGroup)
-                Push(((ObjectGroup)obj).Select(o => new ChangeObjectPropertyUndoInstance(this, o)).Cast<UndoRedoInstance>().ToList());
+                Push(new EditorUndoRedoBatch(this, ((ObjectGroup)obj).Select(o => new ChangeObjectPropertyUndoInstance(this, o))));
             else
                 Push(new ChangeObjectPropertyUndoInstance(this, obj));
         }
@@ -455,7 +550,7 @@ namespace TombEditor
         public void PushObjectTransformed(PositionBasedObjectInstance obj)
         {
             if (obj is ObjectGroup)
-                Push(((ObjectGroup)obj).Select(o => new TransformObjectUndoInstance(this, o)).Cast<UndoRedoInstance>().ToList());
+                Push(new EditorUndoRedoBatch(this, ((ObjectGroup)obj).Select(o => new TransformObjectUndoInstance(this, o))));
             else
                 Push(new TransformObjectUndoInstance(this, obj));
         }

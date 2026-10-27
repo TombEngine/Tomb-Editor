@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<propertyCatalog>
+
+  <moveable id="WRAITH4">
+
+    <property
+      internalName="MeshID"
+      displayName="Mesh ID"
+      type="Int"
+      defaultValue="0"
+      minValue="0"
+      maxValue="31"
+      category="Visual"
+      description="Mesh ID of the wraith." />
+    
+    <property
+      internalName="PrimaryColor"
+      displayName="Primary Color"
+      type="Color"
+      defaultValue="TEN.Color(255, 156, 0)"
+      category="Visual"
+      description="Color used for all visual effects." />
+    
+    <property
+      internalName="AttackType"
+      displayName="Attack Type"
+      type="Enum"
+      entries="Damage, Electric, Fire, Poison, Smoke, Water"
+      defaultValue="Damage"
+      category="Damage"
+      description="Type of attack the wraith uses." />
+
+    <property
+      internalName="Damage"
+      displayName="Damage"
+      type="Int"
+      defaultValue="4"
+      minValue="0"
+      maxValue="1000"
+      category="Damage"
+      description="The amount of damage the wraith deals." />
+
+    <property
+      internalName="WaterDeath"
+      displayName="Water Death"
+      type="Bool"
+      defaultValue="true"
+      category="Death"
+      description="If true, the wraith dies on contact with water." />
+
+    <property
+
+      internalName="TrapDeath"
+      displayName="Trap Death"
+      type="Bool"
+      defaultValue="false"
+      category="Death"
+      description="If true, the wraith seeks the nearest WRAITH_TRAP and dies on contact with it." />
+
+    <property
+      internalName="FlipmapDeath"
+      displayName="Flipmap On Death"
+      type="Int"
+      defaultValue="-1"
+      minValue="-1"
+      maxValue="255"
+      category="Death"
+      description="Flipmap index to trigger when the wraith dies. -1 means none." />
+      
+  </moveable>
+
+</propertyCatalog>

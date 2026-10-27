@@ -118,7 +118,7 @@ namespace TombIDE
 				if (string.IsNullOrWhiteSpace(textBox_ProjectPath.Text))
 					throw new ArgumentException("You must select a folder where you want to install your project.");
 
-				if (comboBox_EngineType.SelectedIndex == 0)
+				if (SelectedGameVersion == 0)
 					throw new ArgumentException("You must specify the engine type of the project.");
 
 				string projectPath = textBox_ProjectPath.Text.Trim();
@@ -128,7 +128,7 @@ namespace TombIDE
 
 				tableLayoutPanel_Content02.Controls.Clear();
 
-				if (comboBox_EngineType.SelectedIndex is 1 or 2 or 7)
+				if (SelectedGameVersion is TRVersion.Game.TR1 or TRVersion.Game.TR2X or TRVersion.Game.TR3X or TRVersion.Game.TombEngine)
 				{
 					tableLayoutPanel_Content02.Controls.Add(panel_LevelsRadioChoice, 0, 0);
 					tableLayoutPanel_Content02.Controls.Add(progressBar, 0, 4);
@@ -158,7 +158,7 @@ namespace TombIDE
 			=> tablessTabControl.SelectTab(0);
 
 		private void comboBox_EngineType_SelectedIndexChanged(object sender, EventArgs e)
-			=> checkBox_IncludeFLEP.Visible = checkBox_IncludeFLEP.Enabled = comboBox_EngineType.SelectedIndex == 6;
+			=> checkBox_IncludeFLEP.Visible = checkBox_IncludeFLEP.Enabled = SelectedGameVersion == TRVersion.Game.TRNG;
 
 		private void button_Create_Click(object sender, EventArgs e)
 		{
@@ -183,26 +183,24 @@ namespace TombIDE
 				if (radio_Levels_02.Checked && string.IsNullOrWhiteSpace(textBox_LevelsPath.Text))
 					throw new ArgumentException("You must specify the custom /Levels/ folder path.");
 
-				if (comboBox_EngineType.SelectedIndex == 0)
+				if (SelectedGameVersion == 0)
 					throw new ArgumentException("You must specify the engine type of the project.");
 
 				string projectPath = textBox_ProjectPath.Text.Trim();
 				string enginePath = Path.Combine(projectPath, "Engine");
 				string scriptPath = radio_Script_01.Checked ? Path.Combine(projectPath, "Script") : textBox_ScriptPath.Text.Trim();
 
-				if (comboBox_EngineType.SelectedIndex is 1 or 2)
+				if (SelectedGameVersion is TRVersion.Game.TR1 or TRVersion.Game.TR2X or TRVersion.Game.TR3X)
 					scriptPath = Path.Combine(enginePath, "cfg");
-				else if (comboBox_EngineType.SelectedIndex == 7)
+				else if (SelectedGameVersion == TRVersion.Game.TombEngine)
 					scriptPath = Path.Combine(enginePath, "Scripts");
 
 				string levelsPath = radio_Levels_01.Checked ? Path.Combine(projectPath, "Levels") : textBox_LevelsPath.Text.Trim();
 
-				switch (comboBox_EngineType.SelectedIndex)
+				switch (SelectedGameVersion)
 				{
-					case 1 or 2:
-						TRVersion.Game engine = comboBox_EngineType.SelectedIndex is 1 ? TRVersion.Game.TR1 : TRVersion.Game.TR2X;
-
-						using (var form = new FormFindMusic(engine))
+					case TRVersion.Game.TR1 or TRVersion.Game.TR2X:
+						using (var form = new FormFindMusic(SelectedGameVersion))
 						{
 							if (form.ShowDialog(this) == DialogResult.OK)
 							{
@@ -218,7 +216,7 @@ namespace TombIDE
 
 						break;
 
-					case 3 or 4:
+					case TRVersion.Game.TR2 or TRVersion.Game.TR3 or TRVersion.Game.TR3X:
 						DialogResult result = DarkMessageBox.Show(this,
 							"In order to correctly install the game, you will have to select an /audio/ folder\n" +
 							"from an original copy of the game (Steam and GOG versions are also valid).\n" +
@@ -228,7 +226,7 @@ namespace TombIDE
 						if (result == DialogResult.Yes)
 						{
 							using var dialog = new BrowseFolderDialog();
-							string gameName = comboBox_EngineType.SelectedIndex == 3 ? "Tomb Raider 2" : "Tomb Raider 3";
+							string gameName = SelectedGameVersion == TRVersion.Game.TR2 ? "Tomb Raider 2" : "Tomb Raider 3";
 
 							dialog.Title = $"Select an original {gameName} /audio/ folder.";
 
@@ -239,9 +237,9 @@ namespace TombIDE
 
 								string audioDir = Path.Combine(enginePath, "audio");
 
-								switch (comboBox_EngineType.SelectedIndex)
+								switch (SelectedGameVersion)
 								{
-									case 3:
+									case TRVersion.Game.TR2:
 										_cdaudioDatFile = Array.Find(files, x => x.Name.Equals("cdaudio.dat", StringComparison.OrdinalIgnoreCase));
 
 										if (_cdaudioDatFile == null)
@@ -254,7 +252,7 @@ namespace TombIDE
 
 										break;
 
-									case 4:
+									case TRVersion.Game.TR3 or TRVersion.Game.TR3X:
 										_cdaudioWadFile = Array.Find(files, x => x.Name.Equals("cdaudio.wad", StringComparison.OrdinalIgnoreCase));
 
 										if (_cdaudioWadFile == null)
@@ -307,6 +305,7 @@ namespace TombIDE
 					case TRVersion.Game.TR2X: InstallTR2XEngine(createdProject); break;
 					case TRVersion.Game.TR2: InstallTR2Engine(createdProject); break;
 					case TRVersion.Game.TR3: InstallTR3Engine(createdProject); break;
+					case TRVersion.Game.TR3X: InstallTR3XEngine(createdProject); break;
 					case TRVersion.Game.TR4: InstallTR4Engine(createdProject); break;
 					case TRVersion.Game.TRNG: InstallTRNGEngine(createdProject, checkBox_IncludeFLEP.Checked); break;
 					case TRVersion.Game.TombEngine: InstallTENEngine(createdProject); break;
@@ -338,28 +337,27 @@ namespace TombIDE
 
 		#region Methods
 
+		private TRVersion.Game SelectedGameVersion => comboBox_EngineType.SelectedIndex switch
+		{
+			1 => TRVersion.Game.TR1,
+			2 => TRVersion.Game.TR2X,
+			3 => TRVersion.Game.TR2,
+			4 => TRVersion.Game.TR3X,
+			5 => TRVersion.Game.TR3,
+			6 => TRVersion.Game.TR4,
+			7 => TRVersion.Game.TRNG,
+			8 => TRVersion.Game.TombEngine,
+			_ => 0,
+		};
+
 		private IGameProject CreateNewProject(string projectName, string projectPath, string scriptPath, string levelsPath)
 		{
-			TRVersion.Game gameVersion = 0;
-
-			switch (comboBox_EngineType.SelectedIndex)
-			{
-				case 1: gameVersion = TRVersion.Game.TR1; break;
-				case 2: gameVersion = TRVersion.Game.TR2X; break;
-				case 3: gameVersion = TRVersion.Game.TR2; break;
-				case 4: gameVersion = TRVersion.Game.TR3; break;
-				case 5: gameVersion = TRVersion.Game.TR4; break;
-				case 6: gameVersion = TRVersion.Game.TRNG; break;
-				case 7: gameVersion = TRVersion.Game.TombEngine; break;
-			}
-
-			string launcherFilePath = Path.Combine(projectPath, "PLAY.exe");
-
-			return gameVersion switch
+			return SelectedGameVersion switch
 			{
 				TRVersion.Game.TR1 => new TR1XGameProject(projectName, projectPath, levelsPath),
 				TRVersion.Game.TR2X => new TR2XGameProject(projectName, projectPath, levelsPath),
 				TRVersion.Game.TR2 => new TR2GameProject(projectName, projectPath, levelsPath, scriptPath),
+				TRVersion.Game.TR3X => new TR3XGameProject(projectName, projectPath, levelsPath),
 				TRVersion.Game.TR3 => new TR3GameProject(projectName, projectPath, levelsPath, scriptPath),
 				TRVersion.Game.TR4 => new TR4GameProject(projectName, projectPath, levelsPath, scriptPath),
 				TRVersion.Game.TRNG => new TRNGGameProject(projectName, projectPath, levelsPath, scriptPath, Path.Combine(projectPath, "Plugins")),
@@ -483,6 +481,35 @@ namespace TombIDE
 				string audioDir = Path.Combine(targetProject.GetEngineRootDirectoryPath(), "audio");
 				_cdaudioWadFile.CopyTo(Path.Combine(audioDir, _cdaudioWadFile.Name));
 			}
+
+			targetProject.Save();
+			progressBar.Increment(1);
+		}
+
+		private void InstallTR3XEngine(IGameProject targetProject)
+		{
+			progressBar.Maximum = 1;
+
+			var enginePresetPath = Path.Combine(DefaultPaths.PresetsDirectory, "TR3X.zip");
+			var soundsArchivePath = Path.Combine(DefaultPaths.TemplatesDirectory, "Sounds", "TR3.zip");
+
+			using (var engineArchive = new ZipArchive(File.OpenRead(enginePresetPath)))
+			using (var soundsArchive = new ZipArchive(File.OpenRead(soundsArchivePath)))
+			{
+				var allFiles = new List<ZipArchiveEntry>();
+				allFiles.AddRange(engineArchive.Entries);
+				allFiles.AddRange(soundsArchive.Entries);
+
+				ExtractEntries(allFiles, targetProject);
+			}
+
+			var engineRootDirectory = targetProject.GetEngineRootDirectoryPath();
+			var audioDir = Path.Combine(engineRootDirectory, "audio");
+
+			if (!Directory.Exists(audioDir))
+				Directory.CreateDirectory(audioDir);
+
+			_cdaudioWadFile?.CopyTo(Path.Combine(audioDir, _cdaudioWadFile.Name));
 
 			targetProject.Save();
 			progressBar.Increment(1);

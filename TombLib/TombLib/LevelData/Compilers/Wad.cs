@@ -461,7 +461,7 @@ namespace TombLib.LevelData.Compilers
                             newAnimDispatch.Low = unchecked((ushort)(dispatch.InFrame + newAnimation.FrameStart));
                             newAnimDispatch.High = unchecked((ushort)(dispatch.OutFrame + newAnimation.FrameStart));
                             newAnimDispatch.NextAnimation = checked((ushort)(dispatch.NextAnimation + lastAnimation));
-                            newAnimDispatch.NextFrame = dispatch.NextFrameLow;
+                            newAnimDispatch.NextFrame = dispatch.NextLowFrame;
 
                             _animDispatches.Add(newAnimDispatch);
                             lastAnimDispatch++;
@@ -821,7 +821,7 @@ namespace TombLib.LevelData.Compilers
             if (_level.IsNG)
                 _soundMapSize = _limits[Limit.NG_SoundMapSize];
             else if (_level.IsTRX)
-                _soundMapSize = Math.Max(_finalSoundInfosList.Count, _limits[Limit.SoundMapSize]);
+                _soundMapSize = Math.Max(_finalSoundInfosList.Select(s => s.Id).DefaultIfEmpty(-1).Max() + 1, _limits[Limit.SoundMapSize]);
             else
                 _soundMapSize = _limits[Limit.SoundMapSize];
 

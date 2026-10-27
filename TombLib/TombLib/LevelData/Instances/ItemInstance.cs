@@ -158,6 +158,15 @@ namespace TombLib.LevelData
             else
                 return MoveableId.ShortName(_gameVersion);
         }
+
+        public IWadObject ToIWadObject(LevelSettings settings)
+        {
+            var wadObj = IsStatic
+                ? (IWadObject)settings.WadTryGetStatic(StaticId)
+                : (IWadObject)settings.WadTryGetMoveable(MoveableId);
+
+            return wadObj;
+        }
     }
 
 }

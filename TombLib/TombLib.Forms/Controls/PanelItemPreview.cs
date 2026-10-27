@@ -158,52 +158,10 @@ namespace TombLib.Controls
 
         public void ResetCamera()
         {
-            if (CurrentObject == null)
-                Camera = new ArcBallCamera(new Vector3(0.0f, 256.0f, 0.0f), 0, 0, -(float)Math.PI / 2, (float)Math.PI / 2, 2048.0f, 100, 1000000, FieldOfView * (float)(Math.PI / 180));
-            else
-            {
-                var bs = new BoundingSphere(new Vector3(0.0f, 256.0f, 0.0f), 640.0f);
-                var center = Vector3.Zero;
-                var radius = 256.0f;
+            Func<ArcBallCamera> defaultCamera = () =>
+                new ArcBallCamera(new Vector3(0.0f, 256.0f, 0.0f), 0, 0, -(float)Math.PI / 2, (float)Math.PI / 2, 2048.0f, 100, 1000000, FieldOfView * (float)(Math.PI / 180));
 
-                if (CurrentObject is WadMoveable)
-                {
-                    AnimatedModel model = _wadRenderer.GetMoveable((WadMoveable)CurrentObject);
-
-                    if (model.Animations.Count > 0 && model.Animations[0].KeyFrames.Count > 0)
-                    {
-                        // Use first animation and first frame as preview
-                        model.UpdateAnimation(0, 0);
-                        var bb = model.Animations[0].KeyFrames[0].CalculateBoundingBox(model, model);
-                        bs = BoundingSphere.FromBoundingBox(bb);
-                    }
-                }
-
-                if (CurrentObject is WadStatic)
-                {
-                    var st = CurrentObject as WadStatic;
-                    if (st.Mesh != null)
-                        bs = (CurrentObject as WadStatic).Mesh.CalculateBoundingSphere();
-                }
-
-                if (CurrentObject is ImportedGeometry)
-                {
-                    var impgeo = (CurrentObject as ImportedGeometry);
-
-                    if (impgeo.DirectXModel != null && impgeo.DirectXModel.Meshes != null)
-                    {
-                        var bb = new BoundingBox();
-                        foreach (var mesh in impgeo.DirectXModel.Meshes)
-                            bb = bb.Union(mesh.BoundingBox);
-                        bs = BoundingSphere.FromBoundingBox(bb);
-                    }
-                }
-
-                center = bs.Center;
-                radius = bs.Radius * 1.15f; // Zoom out a bit
-
-                Camera = new ArcBallCamera(center, MathC.DegToRad(35), MathC.DegToRad(35), -(float)Math.PI / 2, (float)Math.PI / 2, radius * 3, 50, 1000000, FieldOfView * (float)(Math.PI / 180));
-            }
+            Camera = WadObjectRenderHelper.CreateCameraForObject(CurrentObject, _wadRenderer, FieldOfView) ?? defaultCamera();
         }
 
         public void GarbageCollect()
@@ -265,107 +223,8 @@ namespace TombLib.Controls
             ((Rendering.DirectX11.Dx11RenderingDevice)Device).ResetState();
 
             Matrix4x4 viewProjection = Camera.GetViewProjectionMatrix(Width, Height);
-            if (CurrentObject is WadMoveable)
-            {
-                // HACK: new moveables have one bone with null mesh
-                var moveable = (WadMoveable)CurrentObject;
-                if (moveable.Meshes.Count == 0 || (moveable.Meshes.Count == 1 && moveable.Meshes[0] == null))
-                    return;
 
-                AnimatedModel model = _wadRenderer.GetMoveable((WadMoveable)CurrentObject);
-
-                // We don't need to rebuilt it everytime necessarily, but it's cheap to so and
-                // simpler than trying to figure out when it may be necessary.
-                model.UpdateAnimation(0, 0);
-
-                var effect = DeviceManager.DefaultDeviceManager.___LegacyEffects["Model"];
-
-                effect.Parameters["AlphaTest"].SetValue(DrawTransparency);
-                effect.Parameters["Color"].SetValue(Vector4.One);
-                effect.Parameters["StaticLighting"].SetValue(false);
-                effect.Parameters["ColoredVertices"].SetValue(false);
-                effect.Parameters["Texture"].SetResource(_wadRenderer.Texture);
-                effect.Parameters["TextureSampler"].SetResource(_legacyDevice.SamplerStates.Default);
-
-                // Build animation transforms
-                var matrices = new List<Matrix4x4>();
-                if (model.Animations.Count != 0)
-                {
-                    for (var b = 0; b < model.Meshes.Count; b++)
-                        matrices.Add(model.AnimationTransforms[b]);
-                }
-                else
-                {
-                    foreach (var bone in model.Bones)
-                        matrices.Add(bone.GlobalTransform);
-                }
-
-                if (model.Skin != null)
-                    model.RenderSkin(_legacyDevice, effect, viewProjection.ToSharpDX());
-
-                for (int i = 0; i < model.Meshes.Count; i++)
-                {
-                    var mesh = model.Meshes[i];
-                    if (mesh.Vertices.Count == 0)
-                        continue;
-
-                    if (model.Skin != null && mesh.Hidden)
-                        continue;
-
-                    mesh.UpdateBuffers(Camera.GetPosition());
-
-                    _legacyDevice.SetVertexBuffer(0, mesh.VertexBuffer);
-                    _legacyDevice.SetIndexBuffer(mesh.IndexBuffer, true);
-                    _legacyDevice.SetVertexInputLayout(mesh.InputLayout);
-
-                    effect.Parameters["ModelViewProjection"].SetValue((matrices[i] * viewProjection).ToSharpDX());
-
-                    effect.Techniques[0].Passes[0].Apply();
-
-                    foreach (var submesh in mesh.Submeshes)
-                    {
-                        submesh.Value.Material.SetStates(_legacyDevice, DrawTransparency);
-                        _legacyDevice.Draw(PrimitiveType.TriangleList, submesh.Value.NumIndices, submesh.Value.BaseIndex);
-                    }
-                }
-            }
-            else if (CurrentObject is WadStatic)
-            {
-                StaticModel model = _wadRenderer.GetStatic((WadStatic)CurrentObject);
-
-                var effect = DeviceManager.DefaultDeviceManager.___LegacyEffects["Model"];
-
-                effect.Parameters["ModelViewProjection"].SetValue(viewProjection.ToSharpDX());
-                effect.Parameters["AlphaTest"].SetValue(DrawTransparency);
-                effect.Parameters["Color"].SetValue(Vector4.One);
-                effect.Parameters["StaticLighting"].SetValue(false); 
-                effect.Parameters["ColoredVertices"].SetValue(false);
-                effect.Parameters["Texture"].SetResource(_wadRenderer.Texture);
-                effect.Parameters["TextureSampler"].SetResource(_legacyDevice.SamplerStates.Default);
-
-                for (int i = 0; i < model.Meshes.Count; i++)
-                {
-                    var mesh = model.Meshes[i];
-                    if (mesh.Vertices.Count == 0)
-                        continue;
-
-                    mesh.UpdateBuffers(Camera.GetPosition());
-
-                    _legacyDevice.SetVertexBuffer(0, mesh.VertexBuffer);
-                    _legacyDevice.SetIndexBuffer(mesh.IndexBuffer, true);
-                    _legacyDevice.SetVertexInputLayout(mesh.InputLayout);
-
-                    effect.Parameters["ModelViewProjection"].SetValue(viewProjection.ToSharpDX());
-                    effect.Techniques[0].Passes[0].Apply();
-
-                    foreach (var submesh in mesh.Submeshes)
-                    {
-                        submesh.Value.Material.SetStates(_legacyDevice, DrawTransparency);
-                        _legacyDevice.DrawIndexed(PrimitiveType.TriangleList, submesh.Value.NumIndices, submesh.Value.BaseIndex);
-                    }
-                }
-            }
-            else if (CurrentObject is WadSpriteSequence)
+            if (CurrentObject is WadSpriteSequence)
             {
                 var seq = (WadSpriteSequence)CurrentObject;
                 if (seq.Sprites.Count <= _currentFrame)
@@ -384,50 +243,9 @@ namespace TombLib.Controls
                     PosEnd = 0.9f * factor
                 } });
             }
-            else if (CurrentObject is ImportedGeometry)
+            else
             {
-                var geo = (ImportedGeometry)CurrentObject;
-                var model = geo.DirectXModel;
-
-                var effect = DeviceManager.DefaultDeviceManager.___LegacyEffects["RoomGeometry"];
-
-                effect.Parameters["UseVertexColors"].SetValue(true);
-                effect.Parameters["AlphaTest"].SetValue(DrawTransparency);
-                effect.Parameters["Color"].SetValue(Vector4.One);
-                effect.Parameters["TextureSampler"].SetResource(_legacyDevice.SamplerStates.AnisotropicWrap);
-
-                if (model != null && model.Meshes.Count > 0)
-                    for (int i = 0; i < model.Meshes.Count; i++)
-                    {
-                        var mesh = model.Meshes[i];
-                        if (mesh.Vertices.Count == 0)
-                            continue;
-
-                        mesh.UpdateBuffers(Camera.GetPosition());
-
-                        _legacyDevice.SetVertexBuffer(0, mesh.VertexBuffer);
-                        _legacyDevice.SetIndexBuffer(mesh.IndexBuffer, true);
-                        _legacyDevice.SetVertexInputLayout(mesh.InputLayout);
-
-                        effect.Parameters["ModelViewProjection"].SetValue(viewProjection.ToSharpDX());
-
-                        foreach (var submesh in mesh.Submeshes)
-                        {
-                            var texture = submesh.Value.Material.Texture;
-                            if (texture != null && texture is ImportedGeometryTexture)
-                            {
-                                effect.Parameters["TextureEnabled"].SetValue(true);
-                                effect.Parameters["Texture"].SetResource(((ImportedGeometryTexture)texture).DirectXTexture);
-                                effect.Parameters["ReciprocalTextureSize"].SetValue(new Vector2(1.0f / texture.Image.Width, 1.0f / texture.Image.Height));
-                            }
-                            else
-                                effect.Parameters["TextureEnabled"].SetValue(false);
-
-                            effect.Techniques[0].Passes[0].Apply();
-                            submesh.Value.Material.SetStates(_legacyDevice, DrawTransparency);
-                            _legacyDevice.DrawIndexed(PrimitiveType.TriangleList, submesh.Value.NumIndices, submesh.Value.BaseIndex);
-                        }
-                    }
+                WadObjectRenderHelper.RenderObject(CurrentObject, _wadRenderer, _legacyDevice, viewProjection, Camera.GetPosition(), DrawTransparency);
             }
         }
 

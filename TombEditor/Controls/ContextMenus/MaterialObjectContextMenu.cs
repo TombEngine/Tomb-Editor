@@ -24,7 +24,7 @@ namespace TombEditor.Controls.ContextMenus
                     Items.Add(new ToolStripSeparator());
                 }
 
-                if (_editor.Level.IsTombEngine)
+                if (targetObject is IHasLuaName luaTarget && luaTarget.SupportsLuaName())
                 {
                     Items.Add(new ToolStripMenuItem("Rename object", Properties.Resources.general_edit_16, (o, e) =>
                     {
@@ -38,6 +38,22 @@ namespace TombEditor.Controls.ContextMenus
                 Items.Add(new ToolStripMenuItem("Edit object", Properties.Resources.general_edit_16, (o, e) =>
                 {
                     EditorActions.EditObject(targetObject, owner);
+                }));
+            }
+
+            if (targetObject is FlybyCameraInstance flybyTarget)
+            {
+                Items.Add(new ToolStripMenuItem("Preview flyby sequence", Properties.Resources.objects_movie_projector_16, (o, e) =>
+                {
+                    editor.ToggleCameraPreview(true, flybyTarget);
+                }));
+            }
+
+            if (targetObject is CameraInstance cameraTarget)
+            {
+                Items.Add(new ToolStripMenuItem("Preview camera", Properties.Resources.objects_movie_projector_16, (o, e) =>
+                {
+                    editor.ToggleCameraPreview(true, cameraTarget);
                 }));
             }
 
@@ -137,7 +153,7 @@ namespace TombEditor.Controls.ContextMenus
                 }));
             }
 
-            if (targetObject is PositionAndScriptBasedObjectInstance && _editor.Level.Settings.GameVersion == TRVersion.Game.TombEngine)
+            if (targetObject is IHasLuaName luaObject && luaObject.SupportsLuaName())
             {
                 Items.Add(new ToolStripMenuItem("Copy Lua name to clipboard", null, (o, e) =>
                 {

@@ -32,4 +32,7 @@
 	<sprite_sequence id="1386" name="SNOW_SPRITES" />
 	<sprite_sequence id="1387" name="RAIN_SPRITES" />
 	<sprite_sequence id="1388" name="INTERACTION_SPRITES" />
+	<sprite_sequence id="1389" name="INVENTORY_SPRITES" />
+	<sprite_sequence id="1390" name="PHOTOMODE_SPRITES" />
+	<sprite_sequence id="1391" name="PHOTOMODE_FRAMES" />
 </sprite_sequences>

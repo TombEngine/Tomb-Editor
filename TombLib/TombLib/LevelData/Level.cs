@@ -377,7 +377,7 @@ namespace TombLib.LevelData
                             sector.SetFaceTexture(face, TextureArea.None);
                         }
                     }
-                room.BuildGeometry();
+                room.Rebuild(relight: true, highQualityLighting: true);
             });
 
             foreach (AnimatedTextureSet set in Settings.AnimatedTextureSets)
@@ -391,6 +391,44 @@ namespace TombLib.LevelData
         {
             LevelSettings oldSettings = Settings;
             Settings = newSettings;
+
+            // Wads
+            {
+                // Reuse old wad objects to keep references up to date
+                var oldLookup = new Dictionary<ReferencedWad.UniqueIDType, ReferencedWad>();
+                foreach (ReferencedWad oldWad in oldSettings.Wads)
+                    oldLookup.Add(oldWad.UniqueID, oldWad);
+                for (int i = 0; i < newSettings.Wads.Count; ++i)
+                {
+                    ReferencedWad newWad = newSettings.Wads[i];
+                    ReferencedWad oldWad;
+                    if (oldLookup.TryGetValue(newWad.UniqueID, out oldWad))
+                    {
+                        oldWad.Assign(newWad);
+                        newSettings.Wads[i] = oldWad;
+                        oldLookup.Remove(oldWad.UniqueID); // The same object shouldn't be matched multiple times.
+                    }
+                }
+            }
+
+            // Sound catalogs
+            {
+                // Reuse old sound catalog objects to keep references up to date
+                var oldLookup = new Dictionary<ReferencedSoundCatalog.UniqueIDType, ReferencedSoundCatalog>();
+                foreach (ReferencedSoundCatalog oldCatalog in oldSettings.SoundCatalogs)
+                    oldLookup.Add(oldCatalog.UniqueID, oldCatalog);
+                for (int i = 0; i < newSettings.SoundCatalogs.Count; ++i)
+                {
+                    ReferencedSoundCatalog newCatalog = newSettings.SoundCatalogs[i];
+                    ReferencedSoundCatalog oldCatalog;
+                    if (oldLookup.TryGetValue(newCatalog.UniqueID, out oldCatalog))
+                    {
+                        oldCatalog.Assign(newCatalog);
+                        newSettings.SoundCatalogs[i] = oldCatalog;
+                        oldLookup.Remove(oldCatalog.UniqueID); // The same object shouldn't be matched multiple times.
+                    }
+                }
+            }
 
             // Imported geometry
             {
@@ -450,6 +488,12 @@ namespace TombLib.LevelData
         {
             var result = new List<PositionBasedObjectInstance>();
             ExistingRooms.ForEach(r => result.AddRange(r.Objects));
+            return result;
+        }
+
+        public HashSet<string> GetAllLuaNames()
+        {
+            var result = new HashSet<string>(GetAllObjects().OfType<IHasLuaName>().Select(o => o.LuaName).Where(n => !string.IsNullOrEmpty(n)));
             return result;
         }
 

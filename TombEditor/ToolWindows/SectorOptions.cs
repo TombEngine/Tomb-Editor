@@ -74,15 +74,15 @@ namespace TombEditor.ToolWindows
                 obj is Editor.LevelChangedEvent)
             {
                 bool climbingSupported = _editor.Level.Settings.GameVersion.SupportsClimbing();
-                bool isTR345 = _editor.Level.Settings.GameVersion.Native() >= TRVersion.Game.TR3;
+                bool beetleTrigMineSupported = _editor.Level.Settings.GameVersion >= TRVersion.Game.TR3;
 
                 butClimbNegativeX.Enabled = climbingSupported;
                 butClimbNegativeZ.Enabled = climbingSupported;
                 butClimbPositiveX.Enabled = climbingSupported;
                 butClimbPositiveZ.Enabled = climbingSupported;
                 butMonkey.Enabled = _editor.Level.Settings.GameVersion.SupportsMonkeySwing();
-                butFlagBeetle.Enabled = isTR345;
-                butFlagTriggerTriggerer.Enabled = isTR345;
+                butFlagBeetle.Enabled = beetleTrigMineSupported;
+                butFlagTriggerTriggerer.Enabled = beetleTrigMineSupported;
 
                 if (_editor.Level.Settings.GameVersion.Native() >= TRVersion.Game.TR4)
                 {

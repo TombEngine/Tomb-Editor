@@ -282,84 +282,166 @@ namespace TombLib.Wad
                 return null;
         }
 
-        public static IOModel PrepareForExport(string filePath, IOGeometrySettings settings, WadMesh m)
+        private class TexturePackingResult
         {
-            var model = new IOModel();
-            var mesh = new IOMesh(m.Name);
-            model.Meshes.Add(mesh);
+            public List<WadMesh> Meshes { get; } = new List<WadMesh>();
+            public Dictionary<Hash, WadTexture.AtlasReference> TextureReferences { get; } = new Dictionary<Hash, WadTexture.AtlasReference>();
+            public List<WadTexture> Pages { get; set; } = new List<WadTexture>();
+            public bool MergeIntoPages { get; set; }
+        }
 
-            if (settings.PackTextures)
+        public static bool ConsolidateTextures(IReadOnlyList<WadMesh> meshes, int padding, int texturePageSize)
+        {
+            if (meshes == null)
+                return false;
+
+            var targetMeshes = meshes.Where(mesh => mesh != null).ToList();
+            if (targetMeshes.Count == 0 || targetMeshes.All(mesh => mesh.Polys.Count == 0))
+                return false;
+
+            var packingResult = PrepareTexturePacking(targetMeshes, true, padding, texturePageSize);
+            if (!packingResult.MergeIntoPages)
+                return false;
+
+            ApplyTexturePacking(targetMeshes, packingResult, texturePageSize);
+            return true;
+        }
+
+        private static TexturePackingResult PrepareTexturePacking(IReadOnlyList<WadMesh> meshes, bool cropTextures, int padding, int texturePageSize)
+        {
+            texturePageSize = Math.Clamp(texturePageSize, 1, 2048);
+
+            var result = new TexturePackingResult();
+
+            for (int i = 0; i < meshes.Count; i++)
+                result.Meshes.Add(meshes[i].Clone());
+
+            if (cropTextures)
+                CropTextures(result.Meshes);
+
+            var textures = CollectTextures(result.Meshes);
+            foreach (var texture in textures)
             {
-                m = m.Clone();
-                for (int i = 0; i < m.Polys.Count; i++)
+                result.TextureReferences.Add(texture.Hash, new WadTexture.AtlasReference
                 {
-                    var p = m.Polys[i];
+                    Texture = texture
+                });
+            }
 
-                    var rect = p.Texture.GetRect();
-                    var image = ImageC.CreateNew((int)Math.Clamp(rect.Width, 1, int.MaxValue), (int)Math.Clamp(rect.Height, 1, int.MaxValue));
-                    image.CopyFrom(0, 0, p.Texture.Texture.Image, (int)rect.TopLeft.X, (int)rect.TopLeft.Y, image.Width, image.Height);
+            result.MergeIntoPages = cropTextures && result.Meshes.SelectMany(mesh => mesh.Polys).All(poly =>
+                poly.Texture.Texture.Image.Size.X <= texturePageSize &&
+                poly.Texture.Texture.Image.Size.Y <= texturePageSize);
 
-                    var texture = p.Texture;
+            result.Pages = result.MergeIntoPages
+                ? Wad2.PackTexturesForExport(result.TextureReferences, padding, texturePageSize)
+                : textures;
+
+            result.Pages = result.Pages.Where(page => page.Image.Width > 0 && page.Image.Height > 0).ToList();
+            return result;
+        }
+
+        private static void CropTextures(IReadOnlyList<WadMesh> meshes)
+        {
+            for (int meshIndex = 0; meshIndex < meshes.Count; meshIndex++)
+            {
+                var mesh = meshes[meshIndex];
+
+                for (int polyIndex = 0; polyIndex < mesh.Polys.Count; polyIndex++)
+                {
+                    var poly = mesh.Polys[polyIndex];
+                    var rect = poly.Texture.GetRect().Round();
+                    var sourceImage = poly.Texture.Texture.Image;
+
+                    int startX = (int)Math.Clamp(rect.Start.X, 0.0f, sourceImage.Width - 1.0f);
+                    int startY = (int)Math.Clamp(rect.Start.Y, 0.0f, sourceImage.Height - 1.0f);
+                    int endX = (int)Math.Clamp(rect.End.X, startX + 1.0f, (float)sourceImage.Width);
+                    int endY = (int)Math.Clamp(rect.End.Y, startY + 1.0f, (float)sourceImage.Height);
+
+                    rect = new Rectangle2(startX, startY, endX, endY);
+
+                    var image = ImageC.CreateNew(Math.Max(1, endX - startX), Math.Max(1, endY - startY));
+                    image.CopyFrom(0, 0, sourceImage, startX, startY, image.Width, image.Height);
+
+                    var texture = poly.Texture;
                     texture.Texture = new WadTexture(image);
                     texture.TexCoord0 -= rect.Start;
                     texture.TexCoord1 -= rect.Start;
                     texture.TexCoord2 -= rect.Start;
                     texture.TexCoord3 -= rect.Start;
 
-                    p.Texture = texture;
-                    m.Polys[i] = p;
+                    poly.Texture = texture;
+                    mesh.Polys[polyIndex] = poly;
+                }
+            }
+        }
+
+        private static List<WadTexture> CollectTextures(IReadOnlyList<WadMesh> meshes)
+        {
+            var textures = new Dictionary<Hash, WadTexture>();
+
+            for (int meshIndex = 0; meshIndex < meshes.Count; meshIndex++)
+            {
+                var mesh = meshes[meshIndex];
+
+                for (int polyIndex = 0; polyIndex < mesh.Polys.Count; polyIndex++)
+                {
+                    var texture = (WadTexture)mesh.Polys[polyIndex].Texture.Texture;
+                    if (!textures.ContainsKey(texture.Hash))
+                        textures.Add(texture.Hash, texture);
                 }
             }
 
-            // Collect all textures
-            var tempTextures = new Dictionary<Hash, WadTexture>();
-            for (int i = 0; i < m.Polys.Count; i++)
-            {
-                var poly = m.Polys[i];
+            var textureList = textures.Values.ToList();
+            textureList.Sort((x, y) => y.Image.Width.CompareTo(x.Image.Width));
+            return textureList;
+        }
 
-                // Add uniquely the texture to the dictionary
-                if (!tempTextures.ContainsKey(((WadTexture)poly.Texture.Texture).Hash))
-                    tempTextures.Add(((WadTexture)poly.Texture.Texture).Hash, ((WadTexture)poly.Texture.Texture));
-            }
+        private static void ApplyTexturePacking(IReadOnlyList<WadMesh> meshes, TexturePackingResult packingResult, int texturePageSize)
+        {
+            texturePageSize = Math.Clamp(texturePageSize, 1, 2048);
 
-            var textureList = tempTextures.Values.ToList();
-            textureList.Sort(delegate (WadTexture x, WadTexture y)
+            for (int meshIndex = 0; meshIndex < meshes.Count; meshIndex++)
             {
-                if (x.Image.Width > y.Image.Width)
-                    return -1;
-                else if (x.Image.Width < y.Image.Width)
-                    return 1;
-                return 0;
-            });
+                var targetMesh = meshes[meshIndex];
+                var sourceMesh = packingResult.Meshes[meshIndex];
 
-            var texturePieces = new Dictionary<Hash, WadTexture.AtlasReference>();
-            foreach (var texture in textureList)
-            {
-                texturePieces.Add(texture.Hash, new WadTexture.AtlasReference
+                for (int polyIndex = 0; polyIndex < targetMesh.Polys.Count; polyIndex++)
                 {
-                    Texture = texture
-                });
+                    var sourcePoly = sourceMesh.Polys[polyIndex];
+                    var packedTexture = packingResult.TextureReferences[((WadTexture)sourcePoly.Texture.Texture).Hash];
+                    var targetPoly = targetMesh.Polys[polyIndex];
+                    var texture = sourcePoly.Texture;
+                    var offset = new Vector2(Math.Max(0.0f, packedTexture.Position.X), Math.Max(0.0f, packedTexture.Position.Y));
+
+                    texture.Texture = packingResult.Pages[packedTexture.Atlas];
+                    texture.TexCoord0 += offset;
+                    texture.TexCoord1 += offset;
+                    texture.TexCoord2 += offset;
+                    texture.TexCoord3 += offset;
+
+                    if (targetPoly.Texture.ParentArea.IsZero)
+                        texture.ClearParentArea();
+                    else
+                        texture.SetParentArea(texturePageSize);
+
+                    targetPoly.Texture = texture;
+                    targetMesh.Polys[polyIndex] = targetPoly;
+                }
             }
+        }
 
-            // Only merge textures into pages if all of them are no more than 256px in dimensions,
-            // otherwise algorithm may fail.
+        public static IOModel PrepareForExport(string filePath, IOGeometrySettings settings, WadMesh m)
+        {
+            var model = new IOModel();
+            var mesh = new IOMesh(m.Name);
+            model.Meshes.Add(mesh);
 
-            // FIXME Monty: modify algorithm in a way that it looks into every poly's texture area zone
-            // for comparison, not just bluntly hash whole image. This way algorithm will never get
-            // to a point when incoming texture fragment is bigger than 256.
+            var packingResult = PrepareTexturePacking(new[] { m }, settings.PackTextures, settings.PadPackedTextures ? 4 : 0, 256);
+            m = packingResult.Meshes[0];
 
-            bool mergeIntoPages = settings.PackTextures &&
-                                  m.Polys.All(p => p.Texture.Texture.Image.Size.X <= 256 &&
-                                                   p.Texture.Texture.Image.Size.Y <= 256);
-            List<WadTexture> pages;
-
-            if (mergeIntoPages)
-                pages = Wad2.PackTexturesForExport(texturePieces, settings.PadPackedTextures ? 4 : 0);
-            else
-                pages = tempTextures.Values.ToList();
-
-            // Clean up incorrect textures
-            pages = pages.Where(p => p.Image.Width > 0 && p.Image.Height > 0).ToList();
+            var texturePieces = packingResult.TextureReferences;
+            var mergeIntoPages = packingResult.MergeIntoPages;
+            var pages = packingResult.Pages;
 
             var name = string.IsNullOrEmpty(mesh.Name) ? "UntitledMesh" : mesh.Name;
 

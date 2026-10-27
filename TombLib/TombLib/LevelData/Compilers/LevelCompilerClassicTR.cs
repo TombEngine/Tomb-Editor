@@ -152,7 +152,7 @@ namespace TombLib.LevelData.Compilers
                 case TRVersion.Game.TR5:
                     WriteLevelTr5();
                     break;
-                case TRVersion.Game.TR1X or TRVersion.Game.TR2X:
+                case TRVersion.Game.TR1X or TRVersion.Game.TR2X or TRVersion.Game.TR3X:
                     WriteLevelTrx();
                     break;
                 default:
@@ -585,6 +585,9 @@ namespace TombLib.LevelData.Compilers
         public List<tr_cinematicFrame> GetCinematicFrames()
         {
             var result = new List<tr_cinematicFrame>();
+
+            if (_level.IsTRX && !_level.Settings.TrxConvertFlybysToCinematicFrames)
+                return result;
 
             var allObjects = _level.GetAllObjects().OfType<PositionBasedObjectInstance>().ToList();
             if (allObjects.Count == 0)

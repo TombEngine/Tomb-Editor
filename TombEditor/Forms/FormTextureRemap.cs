@@ -218,7 +218,7 @@ namespace TombEditor.Forms
                 }
 
             // Send out updates
-            Parallel.ForEach(relevantRooms, room => room.BuildGeometry());
+            Parallel.ForEach(relevantRooms, room => room.Rebuild(_editor.ShouldRelight, _editor.Configuration.Rendering3D_HighQualityLightPreview));
             foreach (Room room in relevantRooms)
                 _editor.RoomTextureChange(room);
 
@@ -232,22 +232,6 @@ namespace TombEditor.Forms
         }
 
         private void butCancel_Click(object sender, EventArgs e) => Close();
-
-        private void comboSourceTexture_DropDown(object sender, EventArgs e)
-        {
-            // Make the combo box as wide as possible
-            Point screenPointLeft = comboSourceTexture.PointToScreen(new Point(0, 0));
-            Rectangle screenPointRight = Screen.GetBounds(comboSourceTexture.PointToScreen(new Point(0, comboSourceTexture.Width)));
-            comboSourceTexture.DropDownWidth = screenPointRight.Right - screenPointLeft.X - 15; // Margin
-        }
-
-        private void comboDestinationTexture_DropDown(object sender, EventArgs e)
-        {
-            // Make the combo box as wide as possible
-            Point screenPointLeft = comboDestinationTexture.PointToScreen(new Point(0, 0));
-            Rectangle screenPointRight = Screen.GetBounds(comboDestinationTexture.PointToScreen(new Point(0, comboDestinationTexture.Width)));
-            comboDestinationTexture.DropDownWidth = screenPointRight.Right - screenPointLeft.X - 15; // Margin
-        }
 
         private void comboSourceTexture_SelectedValueChanged(object sender, EventArgs e)
         {

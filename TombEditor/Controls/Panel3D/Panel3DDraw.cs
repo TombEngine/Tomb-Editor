@@ -1,4 +1,4 @@
-﻿using SharpDX.Toolkit.Graphics;
+using SharpDX.Toolkit.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -184,9 +184,11 @@ namespace TombEditor.Controls.Panel3D
 
         private void DrawFlybyPath(Effect effect)
         {
+            if (!TryGetSelectedFlybySequence(out int sequence))
+                return;
+
             // Add the path of the flyby
-            if (_editor.SelectedObject is FlybyCameraInstance &&
-                AddFlybyPath(((FlybyCameraInstance)_editor.SelectedObject).Sequence))
+            if (AddFlybyPath(sequence))
             {
                 _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullNone);
                 _legacyDevice.SetVertexBuffer(_flybyPathVertexBuffer);
@@ -196,6 +198,49 @@ namespace TombEditor.Controls.Panel3D
                 effect.CurrentTechnique.Passes[0].Apply();
                 _legacyDevice.Draw(PrimitiveType.TriangleList, _flybyPathVertexBuffer.ElementCount);
             }
+        }
+
+        private bool TryGetSelectedFlybySequence(out int sequence)
+        {
+            if (_editor.SelectedObject is FlybyCameraInstance flyby)
+            {
+                sequence = flyby.Sequence;
+                return true;
+            }
+
+            if (_editor.SelectedObject is ObjectGroup group)
+            {
+                bool hasFlyby = false;
+                int selectedSequence = 0;
+
+                foreach (var item in group)
+                {
+                    if (item is not FlybyCameraInstance selectedFlyby)
+                        continue;
+
+                    if (!hasFlyby)
+                    {
+                        selectedSequence = selectedFlyby.Sequence;
+                        hasFlyby = true;
+                        continue;
+                    }
+
+                    if (selectedFlyby.Sequence != selectedSequence)
+                    {
+                        sequence = 0;
+                        return false;
+                    }
+                }
+
+                if (hasFlyby)
+                {
+                    sequence = selectedSequence;
+                    return true;
+                }
+            }
+
+            sequence = 0;
+            return false;
         }
 
         private void DrawSectorSplitHighlights(Effect effect)
@@ -667,8 +712,9 @@ namespace TombEditor.Controls.Panel3D
                 if (!instance.Valid)
                     continue;
 
-                // Create a vertex array
-                SolidVertex[] vtxs = new SolidVertex[84]; // 78 with diagonal steps
+                // Reuse cached vertex array
+                SolidVertex[] vtxs = _ghostBlockVertices;
+                Array.Clear(vtxs, 0, vtxs.Length);
 
                 // Derive base sector colours
                 var p1c = new Vector4(baseColor.To3() * (selected ? 0.8f : 0.4f), selected ? 0.7f : 0.5f);
@@ -1078,7 +1124,7 @@ namespace TombEditor.Controls.Panel3D
                         }
                     }
 
-                if (group.Key == typeof(CameraInstance))
+                if (group.Key == typeof(CameraInstance) && _editor.CameraPreviewMode == CameraPreviewType.None)
                     foreach (CameraInstance instance in group)
                     {
                         _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullBack);
@@ -1106,14 +1152,14 @@ namespace TombEditor.Controls.Panel3D
                         DrawOrQueueServiceObject(instance, _littleCube, color, effect, sprites);
                     }
 
-                if (group.Key == typeof(FlybyCameraInstance))
+                if (group.Key == typeof(FlybyCameraInstance) && _editor.CameraPreviewMode == CameraPreviewType.None)
                     foreach (FlybyCameraInstance instance in group)
                     {
                         _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullBack);
 
                         var color = new Vector4(0.0f, 0.0f, 1.0f, 1.0f);
 
-                        if (_editor.SelectedObject is FlybyCameraInstance && (_editor.SelectedObject as FlybyCameraInstance).Sequence == instance.Sequence)
+                        if (TryGetSelectedFlybySequence(out int selectedSequence) && selectedSequence == instance.Sequence)
                             color = MathC.GetRandomColorByIndex(instance.Sequence, 32, 0.7f);
 
                         if (_highlightedObjects.Contains(instance))
@@ -1300,91 +1346,96 @@ namespace TombEditor.Controls.Panel3D
                     }
             }
 
-            // Draw extra flyby cones
+            if (_editor.CameraPreviewMode != CameraPreviewType.None)
+                return;
 
-            _legacyDevice.SetVertexBuffer(_cone.VertexBuffer);
-            _legacyDevice.SetVertexInputLayout(_cone.InputLayout);
-            _legacyDevice.SetIndexBuffer(_cone.IndexBuffer, _cone.IsIndex32Bits);
+            // Draw extra flyby camera pyramids (hidden during flyby preview).
+            DrawFlybyCameraPyramids(effect, roomsWhoseObjectsToDraw);
+        }
+
+        private void DrawFlybyCameraPyramids(Effect effect, Room[] roomsWhoseObjectsToDraw)
+        {
             _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullNone);
+            _legacyDevice.SetBlendState(_legacyDevice.BlendStates.AlphaBlend);
 
-            bool wireframe = false;
             foreach (Room room in roomsWhoseObjectsToDraw)
                 foreach (var instance in room.Objects.OfType<FlybyCameraInstance>())
                 {
                     var color = MathC.GetRandomColorByIndex(instance.Sequence, 32, 0.7f);
-                    Matrix4x4 model;
-
                     if (_highlightedObjects.Contains(instance))
                         color = _editor.Configuration.UI_ColorScheme.ColorSelection;
 
-                    for (int pass = 0; pass < 2; pass++)
-                    {
-                        if (_editor.SelectedObject == instance)
-                        {
-                            float coneAngle = (float)Math.Atan2(512, 1024);
-                            float cutoffScaleH = 1;
-                            float cutoffScaleW = instance.Fov * (float)(Math.PI / 360) / coneAngle * cutoffScaleH;
+                    float distance = Vector3.Distance(instance.WorldPosition, Camera.GetPosition());
+                    if (distance < (_coneRadius * 0.5f))
+                        color.W *= distance / (_coneRadius * 0.5f);
 
-                            if (pass == 0)
-                            {
-                                // Ordinary cone
-                                model = Matrix4x4.CreateScale(cutoffScaleW, cutoffScaleW, cutoffScaleH) * instance.ObjectMatrix;
-                            }
-                            else
-                            {
-                                // Roll pointer
-                                var step = 1 / _coneRadius;
-                                var scale = _littleCubeRadius * 2;
-                                var pScale = _littleCubeRadius / 5;
-                                var vOffset = -cutoffScaleW / 2 * _coneRadius - scale;
-                                var hOffset = cutoffScaleH * _coneRadius;
+                    if (color.W <= 0.0f)
+                        continue;
 
-                                model = Matrix4x4.CreateScale(step * pScale, step * pScale, step * scale) *
-                                        Matrix4x4.CreateTranslation(new Vector3(0, hOffset, vOffset)) *
-                                        Matrix4x4.CreateRotationX((float)(Math.PI / 2)) *
-                                        instance.ObjectMatrix;
-                            }
+                    bool selected = _editor.SelectedObject == instance;
+                    float pyramidLength = selected ? _coneRadius * _flybyPyramidSelectedLengthScale : _flybyPyramidInactiveLength;
+                    float pyramidHalfHeight = selected ? GetFlybyPyramidDefaultHalfSize(pyramidLength) : _flybyPyramidInactiveBaseHeight * 0.5f;
+                    float pyramidHalfWidth = GetFlybyPyramidHalfWidth(instance.Fov, pyramidLength, pyramidHalfHeight, selected);
+                    var scaleMatrix = Matrix4x4.CreateScale(pyramidHalfWidth, pyramidHalfHeight, pyramidLength);
+                    var transform = selected ? instance.RotationPositionMatrix : BuildFlybyMarkerMatrix(instance, pyramidLength);
+                    var model = scaleMatrix * transform;
 
-                            if (wireframe == false)
-                            {
-                                _legacyDevice.SetRasterizerState(_rasterizerWireframe);
-                                wireframe = true;
-                            }
-                        }
-                        else
-                        {
-                            // Don't do second pass for non-selected flybys
-                            if (pass == 1)
-                                break;
+                    if (!selected)
+                        DrawFlybyPyramidBuffer(effect, _flybyPyramidSolidVertexBuffer, PrimitiveType.TriangleList, model, color);
 
-                            // Push unselected cone further away in sprite mode for neatness
-                            if (_editor.Configuration.Rendering3D_UseSpritesForServiceObjects)
-                                model = Matrix4x4.CreateTranslation(new Vector3(0, 0, -_coneRadius * 0.5f));
-                            else
-                                model = Matrix4x4.Identity;
-
-                            model *= Matrix4x4.CreateTranslation(new Vector3(0, 0, -_coneRadius * 1.2f)) *
-                                     Matrix4x4.CreateRotationY((float)Math.PI) *
-                                     Matrix4x4.CreateScale(1 / _coneRadius * _littleCubeRadius * 2.0f) *
-                                     instance.ObjectMatrix;
-
-                            if (wireframe == true)
-                            {
-                                _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullNone);
-                                wireframe = false;
-                            }
-                        }
-
-                        effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection).ToSharpDX());
-                        effect.Parameters["Color"].SetValue(color);
-                        effect.CurrentTechnique.Passes[0].Apply();
-                        _legacyDevice.DrawIndexed(PrimitiveType.TriangleList, _cone.IndexBuffer.ElementCount);
-                    }
+                    DrawFlybyPyramidBuffer(effect,
+                        selected ? _flybyPyramidWireVertexBuffer : _flybyPyramidAccentVertexBuffer,
+                        PrimitiveType.LineList,
+                        model,
+                        color);
                 }
+
+            _legacyDevice.SetBlendState(_legacyDevice.BlendStates.Opaque);
+            _legacyDevice.SetRasterizerState(_legacyDevice.RasterizerStates.CullBack);
+        }
+
+        private void DrawFlybyPyramidBuffer(Effect effect, Buffer<SolidVertex> buffer, PrimitiveType primitiveType, Matrix4x4 model, Vector4 color)
+        {
+            _legacyDevice.SetVertexBuffer(buffer);
+            _legacyDevice.SetVertexInputLayout(VertexInputLayout.FromBuffer(0, buffer));
+            effect.Parameters["ModelViewProjection"].SetValue((model * _viewProjection).ToSharpDX());
+            effect.Parameters["Color"].SetValue(color);
+            effect.CurrentTechnique.Passes[0].Apply();
+            _legacyDevice.Draw(primitiveType, buffer.ElementCount);
+        }
+
+        private Matrix4x4 BuildFlybyMarkerMatrix(FlybyCameraInstance instance, float pyramidLength)
+        {
+            var model = _editor.Configuration.Rendering3D_UseSpritesForServiceObjects
+                ? Matrix4x4.CreateTranslation(new Vector3(0.0f, 0.0f, -pyramidLength * 0.5f))
+                : Matrix4x4.Identity;
+
+            return model *
+                   Matrix4x4.CreateTranslation(new Vector3(0.0f, 0.0f, -pyramidLength * 1.2f)) *
+                   Matrix4x4.CreateRotationY((float)Math.PI) *
+                   instance.RotationPositionMatrix;
+        }
+
+        private static float GetFlybyPyramidDefaultHalfSize(float pyramidLength)
+        {
+            return MathF.Tan(_flybyPyramidReferenceFov * (float)(Math.PI / 360.0f)) * pyramidLength * _flybyPyramidSelectedBaseScale;
+        }
+
+        private static float GetFlybyPyramidHalfWidth(float fov, float pyramidLength, float pyramidHalfHeight, bool selected)
+        {
+            float clampedHalfAngle = Math.Clamp(fov, 1.0f, 179.0f) * (float)(Math.PI / 360.0f);
+
+            if (selected)
+                return MathF.Tan(clampedHalfAngle) * pyramidLength * _flybyPyramidSelectedBaseScale;
+
+            return pyramidHalfHeight;
         }
 
         private void DrawOrQueueServiceObject(ISpatial instance, GeometricPrimitive primitive, Vector4 color, Effect effect, List<Sprite> sprites)
         {
+            if (_editor.CameraPreviewMode != CameraPreviewType.None)
+                return;
+
             if (_editor.Configuration.Rendering3D_UseSpritesForServiceObjects)
             {
                 foreach (bool shadow in new[] { true, false })
@@ -1512,6 +1563,8 @@ namespace TombEditor.Controls.Panel3D
             var camPos = Camera.GetPosition();
             var skinnedModelEffect = DeviceManager.DefaultDeviceManager.___LegacyEffects["Model"];
 
+            ApplyBrushToModelEffect(skinnedModelEffect);
+
             skinnedModelEffect.Parameters["AlphaTest"].SetValue(HideTransparentFaces);
             skinnedModelEffect.Parameters["ColoredVertices"].SetValue(_editor.Level.IsTombEngine);
             skinnedModelEffect.Parameters["Texture"].SetResource(_wadRenderer.Texture);
@@ -1577,6 +1630,7 @@ namespace TombEditor.Controls.Panel3D
                         }
                     }
 
+                    skinnedModelEffect.Parameters["WorldMatrix"].SetValue(instance.ObjectMatrix.ToSharpDX());
                     skin.RenderSkin(_legacyDevice, skinnedModelEffect, (instance.ObjectMatrix * _viewProjection).ToSharpDX(), model);
                 }
 
@@ -1622,6 +1676,7 @@ namespace TombEditor.Controls.Panel3D
 
                         var world = model.AnimationTransforms[i] * instance.ObjectMatrix;
                         skinnedModelEffect.Parameters["ModelViewProjection"].SetValue((world * _viewProjection).ToSharpDX());
+                        skinnedModelEffect.Parameters["WorldMatrix"].SetValue(world.ToSharpDX());
                         skinnedModelEffect.Techniques[0].Passes[0].Apply();
 
                         foreach (var submesh in mesh.Submeshes)
@@ -1635,6 +1690,10 @@ namespace TombEditor.Controls.Panel3D
                     }
                 }
             }
+
+            // Reset state.
+            ApplyBrushToModelEffect(skinnedModelEffect, true);
+            skinnedModelEffect.Techniques[0].Passes[0].Apply();
         }
 
         private void DrawImportedGeometry(List<ImportedGeometryInstance> importedGeometryToDraw, List<Text> textToDraw, bool disableSelection = false)
@@ -1767,8 +1826,9 @@ namespace TombEditor.Controls.Panel3D
                 return;
 
             var staticMeshEffect = DeviceManager.DefaultDeviceManager.___LegacyEffects["Model"];
-
             var camPos = Camera.GetPosition();
+
+            ApplyBrushToModelEffect(staticMeshEffect);
 
             var groups = staticsToDraw.GroupBy(s => s.WadObjectId);
             foreach (var group in groups)
@@ -1818,6 +1878,7 @@ namespace TombEditor.Controls.Panel3D
                         }
 
                         staticMeshEffect.Parameters["ModelViewProjection"].SetValue((instance.ObjectMatrix * _viewProjection).ToSharpDX());
+                        staticMeshEffect.Parameters["WorldMatrix"].SetValue(instance.ObjectMatrix.ToSharpDX());
                         staticMeshEffect.Parameters["AlphaTest"].SetValue(HideTransparentFaces);
                         staticMeshEffect.Parameters["ColoredVertices"].SetValue(_editor.Level.IsTombEngine);
                         staticMeshEffect.Parameters["TextureSampler"].SetResource(BilinearFilter ? _legacyDevice.SamplerStates.AnisotropicWrap : _legacyDevice.SamplerStates.PointWrap);
@@ -1850,6 +1911,10 @@ namespace TombEditor.Controls.Panel3D
                     }
                 }
             }
+
+            // Reset state.
+            ApplyBrushToModelEffect(staticMeshEffect, true);
+            staticMeshEffect.Techniques[0].Passes[0].Apply();
         }
 
         private void DrawScene()
@@ -1877,7 +1942,7 @@ namespace TombEditor.Controls.Panel3D
                     lightMode = 2;
                     break;
 
-                case TRVersion.Game.TR3:
+                case TRVersion.Game.TR3 or TRVersion.Game.TR3X:
                 case TRVersion.Game.TR4:
                     lightMode = 1;
                     break;
@@ -1893,16 +1958,37 @@ namespace TombEditor.Controls.Panel3D
             }
 
             // New rendering setup
-            _viewProjection = Camera.GetViewProjectionMatrix(ClientSize.Width, ClientSize.Height);
+            bool useFlybyViewProjection = _editor.CameraPreviewMode != CameraPreviewType.None && _flybyPreview != null && (_flybyPreview.StaticFrame.HasValue || !_flybyPreview.IsFinished);
+
+            _viewProjection = useFlybyViewProjection
+                ? _flybyPreview.BuildViewProjection(ClientSize.Width, ClientSize.Height, Camera.FieldOfView)
+                : Camera.GetViewProjectionMatrix(ClientSize.Width, ClientSize.Height);
+
+            // Determine brush overlay state.
+            var brushState = ComputeBrushOverlay();
+            bool drawFlybyDof = TryGetFlybyDofOverlayState(out FlybyDofOverlayState flybyDofState);
+
+            // In ObjectPlacement (brush) mode, use only the brush-specific ShowTextures flag,
+            // the global white-lighting override is ignored so it doesn't bleed into brush mode.
+            bool brushHidesTextures = _editor.Mode == EditorMode.ObjectPlacement && !_editor.Configuration.ObjectBrush_ShowTextures;
+            bool whiteTextureOnly = _editor.Mode == EditorMode.ObjectPlacement ? brushHidesTextures : ShowLightingWhiteTextureOnly;
+
             _renderingStateBuffer.Set(new RenderingState
             {
                 ShowExtraBlendingModes = ShowExtraBlendingModes,
-                RoomGridForce = _editor.Mode == EditorMode.Geometry,
-                RoomDisableVertexColors = _editor.Mode == EditorMode.FaceEdit,
+                RoomGridForce = _editor.Mode == EditorMode.Geometry || brushHidesTextures,
+                RoomDisableVertexColors = _editor.Mode == EditorMode.FaceEdit || _editor.Mode == EditorMode.ObjectPlacement,
                 RoomGridLineWidth = _editor.Configuration.Rendering3D_LineWidth,
                 TransformMatrix = _viewProjection,
-                ShowLightingWhiteTextureOnly = ShowLightingWhiteTextureOnly,
-                LightMode = lightMode
+                ShowLightingWhiteTextureOnly = whiteTextureOnly,
+                LightMode = lightMode,
+                BrushShape = brushState.Shape,
+                BrushCenter = brushState.Center,
+                BrushColor = brushState.Color,
+                BrushRotation = brushState.Rotation,
+                DofCenterRange = drawFlybyDof ? flybyDofState.CenterRange : Vector4.Zero,
+                DofDirectionDistance = drawFlybyDof ? flybyDofState.DirectionDistance : Vector4.Zero,
+                DofColorStrength = drawFlybyDof ? flybyDofState.ColorStrength : Vector4.Zero
             });
 
             var renderArgs = new RenderingDrawingRoom.RenderArgs
@@ -1984,8 +2070,9 @@ namespace TombEditor.Controls.Panel3D
                 DrawPlaceholders(effect, roomsToDraw, textToDraw, spritesToDraw);
                 // Draw light objects and bounding volumes
                 DrawLights(effect, roomsToDraw, textToDraw, spritesToDraw);
-                // Draw flyby path
-                DrawFlybyPath(effect);
+                // Draw flyby path (hidden during flyby preview)
+                if (_editor.CameraPreviewMode == CameraPreviewType.None)
+                    DrawFlybyPath(effect);
                 // Draw sector split highlights
                 DrawSectorSplitHighlights(effect);
             }
@@ -2025,9 +2112,12 @@ namespace TombEditor.Controls.Panel3D
 
             ((TombLib.Rendering.DirectX11.Dx11RenderingDevice)Device).ResetState();
 
-            // Draw the gizmo
-            SwapChain.ClearDepth();
-            _gizmo.Draw(_viewProjection);
+            // Draw the gizmo (hidden during camera preview)
+            if (CanUseGizmo())
+            {
+                SwapChain.ClearDepth();
+                _gizmo.Draw(_viewProjection);
+            }
 
             // Draw depth-independent sprites
             var flatSprites = spritesToDraw.Where(s => !s.Depth.HasValue).ToList();

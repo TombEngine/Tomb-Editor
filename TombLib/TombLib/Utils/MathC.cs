@@ -8,11 +8,15 @@ namespace TombLib
 {
     public static class MathC
     {
-        public const float ZeroTolerance = 1e-6f; // Value a 8x higher than 1.19209290E-07F
+        public const float Epsilon = 1e-6f; // Approx. 8x larger than 1.19209290E-07F.
+        public const float TwoPi = 2.0f * MathF.PI;
 
         // Use Rec.709 trichromat formula to get perceptive luma value
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float GetLuma(this Vector3 color) => (float)((color.X * 0.2126) + (color.Y * 0.7152) + (color.Z * 0.0722));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool IsFinite(this Vector3 vec) => float.IsFinite(vec.X) && float.IsFinite(vec.Y) && float.IsFinite(vec.Z);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static VectorInt2 To2(this VectorInt3 vec) => new VectorInt2(vec.X, vec.Y);
@@ -144,7 +148,7 @@ namespace TombLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsZero(float a)
         {
-            return Math.Abs(a) < ZeroTolerance;
+            return Math.Abs(a) < Epsilon;
         }
 
         /// <summary>
@@ -387,9 +391,13 @@ namespace TombLib
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float RadToDeg(float r) => r * (180.0f / (float)Math.PI) + (r < 0 ? 360.0f : 0.0f);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float SignedRadToDeg(float r) => r * (180.0f / (float)Math.PI);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static float DegToRad(float r) => (float)Math.PI * r / 180.0f;
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 RadToDeg(Vector3 r) => new Vector3(RadToDeg(r.X), RadToDeg(r.Y), RadToDeg(r.Z));
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Vector3 SignedRadToDeg(Vector3 r) => new Vector3(SignedRadToDeg(r.X), SignedRadToDeg(r.Y), SignedRadToDeg(r.Z));
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Vector3 DegToRad(Vector3 r) => new Vector3(DegToRad(r.X), DegToRad(r.Y), DegToRad(r.Z));
 

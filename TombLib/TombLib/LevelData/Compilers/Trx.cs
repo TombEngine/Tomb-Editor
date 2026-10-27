@@ -6,6 +6,8 @@ using System.Linq;
 using TombLib.IO;
 using TombLib.LevelData.Compilers.Util;
 using TombLib.LevelData.SectorEnums;
+using TombLib.LuaProperties;
+using TombLib.Wad.Catalog;
 
 namespace TombLib.LevelData.Compilers;
 
@@ -13,7 +15,10 @@ public partial class LevelCompilerClassicTR
 {
     private const int _legacyRoomLimit = 255;
     private const int _noRoom = -1;
+    private const int _noAlternate = 255;
+    private const int _maxAlternates = 10;
     private const int _maxSamples = 1000;
+    private const int _maxLuaNameLength = 4096;
 
     private void WriteLevelTrx()
     {
@@ -25,6 +30,9 @@ public partial class LevelCompilerClassicTR
             case TRVersion.Game.TR2X:
                 WriteLevelTr2();
                 break;
+            case TRVersion.Game.TR3X:
+                WriteLevelTr3();
+                break;
             default:
                 throw new NotImplementedException("The selected game engine is not supported yet");
         }
@@ -32,18 +40,35 @@ public partial class LevelCompilerClassicTR
         ReportProgress(98, "Writing TRX data");
 
         var injData = new TrxInjectionData();
+        injData.FlybyCameras.AddRange(GenerateFlybyCameras());
         injData.SectorEdits.AddRange(GenerateTrxSectorEdits());
         injData.TexPages.AddRange(GenerateTrxTexPages());
         injData.SFX.AddRange(GenerateTrxSFXData());
+        injData.ItemNameEdits.AddRange(GenerateTrxItemNameEdits());
+        injData.PropertyEdits.AddRange(GenerateTrxGlobalMoveableProperties());
+        injData.PropertyEdits.AddRange(GenerateTrxInstanceMoveableProperties());
 
         using var writer = new BinaryWriterEx(new FileStream(_dest, FileMode.Append));
         TrxInjector.Serialize(injData, writer);
+    }
+
+    private IEnumerable<tr4_flyby_camera> GenerateFlybyCameras()
+    {
+        if (_level.Settings.TrxConvertFlybysToCinematicFrames)
+            yield break;
+        foreach (var flyby in _flyByCameras)
+            yield return flyby;
     }
 
     private IEnumerable<TrxSectorEdit> GenerateTrxSectorEdits()
     {
         foreach (var (teRoom, trRoom) in _tempRooms)
         {
+            if (GetRoomPropertyEntry(teRoom, trRoom) is TRXRoomPropertyEntry roomEntry)
+            {
+                yield return roomEntry;
+            }
+
             for (ushort x = 1; x < teRoom.NumXSectors - 1; x++)
             {
                 for (ushort z = 1; z < teRoom.NumZSectors - 1; z++)
@@ -56,6 +81,10 @@ public partial class LevelCompilerClassicTR
                     {
                         yield return climbEdit;
                     }
+                    if (GetMineCartEntry(teRoom, x, z) is TrxSectorEdit mineCartEdit)
+                    {
+                        yield return mineCartEdit;
+                    }
                     if (GetTriangulation(teRoom, x, z) is TrxSectorEdit triangulationEdit)
                     {
                         yield return triangulationEdit;
@@ -65,11 +94,53 @@ public partial class LevelCompilerClassicTR
         }
     }
 
+    private TRXRoomPropertyEntry GetRoomPropertyEntry(Room teRoom, tr_room trRoom)
+    {
+        var alternateGroup = GetRoomAlternateGroup(teRoom);
+        if ((teRoom.Properties.Reverberation == 0 || _level.Settings.GameVersion == TRVersion.Game.TR3X)
+            && !teRoom.Properties.FlagCold && !teRoom.Properties.FlagDamage && alternateGroup == _noAlternate)
+        {
+            return null;
+        }
+
+        var flags = trRoom.Flags;
+        if (teRoom.Properties.FlagDamage)
+        {
+            flags |= 0x02;
+        }
+        if (teRoom.Properties.FlagCold)
+        {
+            flags |= 0x04;
+        }
+
+        return new()
+        {
+            RoomIndex = (short)_roomRemapping[teRoom],
+            Flags = flags,
+            ReverbInfo = teRoom.Properties.Reverberation,
+            AlternateGroup = alternateGroup,
+        };
+    }
+
+    private byte GetRoomAlternateGroup(Room room)
+    {
+        if (_level.Settings.TrxUseAlternateGroups && room.AlternateGroup >= _maxAlternates)
+        {
+            _progressReporter.ReportWarn($"Room '{room.Name}' uses alternate group {room.AlternateGroup}; TRX supports only groups 0-{_maxAlternates - 1}.");
+            return _noAlternate;
+        }
+
+        return (byte)(_level.Settings.TrxUseAlternateGroups && room.AlternateGroup >= 0 ? room.AlternateGroup : _noAlternate);
+    }
+
     private TrxSectorOverwrite GetSectorOverwrite(Room teRoom, tr_room trRoom, ushort x, ushort z)
     {
         var teSector = teRoom.Sectors[x, z];
-        var roomBelow = GetPortalRoom(teSector.FloorPortal);
-        var roomAbove = GetPortalRoom(teSector.CeilingPortal);
+        var pos = new VectorInt2(x, z);
+        var roomBelow = GetPortalRoom(teSector.FloorPortal,
+            teRoom.GetFloorRoomConnectionInfo(pos, true).TraversableType);
+        var roomAbove = GetPortalRoom(teSector.CeilingPortal,
+            teRoom.GetCeilingRoomConnectionInfo(pos, true).TraversableType);
         
         if (roomBelow < _legacyRoomLimit && roomAbove < _legacyRoomLimit)
         {
@@ -87,15 +158,19 @@ public partial class LevelCompilerClassicTR
         };
     }
 
-    private int GetPortalRoom(PortalInstance portal)
+    private int GetPortalRoom(PortalInstance portal, Room.RoomConnectionType connType)
     {
         return portal != null && portal.Opacity != PortalOpacity.SolidFaces
+            && connType != Room.RoomConnectionType.NoPortal
             ? _roomRemapping[portal.AdjoiningRoom]
             : _noRoom;
     }
 
     private TrxClimbEntry GetClimbEntry(Room teRoom, ushort x, ushort z)
     {
+        if (_level.Settings.GameVersion == TRVersion.Game.TR3X)
+            return null;
+
         var teSector = teRoom.Sectors[x, z];
         var hasLadder = (teSector.Flags & SectorFlags.ClimbAny) != 0;
         var hasMonkey = (teSector.Flags & SectorFlags.Monkey) != 0;
@@ -118,8 +193,41 @@ public partial class LevelCompilerClassicTR
         };
     }
 
+    private TrxMineCartEntry GetMineCartEntry(Room teRoom, ushort x, ushort z)
+    {
+        if (_level.Settings.GameVersion == TRVersion.Game.TR3X)
+            return null;
+
+        var teSector = teRoom.Sectors[x, z];
+        var left = (teSector.Flags & SectorFlags.TriggerTriggerer) != 0;
+        var right = (teSector.Flags & SectorFlags.Beetle) != 0;
+
+        var type = (left, right) switch
+        {
+            (true, true) => TrxMineCartType.Stop,
+            (true, false) => TrxMineCartType.Left,
+            (false, true) => TrxMineCartType.Right,
+            _ => TrxMineCartType.None,
+        };
+        if (type == TrxMineCartType.None)
+        {
+            return null;
+        }
+
+        return new()
+        {
+            RoomIndex = (short)_roomRemapping[teRoom],
+            X = x,
+            Z = z,
+            Type = type,
+        };
+    }
+
     private TrxTriangulationEntry GetTriangulation(Room teRoom, ushort x, ushort z)
     {
+        if (_level.Settings.GameVersion == TRVersion.Game.TR3X)
+            return null;
+
         var teSector = teRoom.Sectors[x, z];
         if (teSector.IsFullWall)
         {
@@ -173,6 +281,9 @@ public partial class LevelCompilerClassicTR
             yield break;
 
         if (version == TRVersion.Game.TR2X && depth == TrxTextureBitDepth.Bit16)
+            yield break;
+
+        if (version == TRVersion.Game.TR3X && depth == TrxTextureBitDepth.Bit16)
             yield break;
 
         const int size = 256 * 256;
@@ -282,8 +393,9 @@ public partial class LevelCompilerClassicTR
                 continue;
 
             var soundInfo = _finalSoundInfosList[_finalSoundMap[i]];
-            var details = GetTR12SoundDetails(soundInfo);
-            var data = TrxSFXData.Create(i, details);
+            var data = _level.Settings.GameVersion == TRVersion.Game.TR3X
+                ? TrxSFXData.Create(i, GetTR3SoundDetails(soundInfo))
+                : TrxSFXData.Create(i, GetTR12SoundDetails(soundInfo));
             data.Samples.AddRange(
                 Enumerable.Range(0, soundInfo.Samples.Count)
                 .Select(_ => samples.Dequeue().Data));
@@ -293,5 +405,129 @@ public partial class LevelCompilerClassicTR
 
         if (sampleCount > _maxSamples)
             _progressReporter.ReportWarn($"{sampleCount} samples included - limit is {_maxSamples}. This may lead to crashes.");
+    }
+
+    private IEnumerable<TrxItemNameEdit> GenerateTrxItemNameEdits()
+    {
+        foreach (var (moveable, index) in _moveablesTable)
+        {
+            if (string.IsNullOrEmpty(moveable.LuaName))
+                continue;
+
+            var name = TrxInjector.Encode(moveable.LuaName);
+            if (name.Length > _maxLuaNameLength)
+            {
+                _progressReporter.ReportWarn($"Lua name for moveable {index} is too long - max {_maxLuaNameLength} bytes.");
+                continue;
+            }
+
+            yield return new()
+            {
+                Index = (short)index,
+                Name = moveable.LuaName,
+            };
+        }
+    }
+
+    private IEnumerable<TrxObjectPropertyEdit> GenerateTrxGlobalMoveableProperties()
+    {
+        var moveables = _level.Settings.Wads
+            .Where(w => w.Wad != null)
+            .SelectMany(w => w.Wad.Moveables);
+        foreach (var mov in moveables)
+        {
+            if (mov.Value.LuaProperties == null || !mov.Value.LuaProperties.HasProperties)
+                continue;
+
+            var objectId = mov.Key.TypeId;
+            var edit = new TrxObjectPropertyEdit((int)objectId);
+            PopulateTrxProperties(edit, mov.Value.LuaProperties, objectId);
+
+            if (edit.Properties.Count > 0)
+                yield return edit;
+        }
+    }
+
+    private IEnumerable<TrxItemPropertyEdit> GenerateTrxInstanceMoveableProperties()
+    {
+        foreach (var (moveable, index) in _moveablesTable)
+        {
+            if (_level.Settings.WadTryGetMoveable(moveable.WadObjectId) == null ||
+                moveable.LuaProperties?.HasProperties != true)
+                continue;
+
+            var edit = new TrxItemPropertyEdit(index);
+            PopulateTrxProperties(edit, moveable.LuaProperties,
+                TrCatalog.GetSubstituteID(_level.Settings.GameVersion, moveable.WadObjectId.TypeId));
+
+            if (edit.Properties.Count > 0)
+                yield return edit;
+        }
+    }
+
+    private void PopulateTrxProperties(TrxPropertyEdit edit, LuaPropertyContainer properties, uint objectId)
+    {
+        var definitionMap = LuaPropertyCatalog
+            .GetDefinitions(ObjectKind.Moveable, objectId, _level.Settings.GameVersion)
+            .ToDictionary(d => d.InternalName);
+        foreach (var (name, value) in properties.GetAll())
+        {
+            if (!definitionMap.TryGetValue(name, out var definition))
+                continue;
+
+            if (value.Equals(definition.DefaultValue))
+                continue;
+
+            var trxProperty = ConvertLuaPropertyToTrx(definition.Type, name, value);
+            if (trxProperty != null)
+                edit.Properties.Add(trxProperty);
+        }
+    }
+
+    private static TrxProperty ConvertLuaPropertyToTrx(LuaPropertyType type,
+        string propertyName, string propertyValue)
+    {
+        switch (type)
+        {
+            case LuaPropertyType.Bool:
+                return new TrxBoolProperty
+                {
+                    Name = propertyName,
+                    Value = LuaValueParser.UnboxBool(propertyValue),
+                };
+            case LuaPropertyType.Int:
+            case LuaPropertyType.Enum:
+                return new TrxIntProperty
+                {
+                    Name = propertyName,
+                    Value = LuaValueParser.UnboxInt(propertyValue),
+                };
+            case LuaPropertyType.Float:
+                return new TrxFloatProperty
+                {
+                    Name = propertyName,
+                    Value = LuaValueParser.UnboxFloat(propertyValue),
+                };
+            case LuaPropertyType.Vec3:
+                var vec = LuaValueParser.UnboxVec3(propertyValue);
+                return new TrxXYZProperty
+                {
+                    Name = propertyName,
+                    X = (int)vec[0],
+                    Y = (int)vec[1],
+                    Z = (int)vec[2],
+                };
+            case LuaPropertyType.Color:
+                var rgb = LuaValueParser.UnboxColor(propertyValue);
+                return new TrxRGBProperty
+                {
+                    Name = propertyName,
+                    R = rgb[0],
+                    G = rgb[1],
+                    B = rgb[2],
+                };
+            default:
+                return null;
+        }
     }
 }

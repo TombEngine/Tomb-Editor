@@ -13,6 +13,7 @@ namespace WadTool
 
         public bool Tool_AllowTRNGDecryption { get; set; } = false;
         public bool Tool_MakeEmptyWadAtStartup { get; set; } = false;
+        public bool Tool_AutoConsolidateTexturesOnCopy { get; set; } = false;
         public string Tool_ReferenceProject { get; set; } = string.Empty;
 
         public float UI_FormColor_Brightness { get; set; } = 100.0f;

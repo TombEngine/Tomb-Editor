@@ -24,9 +24,8 @@ namespace TombEditor.Forms
                 comboCameraMode.Items.RemoveAt((int)CameraInstanceMode.Locked);
             if (_instance.Room.Level.Settings.GameVersion != TRVersion.Game.TRNG)
                 ckGlideOut.Enabled = false;
-            if (_instance.Room.Level.Settings.GameVersion.Native() >= TRVersion.Game.TR3 &&
-                _instance.Room.Level.Settings.GameVersion != TRVersion.Game.TRNG &&
-                _instance.Room.Level.Settings.GameVersion != TRVersion.Game.TombEngine)
+            if (_instance.Room.Level.Settings.GameVersion is TRVersion.Game.TR3
+                or TRVersion.Game.TR4 or TRVersion.Game.TR5)
                 nudMoveTimer.Enabled = false;
         }
 

@@ -382,8 +382,12 @@ namespace TombEditor.Forms
                 _editor.SelectedRoom = (Room)obj;
             else if (obj is ObjectInstance)
                 _editor.ShowObject((ObjectInstance)obj);
-            else if (obj is ItemType)
-                _editor.ChosenItem = (ItemType)obj;
+            else if (obj is ItemType itemType)
+            {
+                var wadObj = itemType.ToIWadObject(_editor.Level.Settings);
+                if (wadObj != null)
+                    _editor.ChosenItems = new[] { wadObj };
+            }
         }
 
         private void DeleteObjects()

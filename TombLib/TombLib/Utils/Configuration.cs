@@ -78,18 +78,28 @@ namespace TombLib
             else
                 form.StartPosition = FormStartPosition.Manual;
 
+            ClampWindowLocation(form);
+        }
+
+        public static void ClampWindowLocation(Form form)
+        {
+            if (form.StartPosition != FormStartPosition.Manual)
+                return;
+
             // Properly clamp screen coords to fix issues with out-of-bounds windows
-            if (form.Location.X < 0) form.Location = new Point(0, form.Location.Y);
-            if (form.Location.Y < 0) form.Location = new Point(form.Location.X, 0);
+            int clampedX = Math.Max(0, form.Location.X);
+            int clampedY = Math.Max(0, form.Location.Y);
 
             // Also clamp max. width/height if we're not on multidisplay config
-            if (Screen.AllScreens.Length == 1)
+            if (Screen.AllScreens.Length == 1 && Screen.PrimaryScreen is not null)
             {
-                var w = Screen.PrimaryScreen.Bounds.Width - form.Width;
-                var h = Screen.PrimaryScreen.Bounds.Height - form.Height;
-                if (form.Location.X >= w) form.Location = new Point(w, form.Location.Y);
-                if (form.Location.Y >= h) form.Location = new Point(form.Location.X, h);
+                int w = Math.Max(0, Screen.PrimaryScreen.Bounds.Width - form.Width);
+                int h = Math.Max(0, Screen.PrimaryScreen.Bounds.Height - form.Height);
+                clampedX = Math.Min(clampedX, w);
+                clampedY = Math.Min(clampedY, h);
             }
+
+            form.Location = new Point(clampedX, clampedY);
         }
 
         public static void ConfigureWindow(Form form, ConfigurationBase config)

@@ -22,6 +22,7 @@ namespace DarkUI.Controls
         public event EventHandler SelectedNodesChanged;
         public event EventHandler AfterNodeExpand;
         public event EventHandler AfterNodeCollapse;
+        public event EventHandler NodesMoved;
 
         #endregion
 
@@ -49,11 +50,16 @@ namespace DarkUI.Controls
 
         private DarkTreeNode _provisionalNode;
         private DarkTreeNode _dropNode;
+        private DropPosition _dropPosition;
+        private int _dropIndicatorY;
         private bool _provisionalDragging;
+        private bool _mouseInClientArea;
         private List<DarkTreeNode> _dragNodes;
         private Point _dragPos;
 
         private readonly Color _borderColor = Colors.LightBorder;
+
+        private enum DropPosition { None, Before, After, Into }
 
         #endregion
 
@@ -154,6 +160,12 @@ namespace DarkUI.Controls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public IComparer<DarkTreeNode> TreeViewNodeSorter { get; set; }
 
+        // Optional predicate to restrict which nodes can act as drop targets.
+        // When null, any node may receive drops.
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public Func<DarkTreeNode, bool> CanDropIntoNode { get; set; }
+
         #endregion
 
         #region Constructor Region
@@ -182,6 +194,7 @@ namespace DarkUI.Controls
                 SelectedNodesChanged = null;
                 AfterNodeExpand = null;
                 AfterNodeCollapse = null;
+                NodesMoved = null;
 
                 _nodes?.Dispose();
 
@@ -201,6 +214,7 @@ namespace DarkUI.Controls
         {
             foreach (var node in e.Items)
             {
+                node.ParentNode = null;
                 node.ParentTree = this;
                 node.IsRoot = true;
 
@@ -216,12 +230,7 @@ namespace DarkUI.Controls
         private void Nodes_ItemsRemoved(object sender, ObservableListModified<DarkTreeNode> e)
         {
             foreach (var node in e.Items)
-            {
-                node.ParentTree = this;
-                node.IsRoot = true;
-
-                HookNodeEvents(node);
-            }
+                UnhookNodeEvents(node);
 
             UpdateNodes();
         }
@@ -283,25 +292,10 @@ namespace DarkUI.Controls
                 }
             }
 
-            if (IsDragging)
-            {
-                if (_dropNode != null)
-                {
-                    var rect = GetNodeFullRowArea(_dropNode);
-                    if (!rect.Contains(OffsetMousePosition))
-                    {
-                        _dropNode = null;
-                        Invalidate();
-                    }
-                }
-            }
-
             CheckHover();
 
             if (IsDragging)
-            {
                 HandleDrag();
-            }
 
             base.OnMouseMove(e);
         }
@@ -579,8 +573,10 @@ namespace DarkUI.Controls
 
             if (ShowIcons)
                 node.IconArea = new Rectangle(node.ExpandArea.Right + 2, iconTop, IconSize, IconSize);
-            else
+            else if (node.Nodes.Count > 0)
                 node.IconArea = new Rectangle(node.ExpandArea.Right, iconTop, 0, 0);
+            else
+                node.IconArea = new Rectangle(node.ExpandArea.Left, iconTop, 0, 0);
 
             using (var g = CreateGraphics())
             {
@@ -644,7 +640,9 @@ namespace DarkUI.Controls
 
         private void CheckHover()
         {
-            if (!ClientRectangle.Contains(PointToClient(MousePosition)))
+            _mouseInClientArea = ClientRectangle.Contains(PointToClient(MousePosition));
+
+            if (!_mouseInClientArea)
             {
                 if (IsDragging && _dropNode != null)
                 {
@@ -671,21 +669,7 @@ namespace DarkUI.Controls
 
         private void CheckNodeHover(DarkTreeNode node, Point location)
         {
-            if (IsDragging)
-            {
-                var rect = GetNodeFullRowArea(node);
-                if (rect.Contains(OffsetMousePosition))
-                {
-                    var newDropNode = _dragNodes.Contains(node) ? null : node;
-
-                    if (_dropNode != newDropNode)
-                    {
-                        _dropNode = newDropNode;
-                        Invalidate();
-                    }
-                }
-            }
-            else
+            if (!IsDragging)
             {
                 var hot = node.ExpandArea.Contains(location);
                 if (node.ExpandAreaHot != hot)
@@ -695,8 +679,11 @@ namespace DarkUI.Controls
                 }
             }
 
-            foreach (var childNode in node.Nodes)
-                CheckNodeHover(childNode, location);
+            if (node.Expanded)
+            {
+                foreach (var childNode in node.Nodes)
+                    CheckNodeHover(childNode, location);
+            }
         }
 
         public void ExpandAllNodes()
@@ -1087,26 +1074,115 @@ namespace DarkUI.Controls
             if (!AllowMoveNodes)
                 return;
 
-            var dropNode = _dropNode;
+            _mouseInClientArea = ClientRectangle.Contains(PointToClient(MousePosition));
 
-            if (dropNode == null)
+            if (!_mouseInClientArea)
             {
                 if (Cursor != Cursors.No)
                     Cursor = Cursors.No;
 
+                ClearDropTarget();
                 return;
             }
 
-            if (!CanMoveNodes(_dragNodes, dropNode))
+            // Find the node the mouse is hovering over and compute drop position.
+            DarkTreeNode hitNode = null;
+            bool hitDragNode = false;
+            var position = DropPosition.None;
+            int indicatorY = 0;
+
+            var allVisible = GetAllNodes();
+            foreach (var node in allVisible)
             {
-                if (Cursor != Cursors.No)
-                    Cursor = Cursors.No;
+                var rect = GetNodeFullRowArea(node);
+                if (!rect.Contains(OffsetMousePosition))
+                    continue;
 
+                if (_dragNodes.Contains(node))
+                {
+                    hitDragNode = true;
+                    break;
+                }
+
+                bool canDropInto = CanDropIntoNode == null || CanDropIntoNode(node);
+                int relativeY = OffsetMousePosition.Y - rect.Top;
+                int zoneSize = rect.Height / 4;
+
+                if (relativeY < zoneSize)
+                {
+                    position = DropPosition.Before;
+                    indicatorY = rect.Top;
+                }
+                else if (relativeY > rect.Height - zoneSize)
+                {
+                    position = DropPosition.After;
+                    indicatorY = rect.Bottom;
+                }
+                else if (canDropInto)
+                {
+                    position = DropPosition.Into;
+                    indicatorY = 0;
+                }
+                else
+                {
+                    // Not a valid drop-into target, treat center as before/after
+                    // based on which half the mouse sits in.
+                    if (relativeY < rect.Height / 2)
+                    {
+                        position = DropPosition.Before;
+                        indicatorY = rect.Top;
+                    }
+                    else
+                    {
+                        position = DropPosition.After;
+                        indicatorY = rect.Bottom;
+                    }
+                }
+
+                hitNode = node;
+                break;
+            }
+
+            // No valid drop target hit — determine fallback based on mouse position.
+            if (hitNode == null && !hitDragNode && _mouseInClientArea)
+            {
+                var firstNonDrag = allVisible.FirstOrDefault(n => !_dragNodes.Contains(n));
+                if (firstNonDrag != null)
+                {
+                    var firstRect = GetNodeFullRowArea(firstNonDrag);
+                    if (OffsetMousePosition.Y <= firstRect.Top)
+                    {
+                        // Mouse is above the first node — insert before it.
+                        hitNode = firstNonDrag;
+                        position = DropPosition.Before;
+                        indicatorY = firstRect.Top;
+                    }
+                    else
+                    {
+                        // Mouse is below all nodes — append to root.
+                        position = DropPosition.After;
+                        indicatorY = ContentSize.Height;
+                    }
+                }
+            }
+
+            // Validate drop target.
+            if (hitNode != null && !CanMoveNodes(_dragNodes, hitNode, position))
+            {
+                ClearDropTarget();
+                Cursor = Cursors.No;
                 return;
             }
 
-            if (Cursor != Cursors.SizeAll)
-                Cursor = Cursors.SizeAll;
+            if (_dropNode != hitNode || _dropPosition != position || _dropIndicatorY != indicatorY)
+            {
+                _dropNode = hitNode;
+                _dropPosition = position;
+                _dropIndicatorY = indicatorY;
+                Invalidate();
+            }
+
+            Cursor = Cursors.SizeAll;
         }
 
         private void HandleDrop()
@@ -1115,44 +1191,102 @@ namespace DarkUI.Controls
                 return;
 
             var dropNode = _dropNode;
+            var position = _dropPosition;
 
-            if (dropNode == null)
+            // Root-level drop: mouse in control area but not over any specific node.
+            if (dropNode == null && _mouseInClientArea)
+            {
+                MoveNodesToCollection(_dragNodes, Nodes, -1);
+                StopDrag();
+                UpdateNodes();
+                return;
+            }
+
+            if (dropNode == null || position == DropPosition.None)
             {
                 StopDrag();
                 return;
             }
 
-            if (CanMoveNodes(_dragNodes, dropNode, true))
+            switch (position)
             {
-                var cachedSelectedNodes = SelectedNodes.ToList();
+                case DropPosition.Into:
+                    MoveNodesToCollection(_dragNodes, dropNode.Nodes, -1);
+                    dropNode.Expanded = true;
+                    break;
 
-                foreach (var node in _dragNodes)
-                {
-                    if (node.ParentNode == null)
-                        Nodes.Remove(node);
-                    else
-                        node.ParentNode.Nodes.Remove(node);
+                case DropPosition.Before:
+                case DropPosition.After:
+                    var targetCollection = dropNode.ParentNode != null ? dropNode.ParentNode.Nodes : Nodes;
+                    int targetIndex = targetCollection.IndexOf(dropNode);
 
-                    dropNode.Nodes.Add(node);
-                }
+                    if (position == DropPosition.After)
+                        targetIndex++;
 
-                if (TreeViewNodeSorter != null)
-                    dropNode.Nodes.Sort(TreeViewNodeSorter);
-
-                dropNode.Expanded = true;
-
-                foreach (var node in cachedSelectedNodes)
-                    SelectedNodes.Add(node);
+                    MoveNodesToCollection(_dragNodes, targetCollection, targetIndex);
+                    break;
             }
 
             StopDrag();
             UpdateNodes();
         }
 
+        private void MoveNodesToCollection(List<DarkTreeNode> nodes, ObservableList<DarkTreeNode> target, int insertIndex)
+        {
+            var cachedSelectedNodes = SelectedNodes.ToList();
+
+            foreach (var node in nodes)
+            {
+                var sourceCollection = node.ParentNode != null ? node.ParentNode.Nodes : Nodes;
+
+                // Adjust insert index when removing from the same collection before the target position.
+                if (sourceCollection == target && insertIndex >= 0)
+                {
+                    int currentIndex = sourceCollection.IndexOf(node);
+                    if (currentIndex >= 0 && currentIndex < insertIndex)
+                        insertIndex--;
+                }
+
+                sourceCollection.Remove(node);
+
+                if (insertIndex >= 0 && insertIndex <= target.Count)
+                    target.Insert(insertIndex, node);
+                else
+                    target.Add(node);
+
+                if (insertIndex >= 0)
+                    insertIndex++;
+            }
+
+            if (TreeViewNodeSorter != null)
+                target.Sort(TreeViewNodeSorter);
+
+            foreach (var node in cachedSelectedNodes)
+            {
+                if (!SelectedNodes.Contains(node))
+                    SelectedNodes.Add(node);
+            }
+
+            NodesMoved?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void ClearDropTarget()
+        {
+            if (_dropNode != null || _dropPosition != DropPosition.None)
+            {
+                _dropNode = null;
+                _dropPosition = DropPosition.None;
+                _dropIndicatorY = 0;
+                Invalidate();
+            }
+        }
+
         protected override void StopDrag()
         {
             _dragNodes = null;
             _dropNode = null;
+            _dropPosition = DropPosition.None;
+            _dropIndicatorY = 0;
 
             Cursor = Cursors.Default;
 
@@ -1161,40 +1295,44 @@ namespace DarkUI.Controls
             base.StopDrag();
         }
 
-        private bool CanMoveNodes(IEnumerable<DarkTreeNode> dragNodes, DarkTreeNode dropNode, bool isMoving = false)
+        private bool CanMoveNodes(IEnumerable<DarkTreeNode> dragNodes, DarkTreeNode dropNode, DropPosition position)
         {
             if (dropNode == null)
                 return false;
 
             foreach (var node in dragNodes)
             {
+                // Cannot drop node onto itself.
                 if (node == dropNode)
-                {
-                    if (isMoving)
-                        DarkMessageBox.Show(this, $"Cannot move {node.Text}. The destination folder is the same as the source folder.,", Application.ProductName, MessageBoxIcon.Error);
-
                     return false;
+
+                // For Before/After: check if the node is already at that exact position.
+                if (position == DropPosition.Before || position == DropPosition.After)
+                {
+                    var targetCollection = dropNode.ParentNode != null ? dropNode.ParentNode.Nodes : Nodes;
+                    var sourceCollection = node.ParentNode != null ? node.ParentNode.Nodes : Nodes;
+
+                    if (sourceCollection == targetCollection)
+                    {
+                        int srcIdx = sourceCollection.IndexOf(node);
+                        int dstIdx = targetCollection.IndexOf(dropNode);
+                        if (position == DropPosition.Before && srcIdx == dstIdx - 1)
+                            return false;
+                        if (position == DropPosition.After && srcIdx == dstIdx + 1)
+                            return false;
+                    }
                 }
 
-                if (node.ParentNode != null && node.ParentNode == dropNode)
-                {
-                    if (isMoving)
-                        DarkMessageBox.Show(this, $"Cannot move {node.Text}. The destination folder is the same as the source folder.", Application.ProductName, MessageBoxIcon.Error);
-
+                // For Into: cannot drop into current parent.
+                if (position == DropPosition.Into && node.ParentNode == dropNode)
                     return false;
-                }
 
+                // Cannot drop into a descendant of the dragged node.
                 var parentNode = dropNode.ParentNode;
                 while (parentNode != null)
                 {
                     if (node == parentNode)
-                    {
-                        if (isMoving)
-                            DarkMessageBox.Show(this, $"Cannot move {node.Text}. The destination folder is a subfolder of the source folder.", Application.ProductName, MessageBoxIcon.Error);
-
                         return false;
-                    }
-
                     parentNode = parentNode.ParentNode;
                 }
             }
@@ -1219,8 +1357,18 @@ namespace DarkUI.Controls
         protected override void PaintContent(Graphics g)
         {
             foreach (var node in Nodes)
-            {
                 DrawNode(node, g);
+
+            // Draw drop indicator line during drag operation.
+            if (IsDragging && _dropPosition != DropPosition.Into && _dropPosition != DropPosition.None)
+            {
+                int lineY = Math.Max(2, _dropIndicatorY);
+                int width = Math.Max(ContentSize.Width, Viewport.Width);
+
+                using (var pen = new Pen(Colors.BlueHighlight, 2.0f))
+                {
+                    g.DrawLine(pen, 0, lineY, width, lineY);
+                }
             }
         }
 
@@ -1246,7 +1394,7 @@ namespace DarkUI.Controls
             if (SelectedNodes.Count > 0 && SelectedNodes.Contains(node))
                 bgColor = Focused ? Colors.BlueSelection : Colors.GreySelection;
 
-            if (IsDragging && _dropNode == node)
+            if (IsDragging && _dropNode == node && _dropPosition == DropPosition.Into)
                 bgColor = Focused ? Colors.BlueSelection : Colors.GreySelection;
 
             using (var b = new SolidBrush(bgColor))

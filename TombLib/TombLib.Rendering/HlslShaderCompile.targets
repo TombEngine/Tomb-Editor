@@ -1,0 +1,160 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<PrepareResourcesDependsOn>
+			$(PrepareResourcesDependsOn);
+			CompileHlslShaders;
+		</PrepareResourcesDependsOn>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<AvailableItemName Include="EffectShader" />
+		<AvailableItemName Include="VertexShader" />
+		<AvailableItemName Include="PixelShader" />
+		<AvailableItemName Include="GeometryShader" />
+		<AvailableItemName Include="HullShader" />
+		<AvailableItemName Include="DomainShader" />
+		<AvailableItemName Include="ComputeShader" />
+		<AvailableItemName Include="TextureShader" />
+	</ItemGroup>
+
+	<Target Name="AssignShaderCompileItems">
+
+		<AssignTargetPath Files="@(EffectShader)" RootFolder="$(MSBuildProjectDirectory)">
+			<Output TaskParameter="AssignedFiles" ItemName="_EffectShaderWithTargetPath" />
+		</AssignTargetPath>
+
+		<AssignTargetPath Files="@(VertexShader)" RootFolder="$(MSBuildProjectDirectory)">
+			<Output TaskParameter="AssignedFiles" ItemName="_VertexShaderWithTargetPath" />
+		</AssignTargetPath>
+
+		<AssignTargetPath Files="@(PixelShader)" RootFolder="$(MSBuildProjectDirectory)">
+			<Output TaskParameter="AssignedFiles" ItemName="_PixelShaderWithTargetPath" />
+		</AssignTargetPath>
+
+		<AssignTargetPath Files="@(GeometryShader)" RootFolder="$(MSBuildProjectDirectory)">
+			<Output TaskParameter="AssignedFiles" ItemName="_GeometryShaderWithTargetPath" />
+		</AssignTargetPath>
+
+		<AssignTargetPath Files="@(HullShader)" RootFolder="$(MSBuildProjectDirectory)">
+			<Output TaskParameter="AssignedFiles" ItemName="_HullShaderWithTargetPath" />
+		</AssignTargetPath>
+
+		<AssignTargetPath Files="@(DomainShader)" RootFolder="$(MSBuildProjectDirectory)">
+			<Output TaskParameter="AssignedFiles" ItemName="_DomainShaderWithTargetPath" />
+		</AssignTargetPath>
+
+		<AssignTargetPath Files="@(ComputeShader)" RootFolder="$(MSBuildProjectDirectory)">
+			<Output TaskParameter="AssignedFiles" ItemName="_ComputeShaderWithTargetPath" />
+		</AssignTargetPath>
+
+		<AssignTargetPath Files="@(TextureShader)" RootFolder="$(MSBuildProjectDirectory)">
+			<Output TaskParameter="AssignedFiles" ItemName="_TextureShaderWithTargetPath" />
+		</AssignTargetPath>
+
+		<ItemGroup>
+			<_ShaderCompile Include="@(_EffectShaderWithTargetPath)">
+				<ShaderType>Effect</ShaderType>
+				<ShaderModel Condition="'%(ShaderModel)' == ''">5_0</ShaderModel>
+			</_ShaderCompile>
+
+			<_ShaderCompile Include="@(_VertexShaderWithTargetPath)">
+				<ShaderType>Vertex</ShaderType>
+				<ShaderModel Condition="'%(ShaderModel)' == ''">5_0</ShaderModel>
+			</_ShaderCompile>
+
+			<_ShaderCompile Include="@(_PixelShaderWithTargetPath)">
+				<ShaderType>Pixel</ShaderType>
+				<ShaderModel Condition="'%(ShaderModel)' == ''">5_0</ShaderModel>
+			</_ShaderCompile>
+
+			<_ShaderCompile Include="@(_GeometryShaderWithTargetPath)">
+				<ShaderType>Geometry</ShaderType>
+				<ShaderModel Condition="'%(ShaderModel)' == ''">5_0</ShaderModel>
+			</_ShaderCompile>
+
+			<_ShaderCompile Include="@(_HullShaderWithTargetPath)">
+				<ShaderType>Hull</ShaderType>
+				<ShaderModel Condition="'%(ShaderModel)' == ''">5_0</ShaderModel>
+			</_ShaderCompile>
+
+			<_ShaderCompile Include="@(_DomainShaderWithTargetPath)">
+				<ShaderType>Domain</ShaderType>
+				<ShaderModel Condition="'%(ShaderModel)' == ''">5_0</ShaderModel>
+			</_ShaderCompile>
+
+			<_ShaderCompile Include="@(_ComputeShaderWithTargetPath)">
+				<ShaderType>Compute</ShaderType>
+				<ShaderModel Condition="'%(ShaderModel)' == ''">5_0</ShaderModel>
+			</_ShaderCompile>
+
+			<_ShaderCompile Include="@(_TextureShaderWithTargetPath)">
+				<ShaderType>Texture</ShaderType>
+				<ShaderModel Condition="'%(ShaderModel)' == ''">5_0</ShaderModel>
+			</_ShaderCompile>
+		</ItemGroup>
+
+		<ItemGroup>
+			<_ShaderCompile>
+				<TargetDirectory>$([System.IO.Path]::GetDirectoryName(%(_ShaderCompile.TargetPath)))</TargetDirectory>
+				<ObjectFileOutput Condition="'%(_ShaderCompile.ObjectFileOutput)' == ''">$(IntermediateOutputPath)$([System.IO.Path]::ChangeExtension(%(_ShaderCompile.TargetPath), '.cso'))</ObjectFileOutput>
+				<EntryPointName Condition="'%(_ShaderCompile.EntryPointName)' == ''">main</EntryPointName>
+				<ShaderDebugArguments Condition="'$(DebugSymbols)' == 'true'">/Zi</ShaderDebugArguments>
+				<ShaderProfile Condition="'%(_ShaderCompile.ShaderType)' == 'Effect'">fx_%(_ShaderCompile.ShaderModel)</ShaderProfile>
+				<ShaderProfile Condition="'%(_ShaderCompile.ShaderType)' == 'Vertex'">vs_%(_ShaderCompile.ShaderModel)</ShaderProfile>
+				<ShaderProfile Condition="'%(_ShaderCompile.ShaderType)' == 'Pixel'">ps_%(_ShaderCompile.ShaderModel)</ShaderProfile>
+				<ShaderProfile Condition="'%(_ShaderCompile.ShaderType)' == 'Geometry'">gs_%(_ShaderCompile.ShaderModel)</ShaderProfile>
+				<ShaderProfile Condition="'%(_ShaderCompile.ShaderType)' == 'Hull'">hs_%(_ShaderCompile.ShaderModel)</ShaderProfile>
+				<ShaderProfile Condition="'%(_ShaderCompile.ShaderType)' == 'Domain'">ds_%(_ShaderCompile.ShaderModel)</ShaderProfile>
+				<ShaderProfile Condition="'%(_ShaderCompile.ShaderType)' == 'Compute'">cs_%(_ShaderCompile.ShaderModel)</ShaderProfile>
+				<ShaderProfile Condition="'%(_ShaderCompile.ShaderType)' == 'Texture'">tx_%(_ShaderCompile.ShaderModel)</ShaderProfile>
+			</_ShaderCompile>
+		</ItemGroup>
+	</Target>
+
+	<PropertyGroup>
+		<AssignTargetPathsDependsOn>$(AssignTargetPathsDependsOn);AssignShaderCompileItems</AssignTargetPathsDependsOn>
+	</PropertyGroup>
+
+	<Target Name="ResolveFxcPath" DependsOnTargets="AssignShaderCompileItems">
+		<PropertyGroup>
+			<_WindowsKitsBinDir Condition="'$(_WindowsKitsBinDir)' == ''">$(MSBuildProgramFiles32)\Windows Kits\10\bin</_WindowsKitsBinDir>
+			<_FxcArchitecture Condition="'$(PlatformTarget)' == 'x86'">x86</_FxcArchitecture>
+			<_FxcArchitecture Condition="'$(_FxcArchitecture)' == ''">x64</_FxcArchitecture>
+			<FxcPath Condition="'$(FxcPath)' == '' and '$(TargetPlatformVersion)' != '' and Exists('$(_WindowsKitsBinDir)\$(TargetPlatformVersion)\$(_FxcArchitecture)\fxc.exe')">$(_WindowsKitsBinDir)\$(TargetPlatformVersion)\$(_FxcArchitecture)\fxc.exe</FxcPath>
+			<FxcPath Condition="'$(FxcPath)' == '' and Exists('$(_WindowsKitsBinDir)\$(_FxcArchitecture)\fxc.exe')">$(_WindowsKitsBinDir)\$(_FxcArchitecture)\fxc.exe</FxcPath>
+		</PropertyGroup>
+
+		<MakeDir Condition="'@(_ShaderCompile)' != '' and '$(FxcPath)' == ''" Directories="$(IntermediateOutputPath)" />
+
+		<Exec Condition="'@(_ShaderCompile)' != '' and '$(FxcPath)' == ''"
+			  Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)ResolveFxcPath.ps1&quot; -BinRoot &quot;$(_WindowsKitsBinDir)&quot; -Architecture &quot;$(_FxcArchitecture)&quot; &gt; &quot;$(IntermediateOutputPath)fxc.path&quot;"
+			  IgnoreExitCode="true" />
+
+		<ReadLinesFromFile File="$(IntermediateOutputPath)fxc.path" Condition="'$(FxcPath)' == '' and Exists('$(IntermediateOutputPath)fxc.path')">
+			<Output TaskParameter="Lines" ItemName="_ResolvedFxcPath" />
+		</ReadLinesFromFile>
+
+		<Delete Files="$(IntermediateOutputPath)fxc.path" Condition="Exists('$(IntermediateOutputPath)fxc.path')" />
+
+		<PropertyGroup Condition="'$(FxcPath)' == '' and '@(_ResolvedFxcPath)' != ''">
+			<FxcPath>@(_ResolvedFxcPath)</FxcPath>
+		</PropertyGroup>
+
+		<Message Condition="'@(_ShaderCompile)' != '' and '$(FxcPath)' != '' and Exists('$(FxcPath)')" Text="Using fxc.exe from '$(FxcPath)'." Importance="High" />
+		<Error Condition="'@(_ShaderCompile)' != '' and ('$(FxcPath)' == '' or !Exists('$(FxcPath)'))" Text="Unable to locate fxc.exe. Install a Windows 10 SDK that contains fxc.exe or pass /p:FxcPath=full-path-to-fxc.exe to the build." />
+	</Target>
+
+	<Target Name="CompileHlslShaders" DependsOnTargets="ResolveFxcPath" Inputs="@(_ShaderCompile)" Outputs="%(_ShaderCompile.ObjectFileOutput)">
+		<MakeDir Condition="'@(_ShaderCompile)' != ''" Directories="@(_ShaderCompile->'%(ObjectFileOutput)'->DirectoryName())" />
+
+		<Exec Condition="'@(_ShaderCompile)' != ''"
+			  WorkingDirectory="$(MSBuildProjectDirectory)"
+			  Command="&quot;$(FxcPath)&quot; /nologo %(_ShaderCompile.ShaderDebugArguments) /E %(_ShaderCompile.EntryPointName) /T %(_ShaderCompile.ShaderProfile) /Fo &quot;%(_ShaderCompile.ObjectFileOutput)&quot; &quot;%(_ShaderCompile.Identity)&quot;"
+			  StandardOutputImportance="Low"
+			  StandardErrorImportance="High" />
+
+		<ItemGroup>
+			<FileWrites Include="@(_ShaderCompile->'%(ObjectFileOutput)')" Condition="'@(_ShaderCompile)' != ''" />
+		</ItemGroup>
+	</Target>
+</Project>

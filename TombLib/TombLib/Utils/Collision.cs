@@ -381,7 +381,7 @@ namespace TombLib.Utils
             //Same thing as RayIntersectsSphere except that the radius of the sphere (point)
             //is the epsilon for zero.
             float b = Vector3.Dot(m, ray.Direction);
-            float c = Vector3.Dot(m, m) - MathC.ZeroTolerance;
+            float c = Vector3.Dot(m, m) - MathC.Epsilon;
 
             if (c > 0f && b > 0f)
                 return false;

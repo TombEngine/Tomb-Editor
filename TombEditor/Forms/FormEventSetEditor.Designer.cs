@@ -27,12 +27,13 @@ namespace TombEditor.Forms
             cbActivatorStatics = new DarkCheckBox();
             cbActivatorFlyBy = new DarkCheckBox();
             panelList = new DarkSectionPanel();
-            dgvEvents = new DarkDataGridView();
+            treeEvents = new DarkTreeView();
             darkPanel1 = new DarkPanel();
             butSearch = new DarkButton();
             butUnassignEventSet = new DarkButton();
             butDeleteEventSet = new DarkButton();
             butCloneEventSet = new DarkButton();
+			butNewFolder = new DarkButton();
             butNewEventSet = new DarkButton();
             triggerManager = new Controls.TriggerManager();
             lblActivators = new DarkLabel();
@@ -47,7 +48,6 @@ namespace TombEditor.Forms
             splitContainer = new SplitContainer();
             panelActivators = new DarkSectionPanel();
             panelList.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvEvents).BeginInit();
             darkPanel1.SuspendLayout();
             panelEditor.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer).BeginInit();
@@ -139,7 +139,7 @@ namespace TombEditor.Forms
             // panelList
             // 
             panelList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panelList.Controls.Add(dgvEvents);
+            panelList.Controls.Add(treeEvents);
             panelList.Controls.Add(darkPanel1);
             panelList.Location = new System.Drawing.Point(3, 3);
             panelList.Name = "panelList";
@@ -147,27 +147,17 @@ namespace TombEditor.Forms
             panelList.Size = new System.Drawing.Size(258, 377);
             panelList.TabIndex = 22;
             // 
-            // dgvEvents
+            // treeEvents
             // 
-            dgvEvents.AllowUserToAddRows = false;
-            dgvEvents.AllowUserToDeleteRows = false;
-            dgvEvents.AllowUserToPasteCells = false;
-            dgvEvents.AllowUserToResizeColumns = false;
-            dgvEvents.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dgvEvents.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvEvents.ColumnHeadersHeight = 4;
-            dgvEvents.ForegroundColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            dgvEvents.Location = new System.Drawing.Point(4, 32);
-            dgvEvents.MultiSelect = false;
-            dgvEvents.Name = "dgvEvents";
-            dgvEvents.ReadOnly = true;
-            dgvEvents.RowHeadersWidth = 41;
-            dgvEvents.Size = new System.Drawing.Size(250, 341);
-            dgvEvents.TabIndex = 0;
-            dgvEvents.UseAlternativeDragDropMethod = true;
-            dgvEvents.ColumnHeaderMouseClick += dgvEvents_ColumnHeaderMouseClick;
-            dgvEvents.SelectionChanged += dgvEvents_SelectedIndicesChanged;
-            dgvEvents.DragDrop += dgvEvents_DragDrop;
+            treeEvents.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            treeEvents.Location = new System.Drawing.Point(4, 32);
+            treeEvents.MultiSelect = false;
+            treeEvents.Name = "treeEvents";
+            treeEvents.AllowMoveNodes = true;
+            treeEvents.Size = new System.Drawing.Size(250, 341);
+            treeEvents.TabIndex = 0;
+            treeEvents.SelectedNodesChanged += treeEvents_SelectedNodesChanged;
+            treeEvents.DoubleClick += treeEvents_DoubleClick;
             // 
             // darkPanel1
             // 
@@ -175,6 +165,7 @@ namespace TombEditor.Forms
             darkPanel1.Controls.Add(butUnassignEventSet);
             darkPanel1.Controls.Add(butDeleteEventSet);
             darkPanel1.Controls.Add(butCloneEventSet);
+            darkPanel1.Controls.Add(butNewFolder);
             darkPanel1.Controls.Add(butNewEventSet);
             darkPanel1.Dock = DockStyle.Top;
             darkPanel1.Location = new System.Drawing.Point(1, 1);
@@ -210,12 +201,12 @@ namespace TombEditor.Forms
             // 
             butDeleteEventSet.Checked = false;
             butDeleteEventSet.Image = Properties.Resources.general_trash_16;
-            butDeleteEventSet.Location = new System.Drawing.Point(62, 3);
+            butDeleteEventSet.Location = new System.Drawing.Point(91, 3);
             butDeleteEventSet.Name = "butDeleteEventSet";
             butDeleteEventSet.Size = new System.Drawing.Size(23, 23);
             butDeleteEventSet.TabIndex = 20;
             butDeleteEventSet.Tag = "AddNewRoom";
-            toolTip.SetToolTip(butDeleteEventSet, "Delete selected event set");
+            toolTip.SetToolTip(butDeleteEventSet, "Delete selected event set or folder");
             butDeleteEventSet.Click += butDeleteEventSet_Click;
             // 
             // butCloneEventSet
@@ -223,13 +214,24 @@ namespace TombEditor.Forms
             butCloneEventSet.Checked = false;
             butCloneEventSet.DialogResult = DialogResult.Cancel;
             butCloneEventSet.Image = Properties.Resources.general_copy_16;
-            butCloneEventSet.Location = new System.Drawing.Point(33, 3);
+            butCloneEventSet.Location = new System.Drawing.Point(62, 3);
             butCloneEventSet.Name = "butCloneEventSet";
             butCloneEventSet.Size = new System.Drawing.Size(23, 23);
             butCloneEventSet.TabIndex = 19;
             butCloneEventSet.Tag = "AddNewRoom";
             toolTip.SetToolTip(butCloneEventSet, "Copy selected event set");
             butCloneEventSet.Click += butCloneEventSet_Click;
+			// 
+			// butNewFolder
+			// 
+			butNewFolder.Checked = false;
+            butNewFolder.Image = Properties.Resources.general_Open_16;
+            butNewFolder.Location = new System.Drawing.Point(33, 3);
+            butNewFolder.Name = "butNewFolder";
+            butNewFolder.Size = new System.Drawing.Size(23, 23);
+			butNewFolder.TabIndex = 27;
+            toolTip.SetToolTip(butNewFolder, "Add new folder");
+			butNewFolder.Click += butNewFolder_Click;
             // 
             // butNewEventSet
             // 
@@ -396,7 +398,6 @@ namespace TombEditor.Forms
             SizeGripStyle = SizeGripStyle.Hide;
             StartPosition = FormStartPosition.CenterParent;
             panelList.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvEvents).EndInit();
             darkPanel1.ResumeLayout(false);
             panelEditor.ResumeLayout(false);
             splitContainer.Panel1.ResumeLayout(false);
@@ -418,11 +419,12 @@ namespace TombEditor.Forms
         private DarkUI.Controls.DarkCheckBox cbActivatorStatics;
         private DarkUI.Controls.DarkCheckBox cbActivatorFlyBy;
         private DarkSectionPanel panelList;
-        private DarkDataGridView dgvEvents;
+        private DarkTreeView treeEvents;
         private Controls.TriggerManager triggerManager;
         private DarkPanel darkPanel1;
         private DarkButton butDeleteEventSet;
         private DarkButton butCloneEventSet;
+        private DarkButton butNewFolder;
         private DarkButton butNewEventSet;
         private DarkLabel lblActivators;
         private DarkButton butUnassignEventSet;

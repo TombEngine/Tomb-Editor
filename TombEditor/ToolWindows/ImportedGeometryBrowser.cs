@@ -11,6 +11,7 @@ namespace TombEditor.ToolWindows
     public partial class ImportedGeometryBrowser : DarkToolWindow
     {
         private readonly Editor _editor;
+        private bool _suppressEditorSync = false;
 
         public ImportedGeometryBrowser()
         {
@@ -58,14 +59,16 @@ namespace TombEditor.ToolWindows
                 }
             }
 
-            if (obj is Editor.ChosenImportedGeometryChangedEvent)
+            if (obj is Editor.ChosenItemsChangedEvent itemsChanged)
             {
-                var e = (Editor.ChosenImportedGeometryChangedEvent)obj;
-                if (e.Current != null)
+                var geo = itemsChanged.Current?.OfType<ImportedGeometry>().FirstOrDefault();
+                if (geo != null)
                 {
-                    comboItems.SelectedItem = panelItem.CurrentObject = e.Current;
+                    _suppressEditorSync = true;
+                    comboItems.SelectedItem = panelItem.CurrentObject = geo;
                     MakeActive();
                     panelItem.ResetCamera();
+                    _suppressEditorSync = false;
                 }
             }
 
@@ -94,8 +97,11 @@ namespace TombEditor.ToolWindows
 
         private void comboItems_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboItems.SelectedItem is ImportedGeometry)
-                _editor.ChosenImportedGeometry = (ImportedGeometry)comboItems.SelectedItem;
+            if (_suppressEditorSync)
+                return;
+
+            if (comboItems.SelectedItem is ImportedGeometry geo)
+                _editor.ChosenItems = new IWadObject[] { geo };
         }
 
         private void comboItems_Format(object sender, ListControlConvertEventArgs e)

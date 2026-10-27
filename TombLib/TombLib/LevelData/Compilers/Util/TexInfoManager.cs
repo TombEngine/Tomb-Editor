@@ -513,9 +513,10 @@ namespace TombLib.LevelData.Compilers.Util
 
                 // TR3 uses unique texel alignment algorithm without which all textures tend to break.
                 // But for some reason texel alignment without padding breaks adjacent textures
-                // in TR3, so bypass it for such cases.
+                // in TR3, so bypass it for such cases. This remains the case in TR3X - offer an
+                // alternative in the future via the injector.
 
-                if (version == TRVersion.Game.TR3)
+                if (version.Native() == TRVersion.Game.TR3)
                 {
                     for (int i = 0; i < child.RelCoord.Length; i++)
                         coords[i] -= new Vector2(0.5f);
@@ -772,7 +773,7 @@ namespace TombLib.LevelData.Compilers.Util
             if (_dataHasBeenLaidOut)
                 throw new InvalidOperationException("Data has been already laid out for this TexInfoManager. Reinitialize it if you want to restart texture collection.");
 
-            if ((isForTriangle && texture.TriangleCoordsOutOfBounds) || (!isForTriangle && texture.QuadCoordsOutOfBounds))
+            if ((isForTriangle && texture.AreTriangleCoordsOutOfBounds(256.0f)) || (!isForTriangle && texture.AreQuadCoordsOutOfBounds(256.0f)))
             {
                 _progressReporter.ReportWarn("Texture (" + texture.TexCoord0 + ", " + texture.TexCoord1 + ", " + 
                     texture.TexCoord2 + ", " + texture.TexCoord3 + ") is out of bounds and will be ignored.");
@@ -1473,7 +1474,7 @@ namespace TombLib.LevelData.Compilers.Util
                 if (level.Settings.GameVersion <= TRVersion.Game.TR2 && attribute > 1)
                     attribute = 1;
                 if ((level.Settings.GameVersion == TRVersion.Game.TR3 || level.Settings.GameVersion == TRVersion.Game.TR5
-                    || level.Settings.GameVersion == TRVersion.Game.TR1X || level.Settings.GameVersion == TRVersion.Game.TR2X) && attribute > 2)
+                    || level.Settings.GameVersion.IsTRX()) && attribute > 2)
                     attribute = 2;
 
                 // Now write the texture

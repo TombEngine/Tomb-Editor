@@ -19,6 +19,7 @@
 		<ResourceDictionary Source="Styles/RadioButton.xaml" />
 		<ResourceDictionary Source="Styles/ScrollViewer.xaml" />
 		<ResourceDictionary Source="Styles/SearchableComboBox.xaml" />
+		<ResourceDictionary Source="Styles/Slider.xaml" />
 		<ResourceDictionary Source="Styles/StatusBar.xaml" />
 		<ResourceDictionary Source="Styles/TabControl.xaml" />
 		<ResourceDictionary Source="Styles/TextBlock.xaml" />

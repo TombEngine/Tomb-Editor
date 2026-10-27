@@ -555,6 +555,15 @@ LevelFuncs.Engine.Node.SwapMoveableMesh = function(dest, destIndex, srcSlot, src
 	TEN.Objects.GetMoveableByName(dest):SwapMesh(destIndex, srcSlot, srcIndex)
 end
 
+-- !Name "Restore a previously swapped mesh"
+-- !Section "Moveable parameters"
+-- !Description "Restores a previously swapped mesh."
+-- !Arguments "NewLine, 80, Moveables, Moveable to restore" "Numerical, 20, [ 0 | 31 ], Mesh index to restore"
+
+LevelFuncs.Engine.Node.UnswapMoveableMesh = function(dest, destIndex)
+	TEN.Objects.GetMoveableByName(dest):UnswapMesh(destIndex)
+end
+
 -- !Name "If moveable has effect..."
 -- !Section "Moveable state"
 -- !Conditional "True"

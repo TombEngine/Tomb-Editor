@@ -129,6 +129,11 @@ namespace TombEditor
                 EditorActions.SwitchMode(EditorMode.Lighting);
             });
 
+            AddCommand("SwitchObjectPlacementMode", "Switch to Object Placement mode", CommandType.General, delegate ()
+            {
+                EditorActions.SwitchMode(EditorMode.ObjectPlacement);
+            });
+
             AddCommand("ResetCamera", "Reset camera position to default", CommandType.View, delegate ()
             {
                 _editor.ResetCamera();
@@ -1126,6 +1131,7 @@ namespace TombEditor
                 new HotkeySet { Name = "SwitchGeometryMode", Hotkeys = new List<uint> { (uint)(Keys.F2) } },
                 new HotkeySet { Name = "SwitchFaceEditMode", Hotkeys = new List<uint> { (uint)(Keys.F3) } },
                 new HotkeySet { Name = "SwitchLightingMode", Hotkeys = new List<uint> { (uint)(Keys.F4) } },
+                new HotkeySet { Name = "SwitchObjectPlacementMode", Hotkeys = new List<uint> { (uint)(Keys.F5) } },
                 new HotkeySet { Name = "ResetCamera", Hotkeys = new List<uint> { (uint)(Keys.F6) } },
                 new HotkeySet { Name = "AddTrigger", Hotkeys = new List<uint> { (uint)(Keys.T) } },
                 new HotkeySet { Name = "AddPortal", Hotkeys = new List<uint> { (uint)(Keys.P) } },

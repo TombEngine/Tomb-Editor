@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<materialCatalog>
+  <material id="0" name="Default">
+    <property
+      slot="0"
+      name="EmissiveIntensity"
+      type="Float"
+      defaultValue="1.0"
+      description="Intensity multiplier applied to emissive lighting." />
+  </material>
+</materialCatalog>

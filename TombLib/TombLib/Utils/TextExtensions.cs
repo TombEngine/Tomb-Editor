@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace TombLib.Utils
 {
@@ -22,6 +21,11 @@ namespace TombLib.Utils
         {
             var regex = new Regex("^[a-zA-Z0-9. -_?]*$");
             return regex.IsMatch(source);
+        }
+
+        public static string[] SplitLines(this string source)
+        {
+            return source.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
         }
 
         public static string[] SplitParenthesis(this string source)

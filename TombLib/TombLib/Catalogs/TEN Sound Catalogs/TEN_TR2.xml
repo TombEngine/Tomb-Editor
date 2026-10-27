@@ -3696,6 +3696,25 @@
 			<Indexed>false</Indexed>
 		</WadSoundInfo>
 		<WadSoundInfo>
+			<Id>838</Id>
+			<Name>TR2_Henchman_Death4</Name>
+			<Volume>100</Volume>
+			<RangeInSectors>10</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>true</RandomizePitch>
+			<RandomizeVolume>true</RandomizeVolume>
+			<LoopBehaviour>None</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>TR2_Henchman_Death4_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>false</Global>
+			<Indexed>true</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
 			<Id>1145</Id>
 			<Name>TR2_Dragon_Fall</Name>
 			<Volume>100</Volume>
@@ -3728,6 +3747,44 @@
 			<Samples>
 				<WadSample>
 					<FileName>TR2_Marco_Bartolli_Transform_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>true</Global>
+			<Indexed>true</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
+			<Id>1200</Id>
+			<Name>TR2_Rolling_Barrel_Roll</Name>
+			<Volume>80</Volume>
+			<RangeInSectors>10</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>false</RandomizePitch>
+			<RandomizeVolume>false</RandomizeVolume>
+			<LoopBehaviour>Looped</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>tr2_rolling_barrel_roll_01.wav</FileName>
+				</WadSample>
+			</Samples>
+			<Global>true</Global>
+			<Indexed>true</Indexed>
+		</WadSoundInfo>
+		<WadSoundInfo>
+			<Id>1201</Id>
+			<Name>TR2_Rolling_Barrel_Stop</Name>
+			<Volume>100</Volume>
+			<RangeInSectors>10</RangeInSectors>
+			<Chance>100</Chance>
+			<PitchFactor>0</PitchFactor>
+			<DisablePanning>false</DisablePanning>
+			<RandomizePitch>false</RandomizePitch>
+			<RandomizeVolume>false</RandomizeVolume>
+			<LoopBehaviour>None</LoopBehaviour>
+			<Samples>
+				<WadSample>
+					<FileName>tr2_rolling_barrel_stop_01.wav</FileName>
 				</WadSample>
 			</Samples>
 			<Global>true</Global>

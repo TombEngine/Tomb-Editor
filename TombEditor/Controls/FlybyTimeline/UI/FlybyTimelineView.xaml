@@ -1,0 +1,100 @@
+<UserControl
+    x:Class="TombEditor.Controls.FlybyTimeline.UI.FlybyTimelineView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:local="clr-namespace:TombEditor.Controls.FlybyTimeline.UI"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    d:DesignHeight="80"
+    d:DesignWidth="700"
+    Background="{DynamicResource Brush_Background}"
+    Foreground="{DynamicResource Brush_Text}"
+    RenderOptions.BitmapScalingMode="NearestNeighbor"
+    SnapsToDevicePixels="{x:Static darkUI:Defaults.SnapsToDevicePixels}"
+    UseLayoutRounding="{x:Static darkUI:Defaults.UseLayoutRounding}"
+    mc:Ignorable="d">
+
+    <controls:SpacedGrid Margin="0,2,0,4" ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <controls:SpacedGrid Grid.Column="0" RowSpacing="{x:Static darkUI:Defaults.TinyThicknessWidth}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                FontFamily="Courier New"
+                FontSize="16"
+                Text="{Binding PlayheadTimecode}"
+                TextAlignment="Right"
+                ToolTip="{tombLib:Localize PlayheadTimecodeTooltip}" />
+
+            <controls:SpacedStack
+                Grid.Row="1"
+                Orientation="Horizontal"
+                Spacing="{x:Static darkUI:Defaults.TinyThicknessWidth}">
+                <ComboBox
+                    x:Name="comboSequence"
+                    Width="56"
+                    ItemsSource="{Binding AvailableSequences}"
+                    SelectedItem="{Binding SelectedSequence}"
+                    ToolTip="{tombLib:Localize SequenceTooltip}" />
+
+                <Button
+                    Width="{x:Static darkUI:Defaults.InputControl_Height}"
+                    Command="{Binding AddSequenceCommand}"
+                    Style="{StaticResource ButtonWithIconOnly}"
+                    ToolTip="{tombLib:Localize AddSequenceTooltip}">
+                    <Image Source="pack://application:,,,/TombEditor;component/Resources/icons_general/general_plus_math-16.png" />
+                </Button>
+
+                <Button
+                    Width="{x:Static darkUI:Defaults.InputControl_Height}"
+                    Command="{Binding RemoveSequenceCommand}"
+                    IsEnabled="{Binding HasSequenceSelected}"
+                    Style="{StaticResource ButtonWithIconOnly}"
+                    ToolTip="{tombLib:Localize RemoveSequenceTooltip}">
+                    <Image Source="pack://application:,,,/TombEditor;component/Resources/icons_actions/actions_delete-16.png" />
+                </Button>
+            </controls:SpacedStack>
+        </controls:SpacedGrid>
+
+        <Border
+            Grid.Column="1"
+            BorderBrush="{DynamicResource Brush_Border}"
+            BorderThickness="{x:Static darkUI:Defaults.BorderThickness}">
+            <local:FlybyTimelineControl x:Name="timelineControl" />
+        </Border>
+
+        <StackPanel
+            Grid.Column="2"
+            VerticalAlignment="Center"
+            Orientation="Horizontal">
+            <Button
+                Command="{Binding TogglePlayStopCommand}"
+                IsEnabled="{Binding HasSequenceSelected}"
+                Style="{StaticResource ButtonFlatLargeIconOnly}"
+                ToolTip="{Binding PlayStopTooltip}">
+                <Image RenderOptions.BitmapScalingMode="HighQuality" Source="{Binding PlayStopIcon}" />
+            </Button>
+
+            <Button
+                Command="{Binding AddCameraCommand}"
+                IsEnabled="{Binding HasSequenceSelected}"
+                Style="{StaticResource ButtonFlatLargeIconOnly}"
+                ToolTip="{tombLib:Localize AddCameraTooltip}">
+                <Image Source="pack://application:,,,/TombEditor;component/Resources/icons_transport/transport-plus.png" />
+            </Button>
+        </StackPanel>
+    </controls:SpacedGrid>
+</UserControl>
