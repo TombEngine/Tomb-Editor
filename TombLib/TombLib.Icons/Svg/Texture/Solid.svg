@@ -1,12 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-  <rect x="1" y="2" width="4" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="6" y="2" width="4" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="11" y="2" width="4" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="1" y="6.5" width="2" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="4" y="6.5" width="4" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="9" y="6.5" width="4" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="14" y="6.5" width="1" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="1" y="11" width="4" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="6" y="11" width="4" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="11" y="11" width="4" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
+    <g fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 2.5H14V13.5H2ZM2 6H14M2 10H14M6 2.5V6M10 2.5V6M4 6V10M8 6V10M12 6V10M6 10V13.5M10 10V13.5"/>
+    </g>
 </svg>

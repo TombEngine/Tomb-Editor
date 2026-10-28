@@ -1,18 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-  <defs>
-    <clipPath id="t1clip">
-      <circle cx="8" cy="8" r="5.7"/>
-    </clipPath>
-  </defs>
-  <g clip-path="url(#t1clip)" opacity="0.7">
-    <rect x="2" y="2" width="3" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-    <rect x="8" y="2" width="3" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-    <rect x="5" y="5" width="3" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-    <rect x="11" y="5" width="3" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-    <rect x="2" y="8" width="3" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-    <rect x="8" y="8" width="3" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-    <rect x="5" y="11" width="3" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-    <rect x="11" y="11" width="3" height="3" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  </g>
-  <circle cx="8" cy="8" r="6.3" fill="none" stroke="#FFFFFF" stroke-width="1.12"/>
+    <g fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8" cy="8" r="6"/>
+        <path d="M4 4H6V6H4ZM8 4H10V6H8ZM6 6H8V8H6ZM10 6H12V8H10ZM4 8H6V10H4ZM8 8H10V10H8ZM6 10H8V12H6ZM10 10H11V11H10Z" fill="#A6A6A6" stroke="none"/>
+    </g>
 </svg>

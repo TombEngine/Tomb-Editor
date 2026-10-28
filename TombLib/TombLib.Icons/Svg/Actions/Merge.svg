@@ -1,14 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-  <g stroke="#FFFFFF" stroke-width="1.12" stroke-linecap="round" fill="none">
-    <path d="M1 1 L6 6"/>
-    <path d="M15 1 L10 6"/>
-    <path d="M1 15 L6 10"/>
-    <path d="M15 15 L10 10"/>
-  </g>
-  <g fill="#FFFFFF">
-    <path d="M4 6 L7 6 L7 3 Z" transform="rotate(45 6 6)"/>
-    <path d="M9 6 L12 6 L9 3 Z" transform="rotate(-45 10 6)"/>
-    <path d="M4 10 L7 10 L7 13 Z" transform="rotate(-45 6 10)"/>
-    <path d="M9 10 L12 10 L9 13 Z" transform="rotate(45 10 10)"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+  <path d="m2 14 5-5H3m4 0v4m7-11-5 5h4M9 7V3"/>
 </svg>

@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-  <text x="0.5" y="8" font-family="Segoe UI, Arial, sans-serif" font-size="7" font-weight="700" fill="#FFFFFF">2</text>
-  <g stroke="#FFFFFF" stroke-width="0.88" fill="none" stroke-linejoin="round" stroke-linecap="round">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" stroke-linecap="round" stroke-linejoin="round">
+  <text x="1.5" y="8" font-family="Segoe UI, Arial, sans-serif" font-size="6.5" font-weight="400" fill="#FFFFFF">2</text>
+  <g stroke="#FFFFFF" stroke-width="1" fill="none" stroke-linejoin="round" stroke-linecap="round">
     <rect x="6" y="3" width="8" height="2.2" rx="1.1"/>
     <line x1="10" y1="5.2" x2="10" y2="8.5"/>
     <rect x="9.3" y="8.5" width="1.4" height="3.5" rx="0.3"/>

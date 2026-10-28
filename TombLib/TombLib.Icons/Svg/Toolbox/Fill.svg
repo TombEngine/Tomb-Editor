@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-  <g stroke="#FFFFFF" stroke-width="1.0" fill="none" stroke-linejoin="round" stroke-linecap="round">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" stroke-linecap="round" stroke-linejoin="round">
+  <g stroke="#FFFFFF" stroke-width="1" fill="none" stroke-linejoin="round" stroke-linecap="round">
     <g transform="rotate(-45 7 7)">
       <ellipse cx="7" cy="3" rx="3" ry="1"/>
       <path d="M 4 3 L 4.5 10 L 9.5 10 L 10 3"/>
       <path d="M 4.5 2.8 Q 7 0.5 9.5 2.8"/>
     </g>
     <path d="M 10.5 7 Q 12 10 12 14"/>
-    <line x1="9" y1="14.5" x2="15" y2="14.5"/>
+    <line x1="9" y1="14" x2="14" y2="14"/>
   </g>
 </svg>

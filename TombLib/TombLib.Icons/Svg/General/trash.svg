@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-  <rect x="2" y="3" width="12" height="1.6" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="6" y="1" width="4" height="2" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  <path d="M3 5 L13 5 L12 14.5 L4 14.5 Z" fill="none" stroke="#FFFFFF" stroke-width="1.04" stroke-linejoin="round"/>
-  <line x1="6.5" y1="7" x2="6.5" y2="13" stroke="#FFFFFF" stroke-width="0.96"/>
-  <line x1="8" y1="7" x2="8" y2="13" stroke="#FFFFFF" stroke-width="0.96"/>
-  <line x1="9.5" y1="7" x2="9.5" y2="13" stroke="#FFFFFF" stroke-width="0.96"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" stroke-linecap="round">
+  <rect x="2" y="3" width="12" height="1.6" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+  <rect x="6" y="1" width="4" height="2" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+  <path d="M3 5 L13 5 L12 14.5 L4 14.5 Z" fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linejoin="round"/>
+  <line x1="6.5" y1="7" x2="6.5" y2="13" stroke="#FFFFFF" stroke-width="1"/>
+  <line x1="8" y1="7" x2="8" y2="13" stroke="#FFFFFF" stroke-width="1"/>
+  <line x1="9.5" y1="7" x2="9.5" y2="13" stroke="#FFFFFF" stroke-width="1"/>
 </svg>

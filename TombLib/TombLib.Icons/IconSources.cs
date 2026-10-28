@@ -1,37 +1,47 @@
-using System;
+#nullable enable
+
+using SharpVectors.Converters;
+using SharpVectors.Renderers.Wpf;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Reflection;
+using System.Windows;
 using System.Windows.Media;
-using SharpVectors.Converters;
-using SharpVectors.Renderers.Wpf;
 
 namespace TombLib.Icons;
 
-/// WPF entry point. Loads the SVG as a vector DrawingImage that scales perfectly.
+/// <summary>
+/// Loads embedded SVG icons as frozen WPF vector images.
+/// </summary>
 public static class IconSources
 {
-    private static readonly Assembly Asm = typeof(IconSources).Assembly;
-    private const string AsmPrefix = "TombLib.Icons.Svg.";
-
+    private const string AssemblyPrefix = "TombLib.Icons.Svg.";
+    private static readonly Assembly Assembly = typeof(IconSources).Assembly;
     private static readonly ConcurrentDictionary<IconId, DrawingImage> Cache = new();
 
+    /// <summary>
+    /// Loads a cached vector image for the specified icon.
+    /// </summary>
     public static DrawingImage Load(IconId id)
     {
-        return Cache.GetOrAdd(id, key =>
-        {
-            var resourceName = $"{AsmPrefix}{key.Category}.{key.Name}.svg";
-            using var stream = Asm.GetManifestResourceStream(resourceName)
+        var normalizedId = IconId.Parse(id.Path);
+        return Cache.GetOrAdd(normalizedId, key => {
+            var resourceName = $"{AssemblyPrefix}{key.ResourcePath}.svg";
+            using var stream = Assembly.GetManifestResourceStream(resourceName)
                                ?? throw new FileNotFoundException($"Embedded SVG not found: {resourceName}");
-
-            var settings  = new WpfDrawingSettings { IncludeRuntime = false, TextAsGeometry = true };
+            var settings = new WpfDrawingSettings { IncludeRuntime = false, TextAsGeometry = true };
             using var reader = new FileSvgReader(settings);
-            var drawing = reader.Read(stream);
-            var img = new DrawingImage(drawing);
-            img.Freeze();
-            return img;
+            var viewport = new DrawingGroup { ClipGeometry = new RectangleGeometry(new Rect(0, 0, 16, 16)) };
+            viewport.Children.Add(new GeometryDrawing(Brushes.Transparent, null, new RectangleGeometry(new Rect(0, 0, 16, 16))));
+            viewport.Children.Add(reader.Read(stream));
+            var image = new DrawingImage(viewport);
+            image.Freeze();
+            return image;
         });
     }
 
+    /// <summary>
+    /// Loads a cached vector image from a relative category/name path.
+    /// </summary>
     public static DrawingImage Load(string path) => Load(IconId.Parse(path));
 }

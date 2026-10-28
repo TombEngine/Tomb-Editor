@@ -1,13 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-  <rect x="1" y="2" width="14" height="2" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="3" y="4" width="2" height="7" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="7" y="4" width="2" height="7" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="11" y="4" width="2" height="7" fill="none" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="1" y="11.5" width="2" height="2" fill="none" opacity="0.55" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="5" y="11.5" width="2" height="2" fill="none" opacity="0.55" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="9" y="11.5" width="2" height="2" fill="none" opacity="0.55" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="13" y="11.5" width="2" height="2" fill="none" opacity="0.55" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="3" y="13.5" width="2" height="2" fill="none" opacity="0.55" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="7" y="13.5" width="2" height="2" fill="none" opacity="0.55" stroke="#FFFFFF" stroke-width="0.88"/>
-  <rect x="11" y="13.5" width="2" height="2" fill="none" opacity="0.55" stroke="#FFFFFF" stroke-width="0.88"/>
+    <g fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 2.5H14M3 3V13.5H6M13 3V13.5H10"/>
+        <path d="M7 3Q7 8 3 9M9 3Q9 8 13 9M3 9Q5 10 6 13.5M13 9Q11 10 10 13.5"/>
+        <path d="M5 3Q5 7 3 8M11 3Q11 7 13 8" stroke="#A6A6A6"/>
+    </g>
 </svg>

@@ -31,6 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Tools\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Svg\**\*.svg" />
     <EmbeddedResource Include="Png\**\*.png" />
   </ItemGroup>
