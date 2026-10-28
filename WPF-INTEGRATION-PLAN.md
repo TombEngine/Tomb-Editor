@@ -82,7 +82,9 @@
 - [x] Run regression suites: TombLib 159, TombEditor 65, SoundTool 6, WadTool 5; all 235 passed.
 - [x] Run offscreen STA layout checks for SoundTool, options, color picker and material editor.
 - [x] Run offscreen TombEditor/WadTool GPU startup, Clear/Draw/Present and disposal checks without modifying saved configurations.
-- [ ] Complete interactive audio/SFX, real mouse drag/drop and multi-monitor DPI acceptance checks.
+- [x] Complete interactive audio/SFX checks with generated sample fixtures.
+- [x] Complete real mouse file drag/drop into the native TombEditor viewport.
+- [ ] Complete mixed-monitor DPI transition checks.
 
 The Direct3D backend remains in use through native WPF HWND surfaces. The dependency-removal phase below replaces the remaining legacy input and ownership contracts. Shared legacy controls retained for other suite consumers are outside the three editors' runtime graph.
 
@@ -111,4 +113,28 @@ SharpDX.dll and SharpDX.Toolkit.Graphics.dll remain unchanged by explicit user i
 
 The final audit passed for all twelve executable outputs across Debug/Release and x64/x86. Each configuration inspected 49 local runtime assemblies for TombEditor and 47 each for WadTool and SoundTool, with zero forbidden dependencies outside those two vendor exceptions. All 263 regression tests passed: TombLib 166, TombEditor 86, WadTool 5, SoundTool 6. TombEditor includes 19 input/resource compatibility cases and two legacy layout XML cases; TombLib includes seven WPF dialog lifecycle and ownership cases.
 
-The final offscreen GPU checks created the native viewport HWNDs and completed drawing/presentation for TombEditor and WadTool with the original SharpDX binaries. Neither process loaded a System.Windows.Forms assembly, and configuration file hashes remained unchanged. Interactive audio/SFX, mouse drag/drop and multi-monitor DPI acceptance checks remain manual tasks.
+The final offscreen GPU checks created the native viewport HWNDs and completed drawing/presentation for TombEditor and WadTool with the original SharpDX binaries. Neither process loaded a System.Windows.Forms assembly, and configuration file hashes remained unchanged. The interactive audio/SFX and mouse drag/drop results are recorded below; mixed-monitor DPI acceptance requires additional hardware.
+
+## Interactive verification
+
+- [x] Run all three production apphosts from an isolated deployment with separate configuration files.
+- [x] Inspect each production window's DPI context: PerMonitorV2, 96 DPI on the available 1728x1083 monitor.
+- [x] Use real keyboard input to open and cancel the native file picker in each production executable.
+- [x] Use real mouse input to open Options, verify modal ownership and cancel in all three WPF shells.
+- [x] Resize TombEditor and WadTool and exercise native viewport mouse gestures and redraw.
+- [x] Select and rename a SoundTool sound with the mouse and keyboard; save with Ctrl+S and verify the XML round trip.
+- [x] Start and stop a quiet generated sound through the actual Preview/Stop buttons and audio driver.
+- [x] Confirm audio output on the remote audio endpoint; the measured peak matches the generated 0.02-amplitude tone.
+- [x] Compile MAIN.SFX through native folder/save dialogs for TR2 (11025 Hz) and TR3 (22050 Hz).
+- [x] Unpack MAIN.SFX through native dialogs and validate the extracted WAV.
+- [x] Reproduce and fix native OLE acceptance being lost between DragEnter, DragOver and Drop.
+- [x] Repeat a real mouse file drag into TombEditor's native viewport and verify the temporary PRJ2 is loaded.
+- [x] Add native drag lifecycle regressions, including rejected payloads, effect masks, cleanup and genuine Shell COM file lists.
+- [x] Fix missing WadTool Options translations and unreadable empty-browser text; replace the remaining search emoji with the shared SVG.
+- [x] Inspect final WadTool Options and empty-browser screenshots after rebuilding the localized resources.
+- [x] Complete final regression/build checks for the fixes found during interaction.
+- [ ] Exercise monitor transitions and 125/150/200 percent display scales on suitable hardware.
+
+The available desktop has one monitor at 100 percent scale, so mixed-monitor DPI transitions remain unverified. Startup logs also contain catalog remapping warnings for unresolved names such as ANIMATING_100 and PUZZLE_ITEM_1; these are tracked separately from the UI interaction results.
+
+All 273 regression cases pass after the interactive fixes: TombLib 175, TombEditor 86, WadTool 6 and SoundTool 6. The new coverage includes nine native drag lifecycle cases and a WadTool Options localization case. The complete solution builds with zero errors in Debug/Release on x64/x86; dependency audits pass for all twelve executable outputs with the documented SharpDX exceptions. Actual mouse and keyboard runs, screenshots, generated audio/SFX fixtures and isolated production apphost logs are retained locally in TombEditor/obj/NativeRuntimeSmoke/InteractiveEvidence. Production apphosts also passed native file-dialog cancellation and clean shutdown, with original configuration file hashes unchanged. SharpDX binaries remain unchanged.

@@ -1,138 +1,140 @@
 <UserControl
-	x:Class="TombLib.WPF.CustomControls.WadTreeView"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	d:DesignHeight="647"
-	d:DesignWidth="288"
-	mc:Ignorable="d">
+    x:Class="TombLib.WPF.CustomControls.WadTreeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:icons="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="647"
+    d:DesignWidth="288"
+    mc:Ignorable="d">
 
-	<Grid>
-		<DockPanel x:Name="contentPanel" LastChildFill="True">
+    <Grid>
+        <DockPanel x:Name="contentPanel" LastChildFill="True">
 
-			<!--  Top row: game version + search toggle  -->
-			<DockPanel
-				x:Name="versionPanel"
-				Margin="0,0,0,4"
-				DockPanel.Dock="Top">
-				<TextBlock
-					Margin="0,0,6,0"
-					VerticalAlignment="Center"
-					DockPanel.Dock="Left"
-					Foreground="{DynamicResource Brush_Text}"
-					Text="Game version:" />
-				<Button
-					x:Name="butSearch"
-					Width="23"
-					Height="23"
-					Margin="5,0,0,0"
-					Click="butSearch_Click"
-					Content="🔍"
-					DockPanel.Dock="Right"
-					ToolTip="Search" />
-				<ComboBox
-					x:Name="comboGameVersion"
-					VerticalAlignment="Center"
-					SelectionChanged="comboGameVersion_SelectionChanged" />
-			</DockPanel>
+            <!--  Top row: game version + search toggle  -->
+            <DockPanel
+                x:Name="versionPanel"
+                Margin="0,0,0,4"
+                DockPanel.Dock="Top">
+                <TextBlock
+                    Margin="0,0,6,0"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Foreground="{DynamicResource Brush_Text}"
+                    Text="Game version:" />
+                <Button
+                    x:Name="butSearch"
+                    Width="23"
+                    Height="23"
+                    Margin="5,0,0,0"
+                    Click="butSearch_Click"
+                    DockPanel.Dock="Right"
+                    ToolTip="Search">
+                    <Image Width="16" Height="16" Source="{icons:Icon General/search}" />
+                </Button>
+                <ComboBox
+                    x:Name="comboGameVersion"
+                    VerticalAlignment="Center"
+                    SelectionChanged="comboGameVersion_SelectionChanged" />
+            </DockPanel>
 
-			<!--  Search row (replaces the legacy PopUpSearch pop-up); toggled by the search button  -->
-			<DockPanel
-				x:Name="searchPanel"
-				Margin="0,0,0,4"
-				DockPanel.Dock="Top"
-				Visibility="Collapsed">
-				<Button
-					Width="50"
-					Margin="5,0,0,0"
-					Click="butSearchNext_Click"
-					Content="Next"
-					DockPanel.Dock="Right" />
-				<TextBox x:Name="tbSearch" KeyDown="tbSearch_KeyDown" />
-			</DockPanel>
+            <!--  Search row (replaces the legacy PopUpSearch pop-up); toggled by the search button  -->
+            <DockPanel
+                x:Name="searchPanel"
+                Margin="0,0,0,4"
+                DockPanel.Dock="Top"
+                Visibility="Collapsed">
+                <Button
+                    Width="50"
+                    Margin="5,0,0,0"
+                    Click="butSearchNext_Click"
+                    Content="Next"
+                    DockPanel.Dock="Right" />
+                <TextBox x:Name="tbSearch" KeyDown="tbSearch_KeyDown" />
+            </DockPanel>
 
-			<!--  Bottom: metadata  -->
-			<Grid
-				x:Name="metadataPanel"
-				Margin="0,4,0,0"
-				DockPanel.Dock="Bottom">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="Auto" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
+            <!--  Bottom: metadata  -->
+            <Grid
+                x:Name="metadataPanel"
+                Margin="0,4,0,0"
+                DockPanel.Dock="Bottom">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-				<TextBlock
-					Grid.Row="0"
-					Grid.Column="0"
-					Margin="0,0,6,0"
-					VerticalAlignment="Center"
-					Foreground="{DynamicResource Brush_Text}"
-					Text="Date:" />
-				<TextBox
-					x:Name="tbDate"
-					Grid.Row="0"
-					Grid.Column="1"
-					IsReadOnly="True" />
-				<TextBlock
-					Grid.Row="1"
-					Grid.Column="0"
-					Margin="0,0,6,0"
-					VerticalAlignment="Center"
-					Foreground="{DynamicResource Brush_Text}"
-					Text="Notes:" />
-				<TextBox
-					x:Name="tbNotes"
-					Grid.Row="1"
-					Grid.Column="1"
-					Margin="0,4,0,0"
-					TextChanged="tbNotes_TextChanged" />
-			</Grid>
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="0,0,6,0"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource Brush_Text}"
+                    Text="Date:" />
+                <TextBox
+                    x:Name="tbDate"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    IsReadOnly="True" />
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="0,0,6,0"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource Brush_Text}"
+                    Text="Notes:" />
+                <TextBox
+                    x:Name="tbNotes"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="0,4,0,0"
+                    TextChanged="tbNotes_TextChanged" />
+            </Grid>
 
-			<!--  The tree itself  -->
-			<TreeView x:Name="tree" SelectedItemChanged="tree_SelectedItemChanged">
-				<TreeView.ItemContainerStyle>
-					<Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">
-						<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-					</Style>
-				</TreeView.ItemContainerStyle>
-				<TreeView.ItemTemplate>
-					<HierarchicalDataTemplate ItemsSource="{Binding Children}">
-						<!--  Selection is multi-select and fully managed in code-behind, so the
-						      highlight is drawn here from the node's IsSelected instead of the
-						      native (single-select) TreeViewItem highlight.  -->
-						<Border
-							x:Name="nodeContent"
-							Padding="3,1"
-							Background="Transparent"
-							MouseDown="NodeContent_MouseDown">
-							<TextBlock Foreground="{DynamicResource Brush_Text}" Text="{Binding Text}" />
-						</Border>
-						<HierarchicalDataTemplate.Triggers>
-							<DataTrigger Binding="{Binding IsSelected}" Value="True">
-								<Setter TargetName="nodeContent" Property="Background" Value="{DynamicResource Brush_Selection}" />
-							</DataTrigger>
-						</HierarchicalDataTemplate.Triggers>
-					</HierarchicalDataTemplate>
-				</TreeView.ItemTemplate>
-			</TreeView>
-		</DockPanel>
+            <!--  The tree itself  -->
+            <TreeView x:Name="tree" SelectedItemChanged="tree_SelectedItemChanged">
+                <TreeView.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <!--  Selection is multi-select and fully managed in code-behind, so the
+                              highlight is drawn here from the node's IsSelected instead of the
+                              native (single-select) TreeViewItem highlight.  -->
+                        <Border
+                            x:Name="nodeContent"
+                            Padding="3,1"
+                            Background="Transparent"
+                            MouseDown="NodeContent_MouseDown">
+                            <TextBlock Foreground="{DynamicResource Brush_Text}" Text="{Binding Text}" />
+                        </Border>
+                        <HierarchicalDataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                <Setter TargetName="nodeContent" Property="Background" Value="{DynamicResource Brush_Selection}" />
+                            </DataTrigger>
+                        </HierarchicalDataTemplate.Triggers>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+        </DockPanel>
 
-		<!--  Empty state: shown when no wad is loaded  -->
-		<Border
-			x:Name="emptyPanel"
-			Background="{DynamicResource Brush_Background}"
-			MouseLeftButtonUp="emptyPanel_MouseLeftButtonUp"
-			Visibility="Collapsed">
-			<TextBlock
-				HorizontalAlignment="Center"
-				VerticalAlignment="Center"
-				Foreground="{DynamicResource Brush_Text_Low}"
-				Text="Click here to load new wad file." />
-		</Border>
-	</Grid>
+        <!--  Empty state: shown when no wad is loaded  -->
+        <Border
+            x:Name="emptyPanel"
+            Background="{DynamicResource Brush_Background}"
+            MouseLeftButtonUp="emptyPanel_MouseLeftButtonUp"
+            Visibility="Collapsed">
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Foreground="{DynamicResource Brush_Text}"
+                Text="Click here to load new wad file." />
+        </Border>
+    </Grid>
 </UserControl>

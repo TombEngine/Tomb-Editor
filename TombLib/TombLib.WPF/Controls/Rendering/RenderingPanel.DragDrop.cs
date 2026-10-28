@@ -5,7 +5,6 @@ using NLog;
 using System;
 using System.Runtime.InteropServices;
 using TombLib.Input;
-using TombLib.Services;
 using TombLib.WPF.Input;
 
 namespace TombLib.WPF.Controls.Rendering;
@@ -71,13 +70,14 @@ public partial class RenderingPanel
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly RenderingPanel _owner;
         private IDataTransfer? _data;
+        private TransferEffects _effect;
 
         public NativeDropTarget(RenderingPanel owner) => _owner = owner;
 
         public int DragEnter(ComDataObject data, uint keys, NativePoint point, ref uint effect)
         {
-            _data = WrapDragData(data);
-            return Dispatch(_owner.OnDragEnter, keys, point, ref effect);
+            Reset();
+            return Dispatch(_owner.OnDragEnter, keys, point, ref effect, data);
         }
 
         public int DragOver(uint keys, NativePoint point, ref uint effect) => Dispatch(_owner.OnDragOver, keys, point, ref effect);
@@ -92,35 +92,66 @@ public partial class RenderingPanel
             {
                 Logger.Error(exception, "Unable to end viewport drag operation.");
             }
+            finally
+            {
+                Reset();
+            }
 
-            _data = null;
             return 0;
         }
 
         public int Drop(ComDataObject data, uint keys, NativePoint point, ref uint effect)
         {
-            _data = WrapDragData(data);
-            int result = Dispatch(_owner.OnDragDrop, keys, point, ref effect);
-            _data = null;
-            return result;
+            try
+            {
+                if (_data is null || (_effect & (TransferEffects)effect) == TransferEffects.None)
+                {
+                    effect = 0;
+                    return 0;
+                }
+
+                return Dispatch(_owner.OnDragDrop, keys, point, ref effect, data);
+            }
+            finally
+            {
+                Reset();
+            }
         }
 
-        private int Dispatch(Action<PointerDragEventArgs> handler, uint keys, NativePoint point, ref uint effect)
+        private int Dispatch(Action<PointerDragEventArgs> handler, uint keys, NativePoint point, ref uint effect, ComDataObject? data = null)
         {
             try
             {
+                if (data is not null)
+                    _data = WrapDragData(data);
+
+                if (_data is null)
+                {
+                    effect = 0;
+                    return 0;
+                }
+
+                var allowedEffect = (TransferEffects)effect;
                 var args = new PointerDragEventArgs(_data, (int)keys, point.X, point.Y,
-                    (TransferEffects)effect, TransferEffects.None);
+                    allowedEffect, _effect & allowedEffect);
                 handler(args);
-                effect = (uint)args.Effect;
+                _effect = args.Effect & allowedEffect;
+                effect = (uint)_effect;
                 return 0;
             }
             catch (Exception exception)
             {
                 Logger.Error(exception, "Unable to process viewport drag operation.");
+                Reset();
                 effect = 0;
                 return 0;
             }
+        }
+
+        private void Reset()
+        {
+            _data = null;
+            _effect = TransferEffects.None;
         }
     }
 
