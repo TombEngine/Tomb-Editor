@@ -1,78 +1,55 @@
-﻿using DarkUI.Config;
-using System.ComponentModel;
-using System.Drawing;
+#nullable enable
+
+using System;
+using System.Globalization;
 using System.IO;
-using System.Windows.Forms;
-using System.Windows.Media.TextFormatting;
-using TombLib.Controls;
-using TombLib.Utils;
+using System.Windows;
+using System.Windows.Media;
+using TombLib.WPF;
+using TombLib.WPF.Controls;
 
-namespace WadTool.Controls
+namespace WadTool.Controls;
+
+/// <summary>
+/// Displays mesh textures and edits UV selections using the shared WPF texture map.
+/// </summary>
+public class PanelTextureMap : TextureMapBase
 {
-    public class PanelTextureMap : TextureMapBase
+    private WadToolClass? _tool;
+
+    protected override float TileSelectionSize => 32.0f;
+    protected override bool ResetAttributesOnNewSelection => false;
+    protected override bool MouseWheelMovesTheTextureInsteadOfZooming => _tool?.Configuration.MeshEditor_MouseWheelMovesTheTextureInsteadOfZooming ?? false;
+    protected override float NavigationSpeedKeyMove => 100.0f;
+    protected override float NavigationSpeedKeyZoom => 0.15f;
+    protected override float NavigationSpeedMouseZoom => (_tool?.Configuration.RenderingItem_NavigationSpeedMouseZoom ?? 1.0f) * 0.00225f;
+    protected override float NavigationSpeedMouseWheelZoom => (_tool?.Configuration.RenderingItem_NavigationSpeedMouseWheelZoom ?? 1.0f) * 0.00025f;
+    protected override float NavigationMaxZoom => 2000.0f;
+    protected override float NavigationMinZoom => 0.5f;
+    protected override bool DrawSelectionDirectionIndicators => true;
+
+    /// <summary>Applies navigation preferences for the current editor.</summary>
+    public void Initialize(WadToolClass tool) => _tool = tool;
+
+    protected override void OnRender(DrawingContext drawingContext)
     {
-        private WadToolClass _tool;
+        base.OnRender(drawingContext);
 
-        protected override float TileSelectionSize => 32.0f;
-        protected override bool ResetAttributesOnNewSelection => false;
-        protected override bool MouseWheelMovesTheTextureInsteadOfZooming => _tool?.Configuration.MeshEditor_MouseWheelMovesTheTextureInsteadOfZooming ?? false;
-        protected override float NavigationSpeedKeyMove => 100.0f;
-        protected override float NavigationSpeedKeyZoom => 0.15f;
-        protected override float NavigationSpeedMouseZoom => (_tool?.Configuration.RenderingItem_NavigationSpeedMouseZoom ?? 1.0f) * 0.00225f;
-        protected override float NavigationSpeedMouseWheelZoom => (_tool?.Configuration.RenderingItem_NavigationSpeedMouseWheelZoom ?? 1.0f) * 0.00025f;
-        protected override float NavigationMaxZoom => 2000.0f;
-        protected override float NavigationMinZoom => 0.5f;
-        protected override bool DrawSelectionDirectionIndicators => true;
+        var path = VisibleTexture?.AbsolutePath;
+        if (string.IsNullOrEmpty(path) || File.Exists(path) || ActualWidth <= 0.0 || ActualHeight <= 0.0)
+            return;
 
-        public PanelTextureMap() : base() { }
-
-        public void Initialize(WadToolClass tool)
+        var foreground = TryFindResource("Brush_Text") as Brush ?? Brushes.White;
+        var text = new FormattedText(Localizer.Instance["WadTool.TextureMap.ExternalTextureMissing"] + Environment.NewLine + path,
+            CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, new Typeface(FontFamily, FontStyle, FontWeight, FontStretch),
+            FontSize, foreground, VisualTreeHelper.GetDpi(this).PixelsPerDip)
         {
-            if (LicenseManager.UsageMode == LicenseUsageMode.Runtime)
-            {
-                _tool = tool;
-                _tool.EditorEventRaised += EditorEventRaised;
-            }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && _tool != null)
-                _tool.EditorEventRaised -= EditorEventRaised;
-            base.Dispose(disposing);
-        }
-
-        private void EditorEventRaised(IEditorEvent obj)
-        {
-            //if (obj is WadToolClass.MeshEditorTextureChangedEvent)
-            //    Invalidate();
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-
-            var externalTextureMissing = !string.IsNullOrEmpty(VisibleTexture?.AbsolutePath) && !File.Exists(VisibleTexture?.AbsolutePath);
-
-            if (!externalTextureMissing)
-                return;
-
-            var rect = new Rectangle(ClientRectangle.X, ClientRectangle.Y, 
-                                     ClientRectangle.Width - _scrollSize, ClientRectangle.Height - Font.Height - _scrollSize);
-
-            var message = "External texture not found:\n" + VisibleTexture.AbsolutePath;
-            var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Far };
-            var stringSize = e.Graphics.MeasureString(message, Font, rect.Size, format);
-
-            var textRect = new RectangleF(rect.X + (rect.Width - stringSize.Width) / 2, rect.Y + rect.Height - stringSize.Height,
-                                          stringSize.Width, stringSize.Height);
-            textRect.Inflate(6, 6);
-
-            using (var brush = new SolidBrush(ForeColor.MixWith(Color.DarkRed, 0.55)))
-                e.Graphics.FillRectangle(brush, textRect);
-
-            using (var brush = new SolidBrush(Colors.LightestBackground))
-                e.Graphics.DrawString("External texture not found:\n" + VisibleTexture.AbsolutePath, Font, brush, rect, format);
-        }
+            MaxTextWidth = Math.Max(1.0, ActualWidth - 12.0),
+            TextAlignment = TextAlignment.Center,
+            Trimming = TextTrimming.CharacterEllipsis
+        };
+        var origin = new Point(6.0, Math.Max(0.0, ActualHeight - text.Height - 6.0));
+        drawingContext.DrawRectangle(Brushes.DarkRed, null, new Rect(0.0, origin.Y - 6.0, ActualWidth, text.Height + 12.0));
+        drawingContext.DrawText(text, origin);
     }
 }

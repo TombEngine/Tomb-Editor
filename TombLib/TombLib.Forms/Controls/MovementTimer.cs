@@ -1,111 +1,144 @@
-﻿using System;
+#nullable enable
+
+using System;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using TombLib.Utils;
 
-namespace TombLib.Controls
+namespace TombLib.Controls;
+
+/// <summary>Identifies camera and geometry transition modes.</summary>
+public enum AnimationMode
 {
-    public enum AnimationMode
+    Idle,
+    Spin,
+    Snap,
+    GhostBlockUnfold
+}
+
+/// <summary>Schedules camera movement on the WPF dispatcher and releases pending ticks on disposal.</summary>
+public class MovementTimer : IDisposable
+{
+    private readonly DispatcherTimer _moveTimer = new(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(16) };
+    private readonly float _moveAcceleration;
+    private readonly EventHandler _moveEvent;
+    private bool _disposed;
+
+    private float _autoMoveStep = 0.0f;
+    private float _autoMoveCurrent = 0.0f;
+
+    /// <summary>Gets the current eased progress or directional acceleration.</summary>
+    public float MoveMultiplier { get; private set; }
+
+    /// <summary>Gets the current directional movement key.</summary>
+    public Keys MoveKey { get; private set; } = Keys.None;
+
+    /// <summary>Gets the active transition mode.</summary>
+    public AnimationMode Mode { get; private set; } = AnimationMode.Idle;
+
+    /// <summary>Gets whether an automatic transition is in progress.</summary>
+    public bool Animating => Mode > AnimationMode.Spin;
+
+    /// <summary>Creates a movement timer on the current UI dispatcher.</summary>
+    public MovementTimer(EventHandler moveEvent, float moveAcceleration = 0.02f)
     {
-        Idle,
-        Spin,
-        Snap,
-        GhostBlockUnfold
+        _moveTimer.Tick += UpdateTimer;
+
+        _moveEvent = moveEvent;
+        _moveAcceleration = moveAcceleration;
+        _moveTimer.Tick += _moveEvent;
     }
 
-    public class MovementTimer : IDisposable
+    /// <summary>Stops movement and releases timer subscriptions.</summary>
+    public void Dispose()
     {
-        private readonly Timer _moveTimer = new Timer() { Interval = 16 };
-        private readonly float _moveAcceleration;
-        private EventHandler _moveEvent;
+        if (_disposed)
+            return;
 
-        private float _autoMoveStep = 0.0f;
-        private float _autoMoveCurrent = 0.0f;
+        Stop(true);
+        _disposed = true;
+        _moveTimer.Tick -= UpdateTimer;
+        _moveTimer.Tick -= _moveEvent;
+    }
 
-        public float MoveMultiplier { get; private set; }
-        public Keys MoveKey { get; private set; } = Keys.None;
-        public AnimationMode Mode { get; private set; } = AnimationMode.Idle;
-        public bool Animating => Mode > AnimationMode.Spin;
+    /// <summary>Starts directional movement if no transition is in progress.</summary>
+    public bool Engage(Keys moveDirection)
+    {
+        if (_disposed || Mode != AnimationMode.Idle)
+            return false;
 
-        public MovementTimer(EventHandler moveEvent, float moveAcceleration = 0.02f)
+        if (WinFormsUtils.DirectionalCameraKeys.Contains(moveDirection))
         {
-            _moveTimer.Tick += UpdateTimer;
-
-            _moveEvent = moveEvent;
-            _moveAcceleration = moveAcceleration;
-            _moveTimer.Tick += _moveEvent;
-        }
-
-        public void Dispose()
-        {
-            _moveTimer.Tick -= _moveEvent;
-            _moveEvent = null;
-        }
-
-        public bool Engage(Keys moveDirection)
-        {
-            if (Mode != AnimationMode.Idle)
-                return false; // Reject if auto-move is in progress
-
-            if (WinFormsUtils.DirectionalCameraKeys.Contains(moveDirection))
+            Mode = AnimationMode.Spin;
+            if (!_moveTimer.IsEnabled)
+                _moveTimer.IsEnabled = true;
+            if (MoveKey != moveDirection)
             {
-                Mode = AnimationMode.Spin;
-                if (_moveTimer.Enabled == false)
-                    _moveTimer.Enabled = true;
-                if (MoveKey != moveDirection)
-                {
-                    MoveKey = moveDirection;
-                    MoveMultiplier = 0.0f;
-                }
-                return true;
+                MoveKey = moveDirection;
+                MoveMultiplier = 0.0f;
             }
-            else
-                return false;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /// <summary>Starts an automatic transition with a duration measured in seconds.</summary>
+    public void Animate(AnimationMode mode, float timeInSeconds)
+    {
+        if (_disposed)
+            return;
+
+        if (!float.IsFinite(timeInSeconds) || timeInSeconds <= 0.0f)
+        {
+            Stop(true);
+            return;
         }
 
-        public void Animate(AnimationMode mode, float timeInSeconds)
+        Mode = mode;
+        _autoMoveCurrent = 0.0f;
+        _autoMoveStep = (float)_moveTimer.Interval.TotalSeconds / timeInSeconds;
+        _moveTimer.IsEnabled = true;
+    }
+
+    /// <summary>Stops movement, optionally interrupting an automatic transition.</summary>
+    public void Stop(bool force = false)
+    {
+        if (Mode > AnimationMode.Spin && !force)
+            return;
+
+        _moveTimer.IsEnabled = false;
+        Mode = AnimationMode.Idle;
+        MoveMultiplier = 0.0f;
+        MoveKey = Keys.None;
+    }
+
+    private void UpdateTimer(object? sender, EventArgs e)
+    {
+        if (Mode == AnimationMode.Spin)
         {
-            Mode = mode;
-            _autoMoveCurrent = 0.0f;
-            _autoMoveStep = (1.0f / (float)_moveTimer.Interval) / timeInSeconds;
-            _moveTimer.Enabled = true;
+            MoveMultiplier = Math.Clamp(MoveMultiplier + _moveAcceleration, 0.0f, 1.0f);
         }
-
-        public void Stop(bool force = false)
+        else if (Mode != AnimationMode.Idle)
         {
-            if (Mode > AnimationMode.Spin & !force) return; // Reject if auto-move is in progress
-            
-            _moveTimer.Enabled = false;
-            Mode = AnimationMode.Idle;
-            MoveMultiplier = 0.0f;
-            MoveKey = Keys.None;
-        }
+            _autoMoveCurrent += _autoMoveStep;
 
-        private void UpdateTimer(object sender, EventArgs e)
-        {
-            if (Mode == AnimationMode.Spin)
-            {
-                if (MoveMultiplier < 1.0f)
-                    MoveMultiplier += _moveAcceleration;
-                else
-                    MoveMultiplier = 1.0f;
-            }
-            else if (Mode != AnimationMode.Idle)
-            {
-                _autoMoveCurrent += _autoMoveStep;
+            // Allow timer to overflow for 2 subsequent frames, so we
+            // get the final 1.0 value at all times.
 
-                // Allow timer to overflow for 2 subsequent frames, so we
-                // get finalizing 1.0 value at all times
-
-                if (_autoMoveCurrent >= 1.0f + (_autoMoveStep * 2))
-                    Stop(true);
-                else
-                {
-                    var newMultiplier = MathC.SmoothStep(0.0, 1.0, _autoMoveCurrent);
-                    MoveMultiplier = (float)MathC.Clamp(newMultiplier, 0.0, 1.0);
-                }
-            }
-            else
+            if (_autoMoveCurrent >= 1.0f + (_autoMoveStep * 2))
                 Stop(true);
+            else
+            {
+                var newMultiplier = MathC.SmoothStep(0.0, 1.0, _autoMoveCurrent);
+                MoveMultiplier = (float)MathC.Clamp(newMultiplier, 0.0, 1.0);
+            }
+        }
+        else
+        {
+            Stop(true);
         }
     }
 }

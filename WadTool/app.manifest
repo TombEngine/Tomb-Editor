@@ -1,14 +1,10 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3">
-	<asmv3:application>
-		<asmv3:windowsSettings>
-			<!--
-				Per-Monitor V2: matches the WPF shell (and TombEditor); the legacy "unaware"
-				setting made the OS bitmap-stretch the window, which breaks the WPF layout
-				and the WindowsFormsHost-hosted controls on scaled displays.
-			-->
-			<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/PM</dpiAware>
-			<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2, PerMonitor, System</dpiAwareness>
-		</asmv3:windowsSettings>
-	</asmv3:application>
+    <asmv3:application>
+        <asmv3:windowsSettings>
+            <!-- Keep the WPF shell and native Direct3D surfaces in the same monitor DPI context. -->
+            <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/PM</dpiAware>
+            <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2, PerMonitor, System</dpiAwareness>
+        </asmv3:windowsSettings>
+    </asmv3:application>
 </assembly>

@@ -15,44 +15,20 @@ using TombLib.Graphics;
 using TombLib.LevelData;
 using TombLib.Types;
 using TombLib.Utils;
-using TombLib.Wad;
-using TombLib.Wad.Catalog;
 using TombLib.WPF;
 using TombLib.WPF.CustomControls;
+using TombLib.Wad;
+using TombLib.Wad.Catalog;
 using WadTool.Controls;
 using WadTool.Features.Dialogs.AnimCommandsEditor;
 using WadTool.Features.Dialogs.AnimationFixer;
 using WadTool.Features.Dialogs.StateChangesEditor;
+
 using PopUpInfo = TombLib.WPF.PopUpInfo;
 
 namespace WadTool.Features.Dialogs.AnimEditor;
 
-/// <summary>One entry of the animation list.</summary>
-public sealed partial class AnimListItem : ObservableObject
-{
-    [ObservableProperty] private string _label;
-    public AnimationNode Node { get; }
-    public AnimListItem(AnimationNode node, string label) { Node = node; _label = label; }
-}
-
-/// <summary>One entry of the bounding-mesh / bone list (legacy <c>dgvBoundingMeshList</c>).</summary>
-public sealed partial class MeshBoneItem : ObservableObject
-{
-    [ObservableProperty] private bool _checked = true;
-    public int Index { get; }
-    public string Name { get; }
-    public MeshBoneItem(int index, string name) { Index = index; Name = name; }
-}
-
-/// <summary>
-/// WPF counterpart of the legacy <c>FormAnimationEditor</c> - built incrementally. The 3D view
-/// (<see cref="PanelRenderingAnimationEditor"/>) and the <see cref="AnimationTrackBar"/> timeline
-/// remain WinForms custom-rendered controls, hosted via <c>WindowsFormsHost</c> and driven by this
-/// view model; the blend-curve editor and the rest of the chrome are native WPF.
-///
-/// SLICE 1: animation list, read-only animation properties, playback and frame selection. Keyframe
-/// editing, transforms, root motion, blending, sound and chained playback follow in later slices.
-/// </summary>
+/// <summary>Coordinates animation editing, playback and native WPF viewport tools.</summary>
 public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDialogViewModel
 {
     private readonly DeviceManager _deviceManager;
@@ -193,6 +169,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     {
         if (_playTimer is not null) _playTimer.Stop();
         _editor.Tool.EditorEventRaised -= OnEditorEventRaised;
+        _popup.Dispose();
     }
 
     private void OnEditorEventRaised(IEditorEvent obj)

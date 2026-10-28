@@ -2,35 +2,24 @@
 
 using System.Windows.Media;
 using TombLib.LevelData;
-using TombLib.WPF.Controls;
 using TombLib.WPF.Features.AnimatedTextures;
 
 namespace WadTool.Controls;
 
 /// <summary>
 /// Wad Tool flavour of the WPF texture-map view for the animated-textures editor: same
-/// configuration hooks as the WinForms <see cref="PanelTextureMap"/>, plus the animated-texture
+/// configuration hooks as the shared <see cref="PanelTextureMap"/>, plus the animated-texture
 /// set outlines (WPF counterpart of <c>PanelTextureMapForAnimations</c>).
 /// </summary>
-public class WpfAnimatedTextureMapView : TextureMapBase, IAnimatedTextureMap
+public class WpfAnimatedTextureMapView : PanelTextureMap, IAnimatedTextureMap
 {
     private readonly WadToolClass _tool;
 
     public WpfAnimatedTextureMapView(WadToolClass tool)
     {
         _tool = tool;
+        Initialize(tool);
     }
-
-    protected override float TileSelectionSize => 32.0f;
-    protected override bool ResetAttributesOnNewSelection => false;
-    protected override bool MouseWheelMovesTheTextureInsteadOfZooming => _tool.Configuration.MeshEditor_MouseWheelMovesTheTextureInsteadOfZooming;
-    protected override float NavigationSpeedKeyMove => 100.0f;
-    protected override float NavigationSpeedKeyZoom => 0.15f;
-    protected override float NavigationSpeedMouseZoom => _tool.Configuration.RenderingItem_NavigationSpeedMouseZoom * 0.00225f;
-    protected override float NavigationSpeedMouseWheelZoom => _tool.Configuration.RenderingItem_NavigationSpeedMouseWheelZoom * 0.00025f;
-    protected override float NavigationMaxZoom => 2000.0f;
-    protected override float NavigationMinZoom => 0.5f;
-    protected override bool DrawSelectionDirectionIndicators => true;
 
     protected override float MaxTextureSize => float.PositiveInfinity;
     protected override bool DrawTriangle => false;

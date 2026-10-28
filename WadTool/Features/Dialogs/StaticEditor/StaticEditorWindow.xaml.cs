@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System;
 using System.Windows;
@@ -6,16 +6,13 @@ using System.Windows.Forms;
 using TombLib.Forms;
 using TombLib.Utils;
 using TombLib.WPF;
-using PopUpInfo = TombLib.WPF.PopUpInfo;
 using WadTool.Controls;
+
+using PopUpInfo = TombLib.WPF.PopUpInfo;
 
 namespace WadTool.Features.Dialogs.StaticEditor;
 
-/// <summary>
-/// WPF port of the legacy <c>FormStaticEditor</c>. The 3D view is still the WinForms
-/// <see cref="PanelRenderingStaticEditor"/> control, hosted via <c>WindowsFormsHost</c>; all the
-/// editing controls around it are native WPF bound to <see cref="StaticEditorWindowViewModel"/>.
-/// </summary>
+/// <summary>Native WPF StaticEditor view with a Direct3D viewport and MVVM editing tools.</summary>
 public partial class StaticEditorWindow : Window
 {
     private readonly PanelRenderingStaticEditor _panel;
@@ -51,6 +48,9 @@ public partial class StaticEditorWindow : Window
 
     private void OnClosed(object? sender, EventArgs e)
     {
+        _panel.Dispose();
+        _popup.Dispose();
+
         _panel.MouseDoubleClick -= OnPanelMouseDoubleClick;
         _panel.PositionChanged -= OnPanelPositionChanged;
 

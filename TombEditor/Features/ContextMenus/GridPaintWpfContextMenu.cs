@@ -1,14 +1,12 @@
 #nullable enable
 using System.Windows.Controls;
-using System.Windows.Forms;
 using static TombEditor.Features.ContextMenus.WpfContextMenuHelper;
 
 namespace TombEditor.Features.ContextMenus;
 
 internal static class GridPaintWpfContextMenu
 {
-    public static ContextMenu Show(Editor editor, IWin32Window owner,
-                                   System.Drawing.Point screenPoint)
+    public static ContextMenu Create(Editor editor)
     {
         var menu = new ContextMenu();
 
@@ -19,7 +17,6 @@ internal static class GridPaintWpfContextMenu
         menu.Items.Add(Item("Grid Paint (4x4)", "Toolbox/GridPaint4x4",
             () => SwitchGridPaintTool(editor, PaintGridSize.Grid4x4)));
 
-        Open(menu, screenPoint);
         return menu;
     }
 

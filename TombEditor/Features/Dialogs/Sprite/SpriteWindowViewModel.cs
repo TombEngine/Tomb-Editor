@@ -1,75 +1,90 @@
 #nullable enable
 
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MvvmDialogs;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Windows.Media;
 using TombLib.LevelData;
-using TombLib.Wad.Catalog;
+using TombLib.WPF;
+using TombLib.WPF.Imaging;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
+using TombLib.Wad;
+using TombLib.Wad.Catalog;
 
 namespace TombEditor.Features.Dialogs.Sprite;
 
 public partial class SpriteWindowViewModel : ObservableObject, IModalDialogViewModel
 {
-	private readonly SpriteInstance _instance;
-	private readonly Editor _editor;
+    private readonly Editor _editor;
+    private readonly SpriteInstance _instance;
+    private List<WadSprite> _previewSprites = [];
 
-	[ObservableProperty] private bool? _dialogResult;
+    [ObservableProperty] private bool? _dialogResult;
+    [ObservableProperty] private ImageSource? _previewImage;
+    [ObservableProperty] private Brush _previewBackground;
+    [ObservableProperty] private int _selectedSpriteIndex = -1;
 
-	[ObservableProperty]
-	[NotifyPropertyChangedFor(nameof(PreviewSpriteIndex))]
-	private int _selectedSpriteIndex = -1;
+    /// <summary>Gets the names of available sprite frames.</summary>
+    public ObservableCollection<string> Sprites { get; } = [];
 
-	public ObservableCollection<string> Sprites { get; } = new();
+    public SpriteWindowViewModel(SpriteInstance instance, ILocalizationService? localizationService = null)
+    {
+        _instance = instance;
+        _editor = Editor.Instance;
+        _previewBackground = _editor.Configuration.UI_ColorScheme.Color3DBackground.ToWPFBrush();
+        _ = ServiceLocator.ResolveService(localizationService).WithKeysFor(this);
+        _editor.EditorEventRaised += OnEditorEvent;
+        Populate();
+    }
 
-	/// <summary>Index used by the WinForms preview panel. Negative values are clamped to 0.</summary>
-	public int PreviewSpriteIndex => SelectedSpriteIndex < 0 ? 0 : SelectedSpriteIndex;
+    partial void OnSelectedSpriteIndexChanged(int value) => UpdatePreview();
 
-	public SpriteWindowViewModel(SpriteInstance instance, ILocalizationService? localizationService = null)
-	{
-		_instance = instance;
-		_editor = Editor.Instance;
-		_ = ServiceLocator.ResolveService(localizationService).WithKeysFor(this);
+    private void OnEditorEvent(IEditorEvent editorEvent)
+    {
+        if (editorEvent is Editor.LoadedWadsChangedEvent or Editor.LevelChangedEvent)
+            Populate();
+        else if (editorEvent is Editor.ConfigurationChangedEvent)
+            PreviewBackground = _editor.Configuration.UI_ColorScheme.Color3DBackground.ToWPFBrush();
+    }
 
-		_editor.EditorEventRaised += OnEditorEvent;
-		Populate();
-	}
+    private void Populate()
+    {
+        Sprites.Clear();
+        _previewSprites = _editor.Level.Settings.WadGetAllSprites();
+        var sequences = _editor.Level.Settings.WadGetAllSpriteSequences();
+        var version = _editor.Level.Settings.GameVersion;
 
-	private void OnEditorEvent(IEditorEvent obj)
-	{
-		if (obj is Editor.LoadedWadsChangedEvent || obj is Editor.LevelChangedEvent)
-			Populate();
-	}
+        foreach (var sequence in sequences.Values)
+        {
+            string name = TrCatalog.GetSpriteSequenceName(version, sequence.Id.TypeId);
 
-	private void Populate()
-	{
-		Sprites.Clear();
+            for (int frame = 0; frame < sequence.Sprites.Count; frame++)
+                Sprites.Add($"{name}, Frame {frame}");
+        }
 
-		var sequences = _editor.Level.Settings.WadGetAllSpriteSequences();
-		var version = _editor.Level.Settings.GameVersion;
+        SelectedSpriteIndex = _instance.SpriteID >= 0 && _instance.SpriteID < Sprites.Count ? _instance.SpriteID : (Sprites.Count > 0 ? 0 : -1);
+        UpdatePreview();
+    }
 
-		foreach (var seq in sequences.Values)
-		{
-			string name = TrCatalog.GetSpriteSequenceName(version, seq.Id.TypeId);
-			for (int i = 0; i < seq.Sprites.Count; i++)
-				Sprites.Add($"{name}, Frame {i}");
-		}
+    private void UpdatePreview() => PreviewImage = SelectedSpriteIndex >= 0 && SelectedSpriteIndex < _previewSprites.Count
+        ? ImageSourceFactory.FromImage(_previewSprites[SelectedSpriteIndex].Texture.Image)
+        : null;
 
-		SelectedSpriteIndex = _instance.SpriteID < Sprites.Count ? _instance.SpriteID : (Sprites.Count > 0 ? 0 : -1);
-	}
+    /// <summary>Releases the editor subscription when the dialog closes.</summary>
+    public void Detach() => _editor.EditorEventRaised -= OnEditorEvent;
 
-	public void Detach() => _editor.EditorEventRaised -= OnEditorEvent;
+    [RelayCommand]
+    private void Confirm()
+    {
+        if (SelectedSpriteIndex >= 0)
+            _instance.SetSequenceAndFrame(SelectedSpriteIndex);
 
-	[RelayCommand]
-	private void Confirm()
-	{
-		if (SelectedSpriteIndex >= 0)
-			_instance.SetSequenceAndFrame(SelectedSpriteIndex);
-		DialogResult = true;
-	}
+        DialogResult = true;
+    }
 
-	[RelayCommand]
-	private void Cancel() => DialogResult = false;
+    [RelayCommand]
+    private void Cancel() => DialogResult = false;
 }

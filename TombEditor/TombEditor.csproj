@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <LangVersion>12</LangVersion>
@@ -75,14 +75,6 @@
       <Link>GlobalPaths.cs</Link>
     </Compile>
     <Compile Remove="EditorCommands.cs" />
-    <Compile Update="Features\Panel3D\ToolPalette\Toolbox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Update="Properties\Settings.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
@@ -101,24 +93,11 @@
   <ItemGroup>
     <Resource Include="TE.ico" />
     <Resource Include="Resources\misc\misc_AboutScreen_800.png" />
-    <Resource Include="Resources\icons_actions\*.png" />
-    <Resource Include="Resources\icons_general\*.png" />
-    <Resource Include="Resources\icons_objects\*.png" />
-    <Resource Include="Resources\icons_sectortype\*.png" />
-    <Resource Include="Resources\icons_texture\*.png" />
-    <Resource Include="Resources\icons_toolbox\*.png" />
-    <Resource Include="Resources\icons_transport\*.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     <PackageReference Include="NLog" Version="5.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Update="Properties\Settings.settings">

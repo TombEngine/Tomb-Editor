@@ -9,10 +9,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using TombLib.Controls;
 using TombLib.LevelData;
 using TombLib.Utils;
 using TombLib.WPF;
+using TombLib.WPF.Services;
+using TombLib.WPF.Services.Abstract;
 
 namespace TombEditor.Features.DockableViews.PalettePanel;
 
@@ -252,35 +253,27 @@ public class PaletteGrid : FrameworkElement
         if (editor is null || !Editable)
             return;
 
-        using var colorDialog = new RealtimeColorDialog(
-            editor.Configuration.ColorDialog_Position.X,
-            editor.Configuration.ColorDialog_Position.Y,
-            null,
-            editor.Configuration.UI_ColorScheme);
-
-        var currentColor = SelectedColor;
-        colorDialog.Color = System.Drawing.Color.FromArgb(currentColor.A, currentColor.R, currentColor.G, currentColor.B);
+        var initialColor = SelectedColor.ToFloat3Color();
 
         if (!onlyFromPalette)
         {
-            var obj = editor.SelectedObject;
-
-            if (obj is LightInstance light)
-                colorDialog.Color = (light.Color * 0.5f).ToWinFormsColor();
-            else if (obj is StaticInstance stat)
-                colorDialog.Color = (stat.Color * 0.5f).ToWinFormsColor();
-            else if (editor.Level.IsTombEngine && obj is MoveableInstance moveable)
-                colorDialog.Color = moveable.Color.ToWinFormsColor();
+            initialColor = editor.SelectedObject switch
+            {
+                LightInstance light => light.Color * 0.5f,
+                StaticInstance staticInstance => staticInstance.Color * 0.5f,
+                MoveableInstance moveable when editor.Level.IsTombEngine => moveable.Color,
+                _ => initialColor
+            };
         }
 
-        if (colorDialog.ShowDialog(WinFormsDialogHelper.GetOpenFormOwner()) == System.Windows.Forms.DialogResult.OK)
+        var colorPicker = ServiceLocator.ResolveService<IColorPickerService>();
+
+        if (colorPicker.PickColor(initialColor) is { } picked)
         {
-            var picked = colorDialog.Color;
-            SetColorAtSelection(new ColorC(picked.R, picked.G, picked.B));
+            var color = picked.ToWPFColor();
+            SetColorAtSelection(new ColorC(color.R, color.G, color.B));
             editor.Level.Settings.Palette = Palette;
         }
-
-        editor.Configuration.ColorDialog_Position = colorDialog.Position;
     }
 
     // Rendering.

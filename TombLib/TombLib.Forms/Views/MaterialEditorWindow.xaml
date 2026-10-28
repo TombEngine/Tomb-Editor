@@ -1,0 +1,93 @@
+<Window x:Class="TombLib.Forms.Views.MaterialEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:icons="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+        xmlns:local="clr-namespace:TombLib.Forms.Views"
+        xmlns:tomb="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+        Title="{tomb:Localize Title}" Width="880" Height="720" MinWidth="660" MinHeight="480"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False" Style="{DynamicResource CustomWindowStyle}"
+        Background="{DynamicResource Brush_Background}">
+    <Window.Resources>
+        <Style x:Key="MapEditButton" TargetType="Button">
+            <Setter Property="Margin" Value="4,0,0,0"/>
+            <Setter Property="Width" Value="30"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsReadOnly}" Value="True">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <ComboBox ItemsSource="{Binding Textures}" SelectedItem="{Binding SelectedTexture}" DisplayMemberPath="Path" Margin="0,0,0,10"/>
+        <Grid Grid.Row="1" Margin="0,0,0,10" IsEnabled="{Binding CanEdit}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/><ColumnDefinition Width="220"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{tomb:Localize Name}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <TextBox Grid.Column="1" Text="{Binding MaterialName, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Grid.Column="2" Text="{tomb:Localize Type}" VerticalAlignment="Center" Margin="16,0,8,0"/>
+            <ComboBox Grid.Column="3" ItemsSource="{Binding Types}" SelectedItem="{Binding SelectedType}" DisplayMemberPath="Name"/>
+        </Grid>
+        <TabControl Grid.Row="2" IsEnabled="{Binding CanEdit}">
+            <TabItem Header="{tomb:Localize Maps}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Maps}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="8,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="64"/><ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Background="{DynamicResource Brush_Background_Low}" Width="56" Height="56">
+                                        <Image Source="{Binding Preview}" Stretch="Uniform"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Margin="8,0,0,0">
+                                        <TextBlock Text="{Binding Label}" Margin="0,0,0,4"/>
+                                        <DockPanel>
+                                            <Button DockPanel.Dock="Right" Command="{Binding ClearCommand}" Style="{StaticResource MapEditButton}"
+                                                    ToolTip="{tomb:Localize ~TombLib.MaterialEditorWindow.Clear}">
+                                                <Image Width="16" Height="16" Source="{icons:Icon General/trash}"/>
+                                            </Button>
+                                            <Button DockPanel.Dock="Right" Command="{Binding BrowseCommand}" Style="{StaticResource MapEditButton}"
+                                                    ToolTip="{tomb:Localize ~TombLib.MaterialEditorWindow.Browse}">
+                                                <Image Width="16" Height="16" Source="{icons:Icon General/Open}"/>
+                                            </Button>
+                                            <TextBox Text="{Binding Path, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding IsReadOnly}" ToolTip="{Binding Error}">
+                                                <TextBox.Style>
+                                                    <Style TargetType="TextBox">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Error}" Value="">
+                                                                <Setter Property="BorderBrush" Value="{DynamicResource Brush_Background_Low}"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                        <Setter Property="BorderBrush" Value="IndianRed"/>
+                                                    </Style>
+                                                </TextBox.Style>
+                                            </TextBox>
+                                        </DockPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="{tomb:Localize Properties}">
+                <local:LuaPropertyGridControl DataContext="{Binding PropertyGrid}" Margin="8"/>
+            </TabItem>
+        </TabControl>
+        <DockPanel Grid.Row="3" Margin="0,12,0,0">
+            <Button DockPanel.Dock="Right" Content="{tomb:Localize Cancel}" Command="{Binding CancelCommand}" IsCancel="True" MinWidth="84" Margin="8,0,0,0"/>
+            <Button DockPanel.Dock="Right" Content="{tomb:Localize OK}" Command="{Binding ConfirmCommand}" IsDefault="True" MinWidth="84"/>
+            <TextBlock Text="{Binding MaterialFileName}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Margin="0,0,12,0"/>
+        </DockPanel>
+    </Grid>
+</Window>

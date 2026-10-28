@@ -1,3 +1,5 @@
+#nullable enable
+
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -6,6 +8,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using TombEditor.Features.FlybyTimeline.Preview;
 using TombLib;
 using TombLib.Forms;
@@ -17,9 +20,11 @@ using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
 
+#nullable restore
+
 namespace TombEditor
 {
-	public interface IEditorEvent { }
+    public interface IEditorEvent { }
 
     public interface IEditorPropertyChangedEvent : IEditorEvent { }
 
@@ -1153,8 +1158,9 @@ namespace TombEditor
                 if (((ConfigurationChangedEvent)obj).Save && !_configurationIsLoadedFromFile)
                     Configuration.SaveTry();
 
-                _autoSavingTimer.Interval = Configuration.AutoSave_TimeInSeconds > 0 ? (Configuration.AutoSave_TimeInSeconds * 1000) : int.MaxValue;
-                _autoSavingTimer.Enabled = Configuration.AutoSave_Enable && HasUnsavedChanges;
+                _autoSavingTimer.Interval = Configuration.AutoSave_TimeInSeconds > 0
+                    ? TimeSpan.FromSeconds(Configuration.AutoSave_TimeInSeconds) : TimeSpan.FromMilliseconds(int.MaxValue);
+                _autoSavingTimer.IsEnabled = Configuration.AutoSave_Enable && HasUnsavedChanges;
 
                 if (Configuration.Editor_ReloadFilesAutomaticallyWhenChanged != (_levelSettingsWatcher != null))
                     if (Configuration.Editor_ReloadFilesAutomaticallyWhenChanged)
@@ -1218,7 +1224,7 @@ namespace TombEditor
                 UpdateLevelStatistics(false, false, true);
             }
 
-            if (obj is LevelChangedEvent) 
+            if (obj is LevelChangedEvent)
             {
                 var evnt = obj as LevelChangedEvent;
                 var settings = evnt.Current.Settings;
@@ -1263,7 +1269,7 @@ namespace TombEditor
                 {
                     _lastGeometryTool = @event.Current;
                     Configuration.UI_LastGeometryTool = _lastGeometryTool;
-                }    
+                }
                 else if (Mode == EditorMode.ObjectPlacement)
                 {
                     _lastObjectPlacementTool = @event.Current;
@@ -1303,7 +1309,7 @@ namespace TombEditor
             if (obj is IEditorEventCausesUnsavedChanges)
             {
                 HasUnsavedChanges = true;
-                _autoSavingTimer.Enabled = _configuration.AutoSave_Enable;
+                _autoSavingTimer.IsEnabled = _configuration.AutoSave_Enable;
             }
 
             // Make sure an object that was removed isn't selected
@@ -1485,8 +1491,12 @@ namespace TombEditor
         public class ResumeRenderingEvent : IEditorEvent { }
 
         // Auto saving
-        private readonly System.Windows.Forms.Timer _autoSavingTimer = new System.Windows.Forms.Timer();
+#nullable enable
+        private readonly DispatcherTimer _autoSavingTimer = new(DispatcherPriority.Background);
         private volatile bool _currentlyAutoSaving;
+        private void OnAutoSaveTick(object? sender, EventArgs e) => AutoSave();
+#nullable restore
+
         private void AutoSave()
         {
             Level level = Level; // Copy the member variables to local variables so that the we will have slightly higher chance to succeed in the parallel thread.
@@ -1569,7 +1579,7 @@ namespace TombEditor
 
         public Editor(SynchronizationContext synchronizationContext, Configuration configuration, Level level)
         {
-            
+
             if (synchronizationContext == null)
                 throw new ArgumentNullException(nameof(synchronizationContext));
             Editor.Instance = this;
@@ -1581,7 +1591,7 @@ namespace TombEditor
 
             _configurationWatcher = new FileSystemWatcherManager();
             _configurationWatcher.UpdateAllFiles(new[] { new ConfigurationWatchedObj { Parent = this } });
-            _autoSavingTimer.Tick += (sender, e) => AutoSave();
+            _autoSavingTimer.Tick += OnAutoSaveTick;
 
             _configurationIsLoadedFromFile = true;
             Editor_EditorEventRaised(new ConfigurationChangedEvent { UpdateKeyboardShortcuts = true });
@@ -1596,7 +1606,8 @@ namespace TombEditor
         public void Dispose()
         {
             SectorColoringManager?.Dispose();
-            _autoSavingTimer?.Dispose();
+            _autoSavingTimer.Stop();
+            _autoSavingTimer.Tick -= OnAutoSaveTick;
             _levelSettingsWatcher?.Dispose();
             _configurationWatcher?.Dispose();
         }

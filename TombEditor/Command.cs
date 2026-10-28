@@ -1,4 +1,5 @@
-using DarkUI.Controls;
+#nullable enable
+
 using DarkUI.Forms;
 using NLog;
 using System;
@@ -10,6 +11,7 @@ using System.Numerics;
 using System.Text;
 using System.Windows.Forms;
 using TombEditor.Controls;
+using TombEditor.Features.ColorEditing;
 using TombEditor.Features.DockableViews.ContentBrowser;
 using TombEditor.Features.DockableViews.ImportedGeometryBrowser;
 using TombEditor.Features.DockableViews.ItemBrowser;
@@ -20,7 +22,6 @@ using TombEditor.Features.DockableViews.RoomOptionsPanel;
 using TombEditor.Features.DockableViews.SectorOptionsPanel;
 using TombEditor.Features.DockableViews.TexturePanel;
 using TombEditor.Features.DockableViews.TriggerList;
-using TombEditor.Features.Panel3D.ToolPalette;
 using TombLib;
 using TombLib.Controls;
 using TombLib.Forms;
@@ -31,6 +32,8 @@ using TombLib.Utils;
 using TombLib.WPF;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
+
+#nullable restore
 
 namespace TombEditor
 {
@@ -112,30 +115,6 @@ namespace TombEditor
             var hotkeyForCommands = args.Editor.Configuration.UI_Hotkeys.Where(set => set.Value.Contains(args.KeyData));
             foreach (var hotkeyForCommand in hotkeyForCommands)
                 GetCommand(hotkeyForCommand.Key).Execute?.Invoke(args);
-        }
-
-        public static void AssignCommandsToControls(Editor editor, Control parent, ToolTip toolTip = null, bool onlyToolTips = false)
-        {
-            var controls = WinFormsUtils.AllSubControls(parent).Where(c => c is DarkButton || c is DarkCheckBox || c is DarkPanel).ToList();
-            foreach (var control in controls)
-            {
-                if (!string.IsNullOrEmpty(control.Tag?.ToString()))
-                {
-                    var command = GetCommand(control.Tag.ToString());
-
-                    if (command is not null)
-                    {
-                        var hotkeyLabel = string.Join(", ", editor.Configuration.UI_Hotkeys[control.Tag.ToString()]);
-                        var label = command.FriendlyName + (string.IsNullOrEmpty(hotkeyLabel) ? "" : " (" + hotkeyLabel + ")");
-
-                        if(!onlyToolTips)
-                            control.Click += (sender, e) => { command.Execute?.Invoke(new CommandArgs { Editor = editor, Window = parent.FindForm() }); };
-
-                        if (toolTip is not null && !string.IsNullOrEmpty(label))
-                            toolTip.SetToolTip(control, label);
-                    }
-                }
-            }
         }
 
         private static CommandArgs ResolveCommandArgs(CommandArgs args)
@@ -1144,43 +1123,12 @@ namespace TombEditor
             });
 
 
+#nullable enable
             AddCommand("EditAmbientLight", "Edit ambient light...", CommandType.Rooms, delegate (CommandArgs args)
             {
-                var room = args.Editor.SelectedRoom;
-                var undo = new RoomPropertyUndoInstance(args.Editor.UndoManager, room);
-
-                using (var colorDialog = new RealtimeColorDialog(
-                    args.Editor.Configuration.ColorDialog_Position.X,
-                    args.Editor.Configuration.ColorDialog_Position.Y,
-                    c =>
-                    {
-                        room.Properties.AmbientLight = c.ToFloat3Color() * 2.0f;
-                        args.Editor.UpdateRoomLighting(room);
-                        args.Editor.RoomPropertiesChange(room);
-                    }, args.Editor.Configuration.UI_ColorScheme))
-                {
-                    colorDialog.Color = (room.Properties.AmbientLight * 0.5f).ToWinFormsColor();
-                    var oldLightColor = colorDialog.Color;
-
-                    if (colorDialog.ShowDialog(args.Window) != DialogResult.OK)
-                        colorDialog.Color = oldLightColor;
-
-                    var newColor = colorDialog.Color.ToFloat3Color() * 2.0f;
-                    if (args.Editor.Level.Settings.GameVersion.Native() < TRVersion.Game.TR3)
-                    {
-                        if (!colorDialog.Color.IsGrayscale())
-                            args.Editor.SendMessage("Only grayscale lighting is possible for this game version.", PopupType.Info);
-                        newColor = Vector3.Clamp(new Vector3(newColor.GetLuma()), Vector3.Zero, Vector3.One);
-                    }
-                    room.Properties.AmbientLight = newColor;
-
-                    args.Editor.Configuration.ColorDialog_Position = colorDialog.Position;
-                }
-
-                args.Editor.UndoManager.Push(undo);
-                args.Editor.UpdateRoomLighting(room);
-                args.Editor.RoomPropertiesChange(room);
+                AmbientLightEditor.Edit(args.Editor);
             });
+#nullable restore
 
             AddCommand("ApplyRoomProperties", "Apply room properties...", CommandType.Rooms, delegate (CommandArgs args)
             {
@@ -2004,12 +1952,12 @@ namespace TombEditor
                 EditorActions.SetPortalOpacity(PortalOpacity.TraversableFaces, args.Window);
             });
 
-			AddCommand("ToggleClassicPortalMirror", "Toggle classic portal mirror effect", CommandType.Rooms, delegate (CommandArgs args)
-			{
-				EditorActions.ToggleClassicPortalMirror(args.Window);
-			});
+            AddCommand("ToggleClassicPortalMirror", "Toggle classic portal mirror effect", CommandType.Rooms, delegate (CommandArgs args)
+            {
+                EditorActions.ToggleClassicPortalMirror(args.Window);
+            });
 
-			AddCommand("AddPointLight", "Add point light", CommandType.Lighting, delegate (CommandArgs args)
+            AddCommand("AddPointLight", "Add point light", CommandType.Lighting, delegate (CommandArgs args)
             {
                 EditorActions.PlaceLight(LightType.Point);
             });
@@ -2396,44 +2344,44 @@ namespace TombEditor
                                    "Delete all lights", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                     return;
 
-				foreach (var room in args.Editor.SelectedRooms)
+                foreach (var room in args.Editor.SelectedRooms)
                 {
-					var objects = room.Objects.Where(ob => ob is LightInstance).ToList();
-					if (objects.Count > 0)
-						for (int i = objects.Count - 1; i >= 0; i--)
+                    var objects = room.Objects.Where(ob => ob is LightInstance).ToList();
+                    if (objects.Count > 0)
+                        for (int i = objects.Count - 1; i >= 0; i--)
                         {
-							var obj = objects[i];
-							EditorActions.DeleteObjectWithoutUpdate(obj);
-							objects.RemoveAt(i);
-						}
-				}
-			});
+                            var obj = objects[i];
+                            EditorActions.DeleteObjectWithoutUpdate(obj);
+                            objects.RemoveAt(i);
+                        }
+                }
+            });
 
-			AddCommand("GetObjectStatistics", "Copy object statistics into clipboard", CommandType.Objects, delegate (CommandArgs args)
+            AddCommand("GetObjectStatistics", "Copy object statistics into clipboard", CommandType.Objects, delegate (CommandArgs args)
             {
-				SortedDictionary<WadMoveableId,uint> moveablesCount = new SortedDictionary<WadMoveableId, uint>();
-				SortedDictionary<WadStaticId,uint> staticsCount = new SortedDictionary<WadStaticId, uint>();
-				int totalMoveablesCount;
-				int totalStaticsCount;
+                SortedDictionary<WadMoveableId,uint> moveablesCount = new SortedDictionary<WadMoveableId, uint>();
+                SortedDictionary<WadStaticId,uint> staticsCount = new SortedDictionary<WadStaticId, uint>();
+                int totalMoveablesCount;
+                int totalStaticsCount;
 
-				EditorActions.GetObjectStatistics(args.Editor, moveablesCount, staticsCount, out totalMoveablesCount, out totalStaticsCount);
+                EditorActions.GetObjectStatistics(args.Editor, moveablesCount, staticsCount, out totalMoveablesCount, out totalStaticsCount);
 
-				var sb = new StringBuilder();
-				foreach (var kvp in moveablesCount) {
-					string name = TrCatalog.GetMoveableName(args.Editor.Level.Settings.GameVersion, kvp.Key.TypeId);
-					sb.AppendLine(name + "\t\t\tx" + kvp.Value);
-				}
-				sb.AppendLine("----------------------------------------------------");
-				foreach (var kvp in staticsCount) {
-					string name = TrCatalog.GetStaticName(args.Editor.Level.Settings.GameVersion, kvp.Key.TypeId);
-					sb.AppendLine(name + "\t\t\tx" + kvp.Value);
-				}
-				sb.AppendLine("----------------------------------------------------");
-				sb.AppendLine("Total Moveables :\t\t\t" + totalMoveablesCount);
-				sb.AppendLine("Total Statics :\t\t\t" + totalStaticsCount);
-				Clipboard.SetText(sb.ToString());
-				args.Editor.SendMessage("Object statistics copied into clipboard!", PopupType.Info);
-			});
+                var sb = new StringBuilder();
+                foreach (var kvp in moveablesCount) {
+                    string name = TrCatalog.GetMoveableName(args.Editor.Level.Settings.GameVersion, kvp.Key.TypeId);
+                    sb.AppendLine(name + "\t\t\tx" + kvp.Value);
+                }
+                sb.AppendLine("----------------------------------------------------");
+                foreach (var kvp in staticsCount) {
+                    string name = TrCatalog.GetStaticName(args.Editor.Level.Settings.GameVersion, kvp.Key.TypeId);
+                    sb.AppendLine(name + "\t\t\tx" + kvp.Value);
+                }
+                sb.AppendLine("----------------------------------------------------");
+                sb.AppendLine("Total Moveables :\t\t\t" + totalMoveablesCount);
+                sb.AppendLine("Total Statics :\t\t\t" + totalStaticsCount);
+                Clipboard.SetText(sb.ToString());
+                args.Editor.SendMessage("Object statistics copied into clipboard!", PopupType.Info);
+            });
 
             AddCommand("MoveObjectLeftPrecise", "Move object left (8 units)", CommandType.Objects, delegate (CommandArgs args)
             {

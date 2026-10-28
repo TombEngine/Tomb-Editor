@@ -1,42 +1,41 @@
 <Window
-	x:Class="TombEditor.Features.Dialogs.WadPreview.WadPreviewWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
-	xmlns:local="clr-namespace:TombEditor.Features.Dialogs.WadPreview"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:tombLibControls="clr-namespace:TombLib.WPF.CustomControls;assembly=TombLib.WPF"
-	xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
-	Width="683"
-	Height="400"
-	d:DataContext="{d:DesignInstance Type=local:WadPreviewWindowViewModel}"
-	Background="{DynamicResource Brush_Background}"
-	ResizeMode="NoResize"
-	ShowInTaskbar="False"
-	WindowStartupLocation="Manual"
-	WindowStyle="None"
-	mc:Ignorable="d">
+    x:Class="TombEditor.Features.Dialogs.WadPreview.WadPreviewWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:local="clr-namespace:TombEditor.Features.Dialogs.WadPreview"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tombLibControls="clr-namespace:TombLib.WPF.CustomControls;assembly=TombLib.WPF"
+    Width="683"
+    Height="400"
+    d:DataContext="{d:DesignInstance Type=local:WadPreviewWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    WindowStartupLocation="Manual"
+    WindowStyle="None"
+    mc:Ignorable="d">
 
-	<Border
-		Margin="{x:Static darkUI:Defaults.TinyThickness}"
-		BorderBrush="{DynamicResource Brush_Border}"
-		BorderThickness="{x:Static darkUI:Defaults.BorderThickness}">
+    <Border
+        Margin="{x:Static darkUI:Defaults.TinyThickness}"
+        BorderBrush="{DynamicResource Brush_Border}"
+        BorderThickness="{x:Static darkUI:Defaults.BorderThickness}">
 
-		<controls:SpacedGrid
-			Margin="{x:Static darkUI:Defaults.TinyThickness}"
-			ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="280" />
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
+        <controls:SpacedGrid
+            Margin="{x:Static darkUI:Defaults.TinyThickness}"
+            ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-			<tombLibControls:WadTreeView
-				x:Name="wadTree"
-				Grid.Column="0"
-				MultiSelect="False" />
-			<wfi:WindowsFormsHost x:Name="panelItemHost" Grid.Column="1" />
-		</controls:SpacedGrid>
-	</Border>
+            <tombLibControls:WadTreeView
+                x:Name="wadTree"
+                Grid.Column="0"
+                MultiSelect="False" />
+            <Border x:Name="panelItemHost" Grid.Column="1" />
+        </controls:SpacedGrid>
+    </Border>
 </Window>

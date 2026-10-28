@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System;
 using System.Drawing;
@@ -6,16 +6,13 @@ using System.Windows;
 using System.Windows.Forms;
 using TombLib.Forms;
 using TombLib.WPF;
-using PopUpInfo = TombLib.WPF.PopUpInfo;
 using WadTool.Controls;
+
+using PopUpInfo = TombLib.WPF.PopUpInfo;
 
 namespace WadTool.Features.Dialogs.SkeletonEditor;
 
-/// <summary>
-/// WPF port of the legacy <c>FormSkeletonEditor</c>. The 3D view is still the WinForms
-/// <see cref="PanelRenderingSkeleton"/> control hosted via <c>WindowsFormsHost</c>; the bone tree and
-/// all tools around it are native WPF bound to <see cref="SkeletonEditorWindowViewModel"/>.
-/// </summary>
+/// <summary>Native WPF SkeletonEditor view with a Direct3D viewport and MVVM editing tools.</summary>
 public partial class SkeletonEditorWindow : Window
 {
     private readonly PanelRenderingSkeleton _panel;
@@ -54,6 +51,9 @@ public partial class SkeletonEditorWindow : Window
 
     private void OnClosed(object? sender, EventArgs e)
     {
+        _panel.Dispose();
+        _popup.Dispose();
+
         _panel.MouseDown -= OnPanelMouseDown;
         _panel.MouseUp -= OnPanelMouseUp;
         _panel.MouseDoubleClick -= OnPanelMouseDoubleClick;

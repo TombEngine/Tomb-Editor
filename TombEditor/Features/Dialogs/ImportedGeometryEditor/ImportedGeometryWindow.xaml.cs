@@ -1,7 +1,7 @@
 #nullable enable
 
 using System.Windows;
-using TombLib.Forms;
+using TombLib.Forms.Services;
 using TombLib.LevelData;
 using TombLib.WPF;
 
@@ -27,7 +27,6 @@ public partial class ImportedGeometryWindow : Window
 
     private void OnEditMaterialsRequested(object? sender, ImportedGeometry model)
     {
-        using var form = new FormMaterialEditor(model.Textures, Editor.Instance.Configuration);
-        form.ShowDialog(this.GetWin32Window());
+        MaterialEditorDialog.Show(model.Textures, Editor.Instance.Configuration);
     }
 }

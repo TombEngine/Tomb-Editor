@@ -1,8 +1,11 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TombEditor.Features.FlybyTimeline.Preview;
 using TombLib;
@@ -16,6 +19,11 @@ namespace TombEditor.Controls.Panel3D
 {
     public partial class Panel3D
     {
+        [DllImport("user32.dll")]
+        private static extern short GetAsyncKeyState(int virtualKey);
+
+        private static bool IsKeyPressed(Keys key) => GetAsyncKeyState((int)key) < 0;
+
         private void MoveTimer_Tick(object sender, EventArgs e)
         {
             if (_movementTimer.Animating)
@@ -69,7 +77,7 @@ namespace TombEditor.Controls.Panel3D
 
         private void FlyModeTimer_Tick(object sender, EventArgs e)
         {
-            if (_lastWindow != GetForegroundWindow() || _filter.IsKeyPressed(Keys.Escape))
+            if (_lastWindow != GetForegroundWindow() || IsKeyPressed(Keys.Escape))
             {
                 ToggleFlyMode(false);
                 _lastWindow = GetForegroundWindow();
@@ -79,7 +87,7 @@ namespace TombEditor.Controls.Panel3D
             Capture = true;
 
             Invalidate();
-            var step = (float)_watch.Elapsed.TotalSeconds - _flyModeTimer.Interval / 1000.0f;
+            var step = (float)_watch.Elapsed.TotalSeconds - (float)_flyModeTimer.Interval.TotalSeconds;
 
             step *= 500;
             step *= _editor.Configuration.Rendering3D_FlyModeMoveSpeed;
@@ -93,22 +101,22 @@ namespace TombEditor.Controls.Panel3D
             else if (ModifierKeys.HasFlag(Keys.Control))
                 cameraMoveSpeed /= 2;
 
-            if (_filter.IsKeyPressed(Keys.W))
+            if (IsKeyPressed(Keys.W))
                 newCameraPos.Z -= cameraMoveSpeed;
 
-            if (_filter.IsKeyPressed(Keys.A))
+            if (IsKeyPressed(Keys.A))
                 newCameraPos.X += cameraMoveSpeed;
 
-            if (_filter.IsKeyPressed(Keys.S))
+            if (IsKeyPressed(Keys.S))
                 newCameraPos.Z += cameraMoveSpeed;
 
-            if (_filter.IsKeyPressed(Keys.D))
+            if (IsKeyPressed(Keys.D))
                 newCameraPos.X -= cameraMoveSpeed;
 
-            if (_filter.IsKeyPressed(Keys.E))
+            if (IsKeyPressed(Keys.E))
                 newCameraPos.Y += cameraMoveSpeed;
 
-            if (_filter.IsKeyPressed(Keys.Q))
+            if (IsKeyPressed(Keys.Q))
                 newCameraPos.Y -= cameraMoveSpeed;
 
             Camera.MoveCameraPlane(newCameraPos);

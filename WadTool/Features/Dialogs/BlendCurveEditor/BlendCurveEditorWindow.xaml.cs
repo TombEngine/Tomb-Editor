@@ -29,6 +29,16 @@ public partial class BlendCurveEditorWindow : Window
         DataContextChanged += OnDataContextChanged;
     }
 
+    protected override void OnClosed(EventArgs e)
+    {
+        _curveEditor.ValueChanged -= CurveEditor_ValueChanged;
+        DataContextChanged -= OnDataContextChanged;
+        if (_viewModel is not null)
+            _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+
+        base.OnClosed(e);
+    }
+
     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
         if (_viewModel is not null)

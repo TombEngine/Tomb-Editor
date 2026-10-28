@@ -11,7 +11,7 @@ namespace TombEditor.Features.FlybyTimeline.UI;
 
 /// <summary>
 /// WPF UserControl that embeds the flyby timeline and its controls.
-/// Hosted inside MainView via ElementHost.
+/// Displays the flyby timeline in the WPF editor shell.
 /// </summary>
 public partial class FlybyTimelineView : UserControl
 {

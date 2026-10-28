@@ -1,296 +1,297 @@
 <Window
-	x:Class="WadTool.Features.Dialogs.MeshEditor.MeshEditorWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
-	xmlns:local="clr-namespace:WadTool.Features.Dialogs.MeshEditor"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
-	Title="{Binding Title}"
-	Width="1180"
-	Height="760"
-	MinWidth="980"
-	MinHeight="640"
-	d:DataContext="{d:DesignInstance Type=local:MeshEditorWindowViewModel}"
-	Background="{DynamicResource Brush_Background}"
-	ShowInTaskbar="False"
-	Style="{DynamicResource CustomWindowStyle}"
-	WindowStartupLocation="CenterOwner"
-	mc:Ignorable="d">
+    x:Class="WadTool.Features.Dialogs.MeshEditor.MeshEditorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:local="clr-namespace:WadTool.Features.Dialogs.MeshEditor"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+    xmlns:wadControls="clr-namespace:WadTool.Controls"
+    Title="{Binding Title}"
+    Width="1180"
+    Height="760"
+    MinWidth="980"
+    MinHeight="640"
+    d:DataContext="{d:DesignInstance Type=local:MeshEditorWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ShowInTaskbar="False"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
 
-	<Window.Resources>
-		<BooleanToVisibilityConverter x:Key="BoolToVis" />
-		<Style x:Key="Lbl" TargetType="TextBlock">
-			<Setter Property="VerticalAlignment" Value="Center" />
-			<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
-		</Style>
-		<Style x:Key="Nud" TargetType="controls:NumericUpDown">
-			<Setter Property="Width" Value="70" />
-			<Setter Property="DecimalPlaces" Value="0" />
-		</Style>
-	</Window.Resources>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <Style x:Key="Lbl" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+        </Style>
+        <Style x:Key="Nud" TargetType="controls:NumericUpDown">
+            <Setter Property="Width" Value="70" />
+            <Setter Property="DecimalPlaces" Value="0" />
+        </Style>
+    </Window.Resources>
 
-	<DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
+    <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
 
-		<!--  Toolbar  -->
-		<Border
-			DockPanel.Dock="Top"
-			Padding="2"
-			Background="{DynamicResource Brush_BackgroundSlightlyDark}"
-			Visibility="{Binding ShowEditingTools, Converter={StaticResource BoolToVis}}">
-			<controls:SpacedStack Orientation="Horizontal" Spacing="3">
-				<Button Width="34" Command="{Binding UndoCommand}" Content="↶" IsEnabled="{Binding UndoEnabled}" ToolTip="Undo" />
-				<Button Width="34" Command="{Binding RedoCommand}" Content="↷" IsEnabled="{Binding RedoEnabled}" ToolTip="Redo" />
-				<Separator />
-				<ToggleButton Width="40" Content="Wire" IsChecked="{Binding Wireframe, Mode=TwoWay}" ToolTip="Wireframe" />
-				<ToggleButton Width="40" Content="Alpha" IsChecked="{Binding AlphaTest, Mode=TwoWay}" ToolTip="Alpha test" />
-				<ToggleButton Width="40" Content="Bilin" IsChecked="{Binding Bilinear, Mode=TwoWay}" ToolTip="Bilinear filter" />
-				<ToggleButton Width="40" Content="Grid" IsChecked="{Binding DrawAxis, Mode=TwoWay}" ToolTip="Draw grid" />
-				<Button Width="50" Command="{Binding ResetCameraCommand}" Content="Camera" ToolTip="Reset camera" />
-				<Separator />
-				<Button Width="50" Command="{Binding RotateTextureCommand}" Content="Rot tex" ToolTip="Rotate texture" />
-				<Button Width="50" Command="{Binding MirrorTextureCommand}" Content="Mir tex" ToolTip="Mirror texture" />
-				<Separator />
-				<Button Width="50" Command="{Binding ImportMeshCommand}" Content="Import" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Import mesh" />
-				<Button Width="50" Command="{Binding ExportMeshCommand}" Content="Export" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Export mesh" />
-				<Button Width="40" Command="{Binding FindTextureCommand}" Content="Find" ToolTip="Find selected texture in meshes" />
-				<Button Width="50" Command="{Binding RenameCommand}" Content="Rename" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Rename mesh" />
-				<ToggleButton Width="40" Content="Hide" IsChecked="{Binding Hidden, Mode=TwoWay}" ToolTip="Hide mesh" />
-				<Separator />
-				<ToggleButton Width="50" Content="Preview" IsChecked="{Binding PreviewActive, Mode=TwoWay}" ToolTip="Animate preview" />
-			</controls:SpacedStack>
-		</Border>
+        <!--  Toolbar  -->
+        <Border
+            DockPanel.Dock="Top"
+            Padding="2"
+            Background="{DynamicResource Brush_BackgroundSlightlyDark}"
+            Visibility="{Binding ShowEditingTools, Converter={StaticResource BoolToVis}}">
+            <controls:SpacedStack Orientation="Horizontal" Spacing="3">
+                <Button Width="34" Command="{Binding UndoCommand}" IsEnabled="{Binding UndoEnabled}" ToolTip="Undo"><Image Source="{tomb:Icon General/undo}" /></Button>
+                <Button Width="34" Command="{Binding RedoCommand}" IsEnabled="{Binding RedoEnabled}" ToolTip="Redo"><Image Source="{tomb:Icon General/redo}" /></Button>
+                <Separator />
+                <ToggleButton Width="40" Content="Wire" IsChecked="{Binding Wireframe, Mode=TwoWay}" ToolTip="Wireframe" />
+                <ToggleButton Width="40" Content="Alpha" IsChecked="{Binding AlphaTest, Mode=TwoWay}" ToolTip="Alpha test" />
+                <ToggleButton Width="40" Content="Bilin" IsChecked="{Binding Bilinear, Mode=TwoWay}" ToolTip="Bilinear filter" />
+                <ToggleButton Width="40" Content="Grid" IsChecked="{Binding DrawAxis, Mode=TwoWay}" ToolTip="Draw grid" />
+                <Button Width="50" Command="{Binding ResetCameraCommand}" Content="Camera" ToolTip="Reset camera" />
+                <Separator />
+                <Button Width="50" Command="{Binding RotateTextureCommand}" Content="Rot tex" ToolTip="Rotate texture" />
+                <Button Width="50" Command="{Binding MirrorTextureCommand}" Content="Mir tex" ToolTip="Mirror texture" />
+                <Separator />
+                <Button Width="50" Command="{Binding ImportMeshCommand}" Content="Import" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Import mesh" />
+                <Button Width="50" Command="{Binding ExportMeshCommand}" Content="Export" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Export mesh" />
+                <Button Width="40" Command="{Binding FindTextureCommand}" Content="Find" ToolTip="Find selected texture in meshes" />
+                <Button Width="50" Command="{Binding RenameCommand}" Content="Rename" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Rename mesh" />
+                <ToggleButton Width="40" Content="Hide" IsChecked="{Binding Hidden, Mode=TwoWay}" ToolTip="Hide mesh" />
+                <Separator />
+                <ToggleButton Width="50" Content="Preview" IsChecked="{Binding PreviewActive, Mode=TwoWay}" ToolTip="Animate preview" />
+            </controls:SpacedStack>
+        </Border>
 
-		<!--  Footer: status + OK/Cancel  -->
-		<Grid DockPanel.Dock="Bottom">
-			<Grid.Margin>
-				<Thickness Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
-			</Grid.Margin>
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-			<TextBlock
-				Grid.Column="0"
-				VerticalAlignment="Center"
-				Foreground="{DynamicResource Brush_Text_Low}"
-				Text="{Binding StatusText}"
-				TextTrimming="CharacterEllipsis" />
-			<controls:SpacedStack
-				Grid.Column="1"
-				Orientation="Horizontal"
-				Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-				<Button Width="80" Command="{Binding OkCommand}" Content="OK" IsDefault="True" />
-				<Button Width="80" Command="{Binding CancelCommand}" Content="Cancel" IsCancel="True" />
-			</controls:SpacedStack>
-		</Grid>
+        <!--  Footer: status + OK/Cancel  -->
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.Margin>
+                <Thickness Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+            </Grid.Margin>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Foreground="{DynamicResource Brush_Text_Low}"
+                Text="{Binding StatusText}"
+                TextTrimming="CharacterEllipsis" />
+            <controls:SpacedStack
+                Grid.Column="1"
+                Orientation="Horizontal"
+                Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+                <Button Width="80" Command="{Binding OkCommand}" Content="OK" IsDefault="True" />
+                <Button Width="80" Command="{Binding CancelCommand}" Content="Cancel" IsCancel="True" />
+            </controls:SpacedStack>
+        </Grid>
 
-		<!--  Mesh tree (multi-mesh mode)  -->
-		<DockPanel
-			Width="240"
-			DockPanel.Dock="Left"
-			LastChildFill="True"
-			Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}">
-			<DockPanel.Margin>
-				<Thickness Right="{x:Static darkUI:Defaults.MediumThicknessWidth}" Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
-			</DockPanel.Margin>
-			<controls:SpacedGrid
-				DockPanel.Dock="Top"
-				ColumnSpacing="4">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*" />
-					<ColumnDefinition Width="Auto" />
-				</Grid.ColumnDefinitions>
-				<TextBox Grid.Column="0" Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-				<Button Grid.Column="1" Width="60" Command="{Binding SearchCommand}" Content="Search" />
-			</controls:SpacedGrid>
-			<TreeView x:Name="meshTree" Margin="0,4,0,0" ItemsSource="{Binding RootNodes}">
-				<TreeView.ItemContainerStyle>
-					<Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">
-						<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-						<Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
-					</Style>
-				</TreeView.ItemContainerStyle>
-				<TreeView.ItemTemplate>
-					<HierarchicalDataTemplate ItemsSource="{Binding Children}">
-						<TextBlock Text="{Binding Text}" />
-					</HierarchicalDataTemplate>
-				</TreeView.ItemTemplate>
-			</TreeView>
-		</DockPanel>
+        <!--  Mesh tree (multi-mesh mode)  -->
+        <DockPanel
+            Width="240"
+            DockPanel.Dock="Left"
+            LastChildFill="True"
+            Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}">
+            <DockPanel.Margin>
+                <Thickness Right="{x:Static darkUI:Defaults.MediumThicknessWidth}" Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+            </DockPanel.Margin>
+            <controls:SpacedGrid
+                DockPanel.Dock="Top"
+                ColumnSpacing="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Grid.Column="1" Width="60" Command="{Binding SearchCommand}" Content="Search" />
+            </controls:SpacedGrid>
+            <TreeView x:Name="meshTree" Margin="0,4,0,0" ItemsSource="{Binding RootNodes}">
+                <TreeView.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">
+                        <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    </Style>
+                </TreeView.ItemContainerStyle>
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                        <TextBlock Text="{Binding Text}" />
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+            </TreeView>
+        </DockPanel>
 
-		<!--  Editing tools + texture map (right)  -->
-		<ScrollViewer
-			Width="320"
-			DockPanel.Dock="Right"
-			HorizontalScrollBarVisibility="Disabled"
-			VerticalScrollBarVisibility="Auto"
-			Visibility="{Binding ShowEditingTools, Converter={StaticResource BoolToVis}}">
-			<ScrollViewer.Margin>
-				<Thickness Left="{x:Static darkUI:Defaults.MediumThicknessWidth}" Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
-			</ScrollViewer.Margin>
-			<controls:SpacedStack
-				IsEnabled="{Binding EditingEnabled}"
-				Orientation="Vertical"
-				Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+        <!--  Editing tools + texture map (right)  -->
+        <ScrollViewer
+            Width="320"
+            DockPanel.Dock="Right"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto"
+            Visibility="{Binding ShowEditingTools, Converter={StaticResource BoolToVis}}">
+            <ScrollViewer.Margin>
+                <Thickness Left="{x:Static darkUI:Defaults.MediumThicknessWidth}" Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+            </ScrollViewer.Margin>
+            <controls:SpacedStack
+                IsEnabled="{Binding EditingEnabled}"
+                Orientation="Vertical"
+                Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
 
-				<ComboBox SelectedIndex="{Binding EditingModeIndex, Mode=TwoWay}">
-					<ComboBoxItem Content="Face attributes" />
-					<ComboBoxItem Content="Vertex remap" />
-					<ComboBoxItem Content="Vertex colors &amp; normals" />
-					<ComboBoxItem Content="Vertex effects" />
-					<ComboBoxItem Content="Vertex weights" />
-					<ComboBoxItem Content="Bounding sphere" />
-				</ComboBox>
+                <ComboBox SelectedIndex="{Binding EditingModeIndex, Mode=TwoWay}">
+                    <ComboBoxItem Content="Face attributes" />
+                    <ComboBoxItem Content="Vertex remap" />
+                    <ComboBoxItem Content="Vertex colors &amp; normals" />
+                    <ComboBoxItem Content="Vertex effects" />
+                    <ComboBoxItem Content="Vertex weights" />
+                    <ComboBoxItem Content="Bounding sphere" />
+                </ComboBox>
 
-				<CheckBox Content="{Binding ExtraLabel}" IsChecked="{Binding ShowExtra, Mode=TwoWay}" />
+                <CheckBox Content="{Binding ExtraLabel}" IsChecked="{Binding ShowExtra, Mode=TwoWay}" />
 
-				<!--  Face attributes  -->
-				<GroupBox Header="Face attributes" Visibility="{Binding IsFaceMode, Converter={StaticResource BoolToVis}}">
-					<StackPanel>
-						<CheckBox Content="Apply texture" IsChecked="{Binding ApplyTexture, Mode=TwoWay}" />
-						<CheckBox Margin="0,4,0,0" Content="Apply sheen" IsChecked="{Binding ApplySheen, Mode=TwoWay}" />
-						<controls:SpacedStack Margin="0,2,0,0" Orientation="Horizontal" Spacing="6">
-							<TextBlock Style="{StaticResource Lbl}" Text="Shine:" />
-							<controls:NumericUpDown Style="{StaticResource Nud}" Maximum="63" Minimum="0" Value="{Binding ShineStrength, Mode=TwoWay}" />
-						</controls:SpacedStack>
-						<CheckBox Margin="0,4,0,0" Content="Apply blend mode" IsChecked="{Binding ApplyBlend, Mode=TwoWay}" />
-						<controls:SpacedStack Margin="0,2,0,0" Orientation="Horizontal" Spacing="6">
-							<ComboBox Width="140" ItemsSource="{Binding BlendModes}" SelectedIndex="{Binding BlendModeIndex, Mode=TwoWay}" />
-							<ToggleButton Width="90" Content="Double-sided" IsChecked="{Binding DoubleSided, Mode=TwoWay}" />
-						</controls:SpacedStack>
-						<Button Margin="0,6,0,0" Command="{Binding ApplyToAllFacesCommand}" Content="Apply to all faces" />
-					</StackPanel>
-				</GroupBox>
+                <!--  Face attributes  -->
+                <GroupBox Header="Face attributes" Visibility="{Binding IsFaceMode, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <CheckBox Content="Apply texture" IsChecked="{Binding ApplyTexture, Mode=TwoWay}" />
+                        <CheckBox Margin="0,4,0,0" Content="Apply sheen" IsChecked="{Binding ApplySheen, Mode=TwoWay}" />
+                        <controls:SpacedStack Margin="0,2,0,0" Orientation="Horizontal" Spacing="6">
+                            <TextBlock Style="{StaticResource Lbl}" Text="Shine:" />
+                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="63" Minimum="0" Value="{Binding ShineStrength, Mode=TwoWay}" />
+                        </controls:SpacedStack>
+                        <CheckBox Margin="0,4,0,0" Content="Apply blend mode" IsChecked="{Binding ApplyBlend, Mode=TwoWay}" />
+                        <controls:SpacedStack Margin="0,2,0,0" Orientation="Horizontal" Spacing="6">
+                            <ComboBox Width="140" ItemsSource="{Binding BlendModes}" SelectedIndex="{Binding BlendModeIndex, Mode=TwoWay}" />
+                            <ToggleButton Width="90" Content="Double-sided" IsChecked="{Binding DoubleSided, Mode=TwoWay}" />
+                        </controls:SpacedStack>
+                        <Button Margin="0,6,0,0" Command="{Binding ApplyToAllFacesCommand}" Content="Apply to all faces" />
+                    </StackPanel>
+                </GroupBox>
 
-				<!--  Vertex remap  -->
-				<GroupBox Header="Vertex remap" Visibility="{Binding IsRemapMode, Converter={StaticResource BoolToVis}}">
-					<StackPanel>
-						<controls:SpacedStack Orientation="Horizontal" Spacing="6">
-							<TextBlock Style="{StaticResource Lbl}" Text="Vertex #:" />
-							<controls:NumericUpDown Style="{StaticResource Nud}" Maximum="65535" Minimum="0" Value="{Binding VertexNum, Mode=TwoWay}" />
-							<Button Width="60" Command="{Binding FindVertexCommand}" Content="Find" />
-						</controls:SpacedStack>
-						<controls:SpacedStack Margin="0,6,0,0" Orientation="Horizontal" Spacing="6">
-							<Button Width="80" Command="{Binding RemapVertexCommand}" Content="Remap" IsEnabled="{Binding RemapEnabled}" />
-							<Button Width="80" Command="{Binding AutoFitCommand}" Content="Auto-fit" />
-						</controls:SpacedStack>
-					</StackPanel>
-				</GroupBox>
+                <!--  Vertex remap  -->
+                <GroupBox Header="Vertex remap" Visibility="{Binding IsRemapMode, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <controls:SpacedStack Orientation="Horizontal" Spacing="6">
+                            <TextBlock Style="{StaticResource Lbl}" Text="Vertex #:" />
+                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="65535" Minimum="0" Value="{Binding VertexNum, Mode=TwoWay}" />
+                            <Button Width="60" Command="{Binding FindVertexCommand}" Content="Find" />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack Margin="0,6,0,0" Orientation="Horizontal" Spacing="6">
+                            <Button Width="80" Command="{Binding RemapVertexCommand}" Content="Remap" IsEnabled="{Binding RemapEnabled}" />
+                            <Button Width="80" Command="{Binding AutoFitCommand}" Content="Auto-fit" />
+                        </controls:SpacedStack>
+                    </StackPanel>
+                </GroupBox>
 
-				<!--  Vertex colors &amp; normals  -->
-				<GroupBox Header="Vertex colors &amp; normals" Visibility="{Binding IsColorsMode, Converter={StaticResource BoolToVis}}">
-					<StackPanel>
-						<controls:SpacedStack Orientation="Horizontal" Spacing="6">
-							<TextBlock Style="{StaticResource Lbl}" Text="Color:" />
-							<Button
-								Width="48"
-								Height="22"
-								Background="{Binding VertexColorBrush}"
-								Command="{Binding PickColorCommand}" />
-							<Button Width="120" Command="{Binding ApplyShadesToAllCommand}" Content="Apply to all" />
-						</controls:SpacedStack>
-						<controls:SpacedStack Margin="0,6,0,0" Orientation="Horizontal" Spacing="6">
-							<Button Width="100" Command="{Binding RecalcNormalsCommand}" Content="Recalc normals" />
-							<Button Width="100" Command="{Binding RecalcNormalsAvgCommand}" Content="Recalc (avg)" />
-						</controls:SpacedStack>
-						<Button Margin="0,6,0,0" Command="{Binding ConvertFromShadesCommand}" Content="Convert from shades" />
-					</StackPanel>
-				</GroupBox>
+                <!--  Vertex colors &amp; normals  -->
+                <GroupBox Header="Vertex colors &amp; normals" Visibility="{Binding IsColorsMode, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <controls:SpacedStack Orientation="Horizontal" Spacing="6">
+                            <TextBlock Style="{StaticResource Lbl}" Text="Color:" />
+                            <Button
+                                Width="48"
+                                Height="22"
+                                Background="{Binding VertexColorBrush}"
+                                Command="{Binding PickColorCommand}" />
+                            <Button Width="120" Command="{Binding ApplyShadesToAllCommand}" Content="Apply to all" />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack Margin="0,6,0,0" Orientation="Horizontal" Spacing="6">
+                            <Button Width="100" Command="{Binding RecalcNormalsCommand}" Content="Recalc normals" />
+                            <Button Width="100" Command="{Binding RecalcNormalsAvgCommand}" Content="Recalc (avg)" />
+                        </controls:SpacedStack>
+                        <Button Margin="0,6,0,0" Command="{Binding ConvertFromShadesCommand}" Content="Convert from shades" />
+                    </StackPanel>
+                </GroupBox>
 
-				<!--  Vertex effects  -->
-				<GroupBox Header="Vertex effects" Visibility="{Binding IsEffectsMode, Converter={StaticResource BoolToVis}}">
-					<StackPanel>
-						<controls:SpacedStack Orientation="Horizontal" Spacing="6">
-							<TextBlock Style="{StaticResource Lbl}" Text="Glow:" />
-							<controls:NumericUpDown Style="{StaticResource Nud}" Maximum="63" Minimum="0" Value="{Binding Glow, Mode=TwoWay}" />
-							<TextBlock Style="{StaticResource Lbl}" Text="Move:" />
-							<controls:NumericUpDown Style="{StaticResource Nud}" Maximum="63" Minimum="0" Value="{Binding Move, Mode=TwoWay}" />
-						</controls:SpacedStack>
-						<Button Margin="0,6,0,0" Command="{Binding ApplyEffectsToAllCommand}" Content="Apply to all vertices" />
-					</StackPanel>
-				</GroupBox>
+                <!--  Vertex effects  -->
+                <GroupBox Header="Vertex effects" Visibility="{Binding IsEffectsMode, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <controls:SpacedStack Orientation="Horizontal" Spacing="6">
+                            <TextBlock Style="{StaticResource Lbl}" Text="Glow:" />
+                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="63" Minimum="0" Value="{Binding Glow, Mode=TwoWay}" />
+                            <TextBlock Style="{StaticResource Lbl}" Text="Move:" />
+                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="63" Minimum="0" Value="{Binding Move, Mode=TwoWay}" />
+                        </controls:SpacedStack>
+                        <Button Margin="0,6,0,0" Command="{Binding ApplyEffectsToAllCommand}" Content="Apply to all vertices" />
+                    </StackPanel>
+                </GroupBox>
 
-				<!--  Vertex weights  -->
-				<GroupBox Header="Vertex weights" Visibility="{Binding IsWeightsMode, Converter={StaticResource BoolToVis}}">
-					<StackPanel>
-						<UniformGrid Columns="2" Rows="1">
-							<TextBlock HorizontalAlignment="Center" Style="{StaticResource Lbl}" Text="Bone" />
-							<TextBlock HorizontalAlignment="Center" Style="{StaticResource Lbl}" Text="Weight" />
-						</UniformGrid>
-						<UniformGrid Margin="0,2,0,0" Columns="2" Rows="4">
-							<controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" Value="{Binding WeightIndex1, Mode=TwoWay}" />
-							<controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" Value="{Binding WeightValue1, Mode=TwoWay}" />
-							<controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" Value="{Binding WeightIndex2, Mode=TwoWay}" />
-							<controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" Value="{Binding WeightValue2, Mode=TwoWay}" />
-							<controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" Value="{Binding WeightIndex3, Mode=TwoWay}" />
-							<controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" Value="{Binding WeightValue3, Mode=TwoWay}" />
-							<controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" Value="{Binding WeightIndex4, Mode=TwoWay}" />
-							<controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" Value="{Binding WeightValue4, Mode=TwoWay}" />
-						</UniformGrid>
-						<Button Margin="0,6,0,0" Command="{Binding ApplyWeightsToAllCommand}" Content="Apply to all vertices" />
-					</StackPanel>
-				</GroupBox>
+                <!--  Vertex weights  -->
+                <GroupBox Header="Vertex weights" Visibility="{Binding IsWeightsMode, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <UniformGrid Columns="2" Rows="1">
+                            <TextBlock HorizontalAlignment="Center" Style="{StaticResource Lbl}" Text="Bone" />
+                            <TextBlock HorizontalAlignment="Center" Style="{StaticResource Lbl}" Text="Weight" />
+                        </UniformGrid>
+                        <UniformGrid Margin="0,2,0,0" Columns="2" Rows="4">
+                            <controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" Value="{Binding WeightIndex1, Mode=TwoWay}" />
+                            <controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" Value="{Binding WeightValue1, Mode=TwoWay}" />
+                            <controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" Value="{Binding WeightIndex2, Mode=TwoWay}" />
+                            <controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" Value="{Binding WeightValue2, Mode=TwoWay}" />
+                            <controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" Value="{Binding WeightIndex3, Mode=TwoWay}" />
+                            <controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" Value="{Binding WeightValue3, Mode=TwoWay}" />
+                            <controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" Value="{Binding WeightIndex4, Mode=TwoWay}" />
+                            <controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" Value="{Binding WeightValue4, Mode=TwoWay}" />
+                        </UniformGrid>
+                        <Button Margin="0,6,0,0" Command="{Binding ApplyWeightsToAllCommand}" Content="Apply to all vertices" />
+                    </StackPanel>
+                </GroupBox>
 
-				<!--  Bounding sphere  -->
-				<GroupBox Header="Bounding sphere" Visibility="{Binding IsSphereMode, Converter={StaticResource BoolToVis}}">
-					<StackPanel>
-						<controls:SpacedStack Orientation="Horizontal" Spacing="6">
-							<TextBlock Style="{StaticResource Lbl}" Text="X" />
-							<controls:NumericUpDown Style="{StaticResource Nud}" Maximum="1000000" Minimum="-1000000" Value="{Binding SphereX, Mode=TwoWay}" />
-							<TextBlock Style="{StaticResource Lbl}" Text="Y" />
-							<controls:NumericUpDown Style="{StaticResource Nud}" Maximum="1000000" Minimum="-1000000" Value="{Binding SphereY, Mode=TwoWay}" />
-						</controls:SpacedStack>
-						<controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="6">
-							<TextBlock Style="{StaticResource Lbl}" Text="Z" />
-							<controls:NumericUpDown Style="{StaticResource Nud}" Maximum="1000000" Minimum="-1000000" Value="{Binding SphereZ, Mode=TwoWay}" />
-							<TextBlock Style="{StaticResource Lbl}" Text="R" />
-							<controls:NumericUpDown Style="{StaticResource Nud}" Maximum="1000000" Minimum="0" Value="{Binding SphereRadius, Mode=TwoWay}" />
-						</controls:SpacedStack>
-						<Button Margin="0,6,0,0" Command="{Binding ResetSphereCommand}" Content="Reset sphere" />
-					</StackPanel>
-				</GroupBox>
+                <!--  Bounding sphere  -->
+                <GroupBox Header="Bounding sphere" Visibility="{Binding IsSphereMode, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <controls:SpacedStack Orientation="Horizontal" Spacing="6">
+                            <TextBlock Style="{StaticResource Lbl}" Text="X" />
+                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="1000000" Minimum="-1000000" Value="{Binding SphereX, Mode=TwoWay}" />
+                            <TextBlock Style="{StaticResource Lbl}" Text="Y" />
+                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="1000000" Minimum="-1000000" Value="{Binding SphereY, Mode=TwoWay}" />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="6">
+                            <TextBlock Style="{StaticResource Lbl}" Text="Z" />
+                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="1000000" Minimum="-1000000" Value="{Binding SphereZ, Mode=TwoWay}" />
+                            <TextBlock Style="{StaticResource Lbl}" Text="R" />
+                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="1000000" Minimum="0" Value="{Binding SphereRadius, Mode=TwoWay}" />
+                        </controls:SpacedStack>
+                        <Button Margin="0,6,0,0" Command="{Binding ResetSphereCommand}" Content="Reset sphere" />
+                    </StackPanel>
+                </GroupBox>
 
-				<!--  Texture map + texture list  -->
-				<GroupBox Header="Texture">
-					<StackPanel>
-						<Border
-							Height="220"
-							BorderBrush="{DynamicResource Brush_Border}"
-							BorderThickness="1">
-							<wfi:WindowsFormsHost x:Name="textureMapHost" />
-						</Border>
-						<ComboBox Margin="0,6,0,0" ItemsSource="{Binding Textures}" SelectedItem="{Binding SelectedTexture, Mode=TwoWay}" />
-						<controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
-							<CheckBox VerticalAlignment="Center" Content="All textures" IsChecked="{Binding AllTextures, Mode=TwoWay}" Visibility="{Binding ShowAllTexturesButton, Converter={StaticResource BoolToVis}}" />
-							<Button Width="56" Command="{Binding ExportTextureCommand}" Content="Export" />
-							<Button Width="56" Command="{Binding DeleteTextureCommand}" Content="Delete" />
-						</controls:SpacedStack>
-						<controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
-							<Button Width="74" Command="{Binding AddEmbeddedTextureCommand}" Content="Add emb." />
-							<Button Width="74" Command="{Binding AddExternalTextureCommand}" Content="Add ext." />
-						</controls:SpacedStack>
-						<controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
-							<Button Width="74" Command="{Binding ReplaceEmbeddedTextureCommand}" Content="Repl. emb." />
-							<Button Width="74" Command="{Binding ReplaceExternalTextureCommand}" Content="Repl. ext." />
-						</controls:SpacedStack>
-						<controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
-							<Button Width="100" Command="{Binding MaterialEditorCommand}" Content="Material editor" IsEnabled="{Binding MaterialEditorEnabled}" />
-							<Button Width="100" Command="{Binding AnimationRangesCommand}" Content="Anim ranges" Visibility="{Binding ShowTextureTools, Converter={StaticResource BoolToVis}}" />
-						</controls:SpacedStack>
-					</StackPanel>
-				</GroupBox>
-			</controls:SpacedStack>
-		</ScrollViewer>
+                <!--  Texture map + texture list  -->
+                <GroupBox Header="Texture">
+                    <StackPanel>
+                        <Border
+                            Height="220"
+                            BorderBrush="{DynamicResource Brush_Border}"
+                            BorderThickness="1">
+                            <wadControls:PanelTextureMap x:Name="textureMap" />
+                        </Border>
+                        <ComboBox Margin="0,6,0,0" ItemsSource="{Binding Textures}" SelectedItem="{Binding SelectedTexture, Mode=TwoWay}" />
+                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
+                            <CheckBox VerticalAlignment="Center" Content="All textures" IsChecked="{Binding AllTextures, Mode=TwoWay}" Visibility="{Binding ShowAllTexturesButton, Converter={StaticResource BoolToVis}}" />
+                            <Button Width="56" Command="{Binding ExportTextureCommand}" Content="Export" />
+                            <Button Width="56" Command="{Binding DeleteTextureCommand}" Content="Delete" />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
+                            <Button Width="74" Command="{Binding AddEmbeddedTextureCommand}" Content="Add emb." />
+                            <Button Width="74" Command="{Binding AddExternalTextureCommand}" Content="Add ext." />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
+                            <Button Width="74" Command="{Binding ReplaceEmbeddedTextureCommand}" Content="Repl. emb." />
+                            <Button Width="74" Command="{Binding ReplaceExternalTextureCommand}" Content="Repl. ext." />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
+                            <Button Width="100" Command="{Binding MaterialEditorCommand}" Content="Material editor" IsEnabled="{Binding MaterialEditorEnabled}" />
+                            <Button Width="100" Command="{Binding AnimationRangesCommand}" Content="Anim ranges" Visibility="{Binding ShowTextureTools, Converter={StaticResource BoolToVis}}" />
+                        </controls:SpacedStack>
+                    </StackPanel>
+                </GroupBox>
+            </controls:SpacedStack>
+        </ScrollViewer>
 
-		<!--  3D mesh view  -->
-		<Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
-			<Border.Margin>
-				<Thickness Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
-			</Border.Margin>
-			<wfi:WindowsFormsHost x:Name="meshHost" />
-		</Border>
-	</DockPanel>
+        <!--  3D mesh view  -->
+        <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
+            <Border.Margin>
+                <Thickness Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+            </Border.Margin>
+            <Border x:Name="meshHost" />
+        </Border>
+    </DockPanel>
 </Window>

@@ -1,3 +1,5 @@
+#nullable enable
+
 using SharpDX.Toolkit.Graphics;
 using System;
 using System.Collections.Generic;
@@ -8,6 +10,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using TombEditor.Features.FlybyTimeline.Preview;
 using TombLib;
 using TombLib.Controls;
@@ -16,12 +19,12 @@ using TombLib.Graphics.Primitives;
 using TombLib.LevelData;
 using TombLib.Rendering;
 using TombLib.Utils;
+using RenderingPanel = TombLib.Controls.Wpf.RenderingPanel;
 
 namespace TombEditor.Controls.Panel3D
 {
     public partial class Panel3D : RenderingPanel
     {
-        private static readonly KeyMessageFilter _filter = new KeyMessageFilter();
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Camera Camera { get; set; }
@@ -102,7 +105,7 @@ namespace TombEditor.Controls.Panel3D
         private Vector2 _nextCameraRot;
         private float _lastCameraDist;
         private float _nextCameraDist;
-        private readonly Timer _flyModeTimer;
+        private readonly DispatcherTimer _flyModeTimer;
         private Camera _oldCamera;
         private Frustum _frustum;
         private Matrix4x4 _viewProjection;
@@ -196,11 +199,7 @@ namespace TombEditor.Controls.Panel3D
 
         public Panel3D()
         {
-            SetStyle(ControlStyles.Selectable | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
-
             // The viewport is a drop target for objects dragged from the browsers and for files.
-            // The old WinForms MainView set this via its designer; the WPF host creates the panel
-            // in code, so enable it here to keep drag-and-drop working in both hosts.
             AllowDrop = true;
 
             if (Editor.Instance is not null)
@@ -217,11 +216,10 @@ namespace TombEditor.Controls.Panel3D
                 _toolHandler = new ToolHandler(this);
                 _movementTimer = new MovementTimer(MoveTimer_Tick);
 
-                _flyModeTimer = new Timer { Interval = 1 };
+                _flyModeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1) };
                 _flyModeTimer.Tick += FlyModeTimer_Tick;
 
                 _renderingCachedRooms = new Cache<Room, RenderingDrawingRoom>(1024, CacheRoom);
-                Application.AddMessageFilter(_filter);
             }
         }
 
@@ -253,7 +251,10 @@ namespace TombEditor.Controls.Panel3D
                 _littleCube?.Dispose();
                 _littleSphere?.Dispose();
                 _movementTimer?.Dispose();
-                _flyModeTimer?.Dispose();
+                _flyModeTimer?.Stop();
+
+                if (_flyModeTimer is not null)
+                    _flyModeTimer.Tick -= FlyModeTimer_Tick;
                 _flybyPreview?.Dispose();
                 _rasterizerStateDepthBias?.Dispose();
                 if (_currentWpfContextMenu != null)

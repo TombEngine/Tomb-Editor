@@ -6,17 +6,14 @@ using System.Windows;
 using System.Windows.Input;
 using TombLib.Forms;
 using TombLib.WPF;
+using TombLib.WPF.Input;
 using WadTool.Controls;
+
 using PopUpInfo = TombLib.WPF.PopUpInfo;
 
 namespace WadTool.Features.Dialogs.MeshEditor;
 
-/// <summary>
-/// WPF port of the legacy <c>FormMeshEditor</c>. The 3D mesh view (<see cref="PanelRenderingMesh"/>)
-/// and the texture-map control (<see cref="PanelTextureMap"/>) remain WinForms, hosted via
-/// <c>WindowsFormsHost</c>; everything around them is native WPF bound to
-/// <see cref="MeshEditorWindowViewModel"/>.
-/// </summary>
+/// <summary>Native WPF MeshEditor view with a Direct3D viewport and MVVM editing tools.</summary>
 public partial class MeshEditorWindow : Window
 {
     private readonly PanelRenderingMesh _panelMesh;
@@ -30,9 +27,8 @@ public partial class MeshEditorWindow : Window
         this.HookModalAutoClose();
 
         _panelMesh = new PanelRenderingMesh();
-        _panelTextureMap = new PanelTextureMap();
+        _panelTextureMap = textureMap;
         meshHost.Child = _panelMesh;
-        textureMapHost.Child = _panelTextureMap;
         _panelTextureMap.SelectedTextureChanged += OnTextureSelectionChanged;
 
         meshTree.SelectedItemChanged += OnTreeSelectedItemChanged;
@@ -69,6 +65,9 @@ public partial class MeshEditorWindow : Window
 
     private void OnClosed(object? sender, EventArgs e)
     {
+        _panelMesh.Dispose();
+        _popup.Dispose();
+
         _panelTextureMap.SelectedTextureChanged -= OnTextureSelectionChanged;
         meshTree.SelectedItemChanged -= OnTreeSelectedItemChanged;
         meshTree.MouseDoubleClick -= OnTreeMouseDoubleClick;
@@ -106,33 +105,34 @@ public partial class MeshEditorWindow : Window
 
     private void OnPreviewKeyDown(object sender, KeyEventArgs e)
     {
-        if (_vm is null || !_vm.ShowEditingTools)
+        if (e.Handled || _vm is null || !_vm.ShowEditingTools ||
+            KeyboardInput.IsEditingText(e.OriginalSource as DependencyObject) || KeyboardInput.IsEditingText(Keyboard.FocusedElement as DependencyObject))
+        {
+            return;
+        }
+
+        bool control = Keyboard.Modifiers.HasFlag(ModifierKeys.Control);
+        bool shift = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift);
+        if (e.Key == Key.Escape)
+        {
+            _vm.ClearSelection();
+            e.Handled = true;
+            return;
+        }
+
+        var command = e.Key switch
+        {
+            Key.Z when control && _vm.UndoEnabled => _vm.UndoCommand,
+            Key.Y when control && _vm.RedoEnabled => _vm.RedoCommand,
+            Key.F when control && _vm.IsFaceMode => _vm.FindTextureCommand,
+            Key.OemMinus or Key.OemPlus or Key.OemTilde or Key.OemBackslash when _panelTextureMap.VisibleTexture is { IsAvailable: true } =>
+                shift ? _vm.MirrorTextureCommand : _vm.RotateTextureCommand,
+            _ => null
+        };
+        if (command?.CanExecute(null) != true)
             return;
 
-        bool ctrl = (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control;
-        bool shift = (Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift;
-
-        switch (e.Key)
-        {
-            case Key.Escape:
-                _vm.ClearSelection();
-                break;
-            case Key.Z when ctrl:
-                _vm.UndoCommand.Execute(null);
-                break;
-            case Key.Y when ctrl:
-                _vm.RedoCommand.Execute(null);
-                break;
-            case Key.F when ctrl:
-                if (_vm.IsFaceMode) _vm.FindTextureCommand.Execute(null);
-                break;
-            case Key.OemMinus:
-            case Key.OemPlus:
-            case Key.OemTilde:
-            case Key.OemBackslash:
-                if (shift) _vm.MirrorTextureCommand.Execute(null);
-                else _vm.RotateTextureCommand.Execute(null);
-                break;
-        }
+        command.Execute(null);
+        e.Handled = true;
     }
 }

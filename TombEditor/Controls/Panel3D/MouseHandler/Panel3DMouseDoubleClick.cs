@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+#nullable enable
+
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
@@ -18,7 +20,7 @@ namespace TombEditor.Controls.Panel3D
                 if (ModifierKeys == Keys.None)
                 {
                     var pickedObject = ((PickingResultObject)newPicking).ObjectInstance;
-                    EditorActions.EditObject(pickedObject, Parent);
+                    EditorActions.EditObject(pickedObject, this);
                 }
             }
             else if (newPicking is PickingResultSector)

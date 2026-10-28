@@ -1,3 +1,5 @@
+#nullable enable
+
 using SharpDX.Toolkit.Graphics;
 using System;
 using System.Collections.Generic;
@@ -17,10 +19,13 @@ using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
 
+#nullable restore
+
 namespace TombEditor.Controls.Panel3D
 {
     public partial class Panel3D
     {
+#nullable enable
         private void DrawDebugLines(Effect effect)
         {
             var drawRoomBounds = _editor.Configuration.Rendering3D_AlwaysShowCurrentRoomBounds;
@@ -43,7 +48,7 @@ namespace TombEditor.Controls.Panel3D
                 _legacyDevice.Draw(PrimitiveType.LineList, 2);
             }
 
-            if (!_flyModeTimer.Enabled && drawRoomBounds)
+            if (!_flyModeTimer.IsEnabled && drawRoomBounds)
             {
                 if (_editor.SelectedRooms.Count > 0)
                     foreach (Room room in _editor.SelectedRooms)
@@ -54,6 +59,8 @@ namespace TombEditor.Controls.Panel3D
                     DrawRoomBoundingBox(effect, _editor.SelectedRoom);
             }
         }
+
+#nullable restore
 
         private void DrawText(Room[] roomsToDraw, List<Text> textToDraw)
         {
@@ -1803,8 +1810,8 @@ namespace TombEditor.Controls.Panel3D
                                 instance.RotationPositionMatrix * _viewProjection,
                                 instance + "\n" + GetObjectPositionString(_editor.SelectedRoom, instance) + "\n" +
                                 GetObjectRotationString(_editor.SelectedRoom, instance) + "\n" +
-								"Scale: " + instance.Scale + "\n" +
-								"Triangles: " + instance.Model.DirectXModel.TotalTriangles));
+                                "Scale: " + instance.Scale + "\n" +
+                                "Triangles: " + instance.Model.DirectXModel.TotalTriangles));
 
                             // Add the line height of the object
                             AddObjectHeightLine(_editor.SelectedRoom, instance.Position);

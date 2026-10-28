@@ -1,5 +1,6 @@
 #nullable enable
 
+using IWinFormsWindow = System.Windows.Forms.IWin32Window;
 using System;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -9,7 +10,6 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using TombLib.Forms;
 using WinFormsControl = System.Windows.Forms.Control;
-using IWinFormsWindow = System.Windows.Forms.IWin32Window;
 
 namespace TombLib.WPF;
 
@@ -35,6 +35,7 @@ public class PopUpInfo : IDisposable
     private PopupAlignment _alignment;
     private int _padding;
     private WinFormsControl? _parent;
+    private FrameworkElement? _wpfParent;
     private System.Drawing.Point _parentPosition;
 
     private ToastWindow? _window;
@@ -69,6 +70,33 @@ public class PopUpInfo : IDisposable
         }
     }
 
+    /// <summary>Shows a toast anchored to a native WPF view or rendering surface.</summary>
+    public static void Show(PopUpInfo popup, IWinFormsWindow? owner, FrameworkElement parent, string message, PopupType type)
+    {
+        if (owner is not null && GetRootHandle(owner.Handle) != GetActiveWindow())
+            return;
+
+        string title = type switch
+        {
+            PopupType.Info => "Information",
+            PopupType.Warning => "Warning",
+            PopupType.Error => "Error",
+            _ => string.Empty
+        };
+        popup.Show(parent, PopupAlignment.BottomRight, message, title, type);
+    }
+
+    /// <summary>Shows a toast relative to a WPF anchor, in device independent coordinates.</summary>
+    public void Show(FrameworkElement parent, PopupAlignment alignment, string message, string title = "",
+        PopupType type = PopupType.Info, int timeout = 0, int padding = 10)
+    {
+        _parent = null;
+        _wpfParent = parent;
+        var owner = Window.GetWindow(parent);
+        var handle = owner is null ? IntPtr.Zero : new WindowInteropHelper(owner).Handle;
+        ShowCore(handle, parent.ActualWidth, parent.ActualHeight, alignment, message, title, type, timeout, padding);
+    }
+
     // Common message helpers
     public void ShowInfo(WinFormsControl parent, string message, string title = "Information")
         => Show(parent, PopupAlignment.BottomRight, message, title, PopupType.Info);
@@ -82,6 +110,16 @@ public class PopUpInfo : IDisposable
     public void Show(WinFormsControl parent, PopupAlignment alignment, string message, string title = "",
         PopupType type = PopupType.Info, int timeout = 0, int padding = 10)
     {
+        _parent = parent;
+        _wpfParent = null;
+        double scale = parent.DeviceDpi / 96.0;
+        ShowCore(GetRootHandle(parent.Handle), parent.Width / scale, parent.Height / scale,
+            alignment, message, title, type, timeout, padding);
+    }
+
+    private void ShowCore(IntPtr owner, double width, double height, PopupAlignment alignment, string message, string title,
+        PopupType type, int timeout, int padding)
+    {
         // No message means kill current pop-up
         if (message == "")
         {
@@ -89,20 +127,26 @@ public class PopUpInfo : IDisposable
             return;
         }
 
-        _parent = parent;
         _alignment = alignment;
         _padding = padding;
 
         if (_window is null || !_window.IsLoaded)
         {
             _window?.Close();
-            _window = new ToastWindow();
+            var window = new ToastWindow();
+            window.Closed += (_, _) => {
+                if (ReferenceEquals(_window, window))
+                {
+                    _animTimer.Stop();
+                    _window = null;
+                }
+            };
+            _window = window;
         }
 
-        double scale = parent.DeviceDpi / 96.0;
         _window.Setup(title, message, type,
-            maxWidth: parent.Width * 0.7 / scale,
-            maxHeight: parent.Height / 4.0 / scale);
+            maxWidth: Math.Max(80.0, width * 0.7),
+            maxHeight: Math.Max(40.0, height / 4.0));
 
         // Setup message timeout
         if (timeout > 0)
@@ -131,12 +175,17 @@ public class PopUpInfo : IDisposable
 
         if (!_window.IsVisible)
         {
-            new WindowInteropHelper(_window) { Owner = GetRootHandle(parent.Handle) };
+            new WindowInteropHelper(_window) { Owner = owner };
             _window.Show();
         }
     }
 
-    public void Hide() => _window?.Hide();
+    public void Hide()
+    {
+        _animTimer.Stop();
+        if (_window is { IsLoaded: true })
+            _window.Hide();
+    }
 
     public void Dispose()
     {
@@ -144,25 +193,25 @@ public class PopUpInfo : IDisposable
         _animTimer.Tick -= UpdateTimer;
         _window?.Close();
         _window = null;
+        _parent = null;
+        _wpfParent = null;
     }
 
     private void UpdateTimer(object? sender, EventArgs e)
     {
-        if (_parent == null || _parent.Disposing || _parent.IsDisposed || _window == null)
+        if (!TryGetAnchor(out var callbackControlLocation, out var parentSize, out double scale) || _window is null)
         {
             _animTimer.Stop();
-            _window?.Hide();
+            Hide();
             return;
         }
 
         _animProgress += 0.1f;
         _animProgress = (float)Math.Round(_animProgress, 1, MidpointRounding.AwayFromZero);
 
-        var callbackControlLocation = _parent.PointToScreen(System.Drawing.Point.Empty);
         bool updateLocation = _parentPosition != callbackControlLocation;
         int currentShift = 0;
 
-        double scale = _parent.DeviceDpi / 96.0;
         int popupWidth = (int)(_window.ActualWidth * scale);
         int popupHeight = (int)(_window.ActualHeight * scale);
 
@@ -204,29 +253,54 @@ public class PopUpInfo : IDisposable
                 default:
                 case PopupAlignment.BottomLeft:
                     x = callbackControlLocation.X + _padding;
-                    y = callbackControlLocation.Y + _parent.Size.Height - popupHeight - _padding - currentShift;
+                    y = callbackControlLocation.Y + parentSize.Height - popupHeight - _padding - currentShift;
                     break;
                 case PopupAlignment.BottomRight:
-                    x = callbackControlLocation.X + _parent.Size.Width - popupWidth - _padding;
-                    y = callbackControlLocation.Y + _parent.Size.Height - popupHeight - _padding - currentShift;
+                    x = callbackControlLocation.X + parentSize.Width - popupWidth - _padding;
+                    y = callbackControlLocation.Y + parentSize.Height - popupHeight - _padding - currentShift;
                     break;
                 case PopupAlignment.TopLeft:
                     x = callbackControlLocation.X + _padding;
                     y = callbackControlLocation.Y + _padding + currentShift;
                     break;
                 case PopupAlignment.TopRight:
-                    x = callbackControlLocation.X + _parent.Size.Width - popupWidth - _padding;
+                    x = callbackControlLocation.X + parentSize.Width - popupWidth - _padding;
                     y = callbackControlLocation.Y + _padding + currentShift;
                     break;
                 case PopupAlignment.Center:
-                    x = callbackControlLocation.X + _parent.Size.Width / 2 - popupWidth / 2;
-                    y = callbackControlLocation.Y + _parent.Size.Height / 2 - popupHeight / 2 + currentShift;
+                    x = callbackControlLocation.X + parentSize.Width / 2 - popupWidth / 2;
+                    y = callbackControlLocation.Y + parentSize.Height / 2 - popupHeight / 2 + currentShift;
                     break;
             }
 
             _window.Left = x / scale;
             _window.Top = y / scale;
         }
+    }
+
+    private bool TryGetAnchor(out System.Drawing.Point position, out System.Drawing.Size size, out double scale)
+    {
+        if (_wpfParent is { IsVisible: true } visual && PresentationSource.FromVisual(visual) is not null)
+        {
+            var origin = visual.PointToScreen(new Point());
+            scale = VisualTreeHelper.GetDpi(visual).DpiScaleX;
+            position = new System.Drawing.Point((int)origin.X, (int)origin.Y);
+            size = new System.Drawing.Size((int)(visual.ActualWidth * scale), (int)(visual.ActualHeight * scale));
+            return true;
+        }
+
+        if (_parent is { IsDisposed: false, Disposing: false } control)
+        {
+            position = control.PointToScreen(System.Drawing.Point.Empty);
+            size = control.Size;
+            scale = control.DeviceDpi / 96.0;
+            return true;
+        }
+
+        position = default;
+        size = default;
+        scale = 1.0;
+        return false;
     }
 
     private static IntPtr GetRootHandle(IntPtr handle) => handle == IntPtr.Zero ? IntPtr.Zero : GetAncestor(handle, 2 /* GA_ROOT */);

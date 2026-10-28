@@ -1,4 +1,5 @@
-﻿using DarkUI.Controls;
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -38,7 +39,7 @@ namespace TombEditor.Controls.Panel3D
                 // It gets already set on MouseMove, but it's better
                 // to prevent obscure errors and unwanted behavior later on.
 
-                _noSelectionConfirm = false;    
+                _noSelectionConfirm = false;
             }
 
             _toolHandler.Disengage();
@@ -169,11 +170,7 @@ namespace TombEditor.Controls.Panel3D
 
         private void OnMouseEntered()
         {
-            // Only grab keyboard focus when our own top-level window is already the foreground
-            // window. Hovering the 3D view must not steal activation from a non-modal, always-on-top
-            // tool window. The old "Form.ActiveForm == FindForm()" guard relied on Panel3D living
-            // inside a WinForms Form; under the WPF WindowsFormsHost FindForm() is null and the guard
-            // always passed, so every mouse-enter pulled foreground back to the main window.
+            // Hover only focuses the viewport while its owner is already active.
             if (!Focused && GetForegroundWindow() == GetAncestor(Handle, GA_ROOT))
             {
                 Focus(); // Enable keyboard interaction
@@ -184,7 +181,7 @@ namespace TombEditor.Controls.Panel3D
         private void OnMouseDragAndDrop(DragEventArgs e)
         {
             // Check if we are done with all common file tasks
-            var filesToProcess = EditorActions.DragDropCommonFiles(e, FindForm());
+            var filesToProcess = EditorActions.DragDropCommonFiles(e, this);
 
             if (filesToProcess == 0)
                 return;
@@ -258,7 +255,7 @@ namespace TombEditor.Controls.Panel3D
 
                         if (!file.IsANSI())
                         {
-                            MessageBoxes.NonANSIFilePathError(FindForm());
+                            MessageBoxes.NonANSIFilePathError(this);
                             continue;
                         }
 
@@ -274,8 +271,6 @@ namespace TombEditor.Controls.Panel3D
                 e.Effect = DragDropEffects.Copy;
             else if (e.Data.GetData(e.Data.GetFormats()[0]) as IWadObject[] != null)
                 e.Effect = DragDropEffects.Copy;
-            else if (e.Data.GetDataPresent(typeof(DarkFloatingToolboxContainer)))
-                e.Effect = DragDropEffects.Move;
             else if (EditorActions.DragDropFileSupported(e, true))
                 e.Effect = DragDropEffects.Copy;
             else

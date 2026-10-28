@@ -1,16 +1,19 @@
 {
-	"NewWad2": {
-		"Title": "New Wad2",
-		"GameVersion": "Game version:"
-	},
-	"AnimCommandsEditor": {
-		"Title": "Anim commands editor",
-		"GroupTitle": "Anim commands",
-		"AddTooltip": "New animcommand",
-		"DeleteTooltip": "Delete animcommand",
-		"MoveUpTooltip": "Move up",
-		"MoveDownTooltip": "Move down",
-		"CopyTooltip": "Copy selected animcommands",
-		"CopyToAllTooltip": "Copy selected animcommand to selected frames"
-	}
+    "NewWad2": {
+        "Title": "New Wad2",
+        "GameVersion": "Game version:"
+    },
+    "AnimCommandsEditor": {
+        "Title": "Anim commands editor",
+        "GroupTitle": "Anim commands",
+        "AddTooltip": "New animcommand",
+        "DeleteTooltip": "Delete animcommand",
+        "MoveUpTooltip": "Move up",
+        "MoveDownTooltip": "Move down",
+        "CopyTooltip": "Copy selected animcommands",
+        "CopyToAllTooltip": "Copy selected animcommand to selected frames"
+    },
+    "TextureMap": {
+        "ExternalTextureMissing": "External texture not found:"
+    }
 }

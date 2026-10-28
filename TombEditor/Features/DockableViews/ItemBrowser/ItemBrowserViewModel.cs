@@ -7,10 +7,11 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
+using TombEditor.Features.DockableViews.ResourcePreview;
 using TombLib.LevelData;
+using TombLib.WPF;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
-using TombLib.WPF;
 
 namespace TombEditor.Features.DockableViews.ItemBrowser;
 
@@ -32,6 +33,9 @@ public partial class ItemBrowserViewModel : ObservableObject
     private bool _suppressEditorSync;
     private bool _disposed;
     private bool _hideInternalObjects;
+
+    /// <summary>Gets the preview loading state and resource replacement action.</summary>
+    public ResourcePreviewViewModel Preview { get; }
 
     public ObservableCollection<ItemBrowserEntry> Items { get; } = new();
 
@@ -90,6 +94,7 @@ public partial class ItemBrowserViewModel : ObservableObject
     public ItemBrowserViewModel(Editor editor)
     {
         _editor = editor;
+        Preview = new ResourcePreviewViewModel(editor, importedGeometry: false);
         _editor.EditorEventRaised += OnEditorEventRaised;
 
         AddCommand = CommandHandler.GetCommand(
@@ -109,6 +114,7 @@ public partial class ItemBrowserViewModel : ObservableObject
         if (_disposed)
             return;
         _disposed = true;
+        Preview.Dispose();
         _editor.EditorEventRaised -= OnEditorEventRaised;
     }
 

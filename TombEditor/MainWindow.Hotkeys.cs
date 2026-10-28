@@ -1,42 +1,27 @@
+#nullable enable
+
 using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using System.Windows.Interop;
 using TombLib.Utils;
 using TombLib.WPF;
 
 namespace TombEditor
 {
-    // Global editor hotkey dispatch for the WPF shell.
-    //
-    // The legacy WinForms FormMain routed hotkeys through ProcessCmdKey. The WPF MainWindow has no
-    // such hook, and keys typed while the WindowsFormsHost-hosted Panel3D (or a WPF panel) has focus
-    // never reached the editor command system - so hotkeys did nothing in the 3D view.
-    //
-    // A thread-wide WinForms IMessageFilter fixes this: WindowsFormsIntegration bridges
-    // Application.FilterMessage onto ComponentDispatcher.ThreadFilterMessage, so the filter sees
-    // WM_KEYDOWN for every message pumped by the WPF dispatcher - both hosted WinForms HWNDs and the
-    // WPF HwndSource. This mirrors how ControlScrollFilter already works in Program.cs.
     public partial class MainWindow
     {
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetFocus();
+        private void InstallHotkeyFilter() => ComponentDispatcher.ThreadFilterMessage += OnThreadFilterMessage;
 
-        private EditorHotkeyMessageFilter _hotkeyFilter;
+        private void RemoveHotkeyFilter() => ComponentDispatcher.ThreadFilterMessage -= OnThreadFilterMessage;
 
-        private void InstallHotkeyFilter()
+        private void OnThreadFilterMessage(ref MSG message, ref bool handled)
         {
-            _hotkeyFilter = new EditorHotkeyMessageFilter(HandleHotkey);
-            System.Windows.Forms.Application.AddMessageFilter(_hotkeyFilter);
-        }
-
-        private void RemoveHotkeyFilter()
-        {
-            if (_hotkeyFilter is null)
+            if (handled || message.message is not (0x0100 or 0x0104))
                 return;
 
-            System.Windows.Forms.Application.RemoveMessageFilter(_hotkeyFilter);
-            _hotkeyFilter = null;
+            Keys keyData = (Keys)(int)message.wParam | Control.ModifierKeys;
+            handled = HandleHotkey(keyData);
         }
 
         /// <summary>
@@ -113,48 +98,8 @@ namespace TombEditor
                 (wpfFocused is System.Windows.Controls.ComboBox comboBox && comboBox.IsEditable))
                 return true;
 
-            // Focused WinForms control (e.g. inside the hosted Panel3D region or floating toolboxes)
-            IntPtr focusedHandle = GetFocus();
-            if (focusedHandle == IntPtr.Zero)
-                return false;
-
-            var focusedControl = Control.FromHandle(focusedHandle);
-            string controlType = focusedControl?.GetType().Name;
-
-            return controlType is
-                "DarkTextBox" or
-                "DarkAutocompleteTextBox" or
-                "DarkComboBox" or
-                "DarkListBox" or
-                "UpDownEdit" or
-                "ToolStripTextBoxControl" or
-                "TextBox" or
-                "ComboBox";
+            return false;
         }
 
-        /// <summary>
-        /// Thread-wide key message filter that forwards WM_KEYDOWN / WM_SYSKEYDOWN to a handler.
-        /// </summary>
-        private sealed class EditorHotkeyMessageFilter : IMessageFilter
-        {
-            private const int WM_KEYDOWN = 0x0100;
-            private const int WM_SYSKEYDOWN = 0x0104;
-
-            private readonly Func<Keys, bool> _handler;
-
-            public EditorHotkeyMessageFilter(Func<Keys, bool> handler)
-            {
-                _handler = handler;
-            }
-
-            public bool PreFilterMessage(ref Message m)
-            {
-                if (m.Msg != WM_KEYDOWN && m.Msg != WM_SYSKEYDOWN)
-                    return false;
-
-                Keys keyData = (Keys)(int)m.WParam | Control.ModifierKeys;
-                return _handler(keyData);
-            }
-        }
     }
 }

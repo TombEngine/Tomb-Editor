@@ -1,327 +1,326 @@
 <Window
-	x:Class="WadTool.Features.Dialogs.StaticEditor.StaticEditorWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
-	xmlns:local="clr-namespace:WadTool.Features.Dialogs.StaticEditor"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
-	Title="{Binding Title}"
-	Width="900"
-	Height="730"
-	MinWidth="760"
-	MinHeight="620"
-	d:DataContext="{d:DesignInstance Type=local:StaticEditorWindowViewModel}"
-	Background="{DynamicResource Brush_Background}"
-	ShowInTaskbar="False"
-	Style="{DynamicResource CustomWindowStyle}"
-	WindowStartupLocation="CenterOwner"
-	mc:Ignorable="d">
+    x:Class="WadTool.Features.Dialogs.StaticEditor.StaticEditorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:local="clr-namespace:WadTool.Features.Dialogs.StaticEditor"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="{Binding Title}"
+    Width="900"
+    Height="730"
+    MinWidth="760"
+    MinHeight="620"
+    d:DataContext="{d:DesignInstance Type=local:StaticEditorWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ShowInTaskbar="False"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
 
-	<Window.Resources>
-		<Style TargetType="controls:NumericUpDown">
-			<Setter Property="Width" Value="64" />
-			<Setter Property="Minimum" Value="-1000000" />
-			<Setter Property="Maximum" Value="1000000" />
-			<Setter Property="DecimalPlaces" Value="0" />
-		</Style>
-		<Style x:Key="AxisLabel" TargetType="TextBlock">
-			<Setter Property="VerticalAlignment" Value="Center" />
-			<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
-		</Style>
-	</Window.Resources>
+    <Window.Resources>
+        <Style TargetType="controls:NumericUpDown">
+            <Setter Property="Width" Value="64" />
+            <Setter Property="Minimum" Value="-1000000" />
+            <Setter Property="Maximum" Value="1000000" />
+            <Setter Property="DecimalPlaces" Value="0" />
+        </Style>
+        <Style x:Key="AxisLabel" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+        </Style>
+    </Window.Resources>
 
-	<DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
+    <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
 
-		<!--  Right column: editing controls  -->
-		<ScrollViewer
-			Width="262"
-			DockPanel.Dock="Right"
-			HorizontalScrollBarVisibility="Disabled"
-			VerticalScrollBarVisibility="Auto">
-			<ScrollViewer.Margin>
-				<Thickness Left="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
-			</ScrollViewer.Margin>
+        <!--  Right column: editing controls  -->
+        <ScrollViewer
+            Width="262"
+            DockPanel.Dock="Right"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <ScrollViewer.Margin>
+                <Thickness Left="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+            </ScrollViewer.Margin>
 
-			<controls:SpacedStack Orientation="Vertical" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <controls:SpacedStack Orientation="Vertical" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
 
-				<!--  Transform  -->
-				<GroupBox Header="Transform">
-					<StackPanel>
-						<controls:SpacedStack Orientation="Horizontal" Spacing="6">
-							<TextBlock Style="{StaticResource AxisLabel}" Text="Pos X:" />
-							<controls:NumericUpDown Value="{Binding PositionX, Mode=TwoWay}" />
-							<TextBlock Style="{StaticResource AxisLabel}" Text="Y:" />
-							<controls:NumericUpDown Value="{Binding PositionY, Mode=TwoWay}" />
-							<TextBlock Style="{StaticResource AxisLabel}" Text="Z:" />
-							<controls:NumericUpDown Value="{Binding PositionZ, Mode=TwoWay}" />
-						</controls:SpacedStack>
-						<controls:SpacedStack
-							Margin="0,6,0,0"
-							Orientation="Horizontal"
-							Spacing="6">
-							<TextBlock Style="{StaticResource AxisLabel}" Text="Reset:" />
-							<Button
-								Width="64"
-								Command="{Binding ResetTranslationCommand}"
-								Content="Translation" />
-							<Button
-								Width="56"
-								Command="{Binding ResetRotationCommand}"
-								Content="Rotation" />
-							<Button
-								Width="44"
-								Command="{Binding ResetScaleCommand}"
-								Content="Scale" />
-						</controls:SpacedStack>
-					</StackPanel>
-				</GroupBox>
+                <!--  Transform  -->
+                <GroupBox Header="Transform">
+                    <StackPanel>
+                        <controls:SpacedStack Orientation="Horizontal" Spacing="6">
+                            <TextBlock Style="{StaticResource AxisLabel}" Text="Pos X:" />
+                            <controls:NumericUpDown Value="{Binding PositionX, Mode=TwoWay}" />
+                            <TextBlock Style="{StaticResource AxisLabel}" Text="Y:" />
+                            <controls:NumericUpDown Value="{Binding PositionY, Mode=TwoWay}" />
+                            <TextBlock Style="{StaticResource AxisLabel}" Text="Z:" />
+                            <controls:NumericUpDown Value="{Binding PositionZ, Mode=TwoWay}" />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack
+                            Margin="0,6,0,0"
+                            Orientation="Horizontal"
+                            Spacing="6">
+                            <TextBlock Style="{StaticResource AxisLabel}" Text="Reset:" />
+                            <Button
+                                Width="64"
+                                Command="{Binding ResetTranslationCommand}"
+                                Content="Translation" />
+                            <Button
+                                Width="56"
+                                Command="{Binding ResetRotationCommand}"
+                                Content="Rotation" />
+                            <Button
+                                Width="44"
+                                Command="{Binding ResetScaleCommand}"
+                                Content="Scale" />
+                        </controls:SpacedStack>
+                    </StackPanel>
+                </GroupBox>
 
-				<!--  Visibility box  -->
-				<GroupBox>
-					<GroupBox.Header>
-						<CheckBox Content="Visibility Box" IsChecked="{Binding DrawVisibilityBox, Mode=TwoWay}" />
-					</GroupBox.Header>
-					<StackPanel>
-						<UniformGrid Columns="2" Rows="3">
-							<controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
-								<TextBlock Style="{StaticResource AxisLabel}" Text="X min:" />
-								<controls:NumericUpDown Value="{Binding VisBoxMinX, Mode=TwoWay}" />
-							</controls:SpacedStack>
-							<controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
-								<TextBlock Style="{StaticResource AxisLabel}" Text="X max:" />
-								<controls:NumericUpDown Value="{Binding VisBoxMaxX, Mode=TwoWay}" />
-							</controls:SpacedStack>
-							<controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
-								<TextBlock Style="{StaticResource AxisLabel}" Text="Y min:" />
-								<controls:NumericUpDown Value="{Binding VisBoxMinY, Mode=TwoWay}" />
-							</controls:SpacedStack>
-							<controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
-								<TextBlock Style="{StaticResource AxisLabel}" Text="Y max:" />
-								<controls:NumericUpDown Value="{Binding VisBoxMaxY, Mode=TwoWay}" />
-							</controls:SpacedStack>
-							<controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
-								<TextBlock Style="{StaticResource AxisLabel}" Text="Z min:" />
-								<controls:NumericUpDown Value="{Binding VisBoxMinZ, Mode=TwoWay}" />
-							</controls:SpacedStack>
-							<controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
-								<TextBlock Style="{StaticResource AxisLabel}" Text="Z max:" />
-								<controls:NumericUpDown Value="{Binding VisBoxMaxZ, Mode=TwoWay}" />
-							</controls:SpacedStack>
-						</UniformGrid>
-						<controls:SpacedStack
-							Margin="0,4,0,0"
-							Orientation="Horizontal"
-							Spacing="6">
-							<Button
-								Width="80"
-								Command="{Binding CalculateVisibilityBoxCommand}"
-								Content="Calculate" />
-							<Button
-								Width="80"
-								Command="{Binding ClearVisibilityBoxCommand}"
-								Content="Clear" />
-						</controls:SpacedStack>
-					</StackPanel>
-				</GroupBox>
+                <!--  Visibility box  -->
+                <GroupBox>
+                    <GroupBox.Header>
+                        <CheckBox Content="Visibility Box" IsChecked="{Binding DrawVisibilityBox, Mode=TwoWay}" />
+                    </GroupBox.Header>
+                    <StackPanel>
+                        <UniformGrid Columns="2" Rows="3">
+                            <controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
+                                <TextBlock Style="{StaticResource AxisLabel}" Text="X min:" />
+                                <controls:NumericUpDown Value="{Binding VisBoxMinX, Mode=TwoWay}" />
+                            </controls:SpacedStack>
+                            <controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
+                                <TextBlock Style="{StaticResource AxisLabel}" Text="X max:" />
+                                <controls:NumericUpDown Value="{Binding VisBoxMaxX, Mode=TwoWay}" />
+                            </controls:SpacedStack>
+                            <controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
+                                <TextBlock Style="{StaticResource AxisLabel}" Text="Y min:" />
+                                <controls:NumericUpDown Value="{Binding VisBoxMinY, Mode=TwoWay}" />
+                            </controls:SpacedStack>
+                            <controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
+                                <TextBlock Style="{StaticResource AxisLabel}" Text="Y max:" />
+                                <controls:NumericUpDown Value="{Binding VisBoxMaxY, Mode=TwoWay}" />
+                            </controls:SpacedStack>
+                            <controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
+                                <TextBlock Style="{StaticResource AxisLabel}" Text="Z min:" />
+                                <controls:NumericUpDown Value="{Binding VisBoxMinZ, Mode=TwoWay}" />
+                            </controls:SpacedStack>
+                            <controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
+                                <TextBlock Style="{StaticResource AxisLabel}" Text="Z max:" />
+                                <controls:NumericUpDown Value="{Binding VisBoxMaxZ, Mode=TwoWay}" />
+                            </controls:SpacedStack>
+                        </UniformGrid>
+                        <controls:SpacedStack
+                            Margin="0,4,0,0"
+                            Orientation="Horizontal"
+                            Spacing="6">
+                            <Button
+                                Width="80"
+                                Command="{Binding CalculateVisibilityBoxCommand}"
+                                Content="Calculate" />
+                            <Button
+                                Width="80"
+                                Command="{Binding ClearVisibilityBoxCommand}"
+                                Content="Clear" />
+                        </controls:SpacedStack>
+                    </StackPanel>
+                </GroupBox>
 
-				<!--  Collision box  -->
-				<GroupBox>
-					<GroupBox.Header>
-						<CheckBox Content="Collision Box" IsChecked="{Binding DrawCollisionBox, Mode=TwoWay}" />
-					</GroupBox.Header>
-					<StackPanel>
-						<UniformGrid Columns="2" Rows="3">
-							<controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
-								<TextBlock Style="{StaticResource AxisLabel}" Text="X min:" />
-								<controls:NumericUpDown Value="{Binding ColBoxMinX, Mode=TwoWay}" />
-							</controls:SpacedStack>
-							<controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
-								<TextBlock Style="{StaticResource AxisLabel}" Text="X max:" />
-								<controls:NumericUpDown Value="{Binding ColBoxMaxX, Mode=TwoWay}" />
-							</controls:SpacedStack>
-							<controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
-								<TextBlock Style="{StaticResource AxisLabel}" Text="Y min:" />
-								<controls:NumericUpDown Value="{Binding ColBoxMinY, Mode=TwoWay}" />
-							</controls:SpacedStack>
-							<controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
-								<TextBlock Style="{StaticResource AxisLabel}" Text="Y max:" />
-								<controls:NumericUpDown Value="{Binding ColBoxMaxY, Mode=TwoWay}" />
-							</controls:SpacedStack>
-							<controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
-								<TextBlock Style="{StaticResource AxisLabel}" Text="Z min:" />
-								<controls:NumericUpDown Value="{Binding ColBoxMinZ, Mode=TwoWay}" />
-							</controls:SpacedStack>
-							<controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
-								<TextBlock Style="{StaticResource AxisLabel}" Text="Z max:" />
-								<controls:NumericUpDown Value="{Binding ColBoxMaxZ, Mode=TwoWay}" />
-							</controls:SpacedStack>
-						</UniformGrid>
-						<controls:SpacedStack
-							Margin="0,4,0,0"
-							Orientation="Horizontal"
-							Spacing="6">
-							<Button
-								Width="80"
-								Command="{Binding CalculateCollisionBoxCommand}"
-								Content="Calculate" />
-							<Button
-								Width="80"
-								Command="{Binding ClearCollisionBoxCommand}"
-								Content="Clear" />
-						</controls:SpacedStack>
-					</StackPanel>
-				</GroupBox>
+                <!--  Collision box  -->
+                <GroupBox>
+                    <GroupBox.Header>
+                        <CheckBox Content="Collision Box" IsChecked="{Binding DrawCollisionBox, Mode=TwoWay}" />
+                    </GroupBox.Header>
+                    <StackPanel>
+                        <UniformGrid Columns="2" Rows="3">
+                            <controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
+                                <TextBlock Style="{StaticResource AxisLabel}" Text="X min:" />
+                                <controls:NumericUpDown Value="{Binding ColBoxMinX, Mode=TwoWay}" />
+                            </controls:SpacedStack>
+                            <controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
+                                <TextBlock Style="{StaticResource AxisLabel}" Text="X max:" />
+                                <controls:NumericUpDown Value="{Binding ColBoxMaxX, Mode=TwoWay}" />
+                            </controls:SpacedStack>
+                            <controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
+                                <TextBlock Style="{StaticResource AxisLabel}" Text="Y min:" />
+                                <controls:NumericUpDown Value="{Binding ColBoxMinY, Mode=TwoWay}" />
+                            </controls:SpacedStack>
+                            <controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
+                                <TextBlock Style="{StaticResource AxisLabel}" Text="Y max:" />
+                                <controls:NumericUpDown Value="{Binding ColBoxMaxY, Mode=TwoWay}" />
+                            </controls:SpacedStack>
+                            <controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
+                                <TextBlock Style="{StaticResource AxisLabel}" Text="Z min:" />
+                                <controls:NumericUpDown Value="{Binding ColBoxMinZ, Mode=TwoWay}" />
+                            </controls:SpacedStack>
+                            <controls:SpacedStack Margin="0,2" Orientation="Horizontal" Spacing="4">
+                                <TextBlock Style="{StaticResource AxisLabel}" Text="Z max:" />
+                                <controls:NumericUpDown Value="{Binding ColBoxMaxZ, Mode=TwoWay}" />
+                            </controls:SpacedStack>
+                        </UniformGrid>
+                        <controls:SpacedStack
+                            Margin="0,4,0,0"
+                            Orientation="Horizontal"
+                            Spacing="6">
+                            <Button
+                                Width="80"
+                                Command="{Binding CalculateCollisionBoxCommand}"
+                                Content="Calculate" />
+                            <Button
+                                Width="80"
+                                Command="{Binding ClearCollisionBoxCommand}"
+                                Content="Clear" />
+                        </controls:SpacedStack>
+                    </StackPanel>
+                </GroupBox>
 
-				<!--  Shatter  -->
-				<GroupBox Header="Shatter">
-					<StackPanel>
-						<controls:SpacedStack Orientation="Horizontal" Spacing="6">
-							<CheckBox
-								VerticalAlignment="Center"
-								Content="Shatter"
-								IsChecked="{Binding Shatter, Mode=TwoWay}"
-								IsEnabled="{Binding ShatterControlsEnabled}" />
-							<ComboBox
-								Width="120"
-								IsEnabled="{Binding SoundEnabled}"
-								ItemsSource="{Binding SoundIds}"
-								SelectedIndex="{Binding SoundIdIndex, Mode=TwoWay}" />
-							<Button
-								Width="40"
-								Command="{Binding PlaySoundCommand}"
-								Content="Play"
-								IsEnabled="{Binding PlayEnabled}" />
-						</controls:SpacedStack>
-						<Button
-							Width="120"
-							Margin="0,6,0,0"
-							HorizontalAlignment="Left"
-							Command="{Binding ResetShatterAttributesCommand}"
-							Content="Reset to default"
-							IsEnabled="{Binding ShatterControlsEnabled}" />
-					</StackPanel>
-				</GroupBox>
+                <!--  Shatter  -->
+                <GroupBox Header="Shatter">
+                    <StackPanel>
+                        <controls:SpacedStack Orientation="Horizontal" Spacing="6">
+                            <CheckBox
+                                VerticalAlignment="Center"
+                                Content="Shatter"
+                                IsChecked="{Binding Shatter, Mode=TwoWay}"
+                                IsEnabled="{Binding ShatterControlsEnabled}" />
+                            <ComboBox
+                                Width="120"
+                                IsEnabled="{Binding SoundEnabled}"
+                                ItemsSource="{Binding SoundIds}"
+                                SelectedIndex="{Binding SoundIdIndex, Mode=TwoWay}" />
+                            <Button
+                                Width="40"
+                                Command="{Binding PlaySoundCommand}"
+                                Content="Play"
+                                IsEnabled="{Binding PlayEnabled}" />
+                        </controls:SpacedStack>
+                        <Button
+                            Width="120"
+                            Margin="0,6,0,0"
+                            HorizontalAlignment="Left"
+                            Command="{Binding ResetShatterAttributesCommand}"
+                            Content="Reset to default"
+                            IsEnabled="{Binding ShatterControlsEnabled}" />
+                    </StackPanel>
+                </GroupBox>
 
-				<!--  Lights &amp; mesh  -->
-				<GroupBox Header="Lighting &amp; mesh">
-					<StackPanel>
-						<ComboBox SelectedIndex="{Binding LightingTypeIndex, Mode=TwoWay}">
-							<ComboBoxItem Content="Dynamic Lighting" />
-							<ComboBoxItem Content="Static Lighting" />
-						</ComboBox>
-						<ListBox
-							Height="84"
-							Margin="0,6,0,0"
-							DisplayMemberPath="Name"
-							IsEnabled="{Binding LightsEnabled}"
-							ItemsSource="{Binding Lights}"
-							SelectedItem="{Binding SelectedLight, Mode=TwoWay}" />
-						<controls:SpacedStack
-							Margin="0,6,0,0"
-							Orientation="Horizontal"
-							Spacing="6">
-							<Button
-								Width="60"
-								Command="{Binding AddLightCommand}"
-								Content="Add"
-								IsEnabled="{Binding AddLightEnabled}" />
-							<Button
-								Width="60"
-								Command="{Binding DeleteLightCommand}"
-								Content="Delete"
-								IsEnabled="{Binding DeleteLightEnabled}" />
-						</controls:SpacedStack>
-						<controls:SpacedStack
-							Margin="0,6,0,0"
-							Orientation="Horizontal"
-							Spacing="6">
-							<TextBlock Style="{StaticResource AxisLabel}" Text="Intensity:" />
-							<controls:NumericUpDown
-								Minimum="-128"
-								Maximum="128"
-								Value="{Binding Intensity, Mode=TwoWay}"
-								IsEnabled="{Binding IntensityEnabled}" />
-							<TextBlock Style="{StaticResource AxisLabel}" Text="Radius:" />
-							<controls:NumericUpDown
-								Minimum="0"
-								Maximum="256"
-								Value="{Binding Radius, Mode=TwoWay}"
-								IsEnabled="{Binding RadiusEnabled}" />
-						</controls:SpacedStack>
-						<controls:SpacedStack
-							Margin="0,6,0,0"
-							Orientation="Horizontal"
-							Spacing="6">
-							<TextBlock Style="{StaticResource AxisLabel}" Text="Ambient:" />
-							<controls:NumericUpDown
-								Minimum="0"
-								Maximum="255"
-								Value="{Binding Ambient, Mode=TwoWay}"
-								IsEnabled="{Binding AmbientEnabled}" />
-						</controls:SpacedStack>
-						<controls:SpacedStack
-							Margin="0,6,0,0"
-							Orientation="Horizontal"
-							Spacing="6">
-							<Button
-								Width="80"
-								Command="{Binding EditMeshCommand}"
-								Content="Edit mesh" />
-							<Button
-								Width="120"
-								Command="{Binding RecalculateNormalsCommand}"
-								Content="Recalculate normals" />
-						</controls:SpacedStack>
-					</StackPanel>
-				</GroupBox>
+                <!--  Lights &amp; mesh  -->
+                <GroupBox Header="Lighting &amp; mesh">
+                    <StackPanel>
+                        <ComboBox SelectedIndex="{Binding LightingTypeIndex, Mode=TwoWay}">
+                            <ComboBoxItem Content="Dynamic Lighting" />
+                            <ComboBoxItem Content="Static Lighting" />
+                        </ComboBox>
+                        <ListBox
+                            Height="84"
+                            Margin="0,6,0,0"
+                            DisplayMemberPath="Name"
+                            IsEnabled="{Binding LightsEnabled}"
+                            ItemsSource="{Binding Lights}"
+                            SelectedItem="{Binding SelectedLight, Mode=TwoWay}" />
+                        <controls:SpacedStack
+                            Margin="0,6,0,0"
+                            Orientation="Horizontal"
+                            Spacing="6">
+                            <Button
+                                Width="60"
+                                Command="{Binding AddLightCommand}"
+                                Content="Add"
+                                IsEnabled="{Binding AddLightEnabled}" />
+                            <Button
+                                Width="60"
+                                Command="{Binding DeleteLightCommand}"
+                                Content="Delete"
+                                IsEnabled="{Binding DeleteLightEnabled}" />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack
+                            Margin="0,6,0,0"
+                            Orientation="Horizontal"
+                            Spacing="6">
+                            <TextBlock Style="{StaticResource AxisLabel}" Text="Intensity:" />
+                            <controls:NumericUpDown
+                                Minimum="-128"
+                                Maximum="128"
+                                Value="{Binding Intensity, Mode=TwoWay}"
+                                IsEnabled="{Binding IntensityEnabled}" />
+                            <TextBlock Style="{StaticResource AxisLabel}" Text="Radius:" />
+                            <controls:NumericUpDown
+                                Minimum="0"
+                                Maximum="256"
+                                Value="{Binding Radius, Mode=TwoWay}"
+                                IsEnabled="{Binding RadiusEnabled}" />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack
+                            Margin="0,6,0,0"
+                            Orientation="Horizontal"
+                            Spacing="6">
+                            <TextBlock Style="{StaticResource AxisLabel}" Text="Ambient:" />
+                            <controls:NumericUpDown
+                                Minimum="0"
+                                Maximum="255"
+                                Value="{Binding Ambient, Mode=TwoWay}"
+                                IsEnabled="{Binding AmbientEnabled}" />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack
+                            Margin="0,6,0,0"
+                            Orientation="Horizontal"
+                            Spacing="6">
+                            <Button
+                                Width="80"
+                                Command="{Binding EditMeshCommand}"
+                                Content="Edit mesh" />
+                            <Button
+                                Width="120"
+                                Command="{Binding RecalculateNormalsCommand}"
+                                Content="Recalculate normals" />
+                        </controls:SpacedStack>
+                    </StackPanel>
+                </GroupBox>
 
-				<!--  Draw options  -->
-				<GroupBox Header="Draw">
-					<controls:SpacedStack Orientation="Horizontal" Spacing="10">
-						<CheckBox Content="Grid" IsChecked="{Binding DrawGrid, Mode=TwoWay}" />
-						<CheckBox Content="Gizmo" IsChecked="{Binding DrawGizmo, Mode=TwoWay}" />
-						<CheckBox Content="Lights" IsChecked="{Binding DrawLights, Mode=TwoWay}" />
-						<CheckBox Content="Normals" IsChecked="{Binding DrawNormals, Mode=TwoWay}" />
-					</controls:SpacedStack>
-				</GroupBox>
-			</controls:SpacedStack>
-		</ScrollViewer>
+                <!--  Draw options  -->
+                <GroupBox Header="Draw">
+                    <controls:SpacedStack Orientation="Horizontal" Spacing="10">
+                        <CheckBox Content="Grid" IsChecked="{Binding DrawGrid, Mode=TwoWay}" />
+                        <CheckBox Content="Gizmo" IsChecked="{Binding DrawGizmo, Mode=TwoWay}" />
+                        <CheckBox Content="Lights" IsChecked="{Binding DrawLights, Mode=TwoWay}" />
+                        <CheckBox Content="Normals" IsChecked="{Binding DrawNormals, Mode=TwoWay}" />
+                    </controls:SpacedStack>
+                </GroupBox>
+            </controls:SpacedStack>
+        </ScrollViewer>
 
-		<!--  Footer: mesh import/export + OK / Cancel  -->
-		<controls:SpacedStack
-			DockPanel.Dock="Bottom"
-			HorizontalAlignment="Right"
-			Orientation="Horizontal"
-			Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-			<controls:SpacedStack.Margin>
-				<Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
-			</controls:SpacedStack.Margin>
-			<Button
-				Width="80"
-				Command="{Binding ImportMeshCommand}"
-				Content="Import" />
-			<Button
-				Width="80"
-				Command="{Binding ExportMeshCommand}"
-				Content="Export" />
-			<Button
-				Width="80"
-				Command="{Binding SaveCommand}"
-				Content="OK"
-				IsDefault="True" />
-			<Button
-				Width="80"
-				Command="{Binding CancelCommand}"
-				Content="Cancel"
-				IsCancel="True" />
-		</controls:SpacedStack>
+        <!--  Footer: mesh import/export + OK / Cancel  -->
+        <controls:SpacedStack
+            DockPanel.Dock="Bottom"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <controls:SpacedStack.Margin>
+                <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+            </controls:SpacedStack.Margin>
+            <Button
+                Width="80"
+                Command="{Binding ImportMeshCommand}"
+                Content="Import" />
+            <Button
+                Width="80"
+                Command="{Binding ExportMeshCommand}"
+                Content="Export" />
+            <Button
+                Width="80"
+                Command="{Binding SaveCommand}"
+                Content="OK"
+                IsDefault="True" />
+            <Button
+                Width="80"
+                Command="{Binding CancelCommand}"
+                Content="Cancel"
+                IsCancel="True" />
+        </controls:SpacedStack>
 
-		<!--  The 3D view is the legacy WinForms PanelRenderingStaticEditor, hosted as-is.  -->
-		<Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
-			<wfi:WindowsFormsHost x:Name="renderingHost" />
-		</Border>
-	</DockPanel>
+        <!--  The 3D view is the legacy WinForms PanelRenderingStaticEditor, hosted as-is.  -->
+        <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
+            <Border x:Name="renderingHost" />
+        </Border>
+    </DockPanel>
 </Window>

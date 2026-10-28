@@ -9,11 +9,7 @@ using WadTool.Controls;
 
 namespace WadTool.Features.Dialogs.AnimEditor;
 
-/// <summary>
-/// WPF port of the legacy <c>FormAnimationEditor</c> (built incrementally). The 3D view remains a
-/// WinForms custom-rendered control, hosted via <c>WindowsFormsHost</c>; everything else is WPF
-/// bound to <see cref="AnimationEditorWindowViewModel"/>.
-/// </summary>
+/// <summary>Native WPF AnimationEditor view with a Direct3D viewport and MVVM editing tools.</summary>
 public partial class AnimationEditorWindow : Window
 {
     private readonly PanelRenderingAnimationEditor _panel;
@@ -59,6 +55,8 @@ public partial class AnimationEditorWindow : Window
 
     private void OnClosed(object? sender, EventArgs e)
     {
+        _panel.Dispose();
+
         _timeline.ValueChanged -= OnTimelineValueChanged;
         _timeline.SelectionChanged -= OnTimelineSelectionChanged;
         _bezier.ValueChanged -= OnBezierValueChanged;

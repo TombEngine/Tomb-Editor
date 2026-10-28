@@ -1,3 +1,5 @@
+#nullable enable
+
 using SharpDX.Toolkit.Graphics;
 using System;
 using System.Drawing;
@@ -90,7 +92,7 @@ namespace TombEditor.Controls.Panel3D
             {
                 float rotation = _editor.Configuration.ObjectBrush_Rotation + (delta > 0 ? Constants.AngleAdjustmentStep : -Constants.AngleAdjustmentStep);
                 rotation = ((rotation % 360.0f) + 360.0f) % 360.0f;
-                Actions.MouseDirectionAngle = _lastBrushDirectionAngle = _editor.Configuration.ObjectBrush_Rotation = 
+                Actions.MouseDirectionAngle = _lastBrushDirectionAngle = _editor.Configuration.ObjectBrush_Rotation =
                     (float)(Math.Round(rotation / Constants.AngleAdjustmentStep) * Constants.AngleAdjustmentStep);
                 settingsChanged = true;
             }
@@ -102,7 +104,7 @@ namespace TombEditor.Controls.Panel3D
                     // Ctrl + shift + mousewheel adjusts brush density.
 
                     float density = _editor.Configuration.ObjectBrush_Density + (delta > 0 ? 0.1f : -0.1f);
-                    _editor.Configuration.ObjectBrush_Density = 
+                    _editor.Configuration.ObjectBrush_Density =
                         Math.Min(Constants.MaxDensity, Math.Max(Constants.MinDensity, (float)Math.Round(density, 1)));
                     settingsChanged = true;
                 }
@@ -306,9 +308,9 @@ namespace TombEditor.Controls.Panel3D
                 if (Control.ModifierKeys.HasFlag(Keys.Control))
                 {
                     // Ctrl+Shift: density scales with distance from pin point.
-                    var density = (screenDistance / this.Size.Height) * Constants.MaxDensity;
+                    var density = (screenDistance / ClientSize.Height) * Constants.MaxDensity;
 
-                    _editor.Configuration.ObjectBrush_Density = Math.Min(Constants.MaxDensity, 
+                    _editor.Configuration.ObjectBrush_Density = Math.Min(Constants.MaxDensity,
                         Math.Max(Constants.MinDensity, density));
 
                     settingsChanged = true;

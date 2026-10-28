@@ -1,4 +1,11 @@
 {
+    "ResourcePreview": {
+        "LoadGeometry": "Click here to load new imported geometry.",
+        "LoadWad": "Click here to load a new WAD file.",
+        "FileNotFound": "File '{0}' was not found.",
+        "LoadFailed": "Unable to load file '{0}'.",
+        "ChooseReplacement": "Click here to choose a replacement."
+    },
     "ContentBrowser": {
         "SearchPlaceholder": "Search assets...",
         "EmptyStateMessage": "Click here to load a new WAD file.",

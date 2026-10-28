@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
@@ -57,17 +57,12 @@
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="..\GlobalPaths.cs" Link="GlobalPaths.cs" />
-    <Compile Update="Controls\ContextMenus\BaseContextMenu.cs" />
-    <Compile Update="Controls\ContextMenus\MoveableContextMenu.cs" />
     <Compile Update="Controls\PanelRenderingMainPreview.cs" />
     <Compile Update="Controls\PanelRenderingAnimationEditor.cs" />
     <Compile Update="Controls\PanelRenderingMesh.cs" />
     <Compile Update="Controls\PanelRenderingSkeleton.cs" />
     <Compile Update="Controls\PanelRenderingStaticEditor.cs" />
     <Compile Update="Controls\PanelTextureMap.cs" />
-    <Compile Update="Controls\PanelTextureMapForAnimations.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -91,7 +86,6 @@
   <ItemGroup>
     <Resource Include="WT.ico" />
     <Resource Include="Resources\AboutScreen_800.png" />
-    <Resource Include="Resources\icons_transport\*.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NLog" Version="5.0.0" />

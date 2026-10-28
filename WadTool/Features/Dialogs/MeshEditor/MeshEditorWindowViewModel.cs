@@ -13,11 +13,14 @@ using System.Numerics;
 using TombLib;
 using TombLib.Controls;
 using TombLib.Forms;
+using TombLib.Forms.Services;
 using TombLib.Graphics;
 using TombLib.Utils;
-using TombLib.Wad;
 using TombLib.WPF;
+using TombLib.WPF.Services.Abstract;
+using TombLib.Wad;
 using WadTool.Controls;
+
 using Drawing = System.Drawing;
 using Media = System.Windows.Media;
 using WinForms = System.Windows.Forms;
@@ -25,14 +28,12 @@ using WinForms = System.Windows.Forms;
 namespace WadTool.Features.Dialogs.MeshEditor;
 
 /// <summary>
-/// WPF counterpart of the legacy <c>FormMeshEditor</c>. The 3D mesh view and the texture-map control
-/// remain the WinForms <see cref="PanelRenderingMesh"/> / <see cref="PanelTextureMap"/> (GPU rendering),
-/// hosted via <c>WindowsFormsHost</c>; the toolbar, mesh tree, per-mode tool panels and texture list
-/// are native WPF bound to this view model. Behaviour mirrors the legacy form: live per-element editing
-/// driven by <c>MeshEditorElementChangedEvent</c>, undo/redo integration and single-mesh vs tree mode.
+/// Edits geometry, UV selections and materials through native WPF controls.
+/// The Direct3D mesh viewport retains its rendering surface for picking and gizmos.
 /// </summary>
 public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogViewModel
 {
+    private readonly IColorPickerService _colorPickerService;
     private readonly WadToolClass _tool;
     private readonly Wad2 _wad;
     private readonly DeviceManager _deviceManager;
@@ -113,7 +114,7 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
     public ObservableCollection<Texture> Textures { get; } = new();
     public ObservableCollection<MeshEditorTreeNode> RootNodes { get; } = new();
 
-    /// <summary>Set on close (legacy public <c>SelectedMesh</c>) — read by single-mesh callers.</summary>
+    /// <summary>Set on close (legacy public <c>SelectedMesh</c>) ? read by single-mesh callers.</summary>
     public WadMesh? SelectedMesh { get; set; }
 
     public PanelRenderingMesh? Panel => _panelMesh;
@@ -124,8 +125,9 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
     public event Action? EnsureSelectionVisible;
 
     public MeshEditorWindowViewModel(WadToolClass tool, DeviceManager deviceManager, Wad2 wad,
-        WadMesh? mesh = null, IWadObjectId? focusObjectId = null)
+        WadMesh? mesh = null, IWadObjectId? focusObjectId = null, IColorPickerService? colorPickerService = null)
     {
+        _colorPickerService = colorPickerService ?? new ColorPickerService();
         _tool = tool;
         _wad = wad;
         _deviceManager = deviceManager;
@@ -136,7 +138,7 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
             BlendModes.Add(name);
     }
 
-    /// <summary>Called by the window once both panels are hosted; mirrors the legacy ctor + OnShown.</summary>
+    /// <summary>Called by the window once both viewports are ready; mirrors the legacy ctor + OnShown.</summary>
     public void AttachPanels(PanelRenderingMesh panelMesh, PanelTextureMap panelTextureMap)
     {
         _panelMesh = panelMesh;
@@ -162,7 +164,7 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
 
     public void Detach() => _tool.EditorEventRaised -= OnEditorEventRaised;
 
-    /// <summary>Called by the window when the hosted texture map's selection changed (legacy SelectedTextureChanged).</summary>
+    /// <summary>Called by the window when the texture map's selection changed (legacy SelectedTextureChanged).</summary>
     public void NotifyTextureSelectionChanged() => UpdateStatusLabel();
 
     /// <summary>Esc handling (legacy ProcessCmdKey): clear the picked element and texture selection.</summary>
@@ -595,7 +597,7 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
 
     // ---- Property change reactions ----
 
-    // Combo index → MeshEditingMode: 0 FaceAttributes, 1 VertexRemap, 2 VertexColorsAndNormals,
+    // Combo index ? MeshEditingMode: 0 FaceAttributes, 1 VertexRemap, 2 VertexColorsAndNormals,
     // 3 VertexEffects, 4 VertexWeights, 5 Sphere.
     public bool IsFaceMode => EditingModeIndex == 0;
     public bool IsRemapMode => EditingModeIndex == 1;
@@ -959,10 +961,9 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
     [RelayCommand]
     private void PickColor()
     {
-        using var dialog = new RealtimeColorDialog { Color = _vertexColor, FullOpen = true };
-        if (dialog.ShowDialog(Owner) != WinForms.DialogResult.OK)
-            return;
-        SetVertexColor(dialog.Color);
+        var selected = _colorPickerService.PickColor(_vertexColor.ToFloat3Color(), color => SetVertexColor(color.ToWinFormsColor()));
+        if (selected is { } color)
+            SetVertexColor(color.ToWinFormsColor());
     }
 
     // ---- Face attributes ----
@@ -1331,9 +1332,9 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
     {
         var texture = SelectedTexture as WadTexture;
         var list = Textures.Where(t => !string.IsNullOrEmpty(t.AbsolutePath));
-        using var form = new FormMaterialEditor(list, _tool.Configuration, texture);
-        if (form.ShowDialog() == WinForms.DialogResult.OK && form.MaterialChanged)
-            MessageRaised?.Invoke("Material settings for current texture were saved to " + form.MaterialFileName + ".", PopupType.Info);
+        var result = MaterialEditorDialog.Show(list, _tool.Configuration, texture);
+        if (result.MaterialChanged)
+            MessageRaised?.Invoke("Material settings for current texture were saved to " + result.MaterialFileName + ".", PopupType.Info);
     }
 
     [RelayCommand]

@@ -1,11 +1,13 @@
-﻿using System.Drawing;
+#nullable enable
+
+using System.Drawing;
 using System.Numerics;
 using System.Windows.Forms;
+using TombEditor.Features.ContextMenus;
+using TombLib;
+using TombLib.Graphics;
 using TombLib.LevelData;
 using TombLib.Rendering;
-using TombLib;
-using TombEditor.Features.ContextMenus;
-using TombLib.Graphics;
 
 namespace TombEditor.Controls.Panel3D
 {
@@ -37,7 +39,7 @@ namespace TombEditor.Controls.Panel3D
                         EditorActions.RotateSectors(_editor.SelectedRoom, zone, belongsToFloor);
                         return;
                     }
-                    else if (_editor.Tool.Tool == EditorToolType.Selection || 
+                    else if (_editor.Tool.Tool == EditorToolType.Selection ||
                             (_editor.Tool.Tool >= EditorToolType.Drag && _editor.Tool.Tool < EditorToolType.PortalDigger))
                     {
                         if (!_doSectorSelection && _editor.SelectedSectors.Valid && _editor.SelectedSectors.Area.Contains(pos))
@@ -80,7 +82,7 @@ namespace TombEditor.Controls.Panel3D
 
             // Handle multiple object selection
             if (_editor.Tool.Tool == EditorToolType.Selection && _toolHandler.Engaged && ModifierKeys.HasFlag(Keys.Control))
-                EditorActions.SelectObjectsInArea(FindForm(), _editor.HighlightedSectors, false);
+                EditorActions.SelectObjectsInArea(this, _editor.HighlightedSectors, false);
         }
 
         private void OnMouseButtonUpRight(Point location)

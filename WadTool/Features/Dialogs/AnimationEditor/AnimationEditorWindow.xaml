@@ -10,7 +10,6 @@
     xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
     xmlns:tombLibControls="clr-namespace:TombLib.WPF.CustomControls;assembly=TombLib.WPF"
     xmlns:wadControls="clr-namespace:WadTool.Controls"
-    xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
     Title="{Binding Title}"
     Width="1100"
     Height="720"
@@ -485,7 +484,7 @@
 
             <!--  3D view (hosted)  -->
             <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
-                <wfi:WindowsFormsHost x:Name="panelRenderingHost" />
+                <Border x:Name="panelRenderingHost" />
             </Border>
         </DockPanel>
     </DockPanel>

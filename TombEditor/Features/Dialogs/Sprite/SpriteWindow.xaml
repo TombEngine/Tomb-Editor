@@ -1,65 +1,66 @@
 <Window
-	x:Class="TombEditor.Features.Dialogs.Sprite.SpriteWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
-	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
-	xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.Sprite"
-	xmlns:wfi="clr-namespace:System.Windows.Forms.Integration;assembly=WindowsFormsIntegration"
-	Title="{tombLib:Localize Title}"
-	Width="350"
-	Height="370"
-	MinWidth="350"
-	MinHeight="370"
-	d:DataContext="{d:DesignInstance Type=vm:SpriteWindowViewModel}"
-	md:DialogServiceViews.IsRegistered="True"
-	Background="{DynamicResource Brush_Background}"
-	ShowInTaskbar="False"
-	Style="{DynamicResource CustomWindowStyle}"
-	WindowStartupLocation="CenterOwner"
-	mc:Ignorable="d">
+    x:Class="TombEditor.Features.Dialogs.Sprite.SpriteWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.Sprite"
+    Title="{tombLib:Localize Title}"
+    Width="350"
+    Height="370"
+    MinWidth="350"
+    MinHeight="370"
+    d:DataContext="{d:DesignInstance Type=vm:SpriteWindowViewModel}"
+    md:DialogServiceViews.IsRegistered="True"
+    Background="{DynamicResource Brush_Background}"
+    ShowInTaskbar="False"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
 
-	<controls:SpacedGrid
-		Margin="{x:Static darkUI:Defaults.MediumThickness}"
-		RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+    <controls:SpacedGrid
+        Margin="{x:Static darkUI:Defaults.MediumThickness}"
+        RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-		<controls:SearchableComboBox
-			Grid.Row="0"
-			ItemsSource="{Binding Sprites}"
-			SelectedIndex="{Binding SelectedSpriteIndex, Mode=TwoWay}" />
+        <controls:SearchableComboBox
+            Grid.Row="0"
+            ItemsSource="{Binding Sprites}"
+            SelectedIndex="{Binding SelectedSpriteIndex, Mode=TwoWay}" />
 
-		<Border
-			Grid.Row="1"
-			BorderBrush="{DynamicResource Brush_Border}"
-			BorderThickness="{x:Static darkUI:Defaults.BorderThickness}">
-			<wfi:WindowsFormsHost x:Name="previewHost" />
-		</Border>
+        <Border
+            Grid.Row="1"
+            BorderBrush="{DynamicResource Brush_Border}"
+            BorderThickness="{x:Static darkUI:Defaults.BorderThickness}">
+            <Border Background="{Binding PreviewBackground}" Padding="10">
+                <Image Source="{Binding PreviewImage}" Stretch="Uniform" />
+            </Border>
+        </Border>
 
-		<controls:SpacedStack
-			Grid.Row="2"
-			HorizontalAlignment="Right"
-			Orientation="Horizontal"
-			Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-			<Button
-				Width="80"
-				Command="{Binding ConfirmCommand}"
-				Content="{tombLib:Localize ~Common.OK}"
-				IsDefault="True" />
-			<Button
-				Width="80"
-				Command="{Binding CancelCommand}"
-				Content="{tombLib:Localize ~Common.Cancel}"
-				IsCancel="True" />
-		</controls:SpacedStack>
-	</controls:SpacedGrid>
+        <controls:SpacedStack
+            Grid.Row="2"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <Button
+                Width="80"
+                Command="{Binding ConfirmCommand}"
+                Content="{tombLib:Localize ~Common.OK}"
+                IsDefault="True" />
+            <Button
+                Width="80"
+                Command="{Binding CancelCommand}"
+                Content="{tombLib:Localize ~Common.Cancel}"
+                IsCancel="True" />
+        </controls:SpacedStack>
+    </controls:SpacedGrid>
 </Window>

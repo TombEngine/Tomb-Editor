@@ -1,0 +1,20 @@
+<Window x:Class="SoundTool.Views.OptionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+        xmlns:tomb="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+        Title="{tomb:Localize Options}" Width="420" SizeToContent="Height"
+        Style="{DynamicResource CustomWindowStyle}" Background="{DynamicResource Brush_Background}"
+        ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+    <StackPanel Margin="16">
+        <CheckBox Content="{tomb:Localize AllowMultipleInstances}" IsChecked="{Binding AllowMultipleInstances}" Margin="0,0,0,12" />
+        <DockPanel Margin="0,0,0,16">
+            <TextBlock Text="{tomb:Localize Brightness}" VerticalAlignment="Center" />
+            <controls:NumericUpDown Value="{Binding Brightness}" Minimum="50" Maximum="100" Width="80" HorizontalAlignment="Right" />
+        </DockPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="{tomb:Localize ~Common.OK}" Command="{Binding AcceptCommand}" IsDefault="True" Width="80" Margin="0,0,8,0" />
+            <Button Content="{tomb:Localize ~Common.Cancel}" IsCancel="True" Width="80" />
+        </StackPanel>
+    </StackPanel>
+</Window>
