@@ -1,5 +1,7 @@
 #nullable enable
 
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,13 +9,11 @@ using System.Linq;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
-using TombLib.Forms.ViewModels;
 using TombLib.LevelData.VisualScripting;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
+using TombLib.WPF.ViewModels;
 
 namespace TombEditor.Features.Dialogs.EventSetEditor
 {

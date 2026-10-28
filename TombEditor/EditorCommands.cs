@@ -1,18 +1,19 @@
-﻿using System;
+using Clipboard = System.Windows.Clipboard;
+using Keys = TombLib.Input.EditorKey;
+using NLog;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Windows.Forms;
-using DarkUI.Forms;
 using TombEditor.Forms;
 using TombLib;
-using TombLib.Forms;
 using TombLib.LevelData;
+using TombLib.Services;
 using TombLib.Utils;
 using TombLib.WPF;
-using NLog;
+using TombLib.WPF.Services;
 
 namespace TombEditor
 {
@@ -29,7 +30,7 @@ namespace TombEditor
         View,
         Settings
     }
-    
+
     public class HotkeySet : ICloneable
     {
         public static List<Keys> ReservedCameraKeys = new List<Keys>
@@ -63,14 +64,14 @@ namespace TombEditor
     public class CommandHandler
     {
         private readonly Editor _editor;
-        private IWin32Window _editorWindow;
+        private IWindowOwner _editorWindow;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         private bool _primaryControlFocused;
 
         public List<EditorCommand> Commands { get; private set; }
 
-        public CommandHandler(IWin32Window window, Editor editor)
+        public CommandHandler(IWindowOwner window, Editor editor)
         {
             _editorWindow = window;
             _editor = editor;
@@ -761,8 +762,8 @@ namespace TombEditor
 
             AddCommand("ApplyAmbientLightToAllRooms", "Apply current ambient light to all rooms", CommandType.Rooms, delegate ()
             {
-                if (DarkMessageBox.Show(_editorWindow, "Do you really want to apply the ambient light of the current room to all rooms?",
-                                       "Apply ambient light", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (UserDialogs.Show(_editorWindow, "Do you really want to apply the ambient light of the current room to all rooms?",
+                                       "Apply ambient light", DialogButtons.YesNo, DialogIcon.Question) == DialogChoice.Yes)
                 {
                     EditorActions.ApplyCurrentAmbientLightToAllRooms();
                     _editor.SendMessage("Ambient light was applied to all rooms.", PopupType.Info);
@@ -865,9 +866,9 @@ namespace TombEditor
 
                     if (File.Exists(pngFilePath))
                     {
-                        if (DarkMessageBox.Show(_editorWindow,
+                        if (UserDialogs.Show(_editorWindow,
                                 "There is already a file at \"" + pngFilePath + "\". Continue and overwrite the file?",
-                                "File already exists", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                                "File already exists", DialogButtons.YesNo, DialogIcon.Warning) != DialogChoice.Yes)
                             return;
                     }
                     texture.Image.Save(pngFilePath);

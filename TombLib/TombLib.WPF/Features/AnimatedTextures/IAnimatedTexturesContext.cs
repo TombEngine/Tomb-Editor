@@ -6,7 +6,7 @@ using TombLib.Utils;
 namespace TombLib.WPF.Features.AnimatedTextures
 {
     /// <summary>
-    /// Host context for the WPF animated-textures editor. Mirrors the WinForms
+    /// Host context for the WPF animated-textures editor. Mirrors the shared
     /// <c>FormAnimatedTextures.IAnimatedTexturesContext</c> so each app (Tomb Editor, Wad Tool) can
     /// supply its own textures and live <see cref="AnimatedTextureSet"/> list.
     /// </summary>

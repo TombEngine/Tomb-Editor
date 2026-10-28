@@ -1,9 +1,9 @@
 #nullable enable
 
-using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
+using System;
+using TombLib.WPF.Dialogs;
 
 namespace TombLib.WPF.Features.AnimatedTextures
 {

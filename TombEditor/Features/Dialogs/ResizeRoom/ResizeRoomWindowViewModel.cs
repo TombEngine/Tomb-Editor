@@ -2,10 +2,10 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
 using TombLib;
 using TombLib.LevelData;
 using TombLib.Wad.Catalog;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
 

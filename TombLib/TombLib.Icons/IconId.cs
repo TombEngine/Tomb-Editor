@@ -34,7 +34,8 @@ public readonly record struct IconId(string Category, string Name)
         return new IconId(normalizedPath[..slash], normalizedPath[(slash + 1)..]);
     }
 
-    internal string ResourcePath => Parse(Path).Path.Replace('/', '.');
+    /// <summary>Gets the dot-separated icon suffix used by embedded resources.</summary>
+    public string ResourcePath => Parse(Path).Path.Replace('/', '.');
 
     private static bool IsInvalidSegment(string segment) =>
         string.IsNullOrWhiteSpace(segment) || segment is "." or ".." ||

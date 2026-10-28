@@ -3,38 +3,25 @@
 using AvalonDock.Layout;
 using AvalonDock.Layout.Serialization;
 using DarkUI.WPF.CustomControls;
+using PopUpInfo = TombLib.WPF.PopUpInfo;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using TombEditor.Controls;
 using TombEditor.Controls.Panel3D;
-using TombEditor.Features.DockableViews.ContentBrowser;
-using TombEditor.Features.DockableViews.ImportedGeometryBrowser;
-using TombEditor.Features.DockableViews.ItemBrowser;
-using TombEditor.Features.DockableViews.LightingPanel;
-using TombEditor.Features.DockableViews.ObjectList;
-using TombEditor.Features.DockableViews.PalettePanel;
-using TombEditor.Features.DockableViews.RoomOptionsPanel;
-using TombEditor.Features.DockableViews.RoomsPanel;
-using TombEditor.Features.DockableViews.SectorOptionsPanel;
-using TombEditor.Features.DockableViews.TexturePanel;
-using TombEditor.Features.DockableViews.TriggerList;
 using TombEditor.Features.Panel3D.ObjectBrush;
 using TombEditor.Features.Panel3D.ToolPalette;
-using TombLib.Controls;
-using TombLib.Forms;
-using TombLib.Forms.ViewModels;
-using TombLib.Forms.Views;
+using TombLib.Input;
 using TombLib.LevelData;
 using TombLib.Utils;
 using TombLib.WPF;
+using TombLib.WPF.Controls.Rendering;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
-using PopUpInfo = TombLib.WPF.PopUpInfo;
+using TombLib.WPF.ViewModels;
+using TombLib.WPF.Views;
 
 namespace TombEditor;
 
@@ -78,7 +65,7 @@ public partial class MainWindow : Window
         importedGeometryBrowserView.InitializeRendering(_editor.RenderingDevice);
         itemBrowserView.InitializeRendering(_editor.RenderingDevice);
 
-        contentBrowserView.AttachToEditor(_editor, data => _panel3D.DoDragDrop(data, System.Windows.Forms.DragDropEffects.Copy));
+        contentBrowserView.AttachToEditor(_editor, data => _panel3D.DoDragDrop(data, TransferEffects.Copy));
 
         _toolPaletteView = new ToolboxView();
         _objectBrushView = new ObjectBrushToolboxView();
@@ -170,7 +157,7 @@ public partial class MainWindow : Window
         }
 
         // Floating info/warning/error popup over the 3D viewport, mirroring MainView. Owner is
-        // null so it always shows (the static guard only gates WinForms owners); messages are
+        // null so it always shows (the static guard only gates previous owners); messages are
         // dismissed when the level changes.
         if (obj is Editor.MessageEvent message)
             PopUpInfo.Show(_popup, null, _panel3D, message.Message, message.Type);
@@ -215,7 +202,7 @@ public partial class MainWindow : Window
             ? "Untitled"
             : PathC.GetFileNameWithoutExtensionTry(level.Settings.LevelFilePath);
 
-        Title = "Tomb Editor " + System.Windows.Forms.Application.ProductVersion + " - " + levelName + (_editor.HasUnsavedChanges ? "*" : "");
+        Title = "Tomb Editor " + typeof(MainWindow).Assembly.GetName().Version?.ToString() + " - " + levelName + (_editor.HasUnsavedChanges ? "*" : "");
     }
 
     private void OnEditorEventForFloatingToolboxes(IEditorEvent obj)
@@ -778,11 +765,7 @@ public partial class MainWindow : Window
             label: _localizationService["~TombEditor.MainWindow.Layouts_SaveAsLabel"],
             invalidNames: config.Window_CustomLayouts.Select(l => l.Name).ToArray());
 
-        // IDialogService.ShowDialog requires the owner ViewModel's DataContext to be
-        // registered against a Window, which MainWindow can't satisfy without
-        // breaking child bindings (it can't be its own DataContext). Construct the
-        // dialog manually and mirror the auto-close behaviour MvvmDialogs gives us
-        // by watching DialogResult on the VM.
+        // Own this dialog directly because MainWindow is not its own DataContext.
         var win = new InputBoxWindow
         {
             DataContext = vm,

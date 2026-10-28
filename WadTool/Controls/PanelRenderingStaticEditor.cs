@@ -1,23 +1,23 @@
 #nullable enable
 
-using DarkUI.Forms;
+using RenderingPanel = TombLib.WPF.Controls.Rendering.RenderingPanel;
 using SharpDX.Toolkit.Graphics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Numerics;
-using System.Windows.Forms;
+using System.Windows.Input;
 using TombLib;
-using TombLib.Controls;
 using TombLib.Graphics;
 using TombLib.Graphics.Primitives;
+using TombLib.Input;
 using TombLib.LevelData;
 using TombLib.Rendering;
+using TombLib.Services;
 using TombLib.Utils;
-using TombLib.WPF;
 using TombLib.Wad;
-
-using RenderingPanel = TombLib.Controls.Wpf.RenderingPanel;
+using TombLib.WPF;
+using TombLib.WPF.Controls.Rendering;
 using WpfWindow = System.Windows.Window;
 
 namespace WadTool.Controls;
@@ -32,7 +32,7 @@ public class PanelRenderingStaticEditor : RenderingPanel
 
     /// <summary>
     /// Raised when the static position may have changed through the 3D view (gizmo drag), so the
-    /// host can refresh its position fields. Replaces the old hard cast to the WinForms editor form.
+    /// host can refresh its position fields. Replaces the old hard cast to the previous editor form.
     /// </summary>
     public event Action PositionChanged;
 
@@ -385,7 +385,7 @@ public class PanelRenderingStaticEditor : RenderingPanel
         Focus();
     }
 
-    protected override void OnMouseWheel(MouseEventArgs e)
+    protected override void OnMouseWheel(PointerEventArgs e)
     {
         base.OnMouseWheel(e);
 
@@ -413,8 +413,8 @@ public class PanelRenderingStaticEditor : RenderingPanel
 
     public void DeleteLight(WadLight light)
     {
-        if (DarkMessageBox.Show(WpfWindow.GetWindow(this).GetWin32Window(), "Do you really want to delete this light?", "Confirm delete",
-                                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+        if (UserDialogs.Show(WpfWindow.GetWindow(this).GetWin32Window(), "Do you really want to delete this light?", "Confirm delete",
+                                DialogButtons.YesNo, DialogIcon.Question) == DialogChoice.Yes)
         {
             Static.Lights.Remove(light);
             SelectedLight = null;
@@ -422,13 +422,13 @@ public class PanelRenderingStaticEditor : RenderingPanel
         }
     }
 
-    protected override void OnMouseDown(MouseEventArgs e)
+    protected override void OnMouseDown(PointerEventArgs e)
     {
         base.OnMouseDown(e);
 
         var ray = Ray.GetPickRay(Camera, ClientSize, e.X, e.Y);
 
-        if (e.Button == MouseButtons.Left)
+        if (e.Button == PointerButtons.Left)
         {
             if (Action != StaticEditorAction.PlaceLight)
             {
@@ -486,23 +486,23 @@ public class PanelRenderingStaticEditor : RenderingPanel
         _lastY = e.Y;
     }
 
-    protected override void OnKeyDown(KeyEventArgs e)
+    protected override void OnKeyDown(EditorKeyEventArgs e)
     {
         base.OnKeyDown(e);
 
-        if (e.KeyCode == Keys.Escape)
+        if (e.KeyCode == EditorKey.Escape)
         {
             Action = StaticEditorAction.Normal;
             e.Handled = true;
         }
-        else if (e.KeyCode == Keys.Delete && SelectedLight is not null)
+        else if (e.KeyCode == EditorKey.Delete && SelectedLight is not null)
         {
             DeleteLight(SelectedLight);
             e.Handled = true;
         }
     }
 
-    protected override void OnMouseMove(MouseEventArgs e)
+    protected override void OnMouseMove(PointerEventArgs e)
     {
         base.OnMouseMove(e);
 
@@ -519,11 +519,11 @@ public class PanelRenderingStaticEditor : RenderingPanel
             Invalidate();
 
         if (Action == StaticEditorAction.Normal)
-            Cursor = Cursors.Default;
+            Cursor = Cursors.Arrow;
         else
             Cursor = Cursors.Cross;
 
-        if (e.Button == MouseButtons.Right || e.Button == MouseButtons.Middle)
+        if (e.Button == PointerButtons.Right || e.Button == PointerButtons.Middle)
         {
             // Use height for X coordinate because the camera FOV per pixel is defined by the height.
             float deltaX = (e.X - _lastX) / Height;
@@ -532,16 +532,16 @@ public class PanelRenderingStaticEditor : RenderingPanel
             _lastX = e.X;
             _lastY = e.Y;
 
-            if (e.Button == MouseButtons.Right)
+            if (e.Button == PointerButtons.Right)
             {
-                if ((ModifierKeys & Keys.Control) == Keys.Control)
+                if ((ModifierKeys & EditorKey.Control) == EditorKey.Control)
                     Camera.Zoom(-deltaY * _tool.Configuration.RenderingItem_NavigationSpeedMouseZoom);
-                else if ((ModifierKeys & Keys.Shift) != Keys.Shift)
+                else if ((ModifierKeys & EditorKey.Shift) != EditorKey.Shift)
                     Camera.Rotate(deltaX * _tool.Configuration.RenderingItem_NavigationSpeedMouseRotate,
                                  -deltaY * _tool.Configuration.RenderingItem_NavigationSpeedMouseRotate);
             }
-            if ((e.Button == MouseButtons.Right && (ModifierKeys & Keys.Shift) == Keys.Shift) ||
-                 e.Button == MouseButtons.Middle)
+            if ((e.Button == PointerButtons.Right && (ModifierKeys & EditorKey.Shift) == EditorKey.Shift) ||
+                 e.Button == PointerButtons.Middle)
                 Camera.MoveCameraPlane(new Vector3(deltaX, deltaY, 0) * _tool.Configuration.RenderingItem_NavigationSpeedMouseTranslate);
 
             Invalidate();
@@ -550,7 +550,7 @@ public class PanelRenderingStaticEditor : RenderingPanel
         PositionChanged?.Invoke();
     }
 
-    protected override void OnMouseUp(MouseEventArgs e)
+    protected override void OnMouseUp(PointerEventArgs e)
     {
         base.OnMouseUp(e);
 

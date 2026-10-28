@@ -3,7 +3,7 @@
 using System;
 using System.ComponentModel;
 using System.Numerics;
-using TombLib.Controls.Wpf;
+using TombLib.WPF.Controls.Rendering;
 
 namespace WadTool.Controls;
 

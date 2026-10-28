@@ -1,19 +1,20 @@
 #nullable enable
 
+using Keys = TombLib.Input.EditorKey;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using TombEditor.Features.FlybyTimeline.Preview;
 using TombLib;
-using TombLib.Controls;
-using TombLib.Forms;
 using TombLib.Graphics;
 using TombLib.LevelData;
+using TombLib.Utils;
 using TombLib.Wad;
+using TombLib.WPF.Controls.Rendering;
+using TombLib.WPF.Input;
 
 namespace TombEditor.Controls.Panel3D
 {
@@ -127,20 +128,20 @@ namespace TombEditor.Controls.Panel3D
                 _editor.SelectedRoom = room;
 
             /* Camera rotation handling */
-            var cursorPos = PointToClient(Cursor.Position);
+            var cursorPos = PointToClient(PointerState.ScreenPosition);
 
             float relativeDeltaX = (cursorPos.X - _lastMousePosition.X) / (float)Height;
             float relativeDeltaY = (cursorPos.Y - _lastMousePosition.Y) / (float)Height;
 
             if (cursorPos.X <= 0)
-                Cursor.Position = new Point(Cursor.Position.X + Width - 2, Cursor.Position.Y);
+                PointerState.ScreenPosition = new Point(PointerState.ScreenPosition.X + Width - 2, PointerState.ScreenPosition.Y);
             else if (cursorPos.X >= Width - 1)
-                Cursor.Position = new Point(Cursor.Position.X - Width + 2, Cursor.Position.Y);
+                PointerState.ScreenPosition = new Point(PointerState.ScreenPosition.X - Width + 2, PointerState.ScreenPosition.Y);
 
             if (cursorPos.Y <= 0)
-                Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y + Height - 2);
+                PointerState.ScreenPosition = new Point(PointerState.ScreenPosition.X, PointerState.ScreenPosition.Y + Height - 2);
             else if (cursorPos.Y >= Height - 1)
-                Cursor.Position = new Point(Cursor.Position.X, Cursor.Position.Y - Height + 2);
+                PointerState.ScreenPosition = new Point(PointerState.ScreenPosition.X, PointerState.ScreenPosition.Y - Height + 2);
 
             if (cursorPos.X - _lastMousePosition.X >= (float)Width / 2 || cursorPos.X - _lastMousePosition.X <= -(float)Width / 2)
                 relativeDeltaX = 0;
@@ -168,7 +169,7 @@ namespace TombEditor.Controls.Panel3D
                 Camera = new FreeCamera(_oldCamera.GetPosition(), _oldCamera.RotationX, _oldCamera.RotationY - (float)Math.PI,
                     _oldCamera.MinRotationX, _oldCamera.MaxRotationX, _oldCamera.FieldOfView);
 
-                Cursor.Hide();
+                PointerState.Hide();
 
                 _flyModeTimer.Start();
             }
@@ -190,8 +191,8 @@ namespace TombEditor.Controls.Panel3D
                 Camera.Position = p;
                 Camera.Target = t;
 
-                Cursor.Position = PointToScreen(new Point(Width / 2, Height / 2)); // Center cursor
-                Cursor.Show();
+                PointerState.ScreenPosition = PointToScreen(new Point(Width / 2, Height / 2)); // Center cursor
+                PointerState.Show();
 
                 _flyModeTimer.Stop();
             }

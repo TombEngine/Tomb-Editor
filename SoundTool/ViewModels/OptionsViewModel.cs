@@ -2,7 +2,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
+using TombLib.WPF.Dialogs;
 
 namespace SoundTool.ViewModels;
 

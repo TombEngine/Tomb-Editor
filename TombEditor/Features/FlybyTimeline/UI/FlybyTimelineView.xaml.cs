@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using TombEditor.Features.FlybyTimeline.ViewModel;
+using TombLib.Services;
 
 namespace TombEditor.Features.FlybyTimeline.UI;
 
@@ -29,8 +30,8 @@ public partial class FlybyTimelineView : UserControl
     /// Initializes the view model and wires up all event handlers.
     /// Called once when the hosting MainView is ready.
     /// </summary>
-    /// <param name="parentForm">Optional WinForms owner used for flyby modal dialogs.</param>
-    public void Initialize(System.Windows.Forms.IWin32Window? parentForm = null)
+    /// <param name="parentForm">Optional previous owner used for flyby modal dialogs.</param>
+    public void Initialize(IWindowOwner? parentForm = null)
     {
         if (_viewModel is not null)
             return;

@@ -1,9 +1,9 @@
 #nullable enable
 
-using System;
-using System.Windows;
 using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
+using System;
+using System.Windows;
 
 namespace TombLib.WPF;
 
@@ -13,14 +13,14 @@ namespace TombLib.WPF;
 /// Persists a <see cref="Window"/>'s size, position and maximized flag into
 /// <see cref="ConfigurationBase"/> properties named <c>Window_&lt;key&gt;_Size / _Position / _Maximized</c>.
 /// A position of (-1,-1) (the config default) means "never moved": the window keeps the placement
-/// from its <see cref="Window.WindowStartupLocation"/>, mirroring the legacy WinForms behaviour.
+/// from its <see cref="Window.WindowStartupLocation"/>, mirroring the previous behaviour.
 /// </summary>
 public static class WindowConfiguration
 {
     /// <summary>
     /// Load size/position/maximized state from <paramref name="config"/> onto <paramref name="window"/>,
     /// then hook <see cref="Window.Closing"/> to save it back. Pass <paramref name="key"/> when the
-    /// legacy WinForms form name differs from the WPF window's class name, so existing user configs
+    /// previous form name differs from the WPF window's class name, so existing user configs
     /// keep applying.
     /// </summary>
     public static void ConfigureWindow(Window window, ConfigurationBase config, string? key = null)
@@ -41,7 +41,7 @@ public static class WindowConfiguration
         var max = config.GetType().GetProperty(prefix + "_Maximized")?.GetValue(config);
 
         // Auto-sized dialogs must keep their measured size: applying a persisted size (e.g. one
-        // saved by the legacy WinForms form) would leave a dead band beyond the content.
+        // saved by the previous form) would leave a dead band beyond the content.
         if (window.SizeToContent == SizeToContent.Manual && size is Size s)
         {
             window.Width = s.Width;
@@ -57,8 +57,8 @@ public static class WindowConfiguration
         if (pos is Point p && (p.X != -1 || p.Y != -1))
         {
             // For SizeToContent windows WPF applies CenterOwner/CenterScreen only once the final
-            // size is known — after Loaded, which would override the position restored here.
-            // Neutralize it, like the legacy WinForms code set StartPosition.Manual.
+            // size is known after Loaded, which would override the position restored here.
+            // Neutralize it, like the previous code set StartPosition.Manual.
             window.WindowStartupLocation = WindowStartupLocation.Manual;
             window.Left = p.X;
             window.Top = p.Y;
@@ -102,7 +102,7 @@ public static class WindowConfiguration
 
         if (window.WindowState != WindowState.Maximized)
         {
-            // Auto-sized dialogs get their size from their content — see LoadWindowProperties.
+            // Auto-sized dialogs get their size from their content. See LoadWindowProperties.
             if (window.SizeToContent == SizeToContent.Manual)
                 config.GetType().GetProperty(prefix + "_Size")?.SetValue(config, new Size((int)window.Width, (int)window.Height));
 

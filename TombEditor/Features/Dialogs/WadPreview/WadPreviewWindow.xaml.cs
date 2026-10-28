@@ -6,14 +6,15 @@ using System.Windows;
 using System.Windows.Interop;
 using TombEditor.Controls;
 using TombLib.Rendering;
-using TombLib.WPF.CustomControls;
 using TombLib.Wad;
+using TombLib.WPF.CustomControls;
+using TombLib.WPF.Input;
 
 namespace TombEditor.Features.Dialogs.WadPreview;
 
 /// <summary>
 /// Borderless pop-up that previews a <see cref="Wad2"/>: a WAD tree on the left
-/// for selection, a 3D item preview on the right. Mirrors the WinForms
+/// for selection, a 3D item preview on the right. Mirrors the previous
 /// <c>FormPreviewWad</c>, with a native WPF rendering surface.
 /// </summary>
 public partial class WadPreviewWindow : Window
@@ -39,7 +40,7 @@ public partial class WadPreviewWindow : Window
         DataContextChanged += OnDataContextChanged;
 
         // Close when focus leaves the window AND the cursor is outside its bounds -
-        // preserves the "hover preview" feel of the WinForms version.
+        // preserves the "hover preview" feel of the previous version.
         Deactivated += OnDeactivated;
         Closed += (_, _) => _panelItem.Dispose();
     }
@@ -66,13 +67,13 @@ public partial class WadPreviewWindow : Window
 
     private void OnDeactivated(object? sender, EventArgs e)
     {
-        var cursor = System.Windows.Forms.Cursor.Position;
+        var cursor = PointerState.ScreenPosition;
         var position = PointFromScreen(new Point(cursor.X, cursor.Y));
         if (!new Rect(RenderSize).Contains(position))
             Close();
     }
 
-    /// <summary>Convenience helper for WinForms callers - sets the WPF owner from an HWND.</summary>
+    /// <summary>Convenience helper for previous callers - sets the WPF owner from an HWND.</summary>
     public void SetOwnerFromHwnd(IntPtr hwnd)
     {
         if (hwnd == IntPtr.Zero)

@@ -14,8 +14,7 @@ namespace TombEditor.Features.Dialogs.ResizeRoom;
 /// <summary>
 /// Read-only WPF preview of the room being resized: the kept part of the old room is drawn
 /// with the regular sector coloring (shared <see cref="SectorTileRenderer"/>), the new ring
-/// as border wall and the added area as floor/wall fill. Replaces the WinForms
-/// Panel2DGrid-based control that was hosted through WindowsFormsHost.
+/// as border wall and the added area as floor/wall fill on a native WPF drawing surface.
 /// </summary>
 public class ResizeRoomGridControl : FrameworkElement
 {

@@ -1,139 +1,138 @@
 <Window
-	x:Class="TombEditor.Features.Dialogs.Transform.TransformWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
-	xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.Transform"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
-	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
-	Title="{tombLib:Localize Title}"
-	Width="380"
-	d:DataContext="{d:DesignInstance Type=vm:TransformWindowViewModel}"
-	md:DialogServiceViews.IsRegistered="True"
-	Background="{DynamicResource Brush_Background}"
-	ResizeMode="NoResize"
-	ShowInTaskbar="False"
-	SizeToContent="Height"
-	Style="{DynamicResource CustomWindowStyle}"
-	WindowStartupLocation="CenterOwner"
-	mc:Ignorable="d">
+    x:Class="TombEditor.Features.Dialogs.Transform.TransformWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.Transform"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
-	<controls:SpacedGrid
-		Margin="{x:Static darkUI:Defaults.MediumThickness}"
-		ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}"
-		RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    Title="{tombLib:Localize Title}"
+    Width="380"
+    d:DataContext="{d:DesignInstance Type=vm:TransformWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    SizeToContent="Height"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="*" />
-		</Grid.ColumnDefinitions>
+    <controls:SpacedGrid
+        Margin="{x:Static darkUI:Defaults.MediumThickness}"
+        ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}"
+        RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
 
-		<Label
-			Grid.Row="0"
-			Grid.Column="0"
-			VerticalAlignment="Center"
-			Content="{tombLib:Localize Translation}" />
-		<controls:NumericUpDown
-			Grid.Row="0"
-			Grid.Column="1"
-			Maximum="1048576"
-			Minimum="-1048576"
-			Value="{Binding TranslationX, Mode=TwoWay}" />
-		<controls:NumericUpDown
-			Grid.Row="0"
-			Grid.Column="2"
-			Maximum="1048576"
-			Minimum="-1048576"
-			Value="{Binding TranslationY, Mode=TwoWay}" />
-		<controls:NumericUpDown
-			Grid.Row="0"
-			Grid.Column="3"
-			Maximum="1048576"
-			Minimum="-1048576"
-			Value="{Binding TranslationZ, Mode=TwoWay}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-		<Label
-			Grid.Row="1"
-			Grid.Column="0"
-			VerticalAlignment="Center"
-			Content="{tombLib:Localize Rotation}" />
-		<controls:NumericUpDown
-			Grid.Row="1"
-			Grid.Column="1"
-			IsEnabled="{Binding IsRotationXEnabled}"
-			Maximum="360"
-			Minimum="-360"
-			Value="{Binding RotationX, Mode=TwoWay}" />
-		<controls:NumericUpDown
-			Grid.Row="1"
-			Grid.Column="2"
-			IsEnabled="{Binding IsRotationYEnabled}"
-			Maximum="360"
-			Minimum="-360"
-			Value="{Binding RotationY, Mode=TwoWay}" />
-		<controls:NumericUpDown
-			Grid.Row="1"
-			Grid.Column="3"
-			IsEnabled="{Binding IsRotationZEnabled}"
-			Maximum="360"
-			Minimum="-360"
-			Value="{Binding RotationZ, Mode=TwoWay}" />
+        <Label
+            Grid.Row="0"
+            Grid.Column="0"
+            VerticalAlignment="Center"
+            Content="{tombLib:Localize Translation}" />
+        <controls:NumericUpDown
+            Grid.Row="0"
+            Grid.Column="1"
+            Maximum="1048576"
+            Minimum="-1048576"
+            Value="{Binding TranslationX, Mode=TwoWay}" />
+        <controls:NumericUpDown
+            Grid.Row="0"
+            Grid.Column="2"
+            Maximum="1048576"
+            Minimum="-1048576"
+            Value="{Binding TranslationY, Mode=TwoWay}" />
+        <controls:NumericUpDown
+            Grid.Row="0"
+            Grid.Column="3"
+            Maximum="1048576"
+            Minimum="-1048576"
+            Value="{Binding TranslationZ, Mode=TwoWay}" />
 
-		<Label
-			Grid.Row="2"
-			Grid.Column="0"
-			VerticalAlignment="Center"
-			Content="{tombLib:Localize Scale}" />
-		<controls:NumericUpDown
-			Grid.Row="2"
-			Grid.Column="1"
-			FormatString="F4"
-			Increment="0.1"
-			IsEnabled="{Binding IsScaleEnabled}"
-			Maximum="1024"
-			Minimum="0.001"
-			Value="{Binding ScaleX, Mode=TwoWay}" />
-		<controls:NumericUpDown
-			Grid.Row="2"
-			Grid.Column="2"
-			FormatString="F4"
-			IsEnabled="False"
-			Value="{Binding ScaleY, Mode=OneWay}" />
-		<controls:NumericUpDown
-			Grid.Row="2"
-			Grid.Column="3"
-			FormatString="F4"
-			IsEnabled="False"
-			Value="{Binding ScaleZ, Mode=OneWay}" />
+        <Label
+            Grid.Row="1"
+            Grid.Column="0"
+            VerticalAlignment="Center"
+            Content="{tombLib:Localize Rotation}" />
+        <controls:NumericUpDown
+            Grid.Row="1"
+            Grid.Column="1"
+            IsEnabled="{Binding IsRotationXEnabled}"
+            Maximum="360"
+            Minimum="-360"
+            Value="{Binding RotationX, Mode=TwoWay}" />
+        <controls:NumericUpDown
+            Grid.Row="1"
+            Grid.Column="2"
+            IsEnabled="{Binding IsRotationYEnabled}"
+            Maximum="360"
+            Minimum="-360"
+            Value="{Binding RotationY, Mode=TwoWay}" />
+        <controls:NumericUpDown
+            Grid.Row="1"
+            Grid.Column="3"
+            IsEnabled="{Binding IsRotationZEnabled}"
+            Maximum="360"
+            Minimum="-360"
+            Value="{Binding RotationZ, Mode=TwoWay}" />
 
-		<controls:SpacedStack
-			Grid.Row="3"
-			Grid.Column="0"
-			Grid.ColumnSpan="4"
-			HorizontalAlignment="Right"
-			Orientation="Horizontal"
-			Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-			<Button
-				Width="80"
-				Command="{Binding ConfirmCommand}"
-				Content="{tombLib:Localize ~Common.OK}"
-				IsDefault="True" />
-			<Button
-				Width="80"
-				Command="{Binding CancelCommand}"
-				Content="{tombLib:Localize ~Common.Cancel}"
-				IsCancel="True" />
-		</controls:SpacedStack>
-	</controls:SpacedGrid>
+        <Label
+            Grid.Row="2"
+            Grid.Column="0"
+            VerticalAlignment="Center"
+            Content="{tombLib:Localize Scale}" />
+        <controls:NumericUpDown
+            Grid.Row="2"
+            Grid.Column="1"
+            FormatString="F4"
+            Increment="0.1"
+            IsEnabled="{Binding IsScaleEnabled}"
+            Maximum="1024"
+            Minimum="0.001"
+            Value="{Binding ScaleX, Mode=TwoWay}" />
+        <controls:NumericUpDown
+            Grid.Row="2"
+            Grid.Column="2"
+            FormatString="F4"
+            IsEnabled="False"
+            Value="{Binding ScaleY, Mode=OneWay}" />
+        <controls:NumericUpDown
+            Grid.Row="2"
+            Grid.Column="3"
+            FormatString="F4"
+            IsEnabled="False"
+            Value="{Binding ScaleZ, Mode=OneWay}" />
+
+        <controls:SpacedStack
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="4"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <Button
+                Width="80"
+                Command="{Binding ConfirmCommand}"
+                Content="{tombLib:Localize ~Common.OK}"
+                IsDefault="True" />
+            <Button
+                Width="80"
+                Command="{Binding CancelCommand}"
+                Content="{tombLib:Localize ~Common.Cancel}"
+                IsCancel="True" />
+        </controls:SpacedStack>
+    </controls:SpacedGrid>
 </Window>

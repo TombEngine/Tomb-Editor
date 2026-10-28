@@ -4,12 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TombEditor;
 using TombLib.LevelData;
 using TombLib.LevelData.VisualScripting;
 using TombLib.Utils;
 using TombLib.Wad;
-using TombLib.Wad.Catalog;
 
 namespace TombEditor.Features.Dialogs.EventSetEditor
 {
@@ -39,7 +37,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
     /// <summary>
     /// Supplies the selectable item lists for the listable <see cref="ArgumentType"/>s and performs the
     /// locate / play-sound actions. Mirrors <c>NodeEditor.PopulateCachedNodeLists</c> and the list-building
-    /// switch in the WinForms <c>ArgumentEditor</c>.
+    /// switch in the previous <c>ArgumentEditor</c>.
     /// </summary>
     public sealed class ArgumentDataProvider
     {

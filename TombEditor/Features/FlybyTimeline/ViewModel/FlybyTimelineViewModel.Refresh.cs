@@ -3,9 +3,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using TombEditor.Features.FlybyTimeline.Sequence;
 using TombLib.LevelData;
+using TombLib.Services;
 
 namespace TombEditor.Features.FlybyTimeline.ViewModel;
 
@@ -28,7 +28,7 @@ public partial class FlybyTimelineViewModel
     /// <param name="cameras">The cameras that should be deleted.</param>
     /// <param name="dialogOwner">Optional owner for confirmation or error dialogs raised by the delete action.</param>
     /// <returns><see langword="true"/> when all requested cameras were deleted successfully; <see langword="false"/> when any requested camera remains in the level after the delete action.</returns>
-    private bool TryDeleteCameras(IReadOnlyCollection<FlybyCameraInstance> cameras, IWin32Window? dialogOwner)
+    private bool TryDeleteCameras(IReadOnlyCollection<FlybyCameraInstance> cameras, IWindowOwner? dialogOwner)
     {
         _preview.StopPlayback();
 

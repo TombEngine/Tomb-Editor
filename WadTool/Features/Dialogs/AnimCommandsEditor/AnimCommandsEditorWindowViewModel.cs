@@ -2,13 +2,14 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using TombLib.Graphics;
+using TombLib.Services;
 using TombLib.Wad;
+using TombLib.WPF.Dialogs;
 
 namespace WadTool.Features.Dialogs.AnimCommandsEditor;
 
@@ -38,7 +39,7 @@ public partial class AnimCommandsEditorWindowViewModel : ObservableObject, IModa
 
     public ObservableCollection<AnimCommandRow> Rows { get; } = new();
 
-    /// <summary>Exposed so the window can initialize the hosted WinForms <c>AnimCommandEditor</c>.</summary>
+    /// <summary>Exposed so the window can initialize the WPF <c>AnimCommandEditor</c>.</summary>
     public AnimationEditor Editor => _editor;
 
     /// <summary>Exposed so the window can persist its placement into the legacy config slots.</summary>
@@ -228,7 +229,7 @@ public partial class AnimCommandsEditorWindowViewModel : ObservableObject, IModa
         SelectedRow = Rows.FirstOrDefault();
     }
 
-    /// <summary>Restores the backup if the window is closed without confirming (legacy DialogResult.Cancel path).</summary>
+    /// <summary>Restores the backup if the window is closed without confirming (legacy DialogChoice.Cancel path).</summary>
     public void RevertIfNotConfirmed()
     {
         if (DialogResult != true)

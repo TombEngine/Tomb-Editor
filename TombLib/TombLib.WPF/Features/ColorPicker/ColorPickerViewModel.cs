@@ -1,9 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
+using TombLib.WPF.Dialogs;
 
 namespace TombLib.WPF.Features.ColorPicker;
 

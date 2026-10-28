@@ -2,11 +2,11 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
 using System.Numerics;
 using System.Windows.Media;
 using TombLib;
 using TombLib.LevelData;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
 

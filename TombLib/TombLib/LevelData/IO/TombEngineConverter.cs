@@ -1,10 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
-using System.Windows.Forms;
 using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
@@ -15,7 +14,7 @@ namespace TombLib.LevelData.IO
     {
         public static readonly string ReferenceWadPath = Path.Combine(DefaultPaths.ProgramDirectory, "Assets", "Wads", "TombEngine.wad2");
 
-        public static string Start(string fileName, IWin32Window owner, IProgressReporter progressReporter, CancellationToken cancelToken)
+        public static string Start(string fileName, IProgressReporter progressReporter, CancellationToken cancelToken)
         {
             if (!File.Exists(fileName))
             {
@@ -420,7 +419,7 @@ namespace TombLib.LevelData.IO
 
                         string newSlotName = TrCatalog.GetMoveableName(TRVersion.Game.TombEngine, newSlot);
 
-                        progressReporter.ReportInfo(oldId + " → [" + newSlot + "] " + newSlotName);
+                        progressReporter.ReportInfo(oldId + " -> [" + newSlot + "] " + newSlotName);
 
                         if (newSlotName == "BINOCULAR_GRAPHICS" || newSlotName == "TARGET_GRAPHICS")
                         {
@@ -504,7 +503,7 @@ namespace TombLib.LevelData.IO
 
                         string newSlotName = TrCatalog.GetSpriteSequenceName(TRVersion.Game.TombEngine, newSlot);
 
-                        progressReporter.ReportInfo(oldId + ": → [" + newSlot + "] " + newSlotName);
+                        progressReporter.ReportInfo(oldId + ": -> [" + newSlot + "] " + newSlotName);
 
                         if (newSlotName == "DEFAULT_SPRITES")
                         {

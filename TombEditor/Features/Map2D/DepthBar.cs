@@ -1,5 +1,3 @@
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -12,6 +10,9 @@ using TombLib;
 using TombLib.LevelData;
 using TombLib.LevelData.SectorEnums;
 using TombLib.WPF;
+
+#nullable disable
+
 
 namespace TombEditor.Features.Map2D
 {
@@ -308,7 +309,7 @@ namespace TombEditor.Features.Map2D
                             roomsToMove = _editor.Level.GetConnectedRooms(_roomMouseClicked);
 
 
-                        if (EditorActions.CheckForLockedRooms(WinFormsDialogHelper.GetOpenFormOwner(), roomsToMove))
+                        if (EditorActions.CheckForLockedRooms(WPFUtils.GetWindowOwner(), roomsToMove))
                         {
                             _roomsToMove = null;
                             _selectionMode = SelectionMode.None;
@@ -703,7 +704,7 @@ namespace TombEditor.Features.Map2D
 
         private static Brush CreateHatchBrush(Color color)
         {
-            // Approximates the WinForms WideUpwardDiagonal hatch over a transparent background.
+            // Approximates the previous WideUpwardDiagonal hatch over a transparent background.
             var geometry = new GeometryGroup();
             geometry.Children.Add(new LineGeometry(new Point(0, 8), new Point(8, 0)));
 

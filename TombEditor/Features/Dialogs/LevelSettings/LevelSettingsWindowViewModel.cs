@@ -3,7 +3,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LevelSettingsData = TombLib.LevelData.LevelSettings;
-using MvvmDialogs;
 using static TombLib.LevelData.TRVersion;
 using System;
 using System.Collections.Generic;
@@ -11,15 +10,17 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using TombLib.Forms.ViewModels;
 using TombLib.GeometryIO;
 using TombLib.LevelData;
+using TombLib.Services;
 using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
 using TombLib.WPF;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
+using TombLib.WPF.ViewModels;
 using WpfColor = System.Windows.Media.Color;
 
 namespace TombEditor.Features.Dialogs.LevelSettings
@@ -27,7 +28,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
     /// <summary>
     /// WPF port of <c>FormLevelSettings</c> (phase 1: shell + Game + Paths tabs). Edits a clone of
     /// the level's <see cref="LevelSettingsData"/> and applies it via <c>Editor.UpdateLevelSettings</c>
-    /// on Apply/OK, mirroring the WinForms form. The remaining tabs (Textures, Objects, sounds,
+    /// on Apply/OK, mirroring the previous form. The remaining tabs (Textures, Objects, sounds,
     /// imported geometry, static meshes, sky/font, misc) are ported in later phases.
     /// </summary>
     public partial class LevelSettingsWindowViewModel : ObservableObject, IModalDialogViewModel
@@ -615,7 +616,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
 
         // Helpers.
 
-        private static System.Windows.Forms.IWin32Window Owner => WinFormsDialogHelper.GetOpenFormOwner();
+        private static IWindowOwner Owner => WPFUtils.GetWindowOwner();
 
         private void CommitCollections()
         {

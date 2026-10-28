@@ -1,25 +1,25 @@
 #nullable enable
 
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
-using TombLib.Forms.ViewModels;
 using TombLib.LevelData;
 using TombLib.LevelData.VisualScripting;
 using TombLib.Utils;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
+using TombLib.WPF.ViewModels;
 
 namespace TombEditor.Features.Dialogs.EventSetEditor
 {
     /// <summary>
     /// WPF port of <c>FormEventSetEditor</c> (step 1: event-set management shell + level-script mode).
     /// Edits the level's live global/volume <see cref="EventSet"/> list (Cancel restores a backup,
-    /// mirroring the WinForms form). The per-event node graph is, for now, edited by the hosted WinForms
+    /// mirroring the previous form). The per-event node graph is, for now, edited by the hosted previous
     /// <c>TriggerManager</c>; that area is replaced by a pure-WPF node editor in later steps.
     /// </summary>
     public partial class EventSetEditorWindowViewModel : ObservableObject, IModalDialogViewModel
@@ -162,7 +162,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         private bool _repopulating;
 
-        // Event-set folder tree (#1156 parity with the WinForms FormEventSetEditor).
+        // Event-set folder tree (#1156 parity with the previous FormEventSetEditor).
 
         /// <summary>Rebuilds the whole tree from <see cref="_usedList"/> + the sets' Folder paths.</summary>
         private void BuildTree()

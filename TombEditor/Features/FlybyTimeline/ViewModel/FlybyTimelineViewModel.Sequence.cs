@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TombEditor.Features.FlybyTimeline.Sequence;
-using TombLib.Forms;
 using TombLib.LevelData;
+using TombLib.Utils;
 
 namespace TombEditor.Features.FlybyTimeline.ViewModel;
 

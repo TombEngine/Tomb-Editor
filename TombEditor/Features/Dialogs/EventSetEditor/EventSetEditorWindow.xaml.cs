@@ -41,7 +41,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         private void SetsTree_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            // Double-click renames folders (mirrors the WinForms editor). The expansion toggle
+            // Double-click renames folders (mirrors the previous editor). The expansion toggle
             // the double-click also caused is undone so the rename does not visually jump.
             if (NodeFromPoint(e.OriginalSource) is { IsFolder: true } node && Vm is { } vm)
             {

@@ -1,13 +1,13 @@
 #nullable enable
 
-using System;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using TombLib.LevelData;
 
 namespace TombEditor.Features.StatusBar;
 
 /// <summary>
-/// WPF port of the WinForms <c>FormMain</c> <c>DarkStatusStrip</c> (the status bar shown at the very
+/// WPF port of the previous <c>FormMain</c> <c>DarkStatusStrip</c> (the status bar shown at the very
 /// bottom of the window). Mirrors its four fields: the selected room summary, the world-space
 /// selection area, the local selection size and the autosave status. Texts and formatting are kept
 /// identical to <c>FormMain.EditorEventRaised</c> so behaviour matches the legacy editor.
@@ -118,7 +118,7 @@ public partial class StatusBarViewModel : ObservableObject
             maxHeight = room.GetHighestCorner(_editor.SelectedSectors.Area) / (float)Level.FullClickHeight;
 
         SelectionAreaText = "Area = " +
-            "(" + (room.Position.X + _editor.SelectedSectors.Area.X0) + ", " + (room.Position.Z + _editor.SelectedSectors.Area.Y0) + ") → " +
+            "(" + (room.Position.X + _editor.SelectedSectors.Area.X0) + ", " + (room.Position.Z + _editor.SelectedSectors.Area.Y0) + ") \u2192 " +
             "(" + (room.Position.X + _editor.SelectedSectors.Area.X1) + ", " + (room.Position.Z + _editor.SelectedSectors.Area.Y1) + ")" +
             " | y = [" + (minHeight == int.MaxValue || maxHeight == int.MinValue ? "N/A" : posY + minHeight + ", " + (posY + maxHeight)) + "]";
 

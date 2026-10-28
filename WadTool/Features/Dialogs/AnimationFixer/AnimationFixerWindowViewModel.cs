@@ -2,16 +2,15 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DarkUI.Forms;
-using MvvmDialogs;
 using System.Collections.Generic;
 using TombLib.Graphics;
+using TombLib.Services;
 using TombLib.Utils;
 using TombLib.Wad.Catalog;
 using TombLib.WPF;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
-using WinForms = System.Windows.Forms;
 
 namespace WadTool.Features.Dialogs.AnimationFixer;
 
@@ -144,10 +143,10 @@ public partial class AnimationFixerWindowViewModel : ObservableObject, IModalDia
     [RelayCommand]
     private void Confirm()
     {
-        if (_animations != null && _animations.Count > 0 &&
-            DarkMessageBox.Show(WinFormsDialogHelper.GetOpenFormOwner(),
+        if (_animations is not null && _animations.Count > 0 &&
+            UserDialogs.Show(WPFUtils.GetWindowOwner(),
                                 _localization["LegacyEngineWarningMessage"], _localization["LegacyEngineWarningTitle"],
-                                WinForms.MessageBoxButtons.OKCancel, WinForms.MessageBoxIcon.Warning) == WinForms.DialogResult.OK)
+                                DialogButtons.OKCancel, DialogIcon.Warning) == DialogChoice.OK)
         {
             var undoList = new List<UndoRedoInstance>();
 

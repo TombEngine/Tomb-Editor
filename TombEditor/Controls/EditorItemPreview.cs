@@ -1,9 +1,11 @@
 #nullable enable
 
+using DragDropEffects = TombLib.Input.TransferEffects;
+using MouseButtons = TombLib.Input.PointerButtons;
+using MouseEventArgs = TombLib.Input.PointerEventArgs;
 using System;
 using System.Numerics;
-using System.Windows.Forms;
-using TombLib.Controls.Wpf;
+using TombLib.WPF.Controls.Rendering;
 
 namespace TombEditor.Controls;
 

@@ -1,9 +1,9 @@
 #nullable enable
 
+using DrawingPoint = System.Drawing.Point;
 using System;
 using System.Windows;
-using FormsCursor = System.Windows.Forms.Cursor;
-using WinFormsPoint = System.Drawing.Point;
+using TombLib.WPF.Input;
 
 namespace TombLib.WPF;
 
@@ -168,7 +168,7 @@ public static class CursorWarpHelper
     {
         var screenPoint = element.PointToScreen(localPosition);
 
-        FormsCursor.Position = new WinFormsPoint(
+        PointerState.ScreenPosition = new DrawingPoint(
             (int)Math.Round(screenPoint.X),
             (int)Math.Round(screenPoint.Y));
     }

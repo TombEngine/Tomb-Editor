@@ -1,12 +1,11 @@
 #nullable enable
 
-using System.Collections.Generic;
-using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
-using TombLib.LevelData;
+using System.Collections.Generic;
+using System.Linq;
 using TombLib.Wad;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
 

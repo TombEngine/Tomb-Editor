@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <Page Update="Properties\DesignTimeResources.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -97,9 +97,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Views\InputBoxWindow.xaml.cs">
-      <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>

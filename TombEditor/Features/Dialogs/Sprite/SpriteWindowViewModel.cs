@@ -2,17 +2,17 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
 using TombLib.LevelData;
+using TombLib.Wad;
+using TombLib.Wad.Catalog;
 using TombLib.WPF;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Imaging;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
-using TombLib.Wad;
-using TombLib.Wad.Catalog;
 
 namespace TombEditor.Features.Dialogs.Sprite;
 

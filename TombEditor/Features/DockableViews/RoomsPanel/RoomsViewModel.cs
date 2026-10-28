@@ -2,7 +2,6 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
-using System.Linq;
 using TombLib.LevelData;
 
 namespace TombEditor.Features.DockableViews.RoomsPanel;

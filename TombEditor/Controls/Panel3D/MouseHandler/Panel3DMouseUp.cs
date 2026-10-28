@@ -1,8 +1,8 @@
 #nullable enable
 
+using Keys = TombLib.Input.EditorKey;
 using System.Drawing;
 using System.Numerics;
-using System.Windows.Forms;
 using TombEditor.Features.ContextMenus;
 using TombLib;
 using TombLib.Graphics;

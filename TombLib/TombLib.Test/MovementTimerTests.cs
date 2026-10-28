@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Windows.Threading;
-using TombLib.Controls;
-using WinFormsKeys = System.Windows.Forms.Keys;
+using TombLib.Input;
+using TombLib.WPF.Controls.Rendering;
 
 namespace TombLib.Test;
 
@@ -14,7 +14,7 @@ public class MovementTimerTests
         StaTest.Run(() => {
             int ticks = 0;
             var movement = new MovementTimer((_, _) => ticks++);
-            Assert.IsTrue(movement.Engage(WinFormsKeys.Up));
+            Assert.IsTrue(movement.Engage(EditorKey.Up));
             PumpUntil(() => ticks > 0);
 
             movement.Dispose();
@@ -23,7 +23,7 @@ public class MovementTimerTests
 
             Assert.AreEqual(stoppedTicks, ticks);
             Assert.AreEqual(AnimationMode.Idle, movement.Mode);
-            Assert.IsFalse(movement.Engage(WinFormsKeys.Up));
+            Assert.IsFalse(movement.Engage(EditorKey.Up));
             movement.Animate(AnimationMode.Snap, 1.0f);
             Assert.AreEqual(AnimationMode.Idle, movement.Mode);
         });

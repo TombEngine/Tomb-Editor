@@ -6,7 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using TombEditor.Controls;
-using TombLib.LevelData;
 using TombLib.Utils;
 using TombLib.WPF;
 
@@ -25,7 +24,7 @@ public sealed class MainTextureMapView : WpfTextureMapView
     protected override void OnMouseUp(MouseButtonEventArgs e)
     {
         // Right-button-up with negligible travel opens the context menu instead of
-        // committing a pan, matching the WinForms TextureMapContextMenu behaviour.
+        // committing a pan, matching the previous TextureMapContextMenu behaviour.
         if (e.ChangedButton == MouseButton.Right && _startPos.HasValue)
         {
             Point current = e.GetPosition(this);

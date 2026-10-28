@@ -1,172 +1,172 @@
 <Window
-	x:Class="TombLib.WPF.Features.About.AboutWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	Background="{DynamicResource Brush_Background}"
-	ResizeMode="NoResize"
-	ShowInTaskbar="False"
-	SizeToContent="WidthAndHeight"
-	Style="{DynamicResource CustomWindowStyle}"
-	WindowStartupLocation="CenterOwner"
-	mc:Ignorable="d">
+    x:Class="TombLib.WPF.Features.About.AboutWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{DynamicResource Brush_Background}"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    SizeToContent="WidthAndHeight"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
 
-	<Window.Resources>
-		<Style x:Key="BodyText" TargetType="TextBlock">
-			<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
-			<Setter Property="Margin" Value="0,0,0,4" />
-			<Setter Property="TextWrapping" Value="Wrap" />
-		</Style>
-		<Style x:Key="LicenseText" TargetType="TextBlock">
-			<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
-			<Setter Property="FontSize" Value="11" />
-			<Setter Property="Margin" Value="0,0,0,2" />
-		</Style>
-		<Style x:Key="LicenseLink" TargetType="TextBlock" BasedOn="{StaticResource LicenseText}">
-			<Setter Property="HorizontalAlignment" Value="Right" />
-		</Style>
-		<Style TargetType="Hyperlink">
-			<Setter Property="Foreground" Value="#B8A3E9" />
-			<Setter Property="TextDecorations" Value="{x:Null}" />
-			<EventSetter Event="Click" Handler="Link_Click" />
-			<Style.Triggers>
-				<Trigger Property="IsMouseOver" Value="True">
-					<Setter Property="TextDecorations" Value="Underline" />
-				</Trigger>
-			</Style.Triggers>
-		</Style>
-	</Window.Resources>
+    <Window.Resources>
+        <Style x:Key="BodyText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+            <Setter Property="Margin" Value="0,0,0,4" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+        <Style x:Key="LicenseText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Margin" Value="0,0,0,2" />
+        </Style>
+        <Style x:Key="LicenseLink" TargetType="TextBlock" BasedOn="{StaticResource LicenseText}">
+            <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+        <Style TargetType="Hyperlink">
+            <Setter Property="Foreground" Value="#B8A3E9" />
+            <Setter Property="TextDecorations" Value="{x:Null}" />
+            <EventSetter Event="Click" Handler="Link_Click" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="TextDecorations" Value="Underline" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
 
-	<DockPanel LastChildFill="True">
+    <DockPanel LastChildFill="True">
 
-		<!--  Header artwork with the version overlaid bottom-right  -->
-		<Grid Background="#FF202020" DockPanel.Dock="Top">
-			<Image
-				x:Name="headerImage"
-				Height="64"
-				HorizontalAlignment="Center"
-				Stretch="None" />
-			<TextBlock
-				x:Name="versionText"
-				Margin="0,0,8,4"
-				HorizontalAlignment="Right"
-				VerticalAlignment="Bottom"
-				FontSize="13"
-				Foreground="{DynamicResource Brush_Text}" />
-		</Grid>
+        <!--  Header artwork with the version overlaid bottom-right  -->
+        <Grid Background="#FF202020" DockPanel.Dock="Top">
+            <Image
+                x:Name="headerImage"
+                Height="64"
+                HorizontalAlignment="Center"
+                Stretch="None" />
+            <TextBlock
+                x:Name="versionText"
+                Margin="0,0,8,4"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                FontSize="13"
+                Foreground="{DynamicResource Brush_Text}" />
+        </Grid>
 
-		<!--  Bottom strip: toolchain note + OK  -->
-		<Grid Margin="8,4,8,8" DockPanel.Dock="Bottom">
-			<TextBlock
-				HorizontalAlignment="Left"
-				VerticalAlignment="Center"
-				FontSize="10"
-				Foreground="{DynamicResource Brush_Text}"
-				Text="This tool is part of the Tomb Editor toolchain." />
-			<Button
-				Width="100"
-				HorizontalAlignment="Right"
-				Click="Ok_Click"
-				Content="OK"
-				IsCancel="True"
-				IsDefault="True" />
-		</Grid>
+        <!--  Bottom strip: toolchain note + OK  -->
+        <Grid Margin="8,4,8,8" DockPanel.Dock="Bottom">
+            <TextBlock
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                FontSize="10"
+                Foreground="{DynamicResource Brush_Text}"
+                Text="This tool is part of the Tomb Editor toolchain." />
+            <Button
+                Width="100"
+                HorizontalAlignment="Right"
+                Click="Ok_Click"
+                Content="OK"
+                IsCancel="True"
+                IsDefault="True" />
+        </Grid>
 
-		<StackPanel Width="612" Margin="8,8,8,4">
+        <StackPanel Width="612" Margin="8,8,8,4">
 
-			<!--  Credits (same entries as the WinForms FormAbout)  -->
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="125" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
+            <!--  Credits (same entries as the shared FormAbout)  -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="125" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-				<TextBlock FontWeight="Bold" Style="{StaticResource BodyText}" Text="Original idea:" />
-				<TextBlock Grid.Column="1" Style="{StaticResource BodyText}" Text="MontyTRC" />
+                <TextBlock FontWeight="Bold" Style="{StaticResource BodyText}" Text="Original idea:" />
+                <TextBlock Grid.Column="1" Style="{StaticResource BodyText}" Text="MontyTRC" />
 
-				<TextBlock Grid.Row="1" FontWeight="Bold" Style="{StaticResource BodyText}" Text="Code:" />
-				<TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource BodyText}" Text="MontyTRC, TRTombLevBauer, stohrendorf, Banderi, Lwmte, Nickelony, Raildex, ChocolateFan, sapper, wjwilimowski, Remrem, Sezz, DavidDMRR, Stranger1992" />
+                <TextBlock Grid.Row="1" FontWeight="Bold" Style="{StaticResource BodyText}" Text="Code:" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource BodyText}" Text="MontyTRC, TRTombLevBauer, stohrendorf, Banderi, Lwmte, Nickelony, Raildex, ChocolateFan, sapper, wjwilimowski, Remrem, Sezz, DavidDMRR, Stranger1992" />
 
-				<TextBlock Grid.Row="2" FontWeight="Bold" Style="{StaticResource BodyText}" Text="Assets and support:" />
-				<TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource BodyText}" Text="teme9, Lwmte, Nickelony, Dominik, Joey79100, Danath, piano_raider, Kubsy, Stranger1992, Frjttr" />
+                <TextBlock Grid.Row="2" FontWeight="Bold" Style="{StaticResource BodyText}" Text="Assets and support:" />
+                <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource BodyText}" Text="teme9, Lwmte, Nickelony, Dominik, Joey79100, Danath, piano_raider, Kubsy, Stranger1992, Frjttr" />
 
-				<TextBlock Grid.Row="3" FontWeight="Bold" Style="{StaticResource BodyText}" Text="Beta testing:" />
-				<TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource BodyText}" Text="Dustie, Titak, Gemini, Caesum, Lore, JMN, Joey79100, 1mustard" />
-			</Grid>
+                <TextBlock Grid.Row="3" FontWeight="Bold" Style="{StaticResource BodyText}" Text="Beta testing:" />
+                <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource BodyText}" Text="Dustie, Titak, Gemini, Caesum, Lore, JMN, Joey79100, 1mustard" />
+            </Grid>
 
-			<!--  Licensing  -->
-			<TextBlock
-				Margin="0,8,0,4"
-				FontWeight="Bold"
-				Foreground="{DynamicResource Brush_Text}"
-				Text="Licensing Information" />
+            <!--  Licensing  -->
+            <TextBlock
+                Margin="0,8,0,4"
+                FontWeight="Bold"
+                Foreground="{DynamicResource Brush_Text}"
+                Text="Licensing Information" />
 
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-					<RowDefinition Height="Auto" />
-				</Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-				<TextBlock Style="{StaticResource LicenseText}" Text="NCalc is used under MIT license." />
-				<TextBlock Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="github.com/sklose/NCalc2">github.com/sklose/NCalc2</Hyperlink></TextBlock>
+                <TextBlock Style="{StaticResource LicenseText}" Text="NCalc is used under MIT license." />
+                <TextBlock Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="github.com/sklose/NCalc2">github.com/sklose/NCalc2</Hyperlink></TextBlock>
 
-				<TextBlock Grid.Row="1" Style="{StaticResource LicenseText}" Text="SharpDX is used under MIT license." />
-				<TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="sharpdx.org">sharpdx.org</Hyperlink></TextBlock>
+                <TextBlock Grid.Row="1" Style="{StaticResource LicenseText}" Text="SharpDX is used under MIT license." />
+                <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="sharpdx.org">sharpdx.org</Hyperlink></TextBlock>
 
-				<TextBlock Grid.Row="2" Style="{StaticResource LicenseText}" Text="DarkUI is used under MIT license." />
-				<TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="github.com/RobinPerris/DarkUI">github.com/RobinPerris/DarkUI</Hyperlink></TextBlock>
+                <TextBlock Grid.Row="2" Style="{StaticResource LicenseText}" Text="DarkUI is used under MIT license." />
+                <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="github.com/RobinPerris/DarkUI">github.com/RobinPerris/DarkUI</Hyperlink></TextBlock>
 
-				<TextBlock Grid.Row="3" Style="{StaticResource LicenseText}" Text="NLog is used under BSD 3-clause license." />
-				<TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="nlog-project.org">nlog-project.org</Hyperlink></TextBlock>
+                <TextBlock Grid.Row="3" Style="{StaticResource LicenseText}" Text="NLog is used under BSD 3-clause license." />
+                <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="nlog-project.org">nlog-project.org</Hyperlink></TextBlock>
 
-				<TextBlock Grid.Row="4" Style="{StaticResource LicenseText}" Text="NAudio is used under Microsoft Public License." />
-				<TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="github.com/naudio/NAudio">github.com/naudio/NAudio</Hyperlink></TextBlock>
+                <TextBlock Grid.Row="4" Style="{StaticResource LicenseText}" Text="NAudio is used under Microsoft Public License." />
+                <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="github.com/naudio/NAudio">github.com/naudio/NAudio</Hyperlink></TextBlock>
 
-				<TextBlock Grid.Row="5" Style="{StaticResource LicenseText}" Text="Assimp is used under BSD 3-clause license." />
-				<TextBlock Grid.Row="5" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="github.com/assimp/assimp">github.com/assimp/assimp</Hyperlink></TextBlock>
+                <TextBlock Grid.Row="5" Style="{StaticResource LicenseText}" Text="Assimp is used under BSD 3-clause license." />
+                <TextBlock Grid.Row="5" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="github.com/assimp/assimp">github.com/assimp/assimp</Hyperlink></TextBlock>
 
-				<TextBlock Grid.Row="6" Style="{StaticResource LicenseText}" Text="Assimp.Net is used under MIT license." />
-				<TextBlock Grid.Row="6" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="nuget.org/packages/AssimpNet">nuget.org/packages/AssimpNet</Hyperlink></TextBlock>
+                <TextBlock Grid.Row="6" Style="{StaticResource LicenseText}" Text="Assimp.Net is used under MIT license." />
+                <TextBlock Grid.Row="6" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="nuget.org/packages/AssimpNet">nuget.org/packages/AssimpNet</Hyperlink></TextBlock>
 
-				<TextBlock Grid.Row="7" Style="{StaticResource LicenseText}" Text="OpenFolderDialog is used under MIT license." />
-				<TextBlock Grid.Row="7" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="medo64.com/2011/12/openfolderdialog">medo64.com/2011/12/openfolderdialog</Hyperlink></TextBlock>
+                <TextBlock Grid.Row="7" Style="{StaticResource LicenseText}" Text="OpenFolderDialog is used under MIT license." />
+                <TextBlock Grid.Row="7" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="medo64.com/2011/12/openfolderdialog">medo64.com/2011/12/openfolderdialog</Hyperlink></TextBlock>
 
-				<TextBlock Grid.Row="8" Style="{StaticResource LicenseText}" Text="AvalonEdit is used under MIT license." />
-				<TextBlock Grid.Row="8" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="github.com/icsharpcode/AvalonEdit">github.com/icsharpcode/AvalonEdit</Hyperlink></TextBlock>
+                <TextBlock Grid.Row="8" Style="{StaticResource LicenseText}" Text="AvalonEdit is used under MIT license." />
+                <TextBlock Grid.Row="8" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="github.com/icsharpcode/AvalonEdit">github.com/icsharpcode/AvalonEdit</Hyperlink></TextBlock>
 
-				<TextBlock Grid.Row="9" Style="{StaticResource LicenseText}" Text="ColorThief for .NET is used under MIT license." />
-				<TextBlock Grid.Row="9" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="github.com/KSemenenko/ColorThief">github.com/KSemenenko/ColorThief</Hyperlink></TextBlock>
-			</Grid>
+                <TextBlock Grid.Row="9" Style="{StaticResource LicenseText}" Text="ColorThief for .NET is used under MIT license." />
+                <TextBlock Grid.Row="9" Grid.Column="1" Style="{StaticResource LicenseLink}"><Hyperlink Tag="github.com/KSemenenko/ColorThief">github.com/KSemenenko/ColorThief</Hyperlink></TextBlock>
+            </Grid>
 
-			<TextBlock Margin="0,8,0,0" FontSize="11" Foreground="{DynamicResource Brush_Text}">
-				Additional icons and graphics used under CC-BY ND 3.0 license, from
-				<Hyperlink Tag="icons8.com">icons8.com</Hyperlink></TextBlock>
+            <TextBlock Margin="0,8,0,0" FontSize="11" Foreground="{DynamicResource Brush_Text}">
+                Additional icons and graphics used under CC-BY ND 3.0 license, from
+                <Hyperlink Tag="icons8.com">icons8.com</Hyperlink></TextBlock>
 
-			<TextBlock
-				Margin="0,8,0,0"
-				FontSize="10"
-				Foreground="{DynamicResource Brush_Text}"
-				Text="Tomb Raider, Tomb Raider Level Editor, Lara Croft are © and trademarks of Embracer Group AB.&#x0a;This software is a freeware and intended only for personal and non-commercial use."
-				TextWrapping="Wrap" />
-		</StackPanel>
-	</DockPanel>
+            <TextBlock
+                Margin="0,8,0,0"
+                FontSize="10"
+                Foreground="{DynamicResource Brush_Text}"
+                Text="Tomb Raider, Tomb Raider Level Editor, Lara Croft are &#x00A9; and trademarks of Embracer Group AB.&#x0a;This software is a freeware and intended only for personal and non-commercial use."
+                TextWrapping="Wrap" />
+        </StackPanel>
+    </DockPanel>
 </Window>

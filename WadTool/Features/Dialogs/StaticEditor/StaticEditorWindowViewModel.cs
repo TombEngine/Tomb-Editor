@@ -2,28 +2,27 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
 using TombLib;
-using TombLib.Forms;
 using TombLib.Graphics;
 using TombLib.LevelData;
+using TombLib.Services;
 using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
 using TombLib.WPF;
+using TombLib.WPF.Dialogs;
 using WadTool.Controls;
 using WadTool.Features.Dialogs.MeshEditor;
-using WinForms = System.Windows.Forms;
 
 namespace WadTool.Features.Dialogs.StaticEditor;
 
 /// <summary>
 /// WPF counterpart of the legacy <c>FormStaticEditor</c>. Edits a clone of a <see cref="WadStatic"/>
-/// (visibility / collision boxes, transform, lights, shatter attributes) over the hosted WinForms
+/// (visibility / collision boxes, transform, lights, shatter attributes) using the WPF
 /// <see cref="PanelRenderingStaticEditor"/> 3D view, committing back to the wad on OK.
 /// </summary>
 public partial class StaticEditorWindowViewModel : ObservableObject, IModalDialogViewModel
@@ -385,7 +384,7 @@ public partial class StaticEditorWindowViewModel : ObservableObject, IModalDialo
         {
             ShatterControlsEnabled = true;
             SoundEnabled = _static.Shatter;
-            PlayEnabled = _tool.ReferenceLevel != null && _static.Shatter;
+            PlayEnabled = _tool.ReferenceLevel is not null && _static.Shatter;
         }
 
         Shatter = _static.Shatter;
@@ -618,5 +617,5 @@ public partial class StaticEditorWindowViewModel : ObservableObject, IModalDialo
             catch (Exception) { }
     }
 
-    private static WinForms.IWin32Window Owner => WinFormsDialogHelper.GetOpenFormOwner();
+    private static IWindowOwner Owner => WPFUtils.GetWindowOwner();
 }

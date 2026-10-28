@@ -1,4 +1,3 @@
-﻿using NAudio.Gui;
 using System;
 using System.Runtime.CompilerServices;
 using TombLib.LevelData.SectorEnums;
@@ -76,8 +75,8 @@ namespace TombLib.LevelData
         {
             string text = "Portal ";
 
-			if (Effect == PortalEffectType.ClassicMirror)
-				text += "with mirror ";
+            if (Effect == PortalEffectType.ClassicMirror)
+                text += "with mirror ";
 
             switch (Direction)
             {
@@ -303,10 +302,10 @@ namespace TombLib.LevelData
             int shift = System.Numerics.BitOperations.TrailingZeroCount((uint)Level.SectorSizeUnit);
             compX0 <<= shift;
             compX1 <<= shift;
-			compY0 <<= shift;
-			compY1 <<= shift;
+            compY0 <<= shift;
+            compY1 <<= shift;
 
-			if (detectInside)
+            if (detectInside)
                 return (((pos.X > compX0 && pos.X < compX1) || pos.X == compX0 && compX0 == compX1) &&
                 ((pos.Z > compY0 && pos.Z < compY1) || pos.Z == compY0 && compY0 == compY1) &&
                 !((pos.X == compX0 || pos.X == compX1) && (pos.Z == compY0 || pos.Z == compY1)));
@@ -315,13 +314,13 @@ namespace TombLib.LevelData
                 ((pos.X >= compX0 && pos.X <= compX1) && (pos.Z == compY0 || pos.Z == compY1)));
         }
 
-		public override void AddToRoom(Level level, Room room)
-		{
-			base.AddToRoom(level, room);
-			if (!IsValid(room))
-				throw new ApplicationException("Portal overlaps another");
+        public override void AddToRoom(Level level, Room room)
+        {
+            base.AddToRoom(level, room);
+            if (!IsValid(room))
+                throw new ApplicationException("Portal overlaps another");
 
-			// Set sector information to this portal ...
+            // Set sector information to this portal ...
             switch (Direction)
             {
                 case PortalDirection.Floor:

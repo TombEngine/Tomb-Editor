@@ -1,13 +1,14 @@
 #nullable enable
 
+using Keys = TombLib.Input.EditorKey;
 using SharpDX.Toolkit.Graphics;
 using System;
 using System.Drawing;
 using System.Numerics;
-using System.Windows.Forms;
 using TombEditor.Features.Panel3D.ObjectBrush;
 using TombLib;
 using TombLib.LevelData;
+using TombLib.WPF.Input;
 
 namespace TombEditor.Controls.Panel3D
 {
@@ -88,7 +89,7 @@ namespace TombEditor.Controls.Panel3D
             bool settingsChanged = false;
 
             // Alt + mousewheel adjusts brush rotation.
-            if (Control.ModifierKeys.HasFlag(Keys.Alt))
+            if (KeyboardState.ModifierKeys.HasFlag(Keys.Alt))
             {
                 float rotation = _editor.Configuration.ObjectBrush_Rotation + (delta > 0 ? Constants.AngleAdjustmentStep : -Constants.AngleAdjustmentStep);
                 rotation = ((rotation % 360.0f) + 360.0f) % 360.0f;
@@ -97,9 +98,9 @@ namespace TombEditor.Controls.Panel3D
                 settingsChanged = true;
             }
 
-            if (Control.ModifierKeys.HasFlag(Keys.Shift))
+            if (KeyboardState.ModifierKeys.HasFlag(Keys.Shift))
             {
-                if (Control.ModifierKeys.HasFlag(Keys.Control))
+                if (KeyboardState.ModifierKeys.HasFlag(Keys.Control))
                 {
                     // Ctrl + shift + mousewheel adjusts brush density.
 
@@ -272,8 +273,8 @@ namespace TombEditor.Controls.Panel3D
 
         internal bool UpdateBrushParameters(Point location, Vector3 cursorWorldPos)
         {
-            if (Control.ModifierKeys.HasFlag(Keys.Shift) ||
-                Control.ModifierKeys.HasFlag(Keys.Alt))
+            if (KeyboardState.ModifierKeys.HasFlag(Keys.Shift) ||
+                KeyboardState.ModifierKeys.HasFlag(Keys.Alt))
             {
                 if (!_brushParamEngaged)
                 {
@@ -303,9 +304,9 @@ namespace TombEditor.Controls.Panel3D
 
             bool settingsChanged = false;
 
-            if (Control.ModifierKeys.HasFlag(Keys.Shift))
+            if (KeyboardState.ModifierKeys.HasFlag(Keys.Shift))
             {
-                if (Control.ModifierKeys.HasFlag(Keys.Control))
+                if (KeyboardState.ModifierKeys.HasFlag(Keys.Control))
                 {
                     // Ctrl+Shift: density scales with distance from pin point.
                     var density = (screenDistance / ClientSize.Height) * Constants.MaxDensity;
@@ -329,7 +330,7 @@ namespace TombEditor.Controls.Panel3D
             }
 
             // Alt: rotation = smoothed angle from pin point to current cursor position.
-            if (Control.ModifierKeys.HasFlag(Keys.Alt))
+            if (KeyboardState.ModifierKeys.HasFlag(Keys.Alt))
             {
                 _lastBrushWorldPosition = _brushParamPinPoint;
                 UpdateMouseDirectionAngle(cursorWorldPos);

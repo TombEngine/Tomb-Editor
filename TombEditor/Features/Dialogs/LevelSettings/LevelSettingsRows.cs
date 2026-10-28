@@ -2,12 +2,13 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using LevelSettingsData = TombLib.LevelData.LevelSettings;
 using TombLib.GeometryIO;
 using TombLib.LevelData;
 using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.WPF;
-using LevelSettingsData = TombLib.LevelData.LevelSettings;
+using TombLib.WPF.Services;
 
 namespace TombEditor.Features.Dialogs.LevelSettings
 {
@@ -83,7 +84,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         [RelayCommand]
         private void Browse()
         {
-            string? result = LevelFileDialog.BrowseFile(WinFormsDialogHelper.GetOpenFormOwner(), _settings, Texture.Path, LevelSettingsStrings.Get("BrowseTextureFileTitle"), ImageC.FileExtensions, VariableType.LevelDirectory, false);
+            string? result = LevelFileDialog.BrowseFile(WPFUtils.GetWindowOwner(), _settings, Texture.Path, LevelSettingsStrings.Get("BrowseTextureFileTitle"), ImageC.FileExtensions, VariableType.LevelDirectory, false);
             if (result != null)
                 Path = result;
         }
@@ -134,7 +135,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         [RelayCommand]
         private void Browse()
         {
-            string? result = LevelFileDialog.BrowseFile(WinFormsDialogHelper.GetOpenFormOwner(), _settings, Wad.Path, LevelSettingsStrings.Get("BrowseObjectFileTitle"), Wad2.FileExtensions, VariableType.LevelDirectory, false);
+            string? result = LevelFileDialog.BrowseFile(WPFUtils.GetWindowOwner(), _settings, Wad.Path, LevelSettingsStrings.Get("BrowseObjectFileTitle"), Wad2.FileExtensions, VariableType.LevelDirectory, false);
             if (result != null)
                 Path = result;
         }
@@ -174,7 +175,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         [RelayCommand]
         private void Browse()
         {
-            string? result = LevelFileDialog.BrowseFile(WinFormsDialogHelper.GetOpenFormOwner(), _settings, Catalog.Path, LevelSettingsStrings.Get("BrowseSoundCatalogTitle"), WadSounds.FileExtensions, VariableType.LevelDirectory, false);
+            string? result = LevelFileDialog.BrowseFile(WPFUtils.GetWindowOwner(), _settings, Catalog.Path, LevelSettingsStrings.Get("BrowseSoundCatalogTitle"), WadSounds.FileExtensions, VariableType.LevelDirectory, false);
             if (result != null)
                 Path = result;
         }
@@ -217,7 +218,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         [RelayCommand]
         private void Browse()
         {
-            string? result = LevelFileDialog.BrowseFile(WinFormsDialogHelper.GetOpenFormOwner(), _settings, Object.Info.Path, LevelSettingsStrings.Get("Browse3DFileTitle"), BaseGeometryImporter.FileExtensions, VariableType.LevelDirectory, false);
+            string? result = LevelFileDialog.BrowseFile(WPFUtils.GetWindowOwner(), _settings, Object.Info.Path, LevelSettingsStrings.Get("Browse3DFileTitle"), BaseGeometryImporter.FileExtensions, VariableType.LevelDirectory, false);
             if (result != null)
                 Path = result;
         }
@@ -296,7 +297,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         [RelayCommand]
         private void Browse()
         {
-            string? result = LevelFileDialog.BrowseFolder(WinFormsDialogHelper.GetOpenFormOwner(), _settings, SoundPath.Path, LevelSettingsStrings.Get("BrowseSoundFolderTitle"), VariableType.LevelDirectory);
+            string? result = LevelFileDialog.BrowseFolder(WPFUtils.GetWindowOwner(), _settings, SoundPath.Path, LevelSettingsStrings.Get("BrowseSoundFolderTitle"), VariableType.LevelDirectory);
             if (result != null)
                 Path = result;
         }

@@ -1,6 +1,5 @@
 #nullable enable
 
-using FormsMessage = System.Windows.Forms.Message;
 using SoundTool.ViewModels;
 using System;
 using System.ComponentModel;
@@ -93,8 +92,7 @@ public partial class MainWindow : Window
         Activate();
         if (messageId == SingleInstanceManagement.WM_COPYDATA)
         {
-            var message = FormsMessage.Create(handle, messageId, wParam, lParam);
-            var filename = SingleInstanceManagement.Catch(ref message);
+            var filename = SingleInstanceManagement.Catch(messageId, lParam);
             if (filename is not null)
                 Dispatcher.BeginInvoke(new Action(() => _viewModel.Open(filename)));
         }

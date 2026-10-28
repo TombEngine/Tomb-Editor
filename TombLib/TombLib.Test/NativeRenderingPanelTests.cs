@@ -4,10 +4,9 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
-using TombLib.Controls.Wpf;
-
+using TombLib.Input;
+using TombLib.WPF.Controls.Rendering;
 using DrawingPoint = System.Drawing.Point;
-using WinForms = System.Windows.Forms;
 using WpfSize = System.Windows.Size;
 
 namespace TombLib.Test;
@@ -28,7 +27,7 @@ public class NativeRenderingPanelTests
             Assert.AreNotEqual(IntPtr.Zero, panel.Handle);
             Assert.AreNotEqual(0, GetClassLong(panel.Handle, -26) & 8, "The native window class must synthesize double-click messages.");
             Assert.AreEqual(source.Handle, GetParent(panel.Handle));
-            Assert.IsFalse(typeof(WinForms.Control).IsAssignableFrom(panel.GetType()));
+            Assert.IsInstanceOfType(panel, typeof(HwndHost));
             var point = new DrawingPoint(37, 49);
             Assert.AreEqual(point, panel.PointToClient(panel.PointToScreen(point)));
             Assert.AreEqual(new Rectangle(DrawingPoint.Empty, panel.ClientSize), panel.ClientRectangle);
@@ -42,9 +41,9 @@ public class NativeRenderingPanelTests
             using var source = CreateSource();
             using var panel = new RenderingPanel();
             source.RootVisual = panel;
-            WinForms.MouseEventArgs? pressed = null;
-            WinForms.MouseEventArgs? released = null;
-            WinForms.MouseEventArgs? doubleClicked = null;
+            PointerEventArgs? pressed = null;
+            PointerEventArgs? released = null;
+            PointerEventArgs? doubleClicked = null;
             panel.MouseDown += (_, args) => pressed = args;
             panel.MouseUp += (_, args) => released = args;
             panel.MouseDoubleClick += (_, args) => doubleClicked = args;
@@ -57,9 +56,9 @@ public class NativeRenderingPanelTests
             Assert.IsNotNull(pressed);
             Assert.IsNotNull(released);
             Assert.IsNotNull(doubleClicked);
-            Assert.AreEqual(WinForms.MouseButtons.Right, pressed.Button);
+            Assert.AreEqual(PointerButtons.Right, pressed.Button);
             Assert.AreEqual(new DrawingPoint(37, 49), pressed.Location);
-            Assert.AreEqual(WinForms.MouseButtons.Right, released.Button);
+            Assert.AreEqual(PointerButtons.Right, released.Button);
             Assert.AreEqual(2, doubleClicked.Clicks);
         });
     }
@@ -105,10 +104,10 @@ public class NativeRenderingPanelTests
     {
         public object? ReceivedObject { get; private set; }
 
-        protected override void OnDragEnter(WinForms.DragEventArgs e)
+        protected override void OnDragEnter(PointerDragEventArgs e)
         {
             ReceivedObject = e.Data?.GetData("EditorObject");
-            e.Effect = WinForms.DragDropEffects.Copy;
+            e.Effect = TransferEffects.Copy;
         }
     }
 

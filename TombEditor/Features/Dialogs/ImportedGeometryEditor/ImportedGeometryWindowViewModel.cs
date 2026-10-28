@@ -1,22 +1,22 @@
 #nullable enable
 
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using LevelSettingsData = TombLib.LevelData.LevelSettings;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
-using TombLib.Forms.ViewModels;
+using TombEditor.Features.Dialogs.LevelSettings;
 using TombLib.GeometryIO;
 using TombLib.LevelData;
-using TombLib.Utils;
+using TombLib.Services;
 using TombLib.WPF;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
-using TombEditor.Features.Dialogs.LevelSettings;
-using LevelSettingsData = TombLib.LevelData.LevelSettings;
+using TombLib.WPF.ViewModels;
 using WpfColor = System.Windows.Media.Color;
 
 namespace TombEditor.Features.Dialogs.ImportedGeometryEditor
@@ -25,7 +25,7 @@ namespace TombEditor.Features.Dialogs.ImportedGeometryEditor
     /// WPF port of <c>FormImportedGeometry</c>: edits an <see cref="ImportedGeometryInstance"/> (assigned
     /// model, lighting model, color, flags) and lets the user manage the level's imported geometry list
     /// on a clone of the settings. On OK the caller applies <see cref="NewLevelSettings"/> and the
-    /// modified instance, mirroring the WinForms dialog.
+    /// modified instance, mirroring the previous dialog.
     /// </summary>
     public partial class ImportedGeometryWindowViewModel : ObservableObject, IModalDialogViewModel
     {
@@ -58,7 +58,7 @@ namespace TombEditor.Features.Dialogs.ImportedGeometryEditor
 
         /// <summary>
         /// Raised when the user requests the material editor for the assigned model.
-        /// The view handles this by showing the WinForms material editor.
+        /// The view handles this by showing the previous material editor.
         /// </summary>
         public event EventHandler<ImportedGeometry>? EditMaterialsRequested;
 
@@ -227,6 +227,6 @@ namespace TombEditor.Features.Dialogs.ImportedGeometryEditor
             DialogResult = false;
         }
 
-        private static System.Windows.Forms.IWin32Window Owner => WinFormsDialogHelper.GetOpenFormOwner();
+        private static IWindowOwner Owner => WPFUtils.GetWindowOwner();
     }
 }

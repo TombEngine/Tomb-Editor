@@ -4,7 +4,6 @@
     <LangVersion>12</LangVersion>
     <OutputType>WinExe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <Configurations>Debug;Release</Configurations>
@@ -34,9 +33,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CustomTabControl">
-      <HintPath>..\Libs\CustomTabControl.dll</HintPath>
-    </Reference>
     <Reference Include="SharpDX, Version=2.4.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\SharpDX.dll</HintPath>
@@ -82,9 +78,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DarkUI\DarkUI\DarkUI.csproj" />
     <ProjectReference Include="..\DarkUI\DarkUI.WPF\DarkUI.WPF.csproj" />
-    <ProjectReference Include="..\TombLib\TombLib.Forms\TombLib.Forms.csproj" />
     <ProjectReference Include="..\TombLib\TombLib.Icons\TombLib.Icons.csproj" />
     <ProjectReference Include="..\TombLib\TombLib.Rendering\TombLib.Rendering.csproj" />
     <ProjectReference Include="..\TombLib\TombLib.WPF\TombLib.WPF.csproj" />

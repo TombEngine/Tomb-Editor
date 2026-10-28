@@ -1,17 +1,20 @@
 #nullable enable
 
-using System;
+using DataFormats = System.Windows.DataFormats;
+using DragDropEffects = TombLib.Input.TransferEffects;
+using DragEventArgs = TombLib.Input.PointerDragEventArgs;
+using Keys = TombLib.Input.EditorKey;
+using MouseButtons = TombLib.Input.PointerButtons;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
-using System.Windows.Forms;
-using TombLib.Forms;
 using TombLib.GeometryIO;
 using TombLib.Graphics;
 using TombLib.LevelData;
 using TombLib.Utils;
 using TombLib.Wad;
+using TombLib.WPF;
 
 namespace TombEditor.Controls.Panel3D
 {
@@ -255,7 +258,7 @@ namespace TombEditor.Controls.Panel3D
 
                         if (!file.IsANSI())
                         {
-                            MessageBoxes.NonANSIFilePathError(this);
+                            UserDialogs.NonANSIFilePathError(this);
                             continue;
                         }
 

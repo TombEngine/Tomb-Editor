@@ -1,190 +1,189 @@
 <Window
-	x:Class="TombEditor.Features.Dialogs.KeyboardLayout.KeyboardLayoutWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
-	xmlns:converters="clr-namespace:DarkUI.WPF.Converters;assembly=DarkUI.WPF"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
-	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
-	xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.KeyboardLayout"
-	Title="{tombLib:Localize Title}"
-	Width="620"
-	Height="540"
-	MinWidth="540"
-	MinHeight="420"
-	d:DataContext="{d:DesignInstance Type=vm:KeyboardLayoutWindowViewModel}"
-	md:DialogServiceViews.IsRegistered="True"
-	Background="{DynamicResource Brush_Background}"
-	ShowInTaskbar="False"
-	Style="{DynamicResource CustomWindowStyle}"
-	WindowStartupLocation="CenterOwner"
-	mc:Ignorable="d">
+    x:Class="TombEditor.Features.Dialogs.KeyboardLayout.KeyboardLayoutWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:converters="clr-namespace:DarkUI.WPF.Converters;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
-	<Window.Resources>
-		<BooleanToVisibilityConverter x:Key="BoolToVis" />
-		<converters:InverseBoolConverter x:Key="InverseBool" />
-	</Window.Resources>
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.KeyboardLayout"
+    Title="{tombLib:Localize Title}"
+    Width="620"
+    Height="540"
+    MinWidth="540"
+    MinHeight="420"
+    d:DataContext="{d:DesignInstance Type=vm:KeyboardLayoutWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ShowInTaskbar="False"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
 
-	<controls:SpacedGrid
-		Margin="{x:Static darkUI:Defaults.MediumThickness}"
-		RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <converters:InverseBoolConverter x:Key="InverseBool" />
+    </Window.Resources>
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+    <controls:SpacedGrid
+        Margin="{x:Static darkUI:Defaults.MediumThickness}"
+        RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
 
-		<controls:SpacedGrid
-			Grid.Row="0"
-			ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-			<Label
-				Grid.Column="0"
-				VerticalAlignment="Center"
-				Content="{tombLib:Localize SearchCommand}" />
-			<TextBox
-				Grid.Column="1"
-				VerticalAlignment="Center"
-				Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
-				<TextBox.InputBindings>
-					<KeyBinding Key="Enter" Command="{Binding SearchCommand}" />
-				</TextBox.InputBindings>
-			</TextBox>
-			<Button
-				Grid.Column="2"
-				Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
-				Command="{Binding SearchCommand}"
-				Content="{tombLib:Localize ~Common.Search}" />
-		</controls:SpacedGrid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-		<Grid Grid.Row="1">
-			<DataGrid
-				AutoGenerateColumns="False"
-				CanUserAddRows="False"
-				CanUserDeleteRows="False"
-				IsEnabled="{Binding IsListening, Converter={StaticResource InverseBool}}"
-				ItemsSource="{Binding Rows}"
-				SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
-				SelectionMode="Single">
-				<DataGrid.InputBindings>
-					<!--  Legacy double-click behaviour: listen for a hotkey that replaces the row's existing ones.
-						The grid is disabled while listening, so this cannot re-trigger mid-capture.  -->
-					<MouseBinding
-						Command="{Binding StartListeningReplaceCommand}"
-						CommandParameter="{Binding SelectedRow}"
-						MouseAction="LeftDoubleClick" />
-				</DataGrid.InputBindings>
-				<DataGrid.Columns>
-					<DataGridTextColumn
-						Width="80"
-						Binding="{Binding TypeName}"
-						Header="{tombLib:Localize TypeCommand}"
-						IsReadOnly="True" />
-					<DataGridTextColumn
-						Width="*"
-						Binding="{Binding FriendlyName}"
-						Header="{tombLib:Localize Command}"
-						IsReadOnly="True" />
-					<DataGridTemplateColumn Width="32" Header="">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate>
-								<Button
-									Command="{Binding DataContext.StartListeningCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-									CommandParameter="{Binding}"
-									Content="+"
-									ToolTip="{tombLib:Localize AddCommand}" />
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-					<DataGridTemplateColumn Width="32" Header="">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate>
-								<Button
-									Command="{Binding DataContext.DeleteHotkeysCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-									CommandParameter="{Binding}"
-									Content="X"
-									ToolTip="{tombLib:Localize DeleteCommand}" />
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-					<DataGridTextColumn
-						Width="220"
-						Binding="{Binding HotkeysText}"
-						Header="{tombLib:Localize Hotkeys}"
-						IsReadOnly="True" />
-				</DataGrid.Columns>
-				<DataGrid.RowStyle>
-					<Style BasedOn="{StaticResource {x:Type DataGridRow}}" TargetType="DataGridRow">
-						<Style.Triggers>
-							<DataTrigger Binding="{Binding IsConflicting}" Value="True">
-								<!--  Hardcoded: DarkUI has no semantic error-background brush.  -->
-								<Setter Property="Background" Value="#80331111" />
-							</DataTrigger>
-						</Style.Triggers>
-					</Style>
-				</DataGrid.RowStyle>
-			</DataGrid>
+        <controls:SpacedGrid
+            Grid.Row="0"
+            ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="{tombLib:Localize SearchCommand}" />
+            <TextBox
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding SearchCommand}" />
+                </TextBox.InputBindings>
+            </TextBox>
+            <Button
+                Grid.Column="2"
+                Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+                Command="{Binding SearchCommand}"
+                Content="{tombLib:Localize ~Common.Search}" />
+        </controls:SpacedGrid>
 
-			<!--  Hardcoded colours: DarkUI has no semantic success-background brush, and the text must
-				stay white over the fixed DarkGreen backdrop regardless of the active theme.  -->
-			<Border
-				Background="DarkGreen"
-				BorderBrush="{DynamicResource Brush_Border}"
-				BorderThickness="{x:Static darkUI:Defaults.BorderThickness}"
-				Visibility="{Binding IsListening, Converter={StaticResource BoolToVis}}">
-				<Border.InputBindings>
-					<MouseBinding Command="{Binding StopListeningCommand}" MouseAction="LeftClick" />
-				</Border.InputBindings>
-				<TextBlock
-					HorizontalAlignment="Center"
-					VerticalAlignment="Center"
-					FontSize="{x:Static darkUI:Defaults.LargeFontSize}"
-					Foreground="White"
-					Text="{Binding ListeningText}" />
-			</Border>
-		</Grid>
+        <Grid Grid.Row="1">
+            <DataGrid
+                AutoGenerateColumns="False"
+                CanUserAddRows="False"
+                CanUserDeleteRows="False"
+                IsEnabled="{Binding IsListening, Converter={StaticResource InverseBool}}"
+                ItemsSource="{Binding Rows}"
+                SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
+                SelectionMode="Single">
+                <DataGrid.InputBindings>
+                    <!--  Legacy double-click behaviour: listen for a hotkey that replaces the row's existing ones.
+                        The grid is disabled while listening, so this cannot re-trigger mid-capture.  -->
+                    <MouseBinding
+                        Command="{Binding StartListeningReplaceCommand}"
+                        CommandParameter="{Binding SelectedRow}"
+                        MouseAction="LeftDoubleClick" />
+                </DataGrid.InputBindings>
+                <DataGrid.Columns>
+                    <DataGridTextColumn
+                        Width="80"
+                        Binding="{Binding TypeName}"
+                        Header="{tombLib:Localize TypeCommand}"
+                        IsReadOnly="True" />
+                    <DataGridTextColumn
+                        Width="*"
+                        Binding="{Binding FriendlyName}"
+                        Header="{tombLib:Localize Command}"
+                        IsReadOnly="True" />
+                    <DataGridTemplateColumn Width="32" Header="">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button
+                                    Command="{Binding DataContext.StartListeningCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}"
+                                    Content="+"
+                                    ToolTip="{tombLib:Localize AddCommand}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="32" Header="">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button
+                                    Command="{Binding DataContext.DeleteHotkeysCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                    CommandParameter="{Binding}"
+                                    Content="X"
+                                    ToolTip="{tombLib:Localize DeleteCommand}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn
+                        Width="220"
+                        Binding="{Binding HotkeysText}"
+                        Header="{tombLib:Localize Hotkeys}"
+                        IsReadOnly="True" />
+                </DataGrid.Columns>
+                <DataGrid.RowStyle>
+                    <Style BasedOn="{StaticResource {x:Type DataGridRow}}" TargetType="DataGridRow">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsConflicting}" Value="True">
+                                <!--  Hardcoded: DarkUI has no semantic error-background brush.  -->
+                                <Setter Property="Background" Value="#80331111" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+            </DataGrid>
 
-		<TextBlock
-			Grid.Row="2"
-			Foreground="{DynamicResource Brush_Text_Warning}"
-			Text="{Binding ConflictsText}"
-			Visibility="{Binding HasConflicts, Converter={StaticResource BoolToVis}}" />
+            <!--  Hardcoded colours: DarkUI has no semantic success-background brush, and the text must
+                stay white over the fixed DarkGreen backdrop regardless of the active theme.  -->
+            <Border
+                Background="DarkGreen"
+                BorderBrush="{DynamicResource Brush_Border}"
+                BorderThickness="{x:Static darkUI:Defaults.BorderThickness}"
+                Visibility="{Binding IsListening, Converter={StaticResource BoolToVis}}">
+                <Border.InputBindings>
+                    <MouseBinding Command="{Binding StopListeningCommand}" MouseAction="LeftClick" />
+                </Border.InputBindings>
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="{x:Static darkUI:Defaults.LargeFontSize}"
+                    Foreground="White"
+                    Text="{Binding ListeningText}" />
+            </Border>
+        </Grid>
 
-		<controls:SpacedGrid
-			Grid.Row="3"
-			ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
-			<Button
-				Grid.Column="0"
-				Width="160"
-				Command="{Binding RestoreDefaultsCommand}"
-				Content="{tombLib:Localize SetToDefault}" />
-			<Button
-				Grid.Column="2"
-				Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
-				Command="{Binding OkCommand}"
-				Content="{tombLib:Localize ~Common.OK}"
-				IsDefault="True" />
-			<Button
-				Grid.Column="3"
-				Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
-				Command="{Binding CancelCommand}"
-				Content="{tombLib:Localize ~Common.Cancel}"
-				IsCancel="True" />
-		</controls:SpacedGrid>
-	</controls:SpacedGrid>
+        <TextBlock
+            Grid.Row="2"
+            Foreground="{DynamicResource Brush_Text_Warning}"
+            Text="{Binding ConflictsText}"
+            Visibility="{Binding HasConflicts, Converter={StaticResource BoolToVis}}" />
+
+        <controls:SpacedGrid
+            Grid.Row="3"
+            ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="0"
+                Width="160"
+                Command="{Binding RestoreDefaultsCommand}"
+                Content="{tombLib:Localize SetToDefault}" />
+            <Button
+                Grid.Column="2"
+                Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+                Command="{Binding OkCommand}"
+                Content="{tombLib:Localize ~Common.OK}"
+                IsDefault="True" />
+            <Button
+                Grid.Column="3"
+                Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+                Command="{Binding CancelCommand}"
+                Content="{tombLib:Localize ~Common.Cancel}"
+                IsCancel="True" />
+        </controls:SpacedGrid>
+    </controls:SpacedGrid>
 </Window>

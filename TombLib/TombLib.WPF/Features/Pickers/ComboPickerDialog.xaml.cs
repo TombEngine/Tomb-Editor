@@ -2,14 +2,14 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
 using System.Collections.Generic;
 using System.Windows;
-using IWinFormsWindow = System.Windows.Forms.IWin32Window;
+using TombLib.Services;
+using TombLib.WPF.Dialogs;
 
 namespace TombLib.WPF.Features.Pickers;
 
-/// <summary>Themed modal prompt with a combo box (WPF counterpart of list-selection dialogs like the WinForms <c>AnimationImportDialog</c>).</summary>
+/// <summary>Themed modal prompt with a combo box (WPF counterpart of list-selection dialogs like the shared <c>AnimationImportDialog</c>).</summary>
 public partial class ComboPickerDialog : Window
 {
     public ComboPickerDialog()
@@ -50,8 +50,8 @@ public static class ComboPickerBox
 
         if (owner is Window window)
             dialog.Owner = window;
-        else if (owner is IWinFormsWindow winFormsOwner)
-            dialog.SetOwner(winFormsOwner);
+        else if (owner is IWindowOwner nativeOwner)
+            dialog.SetOwner(nativeOwner);
 
         dialog.ShowDialog();
         return viewModel.DialogResult == true && viewModel.SelectedIndex >= 0 ? viewModel.SelectedIndex : null;

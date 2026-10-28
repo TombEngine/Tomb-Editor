@@ -1,10 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>Library</OutputType>
+    <LangVersion>12</LangVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <Configurations>Debug;Release</Configurations>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Platforms>x64;x86</Platforms>
@@ -430,7 +429,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Catalogs\TEN Property Catalogs\Global\Vehicles.xml">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Catalogs\TEN Property Catalogs\CIRCULAR_SAW.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -532,19 +531,32 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ResourcesC\Extra.Tr5.pc.png" />
+    <EmbeddedResource Include="ResourcesC\Font.pc.png" />
+    <EmbeddedResource Include="ResourcesC\font.bin" />
+    <EmbeddedResource Include="ResourcesC\palette.bin" />
+    <EmbeddedResource Include="ResourcesC\pcsky.raw.png" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="AssimpNet" Version="5.0.0-beta1" />
     <PackageReference Include="DirectXTexNet" Version="1.0.7" />
     <PackageReference Include="Blake3" Version="0.6.1" />
     <PackageReference Include="K4os.Compression.LZ4" Version="1.3.8" />
     <PackageReference Include="K4os.Compression.LZ4.Streams" Version="1.3.8" />
     <PackageReference Include="ksemenenko.ColorThief" Version="1.1.1.4" />
-    <PackageReference Include="NAudio" Version="2.1.0" />
-    <PackageReference Include="NAudio.Flac.Unknown" Version="1.0.2" />
+    <PackageReference Include="NAudio.Core" Version="2.1.0" />
+    <PackageReference Include="NAudio.Wasapi" Version="2.1.0" />
+    <PackageReference Include="NAudio.WinMM" Version="2.1.0" />
+    <PackageDownload Include="NAudio.Flac.Unknown" Version="[1.0.2]" />
     <PackageReference Include="NAudio.Vorbis" Version="1.5.0" />
     <PackageReference Include="NLog" Version="5.0.0" />
     <PackageReference Include="Pfim" Version="0.10.3" />
     <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="3.0.1" />
     <PackageReference Include="System.IO.Hashing" Version="6.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+    <Reference Include="NAudio.Flac">
+      <HintPath>$(NuGetPackageRoot)naudio.flac.unknown/1.0.2/lib/net5.0-windows7.0/NAudio.Flac.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="GeometryIO\IOBone.cs" />

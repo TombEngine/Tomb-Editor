@@ -1,18 +1,20 @@
 #nullable enable
 
-using DarkUI.Config;
 using DarkUI.WPF;
+using DarkUI.WPF.Config;
 using Microsoft.Win32;
 using SoundTool.ViewModels;
 using SoundTool.Views;
 using System;
 using System.IO;
 using System.Windows;
-using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using TombLib.Services;
 using TombLib.Utils;
+using TombLib.WPF;
 using TombLib.WPF.Features.About;
 using TombLib.WPF.Features.AnimatedTextures;
+using TombLib.WPF.Services;
 
 namespace SoundTool.Services;
 
@@ -48,8 +50,7 @@ public sealed class SoundToolDialogs : ISoundToolDialogs
             Title = title,
             InitialFolder = initialPath ?? string.Empty
         };
-        var owner = new NativeOwner(new WindowInteropHelper(Owner).Handle);
-        return dialog.ShowDialog(owner) == System.Windows.Forms.DialogResult.OK ? dialog.Folder : null;
+        return dialog.ShowDialog(Owner.GetWin32Window()) == DialogChoice.OK ? dialog.Folder : null;
     }
 
     public string? Prompt(string title, string label, string value = "")
@@ -80,8 +81,6 @@ public sealed class SoundToolDialogs : ISoundToolDialogs
     }
 
     public void Close() => Owner.Close();
-
-    private sealed record NativeOwner(IntPtr Handle) : System.Windows.Forms.IWin32Window;
 
     private static void SetPath(FileDialog dialog, string? path)
     {

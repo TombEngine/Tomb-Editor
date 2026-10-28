@@ -2,31 +2,30 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DarkUI.Forms;
-using MvvmDialogs;
+using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
-using TombLib.Forms;
-using TombLib.Forms.ViewModels;
-using TombLib.Forms.Views;
 using TombLib.GeometryIO;
 using TombLib.Graphics;
 using TombLib.LevelData;
+using TombLib.Services;
 using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
 using TombLib.WPF;
+using TombLib.WPF.Dialogs;
+using TombLib.WPF.ViewModels;
+using TombLib.WPF.Views;
 using WadTool.Controls;
 using WadTool.Features.Dialogs.MeshEditor;
-using WinForms = System.Windows.Forms;
 
 namespace WadTool.Features.Dialogs.SkeletonEditor;
 
 /// <summary>
 /// WPF counterpart of the legacy <c>FormSkeletonEditor</c>. Edits a clone of a moveable's mesh tree
-/// (bone hierarchy, per-bone pivot / lighting / mesh, optional skin) over the hosted WinForms
+/// (bone hierarchy, per-bone pivot / lighting / mesh, optional skin) using the WPF
 /// <see cref="PanelRenderingSkeleton"/> 3D view, committing back to the wad on OK.
 /// </summary>
 public partial class SkeletonEditorWindowViewModel : ObservableObject, IModalDialogViewModel
@@ -453,16 +452,16 @@ public partial class SkeletonEditorWindowViewModel : ObservableObject, IModalDia
 
         if (_nodesDictionary.Count <= 1)
         {
-            WinForms.MessageBox.Show("Root bone can't be deleted.", "Warning",
-                WinForms.MessageBoxButtons.OK, WinForms.MessageBoxIcon.Error);
+            UserDialogs.Show("Root bone can't be deleted.", "Warning",
+                DialogButtons.OK, DialogIcon.Error);
             return;
         }
 
         var theNode = SelectedBone;
 
-        if (DarkMessageBox.Show(Owner, "Are you really sure to delete bone '" + theNode.Bone.Name + "'?\n" +
+        if (UserDialogs.Show(Owner, "Are you really sure to delete bone '" + theNode.Bone.Name + "'?\n" +
                                 "Angles associated to this bone will be deleted from all keyframes of all animations.",
-                                "Delete bone", WinForms.MessageBoxButtons.YesNo, WinForms.MessageBoxIcon.Question) != WinForms.DialogResult.Yes)
+                                "Delete bone", DialogButtons.YesNo, DialogIcon.Question) != DialogChoice.Yes)
             return;
 
         int index = _bones.IndexOf(theNode);
@@ -570,14 +569,14 @@ public partial class SkeletonEditorWindowViewModel : ObservableObject, IModalDia
     [RelayCommand]
     private void ReplaceAllBonesFromFile()
     {
-        using WinForms.FileDialog dialog = new WinForms.OpenFileDialog
+        FileDialog dialog = new OpenFileDialog
         {
             InitialDirectory = PathC.GetDirectoryNameTry(_tool.DestinationWad.FileName),
             FileName = PathC.GetFileNameTry(_tool.DestinationWad.FileName),
             Filter = BaseGeometryImporter.FileExtensions.GetFilter(),
             Title = "Select a 3D file that you want to see imported."
         };
-        if (dialog.ShowDialog(Owner) != WinForms.DialogResult.OK)
+        if (dialog.ShowDialog(Owner) != true)
             return;
 
         var viewModel = new GeometryIOSettingsWindowViewModel(IOSettingsPresets.GeometryImportSettingsPresets);
@@ -643,9 +642,9 @@ public partial class SkeletonEditorWindowViewModel : ObservableObject, IModalDia
 
         if (_moveable.Meshes.All(m => !m.Hidden))
         {
-            if (DarkMessageBox.Show(Owner, "Do you want to hide all unskinned meshes for this model?\n" +
+            if (UserDialogs.Show(Owner, "Do you want to hide all unskinned meshes for this model?\n" +
                                     "You can unhide them later in the mesh editor.", "Hide unskinned meshes",
-                                    WinForms.MessageBoxButtons.YesNo, WinForms.MessageBoxIcon.Question) == WinForms.DialogResult.Yes)
+                                    DialogButtons.YesNo, DialogIcon.Question) == DialogChoice.Yes)
                 _moveable.Meshes.ForEach(m => m.Hidden = true);
         }
 
@@ -679,12 +678,12 @@ public partial class SkeletonEditorWindowViewModel : ObservableObject, IModalDia
 
         // More PUSH than POP is fine; the opposite leaks into previous moveables in the list.
         if (numPop > numPush)
-            return DarkMessageBox.Show(Owner, "Your mesh tree is unbalanced, you have added more POP than PUSH.",
-                "Error", WinForms.MessageBoxButtons.OKCancel, WinForms.MessageBoxIcon.Error) == WinForms.DialogResult.OK;
+            return UserDialogs.Show(Owner, "Your mesh tree is unbalanced, you have added more POP than PUSH.",
+                "Error", DialogButtons.OKCancel, DialogIcon.Error) == DialogChoice.OK;
 
         if (RootNodes.Count > 1)
-            return DarkMessageBox.Show(Owner, "Your mesh tree is unbalanced, you must have a single bone as root.",
-                "Error", WinForms.MessageBoxButtons.OKCancel, WinForms.MessageBoxIcon.Error) == WinForms.DialogResult.OK;
+            return UserDialogs.Show(Owner, "Your mesh tree is unbalanced, you must have a single bone as root.",
+                "Error", DialogButtons.OKCancel, DialogIcon.Error) == DialogChoice.OK;
 
         _moveable.Bones.Clear();
         foreach (var bone in _bones)
@@ -697,5 +696,5 @@ public partial class SkeletonEditorWindowViewModel : ObservableObject, IModalDia
         return true;
     }
 
-    private static WinForms.IWin32Window Owner => WinFormsDialogHelper.GetOpenFormOwner();
+    private static IWindowOwner Owner => WPFUtils.GetWindowOwner();
 }

@@ -248,7 +248,7 @@
         </Border>
 
         <!--  Center: Destination tree | 3D preview | Source tree, same 26/48/26 split as
-            FormMain.tableLayoutPanel1 (plus grid splitters, which the WinForms shell lacked).  -->
+            FormMain.tableLayoutPanel1 (plus grid splitters, which the previous shell lacked).  -->
         <Grid Margin="{x:Static darkUI:Defaults.SmallThickness}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="26*" MinWidth="150" />

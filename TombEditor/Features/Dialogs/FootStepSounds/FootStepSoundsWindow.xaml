@@ -1,74 +1,73 @@
 <Window
-	x:Class="TombEditor.Features.Dialogs.FootStepSounds.FootStepSoundsWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
-	xmlns:local="clr-namespace:TombEditor.Features.Dialogs.FootStepSounds"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
-	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
-	Title="{tombLib:Localize Title}"
-	Width="440"
-	Height="600"
-	MinWidth="380"
-	MinHeight="420"
-	d:DataContext="{d:DesignInstance Type=local:FootStepSoundsWindowViewModel}"
-	md:DialogServiceViews.IsRegistered="True"
-	Background="{DynamicResource Brush_Background}"
-	ShowInTaskbar="False"
-	Style="{DynamicResource CustomWindowStyle}"
-	WindowStartupLocation="CenterOwner"
-	mc:Ignorable="d">
+    x:Class="TombEditor.Features.Dialogs.FootStepSounds.FootStepSoundsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:local="clr-namespace:TombEditor.Features.Dialogs.FootStepSounds"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
-	<controls:SpacedGrid
-		Margin="{x:Static darkUI:Defaults.MediumThickness}"
-		RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    Title="{tombLib:Localize Title}"
+    Width="440"
+    Height="600"
+    MinWidth="380"
+    MinHeight="420"
+    d:DataContext="{d:DesignInstance Type=local:FootStepSoundsWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ShowInTaskbar="False"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+    <controls:SpacedGrid
+        Margin="{x:Static darkUI:Defaults.MediumThickness}"
+        RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
 
-		<controls:SearchableComboBox
-			Grid.Row="0"
-			DisplayMemberPath="Path"
-			ItemsSource="{Binding Textures}"
-			SelectedItem="{Binding SelectedTexture, Mode=TwoWay}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-		<local:FootStepSoundsTextureMapView x:Name="mapView" Grid.Row="1" />
+        <controls:SearchableComboBox
+            Grid.Row="0"
+            DisplayMemberPath="Path"
+            ItemsSource="{Binding Textures}"
+            SelectedItem="{Binding SelectedTexture, Mode=TwoWay}" />
 
-		<controls:SpacedGrid
-			Grid.Row="2"
-			ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
+        <local:FootStepSoundsTextureMapView x:Name="mapView" Grid.Row="1" />
 
-			<ComboBox
-				Grid.Column="0"
-				VerticalAlignment="Center"
-				ItemsSource="{Binding SoundTypes}"
-				SelectedIndex="{Binding SelectedSoundIndex, Mode=TwoWay}" />
+        <controls:SpacedGrid
+            Grid.Row="2"
+            ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-			<Button
-				Grid.Column="1"
-				Width="100"
-				Command="{Binding AssignSoundCommand}"
-				Content="{tombLib:Localize AssignSound}"
-				IsEnabled="{Binding CanAssign}" />
+            <ComboBox
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                ItemsSource="{Binding SoundTypes}"
+                SelectedIndex="{Binding SelectedSoundIndex, Mode=TwoWay}" />
 
-			<Button
-				Grid.Column="2"
-				Width="80"
-				Command="{Binding ConfirmCommand}"
-				Content="{tombLib:Localize ~Common.OK}"
-				IsCancel="True"
-				IsDefault="True" />
-		</controls:SpacedGrid>
-	</controls:SpacedGrid>
+            <Button
+                Grid.Column="1"
+                Width="100"
+                Command="{Binding AssignSoundCommand}"
+                Content="{tombLib:Localize AssignSound}"
+                IsEnabled="{Binding CanAssign}" />
+
+            <Button
+                Grid.Column="2"
+                Width="80"
+                Command="{Binding ConfirmCommand}"
+                Content="{tombLib:Localize ~Common.OK}"
+                IsCancel="True"
+                IsDefault="True" />
+        </controls:SpacedGrid>
+    </controls:SpacedGrid>
 </Window>

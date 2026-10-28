@@ -1,6 +1,6 @@
 #nullable enable
 
-using DarkUI.Config;
+using DarkUI.WPF.Config;
 using Microsoft.Extensions.DependencyInjection;
 using SoundTool.Services;
 using SoundTool.ViewModels;
@@ -12,10 +12,10 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using TombLib.Utils;
+using TombLib.Wad.Catalog;
 using TombLib.WPF;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
-using TombLib.Wad.Catalog;
 
 namespace SoundTool;
 
@@ -79,7 +79,7 @@ internal static class Program
 
         try
         {
-            if (!DefaultPaths.CheckCatalog(DefaultPaths.EngineCatalogsDirectory))
+            if (!DefaultPaths.CheckCatalog(DefaultPaths.EngineCatalogsDirectory, message => provider.GetRequiredService<IMessageService>().ShowError(message, "SoundTool")))
                 return;
 
             TrCatalog.LoadCatalog(DefaultPaths.EngineCatalogsDirectory);

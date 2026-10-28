@@ -3,7 +3,6 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <LangVersion>12</LangVersion>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
@@ -35,11 +34,9 @@
     <Compile Include="..\GlobalPaths.cs" Link="GlobalPaths.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DarkUI\DarkUI\DarkUI.csproj" />
     <ProjectReference Include="..\DarkUI\DarkUI.WPF\DarkUI.WPF.csproj" />
     <ProjectReference Include="..\TombLib\TombLib.Icons\TombLib.Icons.csproj" />
     <ProjectReference Include="..\TombLib\TombLib.WPF\TombLib.WPF.csproj" />
-    <ProjectReference Include="..\TombLib\TombLib.Forms\TombLib.Forms.csproj" />
     <ProjectReference Include="..\TombLib\TombLib\TombLib.csproj" />
   </ItemGroup>
   <ItemGroup>

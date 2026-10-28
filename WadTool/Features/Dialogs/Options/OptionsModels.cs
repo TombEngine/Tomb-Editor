@@ -1,8 +1,8 @@
 #nullable enable
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace WadTool.Features.Dialogs.Options
 {
@@ -21,7 +21,7 @@ namespace WadTool.Features.Dialogs.Options
 
     /// <summary>
     /// A single configurable option. <see cref="ConfigName"/> is the <see cref="Configuration"/>
-    /// property name the value is read from / written to by reflection, exactly like the WinForms
+    /// property name the value is read from / written to by reflection, exactly like the previous
     /// control <c>Tag</c> did in the old FormOptions.
     /// </summary>
     public partial class OptionItem : ObservableObject

@@ -1,6 +1,5 @@
 #nullable enable
 
-using IWinFormsWindow = System.Windows.Forms.IWin32Window;
 using System;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -8,25 +7,21 @@ using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
-using TombLib.Forms;
-using WinFormsControl = System.Windows.Forms.Control;
+using TombLib.Services;
+using TombLib.Utils;
 
 namespace TombLib.WPF;
 
-/// <summary>
-/// WPF rewrite of the WinForms <c>PopUpInfo</c>: a click-through, non-activating toast anchored to
-/// a (typically hosted WinForms) control, with the same slide/fade animation and reading-speed
-/// based timeout. The static <c>Show</c> entry point and the instance API mirror the legacy form.
-/// </summary>
+/// <summary>Displays a non-activating toast anchored to a WPF control.</summary>
 public class PopUpInfo : IDisposable
 {
-    private const float _shiftCoeff = 0.25f;   // Intro animation push coefficient
-    private const float _finalOpacity = 0.85f; // Non-animated opacity
-    private const float _avgReadSpeed = 2.5f;  // Average reading speed
+    private const float ShiftCoefficient = 0.25f;   // Intro animation push coefficient.
+    private const float FinalOpacity = 0.85f; // Non-animated opacity.
+    private const float AverageReadSpeed = 2.5f;  // Average reading speed.
 
-    private static readonly Color _warningColor = Color.FromRgb(255, 192, 128);
-    private static readonly Color _errorColor = Color.FromRgb(255, 128, 128);
-    private static readonly Color _infoColor = Color.FromRgb(192, 192, 255);
+    private static readonly Color WarningColor = Color.FromRgb(255, 192, 128);
+    private static readonly Color ErrorColor = Color.FromRgb(255, 128, 128);
+    private static readonly Color InfoColor = Color.FromRgb(192, 192, 255);
 
     private readonly DispatcherTimer _animTimer = new() { Interval = TimeSpan.FromMilliseconds(10) };
     private float _animProgress = 0.0f;
@@ -34,7 +29,6 @@ public class PopUpInfo : IDisposable
 
     private PopupAlignment _alignment;
     private int _padding;
-    private WinFormsControl? _parent;
     private FrameworkElement? _wpfParent;
     private System.Drawing.Point _parentPosition;
 
@@ -45,33 +39,8 @@ public class PopUpInfo : IDisposable
         _animTimer.Tick += UpdateTimer;
     }
 
-    // Generic function to call popup from any window
-    public static void Show(PopUpInfo popup, IWinFormsWindow? owner, WinFormsControl parent, string message, PopupType type)
-    {
-        // Legacy behaviour: with an owner set, only pop up while that window is active. The WPF
-        // shells pass a null owner, so check the anchor's root window instead.
-        if (owner != null && GetRootHandle(owner.Handle) != GetActiveWindow())
-            return;
-
-        switch (type)
-        {
-            case PopupType.None:
-                popup.ShowSimple(parent, message);
-                break;
-            case PopupType.Info:
-                popup.ShowInfo(parent, message);
-                break;
-            case PopupType.Warning:
-                popup.ShowWarning(parent, message);
-                break;
-            case PopupType.Error:
-                popup.ShowError(parent, message);
-                break;
-        }
-    }
-
     /// <summary>Shows a toast anchored to a native WPF view or rendering surface.</summary>
-    public static void Show(PopUpInfo popup, IWinFormsWindow? owner, FrameworkElement parent, string message, PopupType type)
+    public static void Show(PopUpInfo popup, IWindowOwner? owner, FrameworkElement parent, string message, PopupType type)
     {
         if (owner is not null && GetRootHandle(owner.Handle) != GetActiveWindow())
             return;
@@ -90,31 +59,10 @@ public class PopUpInfo : IDisposable
     public void Show(FrameworkElement parent, PopupAlignment alignment, string message, string title = "",
         PopupType type = PopupType.Info, int timeout = 0, int padding = 10)
     {
-        _parent = null;
         _wpfParent = parent;
         var owner = Window.GetWindow(parent);
         var handle = owner is null ? IntPtr.Zero : new WindowInteropHelper(owner).Handle;
         ShowCore(handle, parent.ActualWidth, parent.ActualHeight, alignment, message, title, type, timeout, padding);
-    }
-
-    // Common message helpers
-    public void ShowInfo(WinFormsControl parent, string message, string title = "Information")
-        => Show(parent, PopupAlignment.BottomRight, message, title, PopupType.Info);
-    public void ShowWarning(WinFormsControl parent, string message, string title = "Warning")
-        => Show(parent, PopupAlignment.BottomRight, message, title, PopupType.Warning);
-    public void ShowError(WinFormsControl parent, string message, string title = "Error")
-        => Show(parent, PopupAlignment.BottomRight, message, title, PopupType.Error);
-    public void ShowSimple(WinFormsControl parent, string message)
-        => Show(parent, PopupAlignment.BottomRight, message);
-
-    public void Show(WinFormsControl parent, PopupAlignment alignment, string message, string title = "",
-        PopupType type = PopupType.Info, int timeout = 0, int padding = 10)
-    {
-        _parent = parent;
-        _wpfParent = null;
-        double scale = parent.DeviceDpi / 96.0;
-        ShowCore(GetRootHandle(parent.Handle), parent.Width / scale, parent.Height / scale,
-            alignment, message, title, type, timeout, padding);
     }
 
     private void ShowCore(IntPtr owner, double width, double height, PopupAlignment alignment, string message, string title,
@@ -163,7 +111,7 @@ public class PopUpInfo : IDisposable
                 while (index < message.Length && char.IsWhiteSpace(message[index]))
                     index++;
             }
-            _animTimeout = wordCount * _avgReadSpeed;
+            _animTimeout = wordCount * AverageReadSpeed;
         }
 
         // Start intro animation
@@ -193,7 +141,6 @@ public class PopUpInfo : IDisposable
         _animTimer.Tick -= UpdateTimer;
         _window?.Close();
         _window = null;
-        _parent = null;
         _wpfParent = null;
     }
 
@@ -218,12 +165,12 @@ public class PopUpInfo : IDisposable
         if (_animProgress <= 1.0f)
         {
             // Smoothly descend pop-up window from parent control using sine function
-            var shiftDistance = popupHeight * _shiftCoeff;
+            var shiftDistance = popupHeight * ShiftCoefficient;
             currentShift = (int)(shiftDistance - (shiftDistance * Math.Sin(_animProgress * Math.PI / 2)));
 
             updateLocation = true; // Force location updating, as we are animating
 
-            _window.Opacity = _animProgress * _finalOpacity;
+            _window.Opacity = _animProgress * FinalOpacity;
         }
         else
         {
@@ -233,7 +180,7 @@ public class PopUpInfo : IDisposable
             {
                 if (outroTime < 0.0f)
                     outroTime = 0.0f;
-                _window.Opacity = outroTime * _finalOpacity;
+                _window.Opacity = outroTime * FinalOpacity;
                 if (outroTime == 0.0f)
                 {
                     _animProgress = 0.0f;
@@ -289,14 +236,6 @@ public class PopUpInfo : IDisposable
             return true;
         }
 
-        if (_parent is { IsDisposed: false, Disposing: false } control)
-        {
-            position = control.PointToScreen(System.Drawing.Point.Empty);
-            size = control.Size;
-            scale = control.DeviceDpi / 96.0;
-            return true;
-        }
-
         position = default;
         size = default;
         scale = 1.0;
@@ -314,10 +253,10 @@ public class PopUpInfo : IDisposable
     /// <summary>The actual toast surface: borderless, transparent to clicks, never activated.</summary>
     private sealed class ToastWindow : Window
     {
-        private const int GWL_EXSTYLE = -20;
-        private const int WS_EX_TRANSPARENT = 0x20;
-        private const int WS_EX_NOACTIVATE = 0x8000000;
-        private const int WS_EX_TOOLWINDOW = 0x80;
+        private const int ExtendedStyleIndex = -20;
+        private const int TransparentStyle = 0x20;
+        private const int NoActivateStyle = 0x8000000;
+        private const int ToolWindowStyle = 0x80;
 
         private readonly TextBlock _title;
         private readonly Border _titlePanel;
@@ -354,8 +293,8 @@ public class PopUpInfo : IDisposable
             SourceInitialized += (_, _) =>
             {
                 IntPtr hwnd = new WindowInteropHelper(this).Handle;
-                int exStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-                SetWindowLong(hwnd, GWL_EXSTYLE, exStyle | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW);
+                int exStyle = GetWindowLong(hwnd, ExtendedStyleIndex);
+                SetWindowLong(hwnd, ExtendedStyleIndex, exStyle | TransparentStyle | NoActivateStyle | ToolWindowStyle);
             };
         }
 
@@ -366,9 +305,9 @@ public class PopUpInfo : IDisposable
             _title.Text = title;
             _title.Foreground = new SolidColorBrush(type switch
             {
-                PopupType.Warning => _warningColor,
-                PopupType.Error => _errorColor,
-                _ => _infoColor
+                PopupType.Warning => WarningColor,
+                PopupType.Error => ErrorColor,
+                _ => InfoColor
             });
 
             MaxWidth = Math.Max(maxWidth, 60.0);

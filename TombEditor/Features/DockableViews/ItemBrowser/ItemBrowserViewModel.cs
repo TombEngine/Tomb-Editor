@@ -9,9 +9,9 @@ using System.Linq;
 using System.Windows.Input;
 using TombEditor.Features.DockableViews.ResourcePreview;
 using TombLib.LevelData;
-using TombLib.WPF;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
+using TombLib.WPF;
 
 namespace TombEditor.Features.DockableViews.ItemBrowser;
 
@@ -99,11 +99,11 @@ public partial class ItemBrowserViewModel : ObservableObject
 
         AddCommand = CommandHandler.GetCommand(
             "AddItem",
-            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWin32WindowOwner() });
+            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWindowOwner() });
 
         LocateCommand = CommandHandler.GetCommand(
             "LocateItem",
-            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWin32WindowOwner() });
+            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWindowOwner() });
 
         PreviousCommand = new RelayCommand(SelectPrevious, () => Items.Count > 0);
         NextCommand = new RelayCommand(SelectNext, () => Items.Count > 0);

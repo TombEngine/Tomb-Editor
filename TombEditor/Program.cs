@@ -1,6 +1,6 @@
 #nullable enable
 
-using DarkUI.Config;
+using DarkUI.WPF.Config;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using System;
@@ -12,17 +12,16 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using TombLib.Forms.Services;
 using TombLib.Graphics;
 using TombLib.LevelData;
 using TombLib.NG;
 using TombLib.Services;
 using TombLib.Services.Abstract;
 using TombLib.Utils;
+using TombLib.Wad.Catalog;
 using TombLib.WPF;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
-using TombLib.Wad.Catalog;
 
 namespace TombEditor;
 
@@ -132,7 +131,7 @@ public static class Program
 
     private static void RunEditor(Application application, Editor editor, string? startFile, Logging log, IMessageService messages)
     {
-        WpfMessageBoxBridge.Install();
+
 
         try
         {

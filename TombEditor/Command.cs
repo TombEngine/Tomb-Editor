@@ -1,6 +1,7 @@
 #nullable enable
 
-using DarkUI.Forms;
+using Clipboard = System.Windows.Clipboard;
+using Keys = TombLib.Input.EditorKey;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -9,29 +10,17 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Text;
-using System.Windows.Forms;
-using TombEditor.Controls;
 using TombEditor.Features.ColorEditing;
-using TombEditor.Features.DockableViews.ContentBrowser;
-using TombEditor.Features.DockableViews.ImportedGeometryBrowser;
-using TombEditor.Features.DockableViews.ItemBrowser;
-using TombEditor.Features.DockableViews.LightingPanel;
-using TombEditor.Features.DockableViews.ObjectList;
-using TombEditor.Features.DockableViews.PalettePanel;
-using TombEditor.Features.DockableViews.RoomOptionsPanel;
-using TombEditor.Features.DockableViews.SectorOptionsPanel;
-using TombEditor.Features.DockableViews.TexturePanel;
-using TombEditor.Features.DockableViews.TriggerList;
 using TombLib;
-using TombLib.Controls;
-using TombLib.Forms;
 using TombLib.LevelData;
 using TombLib.LevelData.SectorEnums;
 using TombLib.LevelData.SectorEnums.Extensions;
+using TombLib.Services;
 using TombLib.Utils;
-using TombLib.WPF;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
+using TombLib.WPF;
+using TombLib.WPF.Input;
 
 #nullable restore
 
@@ -64,12 +53,12 @@ namespace TombEditor
     public class CommandArgs
     {
         public Editor Editor;
-        public IWin32Window Window;
+        public IWindowOwner Window;
         public Keys KeyData = Keys.None;
 
         public CommandArgs() { }
 
-        public CommandArgs(IWin32Window window, Editor editor)
+        public CommandArgs(IWindowOwner window, Editor editor)
         {
             Window = window;
             Editor = editor;
@@ -123,8 +112,8 @@ namespace TombEditor
 
             var window = args.Window;
 
-            if (!IsValidWindow(window))
-                window = WPFUtils.GetWin32WindowOwner();
+            if (!window.IsValid())
+                window = WPFUtils.GetWindowOwner();
 
             return new CommandArgs
             {
@@ -132,14 +121,6 @@ namespace TombEditor
                 Window = window,
                 KeyData = args.KeyData
             };
-        }
-
-        private static bool IsValidWindow(IWin32Window window)
-        {
-            if (window is null || window.Handle == IntPtr.Zero)
-                return false;
-
-            return window is not Control control || !control.IsDisposed;
         }
 
         private static void GenericDirectionalControlCommand(CommandArgs args, SectorVerticalPart surface, int increment, bool smooth, bool oppositeDiagonal)
@@ -236,7 +217,7 @@ namespace TombEditor
             {
                 if (EditorActions.CheckForRoomAndSectorSelection(args.Window))
                 {
-                    if (Control.ModifierKeys.HasFlag(Keys.Shift) || args.Editor.SelectedObject == null ||
+                    if (KeyboardState.ModifierKeys.HasFlag(Keys.Shift) || args.Editor.SelectedObject == null ||
                         !(args.Editor.SelectedObject is PositionBasedObjectInstance))
                         EditorActions.AddTrigger(args.Editor.SelectedRoom, args.Editor.SelectedSectors.Area, args.Window, args.Editor.BookmarkedObject);
                     else
@@ -872,8 +853,8 @@ namespace TombEditor
 
             AddCommand("DeleteMissingObjects", "Delete missing objects", CommandType.Edit, delegate (CommandArgs args)
             {
-                if (DarkMessageBox.Show(args.Window, "Do you want to delete all missing objects in all rooms?\nThis action can't be undone and will also remove associated triggers.",
-                                       "Delete all missing objects", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (UserDialogs.Show(args.Window, "Do you want to delete all missing objects in all rooms?\nThis action can't be undone and will also remove associated triggers.",
+                                       "Delete all missing objects", DialogButtons.YesNo, DialogIcon.Question) == DialogChoice.Yes)
                 {
                     foreach (var room in args.Editor.Level.ExistingRooms)
                     {
@@ -895,8 +876,8 @@ namespace TombEditor
 
             AddCommand("DeleteAllObjects", "Delete objects in selected rooms", CommandType.Edit, delegate (CommandArgs args)
             {
-                if (DarkMessageBox.Show(args.Window, "Do you want to delete all objects in selected rooms? This action can't be undone.",
-                                       "Delete all objects", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (UserDialogs.Show(args.Window, "Do you want to delete all objects in selected rooms? This action can't be undone.",
+                                       "Delete all objects", DialogButtons.YesNo, DialogIcon.Question) == DialogChoice.Yes)
                 {
 
                     foreach (var room in args.Editor.SelectedRooms)
@@ -915,8 +896,8 @@ namespace TombEditor
 
             AddCommand("DeleteAllTriggers", "Delete triggers in selected rooms", CommandType.Edit, delegate (CommandArgs args)
             {
-                if (DarkMessageBox.Show(args.Window, "Do you want to delete all triggers in selected rooms? This action can't be undone.",
-                                       "Delete all triggers", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (UserDialogs.Show(args.Window, "Do you want to delete all triggers in selected rooms? This action can't be undone.",
+                                       "Delete all triggers", DialogButtons.YesNo, DialogIcon.Question) == DialogChoice.Yes)
                 {
                     foreach (var room in args.Editor.SelectedRooms)
                     {
@@ -1384,9 +1365,9 @@ namespace TombEditor
 
                     if (File.Exists(pngFilePath))
                     {
-                        if (DarkMessageBox.Show(args.Window,
+                        if (UserDialogs.Show(args.Window,
                                 "There is already a file at \"" + pngFilePath + "\". Continue and overwrite the file?",
-                                "File already exists", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                                "File already exists", DialogButtons.YesNo, DialogIcon.Warning) != DialogChoice.Yes)
                             return;
                     }
 
@@ -2333,15 +2314,15 @@ namespace TombEditor
 
             AddCommand("SearchMenus", "Search menu entries", CommandType.General, delegate (CommandArgs args)
             {
-                // Literal key kept for event-contract compatibility: the WinForms FormMain
+                // Literal key kept for event-contract compatibility: the previous FormMain
                 // (removed with the WPF migration) listened for this container name.
                 args.Editor.ActivateDefaultControl("FormMain");
             });
 
             AddCommand("DeleteAllLights", "Delete lights in selected rooms", CommandType.Edit, delegate (CommandArgs args)
             {
-                if (DarkMessageBox.Show(args.Window, "Do you want to delete all lights in level? This action can't be undone.",
-                                   "Delete all lights", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                if (UserDialogs.Show(args.Window, "Do you want to delete all lights in level? This action can't be undone.",
+                                   "Delete all lights", DialogButtons.YesNo, DialogIcon.Question) == DialogChoice.No)
                     return;
 
                 foreach (var room in args.Editor.SelectedRooms)

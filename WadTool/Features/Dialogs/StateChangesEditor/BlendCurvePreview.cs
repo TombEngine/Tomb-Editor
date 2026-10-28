@@ -8,7 +8,7 @@ using TombLib.Types;
 namespace WadTool.Features.Dialogs.StateChangesEditor;
 
 /// <summary>
-/// Lightweight blend curve preview (ported from the legacy WinForms
+/// Lightweight blend curve preview (ported from the legacy previous
 /// <c>BezierCurveEditor.DrawPreview</c>): renders a curve inside the blend curve grid cells.
 /// </summary>
 public sealed class BlendCurvePreview : FrameworkElement

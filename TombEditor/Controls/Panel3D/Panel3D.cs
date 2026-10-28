@@ -1,5 +1,12 @@
 #nullable enable
 
+using Cursors = System.Windows.Input.Cursors;
+using DragEventArgs = TombLib.Input.PointerDragEventArgs;
+using KeyEventArgs = TombLib.Input.EditorKeyEventArgs;
+using Keys = TombLib.Input.EditorKey;
+using MouseEventArgs = TombLib.Input.PointerEventArgs;
+using PreviewKeyDownEventArgs = TombLib.Input.PreviewEditorKeyEventArgs;
+using RenderingPanel = TombLib.WPF.Controls.Rendering.RenderingPanel;
 using SharpDX.Toolkit.Graphics;
 using System;
 using System.Collections.Generic;
@@ -9,17 +16,15 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using System.Windows.Threading;
 using TombEditor.Features.FlybyTimeline.Preview;
 using TombLib;
-using TombLib.Controls;
 using TombLib.Graphics;
 using TombLib.Graphics.Primitives;
 using TombLib.LevelData;
 using TombLib.Rendering;
 using TombLib.Utils;
-using RenderingPanel = TombLib.Controls.Wpf.RenderingPanel;
+using TombLib.WPF.Controls.Rendering;
 
 namespace TombEditor.Controls.Panel3D
 {

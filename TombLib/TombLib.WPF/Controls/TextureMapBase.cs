@@ -16,11 +16,11 @@ using TombLib.Utils;
 namespace TombLib.WPF.Controls;
 
 /// <summary>
-/// WPF port of the legacy WinForms <c>TombLib.Controls.TextureMapBase</c>.
+/// WPF port of the previous <c>TombLib.Controls.TextureMapBase</c>.
 /// </summary>
 /// <remarks>
 /// Renders a <see cref="Texture"/> with a draggable rectangular selection (and free-corner refinement)
-/// using <see cref="DrawingContext"/>. Mouse and keyboard input mirror the WinForms control:
+/// using <see cref="DrawingContext"/>. Mouse and keyboard input mirror the shared control:
 /// left-drag selects, right-drag pans, Ctrl + right-drag zooms, wheel zooms (or pans when configured),
 /// arrow keys pan and PageUp/PageDown zoom while focused.
 /// </remarks>
@@ -800,7 +800,7 @@ public abstract class TextureMapBase : Control
 
     private static DrawingBrush CreateCheckerBrush()
     {
-        // Classic 8×8 alpha-checker pattern used as the texture-map background.
+        // Classic 8x8 alpha-checker pattern used as the texture-map background.
         var dark = new SolidColorBrush(Color.FromRgb(102, 102, 102));
         var light = new SolidColorBrush(Color.FromRgb(153, 153, 153));
         dark.Freeze();

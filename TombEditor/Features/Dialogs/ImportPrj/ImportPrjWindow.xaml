@@ -1,109 +1,108 @@
 <Window
-	x:Class="TombEditor.Features.Dialogs.ImportPrj.ImportPrjWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
-	xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.ImportPrj"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
-	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
-	Title="{tombLib:Localize Title}"
-	Width="520"
-	d:DataContext="{d:DesignInstance Type=vm:ImportPrjWindowViewModel}"
-	md:DialogServiceViews.IsRegistered="True"
-	Background="{DynamicResource Brush_Background}"
-	ResizeMode="NoResize"
-	ShowInTaskbar="False"
-	SizeToContent="Height"
-	Style="{DynamicResource CustomWindowStyle}"
-	WindowStartupLocation="CenterOwner"
-	mc:Ignorable="d">
+    x:Class="TombEditor.Features.Dialogs.ImportPrj.ImportPrjWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.ImportPrj"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
-	<controls:SpacedGrid
-		Margin="{x:Static darkUI:Defaults.MediumThickness}"
-		ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}"
-		RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    Title="{tombLib:Localize Title}"
+    Width="520"
+    d:DataContext="{d:DesignInstance Type=vm:ImportPrjWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    SizeToContent="Height"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="Auto" />
-			<ColumnDefinition Width="*" />
-			<ColumnDefinition Width="Auto" />
-		</Grid.ColumnDefinitions>
+    <controls:SpacedGrid
+        Margin="{x:Static darkUI:Defaults.MediumThickness}"
+        ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}"
+        RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
 
-		<Label
-			Grid.Row="0"
-			Grid.Column="0"
-			VerticalAlignment="Center"
-			Content="{tombLib:Localize PrjFile}" />
-		<TextBox
-			Grid.Row="0"
-			Grid.Column="1"
-			Grid.ColumnSpan="2"
-			VerticalAlignment="Center"
-			IsReadOnly="True"
-			Text="{Binding PrjPath, Mode=OneWay}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
 
-		<Label
-			Grid.Row="1"
-			Grid.Column="0"
-			VerticalAlignment="Center"
-			Content="{tombLib:Localize SoundsCatalog}"
-			ToolTip="{tombLib:Localize SoundsCatalogTooltip}" />
-		<TextBox
-			Grid.Row="1"
-			Grid.Column="1"
-			VerticalAlignment="Center"
-			Text="{Binding SoundsPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-		<Button
-			Grid.Row="1"
-			Grid.Column="2"
-			Width="80"
-			VerticalAlignment="Center"
-			Command="{Binding BrowseSoundsCatalogCommand}"
-			Content="{tombLib:Localize ~Generic.Browse}" />
+        <Label
+            Grid.Row="0"
+            Grid.Column="0"
+            VerticalAlignment="Center"
+            Content="{tombLib:Localize PrjFile}" />
+        <TextBox
+            Grid.Row="0"
+            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            VerticalAlignment="Center"
+            IsReadOnly="True"
+            Text="{Binding PrjPath, Mode=OneWay}" />
 
-		<CheckBox
-			Grid.Row="2"
-			Grid.Column="0"
-			Grid.ColumnSpan="3"
-			Content="{tombLib:Localize RespectMousepatch}"
-			IsChecked="{Binding RespectMousepatchOnFlybyHandling, Mode=TwoWay}"
-			ToolTip="{tombLib:Localize RespectMousepatchTooltip}" />
+        <Label
+            Grid.Row="1"
+            Grid.Column="0"
+            VerticalAlignment="Center"
+            Content="{tombLib:Localize SoundsCatalog}"
+            ToolTip="{tombLib:Localize SoundsCatalogTooltip}" />
+        <TextBox
+            Grid.Row="1"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            Text="{Binding SoundsPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <Button
+            Grid.Row="1"
+            Grid.Column="2"
+            Width="80"
+            VerticalAlignment="Center"
+            Command="{Binding BrowseSoundsCatalogCommand}"
+            Content="{tombLib:Localize ~Generic.Browse}" />
 
-		<CheckBox
-			Grid.Row="3"
-			Grid.Column="0"
-			Grid.ColumnSpan="3"
-			Content="{tombLib:Localize UseHalfPixelCorrection}"
-			IsChecked="{Binding UseHalfPixelCorrection, Mode=TwoWay}"
-			ToolTip="{tombLib:Localize UseHalfPixelCorrectionTooltip}" />
+        <CheckBox
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Content="{tombLib:Localize RespectMousepatch}"
+            IsChecked="{Binding RespectMousepatchOnFlybyHandling, Mode=TwoWay}"
+            ToolTip="{tombLib:Localize RespectMousepatchTooltip}" />
 
-		<controls:SpacedStack
-			Grid.Row="4"
-			Grid.Column="0"
-			Grid.ColumnSpan="3"
-			HorizontalAlignment="Right"
-			Orientation="Horizontal"
-			Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-			<Button
-				Width="80"
-				Command="{Binding ConfirmCommand}"
-				Content="{tombLib:Localize ~Common.OK}"
-				IsDefault="True" />
-			<Button
-				Width="80"
-				Command="{Binding CancelCommand}"
-				Content="{tombLib:Localize ~Common.Cancel}"
-				IsCancel="True" />
-		</controls:SpacedStack>
-	</controls:SpacedGrid>
+        <CheckBox
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Content="{tombLib:Localize UseHalfPixelCorrection}"
+            IsChecked="{Binding UseHalfPixelCorrection, Mode=TwoWay}"
+            ToolTip="{tombLib:Localize UseHalfPixelCorrectionTooltip}" />
+
+        <controls:SpacedStack
+            Grid.Row="4"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <Button
+                Width="80"
+                Command="{Binding ConfirmCommand}"
+                Content="{tombLib:Localize ~Common.OK}"
+                IsDefault="True" />
+            <Button
+                Width="80"
+                Command="{Binding CancelCommand}"
+                Content="{tombLib:Localize ~Common.Cancel}"
+                IsCancel="True" />
+        </controls:SpacedStack>
+    </controls:SpacedGrid>
 </Window>

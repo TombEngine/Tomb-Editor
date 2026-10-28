@@ -38,9 +38,7 @@ public partial class OperationDialogWindow : Window
             _taskbarHwnd = interop.Owner != IntPtr.Zero ? interop.Owner : interop.Handle;
             _taskbarWindow = FindWindowByHandle(_taskbarHwnd);
 
-            // Prefer WPF's first-class taskbar support (it initializes ITaskbarList3 properly and
-            // tracks taskbar button creation); the raw HWND helper below stays as fallback for
-            // WinForms owners (legacy --winforms shell).
+            // Prefer WPF taskbar support, with the native owner handle as a fallback.
             if (_taskbarWindow is not null && _taskbarWindow.TaskbarItemInfo is null)
                 _taskbarWindow.TaskbarItemInfo = new TaskbarItemInfo();
 
@@ -140,7 +138,7 @@ public partial class OperationDialogWindow : Window
         if (_taskbarWindow?.TaskbarItemInfo is { } taskbar)
         {
             // The shell switches to determinate mode implicitly on SetProgressValue, but
-            // TaskbarItemInfo does not — make sure a state is set for operations created with
+            // TaskbarItemInfo does not - make sure a state is set for operations created with
             // noProgressBar that still report numeric progress (parity with the legacy dialog).
             if (taskbar.ProgressState == TaskbarItemProgressState.None)
                 taskbar.ProgressState = TaskbarItemProgressState.Normal;

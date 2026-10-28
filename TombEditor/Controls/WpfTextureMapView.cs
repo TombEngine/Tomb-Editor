@@ -1,7 +1,6 @@
 #nullable enable
 
 using System.Windows.Input;
-using System.Windows.Media;
 using TombLib.LevelData;
 using TombLib.Utils;
 using TombLib.WPF;
@@ -10,7 +9,7 @@ using TombLib.WPF.Controls;
 namespace TombEditor.Controls;
 
 /// <summary>
-/// WPF texture-map view backed by the global editor's configuration. Mirrors the WinForms
+/// WPF texture-map view backed by the global editor's configuration. Mirrors the previous
 /// <c>PanelTextureMap</c> contract so per-dialog subclasses only override behavioural hooks.
 /// </summary>
 public class WpfTextureMapView : TextureMapBase
@@ -49,12 +48,12 @@ public class WpfTextureMapView : TextureMapBase
 
     protected override void OnMouseDown(MouseButtonEventArgs e)
     {
-        // Mirror the WinForms PanelTextureMap "click to load" behaviour: when there is no
+        // Mirror the previous PanelTextureMap "click to load" behaviour: when there is no
         // valid texture, a left-click triggers the same load/reload dialog the toolbar uses
         // instead of falling through to selection input.
         if (!(base.VisibleTexture is { IsAvailable: true }))
         {
-            var owner = WPFUtils.GetWin32WindowOwner();
+            var owner = WPFUtils.GetWindowOwner();
             var current = base.VisibleTexture as LevelTexture;
 
             if (current is not null)

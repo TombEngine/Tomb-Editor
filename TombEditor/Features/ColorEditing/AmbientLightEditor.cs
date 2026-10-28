@@ -2,8 +2,8 @@
 
 using System.Numerics;
 using TombLib;
-using TombLib.Forms;
 using TombLib.LevelData;
+using TombLib.Utils;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
 

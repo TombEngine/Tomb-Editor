@@ -135,7 +135,7 @@ namespace TombEditor
                         return false;
                 }
                 return result;
-            };            
+            };
 
             UndoAction = () =>
             {
@@ -503,7 +503,7 @@ namespace TombEditor
             Editor = editor;
 
             UndoStackChanged += (s, e) => Editor.UndoStackChanged();
-            MessageSent += (s, e) => Editor.SendMessage(e.Message, TombLib.Forms.PopupType.Warning);
+            MessageSent += (s, e) => Editor.SendMessage(e.Message, TombLib.Utils.PopupType.Warning);
         }
 
         internal void BeginLightingBatch()

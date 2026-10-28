@@ -507,7 +507,7 @@ public partial class Panel2DGrid
         }
         else if (selectedSectorObject is TriggerInstance)
         {
-            EditorActions.EditObject(selectedSectorObject, WinFormsDialogHelper.GetOpenFormOwner());
+            EditorActions.EditObject(selectedSectorObject, WPFUtils.GetWindowOwner());
         }
     }
 

@@ -1,446 +1,445 @@
 <UserControl
-	x:Class="TombEditor.Features.Dialogs.EventSetEditor.NodeEditorView"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
-	xmlns:local="clr-namespace:TombEditor.Features.Dialogs.EventSetEditor"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
-	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
-	d:DataContext="{d:DesignInstance Type=local:NodeEditorViewModel}"
-	d:DesignHeight="400"
-	d:DesignWidth="640"
-	md:DialogServiceViews.IsRegistered="True"
-	Focusable="True"
-	KeyDown="OnKeyDown"
-	mc:Ignorable="d">
+    x:Class="TombEditor.Features.Dialogs.EventSetEditor.NodeEditorView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:local="clr-namespace:TombEditor.Features.Dialogs.EventSetEditor"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
-	<UserControl.Resources>
-		<BooleanToVisibilityConverter x:Key="BoolToVis" />
-		<local:LinkBrushConverter x:Key="LinkBrushConverter" />
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    d:DataContext="{d:DesignInstance Type=local:NodeEditorViewModel}"
+    d:DesignHeight="400"
+    d:DesignWidth="640"
+    Focusable="True"
+    KeyDown="OnKeyDown"
+    mc:Ignorable="d">
 
-		<!--  Grid lines overlay  -->
-		<DrawingBrush
-			x:Key="GridBrush"
-			TileMode="Tile"
-			Viewport="0,0,32,32"
-			ViewportUnits="Absolute">
-			<DrawingBrush.Drawing>
-				<GeometryDrawing>
-					<GeometryDrawing.Geometry>
-						<RectangleGeometry Rect="0,0,32,32" />
-					</GeometryDrawing.Geometry>
-					<GeometryDrawing.Pen>
-						<Pen Brush="#1AFFFFFF" Thickness="1" />
-					</GeometryDrawing.Pen>
-				</GeometryDrawing>
-			</DrawingBrush.Drawing>
-		</DrawingBrush>
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <local:LinkBrushConverter x:Key="LinkBrushConverter" />
 
-		<!--  Argument editors  -->
-		<DataTemplate x:Key="ArgBoolean">
-			<CheckBox Margin="0,2,0,0" Content="{Binding Caption}" IsChecked="{Binding BoolValue, Mode=TwoWay}" ToolTip="{Binding Description}" />
-		</DataTemplate>
+        <!--  Grid lines overlay  -->
+        <DrawingBrush
+            x:Key="GridBrush"
+            TileMode="Tile"
+            Viewport="0,0,32,32"
+            ViewportUnits="Absolute">
+            <DrawingBrush.Drawing>
+                <GeometryDrawing>
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="0,0,32,32" />
+                    </GeometryDrawing.Geometry>
+                    <GeometryDrawing.Pen>
+                        <Pen Brush="#1AFFFFFF" Thickness="1" />
+                    </GeometryDrawing.Pen>
+                </GeometryDrawing>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
 
-		<DataTemplate x:Key="ArgNumerical">
-			<StackPanel Margin="0,2,0,0">
-				<TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
-				<controls:NumericUpDown
-					DecimalPlaces="{Binding DecimalPlaces}"
-					Increment="{Binding Increment}"
-					LargeIncrement="{Binding LargeIncrement}"
-					Maximum="{Binding Maximum}"
-					Minimum="{Binding Minimum}"
-					Value="{Binding NumValue, Mode=TwoWay}" />
-			</StackPanel>
-		</DataTemplate>
+        <!--  Argument editors  -->
+        <DataTemplate x:Key="ArgBoolean">
+            <CheckBox Margin="0,2,0,0" Content="{Binding Caption}" IsChecked="{Binding BoolValue, Mode=TwoWay}" ToolTip="{Binding Description}" />
+        </DataTemplate>
 
-		<DataTemplate x:Key="ArgVector2">
-			<StackPanel Margin="0,2,0,0">
-				<TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
-				<UniformGrid Columns="2">
-					<controls:NumericUpDown Margin="0,0,2,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding X, Mode=TwoWay}" />
-					<controls:NumericUpDown Margin="2,0,0,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding Y, Mode=TwoWay}" />
-				</UniformGrid>
-			</StackPanel>
-		</DataTemplate>
+        <DataTemplate x:Key="ArgNumerical">
+            <StackPanel Margin="0,2,0,0">
+                <TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
+                <controls:NumericUpDown
+                    DecimalPlaces="{Binding DecimalPlaces}"
+                    Increment="{Binding Increment}"
+                    LargeIncrement="{Binding LargeIncrement}"
+                    Maximum="{Binding Maximum}"
+                    Minimum="{Binding Minimum}"
+                    Value="{Binding NumValue, Mode=TwoWay}" />
+            </StackPanel>
+        </DataTemplate>
 
-		<DataTemplate x:Key="ArgVector3">
-			<StackPanel
-				Margin="0,2,0,0"
-				AllowDrop="True"
-				DragOver="OnArgDragOver"
-				Drop="OnArgDrop">
-				<TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
-				<UniformGrid Columns="3">
-					<controls:NumericUpDown Margin="0,0,2,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding X, Mode=TwoWay}" />
-					<controls:NumericUpDown Margin="2,0,2,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding Y, Mode=TwoWay}" />
-					<controls:NumericUpDown Margin="2,0,0,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding Z, Mode=TwoWay}" />
-				</UniformGrid>
-			</StackPanel>
-		</DataTemplate>
+        <DataTemplate x:Key="ArgVector2">
+            <StackPanel Margin="0,2,0,0">
+                <TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
+                <UniformGrid Columns="2">
+                    <controls:NumericUpDown Margin="0,0,2,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding X, Mode=TwoWay}" />
+                    <controls:NumericUpDown Margin="2,0,0,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding Y, Mode=TwoWay}" />
+                </UniformGrid>
+            </StackPanel>
+        </DataTemplate>
 
-		<DataTemplate x:Key="ArgColor">
-			<StackPanel
-				Margin="0,2,0,0"
-				AllowDrop="True"
-				DragOver="OnArgDragOver"
-				Drop="OnArgDrop">
-				<TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
-				<Button
-					Height="22"
-					Background="{Binding ColorBrush}"
-					Command="{Binding PickColorCommand}"
-					Content="" />
-			</StackPanel>
-		</DataTemplate>
+        <DataTemplate x:Key="ArgVector3">
+            <StackPanel
+                Margin="0,2,0,0"
+                AllowDrop="True"
+                DragOver="OnArgDragOver"
+                Drop="OnArgDrop">
+                <TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
+                <UniformGrid Columns="3">
+                    <controls:NumericUpDown Margin="0,0,2,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding X, Mode=TwoWay}" />
+                    <controls:NumericUpDown Margin="2,0,2,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding Y, Mode=TwoWay}" />
+                    <controls:NumericUpDown Margin="2,0,0,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding Z, Mode=TwoWay}" />
+                </UniformGrid>
+            </StackPanel>
+        </DataTemplate>
 
-		<DataTemplate x:Key="ArgTime">
-			<StackPanel Margin="0,2,0,0">
-				<TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
-				<UniformGrid Columns="4">
-					<controls:NumericUpDown Margin="0,0,2,0" Maximum="999" Minimum="0" ToolTip="{tombLib:Localize Hours}" Value="{Binding Hours, Mode=TwoWay}" />
-					<controls:NumericUpDown Margin="2,0,2,0" Maximum="59" Minimum="0" ToolTip="{tombLib:Localize Minutes}" Value="{Binding Minutes, Mode=TwoWay}" />
-					<controls:NumericUpDown Margin="2,0,2,0" Maximum="59" Minimum="0" ToolTip="{tombLib:Localize Seconds}" Value="{Binding Seconds, Mode=TwoWay}" />
-					<controls:NumericUpDown Margin="2,0,0,0" Maximum="99" Minimum="0" ToolTip="{tombLib:Localize Centiseconds}" Value="{Binding Cents, Mode=TwoWay}" />
-				</UniformGrid>
-			</StackPanel>
-		</DataTemplate>
+        <DataTemplate x:Key="ArgColor">
+            <StackPanel
+                Margin="0,2,0,0"
+                AllowDrop="True"
+                DragOver="OnArgDragOver"
+                Drop="OnArgDrop">
+                <TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
+                <Button
+                    Height="22"
+                    Background="{Binding ColorBrush}"
+                    Command="{Binding PickColorCommand}"
+                    Content="" />
+            </StackPanel>
+        </DataTemplate>
 
-		<DataTemplate x:Key="ArgString">
-			<StackPanel Margin="0,2,0,0">
-				<TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
-				<TextBox
-					AcceptsReturn="{Binding IsMultiline}"
-					MaxHeight="80"
-					Text="{Binding StringValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-					TextWrapping="Wrap"
-					VerticalScrollBarVisibility="Auto" />
-			</StackPanel>
-		</DataTemplate>
+        <DataTemplate x:Key="ArgTime">
+            <StackPanel Margin="0,2,0,0">
+                <TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
+                <UniformGrid Columns="4">
+                    <controls:NumericUpDown Margin="0,0,2,0" Maximum="999" Minimum="0" ToolTip="{tombLib:Localize Hours}" Value="{Binding Hours, Mode=TwoWay}" />
+                    <controls:NumericUpDown Margin="2,0,2,0" Maximum="59" Minimum="0" ToolTip="{tombLib:Localize Minutes}" Value="{Binding Minutes, Mode=TwoWay}" />
+                    <controls:NumericUpDown Margin="2,0,2,0" Maximum="59" Minimum="0" ToolTip="{tombLib:Localize Seconds}" Value="{Binding Seconds, Mode=TwoWay}" />
+                    <controls:NumericUpDown Margin="2,0,0,0" Maximum="99" Minimum="0" ToolTip="{tombLib:Localize Centiseconds}" Value="{Binding Cents, Mode=TwoWay}" />
+                </UniformGrid>
+            </StackPanel>
+        </DataTemplate>
 
-		<DataTemplate x:Key="ArgList">
-			<StackPanel
-				Margin="0,2,0,0"
-				AllowDrop="True"
-				DragOver="OnArgDragOver"
-				Drop="OnArgDrop">
-				<TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
-				<DockPanel>
-					<Button
-						Width="24"
-						DockPanel.Dock="Right"
-						Command="{Binding RunActionCommand}"
-						Content="..."
-						Visibility="{Binding HasAction, Converter={StaticResource BoolToVis}}" />
-					<ComboBox
-						DisplayMemberPath="Display"
-						ItemsSource="{Binding Items}"
-						SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
-				</DockPanel>
-			</StackPanel>
-		</DataTemplate>
+        <DataTemplate x:Key="ArgString">
+            <StackPanel Margin="0,2,0,0">
+                <TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
+                <TextBox
+                    AcceptsReturn="{Binding IsMultiline}"
+                    MaxHeight="80"
+                    Text="{Binding StringValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="Wrap"
+                    VerticalScrollBarVisibility="Auto" />
+            </StackPanel>
+        </DataTemplate>
 
-		<local:ArgumentTemplateSelector
-			x:Key="ArgSelector"
-			BooleanTemplate="{StaticResource ArgBoolean}"
-			ColorTemplate="{StaticResource ArgColor}"
-			ListTemplate="{StaticResource ArgList}"
-			NumericalTemplate="{StaticResource ArgNumerical}"
-			StringTemplate="{StaticResource ArgString}"
-			TimeTemplate="{StaticResource ArgTime}"
-			Vector2Template="{StaticResource ArgVector2}"
-			Vector3Template="{StaticResource ArgVector3}" />
-	</UserControl.Resources>
+        <DataTemplate x:Key="ArgList">
+            <StackPanel
+                Margin="0,2,0,0"
+                AllowDrop="True"
+                DragOver="OnArgDragOver"
+                Drop="OnArgDrop">
+                <TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
+                <DockPanel>
+                    <Button
+                        Width="24"
+                        DockPanel.Dock="Right"
+                        Command="{Binding RunActionCommand}"
+                        Content="..."
+                        Visibility="{Binding HasAction, Converter={StaticResource BoolToVis}}" />
+                    <ComboBox
+                        DisplayMemberPath="Display"
+                        ItemsSource="{Binding Items}"
+                        SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+                </DockPanel>
+            </StackPanel>
+        </DataTemplate>
 
-	<DockPanel LastChildFill="True">
+        <local:ArgumentTemplateSelector
+            x:Key="ArgSelector"
+            BooleanTemplate="{StaticResource ArgBoolean}"
+            ColorTemplate="{StaticResource ArgColor}"
+            ListTemplate="{StaticResource ArgList}"
+            NumericalTemplate="{StaticResource ArgNumerical}"
+            StringTemplate="{StaticResource ArgString}"
+            TimeTemplate="{StaticResource ArgTime}"
+            Vector2Template="{StaticResource ArgVector2}"
+            Vector3Template="{StaticResource ArgVector3}" />
+    </UserControl.Resources>
 
-		<!--  Toolbar  -->
-		<controls:SpacedStack
-			DockPanel.Dock="Top"
-			Margin="0,0,0,6"
-			Orientation="Horizontal"
-			Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
-			<TextBlock VerticalAlignment="Center" Text="{tombLib:Localize Function}" />
-			<controls:SearchableComboBox
-				Width="240"
-				DisplayMemberPath="Name"
-				ItemsSource="{Binding Functions}"
-				SelectedItem="{Binding FunctionToAdd, Mode=TwoWay}">
-				<controls:SearchableComboBox.GroupStyle>
-					<GroupStyle>
-						<GroupStyle.HeaderTemplate>
-							<DataTemplate>
-								<TextBlock
-									Margin="2,4,0,2"
-									FontWeight="Bold"
-									Foreground="{DynamicResource Brush_Text_Warning}"
-									Text="{Binding Name}" />
-							</DataTemplate>
-						</GroupStyle.HeaderTemplate>
-					</GroupStyle>
-				</controls:SearchableComboBox.GroupStyle>
-			</controls:SearchableComboBox>
-			<Button
-				Width="56"
-				Command="{Binding AddNodeCommand}"
-				Content="{tombLib:Localize Add}" />
+    <DockPanel LastChildFill="True">
 
-			<!--  Node actions (operate on the last selected node).  -->
-			<Button
-				Command="{Binding RenameSelectedCommand}"
-				Content="{tombLib:Localize Rename}"
-				ToolTip="{tombLib:Localize RenameTooltip}" />
-			<Button
-				Command="{Binding ColorSelectedCommand}"
-				Content="{tombLib:Localize Colour}"
-				ToolTip="{tombLib:Localize ColourTooltip}" />
-			<Button
-				Command="{Binding LockSelectedCommand}"
-				Content="{tombLib:Localize Lock}"
-				ToolTip="{tombLib:Localize LockTooltip}" />
-			<Button
-				Command="{Binding DeleteSelectedNodeCommand}"
-				Content="{tombLib:Localize Delete}"
-				ToolTip="{tombLib:Localize DeleteTooltip}" />
-			<Button
-				Command="{Binding ExportSelectedCommand}"
-				Content="{tombLib:Localize Export}"
-				ToolTip="{tombLib:Localize ExportTooltip}" />
-			<Button
-				Command="{Binding ClearNodesCommand}"
-				Content="{tombLib:Localize Clear}"
-				ToolTip="{tombLib:Localize ClearTooltip}" />
-			<Button
-				Command="{Binding FindNodeCommand}"
-				Content="{tombLib:Localize Find}"
-				ToolTip="{tombLib:Localize FindTooltip}" />
+        <!--  Toolbar  -->
+        <controls:SpacedStack
+            DockPanel.Dock="Top"
+            Margin="0,0,0,6"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <TextBlock VerticalAlignment="Center" Text="{tombLib:Localize Function}" />
+            <controls:SearchableComboBox
+                Width="240"
+                DisplayMemberPath="Name"
+                ItemsSource="{Binding Functions}"
+                SelectedItem="{Binding FunctionToAdd, Mode=TwoWay}">
+                <controls:SearchableComboBox.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Margin="2,4,0,2"
+                                    FontWeight="Bold"
+                                    Foreground="{DynamicResource Brush_Text_Warning}"
+                                    Text="{Binding Name}" />
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </controls:SearchableComboBox.GroupStyle>
+            </controls:SearchableComboBox>
+            <Button
+                Width="56"
+                Command="{Binding AddNodeCommand}"
+                Content="{tombLib:Localize Add}" />
 
-			<TextBlock VerticalAlignment="Center" Text="{tombLib:Localize CallCount}" />
-			<controls:NumericUpDown
-				Width="72"
-				DecimalPlaces="0"
-				Maximum="99999"
-				Minimum="0"
-				ToolTip="{tombLib:Localize CallCountTooltip}"
-				Value="{Binding CallCounter, Mode=TwoWay}" />
-		</controls:SpacedStack>
+            <!--  Node actions (operate on the last selected node).  -->
+            <Button
+                Command="{Binding RenameSelectedCommand}"
+                Content="{tombLib:Localize Rename}"
+                ToolTip="{tombLib:Localize RenameTooltip}" />
+            <Button
+                Command="{Binding ColorSelectedCommand}"
+                Content="{tombLib:Localize Colour}"
+                ToolTip="{tombLib:Localize ColourTooltip}" />
+            <Button
+                Command="{Binding LockSelectedCommand}"
+                Content="{tombLib:Localize Lock}"
+                ToolTip="{tombLib:Localize LockTooltip}" />
+            <Button
+                Command="{Binding DeleteSelectedNodeCommand}"
+                Content="{tombLib:Localize Delete}"
+                ToolTip="{tombLib:Localize DeleteTooltip}" />
+            <Button
+                Command="{Binding ExportSelectedCommand}"
+                Content="{tombLib:Localize Export}"
+                ToolTip="{tombLib:Localize ExportTooltip}" />
+            <Button
+                Command="{Binding ClearNodesCommand}"
+                Content="{tombLib:Localize Clear}"
+                ToolTip="{tombLib:Localize ClearTooltip}" />
+            <Button
+                Command="{Binding FindNodeCommand}"
+                Content="{tombLib:Localize Find}"
+                ToolTip="{tombLib:Localize FindTooltip}" />
 
-		<!--  Node canvas  -->
-		<Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
-			<ScrollViewer
-				x:Name="canvasScroll"
-				HorizontalScrollBarVisibility="Auto"
-				PreviewMouseWheel="OnPreviewMouseWheel"
-				VerticalScrollBarVisibility="Auto">
-				<Canvas
-					x:Name="rootCanvas"
-					Width="{Binding CanvasWidth}"
-					Height="{Binding CanvasHeight}"
-					Background="{DynamicResource Brush_Background_Low}"
-					MouseRightButtonUp="Canvas_MouseRightButtonUp">
-					<Canvas.LayoutTransform>
-						<ScaleTransform x:Name="zoomTransform" ScaleX="1" ScaleY="1" />
-					</Canvas.LayoutTransform>
+            <TextBlock VerticalAlignment="Center" Text="{tombLib:Localize CallCount}" />
+            <controls:NumericUpDown
+                Width="72"
+                DecimalPlaces="0"
+                Maximum="99999"
+                Minimum="0"
+                ToolTip="{tombLib:Localize CallCountTooltip}"
+                Value="{Binding CallCounter, Mode=TwoWay}" />
+        </controls:SpacedStack>
 
-					<!--  Grid lines  -->
-					<Rectangle
-						Width="{Binding CanvasWidth}"
-						Height="{Binding CanvasHeight}"
-						Fill="{StaticResource GridBrush}"
-						IsHitTestVisible="False" />
+        <!--  Node canvas  -->
+        <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
+            <ScrollViewer
+                x:Name="canvasScroll"
+                HorizontalScrollBarVisibility="Auto"
+                PreviewMouseWheel="OnPreviewMouseWheel"
+                VerticalScrollBarVisibility="Auto">
+                <Canvas
+                    x:Name="rootCanvas"
+                    Width="{Binding CanvasWidth}"
+                    Height="{Binding CanvasHeight}"
+                    Background="{DynamicResource Brush_Background_Low}"
+                    MouseRightButtonUp="Canvas_MouseRightButtonUp">
+                    <Canvas.LayoutTransform>
+                        <ScaleTransform x:Name="zoomTransform" ScaleX="1" ScaleY="1" />
+                    </Canvas.LayoutTransform>
 
-					<!--  Links  -->
-					<ItemsControl ItemsSource="{Binding Links}">
-						<ItemsControl.ItemsPanel>
-							<ItemsPanelTemplate>
-								<Canvas />
-							</ItemsPanelTemplate>
-						</ItemsControl.ItemsPanel>
-						<ItemsControl.ItemTemplate>
-							<DataTemplate DataType="{x:Type local:LinkViewModel}">
-								<Path
-									Data="{Binding Geometry}"
-									Stroke="{Binding IsElse, Converter={StaticResource LinkBrushConverter}}"
-									StrokeThickness="2" />
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
+                    <!--  Grid lines  -->
+                    <Rectangle
+                        Width="{Binding CanvasWidth}"
+                        Height="{Binding CanvasHeight}"
+                        Fill="{StaticResource GridBrush}"
+                        IsHitTestVisible="False" />
 
-					<!--  Nodes  -->
-					<ItemsControl ItemsSource="{Binding Nodes}">
-						<ItemsControl.ItemsPanel>
-							<ItemsPanelTemplate>
-								<Canvas />
-							</ItemsPanelTemplate>
-						</ItemsControl.ItemsPanel>
-						<ItemsControl.ItemContainerStyle>
-							<Style TargetType="ContentPresenter">
-								<Setter Property="Canvas.Left" Value="{Binding CanvasLeft}" />
-								<Setter Property="Canvas.Top" Value="{Binding CanvasTop}" />
-							</Style>
-						</ItemsControl.ItemContainerStyle>
-						<ItemsControl.ItemTemplate>
-							<DataTemplate DataType="{x:Type local:NodeViewModel}">
-								<Grid
-									Width="{Binding Width}"
-									PreviewMouseLeftButtonDown="Node_PreviewMouseDown"
-									SizeChanged="Node_SizeChanged"
-									Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=local:NodeEditorView}}">
-									<!--  The menu's DataContext is the node; the editor view-model is reached via the placement target's Tag.  -->
-									<Grid.ContextMenu>
-										<ContextMenu>
-											<MenuItem
-												Command="{Binding PlacementTarget.Tag.SetColorCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-												CommandParameter="{Binding}"
-												Header="{tombLib:Localize SetColor}" />
-											<MenuItem
-												Header="{tombLib:Localize Locked}"
-												IsCheckable="True"
-												IsChecked="{Binding IsLocked, Mode=TwoWay}" />
-											<Separator />
-											<MenuItem
-												Command="{Binding PlacementTarget.Tag.DeleteNodeCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-												CommandParameter="{Binding}"
-												Header="{tombLib:Localize Delete}" />
-										</ContextMenu>
-									</Grid.ContextMenu>
+                    <!--  Links  -->
+                    <ItemsControl ItemsSource="{Binding Links}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type local:LinkViewModel}">
+                                <Path
+                                    Data="{Binding Geometry}"
+                                    Stroke="{Binding IsElse, Converter={StaticResource LinkBrushConverter}}"
+                                    StrokeThickness="2" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
-									<!--  Body  -->
-									<Border
-										Background="{DynamicResource Brush_Background}"
-										BorderThickness="2"
-										CornerRadius="3">
-										<Border.Style>
-											<Style TargetType="Border">
-												<Setter Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
-												<Style.Triggers>
-													<DataTrigger Binding="{Binding IsSelected}" Value="True">
-														<Setter Property="BorderBrush" Value="{DynamicResource Brush_Selection}" />
-													</DataTrigger>
-												</Style.Triggers>
-											</Style>
-										</Border.Style>
-										<DockPanel>
-											<!--  Header bar (drag handle)  -->
-											<Thumb
-												DockPanel.Dock="Top"
-												DragDelta="NodeThumb_DragDelta"
-												IsEnabled="{Binding IsEditable}">
-												<Thumb.Template>
-													<ControlTemplate TargetType="Thumb">
-														<Border Background="{Binding HeaderBrush}" CornerRadius="2,2,0,0" Cursor="SizeAll">
-															<StackPanel Margin="6,4" Orientation="Horizontal">
-																<TextBlock
-																	Margin="0,0,4,0"
-																	FontWeight="Bold"
-																	Foreground="White"
-																	Text="🔒"
-																	Visibility="{Binding IsLocked, Converter={StaticResource BoolToVis}}" />
-																<TextBlock
-																	FontWeight="Bold"
-																	Foreground="White"
-																	Text="{Binding Title}"
-																	TextTrimming="CharacterEllipsis" />
-															</StackPanel>
-														</Border>
-													</ControlTemplate>
-												</Thumb.Template>
-											</Thumb>
+                    <!--  Nodes  -->
+                    <ItemsControl ItemsSource="{Binding Nodes}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="Canvas.Left" Value="{Binding CanvasLeft}" />
+                                <Setter Property="Canvas.Top" Value="{Binding CanvasTop}" />
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type local:NodeViewModel}">
+                                <Grid
+                                    Width="{Binding Width}"
+                                    PreviewMouseLeftButtonDown="Node_PreviewMouseDown"
+                                    SizeChanged="Node_SizeChanged"
+                                    Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=local:NodeEditorView}}">
+                                    <!--  The menu's DataContext is the node; the editor view-model is reached via the placement target's Tag.  -->
+                                    <Grid.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem
+                                                Command="{Binding PlacementTarget.Tag.SetColorCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                CommandParameter="{Binding}"
+                                                Header="{tombLib:Localize SetColor}" />
+                                            <MenuItem
+                                                Header="{tombLib:Localize Locked}"
+                                                IsCheckable="True"
+                                                IsChecked="{Binding IsLocked, Mode=TwoWay}" />
+                                            <Separator />
+                                            <MenuItem
+                                                Command="{Binding PlacementTarget.Tag.DeleteNodeCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                                CommandParameter="{Binding}"
+                                                Header="{tombLib:Localize Delete}" />
+                                        </ContextMenu>
+                                    </Grid.ContextMenu>
 
-											<!--  Body: the function the node runs (its primary content) + its arguments.
-												The node name is shown in the header bar / edited via the Rename button.  -->
-											<StackPanel Margin="6" IsEnabled="{Binding IsEditable}">
-												<StackPanel
-													Margin="0,0,0,4"
-													Orientation="Horizontal"
-													ToolTip="{tombLib:Localize NotSupported}"
-													Visibility="{Binding IsUnsupported, Converter={StaticResource BoolToVis}}">
-													<TextBlock
-														Margin="0,0,4,0"
-														Foreground="Orange"
-														Text="⚠" />
-													<TextBlock
-														FontStyle="Italic"
-														Foreground="Orange"
-														Opacity="0.8"
-														Text="{tombLib:Localize NotSupported}"
-														TextTrimming="CharacterEllipsis" />
-												</StackPanel>
-												<TextBlock
-													FontWeight="Bold"
-													Foreground="{DynamicResource Brush_Text}"
-													Text="{Binding FunctionName}"
-													TextTrimming="CharacterEllipsis"
-													ToolTip="{Binding FunctionName}" />
-												<ItemsControl
-													Margin="0,4,0,0"
-													ItemTemplateSelector="{StaticResource ArgSelector}"
-													ItemsSource="{Binding Arguments}"
-													Visibility="{Binding HasArguments, Converter={StaticResource BoolToVis}}">
-													<ItemsControl.ItemsPanel>
-														<ItemsPanelTemplate>
-															<WrapPanel />
-														</ItemsPanelTemplate>
-													</ItemsControl.ItemsPanel>
-													<!--  Each field's width comes from the catalogue Width (%) via PixelWidth.  -->
-													<ItemsControl.ItemContainerStyle>
-														<Style TargetType="ContentPresenter">
-															<Setter Property="Width" Value="{Binding PixelWidth}" />
-														</Style>
-													</ItemsControl.ItemContainerStyle>
-												</ItemsControl>
-											</StackPanel>
-										</DockPanel>
-									</Border>
+                                    <!--  Body  -->
+                                    <Border
+                                        Background="{DynamicResource Brush_Background}"
+                                        BorderThickness="2"
+                                        CornerRadius="3">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource Brush_Selection}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+                                        <DockPanel>
+                                            <!--  Header bar (drag handle)  -->
+                                            <Thumb
+                                                DockPanel.Dock="Top"
+                                                DragDelta="NodeThumb_DragDelta"
+                                                IsEnabled="{Binding IsEditable}">
+                                                <Thumb.Template>
+                                                    <ControlTemplate TargetType="Thumb">
+                                                        <Border Background="{Binding HeaderBrush}" CornerRadius="2,2,0,0" Cursor="SizeAll">
+                                                            <StackPanel Margin="6,4" Orientation="Horizontal">
+                                                                <TextBlock
+                                                                    Margin="0,0,4,0"
+                                                                    FontWeight="Bold"
+                                                                    Foreground="White"
+                                                                    Text="&#x1f512;"
+                                                                    Visibility="{Binding IsLocked, Converter={StaticResource BoolToVis}}" />
+                                                                <TextBlock
+                                                                    FontWeight="Bold"
+                                                                    Foreground="White"
+                                                                    Text="{Binding Title}"
+                                                                    TextTrimming="CharacterEllipsis" />
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Thumb.Template>
+                                            </Thumb>
 
-									<!--  Input port (top center)  -->
-									<Ellipse
-										Width="12"
-										Height="12"
-										Margin="0,-6,0,0"
-										HorizontalAlignment="Center"
-										VerticalAlignment="Top"
-										Fill="{DynamicResource Brush_Border}"
-										Stroke="{DynamicResource Brush_Text}"
-										ToolTip="{tombLib:Localize PortInput}" />
+                                            <!--  Body: the function the node runs (its primary content) + its arguments.
+                                                The node name is shown in the header bar / edited via the Rename button.  -->
+                                            <StackPanel Margin="6" IsEnabled="{Binding IsEditable}">
+                                                <StackPanel
+                                                    Margin="0,0,0,4"
+                                                    Orientation="Horizontal"
+                                                    ToolTip="{tombLib:Localize NotSupported}"
+                                                    Visibility="{Binding IsUnsupported, Converter={StaticResource BoolToVis}}">
+                                                    <TextBlock
+                                                        Margin="0,0,4,0"
+                                                        Foreground="Orange"
+                                                        Text="&#x26a0;" />
+                                                    <TextBlock
+                                                        FontStyle="Italic"
+                                                        Foreground="Orange"
+                                                        Opacity="0.8"
+                                                        Text="{tombLib:Localize NotSupported}"
+                                                        TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
+                                                <TextBlock
+                                                    FontWeight="Bold"
+                                                    Foreground="{DynamicResource Brush_Text}"
+                                                    Text="{Binding FunctionName}"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    ToolTip="{Binding FunctionName}" />
+                                                <ItemsControl
+                                                    Margin="0,4,0,0"
+                                                    ItemTemplateSelector="{StaticResource ArgSelector}"
+                                                    ItemsSource="{Binding Arguments}"
+                                                    Visibility="{Binding HasArguments, Converter={StaticResource BoolToVis}}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <WrapPanel />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <!--  Each field's width comes from the catalogue Width (%) via PixelWidth.  -->
+                                                    <ItemsControl.ItemContainerStyle>
+                                                        <Style TargetType="ContentPresenter">
+                                                            <Setter Property="Width" Value="{Binding PixelWidth}" />
+                                                        </Style>
+                                                    </ItemsControl.ItemContainerStyle>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </Border>
 
-									<!--  Next output port (bottom center)  -->
-									<Ellipse
-										Width="12"
-										Height="12"
-										Margin="0,0,0,-6"
-										HorizontalAlignment="Center"
-										VerticalAlignment="Bottom"
-										Cursor="Cross"
-										Fill="{DynamicResource Brush_Text}"
-										MouseLeftButtonDown="OutputPort_MouseDown"
-										Stroke="{DynamicResource Brush_Text}"
-										Tag="Next"
-										ToolTip="{tombLib:Localize PortNext}" />
+                                    <!--  Input port (top center)  -->
+                                    <Ellipse
+                                        Width="12"
+                                        Height="12"
+                                        Margin="0,-6,0,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Top"
+                                        Fill="{DynamicResource Brush_Border}"
+                                        Stroke="{DynamicResource Brush_Text}"
+                                        ToolTip="{tombLib:Localize PortInput}" />
 
-									<!--  Else output port (right center, conditions only)  -->
-									<Ellipse
-										Width="12"
-										Height="12"
-										Margin="0,0,-6,0"
-										HorizontalAlignment="Right"
-										VerticalAlignment="Center"
-										Cursor="Cross"
-										Fill="#E0A030"
-										MouseLeftButtonDown="OutputPort_MouseDown"
-										Stroke="{DynamicResource Brush_Text}"
-										Tag="Else"
-										ToolTip="{tombLib:Localize PortElse}"
-										Visibility="{Binding IsCondition, Converter={StaticResource BoolToVis}}" />
-								</Grid>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-					</ItemsControl>
-				</Canvas>
-			</ScrollViewer>
-		</Border>
-	</DockPanel>
+                                    <!--  Next output port (bottom center)  -->
+                                    <Ellipse
+                                        Width="12"
+                                        Height="12"
+                                        Margin="0,0,0,-6"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Bottom"
+                                        Cursor="Cross"
+                                        Fill="{DynamicResource Brush_Text}"
+                                        MouseLeftButtonDown="OutputPort_MouseDown"
+                                        Stroke="{DynamicResource Brush_Text}"
+                                        Tag="Next"
+                                        ToolTip="{tombLib:Localize PortNext}" />
+
+                                    <!--  Else output port (right center, conditions only)  -->
+                                    <Ellipse
+                                        Width="12"
+                                        Height="12"
+                                        Margin="0,0,-6,0"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Cursor="Cross"
+                                        Fill="#E0A030"
+                                        MouseLeftButtonDown="OutputPort_MouseDown"
+                                        Stroke="{DynamicResource Brush_Text}"
+                                        Tag="Else"
+                                        ToolTip="{tombLib:Localize PortElse}"
+                                        Visibility="{Binding IsCondition, Converter={StaticResource BoolToVis}}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Canvas>
+            </ScrollViewer>
+        </Border>
+    </DockPanel>
 </UserControl>

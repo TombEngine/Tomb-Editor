@@ -1,11 +1,12 @@
+using Keys = TombLib.Input.EditorKey;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Windows.Forms;
 using TombLib;
 using TombLib.LevelData;
 using TombLib.Wad;
+using TombLib.WPF.Input;
 
 namespace TombEditor.Features.Panel3D.ObjectBrush
 {
@@ -583,7 +584,7 @@ namespace TombEditor.Features.Panel3D.ObjectBrush
             float radius         = editor.Configuration.ObjectBrush_Radius;
             float density        = editor.Configuration.ObjectBrush_Density;
             bool  adjacent       = editor.Configuration.ObjectBrush_PlaceInAdjacentRooms;
-            bool  filterByChosen = Control.ModifierKeys.HasFlag(Keys.Shift);
+            bool  filterByChosen = KeyboardState.ModifierKeys.HasFlag(Keys.Shift);
 
             int targetCount = GetTargetObjectCount(radius, density * 0.3f, shape);
 
@@ -695,7 +696,7 @@ namespace TombEditor.Features.Panel3D.ObjectBrush
             var shape     = editor.Configuration.ObjectBrush_Shape;
             float radius  = editor.Configuration.ObjectBrush_Radius;
             bool adjacent = editor.Configuration.ObjectBrush_PlaceInAdjacentRooms;
-            bool filter   = Control.ModifierKeys.HasFlag(Keys.Shift);
+            bool filter   = KeyboardState.ModifierKeys.HasFlag(Keys.Shift);
 
             var rooms = GetBrushRooms(room, adjacent);
             var objectsInArea = new List<PositionBasedObjectInstance>();

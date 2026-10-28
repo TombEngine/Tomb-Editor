@@ -28,7 +28,7 @@ public sealed partial class WadTreeNode : ObservableObject
 }
 
 /// <summary>
-/// WPF rewrite of the WinForms <c>WadTreeView</c>: shows a wad's moveables / statics / sprite
+/// WPF rewrite of the shared <c>WadTreeView</c>: shows a wad's moveables / statics / sprite
 /// sequences in a multi-select tree, plus game version and metadata editors, with an inline
 /// search row replacing the legacy PopUpSearch pop-up. The public API (Wad, SelectedWadObjectIds,
 /// Select, UpdateContent, events) mirrors the legacy control; multi-selection is managed in

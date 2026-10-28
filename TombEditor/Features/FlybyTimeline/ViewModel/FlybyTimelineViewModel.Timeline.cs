@@ -7,8 +7,8 @@ using System.Numerics;
 using TombEditor.Features.FlybyTimeline.Sequence;
 using TombEditor.Features.FlybyTimeline.UI;
 using TombLib;
-using TombLib.Forms;
 using TombLib.LevelData;
+using TombLib.Utils;
 
 namespace TombEditor.Features.FlybyTimeline.ViewModel;
 

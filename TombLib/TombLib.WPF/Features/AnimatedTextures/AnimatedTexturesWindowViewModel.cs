@@ -1,20 +1,20 @@
 #nullable enable
 
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
 using TombLib;
 using TombLib.LevelData;
 using TombLib.Utils;
-using TombLib.Wad;
 using TombLib.WPF.Controls;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
+using TombLib.Wad;
 
 namespace TombLib.WPF.Features.AnimatedTextures
 {
@@ -90,13 +90,13 @@ namespace TombLib.WPF.Features.AnimatedTextures
         }
 
         // Current visible texture (combo above the map).
-        private Texture _currentTexture;
-        public Texture CurrentTexture
+        private Texture? _currentTexture;
+        public Texture? CurrentTexture
         {
             get => _currentTexture;
             set
             {
-                if (!SetProperty(ref _currentTexture, value) || value == null)
+                if (!SetProperty(ref _currentTexture, value) || value is null)
                     return;
                 if (_textureMap.VisibleTexture != value)
                     _textureMap.ResetVisibleTexture(value);
@@ -126,7 +126,7 @@ namespace TombLib.WPF.Features.AnimatedTextures
 
         private void RebuildSets()
         {
-            // Sync the observable list IN PLACE (never Clear) so the combo keeps its selection — a Clear
+            // Sync the observable list IN PLACE (never Clear) so the combo keeps its selection - a Clear
             // would null SelectedSet and, if triggered during a Frames change, re-enter Frames.Clear().
             _lockUi = true;
 

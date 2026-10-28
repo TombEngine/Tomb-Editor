@@ -2,7 +2,6 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,6 +13,7 @@ using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
 using TombLib.WPF;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
 
@@ -182,7 +182,7 @@ public partial class ReplaceObjectWindowViewModel : ObservableObject, IModalDial
         if (instance is null)
             return string.Empty;
 
-        // Same hand-rolled formatting the WinForms FormReplaceObject used -
+        // Same hand-rolled formatting the previous FormReplaceObject used -
         // TR-catalog names are needed because ItemType.ToString() always returns TR4 names.
         string result;
         if (instance is MoveableInstance mov)

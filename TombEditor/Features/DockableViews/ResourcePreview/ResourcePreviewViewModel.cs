@@ -69,7 +69,7 @@ public partial class ResourcePreviewViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void Reload()
     {
-        var owner = WPFUtils.GetWin32WindowOwner();
+        var owner = WPFUtils.GetWindowOwner();
         var settings = _editor.Level.Settings;
 
         if (_importedGeometry)

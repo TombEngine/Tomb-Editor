@@ -1,9 +1,9 @@
 #nullable enable
 
 using System.Windows;
-using TombLib.Forms.Services;
 using TombLib.LevelData;
 using TombLib.WPF;
+using TombLib.WPF.Services;
 
 namespace TombEditor.Features.Dialogs.ImportedGeometryEditor;
 

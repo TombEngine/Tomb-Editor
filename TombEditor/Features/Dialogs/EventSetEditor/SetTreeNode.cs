@@ -1,16 +1,16 @@
 #nullable enable
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
 using TombLib.LevelData;
 
 namespace TombEditor.Features.Dialogs.EventSetEditor
 {
     /// <summary>
     /// One row of the event-set tree: either a folder (grouping, <see cref="Set"/> is null)
-    /// or an event-set leaf. Folder paths use "/" as separator, mirroring the WinForms
+    /// or an event-set leaf. Folder paths use "/" as separator, mirroring the previous
     /// FormEventSetEditor (#1156); the authoritative path lives on <see cref="EventSet.Folder"/>
     /// and is re-derived from the tree by the view-model's SyncFoldersFromTree.
     /// </summary>

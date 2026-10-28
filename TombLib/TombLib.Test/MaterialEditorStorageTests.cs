@@ -1,7 +1,7 @@
 using System.Xml.Linq;
-using TombLib.Forms.Services;
 using TombLib.LevelData;
 using TombLib.Utils;
+using TombLib.WPF.Services;
 
 namespace TombLib.Test;
 

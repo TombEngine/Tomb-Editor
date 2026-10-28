@@ -2,29 +2,29 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
+using LevelFileDialog = TombLib.WPF.Services.LevelFileDialog;
+using PopUpInfo = TombLib.WPF.PopUpInfo;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Threading;
-using TombLib.Forms;
 using TombLib.GeometryIO;
 using TombLib.Graphics;
 using TombLib.LevelData;
+using TombLib.Services;
 using TombLib.Types;
 using TombLib.Utils;
-using TombLib.WPF;
-using TombLib.WPF.CustomControls;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
+using TombLib.WPF;
+using TombLib.WPF.CustomControls;
+using TombLib.WPF.Dialogs;
 using WadTool.Controls;
-using WadTool.Features.Dialogs.AnimCommandsEditor;
 using WadTool.Features.Dialogs.AnimationFixer;
+using WadTool.Features.Dialogs.AnimCommandsEditor;
 using WadTool.Features.Dialogs.StateChangesEditor;
-
-using PopUpInfo = TombLib.WPF.PopUpInfo;
 
 namespace WadTool.Features.Dialogs.AnimEditor;
 
@@ -232,14 +232,14 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         if (_timeline is null || _panel is null)
             return;
 
-        bool sameAnimSameSize = _editor.CurrentAnim != null && node != null && _editor.CurrentAnim.Index == node.Index &&
+        bool sameAnimSameSize = _editor.CurrentAnim is not null && node is not null && _editor.CurrentAnim.Index == node.Index &&
             _editor.CurrentAnim.DirectXAnimation.KeyFrames.Count == node.DirectXAnimation.KeyFrames.Count;
 
         _editor.CurrentAnim = node;
 
         _editor.MadeChanges = false;
         _allowUpdate = false;
-        if (node != null)
+        if (node is not null)
         {
             AnimName = node.WadAnimation.Name;
             FrameRate = node.WadAnimation.FrameRate;
@@ -322,11 +322,11 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     /// <summary>Reads the current keyframe's per-bone rotation/translation + bounding box into the UI (legacy UpdateTransformUI).</summary>
     private void UpdateTransformUI()
     {
-        if (_panel is null || _editor.CurrentKeyFrame == null)
+        if (_panel is null || _editor.CurrentKeyFrame is null)
             return;
 
         _allowUpdate = false;
-        int meshIndex = _panel.SelectedMesh == null ? 0 : _panel.Model.Meshes.IndexOf(_panel.SelectedMesh);
+        int meshIndex = _panel.SelectedMesh is null ? 0 : _panel.Model.Meshes.IndexOf(_panel.SelectedMesh);
 
         RotationX = TombLib.MathC.RadToDeg(_editor.CurrentKeyFrame.Rotations[meshIndex].X);
         RotationY = TombLib.MathC.RadToDeg(_editor.CurrentKeyFrame.Rotations[meshIndex].Y);
@@ -378,7 +378,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
     partial void OnAnimNameChanged(string value)
     {
-        if (!_allowUpdate || _editor.CurrentAnim == null) return;
+        if (!_allowUpdate || _editor.CurrentAnim is null) return;
         var newName = value.Trim();
         if (string.IsNullOrEmpty(newName) || newName == _editor.CurrentAnim.WadAnimation.Name) return;
         PushUndoOnce();
@@ -447,7 +447,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     /// <summary>Commits the state-id text box (legacy UpdateStateChange). Called by the window on commit.</summary>
     public void CommitStateId()
     {
-        if (!_allowUpdate || _editor.CurrentAnim == null) return;
+        if (!_allowUpdate || _editor.CurrentAnim is null) return;
 
         ushort oldValue = _editor.CurrentAnim.WadAnimation.StateId;
         if (!ushort.TryParse(StateIdText.Trim(), out ushort newValue))
@@ -526,11 +526,11 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
     private void UpdateTransform()
     {
-        if (_panel is null || !_allowUpdate || _editor.CurrentKeyFrame == null)
+        if (_panel is null || !_allowUpdate || _editor.CurrentKeyFrame is null)
             return;
 
         PushUndoOnce();
-        int meshIndex = _panel.SelectedMesh == null ? 0 : _panel.Model.Meshes.IndexOf(_panel.SelectedMesh);
+        int meshIndex = _panel.SelectedMesh is null ? 0 : _panel.Model.Meshes.IndexOf(_panel.SelectedMesh);
         _editor.UpdateTransform(meshIndex,
             new System.Numerics.Vector3(TombLib.MathC.DegToRad((float)RotationX), TombLib.MathC.DegToRad((float)RotationY), TombLib.MathC.DegToRad((float)RotationZ)),
             new System.Numerics.Vector3((float)TranslationX, (float)TranslationY, (float)TranslationZ));
@@ -559,7 +559,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
     private void ApplyRootMotion()
     {
-        if (!_allowUpdate || _editor.CurrentAnim == null) return;
+        if (!_allowUpdate || _editor.CurrentAnim is null) return;
         PushUndoOnce();
         var rootMotion = _editor.CurrentAnim.WadAnimation.RootMotion;
         rootMotion.TranslationX = RootPosX;
@@ -601,7 +601,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void ToggleSound()
     {
-        if (_editor.Tool.ReferenceLevel == null && !WadActions.LoadReferenceLevel(_editor.Tool, Owner)) return;
+        if (_editor.Tool.ReferenceLevel is null && !WadActions.LoadReferenceLevel(_editor.Tool, Owner)) return;
         _editor.Tool.Configuration.AnimationEditor_SoundPreview = !_editor.Tool.Configuration.AnimationEditor_SoundPreview;
         SoundPreview = _editor.Tool.Configuration.AnimationEditor_SoundPreview;
     }
@@ -609,7 +609,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void CycleSoundCondition()
     {
-        if (_editor.Tool.ReferenceLevel == null && !WadActions.LoadReferenceLevel(_editor.Tool, Owner)) return;
+        if (_editor.Tool.ReferenceLevel is null && !WadActions.LoadReferenceLevel(_editor.Tool, Owner)) return;
         var t = _editor.Tool.Configuration.AnimationEditor_SoundPreviewType;
         bool isTEN = IsTombEngine;
         _editor.Tool.Configuration.AnimationEditor_SoundPreviewType = t switch
@@ -623,11 +623,11 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         SoundConditionLabel = _editor.Tool.Configuration.AnimationEditor_SoundPreviewType.ToString();
     }
 
-    private static System.Windows.Forms.IWin32Window Owner => TombLib.WPF.WinFormsDialogHelper.GetOpenFormOwner();
+    private static IWindowOwner Owner => WPFUtils.GetWindowOwner();
 
     private void UpdateStatusLabel()
     {
-        if (_timeline is null || _editor.CurrentAnim == null || _editor.CurrentAnim.DirectXAnimation.KeyFrames.Count == 0)
+        if (_timeline is null || _editor.CurrentAnim is null || _editor.CurrentAnim.DirectXAnimation.KeyFrames.Count == 0)
         {
             StatusText = string.Empty;
             return;
@@ -647,7 +647,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         if (IsPlaying)
         {
             _playTimer.Start();
-            if (_editor.CurrentAnim?.WadAnimation != null)
+            if (_editor.CurrentAnim?.WadAnimation is not null)
             {
                 _chainedInitialAnim = _editor.CurrentAnim.Index;
                 _chainedInitialCursorPos = _timeline.Value;
@@ -663,7 +663,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
                 _editor.Tool.Configuration.AnimationEditor_RewindAfterChainPlayback)
             {
                 var origNode = _editor.Animations.FirstOrDefault(item => item.Index == _chainedInitialAnim);
-                if (origNode != null && origNode != _editor.CurrentAnim)
+                if (origNode is not null && origNode != _editor.CurrentAnim)
                 {
                     if (!SelectAnimByIndex(_chainedInitialAnim))
                         SelectAnimation(origNode);
@@ -700,7 +700,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     private void OnPlayTick()
     {
         if (_panel is null || _timeline is null ||
-            _editor.CurrentAnim?.WadAnimation == null || _editor.CurrentAnim.DirectXAnimation.KeyFrames.Count < 1)
+            _editor.CurrentAnim?.WadAnimation is null || _editor.CurrentAnim.DirectXAnimation.KeyFrames.Count < 1)
             return;
 
         int realFrameNumber = _editor.GetRealNumberOfFrames();
@@ -744,7 +744,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
                 _chainedIncomingAnimation = -1;
 
                 var nextNode = _editor.Animations.FirstOrDefault(item => item.Index == nextIndex);
-                if (nextNode != null)
+                if (nextNode is not null)
                 {
                     if (_editor.Tool.Configuration.AnimationEditor_ScrollGrid && _editor.CurrentAnim.WadAnimation.AnimCommands.Count > 0 &&
                         _editor.CurrentAnim.WadAnimation.AnimCommands.Any(cmd => cmd.Type == WadAnimCommandType.SetPosition))
@@ -852,7 +852,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
     private void PreviewSounds()
     {
-        if (!_editor.Tool.Configuration.AnimationEditor_SoundPreview || _editor.Tool.ReferenceLevel == null)
+        if (!_editor.Tool.Configuration.AnimationEditor_SoundPreview || _editor.Tool.ReferenceLevel is null)
             return;
 
         _overallPlaybackCount++;
@@ -923,12 +923,12 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
         _allowUpdate = false;
         Rooms.Clear();
-        if (_editor.Tool.ReferenceLevel != null)
+        if (_editor.Tool.ReferenceLevel is not null)
         {
             RoomsEnabled = true;
             Rooms.Add("(select room)");
             foreach (var room in _editor.Tool.ReferenceLevel.Rooms)
-                if (room != null) Rooms.Add(room);
+                if (room is not null) Rooms.Add(room);
             SelectedRoomItem = Rooms.Count > 0 ? Rooms[0] : null;
         }
         else
@@ -993,7 +993,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         if (_timeline is null) return false;
         if (_timeline.SelectionIsEmpty)
         { if (prompt) ShowPopup("No frames selected. Please select at least 1 frame.", PopupType.Error); }
-        else if (_editor.CurrentAnim == null)
+        else if (_editor.CurrentAnim is null)
         { if (prompt) ShowPopup("No animation selected. Select animation to work with.", PopupType.Error); }
         else if (_editor.CurrentAnim.DirectXAnimation.KeyFrames.Count == 0)
         { if (prompt) ShowPopup("Current animation contains no frames.", PopupType.Error); }
@@ -1036,7 +1036,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
     private void AddNewFrame(int index, bool undo)
     {
-        if (_editor.CurrentAnim == null || _timeline is null) return;
+        if (_editor.CurrentAnim is null || _timeline is null) return;
         if (undo) _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
 
         KeyFrame keyFrame;
@@ -1068,9 +1068,9 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         if (_timeline is null || _panel is null || !ValidAndSelected(prompt)) return;
 
         if (prompt &&
-            DarkUI.Forms.DarkMessageBox.Show(Owner, "Do you really want to delete frame" +
+            UserDialogs.Show(Owner, "Do you really want to delete frame" +
                 (_timeline.SelectionSize == 1 ? " " + _timeline.Value : "s " + _timeline.Selection.X + "-" + _timeline.Selection.Y) + "?",
-                "Confirm", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No)
+                "Confirm", DialogButtons.YesNo, DialogIcon.Question) == DialogChoice.No)
             return;
 
         if (undo) _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
@@ -1123,8 +1123,8 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void PasteFrame()
     {
-        if (_timeline is null || _panel is null || _editor.CurrentAnim == null) return;
-        if (_editor.ClipboardKeyFrames == null || _editor.ClipboardKeyFrames.Count <= 0)
+        if (_timeline is null || _panel is null || _editor.CurrentAnim is null) return;
+        if (_editor.ClipboardKeyFrames is null || _editor.ClipboardKeyFrames.Count <= 0)
         {
             ShowPopup("Nothing to paste!", PopupType.Warning);
             return;
@@ -1159,7 +1159,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void EditAnimCommands()
     {
-        if (_editor.CurrentAnim == null) return;
+        if (_editor.CurrentAnim is null) return;
         var vm = new AnimCommandsEditorWindowViewModel(_editor, _editor.CurrentAnim);
         var dialog = new AnimCommandsEditorWindow { DataContext = vm };
         dialog.SetOwner(Owner);
@@ -1170,7 +1170,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void EditStateChanges()
     {
-        if (_editor.CurrentAnim == null) return;
+        if (_editor.CurrentAnim is null) return;
         var vm = new StateChangesEditorWindowViewModel(_editor, _editor.CurrentAnim);
         var dialog = new StateChangesEditorWindow { DataContext = vm };
         dialog.SetOwner(Owner);
@@ -1180,7 +1180,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void FixAnimation()
     {
-        if (_editor.CurrentAnim == null) return;
+        if (_editor.CurrentAnim is null) return;
         var anims = new System.Collections.Generic.List<AnimationNode> { _editor.CurrentAnim };
         var vm = new AnimationFixerWindowViewModel(_editor, anims);
         var dialog = new AnimationFixerWindow { DataContext = vm };
@@ -1202,16 +1202,16 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void DeleteAnimation()
     {
-        if (_editor.CurrentAnim == null) return;
-        if (DarkUI.Forms.DarkMessageBox.Show(Owner, "Do you really want to delete '" + _editor.CurrentAnim.WadAnimation.Name + "'?",
-                "Confirm", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.No)
+        if (_editor.CurrentAnim is null) return;
+        if (UserDialogs.Show(Owner, "Do you really want to delete '" + _editor.CurrentAnim.WadAnimation.Name + "'?",
+                "Confirm", DialogButtons.YesNo, DialogIcon.Question) == DialogChoice.No)
             return;
         DeleteAnimationCore(_editor.CurrentAnim);
     }
 
     private void DeleteAnimationCore(AnimationNode animToDelete)
     {
-        if (animToDelete == null || !_editor.Animations.Contains(animToDelete)) return;
+        if (animToDelete is null || !_editor.Animations.Contains(animToDelete)) return;
 
         int currentIndex = _editor.Animations.IndexOf(animToDelete);
         for (int i = 0; i < _editor.Animations.Count; i++)
@@ -1240,7 +1240,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void CutAnimation()
     {
-        if (_editor.CurrentAnim == null) { ShowPopup("No animation to cut!", PopupType.Warning); return; }
+        if (_editor.CurrentAnim is null) { ShowPopup("No animation to cut!", PopupType.Warning); return; }
         _editor.ClipboardNode = _editor.CurrentAnim;
         DeleteAnimationCore(_editor.CurrentAnim);
     }
@@ -1248,14 +1248,14 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void CopyAnimation()
     {
-        if (_editor.CurrentAnim == null) { ShowPopup("No animation to copy!", PopupType.Warning); return; }
+        if (_editor.CurrentAnim is null) { ShowPopup("No animation to copy!", PopupType.Warning); return; }
         _editor.ClipboardNode = _editor.CurrentAnim.Clone();
     }
 
     [RelayCommand]
     private void PasteAnimation()
     {
-        if (_editor.ClipboardNode == null || _editor.CurrentAnim == null) { ShowPopup("No animation to paste!", PopupType.Warning); return; }
+        if (_editor.ClipboardNode is null || _editor.CurrentAnim is null) { ShowPopup("No animation to paste!", PopupType.Warning); return; }
         int animationIndex = _editor.Animations.Count;
         var pastedAnim = _editor.ClipboardNode.Clone(animationIndex);
         _editor.Animations.Add(pastedAnim);
@@ -1267,7 +1267,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void ReplaceAnimation()
     {
-        if (_editor.ClipboardNode == null || _editor.CurrentAnim == null) { ShowPopup("No animation to replace!", PopupType.Warning); return; }
+        if (_editor.ClipboardNode is null || _editor.CurrentAnim is null) { ShowPopup("No animation to replace!", PopupType.Warning); return; }
         _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
         int animationIndex = _editor.CurrentAnim.Index;
         var pastedAnim = _editor.ClipboardNode.Clone(animationIndex);
@@ -1280,7 +1280,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void SplitAnimation()
     {
-        if (_timeline is null || _editor.CurrentAnim == null) { ShowPopup("No animation to split!", PopupType.Warning); return; }
+        if (_timeline is null || _editor.CurrentAnim is null) { ShowPopup("No animation to split!", PopupType.Warning); return; }
 
         if (_editor.CurrentAnim.DirectXAnimation.KeyFrames.Count < 3)
         { ShowPopup("You must have at least 3 frames for splitting the animation", PopupType.Error); return; }
@@ -1398,7 +1398,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         int numFrames;
         var selection = TombLib.MathC.Clamp(_timeline.Selection.Y - _timeline.Selection.X - 1, 0, int.MaxValue).ToString();
         string input = InputBox.Show(Owner, "Interpolation", "Enter number of interpolated frames:", selection);
-        if (input == null) return;
+        if (input is null) return;
         if (!int.TryParse(input, out numFrames)) numFrames = 3;
         if (numFrames == 0) { ShowPopup("Interpolation requires at least 1 frame to insert", PopupType.Error); return; }
 
@@ -1488,7 +1488,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         bool flipZ = accumulatedRotation > 0.5f;
 
         var bonePairs = _panel.Model.GetBonePairs(flipZ);
-        if (bonePairs == null || bonePairs.Count == 0) { ShowPopup("No valid bones were found for mirroring.", PopupType.Error); return; }
+        if (bonePairs is null || bonePairs.Count == 0) { ShowPopup("No valid bones were found for mirroring.", PopupType.Error); return; }
         if (flipZ) ShowPopup("Broken identity rotation detected. Impossible to mirror animation correctly.", PopupType.Warning);
 
         _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
@@ -1541,9 +1541,9 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void ImportAnimation()
     {
-        if (_panel is null || _editor.CurrentAnim == null) return;
+        if (_panel is null || _editor.CurrentAnim is null) return;
         string path = LevelFileDialog.BrowseFile(Owner, "Select a file with animations", BaseGeometryImporter.AnimationFileExtensions, false);
-        if (path == null) return;
+        if (path is null) return;
 
         WadAnimation animation;
         bool containsMetadata = false;
@@ -1555,7 +1555,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         }
         catch (Exception ex) { ShowPopup("Error while loading animation.\nException: " + ex.Message, PopupType.Error); return; }
 
-        if (animation == null) return;
+        if (animation is null) return;
         if (animation.Name == new WadAnimation().Name) animation.Name = _editor.CurrentAnim.WadAnimation.Name;
         if (animation.KeyFrames[0].Angles.Count != _editor.Moveable.Bones.Count)
         { ShowPopup("You can only import an animation with the same number of bones as current moveable.", PopupType.Error); return; }
@@ -1582,10 +1582,10 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void ExportAnimation()
     {
-        if (_editor.CurrentAnim == null) return;
+        if (_editor.CurrentAnim is null) return;
         string path = LevelFileDialog.BrowseFile(Owner, "Specify file to save animation",
             new System.Collections.Generic.List<FileFormat> { new FileFormat("TombEditor XML", "anim") }, true);
-        if (path == null) return;
+        if (path is null) return;
 
         var animationToSave = _editor.GetSavedAnimation(_editor.CurrentAnim);
         if (!WadActions.ExportAnimationToXml(_editor.Moveable, animationToSave, path))

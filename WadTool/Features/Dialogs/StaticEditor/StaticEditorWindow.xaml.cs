@@ -1,14 +1,12 @@
 #nullable enable
 
+using PopUpInfo = TombLib.WPF.PopUpInfo;
 using System;
 using System.Windows;
-using System.Windows.Forms;
-using TombLib.Forms;
+using TombLib.Input;
 using TombLib.Utils;
 using TombLib.WPF;
 using WadTool.Controls;
-
-using PopUpInfo = TombLib.WPF.PopUpInfo;
 
 namespace WadTool.Features.Dialogs.StaticEditor;
 
@@ -61,9 +59,9 @@ public partial class StaticEditorWindow : Window
         }
     }
 
-    private void OnPanelMouseDoubleClick(object? sender, MouseEventArgs e)
+    private void OnPanelMouseDoubleClick(object? sender, PointerEventArgs e)
     {
-        if (e.Button == MouseButtons.Left && _vm?.EditMeshCommand.CanExecute(null) == true)
+        if (e.Button == PointerButtons.Left && _vm?.EditMeshCommand.CanExecute(null) == true)
             _vm.EditMeshCommand.Execute(null);
     }
 

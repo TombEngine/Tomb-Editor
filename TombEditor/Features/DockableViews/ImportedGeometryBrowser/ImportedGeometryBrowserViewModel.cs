@@ -8,8 +8,8 @@ using System.Linq;
 using System.Windows.Input;
 using TombEditor.Features.DockableViews.ResourcePreview;
 using TombLib.LevelData;
-using TombLib.WPF;
 using TombLib.Wad;
+using TombLib.WPF;
 
 namespace TombEditor.Features.DockableViews.ImportedGeometryBrowser;
 
@@ -59,7 +59,7 @@ public partial class ImportedGeometryBrowserViewModel : ObservableObject
         }
     }
 
-    // Raised after the selection changes so the View can sync the WinForms preview's CurrentObject.
+    // Raised after the selection changes so the View can sync the previous preview's CurrentObject.
     public event EventHandler<ImportedGeometry?>? SelectedGeometryChanged;
 
     public ICommand AddCommand { get; }
@@ -75,7 +75,7 @@ public partial class ImportedGeometryBrowserViewModel : ObservableObject
 
         AddCommand = CommandHandler.GetCommand(
             "AddImportedGeometry",
-            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWin32WindowOwner() });
+            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWindowOwner() });
 
         PreviousCommand = new RelayCommand(SelectPrevious, () => Geometries.Count > 0);
         NextCommand = new RelayCommand(SelectNext, () => Geometries.Count > 0);

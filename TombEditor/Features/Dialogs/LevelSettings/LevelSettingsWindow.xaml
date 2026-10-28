@@ -7,7 +7,7 @@
     xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
     xmlns:local="clr-namespace:TombEditor.Features.Dialogs.LevelSettings"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+
     xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     Title="{tombLib:Localize Title}"
@@ -16,7 +16,6 @@
     MinWidth="720"
     MinHeight="420"
     d:DataContext="{d:DesignInstance Type=local:LevelSettingsWindowViewModel}"
-    md:DialogServiceViews.IsRegistered="True"
     Background="{DynamicResource Brush_Background}"
     ShowInTaskbar="False"
     Style="{DynamicResource CustomWindowStyle}"
@@ -399,7 +398,7 @@
 
                     <!--  Catalogs grid  -->
                     <DockPanel Grid.Row="0">
-                        <!--  Vertical icon-button strip on the right, mirroring the WinForms DarkDataGridViewControls.  -->
+                        <!--  Vertical icon-button strip on the right, mirroring the previous DarkDataGridViewControls.  -->
                         <StackPanel DockPanel.Dock="Right" Margin="6,0,0,0">
                             <Button Command="{Binding AddSoundCatalogsCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize AddTooltip}">
                                 <Image Source="{tomb:Icon General/plus_math}" />
@@ -500,7 +499,7 @@
             <!--  Sound Sample Paths -->
             <TabItem Header="{tombLib:Localize TabSoundSamplePaths}">
                 <DockPanel Margin="6">
-                    <!--  Vertical icon-button strip on the right, mirroring the WinForms DarkDataGridViewControls.  -->
+                    <!--  Vertical icon-button strip on the right, mirroring the previous DarkDataGridViewControls.  -->
                     <StackPanel DockPanel.Dock="Right" Margin="6,0,0,0">
                         <Button Command="{Binding AddSampleCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize AddTooltip}">
                             <Image Source="{tomb:Icon General/plus_math}" />

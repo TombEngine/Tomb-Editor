@@ -14,7 +14,7 @@ namespace TombLib.WPF.Features.AnimatedTextures;
 /// <summary>
 /// Draws every animated-texture set's frame outlines on a texture atlas, highlighting the selected
 /// set and numbering its frames. Shared by the Tomb Editor and Wad Tool texture-map views (WPF
-/// counterpart of the WinForms <c>PanelTextureMapForAnimations</c> painting).
+/// counterpart of the shared <c>PanelTextureMapForAnimations</c> painting).
 /// </summary>
 public static class AnimatedTextureSetsPainter
 {

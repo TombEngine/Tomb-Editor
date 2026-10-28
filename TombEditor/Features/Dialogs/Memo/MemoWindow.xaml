@@ -1,87 +1,86 @@
 <Window
-	x:Class="TombEditor.Features.Dialogs.Memo.MemoWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
-	xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.Memo"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
-	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
-	Title="{tombLib:Localize Title}"
-	Width="560"
-	Height="300"
-	MinWidth="320"
-	MinHeight="220"
-	d:DataContext="{d:DesignInstance Type=vm:MemoWindowViewModel}"
-	md:DialogServiceViews.IsRegistered="True"
-	Background="{DynamicResource Brush_Background}"
-	ShowInTaskbar="False"
-	Style="{DynamicResource CustomWindowStyle}"
-	WindowStartupLocation="CenterOwner"
-	mc:Ignorable="d">
+    x:Class="TombEditor.Features.Dialogs.Memo.MemoWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.Memo"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
-	<Window.InputBindings>
-		<KeyBinding
-			Key="Enter"
-			Command="{Binding ConfirmCommand}"
-			Modifiers="Control" />
-	</Window.InputBindings>
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    Title="{tombLib:Localize Title}"
+    Width="560"
+    Height="300"
+    MinWidth="320"
+    MinHeight="220"
+    d:DataContext="{d:DesignInstance Type=vm:MemoWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ShowInTaskbar="False"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
 
-	<controls:SpacedGrid
-		Margin="{x:Static darkUI:Defaults.MediumThickness}"
-		RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Enter"
+            Command="{Binding ConfirmCommand}"
+            Modifiers="Control" />
+    </Window.InputBindings>
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+    <controls:SpacedGrid
+        Margin="{x:Static darkUI:Defaults.MediumThickness}"
+        RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
 
-		<!--  CallMethodAction MethodName="Focus" crashes at Loaded (UIElement.Focus returns bool,
-			the action only accepts void methods) — focus declaratively instead.  -->
-		<!--  Height=Auto overrides the theme's fixed single-line input height so the
-			multiline box fills the window.  -->
-		<TextBox
-			x:Name="memoTextBox"
-			Grid.Row="0"
-			AcceptsReturn="True"
-			AcceptsTab="True"
-			Height="Auto"
-			FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"
-			HorizontalScrollBarVisibility="Auto"
-			Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-			TextWrapping="Wrap"
-			VerticalContentAlignment="Top"
-			VerticalScrollBarVisibility="Auto" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-		<Grid Grid.Row="1">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
+        <!--  CallMethodAction MethodName="Focus" crashes at Loaded (UIElement.Focus returns bool,
+            the action only accepts void methods) - focus declaratively instead.  -->
+        <!--  Height=Auto overrides the theme's fixed single-line input height so the
+            multiline box fills the window.  -->
+        <TextBox
+            x:Name="memoTextBox"
+            Grid.Row="0"
+            AcceptsReturn="True"
+            AcceptsTab="True"
+            Height="Auto"
+            FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"
+            HorizontalScrollBarVisibility="Auto"
+            Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            TextWrapping="Wrap"
+            VerticalContentAlignment="Top"
+            VerticalScrollBarVisibility="Auto" />
 
-			<CheckBox
-				VerticalAlignment="Center"
-				Content="{tombLib:Localize AlwaysDisplay}"
-				IsChecked="{Binding AlwaysDisplay, Mode=TwoWay}" />
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-			<controls:SpacedStack
-				Grid.Column="1"
-				HorizontalAlignment="Right"
-				Orientation="Horizontal"
-				Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-				<Button
-					Width="80"
-					Command="{Binding ConfirmCommand}"
-					Content="{tombLib:Localize ~Common.OK}"
-					IsDefault="True" />
-				<Button
-					Width="80"
-					Command="{Binding CancelCommand}"
-					Content="{tombLib:Localize ~Common.Cancel}"
-					IsCancel="True" />
-			</controls:SpacedStack>
-		</Grid>
-	</controls:SpacedGrid>
+            <CheckBox
+                VerticalAlignment="Center"
+                Content="{tombLib:Localize AlwaysDisplay}"
+                IsChecked="{Binding AlwaysDisplay, Mode=TwoWay}" />
+
+            <controls:SpacedStack
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal"
+                Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+                <Button
+                    Width="80"
+                    Command="{Binding ConfirmCommand}"
+                    Content="{tombLib:Localize ~Common.OK}"
+                    IsDefault="True" />
+                <Button
+                    Width="80"
+                    Command="{Binding CancelCommand}"
+                    Content="{tombLib:Localize ~Common.Cancel}"
+                    IsCancel="True" />
+            </controls:SpacedStack>
+        </Grid>
+    </controls:SpacedGrid>
 </Window>

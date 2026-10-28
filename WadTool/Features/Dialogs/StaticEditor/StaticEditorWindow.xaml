@@ -318,7 +318,7 @@
                 IsCancel="True" />
         </controls:SpacedStack>
 
-        <!--  The 3D view is the legacy WinForms PanelRenderingStaticEditor, hosted as-is.  -->
+        <!--  The 3D view is the legacy previous PanelRenderingStaticEditor, hosted as-is.  -->
         <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
             <Border x:Name="renderingHost" />
         </Border>

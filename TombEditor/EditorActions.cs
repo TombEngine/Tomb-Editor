@@ -1,7 +1,12 @@
 #nullable enable
 
-using DarkUI.Forms;
+using Clipboard = System.Windows.Clipboard;
+using DataFormats = System.Windows.DataFormats;
+using DragEventArgs = TombLib.Input.PointerDragEventArgs;
+using Keys = TombLib.Input.EditorKey;
 using NLog;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
+using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -12,7 +17,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using TextDataFormat = System.Windows.TextDataFormat;
 using TombEditor.Features.Dialogs.Camera;
 using TombEditor.Features.Dialogs.ChooseRoom;
 using TombEditor.Features.Dialogs.FlybyCamera;
@@ -21,19 +26,12 @@ using TombEditor.Features.Dialogs.Memo;
 using TombEditor.Features.Dialogs.Moveable;
 using TombEditor.Features.Dialogs.Portal;
 using TombEditor.Features.Dialogs.QuickItemGroup;
-using TombEditor.Features.Dialogs.ReplaceObject;
 using TombEditor.Features.Dialogs.ResizeRoom;
 using TombEditor.Features.Dialogs.SelectRoomByTags;
 using TombEditor.Features.Dialogs.Sink;
 using TombEditor.Features.Dialogs.SoundSource;
 using TombEditor.Features.Dialogs.Static;
-using TombEditor.Features.Dialogs.ToolBarLayout;
-using TombEditor.Features.Dialogs.Transform;
 using TombLib;
-using TombLib.Controls;
-using TombLib.Forms;
-using TombLib.Forms.ViewModels;
-using TombLib.Forms.Views;
 using TombLib.GeometryIO;
 using TombLib.LevelData;
 using TombLib.LevelData.Compilers;
@@ -45,14 +43,17 @@ using TombLib.LevelData.SectorServices;
 using TombLib.LevelData.SectorStructs;
 using TombLib.LevelData.VisualScripting;
 using TombLib.Rendering;
+using TombLib.Services;
 using TombLib.Utils;
-using TombLib.WPF;
-using TombLib.WPF.Services;
-using TombLib.WPF.Services.Abstract;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
-using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
-using SaveFileDialog = Microsoft.Win32.SaveFileDialog;
+using TombLib.WPF;
+using TombLib.WPF.Input;
+using TombLib.WPF.Services;
+using TombLib.WPF.Services.Abstract;
+using TombLib.WPF.Threading;
+using TombLib.WPF.ViewModels;
+using TombLib.WPF.Views;
 
 #nullable restore
 
@@ -64,21 +65,21 @@ namespace TombEditor
 
         private static Editor _editor => Editor.Instance;
 
-        public static bool ContinueOnFileDrop(IWin32Window owner, string description)
+        public static bool ContinueOnFileDrop(IWindowOwner owner, string description)
         {
             if (!_editor.HasUnsavedChanges || _editor.Level.Settings.HasUnknownData)
                 return true;
 
-            switch (DarkMessageBox.Show(owner,
+            switch (UserDialogs.Show(owner,
                 "Your unsaved changes will be lost. Do you want to save?",
                 description,
-                MessageBoxButtons.YesNoCancel,
-                MessageBoxIcon.Question,
-                MessageBoxDefaultButton.Button2))
+                DialogButtons.YesNoCancel,
+                DialogIcon.Question,
+                DialogDefaultButton.Button2))
             {
-                case DialogResult.No:
+                case DialogChoice.No:
                     return true;
-                case DialogResult.Yes:
+                case DialogChoice.Yes:
                     return SaveLevel(owner, false);
                 default:
                     return false;
@@ -447,7 +448,7 @@ namespace TombEditor
         }
 
 #nullable enable
-        public static void EditColor(IWin32Window owner, IColorable obj, Action<Vector3>? newColorCallback = null)
+        public static void EditColor(IWindowOwner owner, IColorable obj, Action<Vector3>? newColorCallback = null)
         {
             var originalColors = CaptureObjectColors(obj);
             var initialColor = obj.Color * 0.5f;
@@ -718,15 +719,15 @@ namespace TombEditor
             _editor.UndoManager.PushSectorObjectCreated(triggers.Cast<SectorBasedObjectInstance>().ToList());
         }
 
-        public static void AddTrigger(Room room, RectangleInt2 area, IWin32Window owner)
+        public static void AddTrigger(Room room, RectangleInt2 area, IWindowOwner owner)
         {
-            if (Control.ModifierKeys.HasFlag(Keys.Shift) || _editor.SelectedObject == null || !(_editor.SelectedObject is PositionBasedObjectInstance))
+            if (KeyboardState.ModifierKeys.HasFlag(Keys.Shift) || _editor.SelectedObject == null || !(_editor.SelectedObject is PositionBasedObjectInstance))
                 AddTrigger(room, area, owner, _editor.BookmarkedObject);
             else
                 AddTrigger(room, area, owner, _editor.SelectedObject);
         }
 
-        public static void AddTrigger(Room room, RectangleInt2 area, IWin32Window owner, ObjectInstance @object)
+        public static void AddTrigger(Room room, RectangleInt2 area, IWindowOwner owner, ObjectInstance @object)
         {
             // Initialize root trigger and object list.
             var trigger = new TriggerInstance(area);
@@ -891,7 +892,7 @@ namespace TombEditor
             }
         }
 
-        public static void AddBoxVolumeInSelectedArea(IWin32Window owner)
+        public static void AddBoxVolumeInSelectedArea(IWindowOwner owner)
         {
             if (!VersionCheck(_editor.Level.IsTombEngine, "Volume"))
                 return;
@@ -1056,7 +1057,7 @@ namespace TombEditor
             switch (axis)
             {
                 case RotationAxis.Y:
-                    if (Control.ModifierKeys.HasFlag(Keys.Alt) && instance is ObjectGroup)
+                    if (KeyboardState.ModifierKeys.HasFlag(Keys.Alt) && instance is ObjectGroup)
                     {
                         var og = (ObjectGroup)instance;
                         og.RotateAsGroup(angleInDegrees + (delta ? og.RotationY : 0));
@@ -1101,7 +1102,7 @@ namespace TombEditor
                 .Distinct();
         }
 
-        public static void RenameObject(ObjectInstance instance, IWin32Window owner)
+        public static void RenameObject(ObjectInstance instance, IWindowOwner owner)
         {
             if (instance == null)
             {
@@ -1122,7 +1123,7 @@ namespace TombEditor
 
                 if (!luaInstance.CanSetLuaName(result))
                 {
-                    MessageBoxes.LuaNameAlreadyTakenError(owner);
+                    UserDialogs.LuaNameAlreadyTakenError(owner);
                     RenameObject(luaInstance, owner);
                 }
                 else
@@ -1133,11 +1134,11 @@ namespace TombEditor
             }
         }
 
-        public static void EditObject(ObjectInstance instance, IWin32Window owner)
+        public static void EditObject(ObjectInstance instance, IWindowOwner owner)
         {
             if (instance is MoveableInstance)
             {
-                if (instance.CanBeColored() && Control.ModifierKeys.HasFlag(Keys.Control))
+                if (instance.CanBeColored() && KeyboardState.ModifierKeys.HasFlag(Keys.Control))
                     EditColor(owner, (MoveableInstance)instance);
                 else
                 {
@@ -1159,7 +1160,7 @@ namespace TombEditor
             else if (instance is StaticInstance)
             {
                 // Use static editing dialog only for NG levels for now (bypass it if Ctrl/Alt key is pressed)
-                if (instance.CanBeColored() && (!_editor.Level.IsNG || Control.ModifierKeys.HasFlag(Keys.Control)))
+                if (instance.CanBeColored() && (!_editor.Level.IsNG || KeyboardState.ModifierKeys.HasFlag(Keys.Control)))
                 {
                     EditColor(owner, (StaticInstance)instance);
                 }
@@ -1293,7 +1294,7 @@ namespace TombEditor
             }
             else if (instance is ImportedGeometryInstance)
             {
-                if (Control.ModifierKeys.HasFlag(Keys.Control))
+                if (KeyboardState.ModifierKeys.HasFlag(Keys.Control))
                     EditColor(owner, (ImportedGeometryInstance)instance);
                 else
                 {
@@ -1397,7 +1398,7 @@ namespace TombEditor
             }
         }
 
-        public static void DeleteObjects(IEnumerable<ObjectInstance> objects, IWin32Window owner = null, bool undo = true)
+        public static void DeleteObjects(IEnumerable<ObjectInstance> objects, IWindowOwner owner = null, bool undo = true)
         {
             if (!objects.Any())
                 return;
@@ -1411,7 +1412,7 @@ namespace TombEditor
                 string prompt = "Do you really want to delete ";
                 prompt += (objects.Count() > 1 || objects.Any(o => o is ObjectGroup)) ? "specified objects?" : (objects.First() + "?");
 
-                if (DarkMessageBox.Show(owner, prompt, "Confirm delete", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                if (UserDialogs.Show(owner, prompt, "Confirm delete", DialogButtons.YesNo, DialogIcon.Question) != DialogChoice.Yes)
                     return;
             }
 
@@ -1449,7 +1450,7 @@ namespace TombEditor
             return;
         }
 
-        public static void DeleteObject(ObjectInstance instance, IWin32Window owner = null)
+        public static void DeleteObject(ObjectInstance instance, IWindowOwner owner = null)
         {
             var objectsToDelete = new List<ObjectInstance>() { instance };
             DeleteObjects(objectsToDelete, owner);
@@ -1502,7 +1503,7 @@ namespace TombEditor
 
         private static TombEditor.Features.Dialogs.EventSetEditor.EventSetEditorWindow _eventSetEditorWindow;
 
-        public static void EditEventSets(IWin32Window owner, bool global, VolumeInstance targetVolume = null)
+        public static void EditEventSets(IWindowOwner owner, bool global, VolumeInstance targetVolume = null)
         {
             if (_eventSetEditorWindow != null)
             {
@@ -2648,7 +2649,7 @@ namespace TombEditor
             RebuildLightsForObject(instance);
         }
 
-        public static void SelectObjectsInArea(IWin32Window owner, SectorSelection area, bool resetCurrentSelection = true)
+        public static void SelectObjectsInArea(IWindowOwner owner, SectorSelection area, bool resetCurrentSelection = true)
         {
             if (_editor.SelectedRoom == null || !area.Valid)
             {
@@ -2739,7 +2740,7 @@ namespace TombEditor
                 GridWallsSquares(newRoom, newRoom.LocalArea, false, false);
         }
 
-        public static void DeleteRooms(IEnumerable<Room> rooms_, IWin32Window owner = null)
+        public static void DeleteRooms(IEnumerable<Room> rooms_, IWindowOwner owner = null)
         {
             if (!rooms_.Any())
                 return;
@@ -2756,10 +2757,10 @@ namespace TombEditor
             }
 
             // Ask for confirmation. No owner = silent mode!
-            if (owner != null && DarkMessageBox.Show(owner,
+            if (owner != null && UserDialogs.Show(owner,
                     "All objects (including portals) inside rooms will be deleted and \n" +
                     "triggers pointing to them will be removed.",
-                    "Delete rooms?", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                    "Delete rooms?", DialogButtons.YesNo, DialogIcon.Warning) != DialogChoice.Yes)
             {
                 return;
             }
@@ -2801,7 +2802,7 @@ namespace TombEditor
             _editor.RoomGeometryChange(_editor.SelectedRoom);
         }
 
-        public static void CropRoom(Room room, RectangleInt2 newArea, IWin32Window owner)
+        public static void CropRoom(Room room, RectangleInt2 newArea, IWindowOwner owner)
         {
             // Figure out new room area
             if (newArea.X0 <= 0 || newArea.Y0 <= 0 || newArea.X1 <= 0 || newArea.Y1 <= 0)
@@ -2831,8 +2832,8 @@ namespace TombEditor
             // Ask the user again if portals or triggers are being removed in process.
             if (room.Portals.Any(portal => portal.Direction != PortalDirection.Floor && portal.Direction != PortalDirection.Ceiling && !newArea.Inflate(-1).Contains(portal.Area)) ||
                 room.Triggers.Any(trigger => !newArea.Inflate(-1).Contains(trigger.Area)))
-                if (DarkMessageBox.Show(owner, "Warning: if you crop this room, all portals and triggers outside the new area will be deleted." +
-                    " Do you want to continue?", "Crop room", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+                if (UserDialogs.Show(owner, "Warning: if you crop this room, all portals and triggers outside the new area will be deleted." +
+                    " Do you want to continue?", "Crop room", DialogButtons.YesNo, DialogIcon.Question) != DialogChoice.Yes)
                     return;
 
             // Resize room
@@ -3233,7 +3234,7 @@ namespace TombEditor
             _editor.RoomSectorPropertiesChange(room);
         }
 
-        public static void AddPortal(Room room, RectangleInt2 area, IWin32Window owner)
+        public static void AddPortal(Room room, RectangleInt2 area, IWindowOwner owner)
         {
             if (room.CornerSelected(area))
             {
@@ -3411,13 +3412,13 @@ namespace TombEditor
             _editor.RoomPropertiesChange(newRoom);
         }
 
-        public static void AlternateRoomDisableWithWarning(Room room, IWin32Window owner)
+        public static void AlternateRoomDisableWithWarning(Room room, IWindowOwner owner)
         {
             room = room.AlternateBaseRoom ?? room;
 
             // Ask for confirmation
-            if (DarkMessageBox.Show(owner, "Do you really want to delete the flip room?",
-                "Delete flipped room", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+            if (UserDialogs.Show(owner, "Do you really want to delete the flip room?",
+                "Delete flipped room", DialogButtons.YesNo, DialogIcon.Question, DialogDefaultButton.Button2) != DialogChoice.Yes)
             {
                 return;
             }
@@ -3893,7 +3894,7 @@ namespace TombEditor
                 SmartBuildGeometry(room, area);
         }
 
-        public static void MergeRoomsHorizontally(IEnumerable<Room> rooms, IWin32Window owner)
+        public static void MergeRoomsHorizontally(IEnumerable<Room> rooms, IWindowOwner owner)
         {
             if (rooms.Count() < 2)
             {
@@ -3939,9 +3940,9 @@ namespace TombEditor
 
             // If there are overlaps, ask the user about it
             if (baseRoomOverlaps || alternateRoomOverlaps)
-                if (DarkMessageBox.Show(owner, "The selected rooms overlap horizontally. To resolve the conflict manually, put down walls on the overlapped sectors. " +
+                if (UserDialogs.Show(owner, "The selected rooms overlap horizontally. To resolve the conflict manually, put down walls on the overlapped sectors. " +
                     "You can continue anyway, the rooms are then taken in this priority: " + string.Join(", ", rooms.Select(room => room.Name)),
-                    "Rooms are overlapping", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) != DialogResult.OK)
+                    "Rooms are overlapping", DialogButtons.OKCancel, DialogIcon.Information) != DialogChoice.OK)
                     return;
 
             // Figure out position and size of the merged room
@@ -3955,9 +3956,9 @@ namespace TombEditor
             VectorInt2 size = maxSectorPos - minSectorPos + new VectorInt2(2, 2);
             int maxSize = TrCatalog.GetLimit(_editor.Level.Settings.GameVersion, Limit.RoomDimensions);
             if (size.X >= maxSize || size.Y >= maxSize)
-                if (DarkMessageBox.Show(owner, "After merging all rooms, the new room will have size " + size.X + " by " + size.Y + ". It is bigger than " +
+                if (UserDialogs.Show(owner, "After merging all rooms, the new room will have size " + size.X + " by " + size.Y + ". It is bigger than " +
                     maxSize + " by " + maxSize + " which is maximum size for the engine. You can continue anyway," +
-                    " but in game there will be issues with rendering. Are you sure?", "Room too big", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
+                    " but in game there will be issues with rendering. Are you sure?", "Room too big", DialogButtons.YesNo, DialogIcon.Exclamation, DialogDefaultButton.Button2) != DialogChoice.Yes)
                     return;
 
             // Create new room and start merging
@@ -4177,7 +4178,7 @@ namespace TombEditor
             _editor.RoomListChange();
         }
 
-        public static void SplitRoom(IWin32Window owner)
+        public static void SplitRoom(IWindowOwner owner)
         {
             if (!CheckForRoomAndSectorSelection(owner))
                 return;
@@ -4231,7 +4232,7 @@ namespace TombEditor
             _editor.SelectRooms(_editor.Level.GetConnectedRooms(_editor.SelectedRooms).ToList());
         }
 
-        public static void DuplicateRoom(IWin32Window owner)
+        public static void DuplicateRoom(IWindowOwner owner)
         {
             // Prevent "Copy of Copy of Copy" situation
             int foundPostfixPos = _editor.SelectedRoom.Name.IndexOf(" (copy");
@@ -4266,7 +4267,7 @@ namespace TombEditor
             _editor.SelectedRoom = newRoom;
         }
 
-        public static bool CheckForRoomAndSectorSelection(IWin32Window owner)
+        public static bool CheckForRoomAndSectorSelection(IWindowOwner owner)
         {
             if (_editor.SelectedRoom == null || !_editor.SelectedSectors.Valid)
             {
@@ -4283,7 +4284,7 @@ namespace TombEditor
             return supported;
         }
 
-        public static bool CheckForLockedRooms(IWin32Window owner, IEnumerable<Room> rooms)
+        public static bool CheckForLockedRooms(IWindowOwner owner, IEnumerable<Room> rooms)
         {
             if (rooms.All(room => !room.Properties.Locked))
                 return false;
@@ -4296,8 +4297,8 @@ namespace TombEditor
             }
 
             // Inform user and offer an option to unlock the room position
-            if (DarkMessageBox.Show(owner, "Can't move rooms because some rooms are locked. Unlock and continue?\n" + lockedRoomList, "Locked rooms", MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.No)
+            if (UserDialogs.Show(owner, "Can't move rooms because some rooms are locked. Unlock and continue?\n" + lockedRoomList, "Locked rooms", DialogButtons.YesNo,
+                DialogIcon.Warning, DialogDefaultButton.Button2) == DialogChoice.No)
                 return true;
 
             // Unlock rooms
@@ -4353,7 +4354,7 @@ namespace TombEditor
         }
 
 #nullable enable
-        public static void EditLightColor(IWin32Window owner)
+        public static void EditLightColor(IWindowOwner owner)
         {
             UpdateLight<Vector3>((light, value) => light.Color == value, (light, value) => light.Color = value,
                 light =>
@@ -4379,7 +4380,7 @@ namespace TombEditor
 
 #nullable restore
 
-        public static bool BuildLevel(bool autoCloseWhenDone, IWin32Window owner, bool silent = false, string forceDirectory = null)
+        public static bool BuildLevel(bool autoCloseWhenDone, IWindowOwner owner, bool silent = false, string forceDirectory = null)
         {
             Level level = _editor.Level;
 
@@ -4517,7 +4518,7 @@ namespace TombEditor
             return $"{h} h {m2} min {s2} s";
         }
 
-        public static void BuildLevelAndPlay(IWin32Window owner, bool fastMode = false)
+        public static void BuildLevelAndPlay(IWindowOwner owner, bool fastMode = false)
         {
             if (IsLaraInLevel())
             {
@@ -4566,8 +4567,8 @@ namespace TombEditor
                     return;
                 else
                 {
-                    DarkMessageBox.Show("Batch build failed! \n" + "Exception: " + ex.Message,
-                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    UserDialogs.Show("Batch build failed! \n" + "Exception: " + ex.Message,
+                        "Error", DialogButtons.OK, DialogIcon.Error);
                     return;
                 }
             }
@@ -4580,7 +4581,7 @@ namespace TombEditor
                                               .Any(obj => obj is ItemInstance && ((ItemInstance)obj).ItemType == new ItemType(WadMoveableId.Lara));
         }
 
-        public static bool AddAndPlaceImportedGeometry(IWin32Window owner, VectorInt2 position, string file)
+        public static bool AddAndPlaceImportedGeometry(IWindowOwner owner, VectorInt2 position, string file)
         {
             if (!File.Exists(file))
                 return false;
@@ -4602,7 +4603,7 @@ namespace TombEditor
             return false;
         }
 
-        public static ImportedGeometry AddImportedGeometry(IWin32Window owner, string predefinedPath = null)
+        public static ImportedGeometry AddImportedGeometry(IWindowOwner owner, string predefinedPath = null)
         {
             string path = (predefinedPath ?? LevelFileDialog.BrowseFile(owner, _editor.Level.Settings,
                 PathC.GetDirectoryNameTry(_editor.Level.Settings.LevelFilePath),
@@ -4636,7 +4637,7 @@ namespace TombEditor
             return geometry;
         }
 
-        public static IEnumerable<LevelTexture> AddTexture(IWin32Window owner, IEnumerable<string> predefinedPaths = null)
+        public static IEnumerable<LevelTexture> AddTexture(IWindowOwner owner, IEnumerable<string> predefinedPaths = null)
         {
             List<string> paths = (predefinedPaths ?? LevelFileDialog.BrowseFiles(owner, _editor.Level.Settings,
                 PathC.GetDirectoryNameTry(_editor.Level.Settings.LevelFilePath),
@@ -4652,15 +4653,15 @@ namespace TombEditor
             // Open GUI for texture that couldn't be loaded
             for (int i = 0; i < results.Length; ++i)
                 while (results[i]?.LoadException != null)
-                    switch (DarkMessageBox.Show(owner, "An error occurred while loading texture file '" + paths[i] + "'." +
+                    switch (UserDialogs.Show(owner, "An error occurred while loading texture file '" + paths[i] + "'." +
                         "\nError message: " + results[i].LoadException.GetType(), "Unable to load texture file.",
-                        paths.Count == 1 ? MessageBoxButtons.RetryCancel : MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Error,
-                        paths.Count == 1 ? MessageBoxDefaultButton.Button2 : MessageBoxDefaultButton.Button1))
+                        paths.Count == 1 ? DialogButtons.RetryCancel : DialogButtons.AbortRetryIgnore, DialogIcon.Error,
+                        paths.Count == 1 ? DialogDefaultButton.Button2 : DialogDefaultButton.Button1))
                     {
-                        case DialogResult.Retry:
+                        case DialogChoice.Retry:
                             results[i].Reload(_editor.Level.Settings);
                             break;
-                        case DialogResult.Ignore:
+                        case DialogChoice.Ignore:
                             results[i] = null;
                             break;
                         default:
@@ -4690,20 +4691,20 @@ namespace TombEditor
             }
         }
 
-        public static void UnloadTextures(IWin32Window owner)
+        public static void UnloadTextures(IWindowOwner owner)
         {
-            if (DarkMessageBox.Show(owner, "Are you sure to unload ALL " + _editor.Level.Settings.Textures.Count +
-                " texture files loaded?", "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+            if (UserDialogs.Show(owner, "Are you sure to unload ALL " + _editor.Level.Settings.Textures.Count +
+                " texture files loaded?", "Are you sure?", DialogButtons.YesNo, DialogIcon.Question) != DialogChoice.Yes)
                 return;
             foreach (LevelTexture texture in _editor.Level.Settings.Textures)
                 texture.SetPath(_editor.Level.Settings, null);
             _editor.LoadedTexturesChange();
         }
 
-        public static void RemoveTextures(IWin32Window owner)
+        public static void RemoveTextures(IWindowOwner owner)
         {
-            if (DarkMessageBox.Show(owner, "Are you sure to DELETE ALL " + _editor.Level.Settings.Textures.Count +
-                " texture files loaded? Everything will be untextured.", "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+            if (UserDialogs.Show(owner, "Are you sure to DELETE ALL " + _editor.Level.Settings.Textures.Count +
+                " texture files loaded? Everything will be untextured.", "Are you sure?", DialogButtons.YesNo, DialogIcon.Question) != DialogChoice.Yes)
                 return;
             _editor.SelectedTexture = TextureArea.None;
             _editor.Level.RemoveTextures(texture => true);
@@ -4712,10 +4713,10 @@ namespace TombEditor
             _editor.LoadedTexturesChange();
         }
 
-        public static void RemoveTexture(IWin32Window owner, LevelTexture textureToDelete)
+        public static void RemoveTexture(IWindowOwner owner, LevelTexture textureToDelete)
         {
-            if (DarkMessageBox.Show(owner, "Are you sure to DELETE the texture " + textureToDelete +
-                "? Everything using the texture will be untextured.", "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+            if (UserDialogs.Show(owner, "Are you sure to DELETE the texture " + textureToDelete +
+                "? Everything using the texture will be untextured.", "Are you sure?", DialogButtons.YesNo, DialogIcon.Question) != DialogChoice.Yes)
                 return;
             if (_editor.SelectedTexture.Texture == textureToDelete)
                 _editor.SelectedTexture = TextureArea.None;
@@ -4724,7 +4725,7 @@ namespace TombEditor
             _editor.LoadedTexturesChange(_editor.Level.Settings.Textures.FirstOrDefault());
         }
 
-        public static IEnumerable<ReferencedWad> AddWad(IWin32Window owner, IEnumerable<string> predefinedPaths = null)
+        public static IEnumerable<ReferencedWad> AddWad(IWindowOwner owner, IEnumerable<string> predefinedPaths = null)
         {
             List<string> paths = (predefinedPaths ?? LevelFileDialog.BrowseFiles(owner, _editor.Level.Settings,
                 PathC.GetDirectoryNameTry(_editor.Level.Settings.LevelFilePath),
@@ -4743,21 +4744,21 @@ namespace TombEditor
                 while (!loadingTask.IsCompleted)
                 {
                     Thread.Sleep(1);
-                    Application.DoEvents(); // Keep dialog handler responsive, otherwise wad loading can deadlock waiting on GUI thread, while GUI thread is waiting for Parallel.For.
+                    DispatcherEvents.ProcessPending(); // Keep dialog handler responsive, otherwise wad loading can deadlock waiting on GUI thread, while GUI thread is waiting for Parallel.For.
                 }
 
             // Open GUI for objects (*.wad files) that couldn't be loaded
             for (int i = 0; i < results.Length; ++i)
                 while (results[i]?.LoadException != null)
-                    switch (DarkMessageBox.Show(owner, "An error occurred while loading object file '" + paths[i] + "'." +
+                    switch (UserDialogs.Show(owner, "An error occurred while loading object file '" + paths[i] + "'." +
                         "\nError message: " + results[i].LoadException.GetType(), "Unable to load object file.",
-                        paths.Count == 1 ? MessageBoxButtons.RetryCancel : MessageBoxButtons.AbortRetryIgnore, MessageBoxIcon.Error,
-                        paths.Count == 1 ? MessageBoxDefaultButton.Button2 : MessageBoxDefaultButton.Button1))
+                        paths.Count == 1 ? DialogButtons.RetryCancel : DialogButtons.AbortRetryIgnore, DialogIcon.Error,
+                        paths.Count == 1 ? DialogDefaultButton.Button2 : DialogDefaultButton.Button1))
                     {
-                        case DialogResult.Retry:
+                        case DialogChoice.Retry:
                             results[i].Reload(_editor.Level.Settings);
                             break;
-                        case DialogResult.Ignore:
+                        case DialogChoice.Ignore:
                             results[i] = null;
                             break;
                         default:
@@ -4790,7 +4791,7 @@ namespace TombEditor
                 while (!loadingTask.IsCompleted)
                 {
                     Thread.Sleep(1);
-                    Application.DoEvents(); // Keep dialog handler responsive, otherwise wad loading can deadlock waiting on GUI thread, while GUI thread is waiting for Parallel.For.
+                    DispatcherEvents.ProcessPending(); // Keep dialog handler responsive, otherwise wad loading can deadlock waiting on GUI thread, while GUI thread is waiting for Parallel.For.
                 }
 
             var loadedWads = results.Where(result => result != null);
@@ -4860,16 +4861,16 @@ namespace TombEditor
             return false;
         }
 
-        public static void RemoveWads(IWin32Window owner)
+        public static void RemoveWads(IWindowOwner owner)
         {
-            if (DarkMessageBox.Show(owner, "Are you sure to delete ALL " + _editor.Level.Settings.Wads.Count +
-                " wad files loaded?", "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+            if (UserDialogs.Show(owner, "Are you sure to delete ALL " + _editor.Level.Settings.Wads.Count +
+                " wad files loaded?", "Are you sure?", DialogButtons.YesNo, DialogIcon.Question) != DialogChoice.Yes)
                 return;
             _editor.Level.Settings.Wads.Clear();
             _editor.LoadedWadsChange();
         }
 
-        public static void ReloadWads(IWin32Window owner)
+        public static void ReloadWads(IWindowOwner owner)
         {
             var dialogHandler = new GraphicalDialogHandler(owner);
             foreach (var wad in _editor.Level.Settings.Wads)
@@ -4877,7 +4878,7 @@ namespace TombEditor
             _editor.LoadedWadsChange();
         }
 
-        public static bool ReloadResource(IWin32Window owner, LevelSettings settings, IReloadableResource toReplace, bool sendEvent = true, bool searchForOthers = true)
+        public static bool ReloadResource(IWindowOwner owner, LevelSettings settings, IReloadableResource toReplace, bool sendEvent = true, bool searchForOthers = true)
         {
             string path = LevelFileDialog.BrowseFile(owner, settings, toReplace.GetPath(),
                 "Select a new file for " + toReplace.ResourceType.ToString(), toReplace.FileExtensions, VariableType.LevelDirectory, false);
@@ -4901,8 +4902,8 @@ namespace TombEditor
                     if (!File.Exists(newPath))
                         continue;
 
-                    if (searchForOthers && DarkMessageBox.Show(owner, "Other missing " + resourceTypeString + " was found. Reconnect other resources?",
-                                            "Reconnect offline media", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                    if (searchForOthers && UserDialogs.Show(owner, "Other missing " + resourceTypeString + " was found. Reconnect other resources?",
+                                            "Reconnect offline media", DialogButtons.YesNo, DialogIcon.Question) == DialogChoice.No)
                         break;
                     else
                     {
@@ -4954,7 +4955,7 @@ namespace TombEditor
             return true;
         }
 
-        public static void ReloadSounds(IWin32Window owner)
+        public static void ReloadSounds(IWindowOwner owner)
         {
             var dialogHandler = new GraphicalDialogHandler(owner);
             foreach (var catalog in _editor.Level.Settings.SoundCatalogs)
@@ -4962,18 +4963,18 @@ namespace TombEditor
             _editor.LoadedSoundsCatalogsChange();
         }
 
-        public static bool EnsureNoOutsidePortalsInSelecton(IWin32Window owner)
+        public static bool EnsureNoOutsidePortalsInSelecton(IWindowOwner owner)
         {
             return Room.RemoveOutsidePortals(_editor.Level, _editor.SelectedRooms, list =>
             {
                 StringBuilder portalsToRemoveList = list.Aggregate(new StringBuilder(), (str, room) => str.Append(room).Append("\n"), str => str.Remove(str.Length - 1, 1));
-                return DarkMessageBox.Show(owner, "The rooms can't have portals to the outside. Do you want to continue by removing all portals to the outside? " +
+                return UserDialogs.Show(owner, "The rooms can't have portals to the outside. Do you want to continue by removing all portals to the outside? " +
                     " Portals to remove: " + portalsToRemoveList.ToString(),
-                    "Outside portals", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) == DialogResult.Yes;
+                    "Outside portals", DialogButtons.YesNo, DialogIcon.Warning, DialogDefaultButton.Button2) == DialogChoice.Yes;
             });
         }
 
-        public static bool TransformRooms(RectTransformation transformation, IWin32Window owner)
+        public static bool TransformRooms(RectTransformation transformation, IWindowOwner owner)
         {
             if (!EnsureNoOutsidePortalsInSelecton(owner))
                 return false;
@@ -4994,7 +4995,7 @@ namespace TombEditor
             return true;
         }
 
-        public static void TryCopyObject(ObjectInstance instance, IWin32Window owner)
+        public static void TryCopyObject(ObjectInstance instance, IWindowOwner owner)
         {
             if (!(instance is ICopyable))
             {
@@ -5029,12 +5030,12 @@ namespace TombEditor
             Clipboard.SetDataObject(new ObjectClipboardData(_editor));
         }
 
-        public static void TryCopySectors(SectorSelection selection, IWin32Window owner)
+        public static void TryCopySectors(SectorSelection selection, IWindowOwner owner)
         {
             Clipboard.SetDataObject(new SectorsClipboardData(_editor));
         }
 
-        public static void TryStampObject(ObjectInstance instance, IWin32Window owner)
+        public static void TryStampObject(ObjectInstance instance, IWindowOwner owner)
         {
             if (!(instance is ISpatial))
             {
@@ -5054,7 +5055,7 @@ namespace TombEditor
             _editor.Action = new EditorActionPlace(true, (level, room) => instance.Clone());
         }
 
-        public static void TryPasteSectors(SectorsClipboardData data, IWin32Window owner)
+        public static void TryPasteSectors(SectorsClipboardData data, IWindowOwner owner)
         {
             _editor.UndoManager.PushGeometryChanged(_editor.SelectedRoom);
 
@@ -5124,7 +5125,7 @@ namespace TombEditor
             _editor.SelectedSectors = new SectorSelection { Area = new RectangleInt2(relPos) };
         }
 
-        public static void MoveLara(IWin32Window owner, Room targetRoom, VectorInt2 p)
+        public static void MoveLara(IWindowOwner owner, Room targetRoom, VectorInt2 p)
         {
             // Search for first Lara and remove her
             foreach (Room room in _editor.Level.ExistingRooms)
@@ -5148,7 +5149,7 @@ namespace TombEditor
             PlaceObject(targetRoom, p, new MoveableInstance { WadObjectId = WadMoveableId.Lara });
         }
 
-        public static int DragDropCommonFiles(DragEventArgs e, IWin32Window owner)
+        public static int DragDropCommonFiles(DragEventArgs e, IWindowOwner owner)
         {
             if (!e.Data.GetDataPresent(DataFormats.FileDrop))
                 return -1;
@@ -5179,7 +5180,7 @@ namespace TombEditor
             return files.Length - (wadFiles.Count() + textureFiles.Count()); // Unsupported file count
         }
 
-        public static void SetPortalOpacity(PortalOpacity opacity, IWin32Window owner)
+        public static void SetPortalOpacity(PortalOpacity opacity, IWindowOwner owner)
         {
             var portal = _editor.SelectedObject as PortalInstance;
             if (portal == null)
@@ -5194,7 +5195,7 @@ namespace TombEditor
             _editor.ObjectChange(portal, ObjectChangeType.Change);
         }
 
-        public static void ToggleClassicPortalMirror(IWin32Window owner)
+        public static void ToggleClassicPortalMirror(IWindowOwner owner)
         {
             if (!VersionCheck(_editor.Level.IsTombEngine, "Classic mirror effect"))
                 return;
@@ -5210,7 +5211,7 @@ namespace TombEditor
             _editor.ObjectChange(portal, ObjectChangeType.Change);
         }
 
-        public static bool SaveLevel(IWin32Window owner, bool askForPath)
+        public static bool SaveLevel(IWindowOwner owner, bool askForPath)
         {
             // Disable saving if level has unknown data (i.e. new prj2 version opened in old editor version)
             if (_editor.Level.Settings.HasUnknownData)
@@ -5309,7 +5310,7 @@ namespace TombEditor
                 _editor.ShowObject(instance);
         }
 
-        public static void ReplaceObject(IWin32Window owner, bool fromContext = false)
+        public static void ReplaceObject(IWindowOwner owner, bool fromContext = false)
         {
             foreach (System.Windows.Window w in System.Windows.Application.Current.Windows)
             {
@@ -5327,12 +5328,12 @@ namespace TombEditor
             dialog.Show();
         }
 
-        public static void ExportCurrentRoom(IWin32Window owner)
+        public static void ExportCurrentRoom(IWindowOwner owner)
         {
             ExportRooms(new[] { _editor.SelectedRoom }, owner);
         }
 
-        public static void ExportRooms(IEnumerable<Room> rooms, IWin32Window owner)
+        public static void ExportRooms(IEnumerable<Room> rooms, IWindowOwner owner)
         {
             var saveFileDialog = new SaveFileDialog();
             saveFileDialog.Title = "Export current room";
@@ -5346,7 +5347,7 @@ namespace TombEditor
 
             if (!saveFileDialog.FileName.IsANSI())
             {
-                MessageBoxes.NonANSIFilePathError(owner);
+                UserDialogs.NonANSIFilePathError(owner);
                 ExportRooms(rooms, owner);
                 return;
             }
@@ -5416,7 +5417,7 @@ namespace TombEditor
 
         }
 
-        public static void ImportRooms(IWin32Window owner)
+        public static void ImportRooms(IWindowOwner owner)
         {
             string importedGeometryPath;
             var openFileDialog = new OpenFileDialog();
@@ -5507,7 +5508,7 @@ namespace TombEditor
             }
         }
 
-        public static bool ConvertLevelToTombEngine(IWin32Window owner)
+        public static bool ConvertLevelToTombEngine(IWindowOwner owner)
         {
             var fileName = LevelFileDialog.BrowseFile(owner, "Select project to convert",
                 LevelSettings.FileFormatsLevelPrj.Concat(LevelSettings.FileFormatsLevel),
@@ -5520,7 +5521,7 @@ namespace TombEditor
 
             {
                 var operationVm = new TombEditor.Features.Dialogs.Operation.OperationDialogWindowViewModel("TombEngine level converter", false, true, (progressReporter, cancelToken) =>
-                    newLevel = TombEngineConverter.Start(fileName, owner, progressReporter, cancelToken));
+                    newLevel = TombEngineConverter.Start(fileName, progressReporter, cancelToken));
                 var operationDialog = new TombEditor.Features.Dialogs.Operation.OperationDialogWindow { DataContext = operationVm };
                 if (owner is not null)
                     operationDialog.SetOwner(owner);
@@ -5536,7 +5537,7 @@ namespace TombEditor
             }
         }
 
-        public static bool OpenLevel(IWin32Window owner, string fileName = null, bool silent = false)
+        public static bool OpenLevel(IWindowOwner owner, string fileName = null, bool silent = false)
         {
             if (!ContinueOnFileDrop(owner, "Open level"))
                 return false;
@@ -5572,7 +5573,7 @@ namespace TombEditor
                     // Check if the level has legacy sound system and should be loaded in early versions of TE
                     if (newLevel.Settings.SoundSystem != SoundSystem.Xml)
                     {
-                        DarkMessageBox.Show(owner, "This project is not compatible with this Tomb Editor version.\nUse version 1.3.15 or earlier and re-save this project in it.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        UserDialogs.Show(owner, "This project is not compatible with this Tomb Editor version.\nUse version 1.3.15 or earlier and re-save this project in it.", "Error", DialogButtons.OK, DialogIcon.Error);
                         newLevel = null;
                         return false;
                     }
@@ -5631,7 +5632,7 @@ namespace TombEditor
             Properties.Settings.Default.Save();
         }
 
-        public static void OpenLevelPrj(IWin32Window owner, string fileName = null)
+        public static void OpenLevelPrj(IWindowOwner owner, string fileName = null)
         {
             if (!ContinueOnFileDrop(owner, "Open level"))
                 return;
@@ -5917,7 +5918,7 @@ namespace TombEditor
             TrySelectRooms(outsideRooms);
         }
 
-        public static void SelectRoomsByTags(IWin32Window owner)
+        public static void SelectRoomsByTags(IWindowOwner owner)
         {
             var tagsViewModel = new SelectRoomByTagsWindowViewModel(_editor);
 
@@ -5967,7 +5968,7 @@ namespace TombEditor
         }
 
 #nullable enable
-        public static void SetStaticMeshesColor(IWin32Window owner)
+        public static void SetStaticMeshesColor(IWindowOwner owner)
         {
             var picker = ServiceLocator.ResolveService<IColorPickerService>();
 
@@ -5982,7 +5983,7 @@ namespace TombEditor
         }
 #nullable restore
 
-        public static void MakeQuickItemGroup(IWin32Window owner)
+        public static void MakeQuickItemGroup(IWindowOwner owner)
         {
             if (_editor.Level.Settings.GameVersion != TRVersion.Game.TRNG)
             {
@@ -6042,7 +6043,7 @@ namespace TombEditor
             if (settings.GameVersion.UsesMainSfx())
                 return false;
 
-            var samplePath = Application.StartupPath + "\\Assets\\Samples\\";
+            var samplePath = AppContext.BaseDirectory + "\\Assets\\Samples\\";
 
             switch (settings.GameVersion.Native())
             {
@@ -6077,10 +6078,10 @@ namespace TombEditor
                 return true;
         }
 
-        public static void AutodetectAndAssignSounds(LevelSettings settings, IWin32Window owner = null) // No owner - no confirmation
+        public static void AutodetectAndAssignSounds(LevelSettings settings, IWindowOwner owner = null) // No owner - no confirmation
         {
             if (owner != null && settings.SelectedSounds.Count > 0 &&
-                DarkMessageBox.Show(owner, "Deselect all sounds before autodetection?", "Deselect sounds", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                UserDialogs.Show(owner, "Deselect all sounds before autodetection?", "Deselect sounds", DialogButtons.YesNo, DialogIcon.Question) == DialogChoice.Yes)
                 settings.SelectedSounds.Clear();
 
             AssignHardcodedSounds(settings);

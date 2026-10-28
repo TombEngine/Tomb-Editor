@@ -1,10 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <UseWindowsForms>true</UseWindowsForms>
     <Configurations>Debug;Release</Configurations>
     <Platforms>x64;x86</Platforms>
     <RootNamespace>TombLib.Icons</RootNamespace>
@@ -27,7 +26,29 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SharpVectors.Reloaded" Version="1.8.4" />
+    <!-- The package also ships a GDI renderer that depends on Windows Forms. Only the WPF implementation is used. -->
+    <PackageDownload Include="SharpVectors.Reloaded" Version="[1.8.4]" />
+    <Reference Include="SharpVectors.Converters.Wpf">
+      <HintPath>$(NuGetPackageRoot)sharpvectors.reloaded/1.8.4/lib/net6.0-windows7.0/SharpVectors.Converters.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpVectors.Core">
+      <HintPath>$(NuGetPackageRoot)sharpvectors.reloaded/1.8.4/lib/net6.0-windows7.0/SharpVectors.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpVectors.Css">
+      <HintPath>$(NuGetPackageRoot)sharpvectors.reloaded/1.8.4/lib/net6.0-windows7.0/SharpVectors.Css.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpVectors.Dom">
+      <HintPath>$(NuGetPackageRoot)sharpvectors.reloaded/1.8.4/lib/net6.0-windows7.0/SharpVectors.Dom.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpVectors.Model">
+      <HintPath>$(NuGetPackageRoot)sharpvectors.reloaded/1.8.4/lib/net6.0-windows7.0/SharpVectors.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpVectors.Rendering.Wpf">
+      <HintPath>$(NuGetPackageRoot)sharpvectors.reloaded/1.8.4/lib/net6.0-windows7.0/SharpVectors.Rendering.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpVectors.Runtime.Wpf">
+      <HintPath>$(NuGetPackageRoot)sharpvectors.reloaded/1.8.4/lib/net6.0-windows7.0/SharpVectors.Runtime.Wpf.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

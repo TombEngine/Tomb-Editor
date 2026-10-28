@@ -1,18 +1,18 @@
 #nullable enable
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
 using TombLib.LevelData;
 using TombLib.Utils;
 
 namespace TombLib.WPF.Features.AnimatedTextures
 {
-    /// <summary>Animated preview (ports the WinForms preview timer + GetPerspectivePreview).</summary>
+    /// <summary>Animated preview (ports the shared preview timer + GetPerspectivePreview).</summary>
     public partial class AnimatedTexturesWindowViewModel
     {
         private const int PreviewSize = 128;
@@ -26,7 +26,7 @@ namespace TombLib.WPF.Features.AnimatedTextures
         private double _lastX;
         private double _lastY;
 
-        // Rendered-frame cache, value-keyed like the WinForms _imageCache: each unique frame is
+        // Rendered-frame cache, value-keyed like the shared _imageCache: each unique frame is
         // rendered only once, so a normal tick is just a dictionary lookup. (Re-rendering the
         // 128x128 perspective preview on every tick made the animation sluggish.)
         private readonly record struct PreviewFrameKey(ImageC Image, Vector2 TexCoord0, Vector2 TexCoord1, Vector2 TexCoord2, Vector2 TexCoord3);
@@ -75,8 +75,8 @@ namespace TombLib.WPF.Features.AnimatedTextures
                 var interval = TimeSpan.FromMilliseconds(Math.Clamp(Math.Round(1000.0 / fps), 1, int.MaxValue));
 
                 // Touching Interval (or Start) on a running DispatcherTimer resets its countdown:
-                // with low-FPS sets (e.g. 0.2 = a 5s interval) any repeated call here — settings
-                // edits, texture-map selection changes — would keep the tick from ever firing.
+                // With low-FPS sets (e.g. 0.2 = a 5s interval), repeated calls caused by settings
+                // edits or texture-map selection changes would keep the tick from ever firing.
                 // Reset the scroll position and timer only when something actually changed.
                 if (_previewTimer.Interval != interval)
                 {
@@ -146,7 +146,7 @@ namespace TombLib.WPF.Features.AnimatedTextures
                 : baseImage;
         }
 
-        /// <summary>Tiles and scrolls the frame to simulate UV-rotate (ports the WinForms preview Paint).</summary>
+        /// <summary>Tiles and scrolls the frame to simulate UV-rotate (ports the shared preview Paint).</summary>
         private ImageSource ComposeUvRotate(ImageSource baseImage, AnimatedTextureSet set)
         {
             const double tile = 64.0;

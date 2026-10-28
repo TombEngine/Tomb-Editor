@@ -1,6 +1,6 @@
 #nullable enable
 
-using DarkUI.Config;
+using DarkUI.WPF.Config;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using System;
@@ -10,14 +10,13 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using TombLib.Forms.Services;
 using TombLib.Services;
 using TombLib.Services.Abstract;
 using TombLib.Utils;
+using TombLib.Wad.Catalog;
 using TombLib.WPF;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
-using TombLib.Wad.Catalog;
 
 namespace WadTool;
 
@@ -39,13 +38,12 @@ internal static class Program
         ServiceLocator.Configure(provider);
         using var log = new Logging(configuration.Log_MinLevel, configuration.Log_WriteToFile, configuration.Log_ArchiveN, initialEvents);
         configuration.SaveTry();
-        if (!DefaultPaths.CheckCatalog(DefaultPaths.EngineCatalogsDirectory))
+        if (!DefaultPaths.CheckCatalog(DefaultPaths.EngineCatalogsDirectory, message => provider.GetRequiredService<IMessageService>().ShowError(message, "WadTool")))
             return;
 
         TrCatalog.LoadCatalog(DefaultPaths.EngineCatalogsDirectory);
         var application = Application.Current ?? throw new InvalidOperationException("WPF initialization did not create an application.");
         SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(application.Dispatcher));
-        WpfMessageBoxBridge.Install();
         Run(application, configuration, args, log, provider.GetRequiredService<IMessageService>());
         application.Shutdown();
 

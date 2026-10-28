@@ -3,16 +3,16 @@
 using System;
 using System.Linq;
 using System.Windows.Controls;
-using TombLib.Forms;
-using TombLib.Forms.ViewModels;
 using TombLib.LevelData;
 using TombLib.LuaProperties;
+using TombLib.Utils;
 using TombLib.Wad.Catalog;
+using TombLib.WPF.ViewModels;
 
 namespace TombEditor.Features.DockableViews.ItemPropertiesPanel;
 
 /// <summary>
-/// WPF counterpart of the WinForms <c>ToolWindows.ItemProperties</c> tool window.
+/// WPF counterpart of the previous <c>ToolWindows.ItemProperties</c> tool window.
 /// Both shells share <c>LuaPropertyGridControl</c>/<c>LuaPropertyGridViewModel</c>;
 /// this view only adds the editor-selection tracking around them.
 /// </summary>

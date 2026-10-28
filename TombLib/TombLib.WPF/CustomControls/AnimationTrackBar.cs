@@ -9,12 +9,13 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using TombLib.Graphics;
+using TombLib.WPF.Input;
 using TombLib.Wad;
 
 namespace TombLib.WPF.CustomControls;
 
 /// <summary>
-/// WPF rewrite of the WinForms <c>AnimationTrackBar</c>: the animation editor's timeline. Renders
+/// WPF rewrite of the shared <c>AnimationTrackBar</c>: the animation editor's timeline. Renders
 /// frame/keyframe ticks, frame number labels, the cursor, the (middle- or shift-drag) selection,
 /// the fading highlight, state change ranges and frame-based anim command markers; same public API
 /// (Minimum/Maximum/Value/Selection*, Highlight, Animation, ValueChanged/SelectionChanged/
@@ -22,7 +23,7 @@ namespace TombLib.WPF.CustomControls;
 /// </summary>
 public class AnimationTrackBar : FrameworkElement
 {
-    // Legacy DarkUI.Config.Colors values (this project has no reference to the WinForms DarkUI).
+    // Timeline palette colors.
     private static readonly Color _greyBackground = Color.FromRgb(60, 63, 65);
     private static readonly Color _lightestBackground = Color.FromRgb(178, 178, 178);
     private static readonly Color _lightText = Color.FromRgb(220, 220, 220);
@@ -90,7 +91,7 @@ public class AnimationTrackBar : FrameworkElement
         _highlightTimer.Tick += HighlightTimer_Tick;
     }
 
-    /// <summary>Mirrors the legacy WinForms Invalidate() the view model calls after external changes.</summary>
+    /// <summary>Mirrors the previous Invalidate() the view model calls after external changes.</summary>
     public void Invalidate() => InvalidateVisual();
 
     private void HighlightTimer_Tick(object? sender, EventArgs e)
@@ -333,11 +334,11 @@ public class AnimationTrackBar : FrameworkElement
         else if (e.LeftButton == MouseButtonState.Pressed)
         {
             // Warp cursor at the edges, like the legacy control
-            var cursorPosition = System.Windows.Forms.Cursor.Position;
+            var cursorPosition = PointerState.ScreenPosition;
             if (x <= 0)
-                System.Windows.Forms.Cursor.Position = new System.Drawing.Point(cursorPosition.X + (int)ActualWidth - 2, cursorPosition.Y);
+                PointerState.ScreenPosition = new System.Drawing.Point(cursorPosition.X + (int)ActualWidth - 2, cursorPosition.Y);
             else if (x >= ActualWidth - 1)
-                System.Windows.Forms.Cursor.Position = new System.Drawing.Point(cursorPosition.X - (int)ActualWidth + 2, cursorPosition.Y);
+                PointerState.ScreenPosition = new System.Drawing.Point(cursorPosition.X - (int)ActualWidth + 2, cursorPosition.Y);
 
             Value = XtoValue(x);
         }

@@ -1,99 +1,98 @@
 <Window
-	x:Class="TombEditor.Features.Dialogs.BumpMaps.BumpMapsWindow"
-	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
-	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
-	xmlns:local="clr-namespace:TombEditor.Features.Dialogs.BumpMaps"
-	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-	xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
-	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
-	Title="{tombLib:Localize Title}"
-	Width="440"
-	Height="600"
-	MinWidth="380"
-	MinHeight="420"
-	d:DataContext="{d:DesignInstance Type=local:BumpMapsWindowViewModel}"
-	md:DialogServiceViews.IsRegistered="True"
-	Background="{DynamicResource Brush_Background}"
-	ShowInTaskbar="False"
-	Style="{DynamicResource CustomWindowStyle}"
-	WindowStartupLocation="CenterOwner"
-	mc:Ignorable="d">
+    x:Class="TombEditor.Features.Dialogs.BumpMaps.BumpMapsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:local="clr-namespace:TombEditor.Features.Dialogs.BumpMaps"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
-	<controls:SpacedGrid
-		Margin="{x:Static darkUI:Defaults.MediumThickness}"
-		RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    Title="{tombLib:Localize Title}"
+    Width="440"
+    Height="600"
+    MinWidth="380"
+    MinHeight="420"
+    d:DataContext="{d:DesignInstance Type=local:BumpMapsWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ShowInTaskbar="False"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
 
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="*" />
-			<RowDefinition Height="Auto" />
-			<RowDefinition Height="Auto" />
-		</Grid.RowDefinitions>
+    <controls:SpacedGrid
+        Margin="{x:Static darkUI:Defaults.MediumThickness}"
+        RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
 
-		<controls:SearchableComboBox
-			Grid.Row="0"
-			DisplayMemberPath="Path"
-			ItemsSource="{Binding Textures}"
-			SelectedItem="{Binding SelectedTexture, Mode=TwoWay}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-		<local:BumpMapsTextureMapView x:Name="mapView" Grid.Row="1" />
+        <controls:SearchableComboBox
+            Grid.Row="0"
+            DisplayMemberPath="Path"
+            ItemsSource="{Binding Textures}"
+            SelectedItem="{Binding SelectedTexture, Mode=TwoWay}" />
 
-		<controls:SpacedGrid
-			Grid.Row="2"
-			ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="*" />
-			</Grid.ColumnDefinitions>
+        <local:BumpMapsTextureMapView x:Name="mapView" Grid.Row="1" />
 
-			<CheckBox
-				Grid.Column="0"
-				VerticalAlignment="Center"
-				Command="{Binding ToggleCustomFileCommand}"
-				Content="{tombLib:Localize UseCustomFile}"
-				IsChecked="{Binding IsCustomMapped, Mode=OneWay}"
-				IsHitTestVisible="True" />
-			<TextBlock
-				Grid.Column="1"
-				VerticalAlignment="Center"
-				Foreground="{DynamicResource Brush_Text_Low}"
-				Text="{Binding CustomPathText}"
-				TextTrimming="CharacterEllipsis" />
-		</controls:SpacedGrid>
+        <controls:SpacedGrid
+            Grid.Row="2"
+            ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-		<controls:SpacedGrid
-			Grid.Row="3"
-			ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
-			</Grid.ColumnDefinitions>
+            <CheckBox
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Command="{Binding ToggleCustomFileCommand}"
+                Content="{tombLib:Localize UseCustomFile}"
+                IsChecked="{Binding IsCustomMapped, Mode=OneWay}"
+                IsHitTestVisible="True" />
+            <TextBlock
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Foreground="{DynamicResource Brush_Text_Low}"
+                Text="{Binding CustomPathText}"
+                TextTrimming="CharacterEllipsis" />
+        </controls:SpacedGrid>
 
-			<ComboBox
-				Grid.Column="0"
-				VerticalAlignment="Center"
-				IsEnabled="{Binding IsAssignEnabled}"
-				ItemsSource="{Binding Levels}"
-				SelectedItem="{Binding SelectedLevel, Mode=TwoWay}" />
+        <controls:SpacedGrid
+            Grid.Row="3"
+            ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-			<Button
-				Grid.Column="1"
-				Width="120"
-				Command="{Binding AssignBumpMapCommand}"
-				Content="{tombLib:Localize AssignBumpmap}"
-				IsEnabled="{Binding IsAssignEnabled}" />
+            <ComboBox
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                IsEnabled="{Binding IsAssignEnabled}"
+                ItemsSource="{Binding Levels}"
+                SelectedItem="{Binding SelectedLevel, Mode=TwoWay}" />
 
-			<Button
-				Grid.Column="2"
-				Width="80"
-				Command="{Binding ConfirmCommand}"
-				Content="{tombLib:Localize ~Common.OK}"
-				IsCancel="True"
-				IsDefault="True" />
-		</controls:SpacedGrid>
-	</controls:SpacedGrid>
+            <Button
+                Grid.Column="1"
+                Width="120"
+                Command="{Binding AssignBumpMapCommand}"
+                Content="{tombLib:Localize AssignBumpmap}"
+                IsEnabled="{Binding IsAssignEnabled}" />
+
+            <Button
+                Grid.Column="2"
+                Width="80"
+                Command="{Binding ConfirmCommand}"
+                Content="{tombLib:Localize ~Common.OK}"
+                IsCancel="True"
+                IsDefault="True" />
+        </controls:SpacedGrid>
+    </controls:SpacedGrid>
 </Window>

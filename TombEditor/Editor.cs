@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using TombEditor.Features.FlybyTimeline.Preview;
 using TombLib;
-using TombLib.Forms;
 using TombLib.Graphics;
 using TombLib.LevelData;
 using TombLib.LevelData.IO;

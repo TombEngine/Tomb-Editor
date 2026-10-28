@@ -1,8 +1,8 @@
 #nullable enable
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
-using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace TombEditor.Features.Dialogs.Options
 {
@@ -24,7 +24,7 @@ namespace TombEditor.Features.Dialogs.Options
     /// <summary>
     /// A single configurable option. <see cref="ConfigName"/> is the <see cref="Configuration"/>
     /// property (or <c>UI_ColorScheme</c> field) name the value is read from / written to by reflection,
-    /// exactly like the WinForms control <c>Tag</c> did in the old FormOptions.
+    /// exactly like the previous control <c>Tag</c> did in the old FormOptions.
     /// </summary>
     public partial class OptionItem : ObservableObject
     {

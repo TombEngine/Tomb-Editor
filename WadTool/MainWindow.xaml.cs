@@ -1,32 +1,27 @@
 #nullable enable
 
-using DarkUI.Forms;
+using ContextMenu = System.Windows.Controls.ContextMenu;
+using MenuItem = System.Windows.Controls.MenuItem;
+using PopUpInfo = TombLib.WPF.PopUpInfo;
+using Separator = System.Windows.Controls.Separator;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Forms;
-using TombLib.Forms;
 using TombLib.Graphics;
+using TombLib.Input;
 using TombLib.LevelData;
+using TombLib.Services;
 using TombLib.Utils;
-using TombLib.WPF;
-using TombLib.WPF.CustomControls;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
+using TombLib.WPF;
+using TombLib.WPF.CustomControls;
+using TombLib.WPF.Input;
 using WadTool.Controls;
 using WadTool.Features.Main;
-
-using ContextMenu = System.Windows.Controls.ContextMenu;
-using Keys = System.Windows.Forms.Keys;
-using MenuItem = System.Windows.Controls.MenuItem;
-using MessageBoxButtons = System.Windows.Forms.MessageBoxButtons;
-using MessageBoxIcon = System.Windows.Forms.MessageBoxIcon;
-using PopUpInfo = TombLib.WPF.PopUpInfo;
-using Separator = System.Windows.Controls.Separator;
-using WinFormsDialogResult = System.Windows.Forms.DialogResult;
 
 namespace WadTool;
 
@@ -312,21 +307,18 @@ public partial class MainWindow : Window
         _viewModel.Title = title;
     }
 
-    private WinFormsDialogResult CheckIfSaved()
+    private DialogChoice CheckIfSaved()
     {
         if (_viewModel.CanSave && _tool.DestinationWad is { WadIsEmpty: false })
-            return DarkMessageBox.Show(this.GetWin32Window(), "You have unsaved changes. Do you want to save changes?",
-                                       "Confirm", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+            return UserDialogs.Show(this.GetWin32Window(), "You have unsaved changes. Do you want to save changes?",
+                                       "Confirm", DialogButtons.YesNoCancel, DialogIcon.Question);
         else
-            return WinFormsDialogResult.OK;
+            return DialogChoice.OK;
     }
 
     private void TryMakeNewWad()
     {
-        var result = CheckIfSaved();
-        if (result == WinFormsDialogResult.Yes)
-            WadActions.SaveWad(_tool, this.GetWin32Window(), _tool.DestinationWad, false);
-        else if (result == WinFormsDialogResult.Cancel)
+        if (!CanDiscardChanges())
             return;
 
         WadActions.CreateNewWad(_tool, this.GetWin32Window());
@@ -335,15 +327,19 @@ public partial class MainWindow : Window
 
     private void TryOpenDestWad()
     {
-        var result = CheckIfSaved();
-        if (result == WinFormsDialogResult.Yes)
-            WadActions.SaveWad(_tool, this.GetWin32Window(), _tool.DestinationWad, false);
-        else if (result == WinFormsDialogResult.Cancel)
+        if (!CanDiscardChanges())
             return;
 
         WadActions.LoadWadOpenFileDialog(_tool, this.GetWin32Window(), true);
         RefreshRecentWadsList();
     }
+
+    private bool CanDiscardChanges() => CheckIfSaved() switch
+    {
+        DialogChoice.Yes => WadActions.SaveWad(_tool, this.GetWin32Window(), _tool.DestinationWad, false),
+        DialogChoice.Cancel => false,
+        _ => true
+    };
 
     private void CopyObject(bool otherSlot)
     {
@@ -427,7 +423,7 @@ public partial class MainWindow : Window
     private void treeSourceWad_DoubleClick(object? sender, EventArgs e)
     {
         if (_treeSourceWad.SelectedWadObjectIds.Count() > 0)
-            CopyObject(System.Windows.Forms.Control.ModifierKeys.HasFlag(Keys.Alt));
+            CopyObject(KeyboardState.ModifierKeys.HasFlag(EditorKey.Alt));
     }
 
     private void treeDestWad_KeyDown(object? sender, System.Windows.Input.KeyEventArgs e)
@@ -649,8 +645,8 @@ public partial class MainWindow : Window
         if (_treeDestWad.SelectedWadObjectIds.Count() == 0)
             return;
 
-        if (DarkMessageBox.Show(this.GetWin32Window(), "Do you really want to delete selected objects?", "Delete objects",
-                                MessageBoxButtons.YesNo, MessageBoxIcon.Question) != WinFormsDialogResult.Yes)
+        if (UserDialogs.Show(this.GetWin32Window(), "Do you really want to delete selected objects?", "Delete objects",
+                                DialogButtons.YesNo, DialogIcon.Question) != DialogChoice.Yes)
             return;
 
         foreach (IWadObjectId id in _treeDestWad.SelectedWadObjectIds)
@@ -670,19 +666,19 @@ public partial class MainWindow : Window
     /// <summary>
     /// Handles shortcuts routed from WPF controls and the native Direct3D viewport.
     /// </summary>
-    private bool HandleHotkey(Keys keyData)
+    private bool HandleHotkey(EditorKey keyData)
     {
         if (!IsActive)
             return false;
 
         var name = keyData switch
         {
-            Keys.Control | Keys.N => "NewWad2Menu_Click",
-            Keys.Control | Keys.O => "OpenSourceWadMenu_Click",
-            Keys.Control | Keys.Shift | Keys.O => "OpenDestinationWadMenu_Click",
-            Keys.Control | Keys.Alt | Keys.O => "OpenReferenceLevelMenu_Click",
-            Keys.Control | Keys.S => "SaveMenu_Click",
-            Keys.Control | Keys.Shift | Keys.S => "SaveAsMenu_Click",
+            EditorKey.Control | EditorKey.N => "NewWad2Menu_Click",
+            EditorKey.Control | EditorKey.O => "OpenSourceWadMenu_Click",
+            EditorKey.Control | EditorKey.Shift | EditorKey.O => "OpenDestinationWadMenu_Click",
+            EditorKey.Control | EditorKey.Alt | EditorKey.O => "OpenReferenceLevelMenu_Click",
+            EditorKey.Control | EditorKey.S => "SaveMenu_Click",
+            EditorKey.Control | EditorKey.Shift | EditorKey.S => "SaveAsMenu_Click",
             _ => null
         };
         return name is not null && _viewModel.TryExecute(name);
@@ -691,14 +687,14 @@ public partial class MainWindow : Window
     private void OnPreviewKeyDown(object? sender, System.Windows.Input.KeyEventArgs e)
     {
         var key = e.Key == System.Windows.Input.Key.System ? e.SystemKey : e.Key;
-        var keyData = (Keys)System.Windows.Input.KeyInterop.VirtualKeyFromKey(key);
+        var keyData = (EditorKey)System.Windows.Input.KeyInterop.VirtualKeyFromKey(key);
         var modifiers = System.Windows.Input.Keyboard.Modifiers;
         if (modifiers.HasFlag(System.Windows.Input.ModifierKeys.Control))
-            keyData |= Keys.Control;
+            keyData |= EditorKey.Control;
         if (modifiers.HasFlag(System.Windows.Input.ModifierKeys.Shift))
-            keyData |= Keys.Shift;
+            keyData |= EditorKey.Shift;
         if (modifiers.HasFlag(System.Windows.Input.ModifierKeys.Alt))
-            keyData |= Keys.Alt;
+            keyData |= EditorKey.Alt;
 
         if (HandleHotkey(keyData))
             e.Handled = true;
@@ -708,13 +704,7 @@ public partial class MainWindow : Window
 
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
     {
-        // Ask to save unsaved changes before quitting, mirroring FormMain.OnFormClosing.
-        var result = CheckIfSaved();
-        if (result == WinFormsDialogResult.Yes)
-        {
-            WadActions.SaveWad(_tool, this.GetWin32Window(), _tool.DestinationWad, false);
-        }
-        else if (result == WinFormsDialogResult.Cancel)
+        if (!CanDiscardChanges())
         {
             e.Cancel = true;
             return;

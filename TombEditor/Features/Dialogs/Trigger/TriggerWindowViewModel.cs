@@ -2,16 +2,16 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
 using NLog;
 using System;
 using System.Windows;
 using TombLib;
-using TombLib.Forms.ViewModels;
 using TombLib.LevelData;
 using TombLib.NG;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
+using TombLib.WPF.ViewModels;
 
 namespace TombEditor.Features.Dialogs.Trigger;
 

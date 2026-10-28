@@ -1,13 +1,13 @@
 #nullable enable
 
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
 using TombLib.WPF;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
 using WpfColor = System.Windows.Media.Color;
@@ -18,7 +18,7 @@ namespace WadTool.Features.Dialogs.Options
     /// WPF port of WadTool's <c>FormOptions</c> / <c>FormOptionsBase</c>. The dialog is data-driven:
     /// a schema of tabs -> groups -> <see cref="OptionItem"/>s is rendered by the view, and values are
     /// read from / written to <see cref="Configuration"/> by reflection on each option's
-    /// <see cref="OptionItem.ConfigName"/> (the same convention the WinForms control <c>Tag</c> used).
+    /// <see cref="OptionItem.ConfigName"/> (the same convention the control <c>Tag</c> used).
     /// </summary>
     public partial class OptionsWindowViewModel : ObservableObject, IModalDialogViewModel
     {
@@ -35,9 +35,7 @@ namespace WadTool.Features.Dialogs.Options
         public OptionsWindowViewModel(WadToolClass tool, IColorPickerService? colorPickerService = null, ILocalizationService? localizationService = null)
         {
             _config = tool.Configuration;
-            // IColorPickerService is not registered in WadTool's service provider; fall back to the
-            // WinForms-backed implementation directly (WadTool has no custom color scheme slots).
-            _colorPickerService = colorPickerService ?? new TombLib.Forms.Services.ColorPickerService();
+            _colorPickerService = colorPickerService ?? new ColorPickerService();
             _localizationService = ServiceLocator.ResolveService(localizationService).WithKeysFor(this);
 
             BuildSchema();
@@ -95,7 +93,7 @@ namespace WadTool.Features.Dialogs.Options
             foreach (var item in items)
             {
                 var option = GetOption(config, item.ConfigName);
-                if (option == null)
+                if (option is null)
                     continue;
 
                 switch (option)
@@ -124,7 +122,7 @@ namespace WadTool.Features.Dialogs.Options
             foreach (var item in Tabs.SelectMany(t => t.AllItems))
             {
                 var option = GetOption(_config, item.ConfigName);
-                if (option == null)
+                if (option is null)
                     continue;
 
                 switch (option)
@@ -182,11 +180,11 @@ namespace WadTool.Features.Dialogs.Options
         }
 
         private static object? ItemAt(OptionItem item, int index)
-            => item.Items != null && index >= 0 && index < item.Items.Count ? item.Items[index] : null;
+            => item.Items is not null && index >= 0 && index < item.Items.Count ? item.Items[index] : null;
 
         private static int IndexOf(OptionItem item, object? value)
         {
-            if (item.Items == null || value == null)
+            if (item.Items is null || value is null)
                 return 0;
             int index = item.Items.ToList().IndexOf(value);
             return index < 0 ? 0 : index;
@@ -245,7 +243,7 @@ namespace WadTool.Features.Dialogs.Options
             // read / write stays correct.
             foreach (var tab in Tabs)
                 foreach (var group in tab.Groups)
-                    group.Items.RemoveAll(o => GetOption(_config, o.ConfigName) == null);
+                    group.Items.RemoveAll(o => GetOption(_config, o.ConfigName) is null);
         }
 
         // Schema helpers.

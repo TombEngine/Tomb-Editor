@@ -1,3 +1,5 @@
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +12,7 @@ using TombLib.Wad;
 namespace WadTool
 {
     /// <summary>
-    /// WPF rewrite of the WinForms <c>AnimCommandEditor</c> user control: edits a single
+    /// WPF rewrite of the previous <c>AnimCommandEditor</c> user control: edits a single
     /// <see cref="WadAnimCommand"/> in place (type combo + per-type parameter panel) and raises
     /// <see cref="AnimCommandChanged"/> on every user edit, exactly like the legacy control.
     /// </summary>
@@ -54,7 +56,7 @@ namespace WadTool
             tbPlaySoundFrame.IsEnabled = !disableFrameControls;
             tbFlipEffectFrame.IsEnabled = !disableFrameControls;
 
-            butPlaySound.IsEnabled = (_editor.Tool.ReferenceLevel != null &&
+            butPlaySound.IsEnabled = (_editor.Tool.ReferenceLevel is not null &&
                 _editor.Tool.ReferenceLevel.Settings.GlobalSoundMap.Count > 0);
 
             comboFlipeffectConditions.IsEnabled = _editor.Tool.DestinationWad.GameVersion != TRVersion.Game.TombEngine;
@@ -84,7 +86,7 @@ namespace WadTool
             if (_currentlyDoingCommandSelection)
                 return;
 
-            if (cmd == null)
+            if (cmd is null)
             {
                 comboCommandType.IsEnabled = false;
                 ShowPanel(null);
@@ -175,7 +177,7 @@ namespace WadTool
         // sync directions go through the unfiltered _soundItems list instead of SelectedIndex.
         private void SyncSoundComboToId(int soundId)
         {
-            if (_soundItems.Count == 0 || comboSound.Items.Filter != null)
+            if (_soundItems.Count == 0 || comboSound.Items.Filter is not null)
                 return;
 
             comboSound.SelectedItem = _soundItems[Math.Min(soundId, _soundItems.Count - 1)];
@@ -183,7 +185,7 @@ namespace WadTool
 
         private void comboCommandType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (_command == null || _currentlyDoingCommandSelection)
+            if (_command is null || _currentlyDoingCommandSelection)
                 return;
 
             WadAnimCommandType newType = (WadAnimCommandType)(comboCommandType.SelectedIndex + 1);
@@ -194,7 +196,7 @@ namespace WadTool
 
         private void tbPosX_ValueChanged(object sender, EventArgs e)
         {
-            if (_command == null || _command.Type != WadAnimCommandType.SetPosition)
+            if (_command is null || _command.Type != WadAnimCommandType.SetPosition)
                 return;
             _command.Parameter1 = (short)tbPosX.Value;
             InvokeChanged();
@@ -202,7 +204,7 @@ namespace WadTool
 
         private void tbPosY_ValueChanged(object sender, EventArgs e)
         {
-            if (_command == null || _command.Type != WadAnimCommandType.SetPosition)
+            if (_command is null || _command.Type != WadAnimCommandType.SetPosition)
                 return;
             _command.Parameter2 = (short)tbPosY.Value;
             InvokeChanged();
@@ -210,7 +212,7 @@ namespace WadTool
 
         private void tbPosZ_ValueChanged(object sender, EventArgs e)
         {
-            if (_command == null || _command.Type != WadAnimCommandType.SetPosition)
+            if (_command is null || _command.Type != WadAnimCommandType.SetPosition)
                 return;
             _command.Parameter3 = (short)tbPosZ.Value;
             InvokeChanged();
@@ -218,7 +220,7 @@ namespace WadTool
 
         private void tbHorizontal_ValueChanged(object sender, EventArgs e)
         {
-            if (_command == null || _command.Type != WadAnimCommandType.SetJumpDistance)
+            if (_command is null || _command.Type != WadAnimCommandType.SetJumpDistance)
                 return;
             _command.Parameter1 = (short)tbHorizontal.Value;
             InvokeChanged();
@@ -226,7 +228,7 @@ namespace WadTool
 
         private void tbVertical_ValueChanged(object sender, EventArgs e)
         {
-            if (_command == null || _command.Type != WadAnimCommandType.SetJumpDistance)
+            if (_command is null || _command.Type != WadAnimCommandType.SetJumpDistance)
                 return;
             _command.Parameter2 = (short)tbVertical.Value;
             InvokeChanged();
@@ -234,7 +236,7 @@ namespace WadTool
 
         private void tbFlipEffectFrame_ValueChanged(object sender, EventArgs e)
         {
-            if (_command == null || _command.Type != WadAnimCommandType.FlipEffect)
+            if (_command is null || _command.Type != WadAnimCommandType.FlipEffect)
                 return;
             _command.Parameter1 = (short)tbFlipEffectFrame.Value;
             InvokeChanged();
@@ -242,7 +244,7 @@ namespace WadTool
 
         private void tbFlipEffect_ValueChanged(object sender, EventArgs e)
         {
-            if (_command == null || _command.Type != WadAnimCommandType.FlipEffect)
+            if (_command is null || _command.Type != WadAnimCommandType.FlipEffect)
                 return;
             _command.Parameter2 = (short)tbFlipEffect.Value;
             InvokeChanged();
@@ -250,7 +252,7 @@ namespace WadTool
 
         private void tbPlaySoundFrame_ValueChanged(object sender, EventArgs e)
         {
-            if (_command == null || _command.Type != WadAnimCommandType.PlaySound)
+            if (_command is null || _command.Type != WadAnimCommandType.PlaySound)
                 return;
             _command.Parameter1 = (short)tbPlaySoundFrame.Value;
             InvokeChanged();
@@ -258,7 +260,7 @@ namespace WadTool
 
         private void comboPlaySoundConditions_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (_command == null || _command.Type != WadAnimCommandType.PlaySound || comboPlaySoundConditions.SelectedItem == null)
+            if (_command is null || _command.Type != WadAnimCommandType.PlaySound || comboPlaySoundConditions.SelectedItem is null)
                 return;
             _command.Parameter3 = (short)((WadSoundEnvironmentType)comboPlaySoundConditions.SelectedItem);
             InvokeChanged();
@@ -266,7 +268,7 @@ namespace WadTool
 
         private void comboSound_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (_command == null || _command.Type != WadAnimCommandType.PlaySound)
+            if (_command is null || _command.Type != WadAnimCommandType.PlaySound)
                 return;
 
             if (comboSound.SelectedItem is not string selectedSound)
@@ -279,7 +281,7 @@ namespace WadTool
 
         private void comboFlipeffectConditions_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (_command == null || _command.Type != WadAnimCommandType.FlipEffect || comboFlipeffectConditions.SelectedIndex < 0)
+            if (_command is null || _command.Type != WadAnimCommandType.FlipEffect || comboFlipeffectConditions.SelectedIndex < 0)
                 return;
             _command.Parameter3 = (short)((WadFootstepFlipeffectCondition)comboFlipeffectConditions.SelectedIndex);
             InvokeChanged();
@@ -287,19 +289,19 @@ namespace WadTool
 
         private void butPlaySound_Click(object sender, RoutedEventArgs e)
         {
-            if (_editor.Tool.ReferenceLevel == null ||
+            if (_editor.Tool.ReferenceLevel is null ||
                 _editor.Tool.ReferenceLevel.Settings.GlobalSoundMap.Count == 0)
                 return;
 
             var soundInfo = _editor.Tool.ReferenceLevel.Settings.GlobalSoundMap.FirstOrDefault(soundInfo_ => soundInfo_.Id == (int)nudSoundId.Value);
-            if (soundInfo != null)
+            if (soundInfo is not null)
                 try { WadSoundPlayer.PlaySoundInfo(_editor.Tool.ReferenceLevel, soundInfo); }
                 catch (Exception) { } // FIXME: do something!
         }
 
         private void nudSoundId_ValueChanged(object sender, EventArgs e)
         {
-            if (_command == null || _command.Type != WadAnimCommandType.PlaySound)
+            if (_command is null || _command.Type != WadAnimCommandType.PlaySound)
                 return;
 
             _command.Parameter2 = (short)nudSoundId.Value;
@@ -310,7 +312,7 @@ namespace WadTool
 
         private void tbFrameDisableInterpolation_ValueChanged(object sender, EventArgs e)
         {
-            if (_command == null || _command.Type != WadAnimCommandType.DisableInterpolation)
+            if (_command is null || _command.Type != WadAnimCommandType.DisableInterpolation)
                 return;
             _command.Parameter1 = (short)tbFrameDisableInterpolation.Value;
             InvokeChanged();

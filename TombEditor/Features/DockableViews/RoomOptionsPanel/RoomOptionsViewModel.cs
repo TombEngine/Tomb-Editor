@@ -1,13 +1,13 @@
 #nullable enable
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
-using TombLib.Forms;
 using TombLib.LevelData;
+using TombLib.Utils;
 using TombLib.WPF;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
@@ -414,7 +414,7 @@ public partial class RoomOptionsViewModel : ObservableObject
         RefreshSelectedRoomLockState();
         RepopulateFlipMaps();
 
-        _commandArgs = new CommandArgs(WPFUtils.GetWin32WindowOwner(), _editor);
+        _commandArgs = new CommandArgs(WPFUtils.GetWindowOwner(), _editor);
 
         EditRoomNameCommand = CommandHandler.GetCommand("EditRoomName", _commandArgs);
         AddNewRoomCommand = CommandHandler.GetCommand("AddNewRoom", _commandArgs);

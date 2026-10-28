@@ -1,16 +1,18 @@
 #nullable enable
+
+using Clipboard = System.Windows.Clipboard;
+using static TombEditor.Features.ContextMenus.WpfContextMenuHelper;
 using System.Numerics;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using TombLib;
-using TombLib.Forms;
-using static TombEditor.Features.ContextMenus.WpfContextMenuHelper;
+using TombLib.Services;
+using TombLib.Utils;
 
 namespace TombEditor.Features.ContextMenus;
 
 internal static class Space2DMapWpfContextMenu
 {
-    public static ContextMenu Show(Editor editor, IWin32Window owner,
+    public static ContextMenu Show(Editor editor, IWindowOwner owner,
                                    Vector2 position, System.Drawing.Point screenPoint)
     {
         var menu = new ContextMenu();

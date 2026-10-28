@@ -2,13 +2,13 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using TombLib.Graphics;
 using TombLib.Wad;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
 
@@ -41,11 +41,11 @@ public partial class ReplaceAnimCommandsWindowViewModel : ObservableObject, IMod
     [ObservableProperty] private bool? _dialogResult;
     [ObservableProperty] private string _statusText = string.Empty;
 
-    /// <summary>The animation editor this dialog operates on. Used by the view to initialize the hosted WinForms editors.</summary>
+    /// <summary>The animation editor this dialog operates on. Used by the view to initialize the WPF editors.</summary>
     public AnimationEditor Editor => _editor;
 
     /// <summary>
-    /// Command edited by the hosted "Search for" <see cref="AnimCommandEditor"/>. The WinForms
+    /// Command edited by the hosted "Search for" <see cref="AnimCommandEditor"/>. The previous
     /// control mutates this instance in place, so it is always current when searching.
     /// </summary>
     public WadAnimCommand FindAnimCommand { get; }

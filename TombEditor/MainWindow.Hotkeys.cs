@@ -1,11 +1,11 @@
 #nullable enable
 
+using Keys = TombLib.Input.EditorKey;
 using System;
 using System.Linq;
-using System.Windows.Forms;
 using System.Windows.Interop;
-using TombLib.Utils;
 using TombLib.WPF;
+using TombLib.WPF.Input;
 
 namespace TombEditor
 {
@@ -20,7 +20,7 @@ namespace TombEditor
             if (handled || message.message is not (0x0100 or 0x0104))
                 return;
 
-            Keys keyData = (Keys)(int)message.wParam | Control.ModifierKeys;
+            Keys keyData = (Keys)(int)message.wParam | KeyboardState.ModifierKeys;
             handled = HandleHotkey(keyData);
         }
 
@@ -53,7 +53,7 @@ namespace TombEditor
             }
 
             // Don't process reserved camera keys
-            if (WinFormsUtils.DirectionalCameraKeys.Contains(keyData))
+            if (KeyboardInput.DirectionalCameraKeys.Contains(keyData))
                 return false;
 
             // Don't process one-key and shift hotkeys if we're focused on a control which allows text input
@@ -64,7 +64,7 @@ namespace TombEditor
             {
                 Editor = _editor,
                 KeyData = keyData,
-                Window = WinFormsDialogHelper.GetOpenFormOwner()
+                Window = WPFUtils.GetWindowOwner()
             });
 
             // Don't open menus with the alt key
@@ -75,7 +75,7 @@ namespace TombEditor
         }
 
         /// <summary>
-        /// WPF-aware equivalent of <c>WinFormsUtils.CurrentControlSupportsInput</c>: returns
+        /// WPF-aware equivalent of <c>KeyboardInput.IsEditingText</c>: returns
         /// <see langword="true"/> when the focused element is a text-entry control that should
         /// receive the key as input instead of having it trigger a hotkey.
         /// </summary>

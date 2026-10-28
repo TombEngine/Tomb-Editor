@@ -1,7 +1,7 @@
 using System.Windows;
 using System.Windows.Input;
+using TombLib.Input;
 using TombLib.WPF;
-using WinForms = System.Windows.Forms;
 
 namespace TombEditor.Features.Dialogs.KeyboardLayout;
 
@@ -26,17 +26,17 @@ public partial class KeyboardLayoutWindow : Window
             return;
         }
 
-        var winFormsKey = (WinForms.Keys)KeyInterop.VirtualKeyFromKey(e.Key);
-        var modifiers = WinForms.Keys.None;
+        var winFormsKey = (EditorKey)KeyInterop.VirtualKeyFromKey(e.Key);
+        var modifiers = EditorKey.None;
 
         if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
-            modifiers |= WinForms.Keys.Control;
+            modifiers |= EditorKey.Control;
 
         if ((Keyboard.Modifiers & ModifierKeys.Shift) != 0)
-            modifiers |= WinForms.Keys.Shift;
+            modifiers |= EditorKey.Shift;
 
         if ((Keyboard.Modifiers & ModifierKeys.Alt) != 0)
-            modifiers |= WinForms.Keys.Alt;
+            modifiers |= EditorKey.Alt;
 
         vm.OnListenKeyDown(winFormsKey | modifiers);
         e.Handled = true;

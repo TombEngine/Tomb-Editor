@@ -2,8 +2,9 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DarkUI.Forms;
-using MvvmDialogs;
+using Drawing = System.Drawing;
+using Media = System.Windows.Media;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,19 +12,18 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using TombLib;
-using TombLib.Controls;
-using TombLib.Forms;
-using TombLib.Forms.Services;
 using TombLib.Graphics;
+using TombLib.Input;
+using TombLib.Services;
 using TombLib.Utils;
-using TombLib.WPF;
-using TombLib.WPF.Services.Abstract;
 using TombLib.Wad;
+using TombLib.WPF;
+using TombLib.WPF.Controls.Rendering;
+using TombLib.WPF.Dialogs;
+using TombLib.WPF.Input;
+using TombLib.WPF.Services;
+using TombLib.WPF.Services.Abstract;
 using WadTool.Controls;
-
-using Drawing = System.Drawing;
-using Media = System.Windows.Media;
-using WinForms = System.Windows.Forms;
 
 namespace WadTool.Features.Dialogs.MeshEditor;
 
@@ -174,7 +174,7 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
         if (_panelTextureMap is not null) _panelTextureMap.SelectedTexture = TextureArea.None;
     }
 
-    private WinForms.Keys ModifierKeys => WinForms.Control.ModifierKeys;
+    private EditorKey ModifierKeys => KeyboardState.ModifierKeys;
     private bool NoMesh() => _panelMesh?.Mesh is null || _panelMesh.Mesh.VertexPositions.Count == 0;
 
     private void ReadConfig()
@@ -348,7 +348,7 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
             case MeshEditingMode.VertexEffects:
                 if (newIndex == -1) return;
                 if (!_panelMesh.Mesh.HasAttributes) GenerateMissingVertexData();
-                if (ModifierKeys == WinForms.Keys.Alt)
+                if (ModifierKeys == EditorKey.Alt)
                 {
                     _readingValues = true;
                     Glow = _panelMesh.Mesh.VertexAttributes[newIndex].Glow;
@@ -365,7 +365,7 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
             case MeshEditingMode.VertexWeights:
                 if (newIndex == -1) return;
                 if (!_panelMesh.Mesh.HasWeights) GenerateMissingVertexData();
-                if (ModifierKeys == WinForms.Keys.Alt)
+                if (ModifierKeys == EditorKey.Alt)
                     GetWeightValues(newIndex);
                 else
                 {
@@ -377,8 +377,8 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
             case MeshEditingMode.VertexColorsAndNormals:
                 if (newIndex == -1) return;
                 if (!_panelMesh.Mesh.HasColors || !_panelMesh.Mesh.HasNormals) GenerateMissingVertexData();
-                if (ModifierKeys == WinForms.Keys.Alt)
-                    SetVertexColor(_panelMesh.Mesh.VertexColors[newIndex].ToWinFormsColor());
+                if (ModifierKeys == EditorKey.Alt)
+                    SetVertexColor(_panelMesh.Mesh.VertexColors[newIndex].ToDrawingColor());
                 else
                 {
                     _panelMesh.Mesh.VertexColors[newIndex] = _vertexColor.ToFloat3Color();
@@ -408,7 +408,7 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
 
         var poly = _panelMesh.Mesh.Polys[newIndex];
 
-        if (ModifierKeys == WinForms.Keys.Alt) // Picking
+        if (ModifierKeys == EditorKey.Alt) // Picking
         {
             if (ApplySheen)
                 ShineStrength = poly.ShineStrength;
@@ -430,7 +430,7 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
 
         if (ApplyTexture)
         {
-            if (ModifierKeys == WinForms.Keys.None)
+            if (ModifierKeys == EditorKey.None)
             {
                 if ((_panelTextureMap.VisibleTexture?.IsAvailable ?? false) && _panelTextureMap.SelectedTexture != TextureArea.None)
                 {
@@ -439,9 +439,9 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
                         currTexture.TexCoord3 = currTexture.TexCoord2;
                 }
             }
-            else if (ModifierKeys == WinForms.Keys.Control)
+            else if (ModifierKeys == EditorKey.Control)
                 currTexture.Mirror(poly.IsTriangle);
-            else if (ModifierKeys == WinForms.Keys.Shift)
+            else if (ModifierKeys == EditorKey.Shift)
                 poly.Rotate(1, poly.IsTriangle);
         }
 
@@ -719,8 +719,8 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
     {
         if (image.Width > 2048 || image.Height > 2048)
         {
-            DarkMessageBox.Show(Owner, Path.GetFileName(image.FileName) + " is oversized. UV precision loss may occur.\nResize texture up to 2048px and repeat.",
-                "Texture is oversized", WinForms.MessageBoxIcon.Error);
+            UserDialogs.Show(Owner, Path.GetFileName(image.FileName) + " is oversized. UV precision loss may occur.\nResize texture up to 2048px and repeat.",
+                "Texture is oversized", DialogIcon.Error);
             return false;
         }
         return true;
@@ -961,9 +961,9 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
     [RelayCommand]
     private void PickColor()
     {
-        var selected = _colorPickerService.PickColor(_vertexColor.ToFloat3Color(), color => SetVertexColor(color.ToWinFormsColor()));
+        var selected = _colorPickerService.PickColor(_vertexColor.ToFloat3Color(), color => SetVertexColor(color.ToDrawingColor()));
         if (selected is { } color)
-            SetVertexColor(color.ToWinFormsColor());
+            SetVertexColor(color.ToDrawingColor());
     }
 
     // ---- Face attributes ----
@@ -1243,8 +1243,8 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
                         }
                 }
 
-            if (used && DarkMessageBox.Show(Owner, "Replacing current texture will affect all meshes using it.\nThis action can't be undone. Continue?",
-                "Confirm", WinForms.MessageBoxButtons.YesNo, WinForms.MessageBoxIcon.Question) != WinForms.DialogResult.Yes)
+            if (used && UserDialogs.Show(Owner, "Replacing current texture will affect all meshes using it.\nThis action can't be undone. Continue?",
+                "Confirm", DialogButtons.YesNo, DialogIcon.Question) != DialogChoice.Yes)
                 return;
 
             foreach (var moveable in _tool.DestinationWad.Moveables.Values)
@@ -1315,14 +1315,16 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
             return;
         }
 
-        using var fileDialog = new WinForms.SaveFileDialog
+        var fileDialog = new SaveFileDialog
         {
             Filter = ImageC.SaveFileFileExtensions.GetFilter(true),
             Title = "Choose a texture file name",
             FileName = Path.GetFileNameWithoutExtension(_panelTextureMap.VisibleTexture.ToString()),
             AddExtension = true
         };
-        if (fileDialog.ShowDialog(Owner) != WinForms.DialogResult.OK) return;
+        if (fileDialog.ShowDialog(Owner) != true)
+            return;
+
         try { _panelTextureMap.VisibleTexture.Image.SaveToFile(fileDialog.FileName); }
         catch (Exception exc) { MessageRaised?.Invoke("Unable to save texture. Exception: \n" + exc, PopupType.Error); }
     }
@@ -1394,12 +1396,12 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
 
         if (!TreeMode && !ok && _unsavedChanges)
         {
-            var result = DarkMessageBox.Show(Owner, "You have unsaved changes. Do you want to save changes to current mesh?",
-                "Confirm", WinForms.MessageBoxButtons.YesNoCancel, WinForms.MessageBoxIcon.Question);
+            var result = UserDialogs.Show(Owner, "You have unsaved changes. Do you want to save changes to current mesh?",
+                "Confirm", DialogButtons.YesNoCancel, DialogIcon.Question);
             switch (result)
             {
-                case WinForms.DialogResult.Yes: ok = true; break;
-                case WinForms.DialogResult.No: ok = false; break;
+                case DialogChoice.Yes: ok = true; break;
+                case DialogChoice.No: ok = false; break;
                 default: return false;
             }
         }
@@ -1419,5 +1421,5 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
         return true;
     }
 
-    private static WinForms.IWin32Window Owner => WinFormsDialogHelper.GetOpenFormOwner();
+    private static IWindowOwner Owner => WPFUtils.GetWindowOwner();
 }

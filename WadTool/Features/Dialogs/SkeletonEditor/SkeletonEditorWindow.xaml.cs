@@ -1,14 +1,13 @@
 #nullable enable
 
+using PopUpInfo = TombLib.WPF.PopUpInfo;
 using System;
 using System.Drawing;
 using System.Windows;
-using System.Windows.Forms;
-using TombLib.Forms;
+using TombLib.Input;
+using TombLib.Utils;
 using TombLib.WPF;
 using WadTool.Controls;
-
-using PopUpInfo = TombLib.WPF.PopUpInfo;
 
 namespace WadTool.Features.Dialogs.SkeletonEditor;
 
@@ -68,15 +67,15 @@ public partial class SkeletonEditorWindow : Window
     private void OnTreeSelectedItemChanged(object? sender, RoutedPropertyChangedEventArgs<object> e)
         => _vm?.SelectTreeNode(e.NewValue as BoneTreeNode);
 
-    private void OnPanelMouseDown(object? sender, MouseEventArgs e) => _startPoint = e.Location;
+    private void OnPanelMouseDown(object? sender, PointerEventArgs e) => _startPoint = e.Location;
 
-    private void OnPanelMouseUp(object? sender, MouseEventArgs e)
+    private void OnPanelMouseUp(object? sender, PointerEventArgs e)
     {
         // Mirror the legacy panelRendering_MouseUp: sync the tree to the picked bone and, on a
         // right-click that wasn't a drag, open the bone context menu.
         _vm?.SyncTreeSelectionFromPanel();
 
-        if (e.Button == MouseButtons.Right &&
+        if (e.Button == PointerButtons.Right &&
             Math.Abs(e.X - _startPoint.X) < 2 && Math.Abs(e.Y - _startPoint.Y) < 2 &&
             treeSkeleton.ContextMenu is not null)
         {
@@ -87,9 +86,9 @@ public partial class SkeletonEditorWindow : Window
         _startPoint = System.Drawing.Point.Empty;
     }
 
-    private void OnPanelMouseDoubleClick(object? sender, MouseEventArgs e)
+    private void OnPanelMouseDoubleClick(object? sender, PointerEventArgs e)
     {
-        if (e.Button == MouseButtons.Left && _vm?.EditMeshCommand.CanExecute(null) == true)
+        if (e.Button == PointerButtons.Left && _vm?.EditMeshCommand.CanExecute(null) == true)
             _vm.EditMeshCommand.Execute(null);
     }
 

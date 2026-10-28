@@ -7,7 +7,6 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using TombLib;
-using TombLib.Controls;
 using TombLib.Graphics;
 using TombLib.Graphics.Primitives;
 using TombLib.LevelData;
@@ -18,6 +17,7 @@ using TombLib.Rendering;
 using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
+using TombLib.WPF.Controls.Rendering;
 
 #nullable restore
 

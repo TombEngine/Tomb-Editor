@@ -4,11 +4,7 @@ using System.Windows;
 
 namespace TombLib.WPF.Features.AnimatedTextures
 {
-    /// <summary>
-    /// Minimal themed text prompt (replaces the WinForms <c>FormInputBox</c> for the WPF editor;
-    /// <c>TombLib.Forms.InputBoxWindow</c> is unavailable here because TombLib.WPF cannot reference
-    /// TombLib.Forms). Bind an <see cref="InputDialogViewModel"/> as DataContext and call ShowDialog().
-    /// </summary>
+    /// <summary>Shows a themed text prompt bound to an input dialog view model.</summary>
     public partial class InputDialog : Window
     {
         public InputDialog()

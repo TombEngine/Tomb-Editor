@@ -1,5 +1,7 @@
 #nullable enable
 
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,12 +9,10 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
 using TombLib.LevelData;
 using TombLib.Utils;
 using TombLib.WPF;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
 using WpfColor = System.Windows.Media.Color;
@@ -23,7 +23,7 @@ namespace TombEditor.Features.Dialogs.Options
     /// WPF port of <c>FormOptions</c> / <c>FormOptionsBase</c>. The dialog is data-driven: a schema of
     /// tabs -> groups -> <see cref="OptionItem"/>s is rendered by the view, and values are read from /
     /// written to <see cref="Configuration"/> by reflection on each option's <see cref="OptionItem.ConfigName"/>
-    /// (the same convention the WinForms control <c>Tag</c> used), including the <c>UI_ColorScheme</c>
+    /// (the same convention the previous control <c>Tag</c> used), including the <c>UI_ColorScheme</c>
     /// sub-fields for the color options.
     /// </summary>
     public partial class OptionsWindowViewModel : ObservableObject, IModalDialogViewModel

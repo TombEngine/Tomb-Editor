@@ -1,9 +1,9 @@
 #nullable enable
 
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Windows.Input;
 using System.Windows.Markup;
-using CommunityToolkit.Mvvm.Input;
 using TombLib.WPF;
 
 namespace TombEditor;
@@ -14,44 +14,44 @@ namespace TombEditor;
 /// </summary>
 /// <remarks>
 /// <para>
-/// Mirrors the WinForms <c>CommandHandler.AssignCommandsToControls</c> pattern (Tag → Command):
+/// Mirrors the previous <c>CommandHandler.AssignCommandsToControls</c> pattern (Tag -> Command):
 /// <code>&lt;Button Command="{e:EditorCommand SwitchObjectPlacementMode}" /&gt;</code>
 /// </para>
 /// <para>
 /// Commands are registered in the static constructor of <c>CommandHandler</c>, so by the time
-/// any WPF view requests one they are already available — no init ordering issue.
+/// any WPF view requests one they are already available - no init ordering issue.
 /// </para>
 /// </remarks>
 [MarkupExtensionReturnType(typeof(ICommand))]
 public sealed class EditorCommandExtension : MarkupExtension
 {
-	[ConstructorArgument("name")]
-	public string Name { get; set; }
+    [ConstructorArgument("name")]
+    public string Name { get; set; }
 
-	public EditorCommandExtension()
-	{
-		Name = string.Empty;
-	}
+    public EditorCommandExtension()
+    {
+        Name = string.Empty;
+    }
 
-	public EditorCommandExtension(string name)
-	{
-		Name = name;
-	}
+    public EditorCommandExtension(string name)
+    {
+        Name = name;
+    }
 
-	public override object ProvideValue(IServiceProvider serviceProvider)
-	{
-		if (string.IsNullOrWhiteSpace(Name))
-			return new RelayCommand(() => { }, () => false);
+    public override object ProvideValue(IServiceProvider serviceProvider)
+    {
+        if (string.IsNullOrWhiteSpace(Name))
+            return new RelayCommand(() => { }, () => false);
 
-		var commandName = Name;
-		return new RelayCommand(() =>
-		{
-			var command = CommandHandler.GetCommand(commandName);
-			command?.Execute?.Invoke(new CommandArgs
-			{
-				Editor = Editor.Instance,
-				Window = WPFUtils.GetWin32WindowOwner(),
-			});
-		});
-	}
+        var commandName = Name;
+        return new RelayCommand(() =>
+        {
+            var command = CommandHandler.GetCommand(commandName);
+            command?.Execute?.Invoke(new CommandArgs
+            {
+                Editor = Editor.Instance,
+                Window = WPFUtils.GetWindowOwner(),
+            });
+        });
+    }
 }

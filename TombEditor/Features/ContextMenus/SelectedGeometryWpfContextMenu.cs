@@ -1,15 +1,17 @@
 #nullable enable
+
+using Clipboard = System.Windows.Clipboard;
+using static TombEditor.Features.ContextMenus.WpfContextMenuHelper;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using TombLib;
 using TombLib.LevelData;
-using static TombEditor.Features.ContextMenus.WpfContextMenuHelper;
+using TombLib.Services;
 
 namespace TombEditor.Features.ContextMenus;
 
 internal static class SelectedGeometryWpfContextMenu
 {
-    public static ContextMenu Show(Editor editor, IWin32Window owner, Room targetRoom,
+    public static ContextMenu Show(Editor editor, IWindowOwner owner, Room targetRoom,
                                    RectangleInt2 targetArea, VectorInt2 targetSector,
                                    System.Drawing.Point screenPoint)
     {

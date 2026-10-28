@@ -1,13 +1,14 @@
-﻿using System;
+#nullable enable
+
+using DarkUI.Forms;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
-using DarkUI.Forms;
+using TombLib.Utils;
 
 namespace TombLib.Forms
 {
-    // PopupAlignment and PopupType moved to the core TombLib assembly (Utils/PopupEnums.cs, same
-    // namespace) so the WPF PopUpInfo can share them. This WinForms form remains for the pure
-    // WinForms apps (SoundTool); the WPF shells use TombLib.WPF.PopUpInfo.
+    // Retains the toast implementation for legacy desktop consumers.
     public partial class PopUpInfo : DarkForm
     {
         private const float _shiftCoeff = 0.25f;   // Intro animation push coefficient
@@ -24,7 +25,7 @@ namespace TombLib.Forms
 
         private PopupAlignment _alignment;
         private int _padding;
-        private Control _parent;
+        private Control? _parent;
         private Point _parentPosition;
 
         public PopUpInfo()
@@ -32,14 +33,15 @@ namespace TombLib.Forms
             InitializeComponent();
             _animTimer.Tick += UpdateTimer;
         }
-        
+
         // Generic function to call popup from any window
-        public static void Show(PopUpInfo popup, IWin32Window owner, Control parent, string message, PopupType type)
+        public static void Show(PopUpInfo popup, IWin32Window? owner, Control parent, string message, PopupType type)
         {
-            if (owner != null)
+            if (owner is not null)
             {
                 var form = owner.Handle == IntPtr.Zero ? null : Control.FromHandle(owner.Handle) as Form;
-                if (form == null || ActiveForm != form) return;
+                if (form is null || ActiveForm != form)
+                    return;
             }
 
             switch (type)
@@ -139,7 +141,7 @@ namespace TombLib.Forms
             // Measure text dimensions
             SizeF size = TextRenderer.MeasureText(message,
                                                   lblMessage.Font,
-                                                  new Size(MaximumSize.Width - panelMessage.Padding.Horizontal, 
+                                                  new Size(MaximumSize.Width - panelMessage.Padding.Horizontal,
                                                            MaximumSize.Height - panelMessage.Padding.Vertical - (titleIsVisible ? panelTitle.Height : 0)),
                                                   TextFormatFlags.WordBreak);
             lblMessage.Text = message;
@@ -175,9 +177,9 @@ namespace TombLib.Forms
                 Show(parent);
         }
 
-        private void UpdateTimer(object sender, EventArgs e)
+        private void UpdateTimer(object? sender, EventArgs e)
         {
-            if (_parent == null || _parent.Disposing || _parent.IsDisposed)
+            if (_parent is null || _parent.Disposing || _parent.IsDisposed)
             {
                 _animTimer.Stop();
                 _animTimer.Tick -= UpdateTimer;

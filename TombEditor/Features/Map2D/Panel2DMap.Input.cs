@@ -1,5 +1,3 @@
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +7,10 @@ using System.Windows.Input;
 using TombEditor.Features.ContextMenus;
 using TombLib;
 using TombLib.LevelData;
-using TombLib.LevelData.SectorEnums;
-using TombLib.Utils;
 using TombLib.WPF;
+
+#nullable disable
+
 
 namespace TombEditor.Features.Map2D
 {
@@ -275,7 +274,7 @@ namespace TombEditor.Features.Map2D
                         Vector2 clickPos = FromVisualCoord(e.GetPosition(this));
                         var screenPoint = PointToScreen(e.GetPosition(this));
                         var screen = new System.Drawing.Point((int)screenPoint.X, (int)screenPoint.Y);
-                        var owner = WinFormsDialogHelper.GetOpenFormOwner();
+                        var owner = WPFUtils.GetWindowOwner();
                         if (_editor.SelectedRooms.Contains(DoPicking(clickPos)))
                             _currentContextMenu = SelectedRoomWpfContextMenu.Show(_editor, owner, clickPos, screen);
                         else
@@ -359,7 +358,7 @@ namespace TombEditor.Features.Map2D
 
             if (roomMovement != new VectorInt2())
             {
-                if (EditorActions.CheckForLockedRooms(WinFormsDialogHelper.GetOpenFormOwner(), _roomsToMove))
+                if (EditorActions.CheckForLockedRooms(WPFUtils.GetWindowOwner(), _roomsToMove))
                     _roomMouseClicked = null;
                 else
                 {

@@ -44,7 +44,7 @@
             Top: main editor menu. Mirrors FormMain.menuStrip 1:1. Each leaf MenuItem declares
             editor:EditorMenu.Command="<TagName>", which populates Header (FriendlyName) and
             InputGestureText (hotkey) at load via lookup into the same CommandHandler registry
-            that the WinForms FormMain uses through GenerateMenusRecursive.
+            that the previous FormMain uses through GenerateMenusRecursive.
         -->
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="File">
@@ -275,7 +275,7 @@
         </Menu>
 
         <!--  Bottom-most: status bar (selected room | selection area | selection size | autosave).
-            Port of the WinForms FormMain DarkStatusStrip; docked at the very bottom of the window,
+            Port of the previous FormMain DarkStatusStrip; docked at the very bottom of the window,
             matching the legacy layout.  -->
         <statusBar:StatusBarView x:Name="statusBarView" DockPanel.Dock="Bottom" />
 
@@ -286,7 +286,7 @@
             </avalonDock:DockingManager.Theme>
 
             <avalonDock:LayoutRoot>
-                <!--  Mirrors the legacy WinForms default (Configuration.Window_LayoutDefault):  -->
+                <!--  Mirrors the legacy previous default (Configuration.Window_LayoutDefault):  -->
                 <!--  Left column: Sector options / Room options / Items+Imported geometry / Triggers+Objects.  -->
                 <!--  Right column: Textures. Center bottom: Lighting | Content browser+Palette.  -->
                 <!--  Rooms (a WPF-only panel) is tabbed with Room options; the flyby timeline strip  -->

@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.Sprite"
     Title="{tombLib:Localize Title}"
@@ -15,7 +15,6 @@
     MinWidth="350"
     MinHeight="370"
     d:DataContext="{d:DesignInstance Type=vm:SpriteWindowViewModel}"
-    md:DialogServiceViews.IsRegistered="True"
     Background="{DynamicResource Brush_Background}"
     ShowInTaskbar="False"
     Style="{DynamicResource CustomWindowStyle}"

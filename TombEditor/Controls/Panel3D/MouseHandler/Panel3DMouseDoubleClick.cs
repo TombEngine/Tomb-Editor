@@ -1,10 +1,10 @@
 #nullable enable
 
+using Keys = TombLib.Input.EditorKey;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
-using System.Windows.Forms;
 using TombLib.Graphics;
 using TombLib.LevelData;
 

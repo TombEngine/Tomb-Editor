@@ -1,16 +1,17 @@
 #nullable enable
-using System;
-using System.Linq;
-using System.Windows.Controls;
-using System.Windows.Forms;
-using TombLib.LevelData;
+
+using Clipboard = System.Windows.Clipboard;
 using static TombEditor.Features.ContextMenus.WpfContextMenuHelper;
+using System;
+using System.Windows.Controls;
+using TombLib.LevelData;
+using TombLib.Services;
 
 namespace TombEditor.Features.ContextMenus;
 
 internal static class MaterialObjectWpfContextMenu
 {
-    public static ContextMenu Show(Editor editor, IWin32Window owner,
+    public static ContextMenu Show(Editor editor, IWindowOwner owner,
                                    ObjectInstance targetObject,
                                    System.Drawing.Point screenPoint)
     {

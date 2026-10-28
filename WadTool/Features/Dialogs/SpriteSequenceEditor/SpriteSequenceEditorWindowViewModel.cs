@@ -2,8 +2,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DarkUI.Forms;
-using MvvmDialogs;
+using Microsoft.Win32;
 using NLog;
 using System;
 using System.Collections;
@@ -14,12 +13,13 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using TombLib.Services;
 using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.WPF;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
-using WinForms = System.Windows.Forms;
 
 namespace WadTool.Features.Dialogs.SpriteSequenceEditor;
 
@@ -27,7 +27,7 @@ namespace WadTool.Features.Dialogs.SpriteSequenceEditor;
 /// WPF port of <c>FormSpriteSequenceEditor</c>: edits the sprites of a <see cref="WadSpriteSequence"/>
 /// (add/remove/reorder/replace/export, alignment fields). All edits happen on a working copy;
 /// on OK they are written back to <see cref="SpriteSequence"/> and unsaved changes are flagged
-/// on the tool, mirroring the WinForms dialog. The caller raises <c>WadChanged</c> afterwards.
+/// on the tool, mirroring the dialog. The caller raises <c>WadChanged</c> afterwards.
 /// </summary>
 public partial class SpriteSequenceEditorWindowViewModel : ObservableObject, IModalDialogViewModel
 {
@@ -157,15 +157,15 @@ public partial class SpriteSequenceEditorWindowViewModel : ObservableObject, IMo
         if (SelectedSprite is null)
             return;
 
-        using var fileDialog = new WinForms.OpenFileDialog();
+        var fileDialog = new OpenFileDialog();
         fileDialog.Filter = ImageC.FileExtensions.GetFilter();
         fileDialog.Multiselect = false;
         ApplyCurrentPath(fileDialog);
         fileDialog.Title = _localization["ReplaceDialogTitle"];
 
-        WinForms.DialogResult dialogResult = fileDialog.ShowDialog(Owner);
+        bool? dialogResult = fileDialog.ShowDialog(Owner);
         _currentPath = fileDialog.FileName;
-        if (dialogResult != WinForms.DialogResult.OK)
+        if (dialogResult != true)
             return;
 
         try
@@ -183,10 +183,10 @@ public partial class SpriteSequenceEditorWindowViewModel : ObservableObject, IMo
         catch (Exception exc)
         {
             logger.Error(exc, "Unable to open file '" + fileDialog.FileName + "'.");
-            DarkMessageBox.Show(Owner,
+            UserDialogs.Show(Owner,
                 string.Format(_localization["UnableToLoadSpriteMessage"], fileDialog.FileName, exc),
                 _localization["UnableToLoadSpriteTitle"],
-                WinForms.MessageBoxButtons.OK, WinForms.MessageBoxIcon.Error);
+                DialogButtons.OK, DialogIcon.Error);
         }
     }
 
@@ -197,7 +197,7 @@ public partial class SpriteSequenceEditorWindowViewModel : ObservableObject, IMo
         if (rows.Count == 0)
             return;
 
-        using var fileDialog = new WinForms.SaveFileDialog();
+        var fileDialog = new SaveFileDialog();
         fileDialog.Filter = ImageC.SaveFileFileExtensions.GetFilter(true);
         if (!string.IsNullOrWhiteSpace(_currentPath))
             try
@@ -209,9 +209,9 @@ public partial class SpriteSequenceEditorWindowViewModel : ObservableObject, IMo
         fileDialog.Title = _localization["ExportDialogTitle"];
         fileDialog.AddExtension = true;
 
-        WinForms.DialogResult dialogResult = fileDialog.ShowDialog(Owner);
+        bool? dialogResult = fileDialog.ShowDialog(Owner);
         _currentPath = fileDialog.FileName;
-        if (dialogResult != WinForms.DialogResult.OK)
+        if (dialogResult != true)
             return;
 
         try
@@ -228,10 +228,10 @@ public partial class SpriteSequenceEditorWindowViewModel : ObservableObject, IMo
         catch (Exception exc)
         {
             logger.Error(exc, "Unable to save file '" + fileDialog.FileName + "'.");
-            DarkMessageBox.Show(Owner,
+            UserDialogs.Show(Owner,
                 string.Format(_localization["UnableToSaveSpriteMessage"], exc),
                 _localization["UnableToSaveSpriteTitle"],
-                WinForms.MessageBoxIcon.Error);
+                DialogIcon.Error);
         }
     }
 
@@ -257,15 +257,15 @@ public partial class SpriteSequenceEditorWindowViewModel : ObservableObject, IMo
     /// <summary>Ports the legacy <c>newObject()</c> callback, including the retry/ignore/abort loop.</summary>
     private List<WadSprite>? AskForSpriteFiles()
     {
-        using var fileDialog = new WinForms.OpenFileDialog();
+        var fileDialog = new OpenFileDialog();
         fileDialog.Filter = ImageC.FileExtensions.GetFilter();
         fileDialog.Multiselect = true;
         ApplyCurrentPath(fileDialog);
         fileDialog.Title = _localization["ImportDialogTitle"];
 
-        WinForms.DialogResult dialogResult = fileDialog.ShowDialog(Owner);
+        bool? dialogResult = fileDialog.ShowDialog(Owner);
         _currentPath = fileDialog.FileName;
-        if (dialogResult != WinForms.DialogResult.OK)
+        if (dialogResult != true)
             return null;
 
         // Load sprites
@@ -285,16 +285,16 @@ public partial class SpriteSequenceEditorWindowViewModel : ObservableObject, IMo
                 catch (Exception exc)
                 {
                     logger.Error(exc, "Unable to open file '" + fileName + "'.");
-                    WinForms.DialogResult result = DarkMessageBox.Show(Owner,
+                    DialogChoice result = UserDialogs.Show(Owner,
                         string.Format(_localization["UnableToLoadSpriteMessage"], fileName, exc),
                         _localization["UnableToLoadSpriteTitle"],
-                        fileDialog.FileNames.Length == 1 ? WinForms.MessageBoxButtons.RetryCancel : WinForms.MessageBoxButtons.AbortRetryIgnore,
-                        WinForms.MessageBoxIcon.Error,
-                        fileDialog.FileNames.Length == 1 ? WinForms.MessageBoxDefaultButton.Button2 : WinForms.MessageBoxDefaultButton.Button1);
+                        fileDialog.FileNames.Length == 1 ? DialogButtons.RetryCancel : DialogButtons.AbortRetryIgnore,
+                        DialogIcon.Error,
+                        fileDialog.FileNames.Length == 1 ? DialogDefaultButton.Button2 : DialogDefaultButton.Button1);
 
-                    if (result == WinForms.DialogResult.Ignore)
+                    if (result == DialogChoice.Ignore)
                         break; // Skip this file, keep the rest.
-                    if (result == WinForms.DialogResult.Retry)
+                    if (result == DialogChoice.Retry)
                         continue;
 
                     return null; // Cancel/Abort: like the legacy form, nothing is added at all.
@@ -305,7 +305,7 @@ public partial class SpriteSequenceEditorWindowViewModel : ObservableObject, IMo
         return sprites;
     }
 
-    private void ApplyCurrentPath(WinForms.OpenFileDialog fileDialog)
+    private void ApplyCurrentPath(OpenFileDialog fileDialog)
     {
         if (string.IsNullOrWhiteSpace(_currentPath))
             return;
@@ -349,5 +349,5 @@ public partial class SpriteSequenceEditorWindowViewModel : ObservableObject, IMo
         return bitmap;
     }
 
-    private static WinForms.IWin32Window Owner => WinFormsDialogHelper.GetOpenFormOwner();
+    private static IWindowOwner Owner => WPFUtils.GetWindowOwner();
 }

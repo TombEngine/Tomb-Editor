@@ -2,7 +2,6 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -14,6 +13,7 @@ using TombLib.LevelData;
 using TombLib.Types;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
 
@@ -134,7 +134,7 @@ public partial class StateChangesEditorWindowViewModel : ObservableObject, IModa
 
     private void OnRowsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        // Legacy dgvStateChanges_UserDeletedRow → SaveChanges(); covers both the delete
+        // Legacy dgvStateChanges_UserDeletedRow -> SaveChanges(); covers both the delete
         // button and Del-key row deletion performed by the DataGrid itself.
         if (e.Action == NotifyCollectionChangedAction.Remove)
             SaveChanges();

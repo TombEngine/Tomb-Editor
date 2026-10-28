@@ -1,5 +1,3 @@
-#nullable disable
-
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -10,18 +8,20 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using TombLib;
-using TombLib.Forms;
 using TombLib.LevelData;
 using TombLib.Utils;
 using TombLib.Wad.Catalog;
 using TombLib.WPF;
+
+#nullable disable
+
 
 namespace TombEditor.Features.Map2D
 {
     /// <summary>
     /// WPF port of the 2D map view. Draws the level layout from the top down, hosts the
     /// <see cref="DepthBar"/> on the right edge, and supports room selection, dragging,
-    /// depth probes and copy/paste of rooms. Replaces the WinForms <c>Panel2DMap</c>.
+    /// depth probes and copy/paste of rooms. Replaces the previous <c>Panel2DMap</c>.
     /// </summary>
     public partial class Panel2DMap : FrameworkElement, IDisposable
     {
@@ -56,7 +56,7 @@ namespace TombEditor.Features.Map2D
         private VectorInt3 _overallDelta;
         private bool _viewInitialized;
 
-        // Keyboard navigation (replicates the WinForms MovementTimer acceleration).
+        // Keyboard navigation (replicates the previous MovementTimer acceleration).
         private readonly DispatcherTimer _movementTimer;
         private const float _moveAcceleration = 0.02f;
         private System.Windows.Input.Key _moveKey = System.Windows.Input.Key.None;
@@ -228,7 +228,7 @@ namespace TombEditor.Features.Map2D
         }
 
         /// <summary>
-        /// WPF replacement for WinFormsUtils.BoolCombine that reads the live keyboard modifier state.
+        /// WPF replacement for modifier-key selection that reads the live keyboard modifier state.
         /// </summary>
         private IEnumerable<Room> BoolCombine(IEnumerable<Room> oldObjects, IEnumerable<Room> newObjects)
         {

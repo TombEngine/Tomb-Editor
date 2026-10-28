@@ -1,10 +1,10 @@
 using Moq;
 using System.ComponentModel;
-using TombLib.Forms.Services;
-using TombLib.Forms.ViewModels;
 using TombLib.LevelData;
 using TombLib.Utils;
+using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
+using TombLib.WPF.ViewModels;
 
 namespace TombLib.Test.ViewModels;
 

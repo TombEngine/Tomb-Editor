@@ -1,15 +1,14 @@
 #nullable enable
 
+using PopUpInfo = TombLib.WPF.PopUpInfo;
 using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
-using TombLib.Forms;
+using TombLib.Utils;
 using TombLib.WPF;
 using TombLib.WPF.Input;
 using WadTool.Controls;
-
-using PopUpInfo = TombLib.WPF.PopUpInfo;
 
 namespace WadTool.Features.Dialogs.MeshEditor;
 

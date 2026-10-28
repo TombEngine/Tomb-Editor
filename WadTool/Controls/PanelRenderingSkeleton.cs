@@ -1,20 +1,19 @@
 #nullable enable
 
+using RenderingPanel = TombLib.WPF.Controls.Rendering.RenderingPanel;
 using SharpDX.Toolkit.Graphics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Numerics;
-using System.Windows.Forms;
 using TombLib;
-using TombLib.Controls;
 using TombLib.Graphics;
 using TombLib.Graphics.Primitives;
+using TombLib.Input;
 using TombLib.Rendering;
 using TombLib.Utils;
 using TombLib.Wad;
-
-using RenderingPanel = TombLib.Controls.Wpf.RenderingPanel;
+using TombLib.WPF.Controls.Rendering;
 
 namespace WadTool.Controls;
 
@@ -260,7 +259,7 @@ public class PanelRenderingSkeleton : RenderingPanel
         Focus();
     }
 
-    protected override void OnMouseWheel(MouseEventArgs e)
+    protected override void OnMouseWheel(PointerEventArgs e)
     {
         base.OnMouseWheel(e);
 
@@ -268,9 +267,9 @@ public class PanelRenderingSkeleton : RenderingPanel
         Invalidate();
     }
 
-    protected override void OnMouseDown(MouseEventArgs e)
+    protected override void OnMouseDown(PointerEventArgs e)
     {
-        if (e.Button == MouseButtons.Left)
+        if (e.Button == PointerButtons.Left)
         {
             var ray = Ray.GetPickRay(Camera, ClientSize, e.X, e.Y);
 
@@ -313,12 +312,12 @@ public class PanelRenderingSkeleton : RenderingPanel
         base.OnMouseDown(e);
     }
 
-    protected override void OnKeyDown(KeyEventArgs e)
+    protected override void OnKeyDown(EditorKeyEventArgs e)
     {
         base.OnKeyDown(e);
     }
 
-    protected override void OnMouseMove(MouseEventArgs e)
+    protected override void OnMouseMove(PointerEventArgs e)
     {
         base.OnMouseMove(e);
 
@@ -329,7 +328,7 @@ public class PanelRenderingSkeleton : RenderingPanel
         if (_gizmo.MouseMoved(Camera.GetViewProjectionMatrix(ClientSize.Width, ClientSize.Height), ray))
             Invalidate();
 
-        if (e.Button == MouseButtons.Right || e.Button == MouseButtons.Middle)
+        if (e.Button == PointerButtons.Right || e.Button == PointerButtons.Middle)
         {
             // Use height for X coordinate because the camera FOV per pixel is defined by the height.
             float deltaX = (e.X - _lastX) / Height;
@@ -338,23 +337,23 @@ public class PanelRenderingSkeleton : RenderingPanel
             _lastX = e.X;
             _lastY = e.Y;
 
-            if (e.Button == MouseButtons.Right)
+            if (e.Button == PointerButtons.Right)
             {
-                if ((ModifierKeys & Keys.Control) == Keys.Control)
+                if ((ModifierKeys & EditorKey.Control) == EditorKey.Control)
                     Camera.Zoom(-deltaY * _tool.Configuration.RenderingItem_NavigationSpeedMouseZoom);
-                else if ((ModifierKeys & Keys.Shift) != Keys.Shift)
+                else if ((ModifierKeys & EditorKey.Shift) != EditorKey.Shift)
                     Camera.Rotate(deltaX * _tool.Configuration.RenderingItem_NavigationSpeedMouseRotate,
                                  -deltaY * _tool.Configuration.RenderingItem_NavigationSpeedMouseRotate);
             }
-            if ((e.Button == MouseButtons.Right && (ModifierKeys & Keys.Shift) == Keys.Shift) ||
-                 e.Button == MouseButtons.Middle)
+            if ((e.Button == PointerButtons.Right && (ModifierKeys & EditorKey.Shift) == EditorKey.Shift) ||
+                 e.Button == PointerButtons.Middle)
                 Camera.MoveCameraPlane(new Vector3(deltaX, deltaY, 0) * _tool.Configuration.RenderingItem_NavigationSpeedMouseTranslate);
 
             Invalidate();
         }
     }
 
-    protected override void OnMouseUp(MouseEventArgs e)
+    protected override void OnMouseUp(PointerEventArgs e)
     {
         base.OnMouseUp(e);
 

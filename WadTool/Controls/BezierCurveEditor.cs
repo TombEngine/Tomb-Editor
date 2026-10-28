@@ -10,9 +10,9 @@ using TombLib.Types;
 namespace WadTool.Controls;
 
 /// <summary>
-/// WPF rewrite of the WinForms <c>BezierCurveEditor</c>: renders a blend curve with two
+/// WPF rewrite of the previous <c>BezierCurveEditor</c>: renders a blend curve with two
 /// draggable handles. Double-clicking an empty spot resets the curve to linear. Like the
-/// WinForms control, <see cref="Value"/> shares the caller's <see cref="BezierCurve2"/>
+/// previous control, <see cref="Value"/> shares the caller's <see cref="BezierCurve2"/>
 /// instance and mutates it in place while dragging.
 /// </summary>
 public class BezierCurveEditor : FrameworkElement
@@ -52,7 +52,7 @@ public class BezierCurveEditor : FrameworkElement
     /// <summary>
     /// Screen positions of the four control points. For an exactly linear curve the handles sit
     /// on the corners, so they are displayed at 1/3 and 2/3 of the diagonal to stay grabbable
-    /// (same behaviour as the WinForms control).
+    /// (same behaviour as the control).
     /// </summary>
     private Point[] GetScreenPoints()
     {

@@ -4,11 +4,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows.Forms;
 using System.Windows.Threading;
 using TombEditor.Features.FlybyTimeline.Preview;
 using TombEditor.Features.FlybyTimeline.Sequence;
 using TombLib.LevelData;
+using TombLib.Services;
+using TombLib.WPF;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
 
@@ -33,7 +34,7 @@ public partial class FlybyTimelineViewModel : ObservableObject
     private readonly Editor _editor;
     private readonly FlybyPreviewController _preview;
     private readonly Dispatcher _dispatcher;
-    private readonly IWin32Window? _dialogOwner;
+    private readonly IWindowOwner? _dialogOwner;
     private readonly IMessageService _messageService;
     private readonly ILocalizationService _localizationService;
 
@@ -200,13 +201,13 @@ public partial class FlybyTimelineViewModel : ObservableObject
     /// </summary>
     /// <param name="editor">Editor instance providing level, selection, and undo services.</param>
     /// <param name="dispatcher">UI dispatcher used to marshal editor events onto the UI thread.</param>
-    /// <param name="dialogOwner">Optional WinForms owner used for modal dialogs.</param>
+    /// <param name="dialogOwner">Optional previous owner used for modal dialogs.</param>
     /// <param name="messageService">Optional message service used for confirmations.</param>
     /// <param name="localizationService">Optional localization service used for UI strings.</param>
     public FlybyTimelineViewModel(
         Editor editor,
         Dispatcher dispatcher,
-        IWin32Window? dialogOwner = null,
+        IWindowOwner? dialogOwner = null,
         IMessageService? messageService = null,
         ILocalizationService? localizationService = null)
     {
@@ -247,5 +248,5 @@ public partial class FlybyTimelineViewModel : ObservableObject
     /// <summary>
     /// Gets the best available owner window for flyby modal dialogs.
     /// </summary>
-    public IWin32Window? DialogOwner => Form.ActiveForm ?? _dialogOwner;
+    public IWindowOwner? DialogOwner => _dialogOwner ?? WPFUtils.GetWindowOwner();
 }

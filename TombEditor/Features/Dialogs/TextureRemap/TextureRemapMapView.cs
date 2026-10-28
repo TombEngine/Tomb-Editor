@@ -6,8 +6,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using TombEditor.Controls;
-using TombLib.LevelData;
-using TombLib.Utils;
 
 namespace TombEditor.Features.Dialogs.TextureRemap;
 

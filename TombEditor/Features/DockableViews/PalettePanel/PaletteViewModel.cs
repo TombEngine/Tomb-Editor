@@ -11,59 +11,59 @@ namespace TombEditor.Features.DockableViews.PalettePanel;
 
 public partial class PaletteViewModel : ObservableObject
 {
-	private readonly Editor _editor;
+    private readonly Editor _editor;
 
-	[ObservableProperty] private bool _isTextureSamplingMode;
-	[ObservableProperty] private bool _canResetPalette;
-	[ObservableProperty] private bool _canEditPalette;
-	[ObservableProperty] private bool _canEditColor;
+    [ObservableProperty] private bool _isTextureSamplingMode;
+    [ObservableProperty] private bool _canResetPalette;
+    [ObservableProperty] private bool _canEditPalette;
+    [ObservableProperty] private bool _canEditColor;
 
-	public ICommand ResetPaletteCommand { get; }
-	public ICommand SampleFromTexturesCommand { get; }
-	public ICommand EditObjectColorCommand { get; }
+    public ICommand ResetPaletteCommand { get; }
+    public ICommand SampleFromTexturesCommand { get; }
+    public ICommand EditObjectColorCommand { get; }
 
-	private IReadOnlyList<ColorC>? _lastTexturePalette;
+    private IReadOnlyList<ColorC>? _lastTexturePalette;
 
-	public PaletteViewModel(Editor editor)
-	{
-		_editor = editor;
-		_editor.EditorEventRaised += EditorEventRaised;
+    public PaletteViewModel(Editor editor)
+    {
+        _editor = editor;
+        _editor.EditorEventRaised += EditorEventRaised;
 
-		var args = new CommandArgs(WPFUtils.GetWin32WindowOwner(), _editor);
+        var args = new CommandArgs(WPFUtils.GetWindowOwner(), _editor);
 
-		ResetPaletteCommand = CommandHandler.GetCommand("ResetPalette", args);
-		SampleFromTexturesCommand = CommandHandler.GetCommand("SamplePaletteFromTextures", args);
-		EditObjectColorCommand = CommandHandler.GetCommand("EditObjectColor", args);
+        ResetPaletteCommand = CommandHandler.GetCommand("ResetPalette", args);
+        SampleFromTexturesCommand = CommandHandler.GetCommand("SamplePaletteFromTextures", args);
+        EditObjectColorCommand = CommandHandler.GetCommand("EditObjectColor", args);
 
-		UpdateControlState();
-	}
+        UpdateControlState();
+    }
 
-	public void Cleanup()
-		=> _editor.EditorEventRaised -= EditorEventRaised;
+    public void Cleanup()
+        => _editor.EditorEventRaised -= EditorEventRaised;
 
-	private void EditorEventRaised(IEditorEvent obj)
-	{
-		if (obj is Editor.SelectedObjectChangedEvent selectedObjChanged)
-			CanEditColor = selectedObjChanged.Current.CanBeColored();
+    private void EditorEventRaised(IEditorEvent obj)
+    {
+        if (obj is Editor.SelectedObjectChangedEvent selectedObjChanged)
+            CanEditColor = selectedObjChanged.Current.CanBeColored();
 
-		if (obj is Editor.SelectedLevelTextureChangedSetEvent textureChanged)
-		{
-			_lastTexturePalette = [.. textureChanged.Texture.Image.Palette];
-			UpdateControlState();
-		}
+        if (obj is Editor.SelectedLevelTextureChangedSetEvent textureChanged)
+        {
+            _lastTexturePalette = [.. textureChanged.Texture.Image.Palette];
+            UpdateControlState();
+        }
 
-		if (obj is Editor.ConfigurationChangedEvent)
-			UpdateControlState();
-	}
+        if (obj is Editor.ConfigurationChangedEvent)
+            UpdateControlState();
+    }
 
-	public IReadOnlyList<ColorC>? GetLastTexturePalette() => _lastTexturePalette;
+    public IReadOnlyList<ColorC>? GetLastTexturePalette() => _lastTexturePalette;
 
-	private void UpdateControlState()
-	{
-		bool useTexture = _editor.Configuration.Palette_TextureSamplingMode;
+    private void UpdateControlState()
+    {
+        bool useTexture = _editor.Configuration.Palette_TextureSamplingMode;
 
-		IsTextureSamplingMode = useTexture;
-		CanResetPalette = !useTexture;
-		CanEditPalette = !useTexture;
-	}
+        IsTextureSamplingMode = useTexture;
+        CanResetPalette = !useTexture;
+        CanEditPalette = !useTexture;
+    }
 }

@@ -8,7 +8,7 @@ using TombLib.WPF.Features.AnimatedTextures;
 namespace TombEditor.Controls;
 
 /// <summary>
-/// Pure-WPF clone of the WinForms <c>PanelTextureMapForAnimations</c>: draws every animated-texture
+/// Pure-WPF clone of the previous <c>PanelTextureMapForAnimations</c>: draws every animated-texture
 /// set's frame outlines on the atlas, highlighting the selected set and numbering its frames.
 /// </summary>
 public class WpfAnimatedTextureMapView : WpfTextureMapView, IAnimatedTextureMap

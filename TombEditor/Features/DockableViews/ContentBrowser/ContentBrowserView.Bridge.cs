@@ -6,13 +6,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Threading;
-using TombLib.Controls;
 using TombLib.GeometryIO;
 using TombLib.LevelData;
+using TombLib.Rendering;
 using TombLib.Utils;
-using TombLib.WPF;
-using TombLib.WPF.Imaging;
 using TombLib.Wad;
+using TombLib.WPF;
+using TombLib.WPF.Controls.Rendering;
+using TombLib.WPF.Imaging;
 
 namespace TombEditor.Features.DockableViews.ContentBrowser;
 
@@ -161,7 +162,7 @@ public partial class ContentBrowserView
         CommandHandler.GetCommand(command).Execute?.Invoke(new CommandArgs
         {
             Editor = _bridgeEditor,
-            Window = WPFUtils.GetWin32WindowOwner(),
+            Window = WPFUtils.GetWindowOwner(),
         });
 
         // Validation may have rejected the action; restore the tile animation so the icon
@@ -172,7 +173,7 @@ public partial class ContentBrowserView
 
     private void BridgeOnAddWadRequested(object? sender, EventArgs e)
     {
-        EditorActions.AddWad(WPFUtils.GetWin32WindowOwner(), null);
+        EditorActions.AddWad(WPFUtils.GetWindowOwner(), null);
     }
 
     private void BridgeOnFavoriteToggled(object? sender, AssetItemViewModel item)
@@ -192,7 +193,7 @@ public partial class ContentBrowserView
         if (_bridgeEditor?.Level?.Settings is not { } settings || files.Length == 0)
             return;
 
-        var owner = WPFUtils.GetWin32WindowOwner();
+        var owner = WPFUtils.GetWindowOwner();
 
         var wadFiles = files
             .Where(f => Wad2.FileExtensions.Matches(f))

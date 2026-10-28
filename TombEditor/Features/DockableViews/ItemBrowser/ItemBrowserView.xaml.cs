@@ -2,7 +2,6 @@
 
 using System.Windows.Controls;
 using TombEditor.Controls;
-using TombLib.Controls;
 using TombLib.Rendering;
 using TombLib.Wad;
 
@@ -44,7 +43,7 @@ public partial class ItemBrowserView : UserControl
             return;
 
         // For WadMoveable we delegate to WadObjectRenderHelper so Lara skin/joints are stitched
-        // together correctly (replicates FindLaraSkin in the WinForms panel).
+        // together correctly (replicates FindLaraSkin in the previous panel).
         if (wadObject is WadMoveable moveable && Editor.Instance.Level?.Settings is { } settings)
             _panelItem.CurrentObject = WadObjectRenderHelper.GetRenderObject(moveable, settings);
         else

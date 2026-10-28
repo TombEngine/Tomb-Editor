@@ -2,8 +2,6 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
-using MvvmDialogs.FrameworkDialogs.OpenFile;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,6 +9,7 @@ using System.Linq;
 using System.Numerics;
 using TombLib.LevelData;
 using TombLib.Utils;
+using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
 

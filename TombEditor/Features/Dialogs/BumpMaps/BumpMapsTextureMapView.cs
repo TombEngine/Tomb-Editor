@@ -1,7 +1,6 @@
 #nullable enable
 
 using System;
-using System.Globalization;
 using System.Numerics;
 using System.Windows;
 using System.Windows.Media;

@@ -1,13 +1,13 @@
 #nullable enable
 
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using MediaColor = System.Windows.Media.Color;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Numerics;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using TombLib;
 using TombLib.LevelData;
 using TombLib.LevelData.VisualScripting;
 using TombLib.Utils;
@@ -15,7 +15,6 @@ using TombLib.Wad;
 using TombLib.Wad.Catalog;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
-using MediaColor = System.Windows.Media.Color;
 
 namespace TombEditor.Features.Dialogs.EventSetEditor
 {
@@ -33,7 +32,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
     /// <summary>
     /// One editable argument inside a node. Reads/writes the boxed Lua-syntax string on the underlying
-    /// <see cref="TriggerNodeArgument"/>, porting the box/unbox logic of the WinForms <c>ArgumentEditor</c>.
+    /// <see cref="TriggerNodeArgument"/>, porting the box/unbox logic of the previous <c>ArgumentEditor</c>.
     /// </summary>
     public partial class ArgumentViewModel : ObservableObject
     {
@@ -205,7 +204,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             }
         }
 
-        // Drag-drop from the editor (ports the WinForms ArgumentEditor drop handlers).
+        // Drag-drop from the editor (ports the previous ArgumentEditor drop handlers).
 
         public bool AcceptsDrop => _layout.Type is ArgumentType.Vector3 or ArgumentType.Color or ArgumentType.WadSlots || IsLuaNameDrop;
 

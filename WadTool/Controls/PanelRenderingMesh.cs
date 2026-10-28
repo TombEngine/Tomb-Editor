@@ -1,5 +1,6 @@
 #nullable enable
 
+using RenderingPanel = TombLib.WPF.Controls.Rendering.RenderingPanel;
 using SharpDX.Toolkit.Graphics;
 using System;
 using System.Collections.Generic;
@@ -7,18 +8,16 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
-using System.Windows.Forms;
 using System.Windows.Threading;
 using TombLib;
-using TombLib.Controls;
 using TombLib.Graphics;
 using TombLib.Graphics.Primitives;
+using TombLib.Input;
 using TombLib.LevelData;
 using TombLib.Rendering;
 using TombLib.Utils;
 using TombLib.Wad;
-
-using RenderingPanel = TombLib.Controls.Wpf.RenderingPanel;
+using TombLib.WPF.Controls.Rendering;
 
 namespace WadTool.Controls;
 
@@ -92,7 +91,7 @@ public class PanelRenderingMesh : RenderingPanel
                 case MeshEditingMode.FaceAttributes:
                     if (_currentElement == value) return;  // Face mode does not need continuous editing of same element
                     SelectElement(value);
-                    engageUndo = !ModifierKeys.HasFlag(Keys.Alt);
+                    engageUndo = !ModifierKeys.HasFlag(EditorKey.Alt);
                     break;
 
                 case MeshEditingMode.VertexEffects:
@@ -100,7 +99,7 @@ public class PanelRenderingMesh : RenderingPanel
                 case MeshEditingMode.VertexWeights:
                 case MeshEditingMode.VertexRemap:
                     SelectElement(value);
-                    engageUndo = !ModifierKeys.HasFlag(Keys.Alt) && EditingMode != MeshEditingMode.VertexRemap;
+                    engageUndo = !ModifierKeys.HasFlag(EditorKey.Alt) && EditingMode != MeshEditingMode.VertexRemap;
                     break;
 
                 default:
@@ -792,7 +791,7 @@ public class PanelRenderingMesh : RenderingPanel
         Focus();
     }
 
-    protected override void OnMouseWheel(MouseEventArgs e)
+    protected override void OnMouseWheel(PointerEventArgs e)
     {
         base.OnMouseWheel(e);
 
@@ -800,7 +799,7 @@ public class PanelRenderingMesh : RenderingPanel
         Invalidate();
     }
 
-    protected override void OnMouseDown(MouseEventArgs e)
+    protected override void OnMouseDown(PointerEventArgs e)
     {
         base.OnMouseDown(e);
 
@@ -818,25 +817,25 @@ public class PanelRenderingMesh : RenderingPanel
         }
     }
 
-    protected override void OnMouseMove(MouseEventArgs e)
+    protected override void OnMouseMove(PointerEventArgs e)
     {
         base.OnMouseMove(e);
 
-        if (e.Button == MouseButtons.Right || e.Button == MouseButtons.Middle)
+        if (e.Button == PointerButtons.Right || e.Button == PointerButtons.Middle)
         {
             // Warp cursor
             var delta = WarpMouseCursor(e.Location, _lastMousePosition);
 
-            if (e.Button == MouseButtons.Right)
+            if (e.Button == PointerButtons.Right)
             {
-                if ((ModifierKeys & Keys.Control) == Keys.Control)
+                if ((ModifierKeys & EditorKey.Control) == EditorKey.Control)
                     Camera.Zoom(-delta.Y * _tool.Configuration.RenderingItem_NavigationSpeedMouseZoom);
-                else if ((ModifierKeys & Keys.Shift) != Keys.Shift)
+                else if ((ModifierKeys & EditorKey.Shift) != EditorKey.Shift)
                     Camera.Rotate(delta.X * _tool.Configuration.RenderingItem_NavigationSpeedMouseRotate,
                                  -delta.Y * _tool.Configuration.RenderingItem_NavigationSpeedMouseRotate);
             }
-            if ((e.Button == MouseButtons.Right && (ModifierKeys & Keys.Shift) == Keys.Shift) ||
-                 e.Button == MouseButtons.Middle)
+            if ((e.Button == PointerButtons.Right && (ModifierKeys & EditorKey.Shift) == EditorKey.Shift) ||
+                 e.Button == PointerButtons.Middle)
                 Camera.MoveCameraPlane(new Vector3(delta.X, delta.Y, 0) * _tool.Configuration.RenderingItem_NavigationSpeedMouseTranslate);
 
             Invalidate();
@@ -844,7 +843,7 @@ public class PanelRenderingMesh : RenderingPanel
         else if (EditingMode != MeshEditingMode.None &&
                  EditingMode != MeshEditingMode.VertexRemap &&
                  EditingMode != MeshEditingMode.Sphere &&
-                 e.Button == MouseButtons.Left)
+                 e.Button == PointerButtons.Left)
         {
             TryPickElement(e.X, e.Y, true);
         }
@@ -868,11 +867,11 @@ public class PanelRenderingMesh : RenderingPanel
         _lastMousePosition = e.Location;
     }
 
-    protected override void OnMouseUp(MouseEventArgs e)
+    protected override void OnMouseUp(PointerEventArgs e)
     {
         base.OnMouseUp(e);
 
-        if (e.Button != MouseButtons.Left)
+        if (e.Button != PointerButtons.Left)
             return;
 
         CurrentElement = -1;
@@ -886,11 +885,11 @@ public class PanelRenderingMesh : RenderingPanel
         _actionStarted = false;
     }
 
-    protected override void OnMouseDoubleClick(MouseEventArgs e)
+    protected override void OnMouseDoubleClick(PointerEventArgs e)
     {
         base.OnMouseDoubleClick(e);
 
-        if (e.Button == MouseButtons.Right)
+        if (e.Button == PointerButtons.Right)
             ResetCamera();
     }
 

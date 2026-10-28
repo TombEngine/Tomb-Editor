@@ -84,6 +84,31 @@
 - [x] Run offscreen TombEditor/WadTool GPU startup, Clear/Draw/Present and disposal checks without modifying saved configurations.
 - [ ] Complete interactive audio/SFX, real mouse drag/drop and multi-monitor DPI acceptance checks.
 
-The Direct3D backend remains in use through native WPF HWND surfaces. WinForms enum, event-data and owner-interface compatibility types remain where existing engine APIs require them; the three applications no longer host WinForms custom controls. Shared legacy controls retained for other suite consumers are outside this conversion.
+The Direct3D backend remains in use through native WPF HWND surfaces. The dependency-removal phase below replaces the remaining legacy input and ownership contracts. Shared legacy controls retained for other suite consumers are outside the three editors' runtime graph.
 
 Existing .NET 6 target frameworks and their compatibility warnings remain unchanged.
+
+## Remove Windows Forms dependencies from the three editors
+
+- [x] Replace core key, pointer, drag/drop, dialog and window-owner contracts with presentation-neutral types.
+- [x] Preserve serialized shortcut numeric values, aliases and modifier flags.
+- [x] Extract WPF views, view models, services and native rendering hosts from TombLib.Forms into TombLib.WPF.
+- [x] Separate the SVG icon catalog and WPF theme palette from legacy bitmap and DarkUI dependencies.
+- [x] Replace file/folder dialogs, clipboard access, cursor state and dispatcher pumping with native WPF services.
+- [x] Remove UseWindowsForms and legacy project references from TombEditor, WadTool and SoundTool.
+- [x] Preserve old layout XML without loading legacy docking types.
+- [x] Remove the NAudio.WinForms dependency while preserving MP3 and FLAC decoding.
+- [x] Replace the MvvmDialogs package whose compiled assembly references System.Windows.Forms.
+- [x] Select only the SharpVectors WPF assemblies, excluding its unused Windows Forms GDI renderer.
+- [x] Add a dependency audit that checks runtime manifests and reachable managed assembly references.
+- [x] Rebuild all three executable manifests and pass the dependency audit.
+- [x] Run editor, shared-library, input/resource and configuration compatibility tests.
+- [x] Run offscreen TombEditor/WadTool GPU startup and drawing without loading Windows Forms assemblies.
+- [x] Verify the complete solution still builds for legacy suite consumers in Debug/Release on x64/x86.
+- [x] Review formatting and record remaining interactive checks.
+
+SharpDX.dll and SharpDX.Toolkit.Graphics.dll remain unchanged by explicit user instruction. Their internal System.Windows.Forms references are the only permitted vendor exceptions; the renderer will be migrated separately. Legacy Windows Forms projects required by other suite applications remain outside the three editors' dependency graph.
+
+The final audit passed for all twelve executable outputs across Debug/Release and x64/x86. Each configuration inspected 49 local runtime assemblies for TombEditor and 47 each for WadTool and SoundTool, with zero forbidden dependencies outside those two vendor exceptions. All 263 regression tests passed: TombLib 166, TombEditor 86, WadTool 5, SoundTool 6. TombEditor includes 19 input/resource compatibility cases and two legacy layout XML cases; TombLib includes seven WPF dialog lifecycle and ownership cases.
+
+The final offscreen GPU checks created the native viewport HWNDs and completed drawing/presentation for TombEditor and WadTool with the original SharpDX binaries. Neither process loaded a System.Windows.Forms assembly, and configuration file hashes remained unchanged. Interactive audio/SFX, mouse drag/drop and multi-monitor DPI acceptance checks remain manual tasks.

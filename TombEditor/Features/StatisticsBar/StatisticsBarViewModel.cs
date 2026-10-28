@@ -1,8 +1,8 @@
 #nullable enable
 
+using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
 using TombLib.Wad.Catalog;
 
 namespace TombEditor.Features.StatisticsBar;
@@ -11,7 +11,7 @@ namespace TombEditor.Features.StatisticsBar;
 public sealed record StatRun(string Text, bool Highlight);
 
 /// <summary>
-/// WPF port of the WinForms <c>MainView.UpdateStatistics</c> / <c>tbStats</c> bar.
+/// WPF port of the previous <c>MainView.UpdateStatistics</c> / <c>tbStats</c> bar.
 /// Reads the editor's live <see cref="StatisticSummary"/> and rebuilds two coloured lines plus a
 /// limit-warning tooltip whenever statistics, the level, version or selected room change.
 /// </summary>
@@ -22,7 +22,7 @@ public partial class StatisticsBarViewModel : ObservableObject
 
     public ObservableCollection<StatRun> Runs { get; } = new();
 
-    /// <summary>Mirrors the WinForms <c>comboStepHeight</c> items (indices map to 32/64/128/256).</summary>
+    /// <summary>Mirrors the previous <c>comboStepHeight</c> items (indices map to 32/64/128/256).</summary>
     public IReadOnlyList<string> StepHeightOptions { get; } = new[] { "32 (Eighth)", "64 (Quarter)", "128 (Half)", "256 (Full)" };
 
     [ObservableProperty] private string? _limitWarning;
@@ -172,7 +172,7 @@ public partial class StatisticsBarViewModel : ObservableObject
         Runs.Add(new StatRun("Statics: " + rStats.StaticCount + " / " + lStats.StaticCount + "  ", false));
         Runs.Add(new StatRun("Triggers: " + rStats.TriggerCount + " / " + lStats.TriggerCount + "  ", false));
 
-        // Lights (dynamic only — static lights are not real lights)
+        // Lights (dynamic only - static lights are not real lights)
 
         Runs.Add(new StatRun("Lights: ", false));
 

@@ -7,11 +7,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using TombLib.Forms;
-using TombLib.Forms.Services;
 using TombLib.LevelData;
 using TombLib.Utils;
 using TombLib.WPF;
+using TombLib.WPF.Services;
 
 namespace TombEditor.Features.DockableViews.TexturePanel;
 
@@ -143,19 +142,19 @@ public partial class TexturePanelViewModel : ObservableObject
         _editor.EditorEventRaised += OnEditorEventRaised;
 
         AddTextureCommand = CommandHandler.GetCommand("AddTexture",
-            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWin32WindowOwner() });
+            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWindowOwner() });
 
         RotateCommand = CommandHandler.GetCommand("RotateTexture",
-            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWin32WindowOwner() });
+            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWindowOwner() });
 
         MirrorCommand = CommandHandler.GetCommand("MirrorTexture",
-            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWin32WindowOwner() });
+            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWindowOwner() });
 
         SetDoubleSidedCommand = CommandHandler.GetCommand("SetTextureDoubleSided",
-            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWin32WindowOwner() });
+            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWindowOwner() });
 
         EditAnimationRangesCommand = CommandHandler.GetCommand("EditAnimationRanges",
-            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWin32WindowOwner() });
+            () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWindowOwner() });
 
         DeleteTextureCommand = new RelayCommand(DeleteSelected, () => AreMainButtonsEnabled);
         BrowseTextureCommand = new RelayCommand(BrowseSelected, () => AreMainButtonsEnabled);
@@ -323,13 +322,13 @@ public partial class TexturePanelViewModel : ObservableObject
     private void DeleteSelected()
     {
         if (SelectedTexture is { } tex)
-            EditorActions.RemoveTexture(WPFUtils.GetWin32WindowOwner(), tex);
+            EditorActions.RemoveTexture(WPFUtils.GetWindowOwner(), tex);
     }
 
     private void BrowseSelected()
     {
         if (SelectedTexture is { } tex && _editor.Level?.Settings is { } settings)
-            EditorActions.ReloadResource(WPFUtils.GetWin32WindowOwner(), settings, tex);
+            EditorActions.ReloadResource(WPFUtils.GetWindowOwner(), settings, tex);
     }
 
     private void OpenTextureSounds()
@@ -339,7 +338,7 @@ public partial class TexturePanelViewModel : ObservableObject
 
         var vm = new TombEditor.Features.Dialogs.FootStepSounds.FootStepSoundsWindowViewModel(tex, _editor);
         var dialog = new TombEditor.Features.Dialogs.FootStepSounds.FootStepSoundsWindow { DataContext = vm };
-        dialog.SetOwner(WPFUtils.GetWin32WindowOwner());
+        dialog.SetOwner(WPFUtils.GetWindowOwner());
         dialog.ShowDialog();
     }
 
@@ -350,7 +349,7 @@ public partial class TexturePanelViewModel : ObservableObject
 
         var vm = new TombEditor.Features.Dialogs.BumpMaps.BumpMapsWindowViewModel(tex, _editor);
         var dialog = new TombEditor.Features.Dialogs.BumpMaps.BumpMapsWindow { DataContext = vm };
-        dialog.SetOwner(WPFUtils.GetWin32WindowOwner());
+        dialog.SetOwner(WPFUtils.GetWindowOwner());
         dialog.ShowDialog();
     }
 
