@@ -208,7 +208,7 @@ namespace TombLib.LevelData.Compilers
 
             // Properly identify game version to swap light mode, quicksand and no lensflare flags
             bool isTR2  = room.Level.Settings.GameVersion.Native() == TRVersion.Game.TR2;
-            bool isTR23 = isTR2 || room.Level.Settings.GameVersion == TRVersion.Game.TR3;
+            bool isTR23 = isTR2 || room.Level.Settings.GameVersion.Native() == TRVersion.Game.TR3;
             bool isNL   = room.Level.Settings.GameVersion.Native() >= TRVersion.Game.TR4;
             bool isNG   = room.Level.IsNG;
 

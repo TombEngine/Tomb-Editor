@@ -152,7 +152,7 @@ namespace TombLib.LevelData.Compilers
                 case TRVersion.Game.TR5:
                     WriteLevelTr5();
                     break;
-                case TRVersion.Game.TR1X or TRVersion.Game.TR2X:
+                case TRVersion.Game.TR1X or TRVersion.Game.TR2X or TRVersion.Game.TR3X:
                     WriteLevelTrx();
                     break;
                 default:

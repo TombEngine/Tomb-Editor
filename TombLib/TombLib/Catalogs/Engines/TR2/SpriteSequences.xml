@@ -10,6 +10,7 @@
     <sprite_sequence id="139" name="Harpoon gun" />
     <sprite_sequence id="140" name="M16" />
     <sprite_sequence id="141" name="Grenade launcher" />
+    <sprite_sequence id="142" name="Pistol ammo" />
     <sprite_sequence id="143" name="Shotgun shells" />
     <sprite_sequence id="144" name="Auto-pistol clips" />
     <sprite_sequence id="145" name="Uzi clips" />

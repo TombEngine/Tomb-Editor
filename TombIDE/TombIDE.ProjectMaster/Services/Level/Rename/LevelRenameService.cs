@@ -111,8 +111,8 @@ public sealed class LevelRenameService : ILevelRenameService
 			return state;
 		}
 
-		// Handle TR1, TR2X, TR2, TR3 - only script entries
-		if (project.GameVersion is TRVersion.Game.TR1 or TRVersion.Game.TR2X or TRVersion.Game.TR2 or TRVersion.Game.TR3)
+		// Handle TR1, TR2X, TR2, TR3X, TR3 - only script entries
+		if (project.GameVersion is TRVersion.Game.TR1 or TRVersion.Game.TR2X or TRVersion.Game.TR2 or TRVersion.Game.TR3 or TRVersion.Game.TR3X)
 		{
 			if (!isScriptDefined(level.Name))
 			{

@@ -57,11 +57,7 @@ public partial class CameraWindowViewModel : ObservableObject, IModalDialogViewM
 
         IsGlideOutEnabled = settings.GameVersion == TRVersion.Game.TRNG;
 
-        // Move timer is honoured on TR1/TR2 (the < TR3 native branch), TRNG and TombEngine.
-        IsMoveTimerEnabled =
-            settings.GameVersion.Native() < TRVersion.Game.TR3
-            || settings.GameVersion == TRVersion.Game.TRNG
-            || settings.GameVersion == TRVersion.Game.TombEngine;
+        IsMoveTimerEnabled = settings.GameVersion is not (TRVersion.Game.TR3 or TRVersion.Game.TR4 or TRVersion.Game.TR5);
     }
 
     [RelayCommand]

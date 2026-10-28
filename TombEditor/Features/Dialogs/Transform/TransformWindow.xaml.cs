@@ -11,6 +11,7 @@ public partial class TransformWindow : Window
     {
         InitializeComponent();
         this.HookModalAutoClose();
+        Closing += (_, _) => (DataContext as TransformWindowViewModel)?.OnClosing();
         Loaded += (_, _) => WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormTransform");
     }
 }

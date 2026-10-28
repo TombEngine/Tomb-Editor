@@ -17,7 +17,7 @@ namespace TombIDE.ScriptingStudio.Helpers
 			if (editorType == EditorType.Default)
 				editorType = GetDefaultEditorType(filePath);
 
-			if (IDE.Instance.Project.GameVersion is TRVersion.Game.TR1 or TRVersion.Game.TR2X)
+			if (IDE.Instance.Project.GameVersion is TRVersion.Game.TR1 or TRVersion.Game.TR2X or TRVersion.Game.TR3X)
 			{
 				if (FileHelper.IsJson5File(filePath))
 					return typeof(Tomb1MainEditor);

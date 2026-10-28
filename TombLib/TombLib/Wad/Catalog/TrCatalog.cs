@@ -567,6 +567,8 @@ namespace TombLib.Wad.Catalog
                     return "Tomb Raider 2 (TR2X)";
                 case TRVersion.Game.TR3:
                     return "Tomb Raider 3";
+                case TRVersion.Game.TR3X:
+                    return "Tomb Raider 3 (TR3X)";
                 case TRVersion.Game.TR4:
                     return "Tomb Raider 4";
                 case TRVersion.Game.TRNG:

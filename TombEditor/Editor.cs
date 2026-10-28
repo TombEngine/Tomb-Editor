@@ -27,10 +27,12 @@ namespace TombEditor
 
     public interface IEditorEventCausesUnsavedChanges : IEditorEvent { }
 
-    public interface IEditorRoomChangedEvent : IEditorEventCausesUnsavedChanges
+    public interface IEditorRoomEvent : IEditorEvent
     {
         Room Room { get; }
     }
+
+    public interface IEditorRoomChangedEvent : IEditorEventCausesUnsavedChanges, IEditorRoomEvent { }
 
     public enum ObjectChangeType
     {
@@ -439,6 +441,7 @@ namespace TombEditor
             public bool Save { get; internal set; } = false;
         }
         private Configuration _configuration;
+        private bool _lastHighQualityLightPreview;
         public Configuration Configuration
         {
             get { return _configuration; }
@@ -446,9 +449,10 @@ namespace TombEditor
             {
                 if (value == _configuration)
                     return;
-                var previous = _configuration;
+
                 _configuration = value;
                 RaiseEvent(new ConfigurationChangedEvent { UpdateLayout = true, UpdateKeyboardShortcuts = true, Save = true });
+                UpdateLightingForPreviewQualityChange();
             }
         }
 
@@ -609,6 +613,57 @@ namespace TombEditor
         public void RoomGeometryChange(Room room)
         {
             RaiseEvent(new RoomGeometryChangedEvent { Room = room });
+        }
+
+        public class RoomLightingChangedEvent : IEditorRoomEvent
+        {
+            public Room Room { get; internal set; }
+        }
+        public void RoomLightingChange(Room room)
+        {
+            RaiseEvent(new RoomLightingChangedEvent { Room = room });
+        }
+
+        public void UpdateRoomLighting(Room room)
+        {
+            ArgumentNullException.ThrowIfNull(room);
+            SynchronizationContext.Send(_ => UpdateRoomLightingCore(room), null);
+        }
+
+        public void UpdateRoomsLighting(IEnumerable<Room> rooms)
+        {
+            ArgumentNullException.ThrowIfNull(rooms);
+
+            var distinctRooms = rooms.Where(room => room is not null).Distinct().ToList();
+
+            SynchronizationContext.Send(_ =>
+            {
+                if (!ShouldRelight)
+                {
+                    foreach (var room in distinctRooms)
+                        room.InvalidateLighting();
+
+                    return;
+                }
+
+                Parallel.ForEach(distinctRooms,
+                    room => room.RebuildLighting(Configuration.Rendering3D_HighQualityLightPreview));
+
+                foreach (var room in distinctRooms)
+                    RoomLightingChange(room);
+            }, null);
+        }
+
+        private void UpdateRoomLightingCore(Room room)
+        {
+            if (!ShouldRelight)
+            {
+                room.InvalidateLighting();
+                return;
+            }
+
+            room.RebuildLighting(Configuration.Rendering3D_HighQualityLightPreview);
+            RoomLightingChange(room);
         }
 
         // This is invoked when room pos is changed.
@@ -899,6 +954,21 @@ namespace TombEditor
                 Save = save,
                 UpdateToolbarLayout = updateToolbarLayout
             });
+
+            UpdateLightingForPreviewQualityChange();
+        }
+
+        private void UpdateLightingForPreviewQualityChange()
+        {
+            bool highQualityLightPreview = Configuration.Rendering3D_HighQualityLightPreview;
+
+            if (highQualityLightPreview == _lastHighQualityLightPreview)
+                return;
+
+            _lastHighQualityLightPreview = highQualityLightPreview;
+
+            if (_level is not null)
+                UpdateRoomsLighting(_level.ExistingRooms);
         }
 
         // Select a room and (optonally) center the camera
@@ -1000,6 +1070,8 @@ namespace TombEditor
             bool gameVersionChanged = newSettings.GameVersion != _level.Settings.GameVersion ||
                                       newSettings.GameEnableExtraBlendingModes != _level.Settings.GameEnableExtraBlendingModes ||
                                       newSettings.GameEnableExtraReverbPresets != _level.Settings.GameEnableExtraReverbPresets;
+            bool lightQualityChanged = newSettings.DefaultLightQuality != _level.Settings.DefaultLightQuality ||
+                                       newSettings.OverrideIndividualLightQualitySettings != _level.Settings.OverrideIndividualLightQualitySettings;
 
             // Update the current settings
             _level.ApplyNewLevelSettings(newSettings, instance => ObjectChange(instance, ObjectChangeType.Change));
@@ -1029,9 +1101,10 @@ namespace TombEditor
             if (gameVersionChanged)
                 GameVersionChange();
 
-            // Update file watchers
-            if (importedGeometryChanged || texturesChanged || wadsChanged || soundsChanged)
-                _levelSettingsWatcher?.WatchLevelSettings(_level.Settings);
+            if (lightQualityChanged && Configuration.Rendering3D_HighQualityLightPreview)
+                UpdateRoomsLighting(_level.ExistingRooms);
+
+            _levelSettingsWatcher?.WatchLevelSettings(_level.Settings);
 
             HasUnsavedChanges = true;
         }
@@ -1172,8 +1245,13 @@ namespace TombEditor
                 // If the mode switched to lighting mode, relight all rooms which have `PendingRelight` set to true
                 if (@event.Current == EditorMode.Lighting)
                 {
-                    Parallel.ForEach(Level.Rooms.Where(room => room?.PendingRelight == true),
+                    var pendingRooms = Level.Rooms.Where(room => room?.PendingRelight == true).ToList();
+
+                    Parallel.ForEach(pendingRooms,
                         room => room.RebuildLighting(Configuration.Rendering3D_HighQualityLightPreview));
+
+                    foreach (var room in pendingRooms)
+                        RoomLightingChange(room);
                 }
             }
 
@@ -1487,7 +1565,7 @@ namespace TombEditor
 
         // Construction
         public SynchronizationContext SynchronizationContext { get; }
-        public RenderingDevice RenderingDevice = TombLib.Graphics.DeviceManager.DefaultDeviceManager.Device;
+        public RenderingDevice RenderingDevice => TombLib.Graphics.DeviceManager.DefaultDeviceManager.Device;
 
         public Editor(SynchronizationContext synchronizationContext, Configuration configuration, Level level)
         {

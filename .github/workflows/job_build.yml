@@ -1,0 +1,147 @@
+name: Build and test
+
+# Shared by ci.yml, nightly.yml and the pull request test builds. The packaged
+# tree is uploaded as an artifact rather than a zip, so that GitHub's own
+# artifact archive is the download and nothing ends up zipped twice.
+on:
+  workflow_call:
+    inputs:
+      retention_days:
+        type: number
+        description: "How long to keep the packaged build artifact"
+        required: true
+    outputs:
+      asset:
+        description: "Name of the uploaded build artifact"
+        value: ${{ jobs.build.outputs.asset }}
+      version:
+        description: "Stamped assembly version"
+        value: ${{ jobs.build.outputs.version }}
+      built:
+        description: "Build timestamp, UTC"
+        value: ${{ jobs.build.outputs.built }}
+
+jobs:
+  build:
+    # Windows is required: all but one project target net6.0-windows and use
+    # WinForms/WPF, so the solution cannot be built on Linux runners.
+    runs-on: windows-latest
+
+    outputs:
+      asset: ${{ steps.package.outputs.asset }}
+      version: ${{ steps.version.outputs.version }}
+      built: ${{ steps.version.outputs.built }}
+
+    steps:
+      # Pull requests build the head commit rather than the merge commit, so
+      # that a tester gets exactly the revision under review.
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Set up .NET 6 SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      # GenerateAssemblyInfo is off across the solution, so the version cannot be
+      # passed to MSBuild and the shared assembly info file is rewritten instead.
+      # The run number and commit hash make otherwise identical builds
+      # distinguishable in bug reports.
+      - name: Stamp build version
+        id: version
+        shell: pwsh
+        run: |
+          $file = "GlobalAssemblyInfo.cs"
+          $base = [regex]::Match((Get-Content $file -Raw), 'AssemblyVersion\("([^"]+)"\)').Groups[1].Value
+          if (-not $base) { throw "Could not read AssemblyVersion from $file" }
+          $sha = "${{ github.event.pull_request.head.sha || github.sha }}".Substring(0, 7)
+          $version = "$base.${{ github.run_number }}"
+          Set-Content -Path $file -Encoding UTF8 -Value @"
+          using System.Reflection;
+
+          [assembly: AssemblyVersion("$version")]
+          [assembly: AssemblyFileVersion("$version")]
+          [assembly: AssemblyInformationalVersion("$version+$sha")]
+          "@
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "sha=$sha" >> $env:GITHUB_OUTPUT
+          "built=$((Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm')) UTC" >> $env:GITHUB_OUTPUT
+
+      - name: Restore
+        run: dotnet restore "Tomb Editor.sln" -p:Platform=x64
+
+      - name: Build
+        run: dotnet build "Tomb Editor.sln" -c Release -p:Platform=x64 --no-restore
+
+      # A failing test fails the job, so nothing downstream packages or publishes.
+      - name: Test TombLib
+        run: >
+          dotnet test "TombLib/TombLib.Test/TombLib.Test.csproj"
+          -c Release -p:Platform=x64 --no-build
+          --logger "trx;LogFileName=TombLib.Test.trx"
+          --results-directory TestResults
+
+      - name: Test TombEditor
+        run: >
+          dotnet test "TombEditor.Tests/TombEditor.Tests.csproj"
+          -c Release -p:Platform=x64 --no-build
+          --logger "trx;LogFileName=TombEditor.Tests.trx"
+          --results-directory TestResults
+
+      # Uploaded even when a test step fails, so failures can be inspected
+      # without re-running the build locally.
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults
+          retention-days: ${{ inputs.retention_days }}
+          if-no-files-found: ignore
+
+      # Builds are an overlay on an existing install rather than a full one,
+      # which keeps the download around 30 MB instead of 370 MB. Pruning is
+      # deliberately fatal if a path is missing, so that a future layout change
+      # cannot silently turn this back into a full package.
+      - name: Package
+        id: package
+        shell: pwsh
+        run: |
+          $root = "BuildRelease (x64)\net6.0-windows"
+          $templates = Join-Path $root "TIDE\Templates"
+          $runtimes = Join-Path $root "Runtimes"
+          foreach ($path in @($templates, $runtimes))
+          {
+              if (-not (Test-Path $path)) { throw "Expected to prune $path but it does not exist" }
+          }
+
+          # TombIDE project templates are already-compressed archives that change
+          # rarely and nothing else in the suite reads them.
+          Remove-Item -Recurse -Force $templates
+
+          # Native dependencies are shipped per RID; .NET only ever probes the
+          # current one, so the other platforms are dead weight in an x64 build.
+          Get-ChildItem $runtimes -Directory | Where-Object { $_.Name -ne "win-x64" } | Remove-Item -Recurse -Force
+
+          # Moved out of "BuildRelease (x64)" because the space and parentheses in
+          # that name are awkward to feed to the artifact upload's path globbing.
+          Move-Item $root package
+
+          "asset=TombEditor-${{ steps.version.outputs.version }}-${{ steps.version.outputs.sha }}" >> $env:GITHUB_OUTPUT
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.asset }}
+          path: package/
+          retention-days: ${{ inputs.retention_days }}
+          compression-level: 9

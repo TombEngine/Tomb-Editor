@@ -286,7 +286,7 @@ namespace TombEditor.Controls.Panel3D
                     }
                 }
 
-                if (obj is ItemInstance)
+                if (obj is ItemInstance || obj is CameraInstance || obj is SinkInstance)
                     _dragObjectPicked = true; // Prepare for drag-n-drop
 
                 if (obj is ISpatial)

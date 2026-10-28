@@ -5,10 +5,10 @@ using CommunityToolkit.Mvvm.Input;
 using MvvmDialogs;
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows.Threading;
-using TombLib.WPF.CustomControls;
 using System.IO;
+using System.Linq;
+using System.Numerics;
+using System.Windows.Threading;
 using TombLib.Forms;
 using TombLib.GeometryIO;
 using TombLib.Graphics;
@@ -18,11 +18,12 @@ using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
 using TombLib.WPF;
+using TombLib.WPF.CustomControls;
 using WadTool.Controls;
-using PopUpInfo = TombLib.WPF.PopUpInfo;
 using WadTool.Features.Dialogs.AnimCommandsEditor;
 using WadTool.Features.Dialogs.AnimationFixer;
 using WadTool.Features.Dialogs.StateChangesEditor;
+using PopUpInfo = TombLib.WPF.PopUpInfo;
 
 namespace WadTool.Features.Dialogs.AnimEditor;
 
@@ -44,7 +45,7 @@ public sealed partial class MeshBoneItem : ObservableObject
 }
 
 /// <summary>
-/// WPF counterpart of the legacy <c>FormAnimationEditor</c> — built incrementally. The 3D view
+/// WPF counterpart of the legacy <c>FormAnimationEditor</c> - built incrementally. The 3D view
 /// (<see cref="PanelRenderingAnimationEditor"/>) and the <see cref="AnimationTrackBar"/> timeline
 /// remain WinForms custom-rendered controls, hosted via <c>WindowsFormsHost</c> and driven by this
 /// view model; the blend-curve editor and the rest of the chrome are native WPF.
@@ -802,25 +803,16 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
                 _editor.CurrentAnim.WadAnimation.NextAnimation != _editor.CurrentAnim.Index)
                 _panel.GridPosition = System.Numerics.Vector3.Zero;
 
-            var startVel = new System.Numerics.Vector3(_editor.CurrentAnim.WadAnimation.StartLateralVelocity, 0, _editor.CurrentAnim.WadAnimation.StartVelocity);
-            var endVel = new System.Numerics.Vector3(_editor.CurrentAnim.WadAnimation.EndLateralVelocity, 0, _editor.CurrentAnim.WadAnimation.EndVelocity);
+            var startVel = new Vector3(_editor.CurrentAnim.WadAnimation.StartLateralVelocity, 0.0f, _editor.CurrentAnim.WadAnimation.StartVelocity);
+            var endVel = new Vector3(_editor.CurrentAnim.WadAnimation.EndLateralVelocity, 0.0f, _editor.CurrentAnim.WadAnimation.EndVelocity);
 
             if (_editor.Moveable.Id.TypeId == 0)
             {
-                switch (_editor.CurrentAnim.WadAnimation.StateId)
-                {
-                    case 5: case 16: case 23: case 25: case 32:
-                        startVel.Z = -startVel.Z; endVel.Z = -endVel.Z; break;
-                    case 21: case 26: case 31: case 60: case 78:
-                        startVel = new System.Numerics.Vector3(startVel.Z, 0, startVel.X);
-                        endVel = new System.Numerics.Vector3(endVel.Z, 0, endVel.X); break;
-                    case 22: case 27: case 30: case 58: case 77:
-                        startVel = new System.Numerics.Vector3(-startVel.Z, 0, -startVel.X);
-                        endVel = new System.Numerics.Vector3(-endVel.Z, 0, -endVel.X); break;
-                }
+                startVel = GetPreviewVelocity(startVel);
+                endVel = GetPreviewVelocity(endVel);
             }
 
-            var shiftX = System.Numerics.Vector3.Lerp(startVel, endVel, (float)_frameCount / (float)realFrameNumber);
+            var shiftX = Vector3.Lerp(startVel, endVel, (float)_frameCount / realRangeNumber);
             _panel.GridPosition += shiftX;
 
             if (_editor.Tool.Configuration.AnimationEditor_RecoverGridAfterPositionChange)
@@ -869,6 +861,15 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
         UpdateStatusLabel();
     }
+
+    private Vector3 GetPreviewVelocity(Vector3 velocity) => _editor.CurrentAnim.WadAnimation.StateId switch
+    {
+        5 or 16 or 23 or 25 or 32 or 47 => new Vector3(velocity.X, velocity.Y, -velocity.Z),
+        86 or 163 when _editor.Wad.GameVersion == TRVersion.Game.TombEngine => new Vector3(velocity.X, velocity.Y, -velocity.Z),
+        21 or 26 or 31 or 49 or 60 or 78 => new Vector3(velocity.Z, 0.0f, velocity.X),
+        22 or 27 or 30 or 48 or 58 or 77 => new Vector3(-velocity.Z, 0.0f, -velocity.X),
+        _ => velocity
+    };
 
     private void ShowPopup(string message, PopupType type) => PopUpInfo.Show(_popup, null, _panel, message, type);
 

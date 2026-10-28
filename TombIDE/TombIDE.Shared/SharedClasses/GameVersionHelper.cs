@@ -33,7 +33,8 @@ public static class GameVersionHelper
 	public static bool IsScriptGenerationSupported(IGameProject project)
 		=> project.GameVersion is not TRVersion.Game.TR1
 			and not TRVersion.Game.TR1X
-			and not TRVersion.Game.TR2X;
+			and not TRVersion.Game.TR2X
+			and not TRVersion.Game.TR3X;
 
 	/// <summary>
 	/// Determines whether the horizon setting is available for the target project.

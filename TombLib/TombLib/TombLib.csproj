@@ -241,6 +241,9 @@
     <None Update="Catalogs\TEN Node Catalogs\Lara.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Catalogs\TEN Node Catalogs\Lara Traversal.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Catalogs\TEN Node Catalogs\Particles.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -463,6 +466,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Catalogs\TEN Property Catalogs\TUNNEL_BORER.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Catalogs\TRX Property Catalogs\*\*.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

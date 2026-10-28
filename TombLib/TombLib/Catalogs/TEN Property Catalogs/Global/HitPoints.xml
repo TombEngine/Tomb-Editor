@@ -140,7 +140,7 @@
 			description="Starting hit points."
 		/>
     </moveable>
-    <moveable id="SCUBA_DIVER, WINSTON">
+    <moveable id="SCUBA_DIVER, WINSTON, PUNK">
         <property
 			internalName="HitPoints"
 			displayName="Hit Points"
@@ -160,12 +160,52 @@
 			description="Starting hit points."
 		/>
     </moveable>
+    <moveable id="OILRED">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="25"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="SWAT_GUN, LONDON_MERCENARY">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="26"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
     <moveable id="TRIBESMAN_WITH_AX, TRIBESMAN_WITH_DARTS, MP_WITH_STICK, MP_WITH_GUN, TWIN_AUTO_GUN">
         <property
 			internalName="HitPoints"
 			displayName="Hit Points"
 			type="Int"
 			defaultValue="28"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="WHITE_SOLDIER">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="30"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="PRISONER">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="34"
 			category="Enemy Parameters"
 			description="Starting hit points."
 		/>
@@ -186,6 +226,16 @@
 			displayName="Hit Points"
 			type="Int"
 			defaultValue="50"
+			category="Enemy Parameters"
+			description="Starting hit points."
+		/>
+    </moveable>
+    <moveable id="HYBRID_MUTANT">
+        <property
+			internalName="HitPoints"
+			displayName="Hit Points"
+			type="Int"
+			defaultValue="90"
 			category="Enemy Parameters"
 			description="Starting hit points."
 		/>

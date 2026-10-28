@@ -1029,6 +1029,7 @@
         "ColumnSamples": "Samples",
         "ColumnSoundFolder": "Sound folder",
         "TextureBitDepthLabel": "Texture bit depth:",
+        "TrxUseAlternateGroups": "Enable multiple flipmaps (TR4+ style)",
         "TrxConvertFlybysToCinematicFrames": "Convert flyby cameras into cinematic frames",
         "DefaultAmbientLightLabel": "Default ambient light:",
         "DefaultLightQualityLabel": "Default light quality:",

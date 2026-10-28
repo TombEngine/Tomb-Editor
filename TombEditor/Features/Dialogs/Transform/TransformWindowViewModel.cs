@@ -3,6 +3,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MvvmDialogs;
+using System.Linq;
 using System.Numerics;
 using TombLib.LevelData;
 using TombLib.Wad.Catalog;
@@ -22,6 +23,8 @@ public partial class TransformWindowViewModel : ObservableObject, IModalDialogVi
 
     private bool _loading;
     private bool _undoSaved;
+    private bool _lightingUpdatePending;
+    private bool _dataRestored;
 
     [ObservableProperty] private bool? _dialogResult;
 
@@ -123,7 +126,7 @@ public partial class TransformWindowViewModel : ObservableObject, IModalDialogVi
         if (_loading)
             return;
 
-        // Keep Y/Z mirrored to X — uniform scale until per-axis support is added.
+        // Keep Y/Z mirrored to X - uniform scale until per-axis support is added.
         _loading = true;
         ScaleY = value;
         ScaleZ = value;
@@ -134,7 +137,7 @@ public partial class TransformWindowViewModel : ObservableObject, IModalDialogVi
 
     private void CommitIfReady()
     {
-        if (_loading)
+        if (_loading || !HasPendingChanges())
             return;
 
         if (!_undoSaved)
@@ -144,6 +147,17 @@ public partial class TransformWindowViewModel : ObservableObject, IModalDialogVi
         }
 
         SaveToInstance();
+
+        if (_editor.ShouldRelight)
+        {
+            EditorActions.RebuildLightsForObject(_instance);
+            _lightingUpdatePending = false;
+        }
+        else if (EditorActions.GetLightingRoomsForObject(_instance).Any())
+        {
+            _lightingUpdatePending = true;
+        }
+
         _editor.ObjectChange(_instance, ObjectChangeType.Change);
     }
 
@@ -167,16 +181,57 @@ public partial class TransformWindowViewModel : ObservableObject, IModalDialogVi
             scaleable.Scale = (float)ScaleX;
     }
 
+    private bool HasPendingChanges() =>
+        _instance.Position != new Vector3(
+            (float)TranslationX - _instance.Room.Position.X * (int)Level.SectorSizeUnit,
+            (float)-TranslationY - _instance.Room.Position.Y,
+            (float)TranslationZ - _instance.Room.Position.Z * (int)Level.SectorSizeUnit) ||
+        _instance is IScaleable scaleable && scaleable.Scale != (float)ScaleX ||
+        _instance is IRotateableY rotateableY && rotateableY.RotationY != (float)RotationY ||
+        _instance is IRotateableYX rotateableYX && rotateableYX.RotationX != (float)RotationX ||
+        _instance is IRotateableYXRoll rotateableYXRoll && rotateableYXRoll.Roll != (float)RotationZ;
+
+    private bool HasTransformChangedFromBackup() =>
+        _instance.Position != _backupPosition ||
+        _instance is IScaleable scaleable && scaleable.Scale != _backupScale.X ||
+        _instance is IRotateableY rotateableY && rotateableY.RotationY != _backupRotation.Y ||
+        _instance is IRotateableYX rotateableYX && rotateableYX.RotationX != _backupRotation.X ||
+        _instance is IRotateableYXRoll rotateableYXRoll && rotateableYXRoll.Roll != _backupRotation.Z;
+
     [RelayCommand]
     private void Confirm()
     {
-        SaveToInstance();
+        CommitIfReady();
+
+        if (_lightingUpdatePending)
+            EditorActions.RebuildLightsForObject(_instance);
+
+        _lightingUpdatePending = false;
         DialogResult = true;
+    }
+
+    /// <summary>
+    /// Restores the original transform when the window closes without confirmation.
+    /// </summary>
+    public void OnClosing()
+    {
+        if (DialogResult is not true)
+            RestoreData();
     }
 
     [RelayCommand]
     private void Cancel()
     {
+        RestoreData();
+        DialogResult = false;
+    }
+
+    private void RestoreData()
+    {
+        if (_dataRestored)
+            return;
+
+        bool changed = HasTransformChangedFromBackup();
         _instance.Position = _backupPosition;
 
         if (_instance is IScaleable scaleable)
@@ -191,7 +246,13 @@ public partial class TransformWindowViewModel : ObservableObject, IModalDialogVi
         if (_instance is IRotateableYXRoll rotYXR)
             rotYXR.Roll = _backupRotation.Z;
 
-        _editor.ObjectChange(_instance, ObjectChangeType.Change);
-        DialogResult = false;
+        if (changed || _lightingUpdatePending)
+            EditorActions.RebuildLightsForObject(_instance);
+
+        _lightingUpdatePending = false;
+        _dataRestored = true;
+
+        if (changed)
+            _editor.ObjectChange(_instance, ObjectChangeType.Change);
     }
 }

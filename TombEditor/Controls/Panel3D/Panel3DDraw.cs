@@ -1942,7 +1942,7 @@ namespace TombEditor.Controls.Panel3D
                     lightMode = 2;
                     break;
 
-                case TRVersion.Game.TR3:
+                case TRVersion.Game.TR3 or TRVersion.Game.TR3X:
                 case TRVersion.Game.TR4:
                     lightMode = 1;
                     break;

@@ -1,14 +1,16 @@
 #nullable enable
 
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using LevelSettingsData = TombLib.LevelData.LevelSettings;
+using MvvmDialogs;
+using static TombLib.LevelData.TRVersion;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using MvvmDialogs;
 using TombLib.Forms.ViewModels;
 using TombLib.GeometryIO;
 using TombLib.LevelData;
@@ -18,8 +20,6 @@ using TombLib.Wad.Catalog;
 using TombLib.WPF;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
-using static TombLib.LevelData.TRVersion;
-using LevelSettingsData = TombLib.LevelData.LevelSettings;
 using WpfColor = System.Windows.Media.Color;
 
 namespace TombEditor.Features.Dialogs.LevelSettings
@@ -273,6 +273,15 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         {
             get => _settings.TrxTextureBitDepth switch { TrxTextureBitDepth.Bit8 => TrxTextureDepths[1], TrxTextureBitDepth.Bit16 => TrxTextureDepths[2], TrxTextureBitDepth.Bit32 => TrxTextureDepths[3], _ => TrxTextureDepths[0] };
             set { _settings.TrxTextureBitDepth = value == TrxTextureDepths[1] ? TrxTextureBitDepth.Bit8 : value == TrxTextureDepths[2] ? TrxTextureBitDepth.Bit16 : value == TrxTextureDepths[3] ? TrxTextureBitDepth.Bit32 : TrxTextureBitDepth.Default; OnPropertyChanged(); }
+        }
+
+        /// <summary>
+        /// Gets or sets whether TRX levels support multiple alternate room groups.
+        /// </summary>
+        public bool TrxUseAlternateGroups
+        {
+            get => _settings.TrxUseAlternateGroups;
+            set { _settings.TrxUseAlternateGroups = value; OnPropertyChanged(); }
         }
 
         public bool TrxConvertFlybysToCinematicFrames

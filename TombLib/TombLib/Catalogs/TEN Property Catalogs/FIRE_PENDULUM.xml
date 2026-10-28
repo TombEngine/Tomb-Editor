@@ -18,7 +18,7 @@
 		/>
 		<property
           internalName="FxFogEffect"
-          displayName="Fx Fog Effect"
+          displayName="Fog Effect"
           type="Bool"
           defaultValue="false"
           category="Trap parameters"

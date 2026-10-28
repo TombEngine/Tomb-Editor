@@ -38,7 +38,7 @@
     <moveable id="36" name="LARA_TORCH_ANIM" use_body_from="12" hidden="true" />
     <moveable id="37" name="HAIR_PRIMARY" hidden="true" />
     <moveable id="38" name="HAIR_SECONDARY" hidden="true" />
-	<moveable id="39" name="PHOTOMODE_ANIMS" use_body_from="12"/>
+    <moveable id="39" name="PHOTOMODE_ANIMS" use_body_from="12" hidden="true" />
     <moveable id="49" name="SNOWMOBILE_TRACKS" hidden="true" />
     <moveable id="50" name="SNOWMOBILE_LARA_ANIMS" use_body_from="12" hidden="true" />
     <moveable id="51" name="SNOWMOBILE" />
@@ -229,6 +229,15 @@
     <moveable id="297" name="SKATEBOARD_KID" />
     <moveable id="298" name="WINSTON" />
 	<moveable id="299" name="SEAL_MUTANT" />
+	<moveable id="300" name="BOO_MUTANT" />
+	<moveable id="301" name="HYBRID_MUTANT" />
+	<moveable id="302" name="OILRED" />
+	<moveable id="303" name="WHITE_SOLDIER" />
+	<moveable id="304" name="PUNK" />
+	<moveable id="305" name="LONDON_MERCENARY" />
+	<moveable id="306" name="SWAT_GUN" />
+	<moveable id="307" name="PRISONER" />
+	<moveable id="308" name="WASP_MUTANT_EMITTER" />
     <moveable id="320" name="SPRINGBOARD" />
     <moveable id="321" name="ROLLING_SPINDLE" />
     <moveable id="322" name="DISK_SHOOTER" />

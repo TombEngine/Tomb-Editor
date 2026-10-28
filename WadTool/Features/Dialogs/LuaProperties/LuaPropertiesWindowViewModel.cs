@@ -113,7 +113,7 @@ public partial class LuaPropertiesWindowViewModel : ObservableObject, IModalDial
 
         PropertyGrid.Title = objectName;
 
-        List<LuaPropertyDefinition> definitions = LuaPropertyCatalog.GetDefinitions(kind, typeId);
+        var definitions = LuaPropertyCatalog.GetDefinitions(kind, typeId, _wad.GameVersion);
         PropertyGrid.Load(definitions, GetContainer(wadObject));
 
         if (definitions.Count == 0)

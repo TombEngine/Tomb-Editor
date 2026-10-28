@@ -27,10 +27,10 @@
 					<TextBlock
 						FontSize="{x:Static darkUI:Defaults.H1FontSize}"
 						FontWeight="Bold"
-						Text="Tomb Raider 1 (TR1X) / Tomb Raider 2 (TR2X)" />
+						Text="Tomb Raider 1 (TR1X) / Tomb Raider 2 (TR2X) / Tomb Raider 3 (TR3X)" />
 					<TextBlock FontSize="{x:Static darkUI:Defaults.SmallFontSize}" Text="by: Lost Artefacts Team" />
 					<TextBlock FontSize="{x:Static darkUI:Defaults.LargeFontSize}" TextWrapping="Wrap">
-						These are enhanced engines for Tomb Raider 1 and 2, offering smooth, true 60 FPS gameplay and expanded creative tools.
+						These are enhanced engines for Tomb Raider 1, 2 and 3, offering smooth, true 60 FPS gameplay and expanded creative tools.
 						They preserve the original feel while adding flexibility through full game-flow scripting in a simple JSON format,
 						and an injection system that unlocks new features and removes engine limitations.
 					</TextBlock>

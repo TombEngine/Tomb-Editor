@@ -31,35 +31,35 @@
     <moveable id="28" name="Tiger" essential="false" ten="TIGER"/>
     <moveable id="29" name="Vulture" essential="false" ten="EAGLE"/>
     <moveable id="30" name="Assault-course target" essential="false" ten="SHOOT_SWITCH1" />
-    <moveable id="31" name="Crawler mutant in closet" essential="false" ten="ANIMATING108"/>
+    <moveable id="31" name="Crawler mutant in closet (Boo mutant)" essential="false" ten="BOO_MUTANT"/>
     <moveable id="32" name="Crocodile (in water)" essential="false" />
     <moveable id="34" name="Compsognathus" essential="false" ten="COMPSOGNATHUS"/>
     <moveable id="35" name="Lizard thing" essential="false" ten="LIZARD"/>
     <moveable id="36" name="Puna guy" essential="false" ten="PUNA_BOSS"/>
-    <moveable id="37" name="Mercenary" essential="false"  ten="TROOPS"/>
+    <moveable id="37" name="Mercenary" essential="false"  ten="MERCENARY"/>
     <moveable id="38" name="Raptor hung by rope (fish bait)" essential="false" ten="SHOOT_SWITCH2" />
-    <moveable id="39" name="RX-Tech guy in red jacket" essential="false" ten="MP_WITH_GUN" /> 
-    <moveable id="40" name="RX-Tech guy with gun" essential="false"  ten="SAS_CAIRO" /> 
+    <moveable id="39" name="RX-Tech guy in red jacket" essential="false" ten="OILRED" /> 
+    <moveable id="40" name="RX-Tech guy with gun" essential="false"  ten="WHITE_SOLDIER" /> 
     <moveable id="41" name="Dog (Antarctica)" essential="false" ten="HUSKIE"/>
     <moveable id="42" name="Crawler mutant" essential="false" ten="SEAL_MUTANT" /> 
     <moveable id="44" name="Tinnos wasp" essential="false" ten="WASP_MUTANT" /> 
     <moveable id="45" name="Tinnos monster" essential="false" ten="CLAW_MUTANT" />
-    <moveable id="46" name="Brute mutant (with claw)" essential="false" /> 
-    <moveable id="47" name="Tinnos wasp respawn point" essential="false" />
+    <moveable id="46" name="Brute mutant (with claw)" essential="false" ten="HYBRID_MUTANT" /> 
+    <moveable id="47" name="Tinnos wasp emitter" essential="false" ten="WASP_MUTANT_EMITTER" />
     <moveable id="48" name="Raptor respawn point" />
     <moveable id="49" name="Willardspider" essential="false" ten="WILLARD" /> 
     <moveable id="50" name="RX-Tech flamethrower guy" essential="false" ten="FLAMETHROWER_BADDY" /> 
-    <moveable id="51" name="London goon" essential="false" ten="SAS_CAIRO"/> 
-    <moveable id="53" name="'Damned' stick-wielding goon" essential="false" ten="MP_WITH_STICK" /> 
+    <moveable id="51" name="London goon" essential="false" ten="LONDON_MERCENARY"/> 
+    <moveable id="53" name="'Damned' stick-wielding goon" essential="false" ten="PUNK" /> 
     <moveable id="56" name="London guard" essential="false" ten="MP_WITH_GUN" /> 
     <moveable id="57" name="Sophia-Leigh" essential="false" ten="SOPHIA_LEIGH_BOSS"/>
     <moveable id="58" name="Thames Wharf machine" essential="false" ten="ELECTRIC_CLEANER" /> 
     <moveable id="60" name="MP with stick" essential="false" ten="MP_WITH_STICK" />
     <moveable id="61" name="MP with gun" essential="false" ten="MP_WITH_GUN" />
-    <moveable id="62" name="Prisoner" essential="false" ten="CIVVY" />
-    <moveable id="63" name="MP with sighted gun and night sight" essential="false" ten="SAS_CAIRO" /> 
+    <moveable id="62" name="Prisoner" essential="false" ten="PRISONER" />
+    <moveable id="63" name="MP with sighted gun and night sight (Swat gun)" essential="false" ten="SWAT_GUN" /> 
     <moveable id="64" name="Gun turret" essential="false" ten="TWIN_AUTO_GUN"/>
-    <moveable id="65" name="Dam guard" essential="false" ten="MP_WITH_STICK" /> 
+    <moveable id="65" name="Civvy" essential="false" ten="CIVVY" /> 
     <moveable id="66" name="Tripwire" essential="false" ten="LASER_BEAM" />
     <moveable id="67" name="Electrified wire" essential="false" ten="ELECTRIC_FENCE" /> 
     <moveable id="68" name="Killer tripwire" essential="false" ten="LASER_BEAM"/> 

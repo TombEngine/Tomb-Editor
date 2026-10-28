@@ -52,46 +52,50 @@ namespace TombLib.LuaProperties
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
-        /// Path to the property catalog folder relative to program directory.
-        /// </summary>
-        public static string PropertyCatalogPath => Path.Combine(DefaultPaths.CatalogsDirectory, "TEN Property Catalogs");
-
-        /// <summary>
         /// Cached property definitions keyed by object type.
         /// </summary>
-        private static Dictionary<LuaPropertyObjectKey, List<LuaPropertyDefinition>> _catalog;
+        private static readonly Dictionary<TRVersion.Game, Dictionary<LuaPropertyObjectKey, List<LuaPropertyDefinition>>> _catalogs = new();
 
         /// <summary>
         /// Gets all property definitions, loading from disk on first access.
         /// </summary>
-        public static Dictionary<LuaPropertyObjectKey, List<LuaPropertyDefinition>> Catalog
+        public static Dictionary<LuaPropertyObjectKey, List<LuaPropertyDefinition>> GetCatalog(TRVersion.Game version)
         {
-            get
-            {
-                if (_catalog == null)
-                    _catalog = LoadCatalog(PropertyCatalogPath);
+            if (!_catalogs.ContainsKey(version))
+                ReloadCatalog(version);
 
-                return _catalog;
-            }
+            return _catalogs[version];
+        }
+
+        /// <summary>
+        /// Gets the directory path that stores the catalogs for the given engine.
+        /// </summary>
+        private static string GetCatalogPath(TRVersion.Game version)
+        {
+            var name = version == TRVersion.Game.TombEngine ? "TEN" : "TRX";
+            var path = Path.Combine(DefaultPaths.CatalogsDirectory, $"{name} Property Catalogs");
+            if (version.IsTRX())
+                path = Path.Combine(path, version.ToString());
+            return path;
         }
 
         /// <summary>
         /// Forces a reload of the catalog from disk.
         /// </summary>
-        public static void ReloadCatalog()
+        public static void ReloadCatalog(TRVersion.Game version)
         {
-            _catalog = LoadCatalog(PropertyCatalogPath);
+            _catalogs[version] = LoadCatalog(GetCatalogPath(version), version);
         }
 
         /// <summary>
         /// Gets property definitions for a specific object type.
         /// Returns an empty list if no definitions exist.
         /// </summary>
-        public static List<LuaPropertyDefinition> GetDefinitions(ObjectKind kind, uint typeId)
+        public static List<LuaPropertyDefinition> GetDefinitions(ObjectKind kind, uint typeId, TRVersion.Game engine)
         {
             var key = new LuaPropertyObjectKey(kind, typeId);
-
-            if (Catalog.TryGetValue(key, out var definitions))
+            var catalog = GetCatalog(engine);
+            if (catalog.TryGetValue(key, out var definitions))
                 return definitions;
 
             return new List<LuaPropertyDefinition>();
@@ -101,7 +105,7 @@ namespace TombLib.LuaProperties
         /// Loads all XML files from the specified catalog path
         /// and merges them into a single dictionary.
         /// </summary>
-        public static Dictionary<LuaPropertyObjectKey, List<LuaPropertyDefinition>> LoadCatalog(string path)
+        public static Dictionary<LuaPropertyObjectKey, List<LuaPropertyDefinition>> LoadCatalog(string path, TRVersion.Game version)
         {
             var result = new Dictionary<LuaPropertyObjectKey, List<LuaPropertyDefinition>>();
 
@@ -125,7 +129,7 @@ namespace TombLib.LuaProperties
             {
                 try
                 {
-                    LoadCatalogFile(file, result);
+                    LoadCatalogFile(file, result, version);
                 }
                 catch (Exception ex)
                 {
@@ -141,7 +145,7 @@ namespace TombLib.LuaProperties
         /// Loads a single XML catalog file and merges definitions into the result dictionary.
         /// Later-loaded properties with the same InternalName for the same object key overwrite earlier ones.
         /// </summary>
-        private static void LoadCatalogFile(string filePath, Dictionary<LuaPropertyObjectKey, List<LuaPropertyDefinition>> result)
+        private static void LoadCatalogFile(string filePath, Dictionary<LuaPropertyObjectKey, List<LuaPropertyDefinition>> result, TRVersion.Game version)
         {
             var doc = new XmlDocument();
             doc.Load(filePath);
@@ -155,11 +159,11 @@ namespace TombLib.LuaProperties
 
             // Process <moveable> entries.
             foreach (XmlNode moveableNode in root.SelectNodes("//moveable"))
-                ParseObjectNode(moveableNode, ObjectKind.Moveable, filePath, result);
+                ParseObjectNode(moveableNode, ObjectKind.Moveable, filePath, result, version);
 
             // Process <static> entries.
             foreach (XmlNode staticNode in root.SelectNodes("//static"))
-                ParseObjectNode(staticNode, ObjectKind.Static, filePath, result);
+                ParseObjectNode(staticNode, ObjectKind.Static, filePath, result, version);
         }
 
         /// <summary>
@@ -168,7 +172,7 @@ namespace TombLib.LuaProperties
         /// Supports multi-slot id formats: "0", "0,1,2", "0-5", "0-5, 73, 100-105",
         /// and string names for Moveable objects: "LARA", "LARA,SHOTGUN_ANIM".
         /// </summary>
-        private static void ParseObjectNode(XmlNode objectNode, ObjectKind kind, string filePath, Dictionary<LuaPropertyObjectKey, List<LuaPropertyDefinition>> result)
+        private static void ParseObjectNode(XmlNode objectNode, ObjectKind kind, string filePath, Dictionary<LuaPropertyObjectKey, List<LuaPropertyDefinition>> result, TRVersion.Game version)
         {
             // Read object identifier: prefer "id", fall back to "name".
             var idAttr = objectNode.Attributes?["id"];
@@ -181,7 +185,7 @@ namespace TombLib.LuaProperties
                 return;
             }
 
-            var typeIds = TrCatalog.ParseIdList(idAttr.Value, filePath, kind, TRVersion.Game.TombEngine);
+            var typeIds = TrCatalog.ParseIdList(idAttr.Value, filePath, kind, version);
             if (typeIds.Count == 0)
             {
                 logger.Warn("Property catalog entry has no valid IDs in '{0}' in {1}", idAttr.Value, filePath);

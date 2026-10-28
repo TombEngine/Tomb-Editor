@@ -242,14 +242,7 @@ public class PaletteGrid : FrameworkElement
         editor.ToggleHiddenSelection(true);
 
         if (selectedObject is IColorable instance)
-        {
-            instance.Color = SelectedColor.ToFloat3Color() * 2.0f;
-
-            if (selectedObject is LightInstance)
-                selectedObject.Room.RebuildLighting(editor.Configuration.Rendering3D_HighQualityLightPreview);
-
-            editor.ObjectChange(selectedObject, ObjectChangeType.Change);
-        }
+            EditorActions.ApplyObjectColor(instance, SelectedColor.ToFloat3Color() * 2.0f);
     }
 
     private void PickColourFromDialog(bool onlyFromPalette = true)

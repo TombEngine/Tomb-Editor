@@ -163,6 +163,9 @@
     <None Update="TIDE\Templates\Defaults\Game Icons\TR3.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TIDE\Templates\Defaults\Game Icons\TR3X.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TIDE\Templates\Defaults\Game Icons\TR4.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -211,6 +214,9 @@
     <None Update="TIDE\Templates\Presets\TR3.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="TIDE\Templates\Presets\TR3X.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="TIDE\Templates\Presets\TR4.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -242,6 +248,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TIDE\Templates\Sounds\TR2.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="TIDE\Templates\Sounds\TR3.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="TIDE\Templates\Sounds\TR4-TRNG.zip">

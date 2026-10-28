@@ -57,6 +57,7 @@ namespace TombLib.Wad
                 case TRVersion.Game.TR2X:
                     return new WadMoveableId(254);
                 case TRVersion.Game.TR3:
+                case TRVersion.Game.TR3X:
                     return new WadMoveableId(355);
                 case TRVersion.Game.TR4:
                 case TRVersion.Game.TR5:

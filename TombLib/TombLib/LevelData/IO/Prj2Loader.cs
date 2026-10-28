@@ -319,6 +319,8 @@ namespace TombLib.LevelData.IO
                     settings.TrxTextureBitDepth = (TrxTextureBitDepth)chunkIO.ReadChunkInt(chunkSize);
                 else if (id == Prj2Chunks.TrxConvertFlybysToCinematicFrames)
                     settings.TrxConvertFlybysToCinematicFrames = chunkIO.ReadChunkBool(chunkSize);
+                else if (id == Prj2Chunks.TrxUseAlternateGroups)
+                    settings.TrxUseAlternateGroups = chunkIO.ReadChunkBool(chunkSize);
                 else if (id == Prj2Chunks.RearrangeRooms)
                     settings.RearrangeVerticalRooms = chunkIO.ReadChunkBool(chunkSize);
                 else if (id == Prj2Chunks.RemoveUnusedObjects)
@@ -1319,6 +1321,7 @@ namespace TombLib.LevelData.IO
                     instance.LuaName = chunkIO.Raw.ReadStringUTF8();
                     addObject(instance);
                     newObjects.TryAdd(objectID, instance);
+                    ReadLuaProperties(chunkIO, instance.LuaProperties);
                 }
                 else if (id3 == Prj2Chunks.ObjectStatic ||
                          id3 == Prj2Chunks.ObjectStatic2)

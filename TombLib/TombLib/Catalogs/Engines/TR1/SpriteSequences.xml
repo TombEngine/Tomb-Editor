@@ -4,7 +4,7 @@
     <sprite_sequence id="85" name="Shotgun" />
     <sprite_sequence id="86" name="Magnums" />
     <sprite_sequence id="87" name="Uzis" />
-    <sprite_sequence id="88" name="Pistol ammo(?)" />
+    <sprite_sequence id="88" name="Pistol ammo" />
     <sprite_sequence id="89" name="Shotgun ammo" />
     <sprite_sequence id="90" name="Magnum ammo" />
     <sprite_sequence id="91" name="Uzi ammo" />

@@ -11,7 +11,7 @@ namespace TombLib.LevelData.Compilers.Util;
 public static class TrxInjector
 {
     private const uint _magic = 'T' | 'R' << 8 | 'X' << 16 | 'J' << 24;
-    private const uint _version = 8;
+    private const uint _version = 12;
     private const uint _injectionType = 0; // Implies no link to a TRX config option
 
     public static void Serialize(TrxInjectionData data, BinaryWriterEx outWriter)
@@ -115,6 +115,8 @@ public static class TrxInjector
             w => data.TexPages.ForEach(t => t.Serialize(w)));
         blockCount += WriteBlock(TrxBlockType.ItemNameEdits, data.ItemNameEdits.Count, writer,
             w => data.ItemNameEdits.ForEach(t => t.Serialize(w)));
+        blockCount += WriteBlock(TrxBlockType.PropertyEdits, data.PropertyEdits.Count, writer,
+            w => data.PropertyEdits.ForEach(p => p.Serialize(w)));
 
         return blockCount;
     }
@@ -177,6 +179,7 @@ public static class TrxInjector
         TextureOverwrites = 20,
         ItemNameEdits = 37,
         FlybyCameras = 38,
+        PropertyEdits = 39,
     }
 }
 
@@ -187,6 +190,7 @@ public class TrxInjectionData
     public List<TrxTextureOverwrite> TexPages { get; set; } = new();
     public List<TrxSFXData> SFX { get; set; } = new();
     public List<TrxItemNameEdit> ItemNameEdits = new();
+    public List<TrxPropertyEdit> PropertyEdits { get; set; } = new();
 }
 
 public abstract class TrxSectorEdit
@@ -303,11 +307,13 @@ public class TRXRoomPropertyEntry : TrxSectorEdit
 
     public short Flags { get; set; }
     public byte ReverbInfo { get; set; }
+    public byte AlternateGroup { get; set; }
 
     protected override void SerializeImpl(BinaryWriterEx writer)
     {
         writer.Write(Flags);
         writer.Write(ReverbInfo);
+        writer.Write(AlternateGroup);
     }
 }
 
@@ -395,5 +401,150 @@ public class TrxItemNameEdit
         writer.Write(Index);
         writer.Write(data.Length);
         writer.Write(data);
+    }
+}
+
+public enum TrxPropertyTarget
+{
+    Object,
+    Item,
+}
+
+public enum TrxPropertyType
+{
+    Int,
+    Float,
+    Double,
+    Bool,
+    XYZ,
+    RGB,
+}
+
+public abstract class TrxPropertyEdit
+{
+    public abstract TrxPropertyTarget Type { get; }
+    public List<TrxProperty> Properties { get; set; } = new();
+
+    public void Serialize(BinaryWriterEx writer)
+    {
+        writer.Write((int)Type);
+        SerializeImpl(writer);
+        writer.Write(Properties.Count);
+        Properties.ForEach(p => p.Serialize(writer));
+    }
+
+    protected abstract void SerializeImpl(BinaryWriterEx writer);
+}
+
+public class TrxObjectPropertyEdit : TrxPropertyEdit
+{
+    public override TrxPropertyTarget Type => TrxPropertyTarget.Object;
+    public int ObjectId { get; set; }
+
+    public TrxObjectPropertyEdit(int objectId)
+    {
+        ObjectId = objectId;
+    }
+
+    protected override void SerializeImpl(BinaryWriterEx writer)
+    {
+        writer.Write(0); // object type = game
+        writer.Write(ObjectId);
+    }
+}
+
+public class TrxItemPropertyEdit : TrxPropertyEdit
+{
+    public override TrxPropertyTarget Type => TrxPropertyTarget.Item;
+    public int ItemIndex { get; set; }
+
+    public TrxItemPropertyEdit(int index)
+    {
+        ItemIndex = index;
+    }
+
+    protected override void SerializeImpl(BinaryWriterEx writer)
+    {
+        writer.Write(ItemIndex);
+    }
+}
+
+public abstract class TrxProperty
+{
+    public abstract TrxPropertyType Type { get; }
+    public string Name { get; set; }
+
+    public void Serialize(BinaryWriterEx writer)
+    {
+        var name = TrxInjector.Encode(Name);
+        writer.Write(name.Length);
+        writer.Write(name);
+        writer.Write((int)Type);
+        SerializeImpl(writer);
+    }
+
+    protected abstract void SerializeImpl(BinaryWriterEx writer);
+}
+
+public class TrxBoolProperty : TrxProperty
+{
+    public override TrxPropertyType Type => TrxPropertyType.Bool;
+    public bool Value { get; set; }
+
+    protected override void SerializeImpl(BinaryWriterEx writer)
+    {
+        writer.Write(Value ? 1 : 0);
+    }
+}
+
+public class TrxFloatProperty : TrxProperty
+{
+    public override TrxPropertyType Type => TrxPropertyType.Float;
+    public float Value { get; set; }
+
+    protected override void SerializeImpl(BinaryWriterEx writer)
+    {
+        writer.Write(Value);
+    }
+}
+
+public class TrxIntProperty : TrxProperty
+{
+    public override TrxPropertyType Type => TrxPropertyType.Int;
+    public int Value { get; set; }
+
+    protected override void SerializeImpl(BinaryWriterEx writer)
+    {
+        writer.Write(Value);
+    }
+}
+
+public class TrxXYZProperty : TrxProperty
+{
+    public override TrxPropertyType Type => TrxPropertyType.XYZ;
+    public int X { get; set; }
+    public int Y { get; set; }
+    public int Z { get; set; }
+
+    protected override void SerializeImpl(BinaryWriterEx writer)
+    {
+        writer.Write(X);
+        writer.Write(Y);
+        writer.Write(Z);
+    }
+}
+
+public class TrxRGBProperty : TrxProperty
+{
+    public override TrxPropertyType Type => TrxPropertyType.RGB;
+    public byte R { get; set; }
+    public byte G { get; set; }
+    public byte B { get; set; }
+
+    protected override void SerializeImpl(BinaryWriterEx writer)
+    {
+        writer.Write(R);
+        writer.Write(G);
+        writer.Write(B);
     }
 }

@@ -16,6 +16,7 @@ namespace TombLib.LevelData
             TR5 = 5,
             TR1X = 11,
             TR2X = 12,
+            TR3X = 13,
             TRNG = 16,
             TombEngine = 18,
         }
@@ -27,6 +28,7 @@ namespace TombLib.LevelData
         {
             Game.TR1X => Game.TR1,
             Game.TR2X => Game.TR2,
+            Game.TR3X => Game.TR3,
             Game.TRNG => Game.TR4,
             _ => ver
         };
@@ -74,7 +76,7 @@ namespace TombLib.LevelData
             => ver >= Game.TR3;
 
         public static bool IsTRX(this Game ver)
-            => ver == Game.TR1X || ver == Game.TR2X;
+            => ver == Game.TR1X || ver == Game.TR2X || ver == Game.TR3X;
     }
 
     // Only for TR5+

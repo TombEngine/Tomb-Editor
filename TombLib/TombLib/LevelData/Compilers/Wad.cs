@@ -821,7 +821,7 @@ namespace TombLib.LevelData.Compilers
             if (_level.IsNG)
                 _soundMapSize = _limits[Limit.NG_SoundMapSize];
             else if (_level.IsTRX)
-                _soundMapSize = Math.Max(_finalSoundInfosList.Max(s => s.Id) + 1, _limits[Limit.SoundMapSize]);
+                _soundMapSize = Math.Max(_finalSoundInfosList.Select(s => s.Id).DefaultIfEmpty(-1).Max() + 1, _limits[Limit.SoundMapSize]);
             else
                 _soundMapSize = _limits[Limit.SoundMapSize];
 

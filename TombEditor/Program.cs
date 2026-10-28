@@ -1,4 +1,4 @@
-﻿using DarkUI.Config;
+using DarkUI.Config;
 using DarkUI.Win32;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
@@ -113,6 +113,10 @@ namespace TombEditor
                         MessageBox.Show("An error occured while loading one of the catalog files.\nFiles may be missing or corrupted. Check the log file for details.");
                         Environment.Exit(1);
                     }
+
+                    // Create the rendering device up front, as imported geometry cannot be loaded without it.
+                    // Editor does not create it on construction, and batch compile mode never creates the main form that would request it.
+                    _ = TombLib.Graphics.DeviceManager.DefaultDeviceManager;
 
                     // Run
                     Editor editor = new Editor(SynchronizationContext.Current, configuration);
