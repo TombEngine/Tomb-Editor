@@ -6,6 +6,25 @@ local inventoryOpen = false
 local setupComplete = false
 local inputMode = false
 local displayItem = nil
+local snap = {}
+
+local function CaptureSnapshot()
+    snap.dofMode, snap.dofFocusDistance, snap.dofRange, snap.dofStrength = TEN.View.GetDOF()
+    snap.postProcessMode, snap.postProcessStrength = TEN.View.GetPostProcess()
+    snap.postProcessTint = TEN.View.GetPostProcessTint()
+end
+
+local function RestoreSnapshot()
+    
+    if not snap then return end
+
+    TEN.View.SetDOF(snap.dofMode, snap.dofFocusDistance, snap.dofRange, snap.dofStrength)
+    TEN.View.SetPostProcess(snap.postProcessMode, snap.postProcessStrength)
+    TEN.View.SetPostProcessTint(snap.postProcessTint)
+
+    snap = {}
+
+end
 
 local SOUND_MAP = 
 {
@@ -25,6 +44,7 @@ local SOUND_MAP =
     ["Success"] = 996,  -- TR5_Keypad_Entry_Yes
     ["Click"] = 644,    -- TR2_Click
 }
+
 
 local function KeypadCreate(object, code)
 
@@ -62,14 +82,15 @@ local function ActivateKeypad(object)
         if inputMode then
             LevelVars.Engine.Keypad[dataName].CodeInput = ""
         end
+        CaptureSnapshot()
         inventoryOpen = true
     end
     
     if inventoryOpen == true then
         inventoryDelay = inventoryDelay + 1
-        TEN.View.SetPostProcessMode(View.PostProcessMode.MONOCHROME)
-        TEN.View.SetPostProcessStrength(1)
-        TEN.View.SetPostProcessTint(Color(128,128,128,255))
+        TEN.View.SetPostProcess(View.PostProcessMode.MONOCHROME, 1)
+        TEN.View.SetPostProcessTint(Color(64,64,64,255))
+        TEN.View.SetDOF(View.DOFMode.FULL, 0, 0, Flow.GetSettings().UI.menuBackgroundBlur)
         TEN.View.DisplayItem.ResetCamera()
         if inventoryDelay >= 2 then
 
@@ -85,6 +106,7 @@ local function exitKeypad(object, status)
     local dataName = object .. "_KeypadData"
     LevelVars.Engine.Keypad[dataName].Status = status
     LevelVars.Engine.Keypad.ActivatedKeypad = nil
+    RestoreSnapshot()
     Flow.SetFreezeMode(Flow.FreezeMode.NONE)
 end
 
@@ -242,7 +264,7 @@ LevelFuncs.Engine.Node.RunKeypad = function()
     if setupComplete then
         TEN.View.SetPostProcessMode(View.PostProcessMode.NONE)
         TEN.View.SetPostProcessStrength(0)
-        TEN.View.SetPostProcessTint(Color(255,255,255,255))
+        TEN.View.SetPostProcessTint(Color(128,128,128,255))
         displayItem = TEN.View.DisplayItem(LevelVars.Engine.Keypad[dataName].ObjectSlot, Vec3(0,2500,1024), Rotation(0,0,0), Vec3(4))
         displayItem:SetColor(Color(128,128,128,255))
         setupComplete = false
