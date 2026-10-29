@@ -62,7 +62,7 @@ end
 
 local function CloseKeypad(keypadObject)
     local dataName = keypadObject .. "_KeypadData"
-    local keypad = GetMoveableByName(keypadObject)
+    local keypad = TEN.Objects.GetMoveableByName(keypadObject)
     keypad:SetItemFlags(1,0)
     LevelVars.Engine.Keypad[dataName] = nil
     LevelVars.Engine.Keypad.ActivatedKeypad = nil
@@ -89,7 +89,7 @@ local function ActivateKeypad(object)
     if inventoryOpen == true then
         inventoryDelay = inventoryDelay + 1
         TEN.View.SetPostProcess(View.PostProcessMode.MONOCHROME, 1)
-        TEN.View.SetPostProcessTint(Color(64,64,64,255))
+        TEN.View.SetPostProcessTint(Color(64, 64, 64, 255))
         TEN.View.SetDOF(View.DOFMode.FULL, 0, 0, Flow.GetSettings().UI.menuBackgroundBlur)
         TEN.View.DisplayItem.ResetCamera()
         if inventoryDelay >= 2 then
@@ -141,7 +141,7 @@ LevelFuncs.Engine.Node.KeypadTrigger = function(object, code, triggerer)
     end
 
     if LevelVars.Engine.Keypad[dataName].Status then
-        local triggerer = GetMoveableByName(triggerer)
+        local triggerer = TEN.Objects.GetMoveableByName(triggerer)
         triggerer:Enable()
         CloseKeypad(object)
     end
@@ -264,9 +264,9 @@ LevelFuncs.Engine.Node.RunKeypad = function()
     if setupComplete then
         TEN.View.SetPostProcessMode(View.PostProcessMode.NONE)
         TEN.View.SetPostProcessStrength(0)
-        TEN.View.SetPostProcessTint(Color(128,128,128,255))
-        displayItem = TEN.View.DisplayItem(LevelVars.Engine.Keypad[dataName].ObjectSlot, Vec3(0,2500,1024), Rotation(0,0,0), Vec3(4))
-        displayItem:SetColor(Color(128,128,128,255))
+        TEN.View.SetPostProcessTint(Color(128, 128, 128, 255))
+        displayItem = TEN.View.DisplayItem(LevelVars.Engine.Keypad[dataName].ObjectSlot, Vec3(0, 2500, 1024), Rotation(0, 0, 0), Vec3(4))
+        displayItem:SetColor(Color(128, 128, 128, 255))
         setupComplete = false
     end
 
@@ -398,7 +398,7 @@ LevelFuncs.Engine.Node.RunKeypad = function()
     end
 
     -- Display entered code with dashes
-    local controlsText = TEN.Strings.DisplayString(codeWithDashes, TEN.Vec2(TEN.Util.PercentToScreen(55, 30)), 1.0, TEN.Color(192,192,192), false, {Strings.DisplayStringOption.RIGHT})
+    local controlsText = TEN.Strings.DisplayString(codeWithDashes, TEN.Vec2(TEN.Util.PercentToScreen(55, 30)), 1.0, TEN.Color(192, 192, 192), false, {Strings.DisplayStringOption.RIGHT})
     TEN.Strings.ShowString(controlsText, 1 / 30)
     displayItem:Draw()
 end
