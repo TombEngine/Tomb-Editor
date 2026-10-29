@@ -34,11 +34,7 @@
     },
     "main_menu_picture": {
       "type": "string",
-      "description": "Path to the main menu background image."
-    },
-    "main_script": {
-      "type": "string",
-      "description": "Path to a global Lua script to execute after game initialization, before the first level loads."
+      "description": "Path to the main menu background image. Omit it to run the title level live behind the menu instead."
     },
     "savegame_file_fmt": {
       "type": "string",
@@ -164,7 +160,6 @@
   },
   "required": [
     "engine",
-    "main_menu_picture",
     "savegame_file_fmt",
     "levels"
   ],
@@ -197,6 +192,10 @@
         "music_track": {
           "type": "integer"
         },
+        "lara_outfit": {
+          "type": "string",
+          "description": "Outfit Lara wears in the title level's cutscenes. Only outfits whose meshes the title level holds can be worn."
+        },
         "inherit_injections": {
           "type": "boolean"
         },
@@ -225,10 +224,6 @@
         "type": {
           "type": "string"
         },
-        "script": {
-          "type": "string",
-          "description": "Path to a Lua script executed after loading this level."
-        },
         "path": {
           "$ref": "#/$defs/path"
         },
@@ -248,11 +243,11 @@
         },
         "water_particles": {
           "type": "boolean",
-          "description": "Enables PSX-style underwater water particles in this level."
+          "description": "Enables PSX-style underwater water particles in this level. TR4 shows them in every water room and ignores this property."
         },
         "death_tile": {
           "type": "string",
-          "description": "Defines death-tile behavior (for TR3 only).",
+          "description": "Defines death-tile behavior.",
           "enum": [
             "lava",
             "rapids",
@@ -342,8 +337,7 @@
       "else": {
         "required": [
           "path",
-          "sequence",
-          "lara_outfit"
+          "sequence"
         ]
       },
       "additionalProperties": false
@@ -476,6 +470,9 @@
           "$ref": "#/definitions/seq_remove_binoculars"
         },
         {
+          "$ref": "#/definitions/seq_reset_hub"
+        },
+        {
           "$ref": "#/definitions/seq_play_cutscene"
         },
         {
@@ -495,9 +492,6 @@
         },
         {
           "$ref": "#/definitions/seq_set_lara_start_anim"
-        },
-        {
-          "$ref": "#/definitions/seq_setup_bacon_lara"
         },
         {
           "$ref": "#/definitions/seq_disable_floor"
@@ -773,6 +767,23 @@
       ],
       "additionalProperties": false
     },
+    "seq_reset_hub": {
+      "type": "object",
+      "description": "Takes Lara's keys, puzzle items, pickup items and examine items away as she leaves this level for the given one. This only applies where the `inventory.keep_plot_items` rule is on, as it is in TR4.",
+      "properties": {
+        "type": {
+          "const": "reset_hub"
+        },
+        "level_idx": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "type",
+        "level_idx"
+      ],
+      "additionalProperties": false
+    },
     "seq_remove_scions": {
       "type": "object",
       "description": "Any combination of these sequences can be used to modify Lara's inventory at the start of a level. `remove_weapons` does not remove the ammo for those guns, and `remove_ammo` does not remove the guns. Item removal is performed first, followed by addition.",
@@ -958,23 +969,6 @@
       "required": [
         "type",
         "anim"
-      ],
-      "additionalProperties": false
-    },
-    "seq_setup_bacon_lara": {
-      "type": "object",
-      "description": "Sets the room number in which Bacon Lara will be anchored to enable correct mirroring behaviour with Lara.",
-      "properties": {
-        "type": {
-          "const": "setup_bacon_lara"
-        },
-        "anchor_room": {
-          "type": "integer"
-        }
-      },
-      "required": [
-        "type",
-        "anchor_room"
       ],
       "additionalProperties": false
     },

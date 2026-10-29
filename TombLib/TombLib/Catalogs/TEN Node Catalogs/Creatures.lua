@@ -57,7 +57,7 @@ end
 -- !Description "Set creature target"
 -- !Arguments "Newline, Moveables, 50, Moveable to set target for."
 -- !Arguments "Moveables, 50, Moveable to set as target."
-LevelFuncs.Engine.Node.SetCreatureTarget = function(moveable, target, retaliate)
+LevelFuncs.Engine.Node.SetCreatureTarget = function(moveable, target)
     local mov = LevelFuncs.Engine.Node.RequireActiveMoveable(moveable, "setting target")
     if not mov then return end
 

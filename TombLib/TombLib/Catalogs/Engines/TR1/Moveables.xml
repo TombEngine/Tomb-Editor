@@ -90,7 +90,7 @@
     <moveable id="100" name="Shotgun" id2="85" ten="SHOTGUN_ITEM" />
     <moveable id="101" name="Magnum" id2="86" />
     <moveable id="102" name="Uzi" id2="87" ten="UZI_ITEM" />
-    <moveable id="103" name="Pistol ammo" ten="PISTOLS_AMMO_ITEM" />
+    <moveable id="103" name="Pistol ammo" id2="88" ten="PISTOLS_AMMO_ITEM" />
     <moveable id="104" name="Shotgun ammo" id2="89" ten="SHOTGUN_AMMO1_ITEM" />
     <moveable id="105" name="Magnum ammo" id2="90" />
     <moveable id="106" name="Uzi ammo" id2="91" ten="UZI_AMMO_ITEM" />

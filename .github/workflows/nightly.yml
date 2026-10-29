@@ -1,0 +1,84 @@
+name: Nightly
+
+# Builds, tests and publishes a portable snapshot of the current "develop" head
+# to a single rolling pre-release tagged "nightly".
+#
+# This is a developer/tester channel and is deliberately kept separate from the
+# curated stable channel: released installers live in TombEngine/TombEditorReleases
+# and are still produced by hand, as described in Installer_compile_instructions.txt.
+# Snapshots ship as a plain zip only - the presence of an NSIS installer stays the
+# marker of a real release - and are pruned to an overlay, see job_build.yml.
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+# Only the newest commit on develop is worth publishing.
+concurrency:
+  group: nightly
+  cancel-in-progress: true
+
+jobs:
+  build:
+    # The release asset is the durable copy, so the artifact only has to survive
+    # long enough for the publish job to collect it.
+    uses: ./.github/workflows/job_build.yml
+    with:
+      retention_days: 1
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.asset }}
+          path: build
+
+      - name: Package
+        id: package
+        run: |
+          sha="${{ github.sha }}"
+          name="TombEditor-nightly-${sha:0:7}.zip"
+          (cd build && zip -qr "../$name" .)
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "size=$(du -m "$name" | cut -f1) MB" >> "$GITHUB_OUTPUT"
+
+      # The rolling release is recreated rather than amended, so the tag always
+      # points at the commit the assets were actually built from.
+      - name: Publish rolling pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # There is no checkout in this job, so gh cannot infer the repository
+          # from a git remote and has to be told which one to act on.
+          GH_REPO: ${{ github.repository }}
+        run: |
+          # Absent on the first ever run, so a failure to delete is not fatal.
+          gh release delete nightly --yes --cleanup-tag || true
+          cat > notes.md <<'NOTES'
+          Automated snapshot of `develop` - **not a release**.
+
+          | | |
+          |---|---|
+          | Version | `${{ needs.build.outputs.version }}` |
+          | Commit | ${{ github.sha }} |
+          | Built | ${{ needs.build.outputs.built }} |
+          | Size | ${{ steps.package.outputs.size }} |
+
+          This is an overlay, not a full install. TombIDE project templates and native libraries for other platforms are left out to keep the download small, so install a [stable release](https://github.com/TombEngine/TombEditorReleases/releases) first, then unpack this over it, replacing existing files.
+
+          TombEditor, WadTool and SoundTool run from this zip on their own; only TombIDE needs the templates, to create new projects. Requires 64-bit Windows with .NET 6 or later and a DirectX 10 capable video card.
+
+          These binaries are unsigned, so Windows SmartScreen will warn on first run. Snapshots are untested beyond the automated suite and may corrupt project files - back up your work and use a stable installer for real level building.
+          NOTES
+          gh release create nightly "${{ steps.package.outputs.name }}" \
+            --prerelease \
+            --target "${{ github.sha }}" \
+            --title "Development snapshot" \
+            --notes-file notes.md

@@ -38,7 +38,7 @@
     <moveable id="36" name="LARA_TORCH_ANIM" use_body_from="12" hidden="true" />
     <moveable id="37" name="HAIR_PRIMARY" hidden="true" />
     <moveable id="38" name="HAIR_SECONDARY" hidden="true" />
-	<moveable id="39" name="PHOTOMODE_ANIMS" use_body_from="12"/>
+    <moveable id="39" name="PHOTOMODE_ANIMS" use_body_from="12" hidden="true" />
     <moveable id="49" name="SNOWMOBILE_TRACKS" hidden="true" />
     <moveable id="50" name="SNOWMOBILE_LARA_ANIMS" use_body_from="12" hidden="true" />
     <moveable id="51" name="SNOWMOBILE" />

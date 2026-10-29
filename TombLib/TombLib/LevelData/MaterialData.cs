@@ -10,6 +10,7 @@ namespace TombLib.LevelData
 	public class MaterialData
 	{
 		public const int PropertyCount = MaterialPropertyDefinition.MaxPropertyCount;
+		public const string DefaultMaterialName = "DefaultMaterial";
 
 		[XmlIgnore]
 		public int Type { get; set; }
@@ -253,7 +254,7 @@ namespace TombLib.LevelData
 			if (!string.IsNullOrWhiteSpace(ColorMap))
 				return Path.GetFileNameWithoutExtension(ColorMap);
 
-			return "Default";
+			return DefaultMaterialName;
 		}
 	}
 }
