@@ -16,6 +16,7 @@ namespace TombLib.LevelData
         public enum SlopeCalculationMode
         {
             Legacy,
+            TombEngine,
             FreeAngles
         }
 
@@ -670,6 +671,32 @@ namespace TombLib.LevelData
                         slopeDirections[i] = Direction.NegativeZ;
                     else if (tilt.Y < -2 && -tilt.Y > Math.Abs(tilt.X))
                         slopeDirections[i] = Direction.PositiveZ;
+                }
+                else if (mode == SlopeCalculationMode.TombEngine)
+                {
+                    // Scale normal to original fake plane length.
+
+                    float scaleFactor = 1.0f / normals[i].Y;
+                    var scaledNormal = normals[i] * scaleFactor;
+
+                    var tilt = new Vector2(
+                        (float)(Math.Round(scaledNormal.X, MidpointRounding.AwayFromZero) * 4.0f),
+                        (float)(Math.Round(scaledNormal.Z, MidpointRounding.AwayFromZero) * 4.0f)) * -1.0f;
+
+                    // TEN does additional slope angle calculation to account for sub-click geometry.
+
+                    if (Math.Acos(Vector3.Dot(normals[i], Vector3.UnitY)) * 180.0 / Math.PI > 36.0f)
+                    {
+                        if (tilt.X > 2)
+                            slopeDirections[i] = Direction.NegativeX;
+                        else if (tilt.X < -2)
+                            slopeDirections[i] = Direction.PositiveX;
+
+                        if (tilt.Y > 2 && tilt.Y > Math.Abs(tilt.X))
+                            slopeDirections[i] = Direction.NegativeZ;
+                        else if (tilt.Y < -2 && -tilt.Y > Math.Abs(tilt.X))
+                            slopeDirections[i] = Direction.PositiveZ;
+                    }
                 }
             }
 

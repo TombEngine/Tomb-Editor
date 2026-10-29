@@ -202,7 +202,8 @@ namespace TombLib.Rendering
             if (DrawSlideDirections)
                 if (face == SectorFace.Floor || face == SectorFace.Floor_Triangle2)
                 {
-                    var slopeDirection = room.Sectors[x, z].GetFloorTriangleSlopeDirections(Sector.SlopeCalculationMode.Legacy)[face == SectorFace.Floor ? 0 : 1];
+                    var method = room.Level.IsTombEngine ? Sector.SlopeCalculationMode.TombEngine : Sector.SlopeCalculationMode.Legacy;
+                    var slopeDirection = room.Sectors[x, z].GetFloorTriangleSlopeDirections(method)[face == SectorFace.Floor ? 0 : 1];
                     bool flipped = room.Sectors[x, z].Floor.SplitDirectionIsXEqualsZ;
                     switch (slopeDirection)
                     {
