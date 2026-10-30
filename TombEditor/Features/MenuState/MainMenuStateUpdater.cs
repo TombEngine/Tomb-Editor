@@ -74,11 +74,7 @@ public sealed class MainMenuStateUpdater
     /// <summary>Paste availability depends on the clipboard content, so it is refreshed when the Edit menu opens.</summary>
     public void UpdatePaste()
     {
-        bool canPaste = _editor.Mode == EditorMode.Map2D
-            ? Clipboard.ContainsData(typeof(RoomClipboardData).FullName)
-            : Clipboard.ContainsData(typeof(ObjectClipboardData).FullName) || Clipboard.ContainsData(typeof(SectorsClipboardData).FullName);
-
-        SetEnabled(canPaste, "Paste");
+        SetEnabled(ClipboardHelper.CanPaste(_editor.Mode == EditorMode.Map2D, includeSectors: true), "Paste");
     }
 
     private void UpdateAll()

@@ -975,6 +975,7 @@
     },
 
     "LevelSettings": {
+        "ColumnShow": "Show",
         "Title": "Level Settings",
         "TabGame": "Game",
         "TabTextureFiles": "Texture Files",

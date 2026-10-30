@@ -28,6 +28,9 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         private readonly LevelSettingsData _settings;
         public LevelTexture Texture { get; private set; }
 
+        /// <summary>Gets whether the texture is loaded and can be shown in the preview window.</summary>
+        public bool CanPreview => Texture.LoadException == null;
+
         public TextureRow(LevelSettingsData settings, LevelTexture texture)
         {
             _settings = settings;
@@ -116,7 +119,11 @@ namespace TombEditor.Features.Dialogs.LevelSettings
             }
         }
 
-        public bool IsValid => Wad.LoadException == null;
+        public bool IsValid => Wad.LoadException == null
+            && !(Wad.Wad != null && (Wad.Wad.GameVersion.Native() != _settings.GameVersion.Native() || Wad.Wad.HasUnknownData));
+
+        /// <summary>Gets whether the wad is loaded and can be shown in the preview window.</summary>
+        public bool CanPreview => Wad.LoadException == null && Wad.Wad != null;
 
         public string Message
         {
