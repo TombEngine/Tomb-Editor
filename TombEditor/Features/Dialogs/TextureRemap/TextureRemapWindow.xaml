@@ -28,14 +28,20 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <controls:SpacedGrid
+        <TextBlock
             Grid.Row="0"
+            Text="{tombLib:Localize Instructions}"
+            TextWrapping="Wrap" />
+
+        <controls:SpacedGrid
+            Grid.Row="1"
             ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -57,7 +63,7 @@
         </controls:SpacedGrid>
 
         <controls:SpacedGrid
-            Grid.Row="1"
+            Grid.Row="2"
             ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -77,7 +83,7 @@
         </controls:SpacedGrid>
 
         <controls:SpacedGrid
-            Grid.Row="2"
+            Grid.Row="3"
             ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -118,7 +124,7 @@
         </controls:SpacedGrid>
 
         <controls:SpacedGrid
-            Grid.Row="3"
+            Grid.Row="4"
             ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -147,7 +153,7 @@
                 IsCancel="True" />
         </controls:SpacedGrid>
 
-        <StatusBar Grid.Row="4">
+        <StatusBar Grid.Row="5">
             <StatusBarItem>
                 <TextBlock Text="{Binding StatusText}" />
             </StatusBarItem>

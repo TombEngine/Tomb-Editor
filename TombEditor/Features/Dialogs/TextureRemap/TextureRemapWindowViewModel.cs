@@ -94,6 +94,26 @@ public partial class TextureRemapWindowViewModel : ObservableObject, IModalDialo
     partial void OnDestinationTextureChanged(LevelTexture? value)
         => RemapRectanglesChanged?.Invoke(this, EventArgs.Empty);
 
+    // Moves the destination start back inside the destination image when the source area grows.
+    partial void OnSourceEndChanged(Vector2 value)
+    {
+        if (DestinationTexture is null)
+            return;
+
+        Vector2 destinationEnd = DestinationStart + (value - SourceStart);
+        Vector2 destinationSize = DestinationTexture.Image.Size;
+        Vector2 destinationStart = DestinationStart;
+
+        if (destinationEnd.X > destinationSize.X)
+            destinationStart.X -= destinationEnd.X - destinationSize.X;
+
+        if (destinationEnd.Y > destinationSize.Y)
+            destinationStart.Y -= destinationEnd.Y - destinationSize.Y;
+
+        if (destinationStart != DestinationStart)
+            DestinationStart = destinationStart;
+    }
+
     partial void OnScalingChanged(float value)
     {
         UpdateScaling();

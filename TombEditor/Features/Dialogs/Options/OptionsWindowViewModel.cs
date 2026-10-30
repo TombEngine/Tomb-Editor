@@ -26,9 +26,11 @@ namespace TombEditor.Features.Dialogs.Options
     /// (the same convention the previous control <c>Tag</c> used), including the <c>UI_ColorScheme</c>
     /// sub-fields for the color options.
     /// </summary>
-    public partial class OptionsWindowViewModel : ObservableObject, IModalDialogViewModel
+    public partial class OptionsWindowViewModel : ObservableObject, IModalDialogViewModel, IDisposable
     {
         private const string ColorSchemeProperty = "UI_ColorScheme";
+
+        private bool _isApplyingPreset;
 
         private readonly Editor _editor;
         private readonly object _config;
@@ -51,6 +53,18 @@ namespace TombEditor.Features.Dialogs.Options
             BuildSchema();
             ReadConfigIntoItems(_config);
             SelectedTab = Tabs.FirstOrDefault();
+
+            _editor.EditorEventRaised += OnEditorEventRaised;
+        }
+
+        /// <summary>Stops listening for configuration changes made elsewhere while the dialog is open.</summary>
+        public void Dispose() => _editor.EditorEventRaised -= OnEditorEventRaised;
+
+        // Keeps the displayed values in sync when the configuration changes from outside (Apply, other windows).
+        private void OnEditorEventRaised(IEditorEvent editorEvent)
+        {
+            if (editorEvent is Editor.ConfigurationChangedEvent)
+                ReadConfigIntoItems(_config);
         }
 
         // Commands.
@@ -213,12 +227,16 @@ namespace TombEditor.Features.Dialogs.Options
             if (preset is null)
                 return;
 
+            _isApplyingPreset = true;
+
             foreach (var item in Tabs.SelectMany(t => t.AllItems).Where(o => o.Kind == OptionKind.Color))
             {
                 var field = preset.GetType().GetField(item.ConfigName);
                 if (field != null && field.GetValue(preset) is Vector4 v)
                     item.Value = v.ToWPFColor();
             }
+
+            _isApplyingPreset = false;
         }
 
         // Search filtering.
@@ -473,6 +491,20 @@ namespace TombEditor.Features.Dialogs.Options
                     if (e.PropertyName == nameof(OptionItem.Value) && item.Value is string presetName)
                         ApplyColorSchemePreset(presetName);
                 };
+
+            // Changing any color by hand means the colors no longer match the picked preset.
+            foreach (var item in Tabs.SelectMany(t => t.AllItems).Where(i => i.Kind == OptionKind.Color))
+                item.PropertyChanged += (_, e) =>
+                {
+                    if (!_isApplyingPreset && e.PropertyName == nameof(OptionItem.Value))
+                        ClearColorSchemePreset();
+                };
+        }
+
+        private void ClearColorSchemePreset()
+        {
+            foreach (var preset in Tabs.SelectMany(t => t.AllItems).Where(i => i.Kind == OptionKind.ColorSchemePreset))
+                preset.Value = null;
         }
 
         private List<object> GetColorSchemePresetNames()

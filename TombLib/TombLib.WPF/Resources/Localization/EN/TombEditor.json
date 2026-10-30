@@ -800,6 +800,7 @@
 
     "TextureRemap": {
         "Title": "Texture remapping assistant",
+        "Instructions": "Automated tool to remap texture areas throughout the level.\nSelect source area and then move corresponding destination area to remap source to.",
         "SourceHeader": "Source",
         "DestinationHeader": "Destination",
         "Scaling": "Scale factor:",

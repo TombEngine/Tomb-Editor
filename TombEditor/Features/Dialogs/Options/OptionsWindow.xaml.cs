@@ -1,5 +1,6 @@
 #nullable enable
 
+using System;
 using System.Windows;
 using TombLib.WPF;
 
@@ -11,5 +12,6 @@ public partial class OptionsWindow : Window
     {
         InitializeComponent();
         this.HookModalAutoClose();
+        Closed += (_, _) => (DataContext as IDisposable)?.Dispose();
     }
 }
