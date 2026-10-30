@@ -80,7 +80,7 @@
 
         <!--  Auto or custom raw texture with a live preview (font, sky, TR5 extra sprites)  -->
         <DataTemplate x:Key="CustomResourceTemplate" DataType="{x:Type local:CustomResourceViewModel}">
-            <Grid>
+            <Grid HorizontalAlignment="Stretch">
                 <Border
                     Width="32"
                     Height="32"
@@ -100,7 +100,7 @@
                     </Border.Style>
                     <Image RenderOptions.BitmapScalingMode="NearestNeighbor" Source="{Binding Preview}" Stretch="Uniform" />
                 </Border>
-                <StackPanel>
+                <StackPanel HorizontalAlignment="Stretch">
                     <RadioButton Margin="0,2" Content="{Binding AutoLabel}" IsChecked="{Binding IsAuto, Mode=TwoWay}" />
                     <RadioButton Margin="0,2" Content="{tombLib:Localize CustomFile256}" IsChecked="{Binding IsCustom, Mode=TwoWay}" />
                     <DockPanel Margin="0,4,0,0">
@@ -112,6 +112,7 @@
                             DockPanel.Dock="Right"
                             IsEnabled="{Binding IsCustom}" />
                         <TextBox
+                            HorizontalAlignment="Stretch"
                             IsEnabled="{Binding IsCustom}"
                             Text="{Binding Path, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             ToolTip="{Binding AbsolutePath}" />
@@ -434,30 +435,30 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Width="*" Binding="{Binding StaticMesh}" Header="{tombLib:Localize ColumnStaticMesh}" IsReadOnly="True" />
                             <DataGridCheckBoxColumn Width="70" Binding="{Binding Merge, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnMerge}" />
-                            <DataGridCheckBoxColumn Width="120" Binding="{Binding InterpretShadesAsEffect, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnShadesAsEffect}" />
-                            <DataGridCheckBoxColumn Width="110" Binding="{Binding TintAsAmbient, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnTintAsAmbient}" />
-                            <DataGridCheckBoxColumn Width="100" Binding="{Binding ClearShades, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnClearShades}" />
+                            <DataGridCheckBoxColumn Width="170" Binding="{Binding InterpretShadesAsEffect, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnShadesAsEffect}" />
+                            <DataGridCheckBoxColumn Width="170" Binding="{Binding TintAsAmbient, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnTintAsAmbient}" />
+                            <DataGridCheckBoxColumn Width="150" Binding="{Binding ClearShades, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnClearShades}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </DockPanel>
             </TabItem>
 
             <!--  Sky and Font -->
-            <TabItem Header="{tombLib:Localize TabSkyAndFont}">
-                <ScrollViewer Margin="6" VerticalScrollBarVisibility="Auto">
-                    <StackPanel IsEnabled="{Binding SupportsFontAndSky}">
+            <TabItem Header="{tombLib:Localize TabSkyAndFont}" HorizontalContentAlignment="Stretch">
+                <Grid Margin="6">
+                    <StackPanel HorizontalAlignment="Stretch" IsEnabled="{Binding SupportsFontAndSky}">
                         <TextBlock Margin="0,0,0,4" Text="{tombLib:Localize SkyTextureLabel}" />
-                        <ContentControl HorizontalContentAlignment="Stretch" Content="{Binding Sky}" ContentTemplate="{StaticResource CustomResourceTemplate}" />
+                        <ContentPresenter Content="{Binding Sky}" ContentTemplate="{StaticResource CustomResourceTemplate}" />
 
                         <TextBlock Margin="0,12,0,4" Text="{tombLib:Localize FontTextureLabel}" />
-                        <ContentControl HorizontalContentAlignment="Stretch" Content="{Binding Font}" ContentTemplate="{StaticResource CustomResourceTemplate}" />
+                        <ContentPresenter Content="{Binding Font}" ContentTemplate="{StaticResource CustomResourceTemplate}" />
 
                         <StackPanel Visibility="{Binding IsTR5, Converter={StaticResource BoolToVis}}">
                             <TextBlock Margin="0,12,0,4" Text="{tombLib:Localize Tr5SpritesTextureLabel}" />
-                            <ContentControl HorizontalContentAlignment="Stretch" Content="{Binding Tr5Sprites}" ContentTemplate="{StaticResource CustomResourceTemplate}" />
+                            <ContentPresenter Content="{Binding Tr5Sprites}" ContentTemplate="{StaticResource CustomResourceTemplate}" />
                         </StackPanel>
                     </StackPanel>
-                </ScrollViewer>
+                </Grid>
             </TabItem>
 
             <!--  Sound Infos -->

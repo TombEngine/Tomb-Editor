@@ -128,6 +128,9 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Crop room: vector compass (ring, ticks, north arrow) instead of the "N" box. Compared on screen with WinForms | Different picture | (this commit) |
 | Search dialog compared on screen: same layout. Differences left: WinForms right-aligns the Keywords and Scope labels and preselects the first result row | Cosmetic | n/a |
 
+| Editor options: every tab compared side by side with the WinForms dialog on screen and by reading control labels with UI Automation; groups, items and captions now in the WinForms order (composite rows for "Animate camera on:" with three checkboxes, font plus Bold, checkbox with its number). Seven of nine pages identical by the automatic check, the other two differ only by how UI Automation sorts a label against its checkboxes | Order was reversed or different | 4aef75004 |
+| Level settings after the merge, compared on screen: Static Meshes and Sound Infos now match the WinForms tabs; Sky and Font path boxes fill the tab width (the tab item aligned the content to the left); Static Meshes column headers widened. Other tabs not yet rechecked after the merge | Layout | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
