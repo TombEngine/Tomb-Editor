@@ -47,7 +47,7 @@
 
         <Grid Grid.Row="1">
             <Border x:Name="ItemPreviewHost" Visibility="{Binding Preview.IsAvailable, Converter={StaticResource BoolToVisibility}}" />
-            <Button Command="{Binding Preview.ReloadCommand}">
+            <Button Height="Auto" Command="{Binding Preview.ReloadCommand}">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
                         <Style.Triggers>

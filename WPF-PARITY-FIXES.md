@@ -47,11 +47,10 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Window title uses the product version ("Tomb Editor 2.0.1 - ...") | It showed "2.0.1.0" | b2965c938 |
 | "Search for menu entry" box and button restored at the right of the menu bar (`MenuSearchHelper`); focus on the `SearchMenus` shortcut | The command existed but nothing received it; feature was missing | b2965c938 |
 | Dock panel titles use the WinForms names: Sector Options, Room Options, Imported Geometry, Objects in Room, Item Properties, Content Browser, Texturing | Casing and the "Textures" name differed | b2965c938 |
+| Items and Imported Geometry panels show "Click here to load a new WAD file." / geometry message when nothing is loaded (message button no longer has a fixed 24 px height) | The text was clipped away: the button style forces a height of 24 px, the message needs about 34 px | (this commit) |
 
 ## Open items
 
-- Tomb Editor: Items and Imported Geometry panels show an empty box instead of "Click here to load new WAD file." (the view model message is set, the button content is not visible; a text color change did not fix it and was reverted).
-- Tomb Editor: menu font is about one point smaller than WinForms (S3).
 - Tomb Editor: functional inventory of the main window, panels and toolbar not done yet.
 - SoundTool: a failed or cancelled save still aborts New / Open / Close (WinForms continues); left as is on request.
 - SoundTool: double-click preview needs a loaded reference project; MAIN.SFX build/unpack not driven live.
@@ -61,6 +60,7 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 ## Intentional divergences (kept on purpose)
 
 - Dark custom title bar instead of the system accent color.
+- Theme font is 11 px (WinForms 9 pt = 12 px), so menus and labels are slightly smaller everywhere; changing it would touch every control.
 - Tomb Editor: dockable flyby timeline, extra "Rooms" panel, 2D/3D tabs, pin/dropdown buttons in dock headers, extra status bar fields.
 - SoundTool: details pane always visible but disabled without a selection; extra Stop button; "Select/Deselect all" marks the catalog as modified; build/unpack iterate sounds ordered by ID; Ctrl+C/V bound to the sound list only.
 - WadTool: inline tree search row with an extra "Next" button.
