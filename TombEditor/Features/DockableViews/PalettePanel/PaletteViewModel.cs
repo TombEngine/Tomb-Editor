@@ -48,7 +48,8 @@ public partial class PaletteViewModel : ObservableObject
 
         if (obj is Editor.SelectedLevelTextureChangedSetEvent textureChanged)
         {
-            _lastTexturePalette = [.. textureChanged.Texture.Image.Palette];
+            var palette = textureChanged.Texture?.Image.Palette;
+            _lastTexturePalette = palette is null ? null : [.. palette];
             UpdateControlState();
         }
 

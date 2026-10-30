@@ -69,15 +69,15 @@ public partial class PaletteView : UserControl
 		{
 			if (!_editor.Configuration.Palette_TextureSamplingMode)
 			{
-				SizeChanged += (_, _) => UpdateToolbarDock();
-		PaletteGridControl.LoadPalette(LevelSettings.LoadPalette());
+				PaletteGridControl.LoadPalette(LevelSettings.LoadPalette());
 				_editor.Level.Settings.Palette = PaletteGridControl.Palette;
 			}
 		}
 
 		if (obj is Editor.SelectedLevelTextureChangedSetEvent textureChanged)
 		{
-			_lastTexturePalette = [.. textureChanged.Texture.Image.Palette];
+			var palette = textureChanged.Texture?.Image.Palette;
+			_lastTexturePalette = palette is null ? null : [.. palette];
 			UpdatePalette();
 		}
 
