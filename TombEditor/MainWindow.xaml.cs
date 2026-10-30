@@ -184,7 +184,9 @@ public partial class MainWindow : Window
         if (obj is Editor.LevelChangedEvent)
             _popup.Hide();
 
-        if (obj is Editor.ToolWindowToggleEvent toggle)
+        if (obj is Editor.ToolWindowToggleEvent { Name: "ToolPalette" })
+            ToggleToolPalette();
+        else if (obj is Editor.ToolWindowToggleEvent toggle)
             ToggleAnchorable(ContentIdForPanelName(toggle.Name));
 
         // Bring the 3D view or the 2D map forward inside the nested editor dock when the mode switches.
@@ -517,6 +519,13 @@ public partial class MainWindow : Window
 
     private void EditMenu_SubmenuOpened(object sender, RoutedEventArgs e) => _menuState.UpdatePaste();
 
+    private void ViewMenu_SubmenuOpened(object sender, RoutedEventArgs e)
+    {
+        var configuration = _editor.Configuration;
+        _menuState.SetChecked("DrawWhiteTextureLightingOnly", configuration.Rendering3D_ShowLightingWhiteTextureOnly);
+        _menuState.SetChecked("ShowRealTintForObjects", configuration.Rendering3D_ShowRealTintForObjects);
+    }
+
     private void WindowMenu_SubmenuOpened(object sender, RoutedEventArgs e)
     {
         if (sender is not MenuItem windowMenu)
@@ -536,7 +545,9 @@ public partial class MainWindow : Window
 
             item.IsCheckable = true;
 
-            if (commandName == "ShowFlybyTimeline")
+            if (commandName == "ShowToolPalette")
+                item.IsChecked = _toolPalette.IsShown;
+            else if (commandName == "ShowFlybyTimeline")
                 item.IsChecked = _editor.Configuration.Window_Layout.ShowFlybyTimeline;
             else if (commandName == "ShowStatistics")
                 item.IsChecked = _editor.Configuration.Window_Layout.ShowStats;
@@ -743,8 +754,15 @@ public partial class MainWindow : Window
             layout.ObjectBrushToolboxPosition = new System.Drawing.Point((int)_objectBrushToolbox.Position.X, (int)_objectBrushToolbox.Position.Y);
     }
 
+    private void ToggleToolPalette()
+    {
+        _toolPalette.IsShown = !_toolPalette.IsShown;
+        ActiveLayout().ShowToolbox = _toolPalette.IsShown;
+    }
+
     private void ApplyToolboxPositionsFrom(NamedLayout layout)
     {
+        _toolPalette.IsShown = layout.ShowToolbox;
         _toolPalette.Position = new Point(layout.ToolboxPosition.X, layout.ToolboxPosition.Y);
 
         if (_objectBrushToolbox.IsShown)

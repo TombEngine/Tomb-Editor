@@ -145,6 +145,19 @@ public sealed class MainMenuStateUpdater
         }
     }
 
+    /// <summary>Shows the check mark of a toggle entry.</summary>
+    public void SetChecked(string command, bool isChecked)
+    {
+        if (!_items.TryGetValue(command, out var list))
+            return;
+
+        foreach (var item in list)
+        {
+            item.IsCheckable = true;
+            item.IsChecked = isChecked;
+        }
+    }
+
     private void SetEnabled(bool enabled, params string[] commands)
     {
         foreach (var command in commands)

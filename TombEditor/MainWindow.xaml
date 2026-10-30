@@ -102,7 +102,7 @@
                 <MenuItem editor:EditorMenu.Command="SearchAndReplaceObjects" editor:EditorMenu.Icon="General/Find-and-replace" />
             </MenuItem>
 
-            <MenuItem Header="View">
+            <MenuItem Header="View" SubmenuOpened="ViewMenu_SubmenuOpened">
                 <MenuItem editor:EditorMenu.Command="ResetCamera" editor:EditorMenu.Icon="Actions/center_direction" />
                 <MenuItem editor:EditorMenu.Command="RelocateCamera" editor:EditorMenu.Icon="General/target" />
                 <MenuItem editor:EditorMenu.Command="ToggleFlyMode" editor:EditorMenu.Icon="General/airplane" />
