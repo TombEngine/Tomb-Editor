@@ -109,6 +109,24 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | English strings added for Blend curve, Sprite sequence and State changes editors (titles, columns, tooltips, file dialog titles, error and status messages) | These windows would have shown raw keys | (this commit) |
 | Mesh editor and Animation editor remember size, position and maximized state; Skeleton editor context menu shows the Ctrl+O / Ctrl+P / Ctrl+Up / Ctrl+Down shortcuts and has the WinForms minimum size (800x500) | The two editors always opened at their default size | (this commit) |
 | Animation editor keyboard shortcuts of the previous form: Ctrl+Z / Ctrl+Y / Ctrl+S, Ctrl+X / C / V on frames, Ctrl+I interpolate, Space play, Left / Right / Up / Down frame navigation, Delete frames (ignored while typing; not verified on screen) | The window had no keyboard shortcuts at all | (this commit) |
+## Subagent batch (built only, NOT yet verified on screen)
+
+Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
+
+| Area | Fix | Commit |
+|------|-----|--------|
+| Animation editor | Top menu bar (Edit, Animations, Frames, Rendering) with enable rules; insert n frames, delete every nth frame, resample, resample to framerate, batch import/export, fix current/selected/all, find and replace animcommands, per-frame bounding box | 0bd3faf05 |
+| Animation editor | Animation list filter (s:/a:/name: tokens), multi-select, add and delete selected buttons, selection no longer cleared when empty | 0bd3faf05 |
+| Animation editor | Timeline context menu, double click on an anim command opens its editor, right double click on the 3D view resets the camera | 0bd3faf05 |
+| Event set editor | Level-script panel (function list, filter, unassign, browse notice, argument, call count) | d9466f22b |
+| Event set editor | Node editor multi-selection (rubber band, Ctrl/Shift, group drag), key map N/A/C/L, Ctrl+A, Esc, Delete/Backspace, Shift+Delete, grid size/step/width/ropes from NodeEditor_* options, Link button | d9466f22b |
+| Event set editor | Splitter persistence, set search popup, name warnings as toasts, Delete/Backspace on the tree | d9466f22b |
+| Moveable/Static | Tint picker calls EditorActions.EditColor (live preview, rollback on cancel); tint no longer rewritten on OK; Static checkbox order and scalable field visibility | 4570e9e51 |
+| Level settings | Browse uses shared reload logic; catalog Reload / Edit in SoundTool / Include all; adding a wad adds its catalog and switches game version; ConvertLevelExtension on version change; lists sync on change | 0ef87333c |
+| Level settings | Sky and Font radios with previews, path variables live, prompts above lists, samples tab hidden for MAIN.SFX, TRNG Area / Original ID columns, TR5 weather and Lara type on Misc | 0ef87333c |
+| Texture remap / Options | Instruction label and destination clamp; colour preset resets on manual colour edit, refresh on configuration change | 99712b794 |
+
+Known gaps reported by the agents: node grid overlay stays at a fixed 32 px tile, NodeEditor_ShowGrips unused, Export in the node editor still copies one node, blank nodes cannot be created, chain-playback reset on list click not ported, Imported geometry Browse does not use the reload logic, From catalog button handles a single row.
 ## Open items
 | Event set editor: closing with the window X or Escape restores the backup (only OK keeps changes), Unassign clears the volume's event set, generic mode starts with no set selected and hides the volume options | The X button committed; Unassign did nothing; generic mode preselected a set | (this commit) |
 | Level settings: size and position remembered; "Dither 16-bit textures" also enabled for TRX games; "Map animated textures to imported geometry" disabled for TombEngine | Window did not remember its place; enable rules differed | (this commit) |
