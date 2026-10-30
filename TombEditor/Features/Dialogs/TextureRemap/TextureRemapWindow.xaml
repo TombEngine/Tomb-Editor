@@ -112,8 +112,7 @@
                     </Grid.RowDefinitions>
                     <ComboBox
                         Grid.Row="0"
-                        DisplayMemberPath="Path"
-                        ItemsSource="{Binding Textures}"
+                                                ItemsSource="{Binding Textures}"
                         SelectedItem="{Binding SourceTexture, Mode=TwoWay}" />
                     <local:TextureRemapMapView
                         x:Name="SourceMapView"
@@ -133,8 +132,7 @@
                     </Grid.RowDefinitions>
                     <ComboBox
                         Grid.Row="0"
-                        DisplayMemberPath="Path"
-                        ItemsSource="{Binding Textures}"
+                                                ItemsSource="{Binding Textures}"
                         SelectedItem="{Binding DestinationTexture, Mode=TwoWay}" />
                     <local:TextureRemapMapView
                         x:Name="DestinationMapView"

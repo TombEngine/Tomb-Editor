@@ -1,6 +1,8 @@
+using System;
 #nullable enable
 
 using System.Windows;
+using System.Windows.Threading;
 using TombLib.WPF;
 
 namespace TombEditor.Features.Dialogs.TextureRemap;
@@ -11,7 +13,13 @@ public partial class TextureRemapWindow : Window
     {
         InitializeComponent();
         this.HookModalAutoClose();
-        Loaded += (_, _) => WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormTextureRemap");
+        Loaded += (_, _) =>
+        {
+            WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormTextureRemap");
+
+            // The maps need their final size to place the top of the texture at the top of the view.
+            Dispatcher.BeginInvoke(new Action(ResetMaps), DispatcherPriority.Loaded);
+        };
         DataContextChanged += OnDataContextChanged;
     }
 
@@ -33,6 +41,15 @@ public partial class TextureRemapWindow : Window
             vm.RemapRectanglesChanged += OnRectanglesChanged;
             vm.PropertyChanged += OnViewModelPropertyChanged;
         }
+    }
+
+    private void ResetMaps()
+    {
+        if (DataContext is not TextureRemapWindowViewModel vm)
+            return;
+
+        SourceMapView.ResetVisibleTexture(vm.SourceTexture);
+        DestinationMapView.ResetVisibleTexture(vm.DestinationTexture);
     }
 
     private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
