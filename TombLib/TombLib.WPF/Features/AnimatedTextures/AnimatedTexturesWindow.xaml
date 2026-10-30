@@ -84,7 +84,7 @@
 				<StackPanel DockPanel.Dock="Bottom" Margin="0,6,0,0">
 					<TextBlock Margin="0,0,0,2" Text="{tombLib:Localize Settings}" />
 					<Border Padding="6" BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
-						<Grid>
+						<Grid IsEnabled="{Binding HasSelectedSet}">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto" />
 								<ColumnDefinition Width="*" />
