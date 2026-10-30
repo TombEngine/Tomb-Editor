@@ -1,22 +1,11 @@
-Version 2.1
-===========
+Version 2.0.2
+=============
 
 Tomb Editor:
+ * Fixed slide direction indication for TEN.
 
-WadTool:
-
-SoundTool:
-
-TombIDE:
-
-TEN nodes:
-
-TEN property system updates:
-
-TEN base WAD
-
-Version 2.0
-===========
+Version 2.0.1
+=============
 
 Tomb Editor:
  * Added new Object Placement editor mode with a new set of tools for easy object placement and selection.
