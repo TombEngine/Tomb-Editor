@@ -112,7 +112,6 @@
                 <MenuItem Command="{Binding CutAnimationCommand}" Header="Cut"><MenuItem.Icon><Image Source="{tomb:Icon Actions/cut}" /></MenuItem.Icon></MenuItem>
                 <MenuItem Command="{Binding CopyAnimationCommand}" Header="Copy"><MenuItem.Icon><Image Source="{tomb:Icon General/copy}" /></MenuItem.Icon></MenuItem>
                 <MenuItem Command="{Binding PasteAnimationCommand}" Header="Paste"><MenuItem.Icon><Image Source="{tomb:Icon General/paste}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding ReplaceAnimationCommand}" Header="Replace"><MenuItem.Icon><Image Source="{tomb:Icon General/paste-new}" /></MenuItem.Icon></MenuItem>
                 <Separator />
                 <MenuItem Command="{Binding ImportAnimationCommand}" Header="Import..."><MenuItem.Icon><Image Source="{tomb:Icon General/Import}" /></MenuItem.Icon></MenuItem>
                 <MenuItem Command="{Binding ExportAnimationCommand}" Header="Export..."><MenuItem.Icon><Image Source="{tomb:Icon General/Export}" /></MenuItem.Icon></MenuItem>

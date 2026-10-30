@@ -84,7 +84,15 @@
 										x:Name="PART_SearchButton"
 										Grid.Column="1"
 										Style="{DynamicResource ButtonWithIconOnly}">
-										<Image Source="/DarkUI.WPF;component/Resources/search-16.png" />
+										<Path
+											Width="16"
+											Height="16"
+											Data="M 6.5,2 A 4.5,4.5 0 1 1 6.49,2 Z M 10,10 L 14.5,14.5"
+											SnapsToDevicePixels="False"
+											Stroke="{DynamicResource Brush_Text}"
+											StrokeEndLineCap="Round"
+											StrokeStartLineCap="Round"
+											StrokeThickness="1.4" />
 									</Button>
 
 									<Border

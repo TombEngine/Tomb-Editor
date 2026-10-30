@@ -109,6 +109,13 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | English strings added for Blend curve, Sprite sequence and State changes editors (titles, columns, tooltips, file dialog titles, error and status messages) | These windows would have shown raw keys | (this commit) |
 | Mesh editor and Animation editor remember size, position and maximized state; Skeleton editor context menu shows the Ctrl+O / Ctrl+P / Ctrl+Up / Ctrl+Down shortcuts and has the WinForms minimum size (800x500) | The two editors always opened at their default size | (this commit) |
 | Animation editor keyboard shortcuts of the previous form: Ctrl+Z / Ctrl+Y / Ctrl+S, Ctrl+X / C / V on frames, Ctrl+I interpolate, Space play, Left / Right / Up / Down frame navigation, Delete frames (ignored while typing; not verified on screen) | The window had no keyboard shortcuts at all | (this commit) |
+## DPI and side by side checks
+
+| Fix | Why | Commit |
+|-----|-----|--------|
+| DPI: audited all three manifests (PerMonitorV2 with fallback; SoundTool now uses the same value as the others), icons are SVG vectors (crisp at any scale), window .ico files carry 16-256 px sizes; the only raster UI icon (search-16.png in SearchableComboBox) replaced by a vector magnifier. Windows scale cannot be changed here without altering the user display, so only the current scale was seen on screen | Raster icon blurred above 100 percent | (this commit) |
+| Animation editor Animations menu: removed the extra Replace item (WinForms has Replace only on the toolbar); menu names of Edit, Animations, Frames and Rendering otherwise identical to WinForms (compared by UI Automation) | Same menus | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
