@@ -57,8 +57,15 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
 
     [ObservableProperty] private bool? _dialogResult;
 
-    [ObservableProperty] private bool _showEditingTools = true;
-    [ObservableProperty] private bool _treeMode;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CancelVisible))]
+    private bool _showEditingTools = true;
+
+    /// <summary>Realtime tree editing has nothing to cancel, so the previous form hid the Cancel button there.</summary>
+    public bool CancelVisible => !(TreeMode && ShowEditingTools);
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CancelVisible))]
+    private bool _treeMode;
     [ObservableProperty] private bool _showTextureTools;
     [ObservableProperty] private bool _showAllTexturesButton = true;
     [ObservableProperty] private string _statusText = string.Empty;

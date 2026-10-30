@@ -42,25 +42,25 @@
             Background="{DynamicResource Brush_BackgroundSlightlyDark}"
             Visibility="{Binding ShowEditingTools, Converter={StaticResource BoolToVis}}">
             <controls:SpacedStack Orientation="Horizontal" Spacing="3">
-                <Button Width="34" Command="{Binding UndoCommand}" IsEnabled="{Binding UndoEnabled}" ToolTip="Undo"><Image Source="{tomb:Icon General/undo}" /></Button>
-                <Button Width="34" Command="{Binding RedoCommand}" IsEnabled="{Binding RedoEnabled}" ToolTip="Redo"><Image Source="{tomb:Icon General/redo}" /></Button>
+                <Button Width="34" Command="{Binding UndoCommand}" IsEnabled="{Binding UndoEnabled}" ToolTip="Undo (Ctrl+Z)"><Image Source="{tomb:Icon General/undo}" /></Button>
+                <Button Width="34" Command="{Binding RedoCommand}" IsEnabled="{Binding RedoEnabled}" ToolTip="Redo (Ctrl+Y)"><Image Source="{tomb:Icon General/redo}" /></Button>
                 <Separator />
-                <ToggleButton Width="40" Content="Wire" IsChecked="{Binding Wireframe, Mode=TwoWay}" ToolTip="Wireframe" />
-                <ToggleButton Width="40" Content="Alpha" IsChecked="{Binding AlphaTest, Mode=TwoWay}" ToolTip="Alpha test" />
-                <ToggleButton Width="40" Content="Bilin" IsChecked="{Binding Bilinear, Mode=TwoWay}" ToolTip="Bilinear filter" />
-                <ToggleButton Width="40" Content="Grid" IsChecked="{Binding DrawAxis, Mode=TwoWay}" ToolTip="Draw grid" />
+                <ToggleButton Width="40" Content="Wire" IsChecked="{Binding Wireframe, Mode=TwoWay}" ToolTip="Draw in wireframe mode" />
+                <ToggleButton Width="40" Content="Alpha" IsChecked="{Binding AlphaTest, Mode=TwoWay}" ToolTip="Toggle transparency" />
+                <ToggleButton Width="40" Content="Bilin" IsChecked="{Binding Bilinear, Mode=TwoWay}" ToolTip="Toggle bilinear filter" />
+                <ToggleButton Width="40" Content="Grid" IsChecked="{Binding DrawAxis, Mode=TwoWay}" ToolTip="Draw grid and axis" />
                 <Button Width="50" Command="{Binding ResetCameraCommand}" Content="Camera" ToolTip="Reset camera" />
                 <Separator />
-                <Button Width="50" Command="{Binding RotateTextureCommand}" Content="Rot tex" ToolTip="Rotate texture" />
-                <Button Width="50" Command="{Binding MirrorTextureCommand}" Content="Mir tex" ToolTip="Mirror texture" />
+                <Button Width="50" Command="{Binding RotateTextureCommand}" Content="Rot tex" ToolTip="Rotate current texture (~)" />
+                <Button Width="50" Command="{Binding MirrorTextureCommand}" Content="Mir tex" ToolTip="Mirror current texture (Shift+~)" />
                 <Separator />
                 <Button Width="50" Command="{Binding ImportMeshCommand}" Content="Import" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Import mesh" />
                 <Button Width="50" Command="{Binding ExportMeshCommand}" Content="Export" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Export mesh" />
-                <Button Width="40" Command="{Binding FindTextureCommand}" Content="Find" ToolTip="Find selected texture in meshes" />
+                <Button Width="40" Command="{Binding FindTextureCommand}" Content="Find" ToolTip="Search for mesh by selected texture area (Ctrl+F)" />
                 <Button Width="50" Command="{Binding RenameCommand}" Content="Rename" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Rename mesh" />
-                <ToggleButton Width="40" Content="Hide" IsChecked="{Binding Hidden, Mode=TwoWay}" ToolTip="Hide mesh" />
+                <ToggleButton Width="40" Content="Hide" IsChecked="{Binding Hidden, Mode=TwoWay}" ToolTip="Hide mesh if skinned mesh is used for the parent object" />
                 <Separator />
-                <ToggleButton Width="50" Content="Preview" IsChecked="{Binding PreviewActive, Mode=TwoWay}" ToolTip="Animate preview" />
+                <ToggleButton Width="50" Content="Preview" IsChecked="{Binding PreviewActive, Mode=TwoWay}" ToolTip="Preview all effects" />
             </controls:SpacedStack>
         </Border>
 
@@ -84,7 +84,7 @@
                 Orientation="Horizontal"
                 Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
                 <Button Width="80" Command="{Binding OkCommand}" Content="OK" IsDefault="True" />
-                <Button Width="80" Command="{Binding CancelCommand}" Content="Cancel" IsCancel="True" />
+                <Button Width="80" Command="{Binding CancelCommand}" Content="Cancel" IsCancel="True" Visibility="{Binding CancelVisible, Converter={StaticResource BoolToVis}}" />
             </controls:SpacedStack>
         </Grid>
 
@@ -104,7 +104,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0" Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Grid.Column="0" Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"><TextBox.InputBindings><KeyBinding Key="Return" Command="{Binding SearchCommand}" /></TextBox.InputBindings></TextBox>
                 <Button Grid.Column="1" Width="60" Command="{Binding SearchCommand}" Content="Search" />
             </controls:SpacedGrid>
             <TreeView x:Name="meshTree" Margin="0,4,0,0" ItemsSource="{Binding RootNodes}">
@@ -171,7 +171,7 @@
                     <StackPanel>
                         <controls:SpacedStack Orientation="Horizontal" Spacing="6">
                             <TextBlock Style="{StaticResource Lbl}" Text="Vertex #:" />
-                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="65535" Minimum="0" Value="{Binding VertexNum, Mode=TwoWay}" />
+                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="65535" Minimum="0" Value="{Binding VertexNum, Mode=TwoWay}"><controls:NumericUpDown.InputBindings><KeyBinding Key="Return" Command="{Binding RemapVertexCommand}" /></controls:NumericUpDown.InputBindings></controls:NumericUpDown>
                             <Button Width="60" Command="{Binding FindVertexCommand}" Content="Find" />
                         </controls:SpacedStack>
                         <controls:SpacedStack Margin="0,6,0,0" Orientation="Horizontal" Spacing="6">
