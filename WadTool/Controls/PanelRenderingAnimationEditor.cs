@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using TombLib;
 using TombLib.Graphics;
 using TombLib.Graphics.Primitives;
@@ -47,8 +46,6 @@ public class PanelRenderingAnimationEditor : RenderingPanel
         }
     }
     private Vector3 _gridPosition;
-    private int _lastRightPressTick;
-    private System.Drawing.Point _lastRightPressLocation;
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public List<WadMeshBoneNode> Skeleton { get; set; }
@@ -139,26 +136,6 @@ public class PanelRenderingAnimationEditor : RenderingPanel
         }
     }
 
-    /// <summary>
-    /// Detects a second right button press close in time and space to the previous one. The native viewport window
-    /// class does not generate double click messages, so it is measured manually.
-    /// </summary>
-    private bool IsRightDoubleClick(PointerEventArgs e)
-    {
-        var now = Environment.TickCount;
-        var isDoubleClick = now - _lastRightPressTick <= GetDoubleClickTime() &&
-            Math.Abs(e.X - _lastRightPressLocation.X) <= System.Windows.SystemParameters.MinimumHorizontalDragDistance &&
-            Math.Abs(e.Y - _lastRightPressLocation.Y) <= System.Windows.SystemParameters.MinimumVerticalDragDistance;
-
-        // A recognized double click must not start another one.
-        _lastRightPressTick = isDoubleClick ? 0 : now;
-        _lastRightPressLocation = e.Location;
-
-        return isDoubleClick;
-    }
-
-    [DllImport("user32.dll")]
-    private static extern uint GetDoubleClickTime();
 
     /// <summary>Resets the camera to its default position.</summary>
     public void ResetCamera()
@@ -380,12 +357,17 @@ public class PanelRenderingAnimationEditor : RenderingPanel
         Invalidate();
     }
 
+    protected override void OnMouseDoubleClick(PointerEventArgs e)
+    {
+        base.OnMouseDoubleClick(e);
+
+        if (e.Button == PointerButtons.Right)
+            ResetCamera();
+    }
+
     protected override void OnMouseDown(PointerEventArgs e)
     {
         base.OnMouseDown(e);
-
-        if (e.Button == PointerButtons.Right && IsRightDoubleClick(e))
-            ResetCamera();
 
         if (e.Button == PointerButtons.Left)
         {
