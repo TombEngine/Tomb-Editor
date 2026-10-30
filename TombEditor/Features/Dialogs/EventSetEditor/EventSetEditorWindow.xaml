@@ -41,7 +41,7 @@
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240" MinWidth="180" />
+                <ColumnDefinition x:Name="listColumn" Width="240" MinWidth="180" />
                 <ColumnDefinition Width="6" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
@@ -63,6 +63,14 @@
                     <Button Command="{Binding NewFolderCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize NewFolderTooltip}">
                         <Image Source="{tomb:Icon General/folder}" />
                     </Button>
+                    <Button
+                        x:Name="searchButton"
+                        Click="SearchButton_Click"
+                        IsEnabled="{Binding HasTreeNodes}"
+                        Style="{DynamicResource ButtonWithIconOnly}"
+                        ToolTip="{tombLib:Localize SearchTooltip}">
+                        <Image Source="{tomb:Icon General/search}" />
+                    </Button>
                     <Button Command="{Binding UnassignSetCommand}" ToolTip="{tombLib:Localize UnassignTooltip}" Content="{tombLib:Localize Unassign}" Visibility="{Binding ShowVolumeOptions, Converter={StaticResource BoolToVis}}" />
                 </controls:SpacedStack>
                 <controls:AlternatingTreeView
@@ -71,6 +79,7 @@
                     DragOver="SetsTree_DragOver"
                     Drop="SetsTree_Drop"
                     ItemsSource="{Binding TreeRoots}"
+                    KeyDown="SetsTree_KeyDown"
                     MouseDoubleClick="SetsTree_MouseDoubleClick"
                     PreviewMouseLeftButtonDown="SetsTree_PreviewMouseLeftButtonDown"
                     PreviewMouseMove="SetsTree_PreviewMouseMove"
@@ -97,14 +106,36 @@
                 </controls:AlternatingTreeView>
             </DockPanel>
 
+            <!--  Event set search (opened by the search button)  -->
+            <Popup
+                x:Name="searchPopup"
+                Grid.Column="0"
+                Placement="Bottom"
+                PlacementTarget="{Binding ElementName=searchButton}"
+                StaysOpen="False">
+                <Border
+                    Padding="4"
+                    Background="{DynamicResource Brush_Background}"
+                    BorderBrush="{DynamicResource Brush_Border}"
+                    BorderThickness="1">
+                    <TextBox
+                        x:Name="searchBox"
+                        Width="200"
+                        PreviewKeyDown="SearchBox_PreviewKeyDown"
+                        TextChanged="SearchBox_TextChanged"
+                        ToolTip="{tombLib:Localize SearchBoxTooltip}" />
+                </Border>
+            </Popup>
+
             <GridSplitter
                 Grid.Column="1"
+                DragCompleted="Splitter_DragCompleted"
                 Width="6"
                 HorizontalAlignment="Stretch"
                 Background="{DynamicResource Brush_Border}" />
 
             <!--  Selected set editor  -->
-            <DockPanel Grid.Column="2" IsEnabled="{Binding HasSelectedSet}">
+            <DockPanel x:Name="editorPanel" Grid.Column="2" IsEnabled="{Binding HasSelectedSet}">
                 <Grid DockPanel.Dock="Top" Margin="0,0,0,6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -189,15 +220,7 @@
                         BorderBrush="{DynamicResource Brush_Border}"
                         BorderThickness="1"
                         Visibility="{Binding IsLevelScriptMode, Converter={StaticResource BoolToVis}}">
-                        <StackPanel Margin="{x:Static darkUI:Defaults.MediumThickness}">
-                            <TextBlock Margin="0,0,0,4" Text="{tombLib:Localize Function}" />
-                            <ComboBox
-                                IsEditable="True"
-                                ItemsSource="{Binding ScriptFunctions}"
-                                Text="{Binding EventFunction, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
-                            <TextBlock Margin="0,8,0,4" Text="{tombLib:Localize Argument}" />
-                            <TextBox Text="{Binding EventArgument, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
-                        </StackPanel>
+                        <local:LevelScriptView DataContext="{Binding LevelScript}" />
                     </Border>
                 </Grid>
             </DockPanel>

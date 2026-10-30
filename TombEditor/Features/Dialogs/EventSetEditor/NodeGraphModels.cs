@@ -19,6 +19,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
     /// </summary>
     public partial class NodeViewModel : ObservableObject
     {
+        private readonly NodeEditorOptions _options;
         private readonly double _gridStep;
         private readonly string _functionDisplay;
 
@@ -26,10 +27,11 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         public ObservableCollection<ArgumentViewModel> Arguments { get; } = new();
         public event Action? Moved;
 
-        public NodeViewModel(TriggerNode node, double gridStep, NodeFunction? function, ArgumentDataProvider provider, EventType eventType)
+        public NodeViewModel(TriggerNode node, NodeEditorOptions options, NodeFunction? function, ArgumentDataProvider provider, EventType eventType)
         {
             Node = node;
-            _gridStep = gridStep;
+            _options = options;
+            _gridStep = options.GridStep;
             _functionDisplay = function?.Name ?? node.Function;
             IsUnsupported = function?.IsUnsupported(eventType) ?? false;
 
@@ -112,8 +114,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         private void SetGridPosition(double gx, double gy)
         {
             // Snap to the nearest grid unit.
-            gx = Math.Clamp(Math.Round(gx), 0, 256);
-            gy = Math.Clamp(Math.Round(gy), 0, 256);
+            gx = Math.Clamp(Math.Round(gx), 0, _options.GridSize);
+            gy = Math.Clamp(Math.Round(gy), 0, _options.GridSize);
             Node.ScreenPosition = new Vector2((float)gx, (float)gy);
             OnPropertyChanged(nameof(CanvasLeft));
             OnPropertyChanged(nameof(CanvasTop));
@@ -146,9 +148,11 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         public NodeViewModel From { get; }
         public NodeViewModel To { get; }
         public bool IsElse { get; }
+        private readonly bool _asRope;
 
-        public LinkViewModel(NodeViewModel from, NodeViewModel to, bool isElse)
+        public LinkViewModel(NodeViewModel from, NodeViewModel to, bool isElse, bool asRope = true)
         {
+            _asRope = asRope;
             From = from;
             To = to;
             IsElse = isElse;
@@ -172,7 +176,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         {
             get
             {
-                double dy = Math.Max(40.0, Math.Abs(Y2 - Y1) / 2.0);
+                double dy = _asRope ? Math.Max(40.0, Math.Abs(Y2 - Y1) / 2.0) : 0.0;
                 var figure = new PathFigure { StartPoint = new Point(X1, Y1) };
                 figure.Segments.Add(new BezierSegment(new Point(X1, Y1 + dy), new Point(X2, Y2 - dy), new Point(X2, Y2), true));
                 var geometry = new PathGeometry();

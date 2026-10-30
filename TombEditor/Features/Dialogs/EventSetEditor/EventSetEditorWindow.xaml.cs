@@ -3,8 +3,10 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using TombLib.Utils;
 using TombLib.WPF;
 
 namespace TombEditor.Features.Dialogs.EventSetEditor
@@ -27,11 +29,71 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             Closed += OnClosed;
         }
 
+        private readonly PopUpInfo _popup = new();
+
         private void OnLoaded(object sender, RoutedEventArgs e)
-            => WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormEventSetEditor");
+        {
+            var configuration = Editor.Instance.Configuration;
+            WindowConfiguration.ConfigureWindow(this, configuration, "FormEventSetEditor");
+
+            // Same list width as the previous splitter distance (restored after the window size).
+            listColumn.Width = new GridLength(Math.Max(configuration.Window_FormEventSetEditor_SplitterDistance, listColumn.MinWidth));
+
+            if (Vm is { } vm)
+                vm.WarningRequested += ShowWarning;
+        }
 
         private void OnClosed(object? sender, EventArgs e)
-            => Vm?.OnWindowClosed();
+        {
+            if (Vm is { } vm)
+                vm.WarningRequested -= ShowWarning;
+
+            _popup.Dispose();
+            Vm?.OnWindowClosed();
+        }
+
+        private void ShowWarning(string message)
+            => _popup.Show(editorPanel, PopupAlignment.BottomRight, message, string.Empty, PopupType.Warning);
+
+        private void Splitter_DragCompleted(object sender, DragCompletedEventArgs e)
+            => Editor.Instance.Configuration.Window_FormEventSetEditor_SplitterDistance = (int)Math.Round(listColumn.ActualWidth);
+
+        private void SetsTree_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key is not (Key.Delete or Key.Back) || Vm is not { } vm)
+                return;
+
+            if (vm.DeleteSetCommand.CanExecute(null))
+                vm.DeleteSetCommand.Execute(null);
+
+            e.Handled = true;
+        }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            searchPopup.IsOpen = true;
+            searchBox.Focus();
+            searchBox.SelectAll();
+        }
+
+        private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
+            => Vm?.FindSet(searchBox.Text, false);
+
+        private void SearchBox_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Enter:
+                    Vm?.FindSet(searchBox.Text, true);
+                    e.Handled = true;
+                    break;
+
+                case Key.Escape:
+                    searchPopup.IsOpen = false;
+                    e.Handled = true;
+                    break;
+            }
+        }
 
         private void SetsTree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {

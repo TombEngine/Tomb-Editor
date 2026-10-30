@@ -77,6 +77,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             EventTypes = global ? Event.GlobalEventTypes : Event.VolumeEventTypes;
             ScriptFunctions = ScriptingUtils.GetAllFunctionNames(editor.Level.Settings.MakeAbsolute(editor.Level.Settings.TenLuaScriptFile));
             _argumentProvider = new ArgumentDataProvider(editor, ScriptFunctions);
+            LevelScript = new LevelScriptViewModel(editor);
+            TreeRoots.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasTreeNodes));
 
             // Backup for Cancel.
             _backupList = _usedList.Select(s => s.Clone()).ToList();
@@ -118,7 +120,28 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             {
                 RepopulateSets();
             }
+            else if (obj is Editor.LoadedScriptsChangedEvent)
+            {
+                ReloadScriptFunctions();
+            }
         }
+
+        /// <summary>Re-reads the level script after it was changed or replaced, keeping the shared function list instance.</summary>
+        private void ReloadScriptFunctions()
+        {
+            var settings = _editor.Level.Settings;
+            var functions = ScriptingUtils.GetAllFunctionNames(settings.MakeAbsolute(settings.TenLuaScriptFile));
+
+            ScriptFunctions.Clear();
+            ScriptFunctions.AddRange(functions);
+            LevelScript.Reload();
+        }
+
+        /// <summary>Raised to show a transient warning next to the editor (invalid event set names).</summary>
+        public event Action<string>? WarningRequested;
+
+        /// <summary>Gets whether the event set list has anything to search in.</summary>
+        public bool HasTreeNodes => TreeRoots.Count > 0;
 
         public bool HasSelectedSet => SelectedSet != null;
 
@@ -289,6 +312,21 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             return SelectedNode.Parent?.FolderPath ?? string.Empty;
         }
 
+        /// <summary>Selects the row matching the search text (search popup); returns false when nothing matches.</summary>
+        public bool FindSet(string text, bool skipCurrent)
+        {
+            var match = SetTreeSearch.FindNext(AllNodes().ToList(), SelectedNode, text, skipCurrent);
+            if (match is null)
+                return false;
+
+            if (match.IsFolder)
+                SelectFolderNode(match);
+            else
+                SelectedSet = match.Set;
+
+            return true;
+        }
+
         private bool FolderNameExists(IEnumerable<SetTreeNode> siblings, string name, SetTreeNode? exclude = null)
             => siblings.Any(n => n.IsFolder && n != exclude && string.Equals(n.DisplayName, name, StringComparison.OrdinalIgnoreCase));
 
@@ -439,10 +477,10 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         // Per-event editor (node graph + level-script modes).
 
-        private const int NodeGridSize = 256;
-        private const double NodeGridStep = 8.0;
-
         [ObservableProperty] private NodeEditorViewModel? _nodeEditor;
+
+        /// <summary>Level-script mode panel (function list, argument, call count).</summary>
+        public LevelScriptViewModel LevelScript { get; }
 
         public bool HasCurrentEvent => CurrentEvent != null;
 
@@ -463,53 +501,40 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         partial void OnCurrentEventChanged(Event? value)
         {
             NodeEditor = value != null
-                ? new NodeEditorViewModel(value, SelectedEventType, NodeFunctions, _argumentProvider, NodeGridSize, NodeGridStep)
+                ? new NodeEditorViewModel(value, SelectedEventType, NodeFunctions, _argumentProvider, NodeEditorOptions.FromConfiguration(_editor.Configuration))
                 : null;
+            LevelScript.SetEvent(value);
 
             OnPropertyChanged(nameof(HasCurrentEvent));
             OnPropertyChanged(nameof(CurrentEventEnabled));
             OnPropertyChanged(nameof(IsNodeEditorMode));
             OnPropertyChanged(nameof(IsLevelScriptMode));
-            OnPropertyChanged(nameof(EventFunction));
-            OnPropertyChanged(nameof(EventArgument));
         }
 
         public bool IsNodeEditorMode
         {
             get => CurrentEvent != null && CurrentEvent.Mode == EventSetMode.NodeEditor;
-            set
-            {
-                if (CurrentEvent == null || !value)
-                    return;
-                CurrentEvent.Mode = EventSetMode.NodeEditor;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(IsLevelScriptMode));
-            }
+            set => SwitchMode(value, EventSetMode.NodeEditor);
         }
 
         public bool IsLevelScriptMode
         {
             get => CurrentEvent != null && CurrentEvent.Mode == EventSetMode.LevelScript;
-            set
-            {
-                if (CurrentEvent == null || !value)
-                    return;
-                CurrentEvent.Mode = EventSetMode.LevelScript;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(IsNodeEditorMode));
-            }
+            set => SwitchMode(value, EventSetMode.LevelScript);
         }
 
-        public string EventFunction
+        private void SwitchMode(bool selected, EventSetMode mode)
         {
-            get => CurrentEvent?.Function ?? string.Empty;
-            set { if (CurrentEvent != null) { CurrentEvent.Function = value; OnPropertyChanged(); } }
-        }
+            if (CurrentEvent is null || !selected || CurrentEvent.Mode == mode)
+                return;
 
-        public string EventArgument
-        {
-            get => CurrentEvent?.Argument ?? string.Empty;
-            set { if (CurrentEvent != null) { CurrentEvent.Argument = value; OnPropertyChanged(); } }
+            CurrentEvent.Mode = mode;
+            OnPropertyChanged(nameof(IsNodeEditorMode));
+            OnPropertyChanged(nameof(IsLevelScriptMode));
+
+            // The call counter is editable in both modes, so the one that was hidden may be stale.
+            NodeEditor?.RefreshCallCounter();
+            LevelScript.RefreshFromEvent();
         }
 
         // Name (with validation).
@@ -528,15 +553,13 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
                 if (string.IsNullOrEmpty(value))
                 {
-                    _messageService.ShowError(_localizationService["NameEmpty"]);
-                    SetProperty(ref _name, SelectedSet.Name);
+                    RejectName("NameEmpty");
                     return;
                 }
 
                 if (_usedList.Any(s => s.Name == value))
                 {
-                    _messageService.ShowError(_localizationService["NameExists"]);
-                    SetProperty(ref _name, SelectedSet.Name);
+                    RejectName("NameExists");
                     return;
                 }
 
@@ -547,6 +570,19 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                 if (FindNodeBySet(SelectedSet) is { } node)
                     node.DisplayName = value;
             }
+        }
+
+        /// <summary>Shows a warning toast and restores the previous name in the text box.</summary>
+        private void RejectName(string messageKey)
+        {
+            WarningRequested?.Invoke(_localizationService[messageKey]);
+
+            // Deferred: WPF ignores a PropertyChanged raised from inside the setter that is being applied.
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(() =>
+            {
+                _name = SelectedSet?.Name ?? string.Empty;
+                OnPropertyChanged(nameof(Name));
+            });
         }
 
         // Volume options.

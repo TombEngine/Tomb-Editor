@@ -201,6 +201,10 @@
                 Content="{tombLib:Localize Lock}"
                 ToolTip="{tombLib:Localize LockTooltip}" />
             <Button
+                Command="{Binding LinkSelectedCommand}"
+                Content="{tombLib:Localize Link}"
+                ToolTip="{tombLib:Localize LinkTooltip}" />
+            <Button
                 Command="{Binding DeleteSelectedNodeCommand}"
                 Content="{tombLib:Localize Delete}"
                 ToolTip="{tombLib:Localize DeleteTooltip}" />
@@ -239,6 +243,9 @@
                     Width="{Binding CanvasWidth}"
                     Height="{Binding CanvasHeight}"
                     Background="{DynamicResource Brush_Background_Low}"
+                    MouseLeftButtonDown="Canvas_MouseLeftButtonDown"
+                    MouseLeftButtonUp="Canvas_MouseLeftButtonUp"
+                    MouseMove="Canvas_MouseMove"
                     MouseRightButtonUp="Canvas_MouseRightButtonUp">
                     <Canvas.LayoutTransform>
                         <ScaleTransform x:Name="zoomTransform" ScaleX="1" ScaleY="1" />
@@ -327,6 +334,7 @@
                                             <Thumb
                                                 DockPanel.Dock="Top"
                                                 DragDelta="NodeThumb_DragDelta"
+                                                DragStarted="NodeThumb_DragStarted"
                                                 IsEnabled="{Binding IsEditable}">
                                                 <Thumb.Template>
                                                     <ControlTemplate TargetType="Thumb">
@@ -438,6 +446,15 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+
+                    <!--  Rubber-band selection rectangle  -->
+                    <Rectangle
+                        x:Name="selectionRectangle"
+                        Fill="#33FFFFFF"
+                        IsHitTestVisible="False"
+                        Stroke="{DynamicResource Brush_Selection}"
+                        StrokeThickness="1"
+                        Visibility="Collapsed" />
                 </Canvas>
             </ScrollViewer>
         </Border>

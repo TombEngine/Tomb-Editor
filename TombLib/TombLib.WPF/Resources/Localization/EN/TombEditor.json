@@ -731,7 +731,26 @@
         "RenameFolderPrompt": "Enter new folder name:",
         "FolderExists": "A folder with that name already exists. Specify a different name.",
         "DeleteFolderTitle": "Delete folder",
-        "DeleteFolderConfirm": "Delete {0} event set(s) in folder '{1}'?"
+        "DeleteFolderConfirm": "Delete {0} event set(s) in folder '{1}'?",
+        "SearchTooltip": "Search event sets",
+        "SearchBoxTooltip": "Type to find an event set. Press Enter to find the next match."
+    },
+
+    "LevelScript": {
+        "Argument": "Argument:",
+        "ArgumentTooltip": "Function argument, if the function supports it.\nMust be formatted according to Lua syntax.",
+        "CallCount": "Call count:",
+        "CallCountTooltip": "How many times the event may fire (0 = unlimited)",
+        "Unassign": "Unassign",
+        "UnassignTooltip": "Unassign function from event",
+        "SearchTooltip": "Filter functions by name",
+        "Browse": "Browse...",
+        "BrowseTitle": "Select the Lua script file for this level",
+        "ScriptNotSpecified": "Level script file is not specified.\nClick the button to load a level script file.",
+        "ScriptNotFound": "Level script file '{0}' not found.\nClick the button to choose a replacement.",
+        "ScriptNoFunctions": "Level script file does not have any level functions.\nThey must have 'LevelFuncs.FuncName = function() ... end' format.",
+        "FunctionNotFound": "Not found: '{0}'",
+        "FunctionNotFoundTooltip": "A function linked to the current event was not found in the script file.\nPlease select another one or restore the linked function in the script."
     },
 
     "NodeEditor": {
@@ -754,8 +773,10 @@
         "Colour": "Colour",
         "ColourTooltip": "Change colour of last selected node",
         "Lock": "Lock",
-        "LockTooltip": "Lock / unlock last selected node",
-        "DeleteTooltip": "Delete last selected node",
+        "LockTooltip": "Lock / unlock selected nodes",
+        "Link": "Link",
+        "LinkTooltip": "Link selected nodes, if possible",
+        "DeleteTooltip": "Delete selected nodes",
         "Export": "Export",
         "ExportTooltip": "Export node to clipboard",
         "Clear": "Clear",

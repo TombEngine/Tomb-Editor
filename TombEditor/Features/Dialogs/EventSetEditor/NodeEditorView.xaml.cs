@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using TombLib.WPF;
+using TombLib.WPF.Input;
 
 namespace TombEditor.Features.Dialogs.EventSetEditor
 {
@@ -19,10 +20,13 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         private NodeViewModel? _pendingFrom;
         private bool _pendingElse;
         private Line? _tempLine;
+        private Vector _dragTotal;
+        private readonly RubberBandSelection _rubberBand;
 
         public NodeEditorView()
         {
             InitializeComponent();
+            _rubberBand = new RubberBandSelection(rootCanvas, selectionRectangle);
             DataContextChanged += OnDataContextChanged;
         }
 
@@ -123,33 +127,42 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            if (ViewModel == null)
+            // Shortcuts must not fire while a node argument or the call counter is being edited.
+            if (ViewModel is null || KeyboardInput.IsEditingText(e.OriginalSource as DependencyObject))
                 return;
 
-            if (e.Key == Key.Delete)
-            {
-                if (ViewModel.DeleteSelectedNodeCommand.CanExecute(null))
-                    ViewModel.DeleteSelectedNodeCommand.Execute(null);
+            // Alt+key arrives as Key.System with the real key in SystemKey.
+            var key = e.Key == Key.System ? e.SystemKey : e.Key;
+            if (NodeEditorKeyMap.TryHandle(ViewModel, key, Keyboard.Modifiers))
                 e.Handled = true;
-            }
-            else if (Keyboard.Modifiers == ModifierKeys.Control)
-            {
-                switch (e.Key)
-                {
-                    case Key.C:
-                        ViewModel.CopySelected(false);
-                        e.Handled = true;
-                        break;
-                    case Key.X:
-                        ViewModel.CopySelected(true);
-                        e.Handled = true;
-                        break;
-                    case Key.V:
-                        ViewModel.Paste();
-                        e.Handled = true;
-                        break;
-                }
-            }
+        }
+
+        private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (ViewModel is null)
+                return;
+
+            var position = e.GetPosition(rootCanvas);
+
+            // Clicks on nodes are handled by the nodes themselves.
+            if (FindNodeAt(position) is not null || _pendingFrom is not null)
+                return;
+
+            Focus();
+            _rubberBand.Begin(ViewModel, position, Keyboard.Modifiers is ModifierKeys.Control or ModifierKeys.Shift);
+            e.Handled = true;
+        }
+
+        private void Canvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (ViewModel is not null && _rubberBand.IsActive)
+                _rubberBand.Update(ViewModel, e.GetPosition(rootCanvas));
+        }
+
+        private void Canvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (_rubberBand.IsActive)
+                _rubberBand.End();
         }
 
         private void Canvas_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
@@ -189,8 +202,14 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         private void Node_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             Focus();
-            if (sender is FrameworkElement element && element.DataContext is NodeViewModel node && ViewModel != null)
-                ViewModel.SelectedNode = node;
+            if (sender is not FrameworkElement { DataContext: NodeViewModel node } || ViewModel is null)
+                return;
+
+            // Ctrl/Shift toggles the node in the selection; a plain click keeps an existing group so it can be dragged.
+            if (Keyboard.Modifiers is ModifierKeys.Control or ModifierKeys.Shift)
+                ViewModel.SelectNode(node, true);
+            else if (!node.IsSelected)
+                ViewModel.SelectSingle(node);
         }
 
         private void ScrollToNode(NodeViewModel node)
@@ -206,13 +225,19 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                 node.Height = e.NewSize.Height;
         }
 
+        private void NodeThumb_DragStarted(object sender, DragStartedEventArgs e)
+        {
+            _dragTotal = new Vector();
+
+            if (sender is FrameworkElement { DataContext: NodeViewModel node } && ViewModel is not null)
+                ViewModel.BeginMove(node);
+        }
+
         private void NodeThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            if (sender is FrameworkElement element && element.DataContext is NodeViewModel node)
-            {
-                node.CanvasLeft += e.HorizontalChange;
-                node.CanvasTop += e.VerticalChange;
-            }
+            // The total offset is applied to the starting positions, so slow drags are not lost to grid snapping.
+            _dragTotal += new Vector(e.HorizontalChange, e.VerticalChange);
+            ViewModel?.MoveBy(_dragTotal.X, _dragTotal.Y);
         }
 
         private void OutputPort_MouseDown(object sender, MouseButtonEventArgs e)
