@@ -428,6 +428,10 @@ public partial class MainWindow : Window
 
     private void treeDestWad_KeyDown(object? sender, System.Windows.Input.KeyEventArgs e)
     {
+        // Text inputs hosted by the tree control (notes, search, game version) must keep their own Delete behavior.
+        if (e.OriginalSource is System.Windows.Controls.Primitives.TextBoxBase or System.Windows.Controls.ComboBox)
+            return;
+
         switch (e.Key)
         {
             case System.Windows.Input.Key.Delete:
