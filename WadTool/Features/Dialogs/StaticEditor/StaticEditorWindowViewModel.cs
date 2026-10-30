@@ -347,6 +347,17 @@ public partial class StaticEditorWindowViewModel : ObservableObject, IModalDialo
 
         LightingTypeIndex = (int)_static.Mesh.LightingType;
 
+        // The index setter is skipped while initializing, so apply the Normals lighting restrictions here.
+        if (_static.Mesh.LightingType == WadMeshLightingType.Normals)
+        {
+            AddLightEnabled = false;
+            DeleteLightEnabled = false;
+            IntensityEnabled = false;
+            RadiusEnabled = false;
+            AmbientEnabled = false;
+            LightsEnabled = false;
+        }
+
         _initializing = previous;
     }
 

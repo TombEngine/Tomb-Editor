@@ -36,12 +36,12 @@
             <Setter Property="Width" Value="64" />
             <Setter Property="Foreground" Value="{DynamicResource Brush_Text_Low}" />
         </Style>
-        <Style x:Key="Nud" TargetType="controls:NumericUpDown">
+        <Style x:Key="Nud" BasedOn="{StaticResource {x:Type controls:NumericUpDown}}" TargetType="controls:NumericUpDown">
             <Setter Property="DecimalPlaces" Value="0" />
             <Setter Property="Minimum" Value="-1000000" />
             <Setter Property="Maximum" Value="1000000" />
         </Style>
-        <Style x:Key="Axis" TargetType="controls:NumericUpDown">
+        <Style x:Key="Axis" BasedOn="{StaticResource {x:Type controls:NumericUpDown}}" TargetType="controls:NumericUpDown">
             <Setter Property="DecimalPlaces" Value="2" />
             <Setter Property="Minimum" Value="-1000000" />
             <Setter Property="Maximum" Value="1000000" />

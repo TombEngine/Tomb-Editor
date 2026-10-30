@@ -27,7 +27,7 @@
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
         </Style>
-        <Style x:Key="Nud" TargetType="controls:NumericUpDown">
+        <Style x:Key="Nud" BasedOn="{StaticResource {x:Type controls:NumericUpDown}}" TargetType="controls:NumericUpDown">
             <Setter Property="Width" Value="70" />
             <Setter Property="DecimalPlaces" Value="0" />
         </Style>

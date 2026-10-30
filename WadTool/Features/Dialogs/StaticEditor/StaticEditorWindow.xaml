@@ -20,10 +20,10 @@
     mc:Ignorable="d">
 
     <Window.Resources>
-        <Style TargetType="controls:NumericUpDown">
-            <Setter Property="Width" Value="64" />
-            <Setter Property="Minimum" Value="-1000000" />
-            <Setter Property="Maximum" Value="1000000" />
+        <Style BasedOn="{StaticResource {x:Type controls:NumericUpDown}}" TargetType="controls:NumericUpDown">
+            <Setter Property="Width" Value="54" />
+            <Setter Property="Minimum" Value="-65535" />
+            <Setter Property="Maximum" Value="65535" />
             <Setter Property="DecimalPlaces" Value="0" />
         </Style>
         <Style x:Key="AxisLabel" TargetType="TextBlock">
@@ -183,8 +183,8 @@
                                 Content="Shatter"
                                 IsChecked="{Binding Shatter, Mode=TwoWay}"
                                 IsEnabled="{Binding ShatterControlsEnabled}" />
-                            <ComboBox
-                                Width="120"
+                            <controls:SearchableComboBox
+                                Width="200"
                                 IsEnabled="{Binding SoundEnabled}"
                                 ItemsSource="{Binding SoundIds}"
                                 SelectedIndex="{Binding SoundIdIndex, Mode=TwoWay}" />
@@ -239,12 +239,18 @@
                             Spacing="6">
                             <TextBlock Style="{StaticResource AxisLabel}" Text="Intensity:" />
                             <controls:NumericUpDown
+                                DecimalPlaces="2"
+                                Increment="0.03"
+                                LargeIncrement="0.12"
                                 Minimum="-128"
                                 Maximum="128"
                                 Value="{Binding Intensity, Mode=TwoWay}"
                                 IsEnabled="{Binding IntensityEnabled}" />
                             <TextBlock Style="{StaticResource AxisLabel}" Text="Radius:" />
                             <controls:NumericUpDown
+                                DecimalPlaces="2"
+                                Increment="0.03"
+                                LargeIncrement="1.0"
                                 Minimum="0"
                                 Maximum="256"
                                 Value="{Binding Radius, Mode=TwoWay}"

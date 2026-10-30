@@ -14,7 +14,7 @@
 			<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
 			<Setter Property="Margin" Value="0,0,0,3" />
 		</Style>
-		<Style x:Key="FieldNud" TargetType="controls:NumericUpDown">
+		<Style x:Key="FieldNud" BasedOn="{StaticResource {x:Type controls:NumericUpDown}}" TargetType="controls:NumericUpDown">
 			<Setter Property="Width" Value="76" />
 			<Setter Property="HorizontalAlignment" Value="Left" />
 		</Style>
