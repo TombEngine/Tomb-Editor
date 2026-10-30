@@ -10,6 +10,7 @@
 		<ResourceDictionary Source="Styles/ContextMenu.xaml" />
 		<ResourceDictionary Source="Styles/DataGrid.xaml" />
 		<ResourceDictionary Source="Styles/FocusVisualStyle.xaml" />
+		<ResourceDictionary Source="Styles/GridSplitter.xaml" />
 		<ResourceDictionary Source="Styles/GroupBox.xaml" />
 		<ResourceDictionary Source="Styles/Label.xaml" />
 		<ResourceDictionary Source="Styles/ListBox.xaml" />

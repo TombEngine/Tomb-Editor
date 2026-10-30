@@ -78,9 +78,9 @@
 											VerticalAlignment="Center"
 											FontSize="{x:Static local:Defaults.TitleBar_FontSize}"
 											Foreground="{TemplateBinding Foreground}"
-											Text="{Binding Title, RelativeSource={RelativeSource TemplatedParent}}">
+											Text="{Binding Title, RelativeSource={RelativeSource TemplatedParent}}" TextTrimming="CharacterEllipsis">
 											<TextBlock.Margin>
-												<Thickness Left="{x:Static local:Defaults.MediumThicknessWidth}" />
+												<Thickness Left="{x:Static local:Defaults.MediumThicknessWidth}" Right="{x:Static local:Defaults.TitleBar_ButtonsWidth}" />
 											</TextBlock.Margin>
 										</TextBlock>
 									</Grid>

@@ -174,6 +174,7 @@ public static class Defaults
 	public static readonly double TitleBar_ChromeHeight = TitleBar_Height - 5; // 5 is a system constant (I think)
 	public static readonly double TitleBar_PathIconStrokeWidth = 1;
 	public static readonly double TitleBar_ButtonWidth = 45;
+	public static readonly double TitleBar_ButtonsWidth = TitleBar_ButtonWidth * 3;
 	public static readonly double TitleBar_FontSize = 12;
 	public static readonly double TitleBar_IconWidth = 18;
 	public static readonly double TitleBar_IconVerticalOffset = -12;
