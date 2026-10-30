@@ -83,6 +83,12 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Tag autocomplete (Select Rooms by Tags and Room Options): suggestions are words that start with what was typed, never a tag already entered, the first match is highlighted and Enter inserts it (not verified on screen) | It matched any substring, repeated tags and needed the mouse or arrow keys | (this commit) |
 | Import PRJ: title shows the PRJ file name, groups "Base sound catalog (optional)" and "Import settings" with the always-visible description texts, no extra PRJ path row (not verified on screen) | Descriptions were hidden in tooltips | (this commit) |
 
+## Tomb Editor dialogs (Wave C)
+
+| Fix | Why | Commit |
+|-----|-----|--------|
+| Texture remapping assistant: restrict-to-selected-rooms and remap-animated-textures start checked, scale factor 0.25..256 with 2 decimals, Enter runs Remap, WinForms captions, size and position remembered | The defaults made Apply touch the whole level; fractional scaling was impossible | (this commit) |
+| Search textures: size and position remembered, minimum size 330x400 | Window did not remember its place | (this commit) |
 ## Open items
 
 - Tomb Editor: not verified on screen (verified by build and code only): file drops onto the window, saved window placement, selection behavior of the Objects in Room / Rooms lists, trigger deletion with Delete/Backspace, Palette layout when the panel is narrow (wide layout verified).

@@ -11,6 +11,7 @@ public partial class TextureRemapWindow : Window
     {
         InitializeComponent();
         this.HookModalAutoClose();
+        Loaded += (_, _) => WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormTextureRemap");
         DataContextChanged += OnDataContextChanged;
     }
 

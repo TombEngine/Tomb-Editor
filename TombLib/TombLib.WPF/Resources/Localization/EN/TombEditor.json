@@ -768,15 +768,15 @@
     },
 
     "TextureRemap": {
-        "Title": "Texture remap",
+        "Title": "Texture remapping assistant",
         "SourceHeader": "Source",
         "DestinationHeader": "Destination",
-        "Scaling": "Scaling factor:",
+        "Scaling": "Scale factor:",
         "UntextureCompletely": "Untexture completely",
-        "RemapAnimTextures": "Remap animated textures",
+        "RemapAnimTextures": "Remap animated textures too (no undo possible)",
         "RestrictToSelectedRooms": "Restrict to selected rooms",
-        "Apply": "Apply",
-        "MissingTextureMessage": "Source or destination texture is unset.",
+        "Apply": "Remap",
+        "MissingTextureMessage": "Source or destination texture may not be unset.",
         "StatusRoomsOnly": "Successfully remapped {0} textures in rooms.",
         "StatusWithAnims": "Successfully remapped {0} textures in rooms, {1} in texture animations."
     },

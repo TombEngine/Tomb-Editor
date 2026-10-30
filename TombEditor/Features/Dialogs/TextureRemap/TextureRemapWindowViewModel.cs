@@ -43,8 +43,8 @@ public partial class TextureRemapWindowViewModel : ObservableObject, IModalDialo
     [NotifyPropertyChangedFor(nameof(IsDestinationPanelEnabled))]
     private bool _untextureCompletely;
 
-    [ObservableProperty] private bool _restrictToSelectedRooms;
-    [ObservableProperty] private bool _remapAnimTextures;
+    [ObservableProperty] private bool _restrictToSelectedRooms = true;
+    [ObservableProperty] private bool _remapAnimTextures = true;
     [ObservableProperty] private string _statusText = string.Empty;
 
     public ObservableCollection<LevelTexture> Textures { get; } = new();

@@ -12,6 +12,7 @@ public partial class FindTexturesWindow : Window
     {
         InitializeComponent();
         this.HookModalAutoClose();
+        Loaded += (_, _) => WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormFindTextures");
         Closed += OnClosed;
     }
 

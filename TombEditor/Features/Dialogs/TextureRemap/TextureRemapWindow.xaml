@@ -95,9 +95,12 @@
                 Grid.Column="1"
                 Width="80"
                 VerticalAlignment="Center"
+                DecimalPlaces="2"
+                FormatString="F2"
                 Increment="1"
-                Maximum="32"
-                Minimum="1"
+                LargeIncrement="0.25"
+                Maximum="256"
+                Minimum="0.25"
                 Value="{Binding Scaling, Mode=TwoWay}" />
 
             <CheckBox
@@ -133,7 +136,8 @@
                 Grid.Column="1"
                 Width="100"
                 Command="{Binding ApplyRemapCommand}"
-                Content="{tombLib:Localize Apply}" />
+                Content="{tombLib:Localize Apply}"
+                IsDefault="True" />
 
             <Button
                 Grid.Column="2"
