@@ -10,10 +10,10 @@
 
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     Title="{tombLib:Localize Title}"
-    Width="540"
-    Height="420"
-    MinWidth="420"
-    MinHeight="340"
+    Width="600"
+    Height="400"
+    MinWidth="540"
+    MinHeight="355"
     d:DataContext="{d:DesignInstance Type=vm:ResizeRoomWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
     ShowInTaskbar="False"
@@ -37,108 +37,116 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="220" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <Border
+        <GroupBox
             Grid.Row="0"
             Grid.Column="0"
-            Background="{DynamicResource Brush_Background_Low}">
-            <vm:ResizeRoomGridControl x:Name="gridControl" />
-        </Border>
+            Header="{tombLib:Localize PreviewGroup}">
+            <Border Background="{DynamicResource Brush_Background_Low}">
+                <vm:ResizeRoomGridControl x:Name="gridControl" />
+            </Border>
+        </GroupBox>
 
-        <controls:SpacedGrid
-            Grid.Row="0"
-            Grid.Column="1"
-            ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}"
-            RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+        <StackPanel Grid.Row="0" Grid.Column="1" Width="270">
+            <GroupBox Header="{tombLib:Localize NewDimensionsGroup}">
+                <Grid Margin="{x:Static darkUI:Defaults.SmallThickness}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+                    <controls:NumericUpDown
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Width="76"
+                        Margin="0,0,0,4"
+                        LargeIncrement="2"
+                        Maximum="{Binding MaxZPositive}"
+                        Minimum="{Binding MinZPositive}"
+                        ToolTip="{tombLib:Localize ZPositive}"
+                        Value="{Binding ExpandZPositive, Mode=TwoWay}" />
 
-            <Label
-                Grid.Row="0"
-                Grid.Column="0"
-                VerticalAlignment="Center"
-                Content="{tombLib:Localize XNegative}" />
-            <controls:NumericUpDown
-                Grid.Row="0"
-                Grid.Column="1"
-                Maximum="{Binding MaxXNegative}"
-                Minimum="{Binding MinXNegative}"
-                Value="{Binding ExpandXNegative, Mode=TwoWay}" />
+                    <controls:NumericUpDown
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Width="76"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Margin="0,0,4,0"
+                        LargeIncrement="2"
+                        Maximum="{Binding MaxXNegative}"
+                        Minimum="{Binding MinXNegative}"
+                        ToolTip="{tombLib:Localize XNegative}"
+                        Value="{Binding ExpandXNegative, Mode=TwoWay}" />
 
-            <Label
-                Grid.Row="1"
-                Grid.Column="0"
-                VerticalAlignment="Center"
-                Content="{tombLib:Localize XPositive}" />
-            <controls:NumericUpDown
-                Grid.Row="1"
-                Grid.Column="1"
-                Maximum="{Binding MaxXPositive}"
-                Minimum="{Binding MinXPositive}"
-                Value="{Binding ExpandXPositive, Mode=TwoWay}" />
+                    <Border
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Width="76"
+                        Height="76"
+                        Background="{DynamicResource Brush_Background_Low}"
+                        BorderBrush="{DynamicResource Brush_Border}"
+                        BorderThickness="1">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Path
+                                Width="20"
+                                Height="18"
+                                Margin="0,0,0,2"
+                                Data="M 0,18 L 10,0 L 20,18 Z"
+                                Fill="{DynamicResource Brush_Text}" />
+                            <TextBlock HorizontalAlignment="Center" Foreground="{DynamicResource Brush_Text}" Text="N" />
+                        </StackPanel>
+                    </Border>
 
-            <Label
-                Grid.Row="2"
-                Grid.Column="0"
-                VerticalAlignment="Center"
-                Content="{tombLib:Localize ZNegative}" />
-            <controls:NumericUpDown
-                Grid.Row="2"
-                Grid.Column="1"
-                Maximum="{Binding MaxZNegative}"
-                Minimum="{Binding MinZNegative}"
-                Value="{Binding ExpandZNegative, Mode=TwoWay}" />
+                    <controls:NumericUpDown
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Width="76"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Margin="4,0,0,0"
+                        LargeIncrement="2"
+                        Maximum="{Binding MaxXPositive}"
+                        Minimum="{Binding MinXPositive}"
+                        ToolTip="{tombLib:Localize XPositive}"
+                        Value="{Binding ExpandXPositive, Mode=TwoWay}" />
 
-            <Label
-                Grid.Row="3"
-                Grid.Column="0"
-                VerticalAlignment="Center"
-                Content="{tombLib:Localize ZPositive}" />
-            <controls:NumericUpDown
-                Grid.Row="3"
-                Grid.Column="1"
-                Maximum="{Binding MaxZPositive}"
-                Minimum="{Binding MinZPositive}"
-                Value="{Binding ExpandZPositive, Mode=TwoWay}" />
-
-            <CheckBox
-                Grid.Row="4"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"
-                Content="{tombLib:Localize AllowOversizedRooms}"
-                IsChecked="{Binding AllowOversizedRooms, Mode=TwoWay}" />
+                    <controls:NumericUpDown
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Width="76"
+                        Margin="0,4,0,0"
+                        LargeIncrement="2"
+                        Maximum="{Binding MaxZNegative}"
+                        Minimum="{Binding MinZNegative}"
+                        ToolTip="{tombLib:Localize ZNegative}"
+                        Value="{Binding ExpandZNegative, Mode=TwoWay}" />
+                </Grid>
+            </GroupBox>
 
             <RadioButton
-                Grid.Row="5"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"
-                Content="{tombLib:Localize UseFloor}"
-                GroupName="FillMode"
-                IsChecked="{Binding UseFloor, Mode=TwoWay}" />
-            <RadioButton
-                Grid.Row="6"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"
+                Margin="0,8,0,0"
                 Content="{tombLib:Localize UseWalls}"
                 GroupName="FillMode"
                 IsChecked="{Binding UseWalls, Mode=TwoWay}" />
-        </controls:SpacedGrid>
-
+            <RadioButton
+                Margin="0,4,0,0"
+                Content="{tombLib:Localize UseFloor}"
+                GroupName="FillMode"
+                IsChecked="{Binding UseFloor, Mode=TwoWay}" />
+            <CheckBox
+                Margin="0,8,0,0"
+                Content="{Binding AllowOversizedText}"
+                IsChecked="{Binding AllowOversizedRooms, Mode=TwoWay}" />
+        </StackPanel>
         <TextBlock
             Grid.Row="1"
             Grid.Column="0"

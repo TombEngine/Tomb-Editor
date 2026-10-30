@@ -61,6 +61,8 @@ public partial class ResizeRoomWindowViewModel : ObservableObject, IModalDialogV
     public bool IsOversized => AllowOversizedRooms
         && (NewArea.Width >= RecommendedDimensions || NewArea.Height >= RecommendedDimensions);
 
+    public string AllowOversizedText => _localizationService.Format("AllowOversizedRooms", RecommendedDimensions - 2);
+
     public string OversizedWarning => _localizationService.Format("OversizedWarning", VisibleDimensions);
 
     public event System.Action? AreaChanged;

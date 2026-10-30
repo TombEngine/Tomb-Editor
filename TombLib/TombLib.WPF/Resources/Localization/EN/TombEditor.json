@@ -560,8 +560,8 @@
     },
 
     "Sink": {
-        "Title": "Edit sink",
-        "Strength": "Strength:"
+        "Title": "Sink",
+        "Strength": "Current strength:"
     },
 
     "QuickItemGroup": {
@@ -598,14 +598,14 @@
     "Search": {
         "Title": "Search",
         "Scope": "Scope:",
-        "Keyword": "Keyword:",
+        "Keyword": "Keywords:",
         "ColumnName": "Name",
         "ColumnRoom": "Room",
         "ColumnType": "Type",
         "Delete": "Delete",
-        "DeleteConfirmationMessage": "Do you want to delete the selected entry? This action can't be undone.",
-        "DeleteConfirmationTitle": "Delete selected entry",
-        "MapOnlyDeleteMessage": "This entry can only be deleted from the map.",
+        "DeleteConfirmationMessage": "Do you want to delete all selected entries? This action can't be undone.",
+        "DeleteConfirmationTitle": "Delete selected entries",
+        "MapOnlyDeleteMessage": "Some objects weren't deleted because it's possible only from the map.",
         "UnknownRoom": "<Unknown>",
         "ScopeEverything": "Everything",
         "ScopeRooms": "Rooms",
@@ -616,7 +616,7 @@
     },
 
     "ReplaceObject": {
-        "Title": "Search and replace objects",
+        "Title": "Search & replace objects",
         "SourceLabel": "Source object to search:",
         "DestLabel": "Destination object to replace with:",
         "SelectInLevel": "Select in level",
@@ -635,7 +635,7 @@
     },
 
     "SelectRoomByTags": {
-        "Title": "Select rooms by tags",
+        "Title": "Select Rooms by Tags",
         "Tags": "Tags:",
         "AllTags": "All tags instead of any",
         "AllTagsTooltip": "Only select rooms that contain all specified tags instead of any of them."
@@ -820,19 +820,21 @@
     },
 
     "Transform": {
-        "Title": "Edit object transform",
-        "Translation": "Translation:",
+        "Title": "Transform Edit",
+        "Translation": "Position:",
         "Rotation": "Rotation:",
         "Scale": "Scale:"
     },
 
     "ResizeRoom": {
-        "Title": "Resize room",
+        "Title": "Crop Room",
+        "PreviewGroup": "Preview",
+        "NewDimensionsGroup": "New dimensions",
         "XNegative": "West (-X):",
         "XPositive": "East (+X):",
         "ZNegative": "South (-Z):",
         "ZPositive": "North (+Z):",
-        "AllowOversizedRooms": "Allow oversized rooms",
+        "AllowOversizedRooms": "Allow rooms bigger than {0}x{0}",
         "UseFloor": "Fill new sectors with floor",
         "UseWalls": "Fill new sectors with walls",
         "OversizedWarning": "Rooms bigger than {0} may have in-game rendering issues."

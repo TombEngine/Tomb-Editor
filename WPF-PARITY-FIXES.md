@@ -72,6 +72,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 |-----|-----|--------|
 | FootStepSounds and BumpMaps remember size, position and maximized state (Window_FormFootStepSounds_*, Window_FormBumpMaps_*) | The windows always opened at the default size | (this commit) |
 | BumpMaps: the custom-file checkbox is disabled without a selected texture; clicking the path label toggles the custom file | WinForms behavior | (this commit) |
+| Crop Room (ResizeRoom): title "Crop Room", Preview and New dimensions groups, the four spinners placed around a north indicator (Z+ top, X- left, X+ right, Z- bottom, labels as tooltips), "Allow rooms bigger than 30x30" text from the game limit, walls option above floor, size 600x400 with minimum 540x355 | Layout was four labeled rows and a generic title (verified on screen against WinForms) | (this commit) |
+| Titles and labels aligned with WinForms: Select Rooms by Tags, Search & replace objects, Transform Edit with "Position:", Sink with "Current strength:", Search "Keywords:" and plural delete confirmations | Wording differed | (this commit) |
 
 ## Open items
 
