@@ -40,6 +40,18 @@ public partial class MainWindow : Window
     private void SamplesSelectionChanged(object sender, SelectionChangedEventArgs e) =>
         _viewModel.SelectedSamples = [.. ((DataGrid)sender).SelectedItems.OfType<SampleViewModel>()];
 
+    private void RecentMenuSubmenuOpened(object sender, RoutedEventArgs e)
+    {
+        for (int i = RecentMenu.Items.IndexOf(RecentSeparator) - 1; i >= 0; i--)
+            RecentMenu.Items.RemoveAt(i);
+
+        for (int i = 0; i < _viewModel.RecentFiles.Count; i++)
+        {
+            var file = _viewModel.RecentFiles[i];
+            RecentMenu.Items.Insert(i, new MenuItem { Header = new TextBlock { Text = file }, Command = _viewModel.OpenCommand, CommandParameter = file });
+        }
+    }
+
     private void SoundListDoubleClick(object sender, MouseButtonEventArgs e) => _viewModel.PlayCommand.Execute(null);
 
     private void WindowClosing(object? sender, CancelEventArgs e)

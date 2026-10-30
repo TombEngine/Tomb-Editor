@@ -3,19 +3,42 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
         xmlns:tomb="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
-        Title="{tomb:Localize Options}" Width="420" SizeToContent="Height"
+        Title="{tomb:Localize Options}" Width="540" SizeToContent="Height"
         Style="{DynamicResource CustomWindowStyle}" Background="{DynamicResource Brush_Background}"
         ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
-    <StackPanel Margin="16">
-        <CheckBox Content="{tomb:Localize AllowMultipleInstances}" IsChecked="{Binding AllowMultipleInstances}" Margin="0,0,0,12" />
-        <DockPanel Margin="0,0,0,16">
-            <TextBlock Text="{tomb:Localize Brightness}" VerticalAlignment="Center" />
-            <TextBlock DockPanel.Dock="Right" Text="%" VerticalAlignment="Center" Margin="8,0,0,0" />
-            <controls:NumericUpDown DockPanel.Dock="Right" Value="{Binding Brightness}" Minimum="50" Maximum="100" Width="80" />
-        </DockPanel>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="{tomb:Localize ~Common.OK}" Command="{Binding AcceptCommand}" IsDefault="True" Width="80" Margin="0,0,8,0" />
-            <Button Content="{tomb:Localize ~Common.Cancel}" IsCancel="True" Width="80" />
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="160" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!--  Pages  -->
+        <ListBox Grid.Row="0" Grid.Column="0" Margin="0,0,16,0" SelectedIndex="0">
+            <ListBoxItem Content="{tomb:Localize General}" />
+        </ListBox>
+
+        <!--  General page  -->
+        <StackPanel Grid.Row="0" Grid.Column="1">
+            <CheckBox Content="{tomb:Localize AllowMultipleInstances}" IsChecked="{Binding AllowMultipleInstances}" Margin="0,0,0,12" />
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Right" Text="%" VerticalAlignment="Center" Margin="8,0,0,0" />
+                <controls:NumericUpDown DockPanel.Dock="Right" Value="{Binding Brightness}" Minimum="50" Maximum="100" Width="80" />
+                <TextBlock Text="{tomb:Localize Brightness}" VerticalAlignment="Center" />
+            </DockPanel>
         </StackPanel>
-    </StackPanel>
+
+        <!--  Buttons  -->
+        <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="0,16,0,0">
+            <Button DockPanel.Dock="Left" Content="{tomb:Localize SetPageToDefault}" Command="{Binding ResetPageCommand}" Width="160" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="{tomb:Localize ~Common.Apply}" Command="{Binding ApplyCommand}" Width="80" Margin="0,0,8,0" />
+                <Button Content="{tomb:Localize ~Common.OK}" Command="{Binding AcceptCommand}" IsDefault="True" Width="80" Margin="0,0,8,0" />
+                <Button Content="{tomb:Localize ~Common.Cancel}" IsCancel="True" Width="80" />
+            </StackPanel>
+        </DockPanel>
+    </Grid>
 </Window>

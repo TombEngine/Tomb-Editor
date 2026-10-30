@@ -6,6 +6,9 @@
         xmlns:tomb="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
         Title="{Binding Title}" Icon="ST.ico" Width="1050" Height="700" MinWidth="850" MinHeight="560"
         Background="{DynamicResource Brush_Background}" Style="{DynamicResource CustomWindowStyle}" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewCommand}" />
         <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenCommand}" />
@@ -19,10 +22,10 @@
             <MenuItem Header="{tomb:Localize File}">
                 <MenuItem Header="{tomb:Localize New}" Command="{Binding NewCommand}" InputGestureText="Ctrl+N"><MenuItem.Icon><Image Source="{icons:Icon General/create_new}" /></MenuItem.Icon></MenuItem>
                 <MenuItem Header="{tomb:Localize Open}" Command="{Binding OpenCommand}" InputGestureText="Ctrl+O"><MenuItem.Icon><Image Source="{icons:Icon General/Open}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Header="{tomb:Localize Recent}" ItemsSource="{Binding RecentFiles}">
-                    <MenuItem.ItemContainerStyle><Style TargetType="MenuItem"><Setter Property="Header" Value="{Binding}" /><Setter Property="Command" Value="{Binding DataContext.OpenCommand, RelativeSource={RelativeSource AncestorType=Window}}" /><Setter Property="CommandParameter" Value="{Binding}" /></Style></MenuItem.ItemContainerStyle>
+                <MenuItem x:Name="RecentMenu" Header="{tomb:Localize Recent}" IsEnabled="{Binding HasRecentFiles}" SubmenuOpened="RecentMenuSubmenuOpened">
+                    <Separator x:Name="RecentSeparator" />
+                    <MenuItem Header="{tomb:Localize ClearRecent}" Command="{Binding ClearRecentCommand}" />
                 </MenuItem>
-                <MenuItem Header="{tomb:Localize ClearRecent}" Command="{Binding ClearRecentCommand}" />
                 <Separator />
                 <MenuItem Header="{tomb:Localize Save}" Command="{Binding SaveCommand}" InputGestureText="Ctrl+S"><MenuItem.Icon><Image Source="{icons:Icon General/Save}" /></MenuItem.Icon></MenuItem>
                 <MenuItem Header="{tomb:Localize SaveAs}" Command="{Binding SaveAsCommand}" InputGestureText="Ctrl+Shift+S" />
@@ -92,8 +95,8 @@
                         <Button Command="{Binding CopyCommand}" ToolTip="{tomb:Localize Copy}" Width="30"><Image Source="{icons:Icon General/copy}" Width="16" /></Button>
                         <Button Command="{Binding PasteCommand}" ToolTip="{tomb:Localize Paste}" Width="30" Margin="4,0,0,0"><Image Source="{icons:Icon General/paste}" Width="16" /></Button>
                         <Button Command="{Binding ResetCommand}" ToolTip="{tomb:Localize Reset}" Width="30" Margin="4,0,0,0"><Image Source="{icons:Icon General/undo}" Width="16" /></Button>
-                        <Button Command="{Binding PlayCommand}" IsEnabled="{Binding HasReferenceLevel}" ToolTip="{tomb:Localize Preview}" Width="30" Margin="12,0,0,0"><Image Source="{icons:Icon Actions/Transport/Play}" Width="16" /></Button>
-                        <Button Command="{Binding StopCommand}" ToolTip="{tomb:Localize Stop}" Width="30" Margin="4,0,0,0"><Image Source="{icons:Icon Actions/Transport/Stop}" Width="16" /></Button>
+                        <Button Command="{Binding PlayCommand}" Visibility="{Binding HasReferenceLevel, Converter={StaticResource BoolToVis}}" ToolTip="{tomb:Localize Preview}" Width="30" Margin="12,0,0,0"><Image Source="{icons:Icon Actions/Transport/Play}" Width="16" /></Button>
+                        <Button Command="{Binding StopCommand}" Visibility="{Binding HasReferenceLevel, Converter={StaticResource BoolToVis}}" ToolTip="{tomb:Localize Stop}" Width="30" Margin="4,0,0,0"><Image Source="{icons:Icon Actions/Transport/Stop}" Width="16" /></Button>
                     </StackPanel>
                     <Label DockPanel.Dock="Left" Content="{tomb:Localize NameLabel}" />
                     <TextBox Margin="4,0,0,0" DataContext="{Binding SelectedSound}" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />

@@ -63,10 +63,13 @@ public sealed class SoundToolDialogs : ISoundToolDialogs
     public void ShowOptions(Configuration configuration)
     {
         var viewModel = new OptionsViewModel(configuration);
+        viewModel.Applied += (_, _) => ApplyOptions(configuration, viewModel);
         var dialog = new OptionsWindow { Owner = Owner, DataContext = viewModel };
-        if (dialog.ShowDialog() != true)
-            return;
+        dialog.ShowDialog();
+    }
 
+    private static void ApplyOptions(Configuration configuration, OptionsViewModel viewModel)
+    {
         configuration.SoundTool_AllowMultipleInstances = viewModel.AllowMultipleInstances;
         configuration.UI_FormColor_Brightness = viewModel.Brightness;
         Colors.Brightness = viewModel.Brightness / 100.0f;

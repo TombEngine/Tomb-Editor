@@ -43,8 +43,10 @@ public partial class MainViewModel : ObservableObject
     public IReadOnlyList<LoopBehaviourOption> LoopBehaviours => LoopBehaviourOption.All;
     public bool HasSelection => SelectedSound is not null;
     public bool HasReferenceLevel => _referenceLevel is not null;
+    public bool CanSave => _currentArchive is null || !_saved;
+    public bool HasRecentFiles => RecentFiles.Count > 0;
     public string Title => "SoundTool - " + (_currentArchive ?? "Untitled") + (_saved ? string.Empty : "*");
-    public string Status => "Sound infos: " + Sounds.Count + (_referenceLevel is null ? string.Empty : " | Reference project: " + _configuration.SoundTool_ReferenceProject);
+    public string Status => "Sound Infos: " + Sounds.Count + (_referenceLevel is null ? string.Empty : " | Reference project: " + _configuration.SoundTool_ReferenceProject);
 
     public MainViewModel(Configuration configuration, ISoundToolDialogs dialogs, IMessageService messages)
     {
@@ -108,7 +110,7 @@ public partial class MainViewModel : ObservableObject
         });
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanSave))]
     private void Save() => SaveArchive(_currentArchive);
 
     [RelayCommand]
@@ -421,6 +423,13 @@ public partial class MainViewModel : ObservableObject
         _saved = false;
         OnPropertyChanged(nameof(Title));
         OnPropertyChanged(nameof(Status));
+        RefreshSaveState();
+    }
+
+    private void RefreshSaveState()
+    {
+        OnPropertyChanged(nameof(CanSave));
+        SaveCommand.NotifyCanExecuteChanged();
     }
 
     private void RefreshState()
@@ -428,6 +437,7 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(Title));
         OnPropertyChanged(nameof(Status));
         OnPropertyChanged(nameof(HasReferenceLevel));
+        RefreshSaveState();
         ResolveSamples();
         RefreshRecentFiles();
     }
@@ -458,11 +468,14 @@ public partial class MainViewModel : ObservableObject
     private void RefreshRecentFiles()
     {
         RecentFiles.Clear();
+        OnPropertyChanged(nameof(HasRecentFiles));
         if (Properties.Settings.Default.RecentProjects is not { } recent)
             return;
 
         foreach (var file in recent.Where(file => file != _currentArchive && File.Exists(file)))
             RecentFiles.Add(file);
+
+        OnPropertyChanged(nameof(HasRecentFiles));
     }
 
     private bool Run(Action action)
