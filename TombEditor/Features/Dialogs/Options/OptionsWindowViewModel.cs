@@ -328,7 +328,7 @@ namespace TombEditor.Features.Dialogs.Options
                     Bool(_localizationService["Opt_UI_OnlyShowSmallMessageWhenRoomIsLocked"], "UI_OnlyShowSmallMessageWhenRoomIsLocked")),
                 Group(_localizationService["Group_ColorScheme"],
                     Preset(_localizationService["Opt_ColorSchemePreset"], presetNames),
-                    Num(_localizationService["Opt_UI_FormColor_Brightness"], "UI_FormColor_Brightness", 50, 100, 5, 0, "%"),
+                    Num(_localizationService["Opt_UI_FormColor_Brightness"], "UI_FormColor_Brightness", 50, 100, 1, 0, "%"),
                     Color(_localizationService["Opt_UI_FormColor_ButtonHighlight"], "UI_FormColor_ButtonHighlight"),
                     Color(_localizationService["Opt_Color2DRoomsMoved"], "Color2DRoomsMoved"),
                     Color(_localizationService["Opt_Color2DRoomsBelow"], "Color2DRoomsBelow"),
@@ -399,7 +399,7 @@ namespace TombEditor.Features.Dialogs.Options
                     Num(_localizationService["Opt_Rendering3D_NavigationSpeedMouseWheelZoom"], "Rendering3D_NavigationSpeedMouseWheelZoom")),
                 Group(_localizationService["Group_KeyboardControls"],
                     Num(_localizationService["Opt_Rendering3D_NavigationSpeedKeyZoom"], "Rendering3D_NavigationSpeedKeyZoom", 0, 10000),
-                    Num(_localizationService["Opt_Rendering3D_NavigationSpeedKeyRotate"], "Rendering3D_NavigationSpeedKeyRotate", 0, 10, 0.01, 2))));
+                    Num(_localizationService["Opt_Rendering3D_NavigationSpeedKeyRotate"], "Rendering3D_NavigationSpeedKeyRotate", 0, 10, 0.1, 2))));
 
             // Gizmo
             Tabs.Add(Tab(_localizationService["Tab_Gizmo"],
@@ -426,11 +426,11 @@ namespace TombEditor.Features.Dialogs.Options
             // 2D window
             Tabs.Add(Tab(_localizationService["Tab_2DWindow"],
                 Group(_localizationService["Group_2DWindow"],
-                    Num(_localizationService["Opt_Map2D_NavigationSpeedKeyZoom"], "Map2D_NavigationSpeedKeyZoom", 0.05, 10, 0.05, 2),
+                    Num(_localizationService["Opt_Map2D_NavigationSpeedKeyZoom"], "Map2D_NavigationSpeedKeyZoom", 0.01, 10, 0.05, 2),
                     Num(_localizationService["Opt_Map2D_NavigationSpeedKeyMove"], "Map2D_NavigationSpeedKeyMove", 0, 500),
-                    Num(_localizationService["Opt_Map2D_NavigationSpeedMouseZoom"], "Map2D_NavigationSpeedMouseZoom", 0, 1_000_000, 0.05, 2),
-                    Num(_localizationService["Opt_Map2D_NavigationMinZoom"], "Map2D_NavigationMinZoom", 0.05, 1_000_000, 0.05, 2),
-                    Num(_localizationService["Opt_Map2D_NavigationSpeedMouseWheelZoom"], "Map2D_NavigationSpeedMouseWheelZoom", 0.0001, 1, 0.0001, 4),
+                    Num(_localizationService["Opt_Map2D_NavigationSpeedMouseZoom"], "Map2D_NavigationSpeedMouseZoom", 0, 1_000_000, 0.5, 2),
+                    Num(_localizationService["Opt_Map2D_NavigationMinZoom"], "Map2D_NavigationMinZoom", 0.01, 1_000_000, 0.05, 2),
+                    Num(_localizationService["Opt_Map2D_NavigationSpeedMouseWheelZoom"], "Map2D_NavigationSpeedMouseWheelZoom", 0.001, 1, 0.001, 4),
                     Num(_localizationService["Opt_Map2D_NavigationMaxZoom"], "Map2D_NavigationMaxZoom", 0, 5000))));
 
             // Texture map
@@ -443,8 +443,8 @@ namespace TombEditor.Features.Dialogs.Options
                     Bool(_localizationService["Opt_TextureMap_DrawSelectionDirectionIndicators"], "TextureMap_DrawSelectionDirectionIndicators"),
                     Num(_localizationService["Opt_TextureMap_NavigationSpeedKeyZoom"], "TextureMap_NavigationSpeedKeyZoom", 0, 1_000_000, 0.05, 2),
                     Num(_localizationService["Opt_TextureMap_NavigationSpeedKeyMove"], "TextureMap_NavigationSpeedKeyMove", 0, 500),
-                    Num(_localizationService["Opt_TextureMap_NavigationSpeedMouseZoom"], "TextureMap_NavigationSpeedMouseZoom", 0, 1_000_000, 0.05, 2),
-                    Num(_localizationService["Opt_TextureMap_NavigationMinZoom"], "TextureMap_NavigationMinZoom", 0.05, 1_000_000, 0.05, 2),
+                    Num(_localizationService["Opt_TextureMap_NavigationSpeedMouseZoom"], "TextureMap_NavigationSpeedMouseZoom", 0, 1_000_000, 0.5, 2),
+                    Num(_localizationService["Opt_TextureMap_NavigationMinZoom"], "TextureMap_NavigationMinZoom", 0.01, 1_000_000, 0.05, 2),
                     Num(_localizationService["Opt_TextureMap_NavigationSpeedMouseWheelZoom"], "TextureMap_NavigationSpeedMouseWheelZoom", 0, 1_000_000, 0.0005, 4),
                     Num(_localizationService["Opt_TextureMap_NavigationMaxZoom"], "TextureMap_NavigationMaxZoom", 0, 5000))));
 
@@ -506,7 +506,7 @@ namespace TombEditor.Features.Dialogs.Options
         private static OptionItem? Bool(string label, string cfg, bool skip = false)
             => skip ? null : new OptionItem { Kind = OptionKind.Bool, Label = label, ConfigName = cfg };
 
-        private static OptionItem? Num(string label, string cfg, double min = 0, double max = 1_000_000, double inc = 1, int dec = 0, string? suffix = null, bool skip = false)
+        private static OptionItem? Num(string label, string cfg, double min = 0, double max = 100, double inc = 1, int dec = 0, string? suffix = null, bool skip = false)
             => skip ? null : new OptionItem { Kind = OptionKind.Number, Label = label, ConfigName = cfg, Minimum = min, Maximum = max, Increment = inc, DecimalPlaces = dec, Suffix = suffix };
 
         private static OptionItem Text(string label, string cfg)

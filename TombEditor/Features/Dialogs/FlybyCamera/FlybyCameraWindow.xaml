@@ -87,7 +87,7 @@
                 Grid.Row="0"
                 Grid.Column="1"
                 Increment="1"
-                Maximum="65535"
+                Maximum="255"
                 Minimum="0"
                 Value="{Binding Sequence, Mode=TwoWay}" />
 
@@ -96,7 +96,7 @@
                 Grid.Row="1"
                 Grid.Column="1"
                 Increment="1"
-                Maximum="65535"
+                Maximum="255"
                 Minimum="0"
                 Value="{Binding Number, Mode=TwoWay}" />
 
@@ -113,8 +113,8 @@
             <controls:NumericUpDown
                 Grid.Row="3"
                 Grid.Column="1"
-                FormatString="F4"
-                Increment="0.1"
+                FormatString="F2" DecimalPlaces="2"
+                Increment="1"
                 Maximum="100"
                 Minimum="0"
                 Value="{Binding Speed, Mode=TwoWay}" />
@@ -133,31 +133,31 @@
             <controls:NumericUpDown
                 Grid.Row="5"
                 Grid.Column="1"
-                FormatString="F4"
+                FormatString="F2" DecimalPlaces="2"
                 Increment="1"
                 Maximum="360"
-                Minimum="-360"
-                Value="{Binding Roll, Mode=TwoWay}" />
+                Minimum="0"
+                LoopValues="True" Value="{Binding Roll, Mode=TwoWay}" />
 
             <Label Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" Content="{tombLib:Localize RotationX}" />
             <controls:NumericUpDown
                 Grid.Row="6"
                 Grid.Column="1"
-                FormatString="F4"
+                FormatString="F2" DecimalPlaces="2"
                 Increment="1"
-                Maximum="360"
-                Minimum="-360"
-                Value="{Binding RotationX, Mode=TwoWay}" />
+                Maximum="90"
+                Minimum="-90"
+                LoopValues="True" Value="{Binding RotationX, Mode=TwoWay}" />
 
             <Label Grid.Row="7" Grid.Column="0" VerticalAlignment="Center" Content="{tombLib:Localize RotationY}" />
             <controls:NumericUpDown
                 Grid.Row="7"
                 Grid.Column="1"
-                FormatString="F4"
+                FormatString="F2" DecimalPlaces="2"
                 Increment="1"
                 Maximum="360"
-                Minimum="-360"
-                Value="{Binding RotationY, Mode=TwoWay}" />
+                Minimum="0"
+                LoopValues="True" Value="{Binding RotationY, Mode=TwoWay}" />
 
             <Label
                 Grid.Row="8"
@@ -182,9 +182,9 @@
             <controls:NumericUpDown
                 Grid.Row="9"
                 Grid.Column="1"
-                FormatString="F4"
-                Increment="64"
-                Maximum="65536"
+                FormatString="F2" DecimalPlaces="2"
+                Increment="128"
+                Maximum="1000000"
                 Minimum="0"
                 Value="{Binding DofDistance, Mode=TwoWay}"
                 Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}" />
@@ -198,9 +198,9 @@
             <controls:NumericUpDown
                 Grid.Row="10"
                 Grid.Column="1"
-                FormatString="F4"
-                Increment="64"
-                Maximum="65536"
+                FormatString="F2" DecimalPlaces="2"
+                Increment="128"
+                Maximum="1000000"
                 Minimum="0"
                 Value="{Binding DofRange, Mode=TwoWay}"
                 Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}" />
@@ -214,11 +214,11 @@
             <controls:NumericUpDown
                 Grid.Row="11"
                 Grid.Column="1"
-                FormatString="F4"
-                Increment="0.1"
-                Maximum="100"
+                FormatString="F2" DecimalPlaces="2"
+                Increment="0.05"
+                Maximum="1"
                 Minimum="0"
-                Value="{Binding DofStrength, Mode=TwoWay}"
+                LargeIncrement="0.1" Value="{Binding DofStrength, Mode=TwoWay}"
                 Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}" />
         </controls:SpacedGrid>
 

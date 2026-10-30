@@ -174,7 +174,9 @@ public partial class StaticWindowViewModel : ObservableObject, IModalDialogViewM
 
         _editor.UndoManager.PushObjectPropertyChanged(_staticMesh);
         _staticMesh.Ocb = ocb;
-        _staticMesh.Color = ColorToVector3(DisplayColor) * 2.0f;
+        // Only written when the user changed the tint (the 8-bit swatch round trip would alter it otherwise).
+        if (CanBeColored && _colorEdited)
+            _staticMesh.Color = ColorToVector3(DisplayColor) * 2.0f;
         DialogResult = true;
     }
 
@@ -184,6 +186,10 @@ public partial class StaticWindowViewModel : ObservableObject, IModalDialogViewM
         _staticMesh.Color = _originalColor;
         DialogResult = false;
     }
+
+    private bool _colorEdited;
+
+    partial void OnDisplayColorChanged(Color value) => _colorEdited = true;
 
     private static Color Vector3ToColor(Vector3 value)
     {

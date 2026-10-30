@@ -481,7 +481,7 @@
     },
 
     "Moveable": {
-        "Title": "Moveable properties",
+        "Title": "Object",
         "Bit1": "Bit 1",
         "Bit2": "Bit 2",
         "Bit3": "Bit 3",
@@ -491,39 +491,39 @@
         "ClearBody": "Clear body",
         "NoReflection": "No reflection",
         "Ocb": "OCB:",
-        "Color": "Color:",
-        "ResetTint": "Reset tint",
-        "InvalidOcbMessage": "The OCB value is not a valid 16-bit integer."
+        "Color": "Tint:",
+        "ResetTint": "Reset tint to default",
+        "InvalidOcbMessage": "The value of OCB field is not valid"
     },
 
     "Static": {
-        "Title": "Static mesh properties",
+        "Title": "Static mesh",
         "CollisionFlags": "Collision flags",
         "BurnLaraOnCollision": "Burn Lara on collision",
-        "DamageLaraOnContact": "Damage Lara on contact",
+        "DamageLaraOnContact": "Damage Lara on collision",
         "PoisonLaraOnCollision": "Poison Lara on collision",
-        "ExplodeKillingOnCollision": "Explode on killing collision",
-        "HeavyTriggerOnCollision": "Heavy trigger on collision",
+        "ExplodeKillingOnCollision": "Explode killing on collision",
+        "HeavyTriggerOnCollision": "Activate heavy trigger on collision",
         "DisableCollision": "Disable collision",
         "HugeCollision": "Huge collision",
         "GlassTransparency": "Glass transparency",
         "IceTransparency": "Ice transparency",
         "HardShatter": "Hard shatter",
-        "SpecificShatter": "Specific shatter",
+        "SpecificShatter": "Shatterable by specific moveables",
         "Scalable": "Scalable",
         "Ocb": "OCB:",
-        "Color": "Color:",
-        "InvalidOcbMessage": "The OCB value is not a valid 16-bit integer."
+        "Color": "Tint:",
+        "InvalidOcbMessage": "The value of OCB field is not valid"
     },
 
     "Portal": {
-        "Title": "Portal properties",
-        "Effect": "Effect:",
-        "ClassicMirror": "Classic mirror reflections",
+        "Title": "Edit portal",
+        "Effect": "Portal effect:",
+        "ClassicMirror": "Mirror options",
         "ReflectMoveables": "Reflect moveables",
-        "ReflectStatics": "Reflect static meshes",
+        "ReflectStatics": "Reflect statics",
         "ReflectSprites": "Reflect sprites",
-        "ReflectLights": "Reflect lights",
+        "ReflectLights": "Reflect dynamic lights",
         "EffectNone": "None",
         "EffectClassicMirror": "Classic Mirror"
     },
@@ -782,7 +782,7 @@
     },
 
     "FlybyCamera": {
-        "Title": "Flyby camera properties",
+        "Title": "Flyby camera",
         "FlagsHeader": "Behaviour flags",
         "Sequence": "Sequence:",
         "Number": "Number:",
@@ -793,9 +793,9 @@
         "RotationX": "Rotation X:",
         "RotationY": "Rotation Y:",
         "DofMode": "DOF mode:",
-        "DofDistance": "DOF distance:",
-        "DofRange": "DOF range:",
-        "DofStrength": "DOF strength:",
+        "DofDistance": "Distance:",
+        "DofRange": "Range:",
+        "DofStrength": "Strength:",
         "DofModeNone": "None",
         "DofModeFull": "Full",
         "DofModeFront": "Front",
@@ -814,12 +814,12 @@
         "Bit9": "Disable exit from sequence with 'Look At' key",
         "Bit10": "Cinematic mode",
         "Bit11": "Let Lara move in cinematic mode",
-        "Bit12": "Make fade-in",
+        "Bit12": "Unused",
         "Bit12TR5": "Make fade-in",
-        "Bit13": "Make fade-out",
+        "Bit13": "Unused",
         "Bit13TR5": "Make fade-out",
         "Bit14": "Activate heavy trigger",
-        "Bit15": ""
+        "Bit15": "Unused"
     },
 
     "Transform": {
@@ -960,12 +960,12 @@
         "ColumnPath": "Path",
         "ColumnScale": "Scale",
         "ColumnStatus": "Status",
-        "AssignedModel": "Assigned model:",
+        "AssignedModel": "Chosen entry:",
         "Assign": "Assign",
         "LightingModel": "Lighting model:",
-        "SharpEdges": "Sharp edges",
-        "Hidden": "Hidden",
-        "UseAlphaTest": "Use alpha test instead of alpha blend",
+        "SharpEdges": "Force sharp edges",
+        "Hidden": "Hide in editor",
+        "UseAlphaTest": "Faster alpha testing",
         "EditMaterials": "Edit materials...",
         "AssignedModelNone": "None",
         "BrowseFilesTitle": "Select 3D files that you want to see imported.",
@@ -1116,9 +1116,9 @@
     },
 
     "Options": {
-        "Title": "Editor options",
+        "Title": "Options",
         "Search": "Search:",
-        "ResetPageToDefaults": "Reset page to defaults",
+        "ResetPageToDefaults": "Set page to default",
         "Tab_General": "General",
         "Tab_UserInterface": "User interface",
         "Tab_3DWindow": "3D window",

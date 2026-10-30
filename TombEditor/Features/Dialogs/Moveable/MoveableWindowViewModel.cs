@@ -70,6 +70,10 @@ public partial class MoveableWindowViewModel : ObservableObject, IModalDialogVie
         _displayColor = Vector3ToColor(moveable.Color * 0.5f);
     }
 
+    private bool _colorEdited;
+
+    partial void OnDisplayColorChanged(Color value) => _colorEdited = true;
+
     [RelayCommand]
     private void ResetTint()
     {
@@ -99,7 +103,10 @@ public partial class MoveableWindowViewModel : ObservableObject, IModalDialogVie
         _moveable.Invisible = Invisible;
         _moveable.ClearBody = ClearBody;
         _moveable.Ocb = ocb;
-        _moveable.Color = ColorToVector3(DisplayColor) * 2.0f;
+        // Like the previous dialog, the tint is only written when the user changed it (the 8-bit swatch round trip would alter it otherwise).
+        if (CanBeColored && _colorEdited)
+            _moveable.Color = ColorToVector3(DisplayColor) * 2.0f;
+
         DialogResult = true;
     }
 

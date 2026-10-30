@@ -89,7 +89,11 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 |-----|-----|--------|
 | Texture remapping assistant: restrict-to-selected-rooms and remap-animated-textures start checked, scale factor 0.25..256 with 2 decimals, Enter runs Remap, WinForms captions, size and position remembered | The defaults made Apply touch the whole level; fractional scaling was impossible | (this commit) |
 | Search textures: size and position remembered, minimum size 330x400 | Window did not remember its place | (this commit) |
-## Open items
+| Moveable and Static: the tint is written on OK only when the user changed it (the 8-bit swatch round trip silently altered the stored value) and only for colorable objects; WinForms captions ("Object", "Tint:", "Reset tint to default", "Activate heavy trigger on collision" and the other static flags) | Opening and OK-ing a dialog changed the tint; wording differed | (this commit) |
+| Flyby camera: value ranges and steps as in WinForms (sequence and number 0..255, roll 0..360 and rotations with wrap-around, DOF distance/range up to 1,000,000 step 128, DOF strength 0..1), unused flag bits labeled "Unused" outside TR5/TombEngine, shorter DOF labels | Ranges were wider and flag captions wrong for other games | (this commit) |
+| Options: numeric fields without an explicit limit are capped at 100 like in WinForms, zoom steps and minimums as in WinForms, title "Options" and "Set page to default" | The WPF defaults allowed up to 1,000,000 | (this commit) |
+| Keyboard layout: hotkeys with Alt can be captured (WPF reports Key.System while Alt is held) | Alt combinations could not be recorded | (this commit) |
+| Portal, Imported geometry: WinForms captions ("Edit portal", "Portal effect:", "Mirror options", "Chosen entry:", "Force sharp edges", "Hide in editor", "Faster alpha testing") | Wording differed | (this commit) |## Open items
 
 - Tomb Editor: not verified on screen (verified by build and code only): file drops onto the window, saved window placement, selection behavior of the Objects in Room / Rooms lists, trigger deletion with Delete/Backspace, Palette layout when the panel is narrow (wide layout verified).
 - Wave B (simple Tomb Editor dialogs) done: the 18 dialogs were audited and the differences fixed, except the ones listed in the divergences. Wave C (complex dialogs) not started. Level settings must wire the texture and wad hover previews (TexturePreviewWindow / WadPreviewWindow exist but nothing opens them).

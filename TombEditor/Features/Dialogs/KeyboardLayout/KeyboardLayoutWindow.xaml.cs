@@ -26,7 +26,16 @@ public partial class KeyboardLayoutWindow : Window
             return;
         }
 
-        var winFormsKey = (EditorKey)KeyInterop.VirtualKeyFromKey(e.Key);
+        // With Alt held WPF reports Key.System and carries the real key in SystemKey (likewise for IME and dead keys).
+        var pressedKey = e.Key switch
+        {
+            Key.System => e.SystemKey,
+            Key.ImeProcessed => e.ImeProcessedKey,
+            Key.DeadCharProcessed => e.DeadCharProcessedKey,
+            _ => e.Key
+        };
+
+        var winFormsKey = (EditorKey)KeyInterop.VirtualKeyFromKey(pressedKey);
         var modifiers = EditorKey.None;
 
         if ((Keyboard.Modifiers & ModifierKeys.Control) != 0)
