@@ -131,6 +131,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Editor options: every tab compared side by side with the WinForms dialog on screen and by reading control labels with UI Automation; groups, items and captions now in the WinForms order (composite rows for "Animate camera on:" with three checkboxes, font plus Bold, checkbox with its number). Seven of nine pages identical by the automatic check, the other two differ only by how UI Automation sorts a label against its checkboxes | Order was reversed or different | 4aef75004 |
 | Level settings after the merge, compared on screen: Static Meshes and Sound Infos now match the WinForms tabs; Sky and Font path boxes fill the tab width (the tab item aligned the content to the left); Static Meshes column headers widened. Other tabs not yet rechecked after the merge | Layout | (this commit) |
 
+| Level settings: every tab item stretches its content, so the Game tab path boxes and the Misc level path fill the width like in WinForms. Game, Texture Files, Static Meshes, Sky and Font, Sound Infos and Misc compared on screen and matching; Object Files, Imported Geometry, Sound Sample Paths and Path Placeholders still to recheck | Layout | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.

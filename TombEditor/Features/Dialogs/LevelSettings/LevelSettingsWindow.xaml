@@ -150,7 +150,7 @@
         <TabControl Style="{DynamicResource SidebarTabControlStyle}">
 
             <!--  Game  -->
-            <TabItem Header="{tombLib:Localize TabGame}">
+            <TabItem Header="{tombLib:Localize TabGame}" HorizontalContentAlignment="Stretch">
                 <ScrollViewer Margin="0,6,0,6" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
 
@@ -258,7 +258,7 @@
 
 
             <!--  Texture Files -->
-            <TabItem Header="{tombLib:Localize TabTextureFiles}">
+            <TabItem Header="{tombLib:Localize TabTextureFiles}" HorizontalContentAlignment="Stretch">
                 <DockPanel Margin="6">
                     <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6" Text="{tombLib:Localize TexturesPrompt}" TextWrapping="Wrap" />
                     <DockPanel DockPanel.Dock="Right" Margin="6,0,0,0" LastChildFill="False">
@@ -318,7 +318,7 @@
             </TabItem>
 
             <!--  Object Files -->
-            <TabItem Header="{tombLib:Localize TabObjectFiles}">
+            <TabItem Header="{tombLib:Localize TabObjectFiles}" HorizontalContentAlignment="Stretch">
                 <DockPanel Margin="6">
                     <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6" Text="{tombLib:Localize ObjectsPrompt}" TextWrapping="Wrap" />
                     <DockPanel DockPanel.Dock="Right" Margin="6,0,0,0" LastChildFill="False">
@@ -368,7 +368,7 @@
             </TabItem>
 
             <!--  Imported Geometry -->
-            <TabItem Header="{tombLib:Localize TabImportedGeometry}">
+            <TabItem Header="{tombLib:Localize TabImportedGeometry}" HorizontalContentAlignment="Stretch">
                 <DockPanel Margin="6">
                     <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6" Text="{tombLib:Localize ImportedGeometryPrompt}" TextWrapping="Wrap" />
                     <StackPanel DockPanel.Dock="Right" Margin="6,0,0,0">
@@ -412,7 +412,7 @@
             </TabItem>
 
             <!--  Static Meshes -->
-            <TabItem Header="{tombLib:Localize TabStaticMeshes}">
+            <TabItem Header="{tombLib:Localize TabStaticMeshes}" HorizontalContentAlignment="Stretch">
                 <DockPanel Margin="6">
                     <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6" Text="{tombLib:Localize StaticMeshesPrompt}" TextWrapping="Wrap" />
                     <TextBlock DockPanel.Dock="Bottom" Margin="0,6,0,0" Text="{tombLib:Localize StaticMeshesWarning}" TextWrapping="Wrap" />
@@ -462,7 +462,7 @@
             </TabItem>
 
             <!--  Sound Infos -->
-            <TabItem Header="{tombLib:Localize TabSoundInfos}">
+            <TabItem Header="{tombLib:Localize TabSoundInfos}" HorizontalContentAlignment="Stretch">
                 <Grid Margin="6">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="2*" MinHeight="90" />
@@ -625,7 +625,7 @@
             </TabItem>
 
             <!--  Sound Sample Paths -->
-            <TabItem Header="{tombLib:Localize TabSoundSamplePaths}">
+            <TabItem Header="{tombLib:Localize TabSoundSamplePaths}" HorizontalContentAlignment="Stretch">
                 <DockPanel Margin="6">
                     <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6" Text="{Binding SamplesPrompt}" TextWrapping="Wrap" />
                     <!--  Vertical icon-button strip on the right, mirroring the previous DarkDataGridViewControls.  -->
@@ -684,7 +684,7 @@
             </TabItem>
 
             <!--  Misc -->
-            <TabItem Header="{tombLib:Localize TabMisc}">
+            <TabItem Header="{tombLib:Localize TabMisc}" HorizontalContentAlignment="Stretch">
                 <ScrollViewer Margin="6" VerticalScrollBarVisibility="Auto">
                     <StackPanel>
 
@@ -828,7 +828,7 @@
             </TabItem>
 
             <!--  Path Placeholders  -->
-            <TabItem Header="{tombLib:Localize TabPathPlaceholders}">
+            <TabItem Header="{tombLib:Localize TabPathPlaceholders}" HorizontalContentAlignment="Stretch">
                 <DockPanel Margin="6">
                     <TextBlock DockPanel.Dock="Top" Margin="0,0,0,4" Text="{tombLib:Localize PathVariablesLabel}" />
                     <DataGrid
