@@ -40,7 +40,7 @@ public partial class MainViewModel : ObservableObject
     public ObservableCollection<string> RecentFiles { get; } = [];
     public IReadOnlyList<SoundInfoViewModel> SelectedSounds { get; set; } = [];
     public IReadOnlyList<SampleViewModel> SelectedSamples { get; set; } = [];
-    public WadSoundLoopBehaviour[] LoopBehaviours { get; } = Enum.GetValues<WadSoundLoopBehaviour>();
+    public IReadOnlyList<LoopBehaviourOption> LoopBehaviours => LoopBehaviourOption.All;
     public bool HasSelection => SelectedSound is not null;
     public bool HasReferenceLevel => _referenceLevel is not null;
     public string Title => "SoundTool - " + (_currentArchive ?? "Untitled") + (_saved ? string.Empty : "*");

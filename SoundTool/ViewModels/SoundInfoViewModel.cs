@@ -26,6 +26,7 @@ public partial class SoundInfoViewModel : ObservableObject
     [ObservableProperty] private WadSoundLoopBehaviour _loopBehaviour;
 
     public int Id { get; }
+    public string LoopBehaviourHint => LoopBehaviourOption.GetHint(LoopBehaviour);
     public ObservableCollection<SampleViewModel> Samples { get; } = [];
     public event EventHandler? Changed;
 
@@ -67,6 +68,8 @@ public partial class SoundInfoViewModel : ObservableObject
         LoopBehaviour = LoopBehaviour,
         Samples = [.. Samples.Select(sample => new WadSample(sample.FileName))]
     };
+
+    partial void OnLoopBehaviourChanged(WadSoundLoopBehaviour value) => OnPropertyChanged(nameof(LoopBehaviourHint));
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {

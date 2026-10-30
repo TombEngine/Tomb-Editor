@@ -33,8 +33,8 @@
                 <MenuItem Header="{tomb:Localize Exit}" Command="{Binding ExitCommand}" />
             </MenuItem>
             <MenuItem Header="{tomb:Localize Edit}">
-                <MenuItem Header="{tomb:Localize Copy}" Command="{Binding CopyCommand}" IsEnabled="{Binding HasSelection}" />
-                <MenuItem Header="{tomb:Localize Paste}" Command="{Binding PasteCommand}" IsEnabled="{Binding HasSelection}" />
+                <MenuItem Header="{tomb:Localize Copy}" Command="{Binding CopyCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="Ctrl+C" />
+                <MenuItem Header="{tomb:Localize Paste}" Command="{Binding PasteCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="Ctrl+V" />
             </MenuItem>
             <MenuItem Header="{tomb:Localize Tools}">
                 <MenuItem Header="{tomb:Localize Options}" Command="{Binding OptionsCommand}" />
@@ -61,6 +61,10 @@
                     <Button Command="{Binding DeleteSoundsCommand}" IsEnabled="{Binding HasSelection}" Style="{DynamicResource ButtonWithIconAndText}"><StackPanel Orientation="Horizontal"><Image Source="{icons:Icon General/trash}" /><TextBlock Text="{tomb:Localize DeleteSounds}" /></StackPanel></Button>
                 </StackPanel>
                 <DataGrid x:Name="SoundList" ItemsSource="{Binding Sounds}" SelectedItem="{Binding SelectedSound}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Extended" SelectionChanged="SoundsSelectionChanged" MouseDoubleClick="SoundListDoubleClick" CanUserAddRows="False">
+                    <DataGrid.InputBindings>
+                        <KeyBinding Key="C" Modifiers="Control" Command="{Binding CopyCommand}" />
+                        <KeyBinding Key="V" Modifiers="Control" Command="{Binding PasteCommand}" />
+                    </DataGrid.InputBindings>
                     <DataGrid.Columns><DataGridTextColumn Header="ID" Binding="{Binding Id, StringFormat=D4}" Width="60" /><DataGridTextColumn Header="{tomb:Localize Name}" Binding="{Binding Name}" Width="*" /></DataGrid.Columns>
                 </DataGrid>
             </DockPanel>
@@ -133,8 +137,9 @@
                         <CheckBox Grid.Row="1" Grid.Column="4" Content="{tomb:Localize DisablePanning}" IsChecked="{Binding DisablePanning}" HorizontalAlignment="Right" VerticalAlignment="Center" />
                         <DockPanel Grid.Row="2" Grid.Column="4" HorizontalAlignment="Right">
                             <Label Content="{tomb:Localize Loop}" />
-                            <ComboBox Width="120" Margin="4" ItemsSource="{Binding DataContext.LoopBehaviours, RelativeSource={RelativeSource AncestorType=Window}}" SelectedItem="{Binding LoopBehaviour}" />
+                            <ComboBox Width="120" Margin="4" ItemsSource="{Binding DataContext.LoopBehaviours, RelativeSource={RelativeSource AncestorType=Window}}" DisplayMemberPath="Name" SelectedValuePath="Value" SelectedValue="{Binding LoopBehaviour}" />
                         </DockPanel>
+                        <TextBlock Grid.Row="3" Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0" Opacity="{DynamicResource Opacity_DisabledContent}" Text="{Binding LoopBehaviourHint}" />
                     </Grid>
                 </GroupBox>
 

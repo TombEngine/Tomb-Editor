@@ -123,12 +123,15 @@ Each maps to the `*Window.xaml` of the same name under `TombEditor/Features/Dial
 
 ## 9. Progress log
 
-### SoundTool - visual pass done (2026-10-30), functional pass PENDING
+### SoundTool - visual pass done, functional pass mostly done (2026-10-30)
 - Main window: layout of the details pane rebuilt to follow WinForms (ID/Global/Include row, name plus icon buttons, single parameters group with units, sample buttons above the sample list, no scrolling). Menu structure aligned (Options under Tools, Build/Select labels).
 - Options window: unit "%" and colon label added.
 - Theme fixes (ripple to all tools): DataGrid visual states no longer animate shared brushes (this caused the #525252 window background); implicit GridSplitter style; window title trims with ellipsis and no longer runs under the caption buttons.
-- Intentional divergences (to be confirmed): dark custom title bar instead of the system accent color; details pane always visible but disabled when nothing is selected; Options has a single page, no "Apply" and no page list.
-- Known unverified behavior: all rewired bindings in the details pane (Global, Indexed, Randomize, Disable 3D positioning, Mode, copy/paste/reset/play/stop, sample add/browse/delete), the reordered Tools menu actions, keyboard shortcuts, Options OK/Cancel and brightness persistence. The WinForms hint "Play in any case" under Mode was dropped and must be re-evaluated.
-
+- Functional inventory compared WinForms `FormMain` and `SoundInfoEditor` against `MainViewModel` / `SoundInfoViewModel`.
+  - Same (read and covered by unit tests): new/open/save flow and unsaved-changes prompts, add sound (default name NEW_SOUND, duplicate ID rejected), delete with confirmation, search with wrap, reset (keeps name and samples), paste (keeps ID), index/unindex all, value limits (volume/chance 0-100, pitch -100..100, range 0-255), sample add/browse/delete, MAIN.SFX build/unpack, recent files, reference project load/unload.
+  - Fixed: playback mode showed raw enum names and no hint; now shows "None / One shot wait / One shot rewound / Loop" with the legacy hint text. Ctrl+C / Ctrl+V on the sound list now copy/paste the sound info (verified live: pasted sound keeps its ID and takes name, parameters and samples).
+  - Verified live: details pane population on selection, hint under Mode, copy/paste through the list.
+- Intentional divergences (to be confirmed): dark custom title bar instead of the system accent color; details pane always visible but disabled when nothing is selected; Stop preview button added; Index/Unindex all marks the catalog as changed (WinForms did not); compile/unpack iterate sounds ordered by ID (WinForms used grid order); Ctrl+C/V are bound to the sound list only so text boxes keep normal clipboard behavior.
+- Still open: Options window has no "Apply" and no "Set page to default" (and no page list); File menu labels differ from WinForms ("New XML", "Open XML, TXT or SFX...", "Save XML"); Play with no reference project is disabled instead of hidden; double-click preview requires a loaded reference project; MAIN.SFX build/unpack and the unsaved-changes prompt on window close were not driven live (build/unpack/close are covered only by code reading and the cancel-save unit tests).
 ### WadTool main window - first look
 - Background and palette now match. Remaining checks: panel headers, bottom action buttons, status bar, toolbar spacing, and the functional inventory.

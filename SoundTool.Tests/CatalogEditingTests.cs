@@ -116,6 +116,78 @@ public class CatalogEditingTests
         Assert.AreEqual("renamed.wav", sound.ToSound().Samples[0].FileName);
     }
 
+    [TestMethod]
+    public void NewSoundUsesTheLegacyDefaultsAndSelectsTheNewEntry()
+    {
+        var context = new EditorContext();
+
+        var sound = context.AddSound(5);
+
+        Assert.AreEqual("NEW_SOUND", sound.Name);
+        Assert.AreEqual(100, sound.Volume);
+        Assert.AreEqual(10, sound.RangeInSectors);
+        Assert.AreEqual(100, sound.Chance);
+        Assert.IsTrue(context.ViewModel.Title.EndsWith("*", StringComparison.Ordinal));
+    }
+
+    [TestMethod]
+    public void IndexAllAndUnindexAllMarkTheCatalogChanged()
+    {
+        var context = new EditorContext();
+        var first = context.AddSound(1);
+        var second = context.AddSound(2);
+        first.Indexed = false;
+        second.Indexed = false;
+
+        context.ViewModel.IndexAllCommand.Execute(null);
+
+        Assert.IsTrue(first.Indexed);
+        Assert.IsTrue(second.Indexed);
+
+        context.ViewModel.UnindexAllCommand.Execute(null);
+
+        Assert.IsFalse(first.Indexed);
+        Assert.IsFalse(second.Indexed);
+    }
+
+    [TestMethod]
+    public void DeleteRemovesTheSelectedSoundsAndSelectsTheFirstRemaining()
+    {
+        var context = new EditorContext();
+        var first = context.AddSound(1);
+        var second = context.AddSound(2);
+        context.ViewModel.SelectedSounds = [second];
+        context.ViewModel.SelectedSound = second;
+
+        context.ViewModel.DeleteSoundsCommand.Execute(null);
+
+        Assert.AreEqual(1, context.ViewModel.Sounds.Count);
+        Assert.AreSame(first, context.ViewModel.SelectedSound);
+    }
+
+    [TestMethod]
+    public void PlaybackModesExposeLegacyNamesAndHints()
+    {
+        Assert.AreEqual(4, LoopBehaviourOption.All.Count);
+        Assert.AreEqual("Loop", LoopBehaviourOption.All[3].Name);
+        Assert.AreEqual("Play in any case", LoopBehaviourOption.GetHint(WadSoundLoopBehaviour.None));
+        Assert.AreEqual("Ignore if already playing", LoopBehaviourOption.GetHint(WadSoundLoopBehaviour.OneShotWait));
+        Assert.AreEqual("Rewind if already playing", LoopBehaviourOption.GetHint(WadSoundLoopBehaviour.OneShotRewound));
+        Assert.AreEqual("Loop until stopped by engine", LoopBehaviourOption.GetHint(WadSoundLoopBehaviour.Looped));
+    }
+
+    [TestMethod]
+    public void ChangingThePlaybackModeUpdatesTheHint()
+    {
+        var sound = new SoundInfoViewModel(new WadSoundInfo(3));
+        var changed = new List<string?>();
+        sound.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+
+        sound.LoopBehaviour = WadSoundLoopBehaviour.OneShotRewound;
+
+        CollectionAssert.Contains(changed, nameof(SoundInfoViewModel.LoopBehaviourHint));
+        Assert.AreEqual("Rewind if already playing", sound.LoopBehaviourHint);
+    }
     private sealed class EditorContext
     {
         public MainViewModel ViewModel { get; }
