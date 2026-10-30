@@ -89,6 +89,13 @@ namespace TombLib.WPF.Features.AnimatedTextures
             _currentTexture = _textureMap.VisibleTexture ?? _context.SelectedTexture.Texture ?? _context.AvailableTextures.FirstOrDefault();
         }
 
+        /// <summary>Shows the top of the current texture once the map has its final size (it is created before the window is laid out).</summary>
+        public void ResetMapView()
+        {
+            if (_context.SelectedTexture.TextureIsInvisible && _textureMap.VisibleTexture is { } texture)
+                _textureMap.ResetVisibleTexture(texture);
+        }
+
         // Current visible texture (combo above the map).
         private Texture? _currentTexture;
         public Texture? CurrentTexture
