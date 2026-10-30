@@ -10,8 +10,8 @@
     Title="{Binding Title}"
     Width="940"
     Height="640"
-    MinWidth="820"
-    MinHeight="560"
+    MinWidth="800"
+    MinHeight="500"
     d:DataContext="{d:DesignInstance Type=local:SkeletonEditorWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
     ShowInTaskbar="False"
@@ -152,15 +152,15 @@
                         <ContextMenu>
                             <MenuItem
                                 Command="{Binding PlacementTarget.DataContext.TogglePopCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                Header="Pop"
+                                Header="Pop" InputGestureText="Ctrl+O"
                                 IsChecked="{Binding PlacementTarget.DataContext.PopChecked, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
                             <MenuItem
                                 Command="{Binding PlacementTarget.DataContext.TogglePushCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                Header="Push"
+                                Header="Push" InputGestureText="Ctrl+P"
                                 IsChecked="{Binding PlacementTarget.DataContext.PushChecked, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
                             <Separator />
-                            <MenuItem Command="{Binding PlacementTarget.DataContext.MoveBoneUpCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Move up" />
-                            <MenuItem Command="{Binding PlacementTarget.DataContext.MoveBoneDownCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Move down" />
+                            <MenuItem Command="{Binding PlacementTarget.DataContext.MoveBoneUpCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Move up" InputGestureText="Ctrl+Up" />
+                            <MenuItem Command="{Binding PlacementTarget.DataContext.MoveBoneDownCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Move down" InputGestureText="Ctrl+Down" />
                             <Separator />
                             <MenuItem Command="{Binding PlacementTarget.DataContext.AddChildBoneFromFileCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Add child bone from file" />
                             <MenuItem Command="{Binding PlacementTarget.DataContext.ReplaceBoneFromFileCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Replace from file" />

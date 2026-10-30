@@ -34,6 +34,11 @@ public partial class MeshEditorWindow : Window
         meshTree.MouseDoubleClick += OnTreeMouseDoubleClick;
 
         DataContextChanged += OnDataContextChanged;
+        Loaded += (_, _) =>
+        {
+            if (_vm is not null)
+                TombLib.WPF.WindowConfiguration.ConfigureWindow(this, _vm.Configuration, key: "FormMeshEditor");
+        };
         PreviewKeyDown += OnPreviewKeyDown;
         Closing += OnClosingHandler;
         Closed += OnClosed;

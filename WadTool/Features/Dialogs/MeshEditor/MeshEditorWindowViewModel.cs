@@ -35,6 +35,9 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
 {
     private readonly IColorPickerService _colorPickerService;
     private readonly WadToolClass _tool;
+
+    /// <summary>Gets the application configuration (used by the window to persist its placement).</summary>
+    public WadTool.Configuration Configuration => _tool.Configuration;
     private readonly Wad2 _wad;
     private readonly DeviceManager _deviceManager;
     private readonly WadMesh? _singleMesh;

@@ -35,6 +35,11 @@ public partial class AnimationEditorWindow : Window
         stateIdBox.KeyDown += (_, e) => { if (e.Key == System.Windows.Input.Key.Enter) _vm?.CommitStateId(); };
 
         DataContextChanged += OnDataContextChanged;
+        Loaded += (_, _) =>
+        {
+            if (_vm is not null)
+                TombLib.WPF.WindowConfiguration.ConfigureWindow(this, _vm.Configuration, key: "FormAnimationEditor");
+        };
         Closing += OnClosingHandler;
         Closed += OnClosed;
     }

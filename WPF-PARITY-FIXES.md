@@ -99,6 +99,7 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 |-----|-----|--------|
 | English strings added for Select slot, Item Properties (Lua), Find & replace anim commands and Animation fixer (titles, labels, tooltips, status and warning messages, with the WinForms wording) | These windows had no strings and would have shown raw keys such as "ChosenId" or "EndFrameTooltip" | (this commit) |
 | WadTool options: missing "Auto-consolidate textures when copying objects" option added, captions and the "Options" / "Set page to default" texts restored | The option could not be toggled; wording differed | (this commit) |
+| Mesh editor and Animation editor remember size, position and maximized state; Skeleton editor context menu shows the Ctrl+O / Ctrl+P / Ctrl+Up / Ctrl+Down shortcuts and has the WinForms minimum size (800x500) | The two editors always opened at their default size | (this commit) |
 ## Open items
 | Event set editor: closing with the window X or Escape restores the backup (only OK keeps changes), Unassign clears the volume's event set, generic mode starts with no set selected and hides the volume options | The X button committed; Unassign did nothing; generic mode preselected a set | (this commit) |
 | Level settings: size and position remembered; "Dither 16-bit textures" also enabled for TRX games; "Map animated textures to imported geometry" disabled for TombEngine | Window did not remember its place; enable rules differed | (this commit) |

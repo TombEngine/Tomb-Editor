@@ -113,6 +113,9 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     public ObservableCollection<MeshBoneItem> Bones { get; } = new();
     public ObservableCollection<object> Rooms { get; } = new();
 
+    /// <summary>Gets the application configuration (used by the window to persist its placement).</summary>
+    public WadTool.Configuration Configuration => _editor.Tool.Configuration;
+
     public AnimationEditorWindowViewModel(WadToolClass tool, DeviceManager deviceManager, Wad2 wad, WadMoveableId id)
     {
         _deviceManager = deviceManager;
