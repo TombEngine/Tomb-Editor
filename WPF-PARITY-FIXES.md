@@ -54,10 +54,11 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Triggers list: multi-selection, Delete/Backspace delete the selected triggers, delete button removes all selected, panel title becomes "Classic Triggers" for TombEngine levels | Single selection only, no keyboard delete, title was fixed | (this commit) |
 | Objects in Room list keeps its selection when an object changes (entry text updated in place) and scrolls the selected object into view; Rooms list keeps its selection when a room property changes and scrolls into view | Moving or editing the selected object un-highlighted it; selection was never scrolled to | (this commit) |
 | Texturing double-sided button is a toggle that shows the selected texture state | It was a plain button with no checked state | (this commit) |
+| Toolbar enabled states (`ToolbarEnableRules`): Undo/Redo follow the undo stack, Copy/Stamp need a spatial selection, Paste follows the clipboard (listener on the window) and mode, Center camera is off in 2D, Flip map needs an alternated room, volumes and sprite buttons follow the game version | Those buttons were always enabled | (this commit) |
 
 ## Open items
 
-- Tomb Editor (from the functional audit, still to fix): toolbar enabled/checked states; Window > Tool Palette toggle and floating palette item; check marks of View toggles; default layout persistence between runs; hotkey text refresh on keyboard layout change; Alt handling in fly mode; Debug menu; Texturing level-texture sync with the editor and panel activation; Room Options tags commit/casing; item preview animate option not re-applied; Palette layout adaption.
+- Tomb Editor (from the functional audit, still to fix): irreversible-undo icon and flip map checked state on the toolbar; Window > Tool Palette toggle and floating palette item; check marks of View toggles; default layout persistence between runs; hotkey text refresh on keyboard layout change; Alt handling in fly mode; Debug menu; Texturing level-texture sync with the editor and panel activation; Room Options tags commit/casing; item preview animate option not re-applied; Palette layout adaption.
 - SoundTool: a failed or cancelled save still aborts New / Open / Close (WinForms continues); left as is on request.
 - SoundTool: double-click preview needs a loaded reference project; MAIN.SFX build/unpack not driven live.
 - WadTool: tree search is an inline row, not the WinForms pop-up; destination panel header is not highlighted when active (S3); tree rows are about 3 px denser (S3).

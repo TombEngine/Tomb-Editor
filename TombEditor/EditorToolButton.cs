@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using TombEditor.Features.Toolbar;
 using TombLib.LevelData;
 using TombLib.WPF;
 
@@ -67,6 +68,8 @@ public static class EditorToolButton
                 Window = WPFUtils.GetWindowOwner(),
             });
         });
+
+        ToolbarEnableRules.Attach(button, commandName);
     }
 
     #endregion
@@ -220,9 +223,9 @@ public static class EditorToolButton
     /// a <see cref="WeakReference{T}"/> to the target button. When the button is collected the
     /// handler self-unsubscribes on the next event, so MainWindow lifecycles don't leak handlers.
     /// </summary>
-    private static void SubscribeWeak(ToggleButton toggle, Action<IEditorEvent> onEvent)
+    internal static void SubscribeWeak(ButtonBase toggle, Action<IEditorEvent> onEvent)
     {
-        var weak = new WeakReference<ToggleButton>(toggle);
+        var weak = new WeakReference<ButtonBase>(toggle);
         Action<IEditorEvent>? handler = null;
         handler = ev =>
         {

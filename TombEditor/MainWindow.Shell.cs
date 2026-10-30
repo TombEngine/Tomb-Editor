@@ -2,8 +2,10 @@
 
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
+using TombEditor.Features.Toolbar;
 using TombLib.Input;
 using TombLib.Utils;
 using TombLib.WPF;
@@ -14,10 +16,21 @@ namespace TombEditor;
 /// <summary>Window shell behavior: file drops, second-instance messages and activation.</summary>
 public partial class MainWindow
 {
+    private const int WmClipboardUpdate = 0x031D;
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool AddClipboardFormatListener(IntPtr hwnd);
+
     private void InitializeShell()
     {
         AllowDrop = true;
-        SourceInitialized += (_, _) => HwndSource.FromHwnd(new WindowInteropHelper(this).Handle)?.AddHook(WindowMessage);
+        SourceInitialized += (_, _) =>
+        {
+            var handle = new WindowInteropHelper(this).Handle;
+            HwndSource.FromHwnd(handle)?.AddHook(WindowMessage);
+            AddClipboardFormatListener(handle);
+        };
     }
 
     protected override void OnActivated(EventArgs e)
@@ -55,6 +68,13 @@ public partial class MainWindow
 
     private IntPtr WindowMessage(IntPtr handle, int messageId, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
+        if (messageId == WmClipboardUpdate)
+        {
+            _menuState.UpdatePaste();
+            ToolbarEnableRules.NotifyClipboardChanged();
+            return IntPtr.Zero;
+        }
+
         if (messageId != SingleInstanceManagement.WM_COPYDATA && messageId != SingleInstanceManagement.WM_SHOWWINDOW)
             return IntPtr.Zero;
 
