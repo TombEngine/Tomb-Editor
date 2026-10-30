@@ -6,6 +6,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
 	MinWidth="100"
 	Height="23"
 	d:DesignWidth="315"
@@ -18,6 +19,8 @@
 			<!--  colorPreview  -->
 			<ColumnDefinition Width="Auto" />
 			<!--  butView / butReset  -->
+			<ColumnDefinition Width="Auto" />
+			<!--  search  -->
 		</Grid.ColumnDefinitions>
 
 		<controls:SearchableComboBox
@@ -72,5 +75,14 @@
 			Click="OnResetClick"
 			Content="Reset"
 			Visibility="Collapsed" />
+		<Button
+			Grid.Column="3"
+			Width="23"
+			Margin="2,0,0,0"
+			Click="OnSearchClick"
+			ToolTip="Search"
+			Visibility="{Binding Visibility, ElementName=comboPart}">
+			<Image Width="16" Height="16" Source="{tomb:Icon General/search}" />
+		</Button>
 	</Grid>
 </UserControl>

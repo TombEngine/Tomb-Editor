@@ -148,6 +148,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Dialogs compared on screen with the WinForms editor: Search textures (same), Apply room properties (same list; WPF title was truncated by the minimize and maximize buttons, window widened to 320), Animated textures (procedural animation checkboxes Symmetric and Smooth now start unchecked like WinForms). Still different in Animated textures: extra copy button in the set row, no search icon next to the texture combo, extra Text column in the frame list, Type and FPS settings were enabled without a selected set (now disabled, checked on screen) | Layout and defaults | (this commit) |
 
+| Trigger editor compared on screen with the WinForms editor (sector selected with the real mouse, Items > Add trigger): same fields, bit and one shot checkboxes, raw mode, OK and Cancel; fixed the "(&&) Timer" label that showed both ampersands, and added the permanent search icon button next to the type, what and param combos (it opens the combo search like the WinForms search button) | Label and search button | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.

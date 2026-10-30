@@ -1337,7 +1337,7 @@
         "PluginEngine": "Plugin / Engine:",
         "What": "What:",
         "Param": "(#) Param:",
-        "Timer": "(&&) Timer:",
+        "Timer": "(&) Timer:",
         "Extra": "(E) Extra:",
         "Bit1": "Bit 1",
         "Bit2": "Bit 2",

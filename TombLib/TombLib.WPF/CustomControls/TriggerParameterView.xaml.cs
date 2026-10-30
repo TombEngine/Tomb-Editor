@@ -102,6 +102,8 @@ public partial class TriggerParameterView : UserControl
 			? ushortParam.NameObject as ITriggerParameter
 			: Parameter;
 
+    private void OnSearchClick(object sender, RoutedEventArgs e) => comboPart.OpenAndFocusSearch();
+
 	private void OnViewClick(object sender, RoutedEventArgs e)
 	{
 		var target = GetObjectPointer();
