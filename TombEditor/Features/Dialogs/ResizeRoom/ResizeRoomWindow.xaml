@@ -8,6 +8,7 @@
     xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.ResizeRoom"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     Title="{tombLib:Localize Title}"
     Width="600"
@@ -87,24 +88,27 @@
                         ToolTip="{tombLib:Localize XNegative}"
                         Value="{Binding ExpandXNegative, Mode=TwoWay}" />
 
-                    <Border
+                    <!--  Compass: ring, four ticks and a north arrow, like the previous form's picture.  -->
+                    <Viewbox
                         Grid.Row="1"
                         Grid.Column="1"
                         Width="76"
-                        Height="76"
-                        Background="{DynamicResource Brush_Background_Low}"
-                        BorderBrush="{DynamicResource Brush_Border}"
-                        BorderThickness="1">
-                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        Height="76">
+                        <Canvas Width="76" Height="76">
+                            <Ellipse
+                                Canvas.Left="10"
+                                Canvas.Top="10"
+                                Width="56"
+                                Height="56"
+                                Stroke="{DynamicResource Brush_Text}"
+                                StrokeThickness="3" />
                             <Path
-                                Width="20"
-                                Height="18"
-                                Margin="0,0,0,2"
-                                Data="M 0,18 L 10,0 L 20,18 Z"
-                                Fill="{DynamicResource Brush_Text}" />
-                            <TextBlock HorizontalAlignment="Center" Foreground="{DynamicResource Brush_Text}" Text="N" />
-                        </StackPanel>
-                    </Border>
+                                Data="M 38,1 L 38,16 M 38,60 L 38,75 M 1,38 L 16,38 M 60,38 L 75,38"
+                                Stroke="{DynamicResource Brush_Text}"
+                                StrokeThickness="3" />
+                            <Path Data="M 38,12 L 50,46 L 38,38 L 26,46 Z" Fill="{DynamicResource Brush_Text}" />
+                        </Canvas>
+                    </Viewbox>
 
                     <controls:NumericUpDown
                         Grid.Row="1"

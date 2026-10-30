@@ -8,6 +8,7 @@
     xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.KeyboardLayout"
     Title="{tombLib:Localize Title}"
@@ -60,9 +61,11 @@
             </TextBox>
             <Button
                 Grid.Column="2"
-                Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+                Width="28"
                 Command="{Binding SearchCommand}"
-                Content="{tombLib:Localize ~Common.Search}" />
+                ToolTip="{tombLib:Localize ~Common.Search}">
+                <Image Width="16" Height="16" Source="{tomb:Icon General/search}" />
+            </Button>
         </controls:SpacedGrid>
 
         <Grid Grid.Row="1">
@@ -70,6 +73,7 @@
                 AutoGenerateColumns="False"
                 CanUserAddRows="False"
                 CanUserDeleteRows="False"
+                RowHeight="24"
                 IsEnabled="{Binding IsListening, Converter={StaticResource InverseBool}}"
                 ItemsSource="{Binding Rows}"
                 SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
@@ -94,30 +98,32 @@
                         Binding="{Binding FriendlyName}"
                         Header="{tombLib:Localize Command}"
                         IsReadOnly="True" />
-                    <DataGridTemplateColumn Width="32" Header="">
+                    <DataGridTemplateColumn Width="30" Header="">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button
                                     Command="{Binding DataContext.StartListeningCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                     CommandParameter="{Binding}"
-                                    Content="+"
-                                    ToolTip="{tombLib:Localize AddCommand}" />
+                                    ToolTip="{tombLib:Localize AddCommand}">
+                                    <Image Width="16" Height="16" Source="{tomb:Icon General/plus_math}" />
+                                </Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Width="32" Header="">
+                    <DataGridTemplateColumn Width="30" Header="">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button
                                     Command="{Binding DataContext.DeleteHotkeysCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                     CommandParameter="{Binding}"
-                                    Content="X"
-                                    ToolTip="{tombLib:Localize DeleteCommand}" />
+                                    ToolTip="{tombLib:Localize DeleteCommand}">
+                                    <Image Width="16" Height="16" Source="{tomb:Icon General/trash}" />
+                                </Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTextColumn
-                        Width="220"
+                        Width="*"
                         Binding="{Binding HotkeysText}"
                         Header="{tombLib:Localize Hotkeys}"
                         IsReadOnly="True" />

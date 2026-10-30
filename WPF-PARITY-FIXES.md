@@ -118,6 +118,16 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Animation editor timeline context menu: same six items in WPF and WinForms (right click with the real mouse, read via UI Automation); animation list filter: "walk" and "15" give the same lists | Verified side by side | n/a |
 | Animation editor right double click on the 3D view: the panel already delivers the double click message, so the manual timing detection was replaced by OnMouseDoubleClick. Compared with the WinForms editor using the real mouse (orbit, then right double click): the image after the reset is identical to the start in both | The reset did not work in WPF | (this commit) |
 
+## Side by side checks, Tomb Editor
+
+| Fix | Why | Commit |
+|-----|-----|--------|
+| Tomb Editor menus compared with the WinForms editor (File, Edit, View, Rooms, Items, Textures, Transform, Tools, Window, Help, read via UI Automation): identical except items that depend on the game version (the WinForms editor shows the TombEngine-only volume items on a TR4 level at startup, the WPF editor hides them as the code rule says) | Verified side by side | n/a |
+| Level settings, all ten tabs compared side by side on screen with the WinForms dialog (Game tab: game directory field and WinForms captions; the other nine tabs reworked by a subagent from the screenshot differences: columns, captions, button strips, Sky and Font, Sound infos, Misc, Path placeholders). Needs a second side by side pass after the merge | Layout and captions differed | e6561b060, 3be2ded1e |
+| Keyboard layout: compact rows (24 px), icon add and delete buttons, magnifier search button, hotkeys column fills the width. Compared on screen with WinForms | Rows were twice as tall, text buttons | (this commit) |
+| Crop room: vector compass (ring, ticks, north arrow) instead of the "N" box. Compared on screen with WinForms | Different picture | (this commit) |
+| Search dialog compared on screen: same layout. Differences left: WinForms right-aligns the Keywords and Scope labels and preselects the first result row | Cosmetic | n/a |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
