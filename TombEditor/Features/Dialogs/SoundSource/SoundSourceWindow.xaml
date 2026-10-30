@@ -9,11 +9,13 @@
     xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.SoundSource"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     Title="{tombLib:Localize Title}"
     Width="520"
     Height="600"
-    
+    MinWidth="500"
+    MinHeight="520"
     d:DataContext="{d:DesignInstance Type=vm:SoundSourceWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
     ShowInTaskbar="False"
@@ -58,10 +60,13 @@
                 <Button
                     Grid.Row="0"
                     Grid.Column="1"
-                    Width="80"
                     VerticalAlignment="Center"
                     Command="{Binding SearchCommand}"
-                    Content="{tombLib:Localize Search}" />
+                    IsTabStop="False"
+                    Style="{DynamicResource ButtonWithIconOnly}"
+                    ToolTip="{tombLib:Localize Search}">
+                    <Image Source="{tomb:Icon General/search}" />
+                </Button>
 
                 <ListBox
                     x:Name="soundList"
@@ -119,8 +124,7 @@
             <Button
                 Width="80"
                 Command="{Binding ConfirmCommand}"
-                Content="{tombLib:Localize ~Common.OK}"
-                IsDefault="True" />
+                Content="{tombLib:Localize ~Common.OK}" />
             <Button
                 Width="80"
                 Command="{Binding CancelCommand}"

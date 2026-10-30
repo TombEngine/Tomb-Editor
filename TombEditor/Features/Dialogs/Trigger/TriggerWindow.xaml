@@ -16,7 +16,7 @@
     MinWidth="600"
     d:DataContext="{d:DesignInstance Type=vm:TriggerWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
-    ResizeMode="CanResizeWithGrip"
+    ResizeMode="CanResize"
     ShowInTaskbar="False"
     SizeToContent="Height"
     Style="{DynamicResource CustomWindowStyle}"
@@ -69,6 +69,7 @@
             Content="{tombLib:Localize TriggerType}" />
         <tombLibControls:TriggerParameterView
             x:Name="paramTriggerType"
+            KeyboardNavigation.TabIndex="1"
             Grid.Row="0"
             Grid.Column="1"
             Grid.ColumnSpan="5" />
@@ -80,6 +81,7 @@
             Visibility="{Binding IsNG, Converter={StaticResource BoolToVis}}" />
         <tombLibControls:TriggerParameterView
             x:Name="paramPlugin"
+            KeyboardNavigation.TabIndex="17"
             Grid.Row="0"
             Grid.Column="7"
             Visibility="{Binding IsNG, Converter={StaticResource BoolToVis}}" />
@@ -92,6 +94,7 @@
             Content="{tombLib:Localize What}" />
         <tombLibControls:TriggerParameterView
             x:Name="paramTargetType"
+            KeyboardNavigation.TabIndex="2"
             Grid.Row="1"
             Grid.Column="1"
             Grid.ColumnSpan="7" />
@@ -104,6 +107,7 @@
             Content="{tombLib:Localize Param}" />
         <tombLibControls:TriggerParameterView
             x:Name="paramTarget"
+            KeyboardNavigation.TabIndex="3"
             Grid.Row="2"
             Grid.Column="1"
             Grid.ColumnSpan="7" />
@@ -116,6 +120,7 @@
             Content="{tombLib:Localize Timer}" />
         <tombLibControls:TriggerParameterView
             x:Name="paramTimer"
+            KeyboardNavigation.TabIndex="4"
             Grid.Row="3"
             Grid.Column="1"
             Grid.ColumnSpan="7" />
@@ -128,6 +133,7 @@
             Content="{tombLib:Localize Extra}" />
         <tombLibControls:TriggerParameterView
             x:Name="paramExtra"
+            KeyboardNavigation.TabIndex="5"
             Grid.Row="4"
             Grid.Column="1"
             Grid.ColumnSpan="7" />
@@ -138,37 +144,43 @@
             Grid.Column="1"
             VerticalAlignment="Center"
             Content="{tombLib:Localize Bit1}"
-            IsChecked="{Binding Bit1, Mode=TwoWay}" />
+            IsChecked="{Binding Bit1, Mode=TwoWay}"
+            KeyboardNavigation.TabIndex="6" />
         <CheckBox
             Grid.Row="5"
             Grid.Column="2"
             VerticalAlignment="Center"
             Content="{tombLib:Localize Bit2}"
-            IsChecked="{Binding Bit2, Mode=TwoWay}" />
+            IsChecked="{Binding Bit2, Mode=TwoWay}"
+            KeyboardNavigation.TabIndex="7" />
         <CheckBox
             Grid.Row="5"
             Grid.Column="3"
             VerticalAlignment="Center"
             Content="{tombLib:Localize Bit3}"
-            IsChecked="{Binding Bit3, Mode=TwoWay}" />
+            IsChecked="{Binding Bit3, Mode=TwoWay}"
+            KeyboardNavigation.TabIndex="8" />
         <CheckBox
             Grid.Row="5"
             Grid.Column="4"
             VerticalAlignment="Center"
             Content="{tombLib:Localize Bit4}"
-            IsChecked="{Binding Bit4, Mode=TwoWay}" />
+            IsChecked="{Binding Bit4, Mode=TwoWay}"
+            KeyboardNavigation.TabIndex="9" />
         <CheckBox
             Grid.Row="5"
             Grid.Column="5"
             VerticalAlignment="Center"
             Content="{tombLib:Localize Bit5}"
-            IsChecked="{Binding Bit5, Mode=TwoWay}" />
+            IsChecked="{Binding Bit5, Mode=TwoWay}"
+            KeyboardNavigation.TabIndex="10" />
 
         <Grid
             Grid.Row="5"
             Grid.Column="6"
             Grid.ColumnSpan="2"
             VerticalAlignment="Center"
+            KeyboardNavigation.TabIndex="12"
             Visibility="{Binding IsNG, Converter={StaticResource BoolToVis}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -245,7 +257,8 @@
             VerticalAlignment="Center"
             Content="{tombLib:Localize OneShot}"
             IsChecked="{Binding OneShot, Mode=TwoWay}"
-            IsEnabled="{Binding OneShotEnabled}" />
+            IsEnabled="{Binding OneShotEnabled}"
+            KeyboardNavigation.TabIndex="11" />
         <CheckBox
             Grid.Row="6"
             Grid.Column="6"
@@ -253,7 +266,8 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Center"
             Content="{tombLib:Localize RawMode}"
-            IsChecked="{Binding RawMode, Mode=TwoWay}" />
+            IsChecked="{Binding RawMode, Mode=TwoWay}"
+            KeyboardNavigation.TabIndex="14" />
 
         <!--  Row 7: OK / Cancel  -->
         <controls:SpacedStack
@@ -270,12 +284,13 @@
                 Width="80"
                 Command="{Binding ConfirmCommand}"
                 Content="{tombLib:Localize ~Common.OK}"
-                IsDefault="True" />
+                KeyboardNavigation.TabIndex="15" />
             <Button
                 Width="80"
                 Command="{Binding CancelCommand}"
                 Content="{tombLib:Localize ~Common.Cancel}"
-                IsCancel="True" />
+                IsCancel="True"
+                KeyboardNavigation.TabIndex="16" />
         </controls:SpacedStack>
     </controls:SpacedGrid>
 </Window>

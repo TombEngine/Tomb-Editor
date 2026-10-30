@@ -22,27 +22,7 @@
 
     <StackPanel Margin="{x:Static darkUI:Defaults.MediumThickness}">
 
-        <GroupBox Header="{tombLib:Localize BaseSoundCatalogGroup}">
-            <StackPanel Margin="{x:Static darkUI:Defaults.SmallThickness}">
-                <DockPanel>
-                    <Button
-                        Width="80"
-                        Margin="4,0,0,0"
-                        VerticalAlignment="Center"
-                        Command="{Binding BrowseSoundsCatalogCommand}"
-                        Content="{tombLib:Localize ~Generic.Browse}"
-                        DockPanel.Dock="Right" />
-                    <TextBox VerticalAlignment="Center" Text="{Binding SoundsPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </DockPanel>
-                <TextBlock
-                    Margin="0,6,0,0"
-                    Opacity="{DynamicResource Opacity_DisabledContent}"
-                    Text="{tombLib:Localize SoundsCatalogTooltip}"
-                    TextWrapping="Wrap" />
-            </StackPanel>
-        </GroupBox>
-
-        <GroupBox Margin="0,8,0,0" Header="{tombLib:Localize ImportSettingsGroup}">
+        <GroupBox Header="{tombLib:Localize ImportSettingsGroup}">
             <StackPanel Margin="{x:Static darkUI:Defaults.SmallThickness}">
                 <CheckBox
                     Content="{tombLib:Localize RespectMousepatch}"
@@ -59,6 +39,26 @@
                     Margin="20,2,0,0"
                     Opacity="{DynamicResource Opacity_DisabledContent}"
                     Text="{tombLib:Localize UseHalfPixelCorrectionTooltip}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </GroupBox>
+
+        <GroupBox Margin="0,8,0,0" Header="{tombLib:Localize BaseSoundCatalogGroup}">
+            <StackPanel Margin="{x:Static darkUI:Defaults.SmallThickness}">
+                <DockPanel>
+                    <Button
+                        Width="80"
+                        Margin="4,0,0,0"
+                        VerticalAlignment="Center"
+                        Command="{Binding BrowseSoundsCatalogCommand}"
+                        Content="{tombLib:Localize ~Generic.Browse}"
+                        DockPanel.Dock="Right" />
+                    <TextBox VerticalAlignment="Center" Text="{Binding SoundsPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+                <TextBlock
+                    Margin="0,6,0,0"
+                    Opacity="{DynamicResource Opacity_DisabledContent}"
+                    Text="{tombLib:Localize SoundsCatalogTooltip}"
                     TextWrapping="Wrap" />
             </StackPanel>
         </GroupBox>

@@ -32,7 +32,6 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <TextBlock
@@ -40,27 +39,62 @@
             Text="{tombLib:Localize Instructions}"
             TextWrapping="Wrap" />
 
-        <controls:SpacedGrid
-            Grid.Row="1"
-            ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-            <ComboBox
+            <CheckBox
+                Grid.Row="0"
                 Grid.Column="0"
-                DisplayMemberPath="Path"
-                ItemsSource="{Binding Textures}"
-                SelectedItem="{Binding SourceTexture, Mode=TwoWay}" />
+                Margin="0,0,0,4"
+                Content="{tombLib:Localize UntextureCompletely}"
+                IsChecked="{Binding UntextureCompletely, Mode=TwoWay}"
+                KeyboardNavigation.TabIndex="0" />
 
-            <ComboBox
+            <CheckBox
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="0,0,0,4"
+                Content="{tombLib:Localize RestrictToSelectedRooms}"
+                IsChecked="{Binding RestrictToSelectedRooms, Mode=TwoWay}"
+                KeyboardNavigation.TabIndex="1" />
+
+            <CheckBox
+                Grid.Row="2"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="{tombLib:Localize RemapAnimTextures}"
+                IsChecked="{Binding RemapAnimTextures, Mode=TwoWay}"
+                KeyboardNavigation.TabIndex="2" />
+
+            <Label
+                Grid.Row="2"
                 Grid.Column="1"
-                DisplayMemberPath="Path"
-                IsEnabled="{Binding IsDestinationPanelEnabled}"
-                ItemsSource="{Binding Textures}"
-                SelectedItem="{Binding DestinationTexture, Mode=TwoWay}" />
-        </controls:SpacedGrid>
+                VerticalAlignment="Center"
+                Content="{tombLib:Localize Scaling}" />
+            <controls:NumericUpDown
+                Grid.Row="2"
+                Grid.Column="2"
+                Width="80"
+                Margin="4,0,0,0"
+                VerticalAlignment="Center"
+                DecimalPlaces="2"
+                FormatString="F2"
+                Increment="1"
+                KeyboardNavigation.TabIndex="3"
+                LargeIncrement="0.25"
+                Maximum="256"
+                Minimum="0.25"
+                Value="{Binding Scaling, Mode=TwoWay}" />
+        </Grid>
 
         <controls:SpacedGrid
             Grid.Row="2"
@@ -71,89 +105,64 @@
             </Grid.ColumnDefinitions>
 
             <GroupBox Grid.Column="0" Header="{tombLib:Localize SourceHeader}">
-                <local:TextureRemapMapView x:Name="SourceMapView" IsDestination="False" />
+                <controls:SpacedGrid RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <ComboBox
+                        Grid.Row="0"
+                        DisplayMemberPath="Path"
+                        ItemsSource="{Binding Textures}"
+                        SelectedItem="{Binding SourceTexture, Mode=TwoWay}" />
+                    <local:TextureRemapMapView
+                        x:Name="SourceMapView"
+                        Grid.Row="1"
+                        IsDestination="False" />
+                </controls:SpacedGrid>
             </GroupBox>
 
             <GroupBox
                 Grid.Column="1"
                 Header="{tombLib:Localize DestinationHeader}"
                 IsEnabled="{Binding IsDestinationPanelEnabled}">
-                <local:TextureRemapMapView x:Name="DestinationMapView" IsDestination="True" />
+                <controls:SpacedGrid RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <ComboBox
+                        Grid.Row="0"
+                        DisplayMemberPath="Path"
+                        ItemsSource="{Binding Textures}"
+                        SelectedItem="{Binding DestinationTexture, Mode=TwoWay}" />
+                    <local:TextureRemapMapView
+                        x:Name="DestinationMapView"
+                        Grid.Row="1"
+                        IsDestination="True" />
+                </controls:SpacedGrid>
             </GroupBox>
         </controls:SpacedGrid>
 
-        <controls:SpacedGrid
+        <controls:SpacedStack
             Grid.Row="3"
-            ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <Label
-                Grid.Column="0"
-                VerticalAlignment="Center"
-                Content="{tombLib:Localize Scaling}" />
-            <controls:NumericUpDown
-                Grid.Column="1"
-                Width="80"
-                VerticalAlignment="Center"
-                DecimalPlaces="2"
-                FormatString="F2"
-                Increment="1"
-                LargeIncrement="0.25"
-                Maximum="256"
-                Minimum="0.25"
-                Value="{Binding Scaling, Mode=TwoWay}" />
-
-            <CheckBox
-                Grid.Column="3"
-                VerticalAlignment="Center"
-                Content="{tombLib:Localize UntextureCompletely}"
-                IsChecked="{Binding UntextureCompletely, Mode=TwoWay}" />
-
-            <CheckBox
-                Grid.Column="4"
-                VerticalAlignment="Center"
-                Margin="{x:Static darkUI:Defaults.SmallThickness}"
-                Content="{tombLib:Localize RemapAnimTextures}"
-                IsChecked="{Binding RemapAnimTextures, Mode=TwoWay}" />
-        </controls:SpacedGrid>
-
-        <controls:SpacedGrid
-            Grid.Row="4"
-            ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <CheckBox
-                Grid.Column="0"
-                VerticalAlignment="Center"
-                Content="{tombLib:Localize RestrictToSelectedRooms}"
-                IsChecked="{Binding RestrictToSelectedRooms, Mode=TwoWay}" />
-
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
             <Button
-                Grid.Column="1"
-                Width="100"
+                Width="80"
                 Command="{Binding ApplyRemapCommand}"
                 Content="{tombLib:Localize Apply}"
                 IsDefault="True" />
 
             <Button
-                Grid.Column="2"
                 Width="80"
                 Command="{Binding CloseCommand}"
                 Content="{tombLib:Localize ~Common.Close}"
                 IsCancel="True" />
-        </controls:SpacedGrid>
+        </controls:SpacedStack>
 
-        <StatusBar Grid.Row="5">
+        <StatusBar Grid.Row="4">
             <StatusBarItem>
                 <TextBlock Text="{Binding StatusText}" />
             </StatusBarItem>

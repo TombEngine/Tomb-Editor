@@ -13,6 +13,7 @@
 	Height="270"
 	MinWidth="540"
 	MinHeight="270"
+	MaxHeight="270"
 	AllowDrop="True"
 	d:DataContext="{d:DesignInstance Type=vm:ReplaceObjectWindowViewModel}"
 	Background="{DynamicResource Brush_Background}"
@@ -85,31 +86,45 @@
 				Width="100"
 				Command="{Binding SelectSourceCommand}"
 				Content="{tombLib:Localize SelectInLevel}"
-				IsEnabled="{Binding IsSelectSourceEnabled}" />
+				IsEnabled="{Binding IsSelectSourceEnabled}"
+				KeyboardNavigation.TabIndex="0" />
 
-			<Label Grid.Row="2" Grid.Column="0" Content="{tombLib:Localize SearchType}" />
-			<ComboBox
-				Grid.Row="3"
+			<controls:SpacedGrid
+				Grid.Row="2"
 				Grid.Column="0"
 				Grid.ColumnSpan="3"
-				IsEnabled="{Binding IsSearchTypeEnabled}"
-				ItemsSource="{Binding SearchTypes}"
-				SelectedIndex="{Binding SelectedSearchTypeIndex, Mode=TwoWay}" />
+				ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Label
+					Grid.Column="0"
+					Width="76"
+					VerticalAlignment="Center"
+					Content="{tombLib:Localize SearchType}" />
+				<ComboBox
+					Grid.Column="1"
+					IsEnabled="{Binding IsSearchTypeEnabled}"
+					ItemsSource="{Binding SearchTypes}"
+					KeyboardNavigation.TabIndex="1"
+					SelectedIndex="{Binding SelectedSearchTypeIndex, Mode=TwoWay}" />
+			</controls:SpacedGrid>
 
 			<Label
-				Grid.Row="4"
+				Grid.Row="3"
 				Grid.Column="0"
 				Grid.ColumnSpan="3"
 				Content="{tombLib:Localize DestLabel}" />
 
 			<TextBox
 				x:Name="tbDest"
-				Grid.Row="5"
+				Grid.Row="4"
 				Grid.Column="0"
 				IsReadOnly="True"
 				Text="{Binding DestText}" />
 			<Border
-				Grid.Row="5"
+				Grid.Row="4"
 				Grid.Column="1"
 				Width="60"
 				Background="{Binding DestColor}"
@@ -121,22 +136,35 @@
 				</Border.InputBindings>
 			</Border>
 			<Button
-				Grid.Row="5"
+				Grid.Row="4"
 				Grid.Column="2"
 				Width="100"
 				Command="{Binding SelectDestCommand}"
 				Content="{tombLib:Localize SelectInLevel}"
-				IsEnabled="{Binding IsSelectDestEnabled}" />
+				IsEnabled="{Binding IsSelectDestEnabled}"
+				KeyboardNavigation.TabIndex="2" />
 
-			<Label Grid.Row="6" Grid.Column="0" Content="{tombLib:Localize ReplaceType}" />
-			<ComboBox
-				Grid.Row="6"
+			<controls:SpacedGrid
+				Grid.Row="5"
 				Grid.Column="0"
 				Grid.ColumnSpan="3"
-				Margin="0,20,0,0"
-				IsEnabled="{Binding IsReplaceTypeEnabled}"
-				ItemsSource="{Binding ReplaceTypes}"
-				SelectedIndex="{Binding SelectedReplaceTypeIndex, Mode=TwoWay}" />
+				ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Label
+					Grid.Column="0"
+					Width="76"
+					VerticalAlignment="Center"
+					Content="{tombLib:Localize ReplaceType}" />
+				<ComboBox
+					Grid.Column="1"
+					IsEnabled="{Binding IsReplaceTypeEnabled}"
+					ItemsSource="{Binding ReplaceTypes}"
+					KeyboardNavigation.TabIndex="3"
+					SelectedIndex="{Binding SelectedReplaceTypeIndex, Mode=TwoWay}" />
+			</controls:SpacedGrid>
 
 			<controls:SpacedGrid
 				Grid.Row="7"
@@ -156,30 +184,35 @@
 					Grid.Column="0"
 					VerticalAlignment="Center"
 					Content="{tombLib:Localize SelectedRoomsOnly}"
-					IsChecked="{Binding SelectedRoomsOnly}" />
+					IsChecked="{Binding SelectedRoomsOnly}"
+					KeyboardNavigation.TabIndex="4" />
 				<Button
 					Grid.Column="2"
-					Width="160"
-					Command="{Binding SwapSourceDestCommand}"
-					Content="{tombLib:Localize SwapSourceDest}" />
-				<Button
-					Grid.Column="3"
 					Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
 					Command="{Binding NewSearchCommand}"
+					Content="{tombLib:Localize NewSearch}"
 					IsDefault="True"
-					Content="{tombLib:Localize NewSearch}" />
+					KeyboardNavigation.TabIndex="5" />
+				<Button
+					Grid.Column="3"
+					Width="160"
+					Command="{Binding SwapSourceDestCommand}"
+					Content="{tombLib:Localize SwapSourceDest}"
+					KeyboardNavigation.TabIndex="6" />
 				<Button
 					Grid.Column="4"
 					Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
 					Command="{Binding ReplaceCommand}"
 					Content="{tombLib:Localize Replace}"
-					IsEnabled="{Binding IsReplaceEnabled}" />
+					IsEnabled="{Binding IsReplaceEnabled}"
+					KeyboardNavigation.TabIndex="7" />
 				<Button
 					Grid.Column="5"
 					Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
 					Command="{Binding CloseCommand}"
 					Content="{tombLib:Localize ~Common.Close}"
-					IsCancel="True" />
+					IsCancel="True"
+					KeyboardNavigation.TabIndex="8" />
 			</controls:SpacedGrid>
 		</controls:SpacedGrid>
 	</DockPanel>

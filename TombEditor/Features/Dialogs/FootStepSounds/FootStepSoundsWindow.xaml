@@ -35,9 +35,13 @@
             Grid.Row="0"
             DisplayMemberPath="Path"
             ItemsSource="{Binding Textures}"
+            KeyboardNavigation.TabIndex="22"
             SelectedItem="{Binding SelectedTexture, Mode=TwoWay}" />
 
-        <local:FootStepSoundsTextureMapView x:Name="mapView" Grid.Row="1" />
+        <local:FootStepSoundsTextureMapView
+            x:Name="mapView"
+            Grid.Row="1"
+            KeyboardNavigation.TabIndex="0" />
 
         <controls:SpacedGrid
             Grid.Row="2"
@@ -52,6 +56,7 @@
                 Grid.Column="0"
                 VerticalAlignment="Center"
                 ItemsSource="{Binding SoundTypes}"
+                KeyboardNavigation.TabIndex="1"
                 SelectedIndex="{Binding SelectedSoundIndex, Mode=TwoWay}" />
 
             <Button
@@ -59,7 +64,8 @@
                 Width="100"
                 Command="{Binding AssignSoundCommand}"
                 Content="{tombLib:Localize AssignSound}"
-                IsEnabled="{Binding CanAssign}" />
+                IsEnabled="{Binding CanAssign}"
+                KeyboardNavigation.TabIndex="2" />
 
             <Button
                 Grid.Column="2"
@@ -67,7 +73,8 @@
                 Command="{Binding ConfirmCommand}"
                 Content="{tombLib:Localize ~Common.OK}"
                 IsCancel="True"
-                IsDefault="True" />
+                IsDefault="True"
+                KeyboardNavigation.TabIndex="3" />
         </controls:SpacedGrid>
     </controls:SpacedGrid>
 </Window>

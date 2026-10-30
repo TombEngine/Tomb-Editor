@@ -7,6 +7,7 @@
     xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.ToolBarLayout"
     Title="{tombLib:Localize Title}"
@@ -60,23 +61,31 @@
             MouseDoubleClick="AvailableList_MouseDoubleClick"
             SelectedItem="{Binding SelectedAvailable, Mode=TwoWay}" />
 
-        <controls:SpacedStack
+        <controls:SpacedGrid
             Grid.Row="1"
             Grid.Column="1"
-            VerticalAlignment="Center"
-            Orientation="Vertical"
-            Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
             <Button
-                Width="32"
+                Grid.Row="0"
+                Width="30"
                 Command="{Binding AddCommand}"
-                Content="&gt;"
-                ToolTip="{tombLib:Localize AddTooltip}" />
+                Style="{DynamicResource ButtonWithIconOnly}"
+                ToolTip="{tombLib:Localize AddTooltip}">
+                <Image Source="{tomb:Icon General/angle_right}" />
+            </Button>
             <Button
-                Width="32"
+                Grid.Row="1"
+                Width="30"
                 Command="{Binding RemoveCommand}"
-                Content="&lt;"
-                ToolTip="{tombLib:Localize RemoveTooltip}" />
-        </controls:SpacedStack>
+                Style="{DynamicResource ButtonWithIconOnly}"
+                ToolTip="{tombLib:Localize RemoveTooltip}">
+                <Image Source="{tomb:Icon General/angle_left}" />
+            </Button>
+        </controls:SpacedGrid>
 
         <ListBox
             Grid.Row="1"
@@ -93,15 +102,19 @@
             Orientation="Vertical"
             Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
             <Button
-                Width="32"
+                Width="30"
                 Command="{Binding MoveUpCommand}"
-                Content="&#x25b2;"
-                ToolTip="{tombLib:Localize MoveUpTooltip}" />
+                Style="{DynamicResource ButtonWithIconOnly}"
+                ToolTip="{tombLib:Localize MoveUpTooltip}">
+                <Image Source="{tomb:Icon General/ArrowUp}" />
+            </Button>
             <Button
-                Width="32"
+                Width="30"
                 Command="{Binding MoveDownCommand}"
-                Content="&#x25bc;"
-                ToolTip="{tombLib:Localize MoveDownTooltip}" />
+                Style="{DynamicResource ButtonWithIconOnly}"
+                ToolTip="{tombLib:Localize MoveDownTooltip}">
+                <Image Source="{tomb:Icon General/ArrowDown}" />
+            </Button>
         </controls:SpacedStack>
 
         <Grid

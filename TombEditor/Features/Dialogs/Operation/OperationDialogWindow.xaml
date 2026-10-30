@@ -70,22 +70,24 @@
             Value="{Binding Progress}"
             Visibility="{Binding IsProgressVisible, Converter={StaticResource BoolToVis}}" />
 
-        <controls:SpacedStack
+        <controls:SpacedGrid
             Grid.Row="2"
-            HorizontalAlignment="Right"
-            Orientation="Horizontal"
-            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
             <Button
                 x:Name="okButton"
-                Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+                Grid.Column="0"
                 Command="{Binding OkCommand}"
                 Content="{tombLib:Localize ~Common.OK}"
                 IsDefault="True" />
             <Button
-                Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+                Grid.Column="1"
                 Command="{Binding CancelCommand}"
                 Content="{tombLib:Localize ~Common.Cancel}"
                 IsCancel="True" />
-        </controls:SpacedStack>
+        </controls:SpacedGrid>
     </controls:SpacedGrid>
 </Window>

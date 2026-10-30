@@ -46,6 +46,8 @@
 			</Grid.ColumnDefinitions>
 			<Label
 				Grid.Column="0"
+				Width="84"
+				HorizontalContentAlignment="Right"
 				VerticalAlignment="Center"
 				Content="{tombLib:Localize Keyword}" />
 			<TextBox
@@ -64,6 +66,8 @@
 			</Grid.ColumnDefinitions>
 			<Label
 				Grid.Column="0"
+				Width="84"
+				HorizontalContentAlignment="Right"
 				VerticalAlignment="Center"
 				Content="{tombLib:Localize Scope}" />
 			<ComboBox
@@ -75,6 +79,7 @@
 		</controls:SpacedGrid>
 
 		<DataGrid
+			x:Name="resultsGrid"
 			Grid.Row="2"
 			AutoGenerateColumns="False"
 			CanUserAddRows="False"

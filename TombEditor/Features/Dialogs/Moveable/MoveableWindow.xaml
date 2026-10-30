@@ -8,10 +8,12 @@
     xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.Moveable"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     Title="{tombLib:Localize Title}"
     d:DataContext="{d:DesignInstance Type=vm:MoveableWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
+    FocusManager.FocusedElement="{Binding ElementName=ocbBox}"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     SizeToContent="WidthAndHeight"
@@ -59,44 +61,57 @@
             <CheckBox Content="{Binding ClearBodyLabel}" IsChecked="{Binding ClearBody, Mode=TwoWay}" />
         </controls:SpacedStack>
 
-        <Label
+        <controls:SpacedGrid
             Grid.Row="1"
             Grid.Column="0"
-            VerticalAlignment="Center"
-            Content="{tombLib:Localize Ocb}" />
-        <TextBox
-            Grid.Row="1"
-            Grid.Column="1"
-            VerticalAlignment="Center"
-            IsEnabled="{Binding IsOcbEnabled}"
-            PreviewTextInput="OcbTextBox_PreviewTextInput" Text="{Binding OcbText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            Grid.ColumnSpan="2"
+            ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="{tombLib:Localize Ocb}" />
+            <TextBox
+                x:Name="ocbBox"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                IsEnabled="{Binding IsOcbEnabled}"
+                KeyboardNavigation.TabIndex="0"
+                PreviewTextInput="OcbTextBox_PreviewTextInput"
+                Text="{Binding OcbText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </controls:SpacedGrid>
 
-        <Label
+        <controls:SpacedGrid
             Grid.Row="2"
             Grid.Column="0"
-            VerticalAlignment="Center"
-            Content="{tombLib:Localize Color}"
-            Visibility="{Binding CanBeColored, Converter={StaticResource BoolToVis}}" />
-        <Grid
-            Grid.Row="2"
-            Grid.Column="1"
+            Grid.ColumnSpan="2"
+            ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}"
             Visibility="{Binding CanBeColored, Converter={StaticResource BoolToVis}}">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <controls:ColorPickerButton
+            <Label
                 Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="{tombLib:Localize Color}" />
+            <controls:ColorPickerButton
+                Grid.Column="1"
                 Height="24"
                 Command="{Binding PickColorCommand}"
                 SelectedColor="{Binding DisplayColor, Mode=TwoWay}" />
             <Button
-                Grid.Column="1"
-                Width="80"
-                Margin="{x:Static darkUI:Defaults.SmallThickness}"
+                Grid.Column="2"
                 Command="{Binding ResetTintCommand}"
-                Content="{tombLib:Localize ResetTint}" />
-        </Grid>
+                Style="{DynamicResource ButtonWithIconOnly}"
+                ToolTip="{tombLib:Localize ResetTint}">
+                <Image Source="{tomb:Icon General/undo}" />
+            </Button>
+        </controls:SpacedGrid>
 
         <controls:SpacedStack
             Grid.Row="3"

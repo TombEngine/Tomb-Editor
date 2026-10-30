@@ -34,31 +34,31 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="240" />
         </Grid.ColumnDefinitions>
 
-        <GroupBox
+        <ItemsControl
             Grid.Row="0"
-            Grid.Column="0"
-            Header="{tombLib:Localize FlagsHeader}">
-            <ItemsControl Margin="{x:Static darkUI:Defaults.SmallThickness}" ItemsSource="{Binding Flags}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <controls:SpacedStack Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <CheckBox Content="{Binding Label}" IsChecked="{Binding IsChecked, Mode=TwoWay}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </GroupBox>
+            Grid.Column="1"
+            ItemsSource="{Binding Flags}"
+            KeyboardNavigation.TabIndex="1">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <controls:SpacedStack Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox Content="{Binding Label}" IsChecked="{Binding IsChecked, Mode=TwoWay}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
         <controls:SpacedGrid
             Grid.Row="0"
-            Grid.Column="1"
+            Grid.Column="0"
+            KeyboardNavigation.TabIndex="0"
             ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}"
             RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
 

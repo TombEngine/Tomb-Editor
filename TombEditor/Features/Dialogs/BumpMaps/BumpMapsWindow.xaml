@@ -36,9 +36,13 @@
             Grid.Row="0"
             DisplayMemberPath="Path"
             ItemsSource="{Binding Textures}"
+            KeyboardNavigation.TabIndex="21"
             SelectedItem="{Binding SelectedTexture, Mode=TwoWay}" />
 
-        <local:BumpMapsTextureMapView x:Name="mapView" Grid.Row="1" />
+        <local:BumpMapsTextureMapView
+            x:Name="mapView"
+            Grid.Row="1"
+            KeyboardNavigation.TabIndex="0" />
 
         <controls:SpacedGrid
             Grid.Row="2"
@@ -55,7 +59,8 @@
                 Content="{tombLib:Localize UseCustomFile}"
                 IsChecked="{Binding IsCustomMapped, Mode=OneWay}"
                 IsEnabled="{Binding HasSelectedTexture}"
-                IsHitTestVisible="True" />
+                IsHitTestVisible="True"
+                KeyboardNavigation.TabIndex="1" />
             <TextBlock
                 Grid.Column="1"
                 VerticalAlignment="Center"
@@ -78,6 +83,7 @@
                 Grid.Column="0"
                 VerticalAlignment="Center"
                 IsEnabled="{Binding IsAssignEnabled}"
+                KeyboardNavigation.TabIndex="2"
                 ItemsSource="{Binding Levels}"
                 SelectedItem="{Binding SelectedLevel, Mode=TwoWay}" />
 
@@ -86,7 +92,8 @@
                 Width="120"
                 Command="{Binding AssignBumpMapCommand}"
                 Content="{tombLib:Localize AssignBumpmap}"
-                IsEnabled="{Binding IsAssignEnabled}" />
+                IsEnabled="{Binding IsAssignEnabled}"
+                KeyboardNavigation.TabIndex="3" />
 
             <Button
                 Grid.Column="2"
@@ -94,7 +101,8 @@
                 Command="{Binding ConfirmCommand}"
                 Content="{tombLib:Localize ~Common.OK}"
                 IsCancel="True"
-                IsDefault="True" />
+                IsDefault="True"
+                KeyboardNavigation.TabIndex="4" />
         </controls:SpacedGrid>
     </controls:SpacedGrid>
 </Window>

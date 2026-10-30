@@ -13,7 +13,7 @@
     Title="{Binding Title}"
     Width="980"
     Height="640"
-    MinWidth="760"
+    MinWidth="930"
     MinHeight="460"
     d:DataContext="{d:DesignInstance Type=local:EventSetEditorWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
