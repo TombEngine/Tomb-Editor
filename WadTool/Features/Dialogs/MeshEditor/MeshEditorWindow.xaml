@@ -137,6 +137,36 @@
                 Orientation="Vertical"
                 Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
 
+                <!--  Texture map + texture list  -->
+                <GroupBox Header="Texture">
+                    <StackPanel>
+                        <Border
+                            Height="300"
+                            BorderBrush="{DynamicResource Brush_Border}"
+                            BorderThickness="1">
+                            <wadControls:PanelTextureMap x:Name="textureMap" />
+                        </Border>
+                        <ComboBox Margin="0,6,0,0" ItemsSource="{Binding Textures}" SelectedItem="{Binding SelectedTexture, Mode=TwoWay}" />
+                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
+                            <CheckBox VerticalAlignment="Center" Content="All textures" IsChecked="{Binding AllTextures, Mode=TwoWay}" Visibility="{Binding ShowAllTexturesButton, Converter={StaticResource BoolToVis}}" />
+                            <Button Width="56" Command="{Binding ExportTextureCommand}" Content="Export" />
+                            <Button Width="56" Command="{Binding DeleteTextureCommand}" Content="Delete" />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
+                            <Button Width="74" Command="{Binding AddEmbeddedTextureCommand}" Content="Add emb." />
+                            <Button Width="74" Command="{Binding AddExternalTextureCommand}" Content="Add ext." />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
+                            <Button Width="74" Command="{Binding ReplaceEmbeddedTextureCommand}" Content="Repl. emb." />
+                            <Button Width="74" Command="{Binding ReplaceExternalTextureCommand}" Content="Repl. ext." />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
+                            <Button Width="100" Command="{Binding MaterialEditorCommand}" Content="Material editor" IsEnabled="{Binding MaterialEditorEnabled}" />
+                            <Button Width="100" Command="{Binding AnimationRangesCommand}" Content="Anim ranges" Visibility="{Binding ShowTextureTools, Converter={StaticResource BoolToVis}}" />
+                        </controls:SpacedStack>
+                    </StackPanel>
+                </GroupBox>
+
                 <ComboBox SelectedIndex="{Binding EditingModeIndex, Mode=TwoWay}">
                     <ComboBoxItem Content="Face attributes" />
                     <ComboBoxItem Content="Vertex remap" />
@@ -254,35 +284,7 @@
                     </StackPanel>
                 </GroupBox>
 
-                <!--  Texture map + texture list  -->
-                <GroupBox Header="Texture">
-                    <StackPanel>
-                        <Border
-                            Height="220"
-                            BorderBrush="{DynamicResource Brush_Border}"
-                            BorderThickness="1">
-                            <wadControls:PanelTextureMap x:Name="textureMap" />
-                        </Border>
-                        <ComboBox Margin="0,6,0,0" ItemsSource="{Binding Textures}" SelectedItem="{Binding SelectedTexture, Mode=TwoWay}" />
-                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
-                            <CheckBox VerticalAlignment="Center" Content="All textures" IsChecked="{Binding AllTextures, Mode=TwoWay}" Visibility="{Binding ShowAllTexturesButton, Converter={StaticResource BoolToVis}}" />
-                            <Button Width="56" Command="{Binding ExportTextureCommand}" Content="Export" />
-                            <Button Width="56" Command="{Binding DeleteTextureCommand}" Content="Delete" />
-                        </controls:SpacedStack>
-                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
-                            <Button Width="74" Command="{Binding AddEmbeddedTextureCommand}" Content="Add emb." />
-                            <Button Width="74" Command="{Binding AddExternalTextureCommand}" Content="Add ext." />
-                        </controls:SpacedStack>
-                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
-                            <Button Width="74" Command="{Binding ReplaceEmbeddedTextureCommand}" Content="Repl. emb." />
-                            <Button Width="74" Command="{Binding ReplaceExternalTextureCommand}" Content="Repl. ext." />
-                        </controls:SpacedStack>
-                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
-                            <Button Width="100" Command="{Binding MaterialEditorCommand}" Content="Material editor" IsEnabled="{Binding MaterialEditorEnabled}" />
-                            <Button Width="100" Command="{Binding AnimationRangesCommand}" Content="Anim ranges" Visibility="{Binding ShowTextureTools, Converter={StaticResource BoolToVis}}" />
-                        </controls:SpacedStack>
-                    </StackPanel>
-                </GroupBox>
+
             </controls:SpacedStack>
         </ScrollViewer>
 
