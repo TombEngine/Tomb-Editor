@@ -758,6 +758,9 @@ namespace TombEditor
         // This is invoked when level statistics change.
         public class StatisticsChangedEvent : IEditorEvent { }
         private Task _statsTask;
+        private readonly object _statsPendingLock = new object();
+        private bool _statsPending;
+        private bool _statsPendingOnlyRoom = true;
 
         // Move the camera to the center of a specific sector.
         public class MoveCameraToSectorEvent : IEditorCameraEvent
@@ -1362,12 +1365,28 @@ namespace TombEditor
                 _statsTask.Status == TaskStatus.Running ||
                 _statsTask.Status == TaskStatus.WaitingToRun ||
                 _statsTask.Status == TaskStatus.WaitingForActivation))
+            {
+                // Remember the request: the running pass may have started before the last change (for example before
+                // the selected room was set while a level is loading) and would leave stale numbers.
+                lock (_statsPendingLock)
+                {
+                    _statsPending = true;
+                    _statsPendingOnlyRoom &= onlyRoom;
+                }
+
                 return;
+            }
 
             // Parallelize stats collection to speed up things
 
             _statsTask = Task.Factory.StartNew(() =>
             {
+                bool again;
+
+                do
+                {
+                again = false;
+
                 // Wrap updating into try-catch block to ignore stats updating
                 // in case there's race condition which is unlikely from tests
 
@@ -1475,6 +1494,19 @@ namespace TombEditor
                 {
                     logger.Warn("Statistics update collision, data was updated faster than stats collection.");
                 }
+
+                lock (_statsPendingLock)
+                {
+                    if (_statsPending)
+                    {
+                        onlyRoom = _statsPendingOnlyRoom;
+                        _statsPending = false;
+                        _statsPendingOnlyRoom = true;
+                        again = true;
+                    }
+                }
+                }
+                while (again);
             });
         }
 

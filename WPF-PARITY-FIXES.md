@@ -138,6 +138,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Palette panel: opening a real TombEngine level crashed with an unhandled NullReferenceException (the texture palette was read from a missing texture, in both the view and the view model); also removed a stray SizeChanged subscription that was added on every palette reset. Found by opening a real level in the WPF editor | Crash on opening levels | (this commit) |
 
+| Statistics bar: when a level was opened the room counters could stay at 0 because a statistics pass already running discarded the newer request (selected room not yet set). The request is now remembered and the pass repeated. Opened a real TombEngine level on screen: Objects now 1 / 167 as in WinForms (before 0 / 167). The same race exists in the WinForms editor but its timing hides it | Wrong room statistics | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
