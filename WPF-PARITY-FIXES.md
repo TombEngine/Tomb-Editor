@@ -142,6 +142,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Event set editor compared on screen with the WinForms dialog on a real TombEngine level: list buttons in the WinForms order (new, folder, copy, delete, search), no "Event sets:" label, default size 930x500, node editor area shown (disabled) before a set is selected. Open: WinForms puts the node toolbar (Action, Condition, icons, Call count, Enable) at the bottom of the node area, the WPF editor keeps its toolbar on top with a function box and labelled buttons | Layout | (this commit) |
 
+| Moveable ("Object") dialog compared on screen with the WinForms editor on a real TombEngine level (PUZZLE_HOLE3): same layout (bits, invisible, no reflection, OCB, tint with reset icon, OK and Cancel). Only difference: the WinForms OCB box selects its text on open, the WPF box shows the caret. Also confirmed on this level: statistics bar, status line, texture and wad loading, Edit menu | Verified side by side | n/a |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
