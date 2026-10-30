@@ -3,9 +3,12 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LevelSettingsData = TombLib.LevelData.LevelSettings;
+using System.ComponentModel;
+using System.Windows.Media.Imaging;
 using TombLib.GeometryIO;
 using TombLib.LevelData;
 using TombLib.WPF;
+using TombLib.WPF.Imaging;
 using TombLib.WPF.Services;
 
 namespace TombEditor.Features.Dialogs.LevelSettings
@@ -24,6 +27,8 @@ namespace TombEditor.Features.Dialogs.LevelSettings
     public partial class TextureRow : ReloadableRow
     {
         private readonly LevelSettingsData _settings;
+        private BitmapSource? _preview;
+
         public LevelTexture Texture { get; private set; }
 
         /// <summary>Gets whether the texture is loaded and can be shown in the preview window.</summary>
@@ -34,6 +39,9 @@ namespace TombEditor.Features.Dialogs.LevelSettings
             _settings = settings;
             Texture = texture;
         }
+
+        /// <summary>Gets a small thumbnail of the texture, or null if it is not loaded.</summary>
+        public BitmapSource? Preview => _preview ??= Texture.IsAvailable && Texture.LoadException is null ? ImageSourceFactory.FromImage(Texture.Image) : null;
 
         public string Path
         {
@@ -81,6 +89,17 @@ namespace TombEditor.Features.Dialogs.LevelSettings
 
         public string Message => Texture.LoadException == null ? LevelSettingsStrings.Get("StatusLoaded") : Texture.LoadException.Message + " (" + Texture.LoadException.GetType().Name + ")";
         public string Size => Texture.LoadException != null || Texture.Image == TombLib.Utils.Texture.UnloadedPlaceholder ? "-" : Texture.Image.Width + " x " + Texture.Image.Height;
+
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(e.PropertyName) || e.PropertyName is nameof(Path) or nameof(ReplaceMagentaWithTransparency) or nameof(Convert512PixelsToDoubleRows))
+            {
+                _preview = null;
+                base.OnPropertyChanged(new PropertyChangedEventArgs(nameof(Preview)));
+            }
+
+            base.OnPropertyChanged(e);
+        }
 
         [RelayCommand]
         private void Browse() => ReloadFromNewFile(_settings, Texture);
@@ -183,9 +202,9 @@ namespace TombEditor.Features.Dialogs.LevelSettings
     public partial class SoundInfoRow : ObservableObject
     {
         private readonly System.Collections.Generic.List<int> _selectedSounds;
-        private readonly System.Action _onSelectionChanged;
+        private readonly System.Action? _onSelectionChanged;
 
-        public SoundInfoRow(System.Collections.Generic.List<int> selectedSounds, System.Action onSelectionChanged,
+        public SoundInfoRow(System.Collections.Generic.List<int> selectedSounds, System.Action? onSelectionChanged,
             int id, string name, string catalog, string samples, string area, int originalId, bool isMissing)
         {
             _selectedSounds = selectedSounds;
@@ -220,7 +239,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
                 else
                     _selectedSounds.Remove(Id);
                 OnPropertyChanged();
-                _onSelectionChanged();
+                _onSelectionChanged?.Invoke();
             }
         }
     }

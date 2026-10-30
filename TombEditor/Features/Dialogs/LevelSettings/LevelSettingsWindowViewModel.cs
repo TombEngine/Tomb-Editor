@@ -418,7 +418,6 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         public bool RemapAnimatedTextures { get => _settings.RemapAnimatedTextures; set => SetSetting(_settings.RemapAnimatedTextures, value, v => _settings.RemapAnimatedTextures = v); }
         public bool RearrangeVerticalRooms { get => _settings.RearrangeVerticalRooms; set => SetSetting(_settings.RearrangeVerticalRooms, value, v => _settings.RearrangeVerticalRooms = v); }
         public bool RemoveUnusedObjects { get => _settings.RemoveUnusedObjects; set => SetSetting(_settings.RemoveUnusedObjects, value, v => _settings.RemoveUnusedObjects = v); }
-        public bool OverrideIndividualLightQualitySettings { get => _settings.OverrideIndividualLightQualitySettings; set => SetSetting(_settings.OverrideIndividualLightQualitySettings, value, v => _settings.OverrideIndividualLightQualitySettings = v); }
         public bool AutoAssignSoundsIfNoSelection { get => _settings.AutoAssignSoundsIfNoSelection; set => SetSetting(_settings.AutoAssignSoundsIfNoSelection, value, v => _settings.AutoAssignSoundsIfNoSelection = v); }
 
         public bool EnableCustomSampleRate
@@ -573,8 +572,6 @@ namespace TombEditor.Features.Dialogs.LevelSettings
 
         public ObservableCollection<SoundInfoRow> SoundInfos { get; } = new();
 
-        [ObservableProperty] private string _soundStatistics = string.Empty;
-
         private string _soundFilter = string.Empty;
         public string SoundFilter { get => _soundFilter; set { if (SetProperty(ref _soundFilter, value)) PopulateSoundInfoList(); } }
 
@@ -630,7 +627,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
                 string area = GetNgDescription(info.Id, out int originalId);
                 int sampleCount = info.SampleCount(_settings, paths);
                 string samples = sampleCount == 0 ? _localizationService["SamplesMissing"] : sampleCount == -1 ? _localizationService["SamplesNone"] : sampleCount.ToString();
-                rows.Add(new SoundInfoRow(_settings.SelectedSounds, UpdateSoundStatistics, info.Id, info.Name, info.SoundCatalog, samples, area, originalId, sampleCount == 0));
+                rows.Add(new SoundInfoRow(_settings.SelectedSounds, null, info.Id, info.Name, info.SoundCatalog, samples, area, originalId, sampleCount == 0));
             }
 
             foreach (var missing in _settings.SelectedAndMissingSounds)
@@ -640,20 +637,11 @@ namespace TombEditor.Features.Dialogs.LevelSettings
                     continue;
 
                 string area = GetNgDescription(missing, out int originalId);
-                rows.Add(new SoundInfoRow(_settings.SelectedSounds, UpdateSoundStatistics, missing, name, _localizationService["CatalogNotPresent"], string.Empty, area, originalId, true));
+                rows.Add(new SoundInfoRow(_settings.SelectedSounds, null, missing, name, _localizationService["CatalogNotPresent"], string.Empty, area, originalId, true));
             }
 
             foreach (var row in rows.OrderBy(row => row.Id))
                 SoundInfos.Add(row);
-
-            UpdateSoundStatistics();
-        }
-
-        private void UpdateSoundStatistics()
-        {
-            int missing = _settings.SelectedAndMissingSounds.Count;
-            SoundStatistics = _localizationService.Format("SoundStatisticsFormat", _settings.GlobalSoundMap.Count, _settings.SelectedSounds.Count) +
-                              (missing == 0 ? string.Empty : _localizationService.Format("SoundStatisticsMissingFormat", missing));
         }
 
         private string GetNgDescription(int id, out int originalId)
