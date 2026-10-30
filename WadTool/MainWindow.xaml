@@ -308,7 +308,7 @@
                         <tombLibControls:WadTreeView
                             x:Name="treeDestWad"
                             Padding="3"
-                            Background="{DynamicResource Brush_Background_Low}" />
+                            Background="{DynamicResource Brush_Background}" />
                     </DockPanel>
                 </Border>
             </DockPanel>
@@ -422,7 +422,7 @@
                         <tombLibControls:WadTreeView
                             x:Name="treeSourceWad"
                             Padding="3"
-                            Background="{DynamicResource Brush_Background_Low}" />
+                            Background="{DynamicResource Brush_Background}" />
                     </DockPanel>
                 </Border>
             </DockPanel>

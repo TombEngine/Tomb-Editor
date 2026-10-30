@@ -133,5 +133,8 @@ Each maps to the `*Window.xaml` of the same name under `TombEditor/Features/Dial
   - Verified live: details pane population on selection, hint under Mode, copy/paste through the list.
 - Intentional divergences (to be confirmed): dark custom title bar instead of the system accent color; details pane always visible but disabled when nothing is selected; Stop preview button added; Index/Unindex all marks the catalog as changed (WinForms did not); compile/unpack iterate sounds ordered by ID (WinForms used grid order); Ctrl+C/V are bound to the sound list only so text boxes keep normal clipboard behavior.
 - Still open: Options window has no "Apply" and no "Set page to default" (and no page list); File menu labels differ from WinForms ("New XML", "Open XML, TXT or SFX...", "Save XML"); Play with no reference project is disabled instead of hidden; double-click preview requires a loaded reference project; MAIN.SFX build/unpack and the unsaved-changes prompt on window close were not driven live (build/unpack/close are covered only by code reading and the cancel-save unit tests).
-### WadTool main window - first look
-- Background and palette now match. Remaining checks: panel headers, bottom action buttons, status bar, toolbar spacing, and the functional inventory.
+### WadTool main window - visual pass (2026-10-30), functional pass PENDING
+- Compared with `TombEngine.wad2` loaded in both builds. Layout, toolbar, panel headers, bottom buttons, status bar and 3D viewport color already match closely.
+- Fixed: destination and source wad trees used `Brush_Background_Low` (#313335) while WinForms uses the panel color (#3C3F41); now `Brush_Background`.
+- Left as S3: WPF tree rows are about 3 px denser than WinForms; WPF toolbar buttons have visible borders; the WinForms destination panel header is highlighted when active; WPF shows the saved reference project name in the toolbar (data, not a defect).
+- Functional inventory of `FormMain` (WadTool) is the next step.
