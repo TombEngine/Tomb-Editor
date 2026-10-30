@@ -74,8 +74,17 @@ public partial class RoomsViewModel : ObservableObject
             int index = Rooms.IndexOf(propsChanged.Room);
             if (index >= 0)
             {
-                Rooms.RemoveAt(index);
-                Rooms.Insert(index, propsChanged.Room);
+                _suppressEditorSync = true;
+                try
+                {
+                    Rooms.RemoveAt(index);
+                    Rooms.Insert(index, propsChanged.Room);
+                    SelectedRoom = _editor.SelectedRoom;
+                }
+                finally
+                {
+                    _suppressEditorSync = false;
+                }
             }
         }
     }

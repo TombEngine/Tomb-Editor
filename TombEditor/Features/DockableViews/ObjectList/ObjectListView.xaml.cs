@@ -14,6 +14,11 @@ public partial class ObjectListView : UserControl
 		InitializeComponent();
 		_viewModel = new ObjectListViewModel(Editor.Instance);
 		DataContext = _viewModel;
+		_viewModel.PropertyChanged += (_, e) =>
+		{
+			if (e.PropertyName == nameof(ObjectListViewModel.SelectedItem) && _viewModel.SelectedItem is { } selected)
+				ObjectsList.ScrollIntoView(selected);
+		};
 	}
 
 	public void Cleanup() => _viewModel.Cleanup();

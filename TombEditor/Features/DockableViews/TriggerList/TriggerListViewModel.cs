@@ -22,6 +22,9 @@ public partial class TriggerListViewModel : ObservableObject
 
     public ObservableCollection<TriggerEntry> Triggers { get; } = new();
 
+    /// <summary>Gets or sets all triggers highlighted in the list (the list allows multi-selection).</summary>
+    public IReadOnlyList<TriggerEntry> SelectedItems { get; set; } = [];
+
     private TriggerEntry? _selectedItem;
     public TriggerEntry? SelectedItem
     {
@@ -63,7 +66,7 @@ public partial class TriggerListViewModel : ObservableObject
             () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWindowOwner() });
 
         EditTriggerCommand = new RelayCommand(EditSelected, () => SelectedItem is not null);
-        DeleteTriggersCommand = new RelayCommand(DeleteSelected, () => SelectedItem is not null);
+        DeleteTriggersCommand = new RelayCommand(DeleteSelected, () => SelectedItem is not null || SelectedItems.Count > 0);
     }
 
     public void Cleanup()
@@ -164,9 +167,15 @@ public partial class TriggerListViewModel : ObservableObject
 
     private void DeleteSelected()
     {
-        if (SelectedItem?.Trigger is not { } trigger)
+        if (_editor.SelectedRoom is null)
             return;
 
-        EditorActions.DeleteObjects(new ObjectInstance[] { trigger }, WPFUtils.GetWindowOwner());
+        var triggers = SelectedItems.Count > 0 ? SelectedItems.Select(item => item.Trigger) : [SelectedItem?.Trigger];
+        var toRemove = triggers.OfType<ObjectInstance>().ToList();
+        if (toRemove.Count > 0)
+            EditorActions.DeleteObjects(toRemove, WPFUtils.GetWindowOwner());
     }
+
+    /// <summary>Re-evaluates the delete command after the list selection changed.</summary>
+    public void NotifySelectionChanged() => ((RelayCommand)DeleteTriggersCommand).NotifyCanExecuteChanged();
 }

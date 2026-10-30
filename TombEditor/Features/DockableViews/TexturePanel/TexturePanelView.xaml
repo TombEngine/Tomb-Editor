@@ -83,13 +83,14 @@
 					<ColumnDefinition Width="Auto" />
 				</Grid.ColumnDefinitions>
 
-				<Button
+				<ToggleButton
 					Grid.Column="0"
 					Command="{Binding SetDoubleSidedCommand}"
-					Style="{DynamicResource ButtonWithIconOnly}"
+					IsChecked="{Binding IsDoubleSided, Mode=OneWay}"
+					Style="{DynamicResource ToggleButtonWithIconOnly}"
 					ToolTip="Toggle double-sided">
 					<Image Source="{tomb:Icon Texture/DoubleSided_1}" />
-				</Button>
+				</ToggleButton>
 
 				<ComboBox
 					Grid.Column="1"

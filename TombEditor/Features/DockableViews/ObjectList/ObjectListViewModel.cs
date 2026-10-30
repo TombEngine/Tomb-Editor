@@ -11,18 +11,20 @@ using TombLib.WPF;
 
 namespace TombEditor.Features.DockableViews.ObjectList;
 
-public sealed class ObjectEntry
+public sealed class ObjectEntry : ObservableObject
 {
+    private string _text;
+
     public ObjectInstance Instance { get; }
-    public string Text { get; private set; }
+    public string Text => _text;
 
     public ObjectEntry(ObjectInstance instance)
     {
         Instance = instance;
-        Text = instance.ToShortString();
+        _text = instance.ToShortString();
     }
 
-    public void RefreshText() => Text = Instance.ToShortString();
+    public void RefreshText() => SetProperty(ref _text, Instance.ToShortString(), nameof(Text));
 }
 
 public partial class ObjectListViewModel : ObservableObject
@@ -112,10 +114,8 @@ public partial class ObjectListViewModel : ObservableObject
                         var toUpdate = Objects.FirstOrDefault(o => o.Instance == e.Object);
                         if (toUpdate is not null)
                         {
-                            // ObservableCollection cannot detect in-place mutation; replace the entry
-                            // so the bound TextBlock re-evaluates Text.
-                            var index = Objects.IndexOf(toUpdate);
-                            Objects[index] = new ObjectEntry(e.Object);
+                            // Update the text in place so the list keeps its selection.
+                            toUpdate.RefreshText();
                         }
                         else
                         {

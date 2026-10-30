@@ -59,6 +59,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         _menuState = new MainMenuStateUpdater(_editor, mainMenu, stepHeightSeparator);
         InitializeShell();
+        triggerListView.TitleChanged += (_, _) => UpdateTriggerListTitle();
         WindowConfiguration.ConfigureWindow(this, _editor.Configuration, "FormMain");
 
         // The native WPF viewport owns the Direct3D swap chain and input.
@@ -506,6 +507,12 @@ public partial class MainWindow : Window
 
         anchorable.IsActive = true;
         focusSearch();
+    }
+
+    private void UpdateTriggerListTitle()
+    {
+        if (FindAnchorable("triggerList") is { } anchorable)
+            anchorable.Title = triggerListView.Title;
     }
 
     private void EditMenu_SubmenuOpened(object sender, RoutedEventArgs e) => _menuState.UpdatePaste();

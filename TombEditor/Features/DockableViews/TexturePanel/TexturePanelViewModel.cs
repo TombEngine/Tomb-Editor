@@ -131,6 +131,15 @@ public partial class TexturePanelViewModel : ObservableObject
     public ICommand RotateCommand { get; }
     public ICommand MirrorCommand { get; }
     public ICommand SetDoubleSidedCommand { get; }
+
+    private bool _isDoubleSided;
+
+    /// <summary>Gets whether the selected texture is double-sided (checked state of the toggle).</summary>
+    public bool IsDoubleSided
+    {
+        get => _isDoubleSided;
+        private set => SetProperty(ref _isDoubleSided, value);
+    }
     public ICommand EditAnimationRangesCommand { get; }
     public ICommand TextureSoundsCommand { get; }
     public ICommand BumpMapsCommand { get; }
@@ -291,6 +300,7 @@ public partial class TexturePanelViewModel : ObservableObject
         _suppressEditorSync = true;
         try
         {
+            IsDoubleSided = texture.DoubleSided;
             int newIndex = texture.BlendMode.ToUserIndex();
             SelectedBlendModeIndex = newIndex < BlendModeNames.Count ? newIndex : -1;
         }

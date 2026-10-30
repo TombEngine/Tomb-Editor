@@ -16,4 +16,10 @@ public partial class RoomsView : UserControl
     }
 
     public void Cleanup() => _viewModel.Cleanup();
+
+    private void RoomsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (RoomsList.SelectedItem is { } selected)
+            RoomsList.ScrollIntoView(selected);
+    }
 }

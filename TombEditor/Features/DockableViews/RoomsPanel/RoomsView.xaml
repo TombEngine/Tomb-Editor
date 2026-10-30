@@ -13,6 +13,8 @@
 	mc:Ignorable="d">
 
 	<ListBox
+		x:Name="RoomsList"
+		SelectionChanged="RoomsList_SelectionChanged"
 		Margin="{x:Static darkUI:Defaults.SmallThickness}"
 		DisplayMemberPath="Name"
 		ItemsSource="{Binding Rooms}"
