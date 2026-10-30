@@ -140,6 +140,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Statistics bar: when a level was opened the room counters could stay at 0 because a statistics pass already running discarded the newer request (selected room not yet set). The request is now remembered and the pass repeated. Opened a real TombEngine level on screen: Objects now 1 / 167 as in WinForms (before 0 / 167). The same race exists in the WinForms editor but its timing hides it | Wrong room statistics | (this commit) |
 
+| Event set editor compared on screen with the WinForms dialog on a real TombEngine level: list buttons in the WinForms order (new, folder, copy, delete, search), no "Event sets:" label, default size 930x500, node editor area shown (disabled) before a set is selected. Open: WinForms puts the node toolbar (Action, Condition, icons, Call count, Enable) at the bottom of the node area, the WPF editor keeps its toolbar on top with a function box and labelled buttons | Layout | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.

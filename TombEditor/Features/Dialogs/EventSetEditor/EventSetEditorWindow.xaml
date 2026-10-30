@@ -11,8 +11,8 @@
     xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     Title="{Binding Title}"
-    Width="980"
-    Height="640"
+    Width="930"
+    Height="500"
     MinWidth="930"
     MinHeight="460"
     d:DataContext="{d:DesignInstance Type=local:EventSetEditorWindowViewModel}"
@@ -48,20 +48,19 @@
 
             <!--  Event set list  -->
             <DockPanel Grid.Column="0">
-                <TextBlock DockPanel.Dock="Top" Margin="0,0,0,4" Text="{tombLib:Localize EventSets}" />
                 <!--  Management buttons at the top of the list (icon buttons, mirroring the legacy editor).  -->
                 <controls:SpacedStack DockPanel.Dock="Top" Margin="0,0,0,6" Orientation="Horizontal" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
                     <Button Command="{Binding NewSetCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize NewSetTooltip}">
                         <Image Source="{tomb:Icon General/plus_math}" />
+                    </Button>
+                    <Button Command="{Binding NewFolderCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize NewFolderTooltip}">
+                        <Image Source="{tomb:Icon General/folder}" />
                     </Button>
                     <Button Command="{Binding CloneSetCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize CloneSetTooltip}">
                         <Image Source="{tomb:Icon General/copy}" />
                     </Button>
                     <Button Command="{Binding DeleteSetCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize DeleteSetTooltip}">
                         <Image Source="{tomb:Icon General/trash}" />
-                    </Button>
-                    <Button Command="{Binding NewFolderCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize NewFolderTooltip}">
-                        <Image Source="{tomb:Icon General/folder}" />
                     </Button>
                     <Button
                         x:Name="searchButton"
@@ -212,7 +211,7 @@
                     <local:NodeEditorView
                         Grid.Row="1"
                         DataContext="{Binding NodeEditor}"
-                        Visibility="{Binding DataContext.IsNodeEditorMode, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}" />
+                        Visibility="{Binding DataContext.IsNodeEditorShown, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}" />
 
                     <!--  Level script mode  -->
                     <Border

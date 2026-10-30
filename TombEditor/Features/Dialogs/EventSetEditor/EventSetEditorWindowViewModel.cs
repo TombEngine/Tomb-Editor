@@ -509,6 +509,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             OnPropertyChanged(nameof(CurrentEventEnabled));
             OnPropertyChanged(nameof(IsNodeEditorMode));
             OnPropertyChanged(nameof(IsLevelScriptMode));
+            OnPropertyChanged(nameof(IsNodeEditorShown));
         }
 
         public bool IsNodeEditorMode
@@ -516,6 +517,9 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             get => CurrentEvent != null && CurrentEvent.Mode == EventSetMode.NodeEditor;
             set => SwitchMode(value, EventSetMode.NodeEditor);
         }
+
+        /// <summary>The node editor is shown (disabled) even before a set is selected, like the previous form.</summary>
+        public bool IsNodeEditorShown => !IsLevelScriptMode;
 
         public bool IsLevelScriptMode
         {
@@ -531,6 +535,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             CurrentEvent.Mode = mode;
             OnPropertyChanged(nameof(IsNodeEditorMode));
             OnPropertyChanged(nameof(IsLevelScriptMode));
+            OnPropertyChanged(nameof(IsNodeEditorShown));
 
             // The call counter is editable in both modes, so the one that was hidden may be stale.
             NodeEditor?.RefreshCallCounter();
