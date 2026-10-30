@@ -82,7 +82,7 @@
                 <MenuItem editor:EditorMenu.Command="QuitEditor" />
             </MenuItem>
 
-            <MenuItem Header="Edit">
+            <MenuItem Header="Edit" SubmenuOpened="EditMenu_SubmenuOpened">
                 <MenuItem editor:EditorMenu.Command="Undo" editor:EditorMenu.Icon="General/undo" />
                 <MenuItem editor:EditorMenu.Command="Redo" editor:EditorMenu.Icon="General/redo" />
                 <Separator />
@@ -222,7 +222,7 @@
             <MenuItem Header="Transform">
                 <MenuItem editor:EditorMenu.Command="IncreaseStepHeight" />
                 <MenuItem editor:EditorMenu.Command="DecreaseStepHeight" />
-                <Separator />
+                <Separator x:Name="stepHeightSeparator" />
                 <MenuItem editor:EditorMenu.Command="SmoothRandomFloorUp" />
                 <MenuItem editor:EditorMenu.Command="SmoothRandomFloorDown" />
                 <MenuItem editor:EditorMenu.Command="SmoothRandomCeilingUp" />

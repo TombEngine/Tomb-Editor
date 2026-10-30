@@ -14,6 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using TombEditor.Controls.Panel3D;
 using TombEditor.Features.MenuSearch;
+using TombEditor.Features.MenuState;
 using TombEditor.Features.Panel3D.ObjectBrush;
 using TombEditor.Features.Panel3D.ToolPalette;
 using TombLib.Input;
@@ -35,6 +36,7 @@ public partial class MainWindow : Window
     private readonly Panel3D _panel3D;
     private readonly FloatingToolbox _toolPalette;
     private readonly ToolboxView _toolPaletteView;
+    private readonly MainMenuStateUpdater _menuState;
     private readonly FloatingToolbox _objectBrushToolbox;
     private readonly ObjectBrushToolboxView _objectBrushView;
 
@@ -55,6 +57,7 @@ public partial class MainWindow : Window
         _messageService = ServiceLocator.ResolveService<IMessageService>();
         _localizationService = ServiceLocator.ResolveService<ILocalizationService>();
         InitializeComponent();
+        _menuState = new MainMenuStateUpdater(_editor, mainMenu, stepHeightSeparator);
 
         // The native WPF viewport owns the Direct3D swap chain and input.
         _panel3D = new Panel3D();
@@ -129,6 +132,7 @@ public partial class MainWindow : Window
     private void OnEditorEventRaised(IEditorEvent obj)
     {
         OnEditorEventForFloatingToolboxes(obj);
+        _menuState.Handle(obj);
 
         if (obj is Editor.DefaultControlActivationEvent { ContainerName: "FormMain" })
         {
@@ -477,6 +481,8 @@ public partial class MainWindow : Window
         };
         about.ShowDialog();
     }
+
+    private void EditMenu_SubmenuOpened(object sender, RoutedEventArgs e) => _menuState.UpdatePaste();
 
     private void WindowMenu_SubmenuOpened(object sender, RoutedEventArgs e)
     {
