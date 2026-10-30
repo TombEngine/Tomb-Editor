@@ -64,6 +64,9 @@ public partial class AnimationEditorWindow : Window
         bool control = System.Windows.Input.Keyboard.Modifiers == System.Windows.Input.ModifierKeys.Control;
         bool none = System.Windows.Input.Keyboard.Modifiers == System.Windows.Input.ModifierKeys.None;
 
+        if (HandleSelectionKey(e, control, none))
+            return;
+
         System.Windows.Input.ICommand? command = e.Key switch
         {
             System.Windows.Input.Key.Z when control => _vm.UndoCommand,
@@ -74,8 +77,6 @@ public partial class AnimationEditorWindow : Window
             System.Windows.Input.Key.C when control => _vm.CopyFrameCommand,
             System.Windows.Input.Key.V when control => _vm.PasteFrameCommand,
             System.Windows.Input.Key.Space when none => _vm.PlayCommand,
-            System.Windows.Input.Key.Left when none => _vm.GotoPrevCommand,
-            System.Windows.Input.Key.Right when none => _vm.GotoNextCommand,
             System.Windows.Input.Key.Up when none => _vm.GotoStartCommand,
             System.Windows.Input.Key.Down when none => _vm.GotoEndCommand,
             System.Windows.Input.Key.Delete when none => _vm.DeleteFrameCommand,
@@ -87,6 +88,44 @@ public partial class AnimationEditorWindow : Window
 
         command.Execute(null);
         e.Handled = true;
+    }
+    private bool HandleSelectionKey(System.Windows.Input.KeyEventArgs e, bool control, bool none)
+    {
+        if (_vm is null)
+            return false;
+
+        switch (e.Key)
+        {
+            case System.Windows.Input.Key.Left when none:
+                _vm.StepFrameLooping(false);
+                break;
+
+            case System.Windows.Input.Key.Right when none:
+                _vm.StepFrameLooping(true);
+                break;
+
+            case System.Windows.Input.Key.I when none:
+                _vm.MarkSelection(true);
+                break;
+
+            case System.Windows.Input.Key.O when none:
+                _vm.MarkSelection(false);
+                break;
+
+            case System.Windows.Input.Key.A when control:
+                _vm.SelectAllFrames();
+                break;
+
+            case System.Windows.Input.Key.Escape when none:
+                _vm.ClearSelections();
+                break;
+
+            default:
+                return false;
+        }
+
+        e.Handled = true;
+        return true;
     }
     private void OnTimelineValueChanged(object? sender, EventArgs e) => _vm?.OnTimelineValueChanged();
 

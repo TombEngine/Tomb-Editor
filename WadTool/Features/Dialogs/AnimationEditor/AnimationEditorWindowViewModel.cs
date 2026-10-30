@@ -644,6 +644,9 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         _frameCount = _timeline.Value * _editor.CurrentAnim.WadAnimation.FrameRate;
         StatusText = "Frame: " + _frameCount + " / " + Math.Max(_editor.GetRealNumberOfFrames() - 1, 0) +
                      "   Keyframe: " + _timeline.Value + " / " + Math.Max(_editor.CurrentAnim.DirectXAnimation.KeyFrames.Count - 1, 0);
+
+        if (!_timeline.SelectionIsEmpty)
+            StatusText += "   Selected keyframes: " + _timeline.Selection.X + " to " + _timeline.Selection.Y;
     }
 
     [RelayCommand]
@@ -963,6 +966,39 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void GotoStart() { if (_timeline is not null) _timeline.Value = _timeline.Minimum; }
     [RelayCommand]
+    /// <summary>Steps one frame and wraps around at the ends (keyboard navigation of the previous form).</summary>
+    public void StepFrameLooping(bool forward)
+    {
+        if (_timeline is null)
+            return;
+
+        if (forward)
+            _timeline.ValueLoopInc();
+        else
+            _timeline.ValueLoopDec();
+    }
+
+    /// <summary>Marks the start (in) or end (out) of the frame selection at the current frame.</summary>
+    public void MarkSelection(bool start)
+    {
+        if (_timeline is null)
+            return;
+
+        if (start)
+            _timeline.SelectionStart = _timeline.Value;
+        else
+            _timeline.SelectionEnd = _timeline.Value;
+    }
+
+    public void SelectAllFrames() => _timeline?.SelectAll();
+
+    /// <summary>Clears the mesh, bone list and timeline selections (Escape).</summary>
+    public void ClearSelections()
+    {
+        SelectedBoneItem = null;
+        _timeline?.ResetSelection();
+    }
+
     private void GotoPrev() { if (_timeline is not null && _timeline.Value > _timeline.Minimum) _timeline.Value--; }
     [RelayCommand]
     private void GotoNext() { if (_timeline is not null && _timeline.Value < _timeline.Maximum) _timeline.Value++; }

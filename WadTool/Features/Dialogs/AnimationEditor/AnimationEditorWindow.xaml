@@ -135,25 +135,25 @@
 
                 <GroupBox Header="Animation">
                     <StackPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Name" /><TextBox Text="{Binding AnimName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="State ID" /><TextBox x:Name="stateIdBox" Text="{Binding StateIdText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Frame rate" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="1" Maximum="255" Value="{Binding FrameRate, Mode=TwoWay}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Name:" /><TextBox Text="{Binding AnimName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="State:" /><TextBox x:Name="stateIdBox" Text="{Binding StateIdText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Framerate" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="1" Maximum="255" Value="{Binding FrameRate, Mode=TwoWay}" /></DockPanel>
                         <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="End frame" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Value="{Binding EndFrame, Mode=TwoWay}" /></DockPanel>
                         <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Next anim" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Value="{Binding NextAnimation, Mode=TwoWay}" /></DockPanel>
                         <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Next frame" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Value="{Binding NextFrame, Mode=TwoWay}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="V vel start" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="2" Value="{Binding StartVertVel, Mode=TwoWay}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="V vel end" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="2" Value="{Binding EndVertVel, Mode=TwoWay}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="H vel start" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="2" Value="{Binding StartHorVel, Mode=TwoWay}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="H vel end" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="2" Value="{Binding EndHorVel, Mode=TwoWay}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Start X vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="2" Value="{Binding StartVertVel, Mode=TwoWay}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="End X vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="2" Value="{Binding EndVertVel, Mode=TwoWay}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Start Z vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="2" Value="{Binding StartHorVel, Mode=TwoWay}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="End Z vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="2" Value="{Binding EndHorVel, Mode=TwoWay}" /></DockPanel>
                         <DockPanel Margin="0,2" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Blend frames" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Value="{Binding BlendFrameCount, Mode=TwoWay}" /></DockPanel>
                         <Border Height="110" Margin="0,6,0,0" BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}">
                             <wadControls:BezierCurveEditor x:Name="bezierEditor" />
                         </Border>
                         <ComboBox Margin="0,4,0,0" SelectedIndex="{Binding BlendPresetIndex, Mode=TwoWay}" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}">
                             <ComboBoxItem Content="Linear" />
-                            <ComboBoxItem Content="Ease in" />
-                            <ComboBoxItem Content="Ease out" />
-                            <ComboBoxItem Content="Ease in-out" />
+                            <ComboBoxItem Content="Ease In" />
+                            <ComboBoxItem Content="Ease Out" />
+                            <ComboBoxItem Content="Ease In and Out" />
                         </ComboBox>
                     </StackPanel>
                 </GroupBox>
@@ -178,12 +178,12 @@
                 <GroupBox Header="{Binding TransformHeader}">
                     <StackPanel>
                         <ComboBox SelectedIndex="{Binding TransformModeIndex, Mode=TwoWay}">
-                            <ComboBoxItem Content="Simple" />
+                            <ComboBoxItem Content="None" />
                             <ComboBoxItem Content="Smooth" />
                             <ComboBoxItem Content="Smooth reverse" />
                             <ComboBoxItem Content="Linear" />
                             <ComboBoxItem Content="Linear reverse" />
-                            <ComboBoxItem Content="Symmetric" />
+                            <ComboBoxItem Content="Symmetric smooth" />
                             <ComboBoxItem Content="Symmetric linear" />
                         </ComboBox>
                         <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="4">
