@@ -35,6 +35,8 @@ public partial class ImportedGeometryBrowserView : UserControl
         _panelItem.AnimatePreview = Editor.Instance.Configuration.RenderingItem_Animate;
     }
 
+    public void FocusSearch() => GeometriesCombo.OpenAndFocusSearch();
+
     public void Cleanup()
     {
         _viewModel.Cleanup();

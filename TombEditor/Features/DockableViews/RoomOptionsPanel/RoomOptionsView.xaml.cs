@@ -17,25 +17,7 @@ public partial class RoomOptionsView : UserControl
         DataContext = _viewModel;
     }
 
-    public void FocusRoomSearch()
-    {
-        Dispatcher.BeginInvoke(() => {
-            Focus();
-            RoomSearchComboBox.IsDropDownOpen = true;
-            RoomSearchComboBox.ApplyTemplate();
-            RoomSearchComboBox.UpdateLayout();
-
-            Dispatcher.BeginInvoke(() => {
-                if (RoomSearchComboBox.SearchTextBox is { } searchTextBox)
-                {
-                    FocusManager.SetFocusedElement(this, searchTextBox);
-                    Keyboard.Focus(searchTextBox);
-                    searchTextBox.Focus();
-                    searchTextBox.SelectAll();
-                }
-            }, DispatcherPriority.Input);
-        }, DispatcherPriority.Input);
-    }
+    public void FocusRoomSearch() => RoomSearchComboBox.OpenAndFocusSearch();
 
     public void Cleanup() => _viewModel.Cleanup();
 }

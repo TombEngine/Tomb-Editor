@@ -136,6 +136,9 @@ public partial class MainWindow : Window
         OnEditorEventForFloatingToolboxes(obj);
         _menuState.Handle(obj);
 
+        if (obj is Editor.DefaultControlActivationEvent { ContainerName: not "FormMain" } activation)
+            ActivateSearch(activation.ContainerName);
+
         if (obj is Editor.DefaultControlActivationEvent { ContainerName: "FormMain" })
         {
             tbSearchMenu.Focus();
@@ -482,6 +485,27 @@ public partial class MainWindow : Window
             Owner = this
         };
         about.ShowDialog();
+    }
+
+    private void ActivateSearch(string containerName)
+    {
+        var (contentId, focusSearch) = containerName switch
+        {
+            "RoomOptions" => ("roomOptions", (Action)roomOptionsView.FocusRoomSearch),
+            "ItemBrowser" => ("itemBrowser", itemBrowserView.FocusSearch),
+            "ImportedGeometryBrowser" => ("importedGeometryBrowser", importedGeometryBrowserView.FocusSearch),
+            "TexturePanel" => ("texturePanel", texturePanelView.FocusSearch),
+            _ => (null, null)
+        };
+
+        if (contentId is null || focusSearch is null || FindAnchorable(contentId) is not { } anchorable)
+            return;
+
+        if (anchorable.IsHidden)
+            anchorable.Show();
+
+        anchorable.IsActive = true;
+        focusSearch();
     }
 
     private void EditMenu_SubmenuOpened(object sender, RoutedEventArgs e) => _menuState.UpdatePaste();

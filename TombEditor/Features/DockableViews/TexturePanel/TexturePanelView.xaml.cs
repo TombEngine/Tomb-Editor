@@ -24,5 +24,7 @@ public partial class TexturePanelView : UserControl
 		DataContext = _viewModel;
 	}
 
+	public void FocusSearch() => TexturesCombo.OpenAndFocusSearch();
+
 	public void Cleanup() => _viewModel.Cleanup();
 }

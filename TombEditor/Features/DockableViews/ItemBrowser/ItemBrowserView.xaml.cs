@@ -31,6 +31,8 @@ public partial class ItemBrowserView : UserControl
         _panelItem.AnimatePreview = Editor.Instance.Configuration.RenderingItem_Animate;
     }
 
+    public void FocusSearch() => ItemsCombo.OpenAndFocusSearch();
+
     public void Cleanup()
     {
         _viewModel.Cleanup();
