@@ -133,6 +133,9 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Level settings: every tab item stretches its content, so the Game tab path boxes and the Misc level path fill the width like in WinForms. Game, Texture Files, Static Meshes, Sky and Font, Sound Infos and Misc compared on screen and matching; Object Files, Imported Geometry, Sound Sample Paths and Path Placeholders still to recheck | Layout | (this commit) |
 
+| WadTool round 3 (subagent, built; items marked on screen were tried with the real mouse and keyboard): State changes numeric cells take only valid Int16 text (letters ignored, tried on screen) and an out of range value keeps the previous one; Delete button no longer saves per row; Sprite sequence and Static editor Enter no longer closes the dialog; Sprite sequence strip order and 50 px rows; Animation editor list click resets the chain playback start and grid position; Anim commands keep the selection on animation change | Behaviour parity | d06c5295c, ed270a08d |
+| Tomb Editor dialogs round 3 (subagent, built from the WinForms designers): Search labels right aligned and first row preselected (compared on screen, identical); Moveable OCB focus and tint reset icon; Trigger without default button and WinForms tab order; Import PRJ group order and hint texts; Operation, Memo, Replace object, Texture remap, Footstep and bump map tab order, Toolbar layout icons, Imported geometry title and tooltips, Sound source and Flyby camera layout, Event set editor tooltips. Only Search was compared on screen so far | Layout, captions, tab order | 249ba15eb |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
