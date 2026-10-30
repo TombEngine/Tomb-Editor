@@ -35,15 +35,16 @@
             <MenuItem Header="{tomb:Localize Edit}">
                 <MenuItem Header="{tomb:Localize Copy}" Command="{Binding CopyCommand}" IsEnabled="{Binding HasSelection}" />
                 <MenuItem Header="{tomb:Localize Paste}" Command="{Binding PasteCommand}" IsEnabled="{Binding HasSelection}" />
-                <MenuItem Header="{tomb:Localize Options}" Command="{Binding OptionsCommand}" />
             </MenuItem>
             <MenuItem Header="{tomb:Localize Tools}">
-                <MenuItem Header="{tomb:Localize IndexAll}" Command="{Binding IndexAllCommand}" />
-                <MenuItem Header="{tomb:Localize UnindexAll}" Command="{Binding UnindexAllCommand}" />
+                <MenuItem Header="{tomb:Localize Options}" Command="{Binding OptionsCommand}" />
                 <Separator />
                 <MenuItem Header="{tomb:Localize CompileTr2}" Command="{Binding CompileTr2Command}" />
                 <MenuItem Header="{tomb:Localize CompileTr3}" Command="{Binding CompileTr3Command}" />
                 <MenuItem Header="{tomb:Localize Unpack}" Command="{Binding UnpackCommand}" />
+                <Separator />
+                <MenuItem Header="{tomb:Localize IndexAll}" Command="{Binding IndexAllCommand}" />
+                <MenuItem Header="{tomb:Localize UnindexAll}" Command="{Binding UnindexAllCommand}" />
             </MenuItem>
             <MenuItem Header="{tomb:Localize Help}"><MenuItem Header="{tomb:Localize About}" Command="{Binding AboutCommand}" /></MenuItem>
         </Menu>
@@ -56,44 +57,94 @@
                     <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"><TextBox.InputBindings><KeyBinding Key="Enter" Command="{Binding SearchCommand}" /></TextBox.InputBindings></TextBox>
                 </DockPanel>
                 <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Margin="0,8,0,0">
-                    <Button Content="{tomb:Localize AddSound}" Command="{Binding AddSoundCommand}" Margin="0,0,8,0" />
-                    <Button Content="{tomb:Localize Delete}" Command="{Binding DeleteSoundsCommand}" IsEnabled="{Binding HasSelection}" />
+                    <Button Command="{Binding AddSoundCommand}" Style="{DynamicResource ButtonWithIconAndText}" Margin="0,0,8,0"><StackPanel Orientation="Horizontal"><Image Source="{icons:Icon General/plus_math}" /><TextBlock Text="{tomb:Localize AddSound}" /></StackPanel></Button>
+                    <Button Command="{Binding DeleteSoundsCommand}" IsEnabled="{Binding HasSelection}" Style="{DynamicResource ButtonWithIconAndText}"><StackPanel Orientation="Horizontal"><Image Source="{icons:Icon General/trash}" /><TextBlock Text="{tomb:Localize DeleteSounds}" /></StackPanel></Button>
                 </StackPanel>
                 <DataGrid x:Name="SoundList" ItemsSource="{Binding Sounds}" SelectedItem="{Binding SelectedSound}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Extended" SelectionChanged="SoundsSelectionChanged" MouseDoubleClick="SoundListDoubleClick" CanUserAddRows="False">
                     <DataGrid.Columns><DataGridTextColumn Header="ID" Binding="{Binding Id, StringFormat=D4}" Width="60" /><DataGridTextColumn Header="{tomb:Localize Name}" Binding="{Binding Name}" Width="*" /></DataGrid.Columns>
                 </DataGrid>
             </DockPanel>
             <GridSplitter Grid.Column="1" Width="4" HorizontalAlignment="Center" />
-            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="8,0,0,0" IsEnabled="{Binding HasSelection}">
-                    <GroupBox Header="{tomb:Localize SoundParameters}">
-                        <Grid Margin="8" DataContext="{Binding SelectedSound}">
-                            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="100" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
-                            <Label Content="ID" /><TextBox Grid.Column="1" Text="{Binding Id, Mode=OneWay}" IsReadOnly="True" Margin="4" />
-                            <Label Grid.Column="2" Content="{tomb:Localize Name}" /><TextBox Grid.Column="3" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Margin="4" />
-                            <Label Grid.Row="1" Content="{tomb:Localize Volume}" /><controls:NumericUpDown Grid.Row="1" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding Volume}" Margin="4" />
-                            <Label Grid.Row="1" Grid.Column="2" Content="{tomb:Localize Pitch}" /><controls:NumericUpDown Grid.Row="1" Grid.Column="3" Minimum="-100" Maximum="100" Value="{Binding PitchFactor}" Margin="4" />
-                            <Label Grid.Row="2" Content="{tomb:Localize Range}" /><controls:NumericUpDown Grid.Row="2" Grid.Column="1" Minimum="0" Maximum="255" Value="{Binding RangeInSectors}" Margin="4" />
-                            <Label Grid.Row="2" Grid.Column="2" Content="{tomb:Localize Chance}" /><controls:NumericUpDown Grid.Row="2" Grid.Column="3" Minimum="0" Maximum="100" Value="{Binding Chance}" Margin="4" />
-                            <Label Grid.Row="3" Content="{tomb:Localize Loop}" /><ComboBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" Margin="4" ItemsSource="{Binding DataContext.LoopBehaviours, RelativeSource={RelativeSource AncestorType=Window}}" SelectedItem="{Binding LoopBehaviour}" />
-                        </Grid>
-                    </GroupBox>
-                    <WrapPanel Margin="8" DataContext="{Binding SelectedSound}">
-                        <CheckBox Content="{tomb:Localize RandomizeVolume}" IsChecked="{Binding RandomizeVolume}" Margin="0,0,16,8" />
-                        <CheckBox Content="{tomb:Localize RandomizePitch}" IsChecked="{Binding RandomizePitch}" Margin="0,0,16,8" />
-                        <CheckBox Content="{tomb:Localize DisablePanning}" IsChecked="{Binding DisablePanning}" Margin="0,0,16,8" />
-                        <CheckBox Content="{tomb:Localize Global}" IsChecked="{Binding Global}" Margin="0,0,16,8" />
-                        <CheckBox Content="{tomb:Localize Indexed}" IsChecked="{Binding Indexed}" Margin="0,0,16,8" />
-                    </WrapPanel>
-                    <GroupBox Header="{tomb:Localize Samples}">
-                        <DockPanel Margin="8">
-                            <WrapPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
-                                <Button Content="{tomb:Localize AddSample}" Command="{Binding AddSampleCommand}" Margin="0,0,6,0" />
-                                <Button Content="{tomb:Localize Browse}" Command="{Binding BrowseSamplesCommand}" Margin="0,0,6,0" />
-                                <Button Content="{tomb:Localize Delete}" Command="{Binding DeleteSampleCommand}" />
-                            </WrapPanel>
-                            <DataGrid ItemsSource="{Binding SelectedSound.Samples}" SelectedItem="{Binding SelectedSample}" AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Extended" SelectionChanged="SamplesSelectionChanged" Height="190">
+            <Grid Grid.Column="2" Margin="8,0,0,0" IsEnabled="{Binding HasSelection}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!--  Identification  -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" DataContext="{Binding SelectedSound}">
+                    <Label Content="{tomb:Localize Id}" />
+                    <TextBox Width="60" Text="{Binding Id, Mode=OneWay}" IsReadOnly="True" Margin="4,0,12,0" />
+                    <CheckBox Content="{tomb:Localize Global}" IsChecked="{Binding Global}" VerticalAlignment="Center" Margin="0,0,12,0" />
+                    <CheckBox Content="{tomb:Localize Indexed}" IsChecked="{Binding Indexed}" VerticalAlignment="Center" />
+                </StackPanel>
+
+                <!--  Name and sound actions  -->
+                <DockPanel Grid.Row="1" Margin="0,8,0,8">
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="8,0,0,0">
+                        <Button Command="{Binding CopyCommand}" ToolTip="{tomb:Localize Copy}" Width="30"><Image Source="{icons:Icon General/copy}" Width="16" /></Button>
+                        <Button Command="{Binding PasteCommand}" ToolTip="{tomb:Localize Paste}" Width="30" Margin="4,0,0,0"><Image Source="{icons:Icon General/paste}" Width="16" /></Button>
+                        <Button Command="{Binding ResetCommand}" ToolTip="{tomb:Localize Reset}" Width="30" Margin="4,0,0,0"><Image Source="{icons:Icon General/undo}" Width="16" /></Button>
+                        <Button Command="{Binding PlayCommand}" IsEnabled="{Binding HasReferenceLevel}" ToolTip="{tomb:Localize Preview}" Width="30" Margin="12,0,0,0"><Image Source="{icons:Icon Actions/Transport/Play}" Width="16" /></Button>
+                        <Button Command="{Binding StopCommand}" ToolTip="{tomb:Localize Stop}" Width="30" Margin="4,0,0,0"><Image Source="{icons:Icon Actions/Transport/Stop}" Width="16" /></Button>
+                    </StackPanel>
+                    <Label DockPanel.Dock="Left" Content="{tomb:Localize NameLabel}" />
+                    <TextBox Margin="4,0,0,0" DataContext="{Binding SelectedSound}" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+
+                <!--  Sound parameters  -->
+                <GroupBox Grid.Row="2" DataContext="{Binding SelectedSound}">
+                    <Grid Margin="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="80" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="24" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Label Grid.Row="0" Content="{tomb:Localize Volume}" HorizontalAlignment="Right" />
+                        <controls:NumericUpDown Grid.Row="0" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding Volume}" Margin="4" />
+                        <Label Grid.Row="0" Grid.Column="2" Content="%" />
+                        <Label Grid.Row="1" Content="{tomb:Localize Pitch}" HorizontalAlignment="Right" />
+                        <controls:NumericUpDown Grid.Row="1" Grid.Column="1" Minimum="-100" Maximum="100" Value="{Binding PitchFactor}" Margin="4" />
+                        <Label Grid.Row="1" Grid.Column="2" Content="%" />
+                        <Label Grid.Row="2" Content="{tomb:Localize Range}" HorizontalAlignment="Right" />
+                        <controls:NumericUpDown Grid.Row="2" Grid.Column="1" Minimum="0" Maximum="255" Value="{Binding RangeInSectors}" Margin="4" />
+                        <Label Grid.Row="2" Grid.Column="2" Content="{tomb:Localize Sectors}" />
+                        <Label Grid.Row="3" Content="{tomb:Localize Chance}" HorizontalAlignment="Right" />
+                        <controls:NumericUpDown Grid.Row="3" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding Chance}" Margin="4" />
+                        <Label Grid.Row="3" Grid.Column="2" Content="%" />
+
+                        <StackPanel Grid.Row="0" Grid.Column="4" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                            <Label Content="{tomb:Localize Randomize}" />
+                            <CheckBox Content="{tomb:Localize RandomizePitch}" IsChecked="{Binding RandomizePitch}" VerticalAlignment="Center" Margin="4,0,8,0" />
+                            <CheckBox Content="{tomb:Localize RandomizeVolume}" IsChecked="{Binding RandomizeVolume}" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <CheckBox Grid.Row="1" Grid.Column="4" Content="{tomb:Localize DisablePanning}" IsChecked="{Binding DisablePanning}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                        <DockPanel Grid.Row="2" Grid.Column="4" HorizontalAlignment="Right">
+                            <Label Content="{tomb:Localize Loop}" />
+                            <ComboBox Width="120" Margin="4" ItemsSource="{Binding DataContext.LoopBehaviours, RelativeSource={RelativeSource AncestorType=Window}}" SelectedItem="{Binding LoopBehaviour}" />
+                        </DockPanel>
+                    </Grid>
+                </GroupBox>
+
+                <!--  Samples  -->
+                <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,8,0,8">
+                    <Button Command="{Binding AddSampleCommand}" Style="{DynamicResource ButtonWithIconAndText}"><StackPanel Orientation="Horizontal"><Image Source="{icons:Icon General/plus_math}" /><TextBlock Text="{tomb:Localize AddSample}" /></StackPanel></Button>
+                    <Button Command="{Binding BrowseSamplesCommand}" Style="{DynamicResource ButtonWithIconAndText}" Margin="4,0,0,0"><StackPanel Orientation="Horizontal"><Image Source="{icons:Icon General/Open}" /><TextBlock Text="{tomb:Localize Browse}" /></StackPanel></Button>
+                    <Button Command="{Binding DeleteSampleCommand}" Style="{DynamicResource ButtonWithIconAndText}" Margin="4,0,0,0"><StackPanel Orientation="Horizontal"><Image Source="{icons:Icon General/trash}" /><TextBlock Text="{tomb:Localize Delete}" /></StackPanel></Button>
+                </StackPanel>
+                            <DataGrid Grid.Row="4" ItemsSource="{Binding SelectedSound.Samples}" SelectedItem="{Binding SelectedSample}" AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Extended" SelectionChanged="SamplesSelectionChanged">
                                 <DataGrid.RowStyle>
                                     <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
                                         <Style.Triggers><DataTrigger Binding="{Binding ResolvedPath}" Value="[not found]"><Setter Property="Background" Value="#70402020" /></DataTrigger></Style.Triggers>
@@ -101,17 +152,7 @@
                                 </DataGrid.RowStyle>
                                 <DataGrid.Columns><DataGridTextColumn Header="{tomb:Localize Filename}" Binding="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" Width="*" /><DataGridTextColumn Header="{tomb:Localize ResolvedPath}" Binding="{Binding ResolvedPath}" IsReadOnly="True" Width="2*" /></DataGrid.Columns>
                             </DataGrid>
-                        </DockPanel>
-                    </GroupBox>
-                    <WrapPanel Margin="0,12,0,0">
-                        <Button Content="{tomb:Localize Preview}" Command="{Binding PlayCommand}" IsEnabled="{Binding HasReferenceLevel}" Margin="0,0,8,8" />
-                        <Button Content="{tomb:Localize Stop}" Command="{Binding StopCommand}" Margin="0,0,8,8" />
-                        <Button Content="{tomb:Localize Copy}" Command="{Binding CopyCommand}" Margin="0,0,8,8" />
-                        <Button Content="{tomb:Localize Paste}" Command="{Binding PasteCommand}" Margin="0,0,8,8" />
-                        <Button Content="{tomb:Localize Reset}" Command="{Binding ResetCommand}" Margin="0,0,8,8" />
-                    </WrapPanel>
-                </StackPanel>
-            </ScrollViewer>
+            </Grid>
         </Grid>
     </DockPanel>
 </Window>
