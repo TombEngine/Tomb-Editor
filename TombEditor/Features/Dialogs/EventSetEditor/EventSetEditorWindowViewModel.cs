@@ -44,7 +44,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         public bool GlobalMode { get; }
         public bool GenericMode => GlobalMode || _instance == null;
-        public bool ShowVolumeOptions => !GlobalMode;
+        public bool ShowVolumeOptions => !GenericMode;
 
         public List<NodeFunction> NodeFunctions => ScriptingUtils.NodeFunctions;
         public List<string> ScriptFunctions { get; }
@@ -95,10 +95,9 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             _backupCollapsedFolders = new HashSet<string>(_collapsedFolders);
             BuildTree();
 
+            // Like the previous dialog, generic mode does not preselect a set.
             if (!GenericMode)
                 SelectedSet = _instance!.EventSet;
-            else
-                SelectedSet = FirstAvailableSet();
 
             _editor.EditorEventRaised += OnEditorEventRaised;
         }
@@ -402,7 +401,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         partial void OnSelectedSetChanged(EventSet? value)
         {
-            if (!GenericMode && value != null)
+            // Assigning null (Unassign) clears the volume's event set too.
+            if (!GenericMode)
                 _instance!.EventSet = value;
 
             SelectNodeFor(value);
@@ -693,9 +693,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         private void Cancel() => DialogResult = false;
 
         /// <summary>
-        /// Called by the view after the window has closed (any close path). Closing without a verdict
-        /// (title-bar X or an external <c>Close()</c>, i.e. <see cref="DialogResult"/> still null) commits,
-        /// like the OK button; only an explicit Cancel restores the backup.
+        /// Called by the view after the window has closed (any close path). Only OK keeps the changes;
+        /// Cancel, the title-bar X and an external <c>Close()</c> restore the backup.
         /// </summary>
         public void OnWindowClosed()
         {
@@ -704,7 +703,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             if (_levelChanged)
                 return;
 
-            if (DialogResult == false)
+            // Like the previous dialog, anything but OK (Cancel, the window X, Escape) restores the backup.
+            if (DialogResult != true)
             {
                 Cancelled = true;
                 RestoreState();

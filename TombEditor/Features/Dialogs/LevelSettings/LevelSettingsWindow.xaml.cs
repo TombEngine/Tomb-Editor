@@ -11,5 +11,6 @@ public partial class LevelSettingsWindow : Window
     {
         InitializeComponent();
         this.HookModalAutoClose();
+        Loaded += (_, _) => WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormLevelSettings");
     }
 }

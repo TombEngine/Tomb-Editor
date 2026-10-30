@@ -94,7 +94,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Options: numeric fields without an explicit limit are capped at 100 like in WinForms, zoom steps and minimums as in WinForms, title "Options" and "Set page to default" | The WPF defaults allowed up to 1,000,000 | (this commit) |
 | Keyboard layout: hotkeys with Alt can be captured (WPF reports Key.System while Alt is held) | Alt combinations could not be recorded | (this commit) |
 | Portal, Imported geometry: WinForms captions ("Edit portal", "Portal effect:", "Mirror options", "Chosen entry:", "Force sharp edges", "Hide in editor", "Faster alpha testing") | Wording differed | (this commit) |## Open items
-
+| Event set editor: closing with the window X or Escape restores the backup (only OK keeps changes), Unassign clears the volume's event set, generic mode starts with no set selected and hides the volume options | The X button committed; Unassign did nothing; generic mode preselected a set | (this commit) |
+| Level settings: size and position remembered; "Dither 16-bit textures" also enabled for TRX games; "Map animated textures to imported geometry" disabled for TombEngine | Window did not remember its place; enable rules differed | (this commit) |
 - Tomb Editor: not verified on screen (verified by build and code only): file drops onto the window, saved window placement, selection behavior of the Objects in Room / Rooms lists, trigger deletion with Delete/Backspace, Palette layout when the panel is narrow (wide layout verified).
 - Wave B (simple Tomb Editor dialogs) done: the 18 dialogs were audited and the differences fixed, except the ones listed in the divergences. Wave C (complex dialogs) not started. Level settings must wire the texture and wad hover previews (TexturePreviewWindow / WadPreviewWindow exist but nothing opens them).
 ## Intentional divergences (kept on purpose)

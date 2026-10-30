@@ -208,6 +208,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
                 OnPropertyChanged(nameof(IsTR4Native));
                 OnPropertyChanged(nameof(IsTR5));
                 OnPropertyChanged(nameof(Supports16BitDithering));
+                OnPropertyChanged(nameof(CanDither16BitTextures));
                 OnPropertyChanged(nameof(SupportsFontAndSky));
                 OnPropertyChanged(nameof(IsTRX));
                 RaiseAllValidity();
@@ -263,6 +264,9 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         public bool IsTR4Native => _settings.GameVersion.Native() == Game.TR4;
         public bool IsTR5 => _settings.GameVersion == Game.TR5;
         public bool Supports16BitDithering => _settings.GameVersion.Supports16BitDithering();
+
+        /// <summary>Dithering is available for the games that support 16-bit textures and for the TRX games.</summary>
+        public bool CanDither16BitTextures => Supports16BitDithering || IsTRX;
         public bool SupportsFontAndSky => _settings.GameVersion.SupportsFontAndSkySettings();
         public bool IsTRX => _settings.GameVersion.IsTRX();
 

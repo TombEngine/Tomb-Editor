@@ -620,7 +620,7 @@
                             Margin="0,3"
                             Content="{tombLib:Localize Dither16BitTextures}"
                             IsChecked="{Binding Dither16BitTextures, Mode=TwoWay}"
-                            IsEnabled="{Binding Supports16BitDithering}"
+                            IsEnabled="{Binding CanDither16BitTextures}"
                             ToolTip="{tombLib:Localize Dither16BitTexturesTooltip}"
                         />
 
@@ -636,6 +636,7 @@
                             Margin="0,3"
                             Content="{tombLib:Localize RemapAnimatedTextures}"
                             IsChecked="{Binding RemapAnimatedTextures, Mode=TwoWay}"
+                            IsEnabled="{Binding IsNotTombEngine}"
                             ToolTip="{tombLib:Localize RemapAnimatedTexturesTooltip}"
                         />
 
