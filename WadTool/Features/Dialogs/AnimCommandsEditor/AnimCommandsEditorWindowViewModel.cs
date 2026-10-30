@@ -141,8 +141,9 @@ public partial class AnimCommandsEditorWindowViewModel : ObservableObject, IModa
         if (SelectedRow is null)
             return;
 
+        int index = Rows.IndexOf(SelectedRow);
         Rows.Remove(SelectedRow);
-        SelectedRow = null;
+        SelectedRow = Rows.Count == 0 ? null : Rows[Math.Min(index, Rows.Count - 1)];
         SyncToAnimation();
     }
 

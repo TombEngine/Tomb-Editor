@@ -7,6 +7,7 @@
 	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
 	xmlns:local="clr-namespace:WadTool.Features.Dialogs.AnimCommandsEditor"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
 	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
 	xmlns:wadTool="clr-namespace:WadTool"
 	Title="{tombLib:Localize Title}"
@@ -60,51 +61,58 @@
 		<GroupBox Header="{tombLib:Localize GroupTitle}">
 			<DockPanel LastChildFill="True">
 
-				<!--  Side controls: counterpart of the legacy add / delete / up / down / copy buttons  -->
-				<controls:SpacedStack
-					DockPanel.Dock="Right"
-					Orientation="Vertical"
-					Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
-					<controls:SpacedStack.Margin>
+				<!--  Side controls in the order of the legacy form: add / copy / copy to all / delete on top, up / down at the bottom  -->
+				<DockPanel DockPanel.Dock="Right" LastChildFill="False">
+					<DockPanel.Margin>
 						<Thickness Left="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
-					</controls:SpacedStack.Margin>
+					</DockPanel.Margin>
+					<controls:SpacedStack DockPanel.Dock="Top" Orientation="Vertical" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
 					<Button
 						Width="26"
 						Height="22"
 						Command="{Binding AddRowCommand}"
-						Content="+"
-						ToolTip="{tombLib:Localize AddTooltip}" />
-					<Button
-						Width="26"
-						Height="22"
-						Command="{Binding DeleteCommand}"
-						Content="X"
-						ToolTip="{tombLib:Localize DeleteTooltip}" />
-					<Button
-						Width="26"
-						Height="22"
-						Command="{Binding MoveUpCommand}"
-						Content="▲"
-						ToolTip="{tombLib:Localize MoveUpTooltip}" />
-					<Button
-						Width="26"
-						Height="22"
-						Command="{Binding MoveDownCommand}"
-						Content="▼"
-						ToolTip="{tombLib:Localize MoveDownTooltip}" />
+						ToolTip="{tombLib:Localize AddTooltip}">
+						<Image Width="16" Height="16" Source="{tomb:Icon General/plus_math}" />
+					</Button>
 					<Button
 						Width="26"
 						Height="22"
 						Command="{Binding CopyCommand}"
-						Content="⧉"
-						ToolTip="{tombLib:Localize CopyTooltip}" />
+						ToolTip="{tombLib:Localize CopyTooltip}">
+						<Image Width="16" Height="16" Source="{tomb:Icon General/copy}" />
+					</Button>
 					<Button
 						Width="26"
 						Height="22"
 						Command="{Binding CopyToAllCommand}"
-						Content="⊞"
-						ToolTip="{tombLib:Localize CopyToAllTooltip}" />
-				</controls:SpacedStack>
+						ToolTip="{tombLib:Localize CopyToAllTooltip}">
+						<Image Width="16" Height="16" Source="{tomb:Icon Misc/copy-to-all}" />
+					</Button>
+					<Button
+						Width="26"
+						Height="22"
+						Command="{Binding DeleteCommand}"
+						ToolTip="{tombLib:Localize DeleteTooltip}">
+						<Image Width="16" Height="16" Source="{tomb:Icon General/trash}" />
+					</Button>
+					</controls:SpacedStack>
+					<controls:SpacedStack DockPanel.Dock="Bottom" Orientation="Vertical" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+					<Button
+						Width="26"
+						Height="22"
+						Command="{Binding MoveUpCommand}"
+						ToolTip="{tombLib:Localize MoveUpTooltip}">
+						<Image Width="16" Height="16" Source="{tomb:Icon General/ArrowUp}" />
+					</Button>
+					<Button
+						Width="26"
+						Height="22"
+						Command="{Binding MoveDownCommand}"
+						ToolTip="{tombLib:Localize MoveDownTooltip}">
+						<Image Width="16" Height="16" Source="{tomb:Icon General/ArrowDown}" />
+					</Button>
+					</controls:SpacedStack>
+				</DockPanel>
 
 				<DataGrid
 					x:Name="dataGrid"

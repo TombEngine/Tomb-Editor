@@ -162,12 +162,10 @@ public class BezierCurveEditor : FrameworkElement
 
         if (e.ClickCount == 2)
         {
-            if (hit == -1)
-            {
-                Value.Set(BezierCurve2.Linear);
-                ValueChanged?.Invoke(this, EventArgs.Empty);
-                InvalidateVisual();
-            }
+            // The previous control reset the curve on any double click, even on a handle.
+            Value.Set(BezierCurve2.Linear);
+            ValueChanged?.Invoke(this, EventArgs.Empty);
+            InvalidateVisual();
 
             return;
         }

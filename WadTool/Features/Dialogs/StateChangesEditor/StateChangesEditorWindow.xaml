@@ -7,6 +7,7 @@
 	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
 	xmlns:local="clr-namespace:WadTool.Features.Dialogs.StateChangesEditor"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
 	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
 	Title="{tombLib:Localize Title}"
 	Width="596"
@@ -82,38 +83,43 @@
 							Width="26"
 							Height="22"
 							Command="{Binding AddRowCommand}"
-							Content="+"
-							ToolTip="{tombLib:Localize AddTooltip}" />
+							ToolTip="{tombLib:Localize AddTooltip}">
+							<Image Width="16" Height="16" Source="{tomb:Icon General/plus_math}" />
+						</Button>
 						<Button
 							Width="26"
 							Height="22"
 							Command="{Binding DeleteRowsCommand}"
 							CommandParameter="{Binding SelectedItems, ElementName=dataGrid}"
-							Content="X"
-							ToolTip="{tombLib:Localize DeleteTooltip}" />
+							ToolTip="{tombLib:Localize DeleteTooltip}">
+							<Image Width="16" Height="16" Source="{tomb:Icon General/trash}" />
+						</Button>
 						<Button
 							Width="26"
 							Height="22"
 							Command="{Binding MoveRowsUpCommand}"
 							CommandParameter="{Binding SelectedItems, ElementName=dataGrid}"
-							Content="▲"
-							ToolTip="{tombLib:Localize MoveUpTooltip}" />
+							ToolTip="{tombLib:Localize MoveUpTooltip}">
+							<Image Width="16" Height="16" Source="{tomb:Icon General/ArrowUp}" />
+						</Button>
 						<Button
 							Width="26"
 							Height="22"
 							Command="{Binding MoveRowsDownCommand}"
 							CommandParameter="{Binding SelectedItems, ElementName=dataGrid}"
-							Content="▼"
-							ToolTip="{tombLib:Localize MoveDownTooltip}" />
+							ToolTip="{tombLib:Localize MoveDownTooltip}">
+							<Image Width="16" Height="16" Source="{tomb:Icon General/ArrowDown}" />
+						</Button>
 					</controls:SpacedStack>
 
 					<Button
 						Width="26"
 						Height="22"
 						Command="{Binding PlayStateChangeCommand}"
-						Content="▶"
 						DockPanel.Dock="Bottom"
-						ToolTip="{tombLib:Localize PlayStateChangeTooltip}" />
+						ToolTip="{tombLib:Localize PlayStateChangeTooltip}">
+							<Image Width="16" Height="16" Source="{tomb:Icon Actions/play}" />
+						</Button>
 				</DockPanel>
 
 				<DataGrid
@@ -128,11 +134,8 @@
 					ItemsSource="{Binding Rows}"
 					SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
 					SelectionMode="Extended"
+					MouseDoubleClick="OnGridMouseDoubleClick"
 					SelectionUnit="FullRow">
-					<DataGrid.InputBindings>
-						<!--  Legacy CellMouseDoubleClick: play the selected state change in chain mode  -->
-						<MouseBinding Command="{Binding PlayStateChangeCommand}" MouseAction="LeftDoubleClick" />
-					</DataGrid.InputBindings>
 					<DataGrid.Columns>
 						<DataGridTextColumn
 							Width="2*"

@@ -1,6 +1,8 @@
 #nullable enable
 
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using TombLib.WPF;
 using WadTool.Features.Dialogs.BlendCurveEditor;
 
@@ -42,6 +44,20 @@ public partial class StateChangesEditorWindow : Window
         columnBlendCurve.Visibility = tenColumnVisibility;
     }
 
+    // Legacy CellMouseDoubleClick: play the state change on a cell double click, except in the blend curve column.
+    private void OnGridMouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (_vm is null)
+            return;
+
+        var source = e.OriginalSource as DependencyObject;
+        var cell = source as DataGridCell ?? source?.FindAncestor<DataGridCell>();
+        if (cell is null || ReferenceEquals(cell.Column, columnBlendCurve))
+            return;
+
+        if (_vm.PlayStateChangeCommand.CanExecute(null))
+            _vm.PlayStateChangeCommand.Execute(null);
+    }
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
         if (_vm is null)
