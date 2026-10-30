@@ -448,7 +448,7 @@ namespace TombEditor
         }
 
 #nullable enable
-        public static void EditColor(IWindowOwner owner, IColorable obj, Action<Vector3>? newColorCallback = null)
+        public static void EditColor(IWindowOwner? owner, IColorable obj, Action<Vector3>? newColorCallback = null)
         {
             var originalColors = CaptureObjectColors(obj);
             var initialColor = obj.Color * 0.5f;

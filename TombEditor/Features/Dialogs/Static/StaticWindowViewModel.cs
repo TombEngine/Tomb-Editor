@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Windows.Media;
 using TombLib;
 using TombLib.LevelData;
+using TombLib.WPF;
 using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
@@ -174,9 +175,6 @@ public partial class StaticWindowViewModel : ObservableObject, IModalDialogViewM
 
         _editor.UndoManager.PushObjectPropertyChanged(_staticMesh);
         _staticMesh.Ocb = ocb;
-        // Only written when the user changed the tint (the 8-bit swatch round trip would alter it otherwise).
-        if (CanBeColored && _colorEdited)
-            _staticMesh.Color = ColorToVector3(DisplayColor) * 2.0f;
         DialogResult = true;
     }
 
@@ -187,9 +185,9 @@ public partial class StaticWindowViewModel : ObservableObject, IModalDialogViewM
         DialogResult = false;
     }
 
-    private bool _colorEdited;
-
-    partial void OnDisplayColorChanged(Color value) => _colorEdited = true;
+    [RelayCommand]
+    private void PickColor()
+        => EditorActions.EditColor(null, _staticMesh, newColor => DisplayColor = newColor.ToWPFColor());
 
     private static Color Vector3ToColor(Vector3 value)
     {
@@ -199,7 +197,4 @@ public partial class StaticWindowViewModel : ObservableObject, IModalDialogViewM
 
         return Color.FromRgb(r, g, b);
     }
-
-    private static Vector3 ColorToVector3(Color color)
-        => new(color.R / 255.0f, color.G / 255.0f, color.B / 255.0f);
 }

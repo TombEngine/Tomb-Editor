@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using System.Numerics;
 using System.Windows.Media;
 using TombLib.LevelData;
+using TombLib.WPF;
 using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
@@ -70,16 +71,16 @@ public partial class MoveableWindowViewModel : ObservableObject, IModalDialogVie
         _displayColor = Vector3ToColor(moveable.Color * 0.5f);
     }
 
-    private bool _colorEdited;
-
-    partial void OnDisplayColorChanged(Color value) => _colorEdited = true;
-
     [RelayCommand]
     private void ResetTint()
     {
-        // Only update the swatch; Confirm applies DisplayColor to the moveable.
         DisplayColor = Colors.Gray;
+        EditorActions.ApplyObjectColor(_moveable, ColorToVector3(Colors.Gray) * 2.0f);
     }
+
+    [RelayCommand]
+    private void PickColor()
+        => EditorActions.EditColor(null, _moveable, newColor => DisplayColor = newColor.ToWPFColor());
 
     [RelayCommand]
     private void Confirm()
@@ -103,9 +104,6 @@ public partial class MoveableWindowViewModel : ObservableObject, IModalDialogVie
         _moveable.Invisible = Invisible;
         _moveable.ClearBody = ClearBody;
         _moveable.Ocb = ocb;
-        // Like the previous dialog, the tint is only written when the user changed it (the 8-bit swatch round trip would alter it otherwise).
-        if (CanBeColored && _colorEdited)
-            _moveable.Color = ColorToVector3(DisplayColor) * 2.0f;
 
         DialogResult = true;
     }

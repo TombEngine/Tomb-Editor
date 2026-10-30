@@ -37,23 +37,21 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <GroupBox Grid.Row="0" Header="{tombLib:Localize CollisionFlags}">
-            <controls:SpacedStack
-                Margin="{x:Static darkUI:Defaults.SmallThickness}"
-                IsEnabled="{Binding StandardFlagsEnabled}"
-                Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
-                <CheckBox Content="{tombLib:Localize BurnLaraOnCollision}" IsChecked="{Binding BurnLaraOnCollision, Mode=TwoWay}" />
-                <CheckBox Content="{tombLib:Localize DamageLaraOnContact}" IsChecked="{Binding DamageLaraOnContact, Mode=TwoWay}" />
-                <CheckBox Content="{tombLib:Localize PoisonLaraOnCollision}" IsChecked="{Binding PoisonLaraOnCollision, Mode=TwoWay}" />
-                <CheckBox Content="{tombLib:Localize ExplodeKillingOnCollision}" IsChecked="{Binding ExplodeKillingOnCollision, Mode=TwoWay}" />
-                <CheckBox Content="{tombLib:Localize HeavyTriggerOnCollision}" IsChecked="{Binding HeavyTriggerOnCollision, Mode=TwoWay}" />
-                <CheckBox Content="{tombLib:Localize DisableCollision}" IsChecked="{Binding DisableCollision, Mode=TwoWay}" />
-                <CheckBox Content="{tombLib:Localize HugeCollision}" IsChecked="{Binding HugeCollision, Mode=TwoWay}" />
-                <CheckBox Content="{tombLib:Localize GlassTransparency}" IsChecked="{Binding GlassTransparency, Mode=TwoWay}" />
-                <CheckBox Content="{tombLib:Localize IceTransparency}" IsChecked="{Binding IceTransparency, Mode=TwoWay}" />
-                <CheckBox Content="{tombLib:Localize HardShatter}" IsChecked="{Binding HardShatter, Mode=TwoWay}" />
-            </controls:SpacedStack>
-        </GroupBox>
+        <controls:SpacedStack
+            Grid.Row="0"
+            IsEnabled="{Binding StandardFlagsEnabled}"
+            Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <CheckBox Content="{tombLib:Localize DisableCollision}" IsChecked="{Binding DisableCollision, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize GlassTransparency}" IsChecked="{Binding GlassTransparency, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize IceTransparency}" IsChecked="{Binding IceTransparency, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize DamageLaraOnContact}" IsChecked="{Binding DamageLaraOnContact, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize BurnLaraOnCollision}" IsChecked="{Binding BurnLaraOnCollision, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize ExplodeKillingOnCollision}" IsChecked="{Binding ExplodeKillingOnCollision, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize PoisonLaraOnCollision}" IsChecked="{Binding PoisonLaraOnCollision, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize HugeCollision}" IsChecked="{Binding HugeCollision, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize HardShatter}" IsChecked="{Binding HardShatter, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize HeavyTriggerOnCollision}" IsChecked="{Binding HeavyTriggerOnCollision, Mode=TwoWay}" />
+        </controls:SpacedStack>
 
         <CheckBox
             Grid.Row="1"
@@ -77,7 +75,7 @@
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 Increment="1"
-                IsEnabled="{Binding Scalable}"
+                Visibility="{Binding Scalable, Converter={StaticResource BoolToVis}}"
                 Maximum="1023"
                 Minimum="0"
                 Value="{Binding ScalableValue, Mode=TwoWay}" />
@@ -117,6 +115,7 @@
             <controls:ColorPickerButton
                 Grid.Column="1"
                 Height="24"
+                Command="{Binding PickColorCommand}"
                 SelectedColor="{Binding DisplayColor, Mode=TwoWay}" />
         </controls:SpacedGrid>
 

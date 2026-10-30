@@ -88,6 +88,7 @@
             <controls:ColorPickerButton
                 Grid.Column="0"
                 Height="24"
+                Command="{Binding PickColorCommand}"
                 SelectedColor="{Binding DisplayColor, Mode=TwoWay}" />
             <Button
                 Grid.Column="1"
