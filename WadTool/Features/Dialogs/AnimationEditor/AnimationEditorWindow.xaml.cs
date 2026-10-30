@@ -2,7 +2,10 @@
 
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using TombLib.Wad;
 using TombLib.WPF;
 using TombLib.WPF.CustomControls;
 using WadTool.Controls;
@@ -29,6 +32,8 @@ public partial class AnimationEditorWindow : Window
 
         _timeline.ValueChanged += OnTimelineValueChanged;
         _timeline.SelectionChanged += OnTimelineSelectionChanged;
+        _timeline.AnimCommandDoubleClick += OnTimelineAnimCommandDoubleClick;
+        animationList.SelectionChanged += OnAnimationListSelectionChanged;
         _bezier.ValueChanged += OnBezierValueChanged;
 
         stateIdBox.LostKeyboardFocus += (_, _) => _vm?.CommitStateId();
@@ -131,6 +136,11 @@ public partial class AnimationEditorWindow : Window
 
     private void OnTimelineSelectionChanged(object? sender, EventArgs e) => _vm?.OnTimelineSelectionChanged();
 
+    private void OnTimelineAnimCommandDoubleClick(object? sender, WadAnimCommand command) => _vm?.EditAnimCommands(command);
+
+    private void OnAnimationListSelectionChanged(object sender, SelectionChangedEventArgs e)
+        => _vm?.SetSelectedAnimations(animationList.SelectedItems.Cast<AnimListItem>());
+
     private void OnBezierValueChanged(object? sender, EventArgs e) => _vm?.OnBlendCurveEdited();
 
     private void OnClosingHandler(object? sender, CancelEventArgs e)
@@ -145,6 +155,8 @@ public partial class AnimationEditorWindow : Window
 
         _timeline.ValueChanged -= OnTimelineValueChanged;
         _timeline.SelectionChanged -= OnTimelineSelectionChanged;
+        _timeline.AnimCommandDoubleClick -= OnTimelineAnimCommandDoubleClick;
+        animationList.SelectionChanged -= OnAnimationListSelectionChanged;
         _bezier.ValueChanged -= OnBezierValueChanged;
         _vm?.Detach();
     }

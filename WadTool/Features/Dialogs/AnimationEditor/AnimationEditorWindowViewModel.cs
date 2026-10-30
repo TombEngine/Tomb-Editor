@@ -40,6 +40,9 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     private BezierCurveEditor? _bezier;
     private DispatcherTimer? _playTimer;
     private bool _allowUpdate = true;
+    private bool _rebuildingList;
+    private bool _undoPossible;
+    private bool _redoPossible;
     private int _frameCount;
 
     private readonly PopUpInfo _popup = new();
@@ -188,6 +191,14 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
             UpdateTransformUI();
         }
 
+        if (obj is WadToolClass.UndoStackChangedEvent stackEvent)
+        {
+            _undoPossible = stackEvent.UndoPossible;
+            _redoPossible = stackEvent.RedoPossible;
+            UndoCommand.NotifyCanExecuteChanged();
+            RedoCommand.NotifyCanExecuteChanged();
+        }
+
         if (obj is WadToolClass.UndoStackChangedEvent || obj is WadToolClass.AnimationEditorGizmoPickedEvent)
             SetSaved(false);
 
@@ -226,14 +237,15 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
             ShowPopup(message.Message, message.Type);
     }
 
-    private void RebuildAnimationsList()
+    partial void OnSelectedAnimChanged(AnimListItem? value)
     {
-        Animations.Clear();
-        foreach (var node in _editor.Animations)
-            Animations.Add(new AnimListItem(node, "(" + node.Index + ") " + node.WadAnimation.Name));
-    }
+        // Like the previous list, an empty selection keeps the current animation.
+        if (_rebuildingList || value is null)
+            return;
 
-    partial void OnSelectedAnimChanged(AnimListItem? value) => SelectAnimation(value?.Node);
+        SelectAnimation(value.Node);
+        _editor.CheckAnimationIntegrity(value.Node.WadAnimation);
+    }
 
     private void SelectAnimation(AnimationNode? node)
     {
@@ -1046,11 +1058,11 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         return false;
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanUndo))]
     private void Undo() => _editor.Tool.UndoManager.Undo();
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanRedo))]
     private void Redo() => _editor.Tool.UndoManager.Redo();
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanSave))]
     private void Save()
     {
         _editor.SaveChanges();
@@ -1063,6 +1075,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
             return;
 
         _isSaved = saved;
+        SaveCommand.NotifyCanExecuteChanged();
         Title = "Animation editor - " + _editor.Moveable.Id.ToString(_editor.Wad.GameVersion) + (saved ? "" : "*");
     }
 
@@ -1214,10 +1227,13 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     }
 
     [RelayCommand]
-    private void EditAnimCommands()
+    private void EditAnimCommands() => EditAnimCommands(null);
+
+    /// <summary>Opens the anim commands editor, optionally selecting the given command.</summary>
+    public void EditAnimCommands(WadAnimCommand? command)
     {
         if (_editor.CurrentAnim is null) return;
-        var vm = new AnimCommandsEditorWindowViewModel(_editor, _editor.CurrentAnim);
+        var vm = new AnimCommandsEditorWindowViewModel(_editor, _editor.CurrentAnim, command);
         var dialog = new AnimCommandsEditorWindow { DataContext = vm };
         dialog.SetOwner(Owner);
         dialog.ShowDialog();
@@ -1225,34 +1241,19 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     }
 
     [RelayCommand]
-    private void EditStateChanges()
+    private void EditStateChanges() => EditStateChanges(null);
+
+    private void EditStateChanges(WadStateChange? newStateChange)
     {
         if (_editor.CurrentAnim is null) return;
-        var vm = new StateChangesEditorWindowViewModel(_editor, _editor.CurrentAnim);
+        var vm = new StateChangesEditorWindowViewModel(_editor, _editor.CurrentAnim, newStateChange);
         var dialog = new StateChangesEditorWindow { DataContext = vm };
         dialog.SetOwner(Owner);
         dialog.ShowDialog();
     }
 
     [RelayCommand]
-    private void FixAnimation()
-    {
-        if (_editor.CurrentAnim is null) return;
-        var anims = new System.Collections.Generic.List<AnimationNode> { _editor.CurrentAnim };
-        var vm = new AnimationFixerWindowViewModel(_editor, anims);
-        var dialog = new AnimationFixerWindow { DataContext = vm };
-        dialog.SetOwner(Owner);
-        dialog.ShowDialog();
-
-        if (vm.Outcome == AnimationFixerOutcome.NothingFixed)
-            ShowPopup("No properties were selected or there was nothing to fix.\nNo changes were made.", PopupType.Info);
-        else if (vm.Outcome == AnimationFixerOutcome.Fixed)
-        {
-            var msg = vm.ChangedAnimations.Length < 50 ? "Animations (" + vm.ChangedAnimations + ")" : "Multiple animations";
-            ShowPopup(msg + " were fixed.\nPlease save your wad under new name and thoroughly test it.", PopupType.Warning);
-            SelectAnimation(_editor.CurrentAnim);
-        }
-    }
+    private void FixAnimation() => FixAnimations(AnimationFixScope.Current);
 
     // ---- Animation operations (slice 3d) ----
 
@@ -1266,7 +1267,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         DeleteAnimationCore(_editor.CurrentAnim);
     }
 
-    private void DeleteAnimationCore(AnimationNode animToDelete)
+    private void DeleteAnimationCore(AnimationNode animToDelete, bool updateUi = true)
     {
         if (animToDelete is null || !_editor.Animations.Contains(animToDelete)) return;
 
@@ -1283,7 +1284,12 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         }
 
         _editor.Animations.Remove(animToDelete);
+
+        if (!updateUi)
+            return;
+
         RebuildAnimationsList();
+        SetSaved(false);
 
         if (Animations.Count > 0)
             SelectedAnim = Animations[Math.Min(currentIndex, Animations.Count - 1)];
@@ -1390,9 +1396,11 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         _panel.Invalidate();
     }
 
-    private void CalculateKeyframeBoundingBox(int index, bool clear)
+    private void CalculateKeyframeBoundingBox(int index, bool clear, bool undo = false)
     {
         if (_panel is null || _timeline is null || !_editor.ValidAnimationAndFrames) return;
+        if (undo) _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
+
         var meshList = GetSelectedMeshList();
         var keyFrame = _editor.CurrentAnim.DirectXAnimation.KeyFrames[index];
         _panel.Model.BuildAnimationPose(keyFrame);
@@ -1407,6 +1415,8 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
             UpdateTransformUI();
             _panel.Invalidate();
         }
+
+        SetSaved(false);
     }
 
     [RelayCommand]
@@ -1465,7 +1475,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         InterpolateFrames(start, end, numFrames);
     }
 
-    private void InterpolateFrames(int frameIndex1, int frameIndex2, int numFrames)
+    private void InterpolateFrames(int frameIndex1, int frameIndex2, int numFrames, bool updateGui = true)
     {
         if (_timeline is null || _panel is null) return;
         var frame1 = _editor.CurrentAnim.DirectXAnimation.KeyFrames[frameIndex1];
@@ -1504,6 +1514,10 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         }
 
         FixEndFrame(numFrames);
+
+        if (!updateGui)
+            return;
+
         OnKeyframesListChanged();
         _timeline.Highlight(frameIndex1, frameIndex1 + numFrames + 1);
         _timeline.ResetSelection();

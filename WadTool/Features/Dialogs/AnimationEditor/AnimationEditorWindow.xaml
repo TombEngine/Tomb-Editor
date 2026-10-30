@@ -93,7 +93,75 @@
         </Style>
     </Window.Resources>
 
-    <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
+    <DockPanel LastChildFill="True">
+
+        <!--  Menu bar (mirrors the legacy top menu)  -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Edit">
+                <MenuItem Command="{Binding UndoCommand}" Header="Undo" InputGestureText="Ctrl+Z"><MenuItem.Icon><Image Source="{tomb:Icon General/undo}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding RedoCommand}" Header="Redo" InputGestureText="Ctrl+Y"><MenuItem.Icon><Image Source="{tomb:Icon General/redo}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding SaveCommand}" Header="Save changes" InputGestureText="Ctrl+S"><MenuItem.Icon><Image Source="{tomb:Icon General/Save}" /></MenuItem.Icon></MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding CancelCommand}" Header="Close" />
+            </MenuItem>
+            <MenuItem Header="Animations">
+                <MenuItem Command="{Binding AddAnimationCommand}" Header="New animation"><MenuItem.Icon><Image Source="{tomb:Icon General/plus_math}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding DeleteAnimationCommand}" Header="Delete animation"><MenuItem.Icon><Image Source="{tomb:Icon General/trash}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding SplitAnimationCommand}" Header="Split animation"><MenuItem.Icon><Image Source="{tomb:Icon Actions/Split}" /></MenuItem.Icon></MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding CutAnimationCommand}" Header="Cut"><MenuItem.Icon><Image Source="{tomb:Icon Actions/cut}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding CopyAnimationCommand}" Header="Copy"><MenuItem.Icon><Image Source="{tomb:Icon General/copy}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding PasteAnimationCommand}" Header="Paste"><MenuItem.Icon><Image Source="{tomb:Icon General/paste}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding ReplaceAnimationCommand}" Header="Replace"><MenuItem.Icon><Image Source="{tomb:Icon General/paste-new}" /></MenuItem.Icon></MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding ImportAnimationCommand}" Header="Import..."><MenuItem.Icon><Image Source="{tomb:Icon General/Import}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding ExportAnimationCommand}" Header="Export..."><MenuItem.Icon><Image Source="{tomb:Icon General/Export}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Header="Batch">
+                    <MenuItem Command="{Binding BatchImportCommand}" Header="Import..." />
+                    <MenuItem Command="{Binding BatchExportSelectedCommand}" Header="Export selected..." />
+                    <MenuItem Command="{Binding BatchExportAllCommand}" Header="Export all..." />
+                </MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding ResampleAnimationCommand}" Header="Resample animation"><MenuItem.Icon><Image Source="{tomb:Icon Actions/interpolate}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding ResampleAnimationToFramerateCommand}" Header="Resample animation to framerate" />
+                <MenuItem Command="{Binding MirrorCommand}" Header="Mirror animation"><MenuItem.Icon><Image Source="{tomb:Icon General/Mirror}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding ReverseCommand}" Header="Reverse animation" />
+                <Separator />
+                <MenuItem Header="Fix">
+                    <MenuItem Command="{Binding FixCurrentAnimationCommand}" Header="Current animation..." />
+                    <MenuItem Command="{Binding FixSelectedAnimationsCommand}" Header="Selected animations..." />
+                    <MenuItem Command="{Binding FixAllAnimationsCommand}" Header="All animations..." />
+                </MenuItem>
+                <MenuItem Command="{Binding FindReplaceAnimCommandsCommand}" Header="Find &amp; replace animcommands..."><MenuItem.Icon><Image Source="{tomb:Icon General/Find-and-replace}" /></MenuItem.Icon></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Frames">
+                <MenuItem Command="{Binding AddFrameCommand}" Header="Insert frame after current one"><MenuItem.Icon><Image Source="{tomb:Icon General/plus_math}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding InsertFramesAfterCurrentCommand}" Header="Insert (n) frames after current one" />
+                <MenuItem Command="{Binding DeleteFrameCommand}" Header="Delete frames" InputGestureText="Del"><MenuItem.Icon><Image Source="{tomb:Icon General/trash}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding DeleteEveryNthFrameCommand}" Header="Delete every (n)th frame" />
+                <Separator />
+                <MenuItem Command="{Binding CutFrameCommand}" Header="Cut" InputGestureText="Ctrl+X"><MenuItem.Icon><Image Source="{tomb:Icon Actions/cut}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding CopyFrameCommand}" Header="Copy" InputGestureText="Ctrl+C"><MenuItem.Icon><Image Source="{tomb:Icon General/copy}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding PasteFrameCommand}" Header="Paste" InputGestureText="Ctrl+V"><MenuItem.Icon><Image Source="{tomb:Icon General/paste}" /></MenuItem.Icon></MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding InterpolateCommand}" Header="Interpolate frames" InputGestureText="Ctrl+I"><MenuItem.Icon><Image Source="{tomb:Icon Actions/interpolate}" /></MenuItem.Icon></MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding CalculateCurrentFrameBoundingBoxCommand}" Header="Calculate bounding box"><MenuItem.Icon><Image Source="{tomb:Icon General/box}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding DeleteCurrentFrameBoundingBoxCommand}" Header="Delete bounding box" />
+            </MenuItem>
+            <MenuItem Header="Rendering">
+                <MenuItem Header="Draw gizmo" IsCheckable="True" IsChecked="{Binding ShowGizmo, Mode=TwoWay}" />
+                <MenuItem Header="Draw grid" IsCheckable="True" IsChecked="{Binding ShowGrid, Mode=TwoWay}" />
+                <MenuItem Header="Draw collision box" IsCheckable="True" IsChecked="{Binding ShowCollisionBox, Mode=TwoWay}" />
+                <MenuItem Header="Draw skinned mesh" IsCheckable="True" IsChecked="{Binding ShowSkin, Mode=TwoWay}" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}" />
+                <Separator />
+                <MenuItem Header="Smooth animation" IsCheckable="True" IsChecked="{Binding SmoothAnimation, Mode=TwoWay}" />
+                <MenuItem Header="Scroll grid" IsCheckable="True" IsChecked="{Binding ScrollGrid, Mode=TwoWay}" />
+                <MenuItem Header="Restore grid height" IsCheckable="True" IsChecked="{Binding RestoreGridHeight, Mode=TwoWay}" />
+            </MenuItem>
+        </Menu>
+
+        <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
 
         <!--  Footer: OK / Cancel  -->
         <controls:SpacedStack
@@ -116,10 +184,53 @@
             <GroupBox.Margin>
                 <Thickness Right="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
             </GroupBox.Margin>
-            <ListBox
-                DisplayMemberPath="Label"
-                ItemsSource="{Binding Animations}"
-                SelectedItem="{Binding SelectedAnim, Mode=TwoWay}" />
+            <DockPanel>
+                <!--  Filter  -->
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,4">
+                    <Button
+                        DockPanel.Dock="Right"
+                        Style="{StaticResource TbBtn}"
+                        Margin="2,0,0,0"
+                        Command="{Binding ResetFilterCommand}"
+                        ToolTip="Reset filtering">
+                        <Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/delete}" />
+                    </Button>
+                    <Button
+                        DockPanel.Dock="Right"
+                        Style="{StaticResource TbBtn}"
+                        Margin="2,0,0,0"
+                        Command="{Binding ApplyFilterCommand}"
+                        ToolTip="Filter list.&#13;&#10;Numerical input - filter by state ID&#13;&#10;String input - filter by name">
+                        <Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/filter}" />
+                    </Button>
+                    <TextBox
+                        VerticalContentAlignment="Center"
+                        Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        ToolTip="Numerical input - filter by state ID.&#13;&#10;String input - filter by animation name.&#13;&#10;&#13;&#10;Tokens:&#13;&#10;s:[name or ID] - state name or ID&#13;&#10;a:[name or ID] - anim name or ID">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Return" Command="{Binding ApplyFilterCommand}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
+                </DockPanel>
+
+                <!--  Add / delete  -->
+                <controls:SpacedStack
+                    DockPanel.Dock="Bottom"
+                    HorizontalAlignment="Right"
+                    Margin="0,4,0,0"
+                    Orientation="Horizontal"
+                    Spacing="2">
+                    <Button Style="{StaticResource TbBtn}" Command="{Binding AddAnimationCommand}" ToolTip="Add new animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
+                    <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteSelectedAnimationsCommand}" ToolTip="Delete selected animations"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
+                </controls:SpacedStack>
+
+                <ListBox
+                    x:Name="animationList"
+                    DisplayMemberPath="Label"
+                    ItemsSource="{Binding Animations}"
+                    SelectedItem="{Binding SelectedAnim, Mode=TwoWay}"
+                    SelectionMode="Extended" />
+            </DockPanel>
         </GroupBox>
 
         <!--  Right: properties + transform + bounding box + bones  -->
@@ -479,13 +590,26 @@
                 <Border.Margin>
                     <Thickness Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
                 </Border.Margin>
-                <tombLibControls:AnimationTrackBar x:Name="timeline" />
+                <tombLibControls:AnimationTrackBar x:Name="timeline">
+                    <tombLibControls:AnimationTrackBar.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem Command="{Binding MarkInCommand}" Header="Mark in" InputGestureText="I" />
+                            <MenuItem Command="{Binding MarkOutCommand}" Header="Mark out" InputGestureText="O" />
+                            <MenuItem Command="{Binding SelectAllCommand}" Header="Select all" InputGestureText="Ctrl+A" />
+                            <MenuItem Command="{Binding ClearSelectionCommand}" Header="Clear selection" />
+                            <Separator />
+                            <MenuItem Command="{Binding CreateAnimCommandCommand}" Header="Create anim command..." />
+                            <MenuItem Command="{Binding CreateStateChangeCommand}" Header="Create state change..." />
+                        </ContextMenu>
+                    </tombLibControls:AnimationTrackBar.ContextMenu>
+                </tombLibControls:AnimationTrackBar>
             </Border>
 
             <!--  3D view (hosted)  -->
             <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
                 <Border x:Name="panelRenderingHost" />
             </Border>
+        </DockPanel>
         </DockPanel>
     </DockPanel>
 </Window>
