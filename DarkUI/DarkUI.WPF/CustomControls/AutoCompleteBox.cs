@@ -153,6 +153,10 @@ public class AutoCompleteBox : Control
 
 	private void InputTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
 	{
+		// Enter commits the typed text without waiting for the box to lose focus.
+		if (e.Key == Key.Enter && InputTextBox is not null)
+			Text = InputTextBox.Text;
+
 		if (e.Key == Key.Down &&
 			IsSuggestionVisible &&
 			InputTextBox?.IsFocused == true &&

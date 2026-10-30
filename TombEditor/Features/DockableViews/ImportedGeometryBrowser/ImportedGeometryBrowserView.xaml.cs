@@ -27,6 +27,18 @@ public partial class ImportedGeometryBrowserView : UserControl
         };
 
         DataContext = _viewModel;
+        Editor.Instance.EditorEventRaised += OnEditorEvent;
+    }
+
+    /// <summary>Raised when the panel asks to be brought to the front (the chosen item changed elsewhere).</summary>
+    public event System.EventHandler? ActivationRequested;
+
+    private void OnEditorEvent(IEditorEvent editorEvent)
+    {
+        if (editorEvent is Editor.ConfigurationChangedEvent)
+            _panelItem.AnimatePreview = Editor.Instance.Configuration.RenderingItem_Animate;
+        else if (editorEvent is Editor.ChosenItemsChangedEvent)
+            ActivationRequested?.Invoke(this, System.EventArgs.Empty);
     }
 
     public void InitializeRendering(RenderingDevice device)
@@ -39,6 +51,7 @@ public partial class ImportedGeometryBrowserView : UserControl
 
     public void Cleanup()
     {
+        Editor.Instance.EditorEventRaised -= OnEditorEvent;
         _viewModel.Cleanup();
         _panelItem.Dispose();
     }

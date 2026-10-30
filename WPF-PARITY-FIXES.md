@@ -58,10 +58,16 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Window > Tool Palette shows/hides the floating tool palette and the state is saved per layout (`ShowToolbox`), with its check mark; View > "Draw untextured in Lighting Mode" and "Show real tint for objects" show their check marks | The command had no target (palette always shown) and the toggles had no state | (this commit) |
 | Toolbar Undo shows the "irreversible undo" icon when the next undo cannot be reverted; Flip map is a toggle showing whether the selected room is the flipped one | Icon never changed and Flip map had no checked state | (this commit) |
 | The dock layout in use is saved on exit and restored at the next start, also without a custom layout (`Window_Layout.AvalonDockState`) | Only named layouts were persisted; the default always came back as the XAML baseline | (this commit) |
+| Shortcut text in menus and toolbar tooltips refreshes when the keyboard configuration changes | Computed once at load, stale after changing hotkeys | (this commit) |
+| In fly mode the Alt key is swallowed so the menu bar does not activate | Alt opened the menus while flying | (this commit) |
+| Texturing: every change of the visible level texture is announced to the editor (Palette sampling follows it), and the panel comes to the front when a texture is centered from elsewhere | Editor was not told after rebuilds or selection events; panel stayed in the background | (this commit) |
+| Items and Imported Geometry previews re-apply the "animate preview" option when the configuration changes and their panels come to the front when the chosen item changes elsewhere | Option applied only once at startup; no activation | (this commit) |
+| Room tags (and any AutoCompleteBox): Enter commits the text | Only losing focus committed it | (this commit) |
+| Palette toolbar sits on the left when the panel is wide and on top otherwise (not verified on screen) | Fixed left column | (this commit) |
 
 ## Open items
 
-- Tomb Editor (from the functional audit, still to fix): hotkey text refresh on keyboard layout change; Alt handling in fly mode; Debug menu; Texturing level-texture sync with the editor and panel activation; Room Options tags commit/casing; item preview animate option not re-applied; Palette layout adaption.
+- Tomb Editor: none left from the functional audit. Not verified on screen: file drops onto the window, saved window placement, list selection behavior, trigger deletion, Palette adaptive layout.
 - SoundTool: a failed or cancelled save still aborts New / Open / Close (WinForms continues); left as is on request.
 - SoundTool: double-click preview needs a loaded reference project; MAIN.SFX build/unpack not driven live.
 - WadTool: tree search is an inline row, not the WinForms pop-up; destination panel header is not highlighted when active (S3); tree rows are about 3 px denser (S3).
@@ -70,6 +76,7 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 ## Intentional divergences (kept on purpose)
 
 - Dark custom title bar instead of the system accent color.
+- Tomb Editor: the Debug menu (developer scratch actions, visible only with a debugger attached) is not ported; room tags are normalized to lowercase.
 - Theme font is 11 px (WinForms 9 pt = 12 px), so menus and labels are slightly smaller everywhere; changing it would touch every control.
 - Tomb Editor: dockable flyby timeline, extra "Rooms" panel, 2D/3D tabs, pin/dropdown buttons in dock headers, extra status bar fields.
 - SoundTool: details pane always visible but disabled without a selection; extra Stop button; "Select/Deselect all" marks the catalog as modified; build/unpack iterate sounds ordered by ID; Ctrl+C/V bound to the sound list only.

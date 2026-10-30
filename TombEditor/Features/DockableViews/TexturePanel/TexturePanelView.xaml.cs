@@ -19,10 +19,14 @@ public partial class TexturePanelView : UserControl
 		_viewModel = new TexturePanelViewModel(Editor.Instance);
 		_viewModel.RequestResetVisibleTexture += (_, tex) => MapView.ResetVisibleTexture(tex);
 		_viewModel.RequestShowTexture += (_, area) => MapView.ShowTexture(area);
+		_viewModel.RequestActivation += (_, _) => ActivationRequested?.Invoke(this, System.EventArgs.Empty);
 		_viewModel.RequestInvalidate += (_, _) => MapView.InvalidateBitmapCache();
 
 		DataContext = _viewModel;
 	}
+
+	/// <summary>Raised when the panel asks to be brought to the front.</summary>
+	public event System.EventHandler? ActivationRequested;
 
 	public void FocusSearch() => TexturesCombo.OpenAndFocusSearch();
 

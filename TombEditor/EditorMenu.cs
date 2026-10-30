@@ -57,9 +57,7 @@ public static class EditorMenu
             ? cmd.Name.Replace("Show", string.Empty).SplitCamelcase()
             : cmd.FriendlyName;
 
-        var hotkeys = Editor.Instance.Configuration.UI_Hotkeys[commandName];
-        menuItem.InputGestureText = string.Join(", ",
-            hotkeys.Select(h => h.ToString()).Where(s => !string.IsNullOrWhiteSpace(s)));
+        RefreshHotkeyText(menuItem);
 
         menuItem.Command = new RelayCommand(() =>
         {
@@ -69,6 +67,20 @@ public static class EditorMenu
                 Window = WPFUtils.GetWindowOwner(),
             });
         });
+    }
+
+    /// <summary>Recomputes the shortcut text of the menu item and of all its sub-items from the configured hotkeys.</summary>
+    public static void RefreshHotkeyText(MenuItem menuItem)
+    {
+        if (GetCommand(menuItem) is { Length: > 0 } commandName)
+        {
+            var hotkeys = Editor.Instance.Configuration.UI_Hotkeys[commandName];
+            menuItem.InputGestureText = string.Join(", ",
+                hotkeys.Select(h => h.ToString()).Where(s => !string.IsNullOrWhiteSpace(s)));
+        }
+
+        foreach (var child in menuItem.Items.OfType<MenuItem>())
+            RefreshHotkeyText(child);
     }
 
     public static readonly DependencyProperty IconProperty = DependencyProperty.RegisterAttached(

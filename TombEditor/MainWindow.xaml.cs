@@ -60,6 +60,9 @@ public partial class MainWindow : Window
         _menuState = new MainMenuStateUpdater(_editor, mainMenu, stepHeightSeparator);
         InitializeShell();
         triggerListView.TitleChanged += (_, _) => UpdateTriggerListTitle();
+        texturePanelView.ActivationRequested += (_, _) => ActivatePanel("texturePanel");
+        itemBrowserView.ActivationRequested += (_, _) => ActivatePanel("itemBrowser");
+        importedGeometryBrowserView.ActivationRequested += (_, _) => ActivatePanel("importedGeometryBrowser");
         WindowConfiguration.ConfigureWindow(this, _editor.Configuration, "FormMain");
 
         // The native WPF viewport owns the Direct3D swap chain and input.
@@ -142,6 +145,12 @@ public partial class MainWindow : Window
     {
         OnEditorEventForFloatingToolboxes(obj);
         _menuState.Handle(obj);
+
+        if (obj is Editor.ConfigurationChangedEvent { UpdateKeyboardShortcuts: true })
+        {
+            foreach (var item in mainMenu.Items.OfType<MenuItem>())
+                EditorMenu.RefreshHotkeyText(item);
+        }
 
         if (obj is Editor.DefaultControlActivationEvent { ContainerName: not "FormMain" } activation)
             ActivateSearch(activation.ContainerName);
@@ -515,6 +524,17 @@ public partial class MainWindow : Window
 
         anchorable.IsActive = true;
         focusSearch();
+    }
+
+    private void ActivatePanel(string contentId)
+    {
+        if (FindAnchorable(contentId) is not { } anchorable)
+            return;
+
+        if (anchorable.IsHidden)
+            anchorable.Show();
+
+        anchorable.IsActive = true;
     }
 
     private void UpdateTriggerListTitle()

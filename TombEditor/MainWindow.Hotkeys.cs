@@ -35,9 +35,9 @@ namespace TombEditor
             if (!IsActive)
                 return false;
 
-            // Disable all hotkeys in fly mode except ToggleFlyMode
+            // Disable all hotkeys in fly mode except ToggleFlyMode; the Alt key is swallowed so the menu bar does not activate.
             if (_editor.FlyMode && !_editor.Configuration.UI_Hotkeys["ToggleFlyMode"].Contains(keyData))
-                return false;
+                return keyData.HasFlag(Keys.Alt);
 
             if (_editor.CameraPreviewMode != CameraPreviewType.None)
             {

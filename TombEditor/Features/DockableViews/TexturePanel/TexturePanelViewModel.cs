@@ -38,9 +38,8 @@ public partial class TexturePanelViewModel : ObservableObject
             UpdateButtonStates();
             RequestResetVisibleTexture?.Invoke(this, value);
 
-            if (_suppressEditorSync)
-                return;
-
+            // Like the previous panel, every change of the visible level texture is announced to the editor,
+            // including list rebuilds and selection changes coming from the editor itself.
             _editor.SelectedLevelTextureChanged(value);
         }
     }
@@ -123,6 +122,9 @@ public partial class TexturePanelViewModel : ObservableObject
 
     public event EventHandler<LevelTexture?>? RequestResetVisibleTexture;
     public event EventHandler<TextureArea>? RequestShowTexture;
+
+    /// <summary>Raised when the panel should be brought to the front (a texture was centered from elsewhere).</summary>
+    public event EventHandler? RequestActivation;
     public event EventHandler? RequestInvalidate;
 
     public ICommand AddTextureCommand { get; }
@@ -227,6 +229,7 @@ public partial class TexturePanelViewModel : ObservableObject
                     SelectedTexture = tex;
                 ApplyTextureControls(center.Texture);
                 RequestShowTexture?.Invoke(this, center.Texture);
+                RequestActivation?.Invoke(this, EventArgs.Empty);
             }
             finally
             {

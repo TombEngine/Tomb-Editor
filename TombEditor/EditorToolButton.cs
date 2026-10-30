@@ -52,13 +52,12 @@ public static class EditorToolButton
         if (cmd is null)
             return;
 
-        var hotkeys = Editor.Instance.Configuration.UI_Hotkeys[commandName];
-        var hotkeyDisplay = string.Join(", ",
-            hotkeys.Select(h => h.ToString()).Where(s => !string.IsNullOrWhiteSpace(s)));
-
-        button.ToolTip = string.IsNullOrEmpty(hotkeyDisplay)
-            ? cmd.FriendlyName
-            : cmd.FriendlyName + " (" + hotkeyDisplay + ")";
+        UpdateToolTip(button, commandName, cmd);
+        SubscribeWeak(button, editorEvent =>
+        {
+            if (editorEvent is Editor.ConfigurationChangedEvent { UpdateKeyboardShortcuts: true })
+                UpdateToolTip(button, commandName, cmd);
+        });
 
         button.Command = new RelayCommand(() =>
         {
@@ -70,6 +69,17 @@ public static class EditorToolButton
         });
 
         ToolbarEnableRules.Attach(button, commandName);
+    }
+
+    private static void UpdateToolTip(ButtonBase button, string commandName, CommandObj cmd)
+    {
+        var hotkeys = Editor.Instance.Configuration.UI_Hotkeys[commandName];
+        var hotkeyDisplay = string.Join(", ",
+            hotkeys.Select(h => h.ToString()).Where(s => !string.IsNullOrWhiteSpace(s)));
+
+        button.ToolTip = string.IsNullOrEmpty(hotkeyDisplay)
+            ? cmd.FriendlyName
+            : cmd.FriendlyName + " (" + hotkeyDisplay + ")";
     }
 
     #endregion
