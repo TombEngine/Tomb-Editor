@@ -137,4 +137,7 @@ Each maps to the `*Window.xaml` of the same name under `TombEditor/Features/Dial
 - Compared with `TombEngine.wad2` loaded in both builds. Layout, toolbar, panel headers, bottom buttons, status bar and 3D viewport color already match closely.
 - Fixed: destination and source wad trees used `Brush_Background_Low` (#313335) while WinForms uses the panel color (#3C3F41); now `Brush_Background`.
 - Left as S3: WPF tree rows are about 3 px denser than WinForms; WPF toolbar buttons have visible borders; the WinForms destination panel header is highlighted when active; WPF shows the saved reference project name in the toolbar (data, not a defect).
-- Functional inventory of `FormMain` (WadTool) is the next step.
+- Functional audit of `FormMain` (read-only agent, then spot-checked in code): menus, shortcuts, toolbar, context menus, tree interactions, reference project, recent files, unsaved-changes prompts, window title, status bar, command line and saved window placement all match. Not driven live yet.
+  - Fixed: the Delete shortcut was subscribed on the whole tree control and could reach `DeleteObjects` from the notes, search and game-version inputs; it is now ignored for text boxes and combo boxes.
+  - Open (decide): Add object / Change slot / Delete / Edit item are disabled in WPF when not applicable, WinForms kept them enabled and showed an error popup; Save As is enabled whenever a destination wad exists (WinForms only after a change); search is an inline box with a Next button instead of the WinForms popup; a failed or cancelled save now aborts New/Open/Close (safer, keep).
+  - Not covered: dialog contents (Wave B/C), live driving of tree actions.
