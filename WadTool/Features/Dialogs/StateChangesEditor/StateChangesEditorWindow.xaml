@@ -23,7 +23,6 @@
 
 	<Window.Resources>
 		<BooleanToVisibilityConverter x:Key="BoolToVis" />
-		<local:Int16TextConverter x:Key="Int16Text" />
 	</Window.Resources>
 
 	<DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
@@ -135,6 +134,7 @@
 					ItemsSource="{Binding Rows}"
 					SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
 					SelectionMode="Extended"
+					CellEditEnding="OnGridCellEditEnding"
 					MouseDoubleClick="OnGridMouseDoubleClick"
 					SelectionUnit="FullRow">
 					<DataGrid.Columns>
@@ -152,19 +152,19 @@
 						</DataGridTextColumn>
 						<DataGridTextColumn
 							Width="*"
-							Binding="{Binding StateId, Converter={StaticResource Int16Text}}"
+							Binding="{Binding StateId}"
 							Header="{tombLib:Localize ColumnStateId}" />
 						<DataGridTextColumn
 							Width="*"
-							Binding="{Binding LowFrame, Converter={StaticResource Int16Text}}"
+							Binding="{Binding LowFrame}"
 							Header="{tombLib:Localize ColumnLowFrame}" />
 						<DataGridTextColumn
 							Width="*"
-							Binding="{Binding HighFrame, Converter={StaticResource Int16Text}}"
+							Binding="{Binding HighFrame}"
 							Header="{tombLib:Localize ColumnHighFrame}" />
 						<DataGridTextColumn
 							Width="*"
-							Binding="{Binding NextAnimation, Converter={StaticResource Int16Text}}"
+							Binding="{Binding NextAnimation}"
 							Header="{tombLib:Localize ColumnNextAnimation}">
 							<DataGridTextColumn.CellStyle>
 								<!--  Legacy CellFormattingSafe: target animation name as tooltip  -->
@@ -175,17 +175,17 @@
 						</DataGridTextColumn>
 						<DataGridTextColumn
 							Width="*"
-							Binding="{Binding NextLowFrame, Converter={StaticResource Int16Text}}"
+							Binding="{Binding NextLowFrame}"
 							Header="{tombLib:Localize ColumnNextLowFrame}" />
 						<DataGridTextColumn
 							x:Name="columnNextHighFrame"
 							Width="*"
-							Binding="{Binding NextHighFrame, Converter={StaticResource Int16Text}}"
+							Binding="{Binding NextHighFrame}"
 							Header="{tombLib:Localize ColumnNextHighFrame}" />
 						<DataGridTextColumn
 							x:Name="columnBlendFrames"
 							Width="*"
-							Binding="{Binding BlendFrames, Converter={StaticResource Int16Text}}"
+							Binding="{Binding BlendFrames}"
 							Header="{tombLib:Localize ColumnBlendFrames}" />
 						<DataGridTemplateColumn
 							x:Name="columnBlendCurve"

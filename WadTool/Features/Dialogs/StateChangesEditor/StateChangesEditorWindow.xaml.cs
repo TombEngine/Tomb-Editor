@@ -1,7 +1,11 @@
 #nullable enable
 
+using System;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using TombLib.WPF;
 using WadTool.Features.Dialogs.BlendCurveEditor;
@@ -15,6 +19,7 @@ public partial class StateChangesEditorWindow : Window
     public StateChangesEditorWindow()
     {
         InitializeComponent();
+        dataGrid.AddHandler(PreviewTextInputEvent, new TextCompositionEventHandler(OnGridPreviewTextInput), true);
         this.HookModalAutoClose();
 
         DataContextChanged += OnDataContextChanged;
@@ -44,6 +49,26 @@ public partial class StateChangesEditorWindow : Window
         columnBlendCurve.Visibility = tenColumnVisibility;
     }
 
+    // Legacy cell parsing: only a valid number can be typed, and a value outside the Int16 range is replaced by the
+    // previous value of the cell when the edit ends.
+    private void OnGridPreviewTextInput(object sender, TextCompositionEventArgs e)
+    {
+        if (e.OriginalSource is not TextBox textBox)
+            return;
+
+        var text = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength).Insert(textBox.SelectionStart, e.Text);
+        e.Handled = !Regex.IsMatch(text, "^-?[0-9]*$") || (text.Length > 0 && text != "-" && !short.TryParse(text, out _));
+    }
+
+    private void OnGridCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e)
+    {
+        if (e.EditAction != DataGridEditAction.Commit || e.EditingElement is not TextBox textBox || short.TryParse(textBox.Text, out _))
+            return;
+
+        var path = ((e.Column as DataGridBoundColumn)?.Binding as Binding)?.Path.Path;
+        var property = path is null ? null : e.Row.Item?.GetType().GetProperty(path);
+        textBox.Text = Convert.ToString(property?.GetValue(e.Row.Item), CultureInfo.CurrentCulture) ?? string.Empty;
+    }
     // Legacy CellMouseDoubleClick: play the state change on a cell double click, except in the blend curve column.
     private void OnGridMouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
