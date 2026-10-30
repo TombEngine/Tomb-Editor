@@ -46,7 +46,24 @@
             InputGestureText (hotkey) at load via lookup into the same CommandHandler registry
             that the previous FormMain uses through GenerateMenusRecursive.
         -->
-        <Menu DockPanel.Dock="Top">
+        <DockPanel DockPanel.Dock="Top">
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+            <TextBox
+                x:Name="tbSearchMenu"
+                Width="200"
+                VerticalAlignment="Center"
+                KeyDown="TbSearchMenu_KeyDown"
+                ToolTip="Search for menu entry" />
+            <Button
+                x:Name="butFindMenu"
+                Margin="4,0,4,0"
+                VerticalAlignment="Center"
+                Click="ButFindMenu_Click"
+                ToolTip="Search for menu entry">
+                <Image Width="16" Source="{tomb:Icon General/search}" />
+            </Button>
+        </StackPanel>
+        <Menu x:Name="mainMenu">
             <MenuItem Header="File">
                 <MenuItem editor:EditorMenu.Command="NewLevel" editor:EditorMenu.Icon="General/create_new" />
                 <MenuItem editor:EditorMenu.Command="OpenLevel" editor:EditorMenu.Icon="General/Open" />
@@ -273,6 +290,7 @@
                 </MenuItem>
             </MenuItem>
         </Menu>
+        </DockPanel>
 
         <!--  Bottom-most: status bar (selected room | selection area | selection size | autosave).
             Port of the previous FormMain DarkStatusStrip; docked at the very bottom of the window,
@@ -300,7 +318,7 @@
                                 ContentId="sectorOptions"
                                 CanClose="False"
                                 IconSource="{tomb:Icon Sectortype/Floor_1}"
-                                Title="Sector options">
+                                Title="Sector Options">
                                 <sectorOptionsPanel:SectorOptionsView x:Name="sectorOptionsView" />
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>
@@ -317,7 +335,7 @@
                                 CanClose="False"
                                 IconSource="{tomb:Icon General/options}"
                                 IsSelected="True"
-                                Title="Room options">
+                                Title="Room Options">
                                 <roomOptionsPanel:RoomOptionsView x:Name="roomOptionsView" />
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>
@@ -333,7 +351,7 @@
                                 ContentId="importedGeometryBrowser"
                                 CanClose="False"
                                 IconSource="{tomb:Icon Objects/custom-geometry}"
-                                Title="Imported geometry">
+                                Title="Imported Geometry">
                                 <importedGeometryBrowser:ImportedGeometryBrowserView x:Name="importedGeometryBrowserView" />
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>
@@ -349,14 +367,14 @@
                                 ContentId="objectList"
                                 CanClose="False"
                                 IconSource="{tomb:Icon Actions/DrawObjects}"
-                                Title="Objects in room">
+                                Title="Objects in Room">
                                 <objectList:ObjectListView x:Name="objectListView" />
                             </avalonDock:LayoutAnchorable>
                             <avalonDock:LayoutAnchorable
                                 ContentId="itemProperties"
                                 CanClose="False"
                                 IconSource="{tomb:Icon General/edit}"
-                                Title="Item properties">
+                                Title="Item Properties">
                                 <itemPropertiesPanel:ItemPropertiesView x:Name="itemPropertiesView" />
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>
@@ -436,7 +454,7 @@
                                     ContentId="contentBrowser"
                                     CanClose="False"
                                     IconSource="{tomb:Icon General/folder}"
-                                    Title="Content browser">
+                                    Title="Content Browser">
                                     <contentBrowser:ContentBrowserView x:Name="contentBrowserView" />
                                 </avalonDock:LayoutAnchorable>
                                 <avalonDock:LayoutAnchorable
@@ -457,7 +475,7 @@
                                 ContentId="texturePanel"
                                 CanClose="False"
                                 IconSource="{tomb:Icon Actions/TextureMode}"
-                                Title="Textures">
+                                Title="Texturing">
                                 <texturePanel:TexturePanelView x:Name="texturePanelView" />
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>

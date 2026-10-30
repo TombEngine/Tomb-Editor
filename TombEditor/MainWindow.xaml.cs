@@ -6,11 +6,14 @@ using DarkUI.WPF.CustomControls;
 using PopUpInfo = TombLib.WPF.PopUpInfo;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using TombEditor.Controls.Panel3D;
+using TombEditor.Features.MenuSearch;
 using TombEditor.Features.Panel3D.ObjectBrush;
 using TombEditor.Features.Panel3D.ToolPalette;
 using TombLib.Input;
@@ -127,6 +130,12 @@ public partial class MainWindow : Window
     {
         OnEditorEventForFloatingToolboxes(obj);
 
+        if (obj is Editor.DefaultControlActivationEvent { ContainerName: "FormMain" })
+        {
+            tbSearchMenu.Focus();
+            tbSearchMenu.SelectAll();
+        }
+
         // Suspend/resume Panel3D painting around geometry rebuilds (e.g. SmartBuildGeometry while
         // dragging geometry, and geometry undo). Mirrors MainView's Suspend/ResumeRenderingEvent
         // handling - without it the panel keeps painting half-rebuilt geometry on the shared D3D
@@ -195,6 +204,17 @@ public partial class MainWindow : Window
             Close();
     }
 
+    private static readonly string ProductVersion =
+        FileVersionInfo.GetVersionInfo(typeof(MainWindow).Assembly.Location).ProductVersion ?? string.Empty;
+
+    private void TbSearchMenu_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Return)
+            MenuSearchHelper.FindAndOpen(mainMenu, tbSearchMenu.Text);
+    }
+
+    private void ButFindMenu_Click(object sender, RoutedEventArgs e) => MenuSearchHelper.FindAndOpen(mainMenu, tbSearchMenu.Text);
+
     private void UpdateWindowTitle()
     {
         var level = _editor.Level;
@@ -202,7 +222,7 @@ public partial class MainWindow : Window
             ? "Untitled"
             : PathC.GetFileNameWithoutExtensionTry(level.Settings.LevelFilePath);
 
-        Title = "Tomb Editor " + typeof(MainWindow).Assembly.GetName().Version?.ToString() + " - " + levelName + (_editor.HasUnsavedChanges ? "*" : "");
+        Title = "Tomb Editor " + ProductVersion + " - " + levelName + (_editor.HasUnsavedChanges ? "*" : "");
     }
 
     private void OnEditorEventForFloatingToolboxes(IEditorEvent obj)
