@@ -54,11 +54,13 @@
                 Command="{Binding ToggleCustomFileCommand}"
                 Content="{tombLib:Localize UseCustomFile}"
                 IsChecked="{Binding IsCustomMapped, Mode=OneWay}"
+                IsEnabled="{Binding HasSelectedTexture}"
                 IsHitTestVisible="True" />
             <TextBlock
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 Foreground="{DynamicResource Brush_Text_Low}"
+                MouseLeftButtonUp="CustomPathText_MouseLeftButtonUp"
                 Text="{Binding CustomPathText}"
                 TextTrimming="CharacterEllipsis" />
         </controls:SpacedGrid>

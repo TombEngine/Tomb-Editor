@@ -66,10 +66,17 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Room tags (and any AutoCompleteBox): Enter commits the text | Only losing focus committed it | (this commit) |
 | Palette toolbar sits on the left when the panel is wide and on top otherwise (not verified on screen) | Fixed left column | (this commit) |
 
+## Tomb Editor dialogs (Wave B)
+
+| Fix | Why | Commit |
+|-----|-----|--------|
+| FootStepSounds and BumpMaps remember size, position and maximized state (Window_FormFootStepSounds_*, Window_FormBumpMaps_*) | The windows always opened at the default size | (this commit) |
+| BumpMaps: the custom-file checkbox is disabled without a selected texture; clicking the path label toggles the custom file | WinForms behavior | (this commit) |
+
 ## Open items
 
 - Tomb Editor: not verified on screen (verified by build and code only): file drops onto the window, saved window placement, selection behavior of the Objects in Room / Rooms lists, trigger deletion with Delete/Backspace, Palette layout when the panel is narrow (wide layout verified).
-- Waves B/C (dialogs): in progress, see the plan.
+- Waves B/C (dialogs): in progress, see the plan. Level settings must wire the texture and wad hover previews (TexturePreviewWindow / WadPreviewWindow exist but nothing opens them).
 ## Intentional divergences (kept on purpose)
 
 - Dark custom title bar instead of the system accent color.

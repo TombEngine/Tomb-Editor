@@ -11,6 +11,7 @@ public partial class FootStepSoundsWindow : Window
     {
         InitializeComponent();
         this.HookModalAutoClose();
+        Loaded += (_, _) => WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormFootStepSounds");
         DataContextChanged += OnDataContextChanged;
     }
 

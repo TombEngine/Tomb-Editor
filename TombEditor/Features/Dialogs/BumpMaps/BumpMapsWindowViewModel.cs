@@ -28,6 +28,7 @@ public partial class BumpMapsWindowViewModel : ObservableObject, IModalDialogVie
     [NotifyPropertyChangedFor(nameof(IsCustomMapped))]
     [NotifyPropertyChangedFor(nameof(CustomPathText))]
     [NotifyPropertyChangedFor(nameof(IsAssignEnabled))]
+    [NotifyPropertyChangedFor(nameof(HasSelectedTexture))]
     private LevelTexture? _selectedTexture;
 
     [ObservableProperty] private BumpMappingLevel _selectedLevel = BumpMappingLevel.None;
@@ -36,6 +37,8 @@ public partial class BumpMapsWindowViewModel : ObservableObject, IModalDialogVie
     public IReadOnlyList<BumpMappingLevel> Levels { get; }
 
     public bool IsCustomMapped => SelectedTexture is { } t && !string.IsNullOrEmpty(t.BumpPath);
+
+    public bool HasSelectedTexture => SelectedTexture is not null;
 
     public bool IsAssignEnabled => SelectedTexture is not null && !IsCustomMapped;
 

@@ -11,6 +11,7 @@ public partial class BumpMapsWindow : Window
     {
         InitializeComponent();
         this.HookModalAutoClose();
+        Loaded += (_, _) => WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormBumpMaps");
         DataContextChanged += OnDataContextChanged;
     }
 
@@ -30,6 +31,13 @@ public partial class BumpMapsWindow : Window
             vm.MapSelectionProvider = () => mapView.SelectedTexture;
             mapView.ResetVisibleTexture(vm.SelectedTexture);
         }
+    }
+
+    private void CustomPathText_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        // Like the previous dialog, clicking the path label toggles the custom file too.
+        if (DataContext is BumpMapsWindowViewModel { HasSelectedTexture: true } vm && vm.ToggleCustomFileCommand.CanExecute(null))
+            vm.ToggleCustomFileCommand.Execute(null);
     }
 
     private void OnResetVisible(object? sender, TombLib.LevelData.LevelTexture? texture)
