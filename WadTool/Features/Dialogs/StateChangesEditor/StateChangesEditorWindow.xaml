@@ -23,6 +23,7 @@
 
 	<Window.Resources>
 		<BooleanToVisibilityConverter x:Key="BoolToVis" />
+		<local:Int16TextConverter x:Key="Int16Text" />
 	</Window.Resources>
 
 	<DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
@@ -151,19 +152,19 @@
 						</DataGridTextColumn>
 						<DataGridTextColumn
 							Width="*"
-							Binding="{Binding StateId}"
+							Binding="{Binding StateId, Converter={StaticResource Int16Text}}"
 							Header="{tombLib:Localize ColumnStateId}" />
 						<DataGridTextColumn
 							Width="*"
-							Binding="{Binding LowFrame}"
+							Binding="{Binding LowFrame, Converter={StaticResource Int16Text}}"
 							Header="{tombLib:Localize ColumnLowFrame}" />
 						<DataGridTextColumn
 							Width="*"
-							Binding="{Binding HighFrame}"
+							Binding="{Binding HighFrame, Converter={StaticResource Int16Text}}"
 							Header="{tombLib:Localize ColumnHighFrame}" />
 						<DataGridTextColumn
 							Width="*"
-							Binding="{Binding NextAnimation}"
+							Binding="{Binding NextAnimation, Converter={StaticResource Int16Text}}"
 							Header="{tombLib:Localize ColumnNextAnimation}">
 							<DataGridTextColumn.CellStyle>
 								<!--  Legacy CellFormattingSafe: target animation name as tooltip  -->
@@ -174,17 +175,17 @@
 						</DataGridTextColumn>
 						<DataGridTextColumn
 							Width="*"
-							Binding="{Binding NextLowFrame}"
+							Binding="{Binding NextLowFrame, Converter={StaticResource Int16Text}}"
 							Header="{tombLib:Localize ColumnNextLowFrame}" />
 						<DataGridTextColumn
 							x:Name="columnNextHighFrame"
 							Width="*"
-							Binding="{Binding NextHighFrame}"
+							Binding="{Binding NextHighFrame, Converter={StaticResource Int16Text}}"
 							Header="{tombLib:Localize ColumnNextHighFrame}" />
 						<DataGridTextColumn
 							x:Name="columnBlendFrames"
 							Width="*"
-							Binding="{Binding BlendFrames}"
+							Binding="{Binding BlendFrames, Converter={StaticResource Int16Text}}"
 							Header="{tombLib:Localize ColumnBlendFrames}" />
 						<DataGridTemplateColumn
 							x:Name="columnBlendCurve"

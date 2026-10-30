@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Windows.Threading;
 using TombLib.Graphics;
 using TombLib.LevelData;
 using TombLib.Types;
@@ -58,6 +59,8 @@ public partial class StateChangesEditorWindowViewModel : ObservableObject, IModa
     private AnimationNode _animation;
     private List<WadStateChange> _backupStates = new();
     private bool _initializing;
+    private bool _isDeletingFromButton;
+    private bool _isDeleteSavePending;
 
     public StateChangesEditorWindowViewModel(AnimationEditor editor, AnimationNode animation,
         WadStateChange? newStateChange = null, ILocalizationService? localizationService = null)
@@ -134,10 +137,18 @@ public partial class StateChangesEditorWindowViewModel : ObservableObject, IModa
 
     private void OnRowsChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        // Legacy dgvStateChanges_UserDeletedRow -> SaveChanges(); covers both the delete
-        // button and Del-key row deletion performed by the DataGrid itself.
-        if (e.Action == NotifyCollectionChangedAction.Remove)
+        // Legacy dgvStateChanges_UserDeletedRow -> SaveChanges() covers Del-key row deletion only;
+        // the delete button does not save. Multi-row deletion is coalesced into a single save.
+        if (e.Action != NotifyCollectionChangedAction.Remove || _initializing || _isDeletingFromButton || _isDeleteSavePending)
+            return;
+
+        _isDeleteSavePending = true;
+
+        Dispatcher.CurrentDispatcher.BeginInvoke(() =>
+        {
+            _isDeleteSavePending = false;
             SaveChanges();
+        });
     }
 
     private void SaveChanges()
@@ -248,8 +259,13 @@ public partial class StateChangesEditorWindowViewModel : ObservableObject, IModa
         if (selectedItems is null)
             return;
 
+        // Legacy delete button does not call SaveChanges; the rows are persisted by the next save or OK.
+        _isDeletingFromButton = true;
+
         foreach (var row in selectedItems.OfType<StateChangeRow>().ToList())
             Rows.Remove(row);
+
+        _isDeletingFromButton = false;
     }
 
     /// <summary>Indices of the selected rows within <see cref="Rows"/>, in ascending order.</summary>

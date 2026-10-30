@@ -99,14 +99,12 @@ public partial class AnimCommandsEditorWindowViewModel : ObservableObject, IModa
         {
             ApplyAnimCommands(_backupCommands);
             Initialize(currentChanged.Current);
-            SelectedRow = Rows.FirstOrDefault();
         }
 
         if (obj is WadToolClass.AnimationEditorAnimationChangedEvent animationChanged &&
             animationChanged.Animation == _animation && animationChanged.Focus)
         {
             Initialize(animationChanged.Animation);
-            SelectedRow = Rows.FirstOrDefault();
         }
     }
 

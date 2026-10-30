@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using TombLib.Wad;
 using TombLib.WPF;
 using TombLib.WPF.CustomControls;
@@ -140,6 +141,8 @@ public partial class AnimationEditorWindow : Window
 
     private void OnAnimationListSelectionChanged(object sender, SelectionChangedEventArgs e)
         => _vm?.SetSelectedAnimations(animationList.SelectedItems.Cast<AnimListItem>());
+
+    private void OnAnimationListClick(object sender, MouseButtonEventArgs e) => _vm?.ResetChainedPlaybackStart();
 
     private void OnBezierValueChanged(object? sender, EventArgs e) => _vm?.OnBlendCurveEdited();
 

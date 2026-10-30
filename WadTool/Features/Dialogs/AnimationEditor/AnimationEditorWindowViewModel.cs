@@ -237,6 +237,19 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
             ShowPopup(message.Message, message.Type);
     }
 
+    /// <summary>Legacy <c>lstAnimations_Click</c>: a click on the list resets the chained playback start and the grid position.</summary>
+    public void ResetChainedPlaybackStart()
+    {
+        if (_editor.CurrentAnim is null || SelectedAnim is null)
+            return;
+
+        _chainedInitialAnim = _editor.CurrentAnim.Index;
+        _chainedInitialCursorPos = 0;
+        _chainedInitialSelection = new TombLib.VectorInt2();
+
+        _panel.GridPosition = System.Numerics.Vector3.Zero;
+    }
+
     partial void OnSelectedAnimChanged(AnimListItem? value)
     {
         // Like the previous list, an empty selection keeps the current animation.

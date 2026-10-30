@@ -11,10 +11,10 @@
     xmlns:tombLibControls="clr-namespace:TombLib.WPF.CustomControls;assembly=TombLib.WPF"
     xmlns:wadControls="clr-namespace:WadTool.Controls"
     Title="{Binding Title}"
-    Width="1100"
-    Height="720"
-    MinWidth="900"
-    MinHeight="600"
+    Width="1055"
+    Height="834"
+    MinWidth="906"
+    MinHeight="699"
     d:DataContext="{d:DesignInstance Type=local:AnimationEditorWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
     ShowInTaskbar="False"
@@ -225,6 +225,7 @@
 
                 <ListBox
                     x:Name="animationList"
+                    PreviewMouseLeftButtonUp="OnAnimationListClick"
                     DisplayMemberPath="Label"
                     ItemsSource="{Binding Animations}"
                     SelectedItem="{Binding SelectedAnim, Mode=TwoWay}"

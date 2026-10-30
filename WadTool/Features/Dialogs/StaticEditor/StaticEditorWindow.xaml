@@ -330,8 +330,7 @@
             <Button
                 Width="80"
                 Command="{Binding SaveCommand}"
-                Content="OK"
-                IsDefault="True" />
+                Content="OK" />
             <Button
                 Width="80"
                 Command="{Binding CancelCommand}"
