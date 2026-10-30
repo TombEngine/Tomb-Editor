@@ -158,6 +158,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Event set editor node editor driven with the real mouse on the real level (global event sets): new set, function chosen, Add pressed three times (nodes chained under the selected node as WinForms does), Ctrl+A selects all three nodes (blue borders), toolbar at the bottom with icons. Rubber band drag and the WinForms comparison of these gestures were not conclusive on the captures | Verified in WPF only | n/a |
 
+| Event set editor nodes now carry a function combo inside the node (like WinForms, where the node shows its function in an editable combo): picking another function of the same kind rebuilds the node arguments. Driven with the real mouse on the real level (Run volume event -> Set OCB, arguments rebuilt). WinForms also has search icons on every argument and Action / Condition toolbar buttons that create blank nodes: not done | Function change per node | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.

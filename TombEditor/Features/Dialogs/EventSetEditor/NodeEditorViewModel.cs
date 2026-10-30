@@ -101,7 +101,11 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             foreach (var node in TriggerNode.LinearizeNodes(_event.Nodes))
             {
                 var function = Functions.FirstOrDefault(f => f.Signature == node.Function);
-                var vm = new NodeViewModel(node, _options, function, _provider, _eventType);
+                var vm = new NodeViewModel(node, _options, function, _provider, _eventType)
+                {
+                    AvailableFunctions = Functions.Where(f => f.Conditional == (node is TriggerNodeCondition)).ToList()
+                };
+                vm.FunctionChangeRequested += OnNodeFunctionChangeRequested;
                 map[node] = vm;
                 Nodes.Add(vm);
             }
@@ -116,6 +120,16 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             }
 
             SetSelection(Nodes.Where(n => previouslySelected.Contains(n.Node)));
+        }
+
+        /// <summary>Replaces the function of a node (chosen in the node's combo) and rebuilds its arguments.</summary>
+        private void OnNodeFunctionChangeRequested(NodeViewModel nodeViewModel, NodeFunction function)
+        {
+            nodeViewModel.Node.Function = function.Signature;
+            nodeViewModel.Node.FixArguments(function);
+
+            // Rebuilding inside the combo's own selection change would dispose the combo, so defer it.
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(Rebuild));
         }
 
         private void SyncRootsAndRebuild()

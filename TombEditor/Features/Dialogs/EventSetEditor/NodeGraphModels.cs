@@ -22,6 +22,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         private readonly NodeEditorOptions _options;
         private readonly double _gridStep;
         private readonly string _functionDisplay;
+        private readonly NodeFunction? _function;
 
         public TriggerNode Node { get; }
         public ObservableCollection<ArgumentViewModel> Arguments { get; } = new();
@@ -33,6 +34,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             _options = options;
             _gridStep = options.GridStep;
             _functionDisplay = function?.Name ?? node.Function;
+            _function = function;
             IsUnsupported = function?.IsUnsupported(eventType) ?? false;
 
             if (function != null)
@@ -48,6 +50,24 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         }
 
         public bool IsCondition => Node is TriggerNodeCondition;
+
+        /// <summary>Functions that can be chosen for this node (same kind as the node), shown in the node's function combo.</summary>
+        public System.Collections.Generic.IReadOnlyList<NodeFunction> AvailableFunctions { get; set; } = System.Array.Empty<NodeFunction>();
+
+        /// <summary>Raised when the user picks another function in the node's combo.</summary>
+        public event Action<NodeViewModel, NodeFunction>? FunctionChangeRequested;
+
+        public NodeFunction? SelectedFunction
+        {
+            get => _function;
+            set
+            {
+                if (value is null || ReferenceEquals(value, _function))
+                    return;
+
+                FunctionChangeRequested?.Invoke(this, value);
+            }
+        }
         public bool HasArguments => Arguments.Count > 0;
 
         /// <summary>The node's function is not usable with the event type being edited (#1156).</summary>

@@ -385,11 +385,11 @@
                                                         Text="{tombLib:Localize NotSupported}"
                                                         TextTrimming="CharacterEllipsis" />
                                                 </StackPanel>
-                                                <TextBlock
-                                                    FontWeight="Bold"
-                                                    Foreground="{DynamicResource Brush_Text}"
-                                                    Text="{Binding FunctionName}"
-                                                    TextTrimming="CharacterEllipsis"
+                                                <ComboBox
+                                                    DisplayMemberPath="Name"
+                                                    IsEnabled="{Binding IsEditable}"
+                                                    ItemsSource="{Binding AvailableFunctions}"
+                                                    SelectedItem="{Binding SelectedFunction, Mode=TwoWay}"
                                                     ToolTip="{Binding FunctionName}" />
                                                 <ItemsControl
                                                     Margin="0,4,0,0"
