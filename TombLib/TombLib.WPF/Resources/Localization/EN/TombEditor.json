@@ -967,6 +967,8 @@
         "Hidden": "Hide in editor",
         "UseAlphaTest": "Faster alpha testing",
         "EditMaterials": "Edit materials...",
+        "DeleteConfirmation": "You are about to delete {0} imported geometries from the list! The geometry infos will also be removed from all associated objects. Do you want to continue?",
+        "DeleteConfirmationTitle": "Imported geometry removal",
         "AssignedModelNone": "None",
         "BrowseFilesTitle": "Select 3D files that you want to see imported.",
         "AssignModelMessage": "You need to assign a model before opening the Material Editor.",

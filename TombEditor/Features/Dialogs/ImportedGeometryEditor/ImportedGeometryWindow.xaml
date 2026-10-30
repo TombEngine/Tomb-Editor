@@ -81,7 +81,7 @@
                     <StackPanel.Margin>
                         <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
                     </StackPanel.Margin>
-                    <ComboBox Width="150" ItemsSource="{Binding LightingModels}" SelectedItem="{Binding LightingModel, Mode=TwoWay}" />
+                    <ComboBox Width="150" DisplayMemberPath="Name" ItemsSource="{Binding LightingModels}" SelectedValue="{Binding LightingModel, Mode=TwoWay}" SelectedValuePath="Value" />
                     <Button Width="48" Height="22" Command="{Binding PickColorCommand}" ToolTip="{tombLib:Localize ColorTooltip}">
                         <Button.Background>
                             <SolidColorBrush Color="{Binding Color}" />
@@ -139,6 +139,15 @@
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
                 <DataGridTextColumn Width="60" Binding="{Binding Scale, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnScale}" />
+                <DataGridCheckBoxColumn Width="44" Binding="{Binding SwapXY, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnSwapXY}" />
+                <DataGridCheckBoxColumn Width="44" Binding="{Binding SwapXZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnSwapXZ}" />
+                <DataGridCheckBoxColumn Width="44" Binding="{Binding SwapYZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnSwapYZ}" />
+                <DataGridCheckBoxColumn Width="36" Binding="{Binding FlipX, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnFlipX}" />
+                <DataGridCheckBoxColumn Width="36" Binding="{Binding FlipY, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnFlipY}" />
+                <DataGridCheckBoxColumn Width="36" Binding="{Binding FlipZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnFlipZ}" />
+                <DataGridCheckBoxColumn Width="60" Binding="{Binding MappedUV, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnMappedUV}" />
+                <DataGridCheckBoxColumn Width="50" Binding="{Binding FlipUV_V, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnFlipUV}" />
+                <DataGridCheckBoxColumn Width="50" Binding="{Binding InvertFaces, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnInvertFaces}" />
                 <DataGridTextColumn Width="160" Binding="{Binding ErrorMessage}" Header="{tombLib:Localize ColumnStatus}" IsReadOnly="True" />
             </DataGrid.Columns>
         </DataGrid>

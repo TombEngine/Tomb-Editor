@@ -12,6 +12,7 @@ using TombEditor.Features.Dialogs.LevelSettings;
 using TombLib.GeometryIO;
 using TombLib.LevelData;
 using TombLib.Services;
+using TombLib.Utils;
 using TombLib.WPF;
 using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
@@ -27,6 +28,8 @@ namespace TombEditor.Features.Dialogs.ImportedGeometryEditor
     /// on a clone of the settings. On OK the caller applies <see cref="NewLevelSettings"/> and the
     /// modified instance, mirroring the previous dialog.
     /// </summary>
+    public sealed record LightingModelOption(ImportedGeometryLightingModel Value, string Name);
+
     public partial class ImportedGeometryWindowViewModel : ObservableObject, IModalDialogViewModel
     {
         private readonly ImportedGeometryInstance _instance;
@@ -42,8 +45,14 @@ namespace TombEditor.Features.Dialogs.ImportedGeometryEditor
         public LevelSettingsData NewLevelSettings { get; }
 
         public ObservableCollection<ImportedGeometryRow> Geometries { get; } = new();
-        public IReadOnlyList<ImportedGeometryLightingModel> LightingModels { get; } =
-            Enum.GetValues(typeof(ImportedGeometryLightingModel)).Cast<ImportedGeometryLightingModel>().ToList();
+        /// <summary>Gets the lighting models with the captions the previous dialog showed.</summary>
+        public IReadOnlyList<LightingModelOption> LightingModels { get; } =
+        [
+            new(ImportedGeometryLightingModel.NoLighting, "No lights"),
+            new(ImportedGeometryLightingModel.VertexColors, "Vertex colors"),
+            new(ImportedGeometryLightingModel.CalculateFromLightsInRoom, "Calculate from room lights"),
+            new(ImportedGeometryLightingModel.TintAsAmbient, "Specified tint only")
+        ];
 
         [ObservableProperty] private bool? _dialogResult;
         [ObservableProperty] private ImportedGeometryRow? _selectedGeometry;
@@ -118,6 +127,10 @@ namespace TombEditor.Features.Dialogs.ImportedGeometryEditor
         private void AddImportedGeometry()
         {
             var paths = LevelFileDialog.BrowseFiles(Owner, NewLevelSettings, NewLevelSettings.LevelFilePath, _localizationService["BrowseFilesTitle"], BaseGeometryImporter.FileExtensions, VariableType.LevelDirectory).ToList();
+
+            // Non-ANSI paths are skipped with a message, like in the previous dialog.
+            if (paths.RemoveAll(path => !path.IsANSI()) > 0)
+                UserDialogs.NonANSIFilePathError(Owner);
             var importInfos = new List<KeyValuePair<ImportedGeometry, ImportedGeometryInfo>>();
             var config = _editor?.Configuration;
 
@@ -150,6 +163,10 @@ namespace TombEditor.Features.Dialogs.ImportedGeometryEditor
         {
             if (SelectedGeometry == null)
                 return;
+
+            if (!_messageService.ShowConfirmation(_localizationService.Format("DeleteConfirmation", 1), _localizationService["DeleteConfirmationTitle"], false, true))
+                return;
+
             NewLevelSettings.ImportedGeometries.Remove(SelectedGeometry.Object);
             Geometries.Remove(SelectedGeometry);
         }

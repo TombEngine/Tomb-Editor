@@ -13,6 +13,7 @@ public partial class ImportedGeometryWindow : Window
     {
         InitializeComponent();
         this.HookModalAutoClose();
+        Loaded += (_, _) => WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormImportedGeometry");
         DataContextChanged += OnDataContextChanged;
     }
 
