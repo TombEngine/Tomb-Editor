@@ -530,6 +530,9 @@
 
     "ImportPrj": {
         "Title": "Import PRJ",
+        "TitleFormat": "Import PRJ ({0})",
+        "BaseSoundCatalogGroup": "Base sound catalog (optional)",
+        "ImportSettingsGroup": "Import settings",
         "PrjFile": "PRJ file:",
         "SoundsCatalog": "Sounds catalog:",
         "SoundsCatalogTooltip": "Specify sound catalog (sounds.txt or .xml). If empty, legacy SFX/SAM provided with the WAD are used.",

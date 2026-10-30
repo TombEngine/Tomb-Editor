@@ -9,7 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
-    Title="{tombLib:Localize Title}"
+    Title="{Binding WindowTitle}"
     Width="520"
     d:DataContext="{d:DesignInstance Type=vm:ImportPrjWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
@@ -20,76 +20,51 @@
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
-    <controls:SpacedGrid
-        Margin="{x:Static darkUI:Defaults.MediumThickness}"
-        ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}"
-        RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+    <StackPanel Margin="{x:Static darkUI:Defaults.MediumThickness}">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
+        <GroupBox Header="{tombLib:Localize BaseSoundCatalogGroup}">
+            <StackPanel Margin="{x:Static darkUI:Defaults.SmallThickness}">
+                <DockPanel>
+                    <Button
+                        Width="80"
+                        Margin="4,0,0,0"
+                        VerticalAlignment="Center"
+                        Command="{Binding BrowseSoundsCatalogCommand}"
+                        Content="{tombLib:Localize ~Generic.Browse}"
+                        DockPanel.Dock="Right" />
+                    <TextBox VerticalAlignment="Center" Text="{Binding SoundsPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </DockPanel>
+                <TextBlock
+                    Margin="0,6,0,0"
+                    Opacity="{DynamicResource Opacity_DisabledContent}"
+                    Text="{tombLib:Localize SoundsCatalogTooltip}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </GroupBox>
 
-        <Label
-            Grid.Row="0"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            Content="{tombLib:Localize PrjFile}" />
-        <TextBox
-            Grid.Row="0"
-            Grid.Column="1"
-            Grid.ColumnSpan="2"
-            VerticalAlignment="Center"
-            IsReadOnly="True"
-            Text="{Binding PrjPath, Mode=OneWay}" />
-
-        <Label
-            Grid.Row="1"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            Content="{tombLib:Localize SoundsCatalog}"
-            ToolTip="{tombLib:Localize SoundsCatalogTooltip}" />
-        <TextBox
-            Grid.Row="1"
-            Grid.Column="1"
-            VerticalAlignment="Center"
-            Text="{Binding SoundsPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        <Button
-            Grid.Row="1"
-            Grid.Column="2"
-            Width="80"
-            VerticalAlignment="Center"
-            Command="{Binding BrowseSoundsCatalogCommand}"
-            Content="{tombLib:Localize ~Generic.Browse}" />
-
-        <CheckBox
-            Grid.Row="2"
-            Grid.Column="0"
-            Grid.ColumnSpan="3"
-            Content="{tombLib:Localize RespectMousepatch}"
-            IsChecked="{Binding RespectMousepatchOnFlybyHandling, Mode=TwoWay}"
-            ToolTip="{tombLib:Localize RespectMousepatchTooltip}" />
-
-        <CheckBox
-            Grid.Row="3"
-            Grid.Column="0"
-            Grid.ColumnSpan="3"
-            Content="{tombLib:Localize UseHalfPixelCorrection}"
-            IsChecked="{Binding UseHalfPixelCorrection, Mode=TwoWay}"
-            ToolTip="{tombLib:Localize UseHalfPixelCorrectionTooltip}" />
+        <GroupBox Margin="0,8,0,0" Header="{tombLib:Localize ImportSettingsGroup}">
+            <StackPanel Margin="{x:Static darkUI:Defaults.SmallThickness}">
+                <CheckBox
+                    Content="{tombLib:Localize RespectMousepatch}"
+                    IsChecked="{Binding RespectMousepatchOnFlybyHandling, Mode=TwoWay}" />
+                <TextBlock
+                    Margin="20,2,0,8"
+                    Opacity="{DynamicResource Opacity_DisabledContent}"
+                    Text="{tombLib:Localize RespectMousepatchTooltip}"
+                    TextWrapping="Wrap" />
+                <CheckBox
+                    Content="{tombLib:Localize UseHalfPixelCorrection}"
+                    IsChecked="{Binding UseHalfPixelCorrection, Mode=TwoWay}" />
+                <TextBlock
+                    Margin="20,2,0,0"
+                    Opacity="{DynamicResource Opacity_DisabledContent}"
+                    Text="{tombLib:Localize UseHalfPixelCorrectionTooltip}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </GroupBox>
 
         <controls:SpacedStack
-            Grid.Row="4"
-            Grid.Column="0"
-            Grid.ColumnSpan="3"
+            Margin="0,12,0,0"
             HorizontalAlignment="Right"
             Orientation="Horizontal"
             Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
@@ -104,5 +79,4 @@
                 Content="{tombLib:Localize ~Common.Cancel}"
                 IsCancel="True" />
         </controls:SpacedStack>
-    </controls:SpacedGrid>
-</Window>
+    </StackPanel></Window>

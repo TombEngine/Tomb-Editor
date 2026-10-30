@@ -13,6 +13,7 @@
     Width="540"
     Height="440"
     MinWidth="540"
+    MaxWidth="540"
     MinHeight="440"
     d:DataContext="{d:DesignInstance Type=vm:ToolBarLayoutWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
@@ -20,6 +21,16 @@
     Style="{DynamicResource CustomWindowStyle}"
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
+
+    <Window.Resources>
+        <vm:ToolbarTokenIconConverter x:Key="TokenIcon" />
+        <DataTemplate x:Key="TokenTemplate">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="16" Height="16" Margin="0,0,6,0" Source="{Binding Converter={StaticResource TokenIcon}}" />
+                <TextBlock VerticalAlignment="Center" Text="{Binding}" />
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
 
     <controls:SpacedGrid
         Margin="{x:Static darkUI:Defaults.MediumThickness}"
@@ -44,7 +55,9 @@
         <ListBox
             Grid.Row="1"
             Grid.Column="0"
+            ItemTemplate="{StaticResource TokenTemplate}"
             ItemsSource="{Binding Available}"
+            MouseDoubleClick="AvailableList_MouseDoubleClick"
             SelectedItem="{Binding SelectedAvailable, Mode=TwoWay}" />
 
         <controls:SpacedStack
@@ -68,7 +81,9 @@
         <ListBox
             Grid.Row="1"
             Grid.Column="2"
+            ItemTemplate="{StaticResource TokenTemplate}"
             ItemsSource="{Binding Current}"
+            MouseDoubleClick="CurrentList_MouseDoubleClick"
             SelectedItem="{Binding SelectedCurrent, Mode=TwoWay}" />
 
         <controls:SpacedStack

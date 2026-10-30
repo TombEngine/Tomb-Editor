@@ -22,6 +22,8 @@ public partial class ImportPrjWindowViewModel : ObservableObject, IModalDialogVi
     public string PrjPath { get; }
     public string PrjFileName { get; }
 
+    public string WindowTitle => _localizationService.Format("TitleFormat", PrjFileName);
+
     public ImportPrjWindowViewModel(
         string prjPath,
         bool respectMousepatch,
