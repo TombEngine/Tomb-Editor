@@ -94,7 +94,11 @@ public partial class AnimationEditorWindow : Window
 
     private void OnBezierValueChanged(object? sender, EventArgs e) => _vm?.OnBlendCurveEdited();
 
-    private void OnClosingHandler(object? sender, CancelEventArgs e) => _vm?.HandleClosing();
+    private void OnClosingHandler(object? sender, CancelEventArgs e)
+    {
+        if (_vm is not null && !_vm.HandleClosing())
+            e.Cancel = true;
+    }
 
     private void OnClosed(object? sender, EventArgs e)
     {

@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -63,6 +63,8 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
     [ObservableProperty] private bool? _dialogResult;
     [ObservableProperty] private string _title;
+
+    private bool _isSaved = true;
     [ObservableProperty] private string _statusText = string.Empty;
     [ObservableProperty] private bool _isPlaying;
     [ObservableProperty] private bool _isTombEngine;
@@ -185,6 +187,9 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
             _editor.MadeChanges = false;
             UpdateTransformUI();
         }
+
+        if (obj is WadToolClass.UndoStackChangedEvent || obj is WadToolClass.AnimationEditorGizmoPickedEvent)
+            SetSaved(false);
 
         if (obj is WadToolClass.AnimationEditorAnimationChangedEvent ||
             obj is WadToolClass.AnimationEditorCurrentAnimationChangedEvent ||
@@ -1010,7 +1015,20 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void Redo() => _editor.Tool.UndoManager.Redo();
     [RelayCommand]
-    private void Save() => _editor.SaveChanges();
+    private void Save()
+    {
+        _editor.SaveChanges();
+        SetSaved(true);
+    }
+
+    private void SetSaved(bool saved)
+    {
+        if (_isSaved == saved)
+            return;
+
+        _isSaved = saved;
+        Title = "Animation editor - " + _editor.Moveable.Id.ToString(_editor.Wad.GameVersion) + (saved ? "" : "*");
+    }
 
     [RelayCommand]
     private void AddAnimation()
@@ -1600,11 +1618,37 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [RelayCommand]
     private void Cancel() => DialogResult = false;
 
-    /// <summary>Saves on OK (legacy SaveChanges + WadChanged is done by the caller).</summary>
-    public void HandleClosing()
+    /// <summary>
+    /// Asks what to do with unsaved changes (like the previous form) and saves on OK. Returns false to keep the window open.
+    /// </summary>
+    public bool HandleClosing()
     {
-        if (_playTimer is not null) _playTimer.Stop();
+        if (!_isSaved && DialogResult != true)
+        {
+            var result = UserDialogs.Show(Owner, "You have unsaved changes. Do you want to save changes to animations?",
+                "Confirm", DialogButtons.YesNoCancel, DialogIcon.Question);
+
+            switch (result)
+            {
+                case DialogChoice.Yes:
+                    DialogResult = true;
+                    break;
+
+                case DialogChoice.No:
+                    DialogResult = false;
+                    break;
+
+                default:
+                    return false;
+            }
+        }
+
+        if (_playTimer is not null)
+            _playTimer.Stop();
+
         if (DialogResult == true)
             _editor.SaveChanges();
+
+        return true;
     }
 }
