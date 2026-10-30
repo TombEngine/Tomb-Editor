@@ -99,6 +99,7 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 |-----|-----|--------|
 | English strings added for Select slot, Item Properties (Lua), Find & replace anim commands and Animation fixer (titles, labels, tooltips, status and warning messages, with the WinForms wording) | These windows had no strings and would have shown raw keys such as "ChosenId" or "EndFrameTooltip" | (this commit) |
 | WadTool options: missing "Auto-consolidate textures when copying objects" option added, captions and the "Options" / "Set page to default" texts restored | The option could not be toggled; wording differed | (this commit) |
+| English strings added for Blend curve, Sprite sequence and State changes editors (titles, columns, tooltips, file dialog titles, error and status messages) | These windows would have shown raw keys | (this commit) |
 | Mesh editor and Animation editor remember size, position and maximized state; Skeleton editor context menu shows the Ctrl+O / Ctrl+P / Ctrl+Up / Ctrl+Down shortcuts and has the WinForms minimum size (800x500) | The two editors always opened at their default size | (this commit) |
 | Animation editor keyboard shortcuts of the previous form: Ctrl+Z / Ctrl+Y / Ctrl+S, Ctrl+X / C / V on frames, Ctrl+I interpolate, Space play, Left / Right / Up / Down frame navigation, Delete frames (ignored while typing; not verified on screen) | The window had no keyboard shortcuts at all | (this commit) |
 ## Open items
