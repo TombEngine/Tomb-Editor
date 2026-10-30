@@ -166,13 +166,13 @@
 					Grid.Column="3"
 					Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
 					Command="{Binding NewSearchCommand}"
+					IsDefault="True"
 					Content="{tombLib:Localize NewSearch}" />
 				<Button
 					Grid.Column="4"
 					Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
 					Command="{Binding ReplaceCommand}"
 					Content="{tombLib:Localize Replace}"
-					IsDefault="True"
 					IsEnabled="{Binding IsReplaceEnabled}" />
 				<Button
 					Grid.Column="5"

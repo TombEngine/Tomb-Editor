@@ -203,7 +203,10 @@ public partial class TransformWindowViewModel : ObservableObject, IModalDialogVi
     {
         CommitIfReady();
 
-        if (_lightingUpdatePending)
+        // Like the previous dialog: nothing changed means no pending relight; otherwise relight once.
+        if (!HasTransformChangedFromBackup())
+            _lightingUpdatePending = false;
+        else if (_lightingUpdatePending)
             EditorActions.RebuildLightsForObject(_instance);
 
         _lightingUpdatePending = false;
@@ -246,7 +249,7 @@ public partial class TransformWindowViewModel : ObservableObject, IModalDialogVi
         if (_instance is IRotateableYXRoll rotYXR)
             rotYXR.Roll = _backupRotation.Z;
 
-        if (changed || _lightingUpdatePending)
+        if (changed && _editor.ShouldRelight)
             EditorActions.RebuildLightsForObject(_instance);
 
         _lightingUpdatePending = false;

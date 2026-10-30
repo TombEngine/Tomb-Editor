@@ -45,7 +45,6 @@
             x:Name="memoTextBox"
             Grid.Row="0"
             AcceptsReturn="True"
-            AcceptsTab="True"
             Height="Auto"
             FocusManager.FocusedElement="{Binding RelativeSource={RelativeSource Self}}"
             HorizontalScrollBarVisibility="Auto"

@@ -75,11 +75,18 @@ public partial class ReplaceObjectWindowViewModel : ObservableObject, IModalDial
         }
     }
 
-    partial void OnSelectionTypeChanged(ObjectSelectionType value)
+    partial void OnSelectionTypeChanged(ObjectSelectionType value) => ApplySelectionType(value);
+
+    /// <summary>
+    /// Updates the select buttons and labels for the selection type and picks up the object currently selected
+    /// in the level, like the previous dialog did every time the selection type was assigned.
+    /// </summary>
+    private void ApplySelectionType(ObjectSelectionType value)
     {
         var selectDest = value == ObjectSelectionType.Destination;
         IsSelectDestEnabled = value == ObjectSelectionType.None || !selectDest;
         IsSelectSourceEnabled = value == ObjectSelectionType.None || selectDest;
+        ToggleItem(_editor.SelectedObject as PositionBasedObjectInstance);
         UpdateLabels();
     }
 
@@ -219,7 +226,11 @@ public partial class ReplaceObjectWindowViewModel : ObservableObject, IModalDial
         SetSource(null);
         SetDest(null);
         if (resetSelectionType)
+        {
             SelectionType = ObjectSelectionType.Source;
+            ApplySelectionType(SelectionType);
+        }
+
         RepopulateUI(resetLabels: true);
     }
 

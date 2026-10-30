@@ -199,6 +199,8 @@ public partial class OperationDialogWindowViewModel : ObservableObject, IModalDi
     {
         if (_task is not null && _task.Status >= TaskStatus.RanToCompletion)
         {
+            // Reset first so assigning false raises a change even if a veto left it at false before.
+            DialogResult = null;
             DialogResult = false;
             return;
         }
@@ -208,7 +210,6 @@ public partial class OperationDialogWindowViewModel : ObservableObject, IModalDi
     private void EndThread()
     {
         _cts.Cancel();
-        DialogResult = false;
         AppendLine(_localizationService["StoppingProcess"], ErrorRowBrush);
     }
 

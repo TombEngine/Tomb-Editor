@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Shell;
@@ -24,6 +25,23 @@ public partial class OperationDialogWindow : Window
         Loaded += OnLoaded;
         Closing += OnClosing;
         Closed += OnClosed;
+    }
+
+    /// <summary>The log was selectable and copyable in the previous dialog: Ctrl+C copies the selected lines (all when none are selected).</summary>
+    private void LogList_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if (e.Key != System.Windows.Input.Key.C || !System.Windows.Input.Keyboard.Modifiers.HasFlag(System.Windows.Input.ModifierKeys.Control))
+            return;
+
+        var lines = logList.SelectedItems.Count > 0
+            ? logList.SelectedItems.OfType<OperationDialogWindowViewModel.LogEntry>()
+            : logList.Items.OfType<OperationDialogWindowViewModel.LogEntry>();
+
+        var text = string.Join(Environment.NewLine, lines.Select(line => line.Text));
+        if (text.Length > 0)
+            System.Windows.Clipboard.SetText(text);
+
+        e.Handled = true;
     }
 
     private void OnLoaded(object sender, RoutedEventArgs e)

@@ -42,7 +42,9 @@
             Background="{Binding LogBackground}"
             HorizontalContentAlignment="Stretch"
             ItemsSource="{Binding LogEntries}"
+            KeyDown="LogList_KeyDown"
             ScrollViewer.HorizontalScrollBarVisibility="Auto"
+            SelectionMode="Extended"
             ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.ItemTemplate>
                 <DataTemplate>

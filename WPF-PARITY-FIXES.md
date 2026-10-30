@@ -74,6 +74,10 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | BumpMaps: the custom-file checkbox is disabled without a selected texture; clicking the path label toggles the custom file | WinForms behavior | (this commit) |
 | Crop Room (ResizeRoom): title "Crop Room", Preview and New dimensions groups, the four spinners placed around a north indicator (Z+ top, X- left, X+ right, Z- bottom, labels as tooltips), "Allow rooms bigger than 30x30" text from the game limit, walls option above floor, size 600x400 with minimum 540x355 | Layout was four labeled rows and a generic title (verified on screen against WinForms) | (this commit) |
 | Titles and labels aligned with WinForms: Select Rooms by Tags, Search & replace objects, Transform Edit with "Position:", Sink with "Current strength:", Search "Keywords:" and plural delete confirmations | Wording differed | (this commit) |
+| Transform Edit: axis letters (X/Y/Z, P/Y/R), rotation with 2 decimals and wrap-around, scale with 2 decimals, Alt increments (16 / 5 / 1); OK clears the pending relight when nothing changed, Cancel relights only when something changed and relighting is enabled (not verified on screen: needs a selected object) | Rotation was shown rounded, no axis labels, relight rules differed | (this commit) |
+| Search & replace objects: Enter runs "New search" (not Replace); picking up the object selected in the level when the selection type changes; the Select buttons start with the right enabled state | Enter replaced objects by mistake; selected object was ignored | (this commit) |
+| Memo: Tab moves focus (no tab character) and Ctrl+Enter saves even while typing | AcceptsTab inserted tabs; Enter handling could swallow Ctrl+Enter | (this commit) |
+| Operation dialog: Cancel closes the dialog after a cancelled run (it could stay stuck); the log supports selection and Ctrl+C | Cancel did nothing the second time; log was not copyable | (this commit) |
 
 ## Open items
 

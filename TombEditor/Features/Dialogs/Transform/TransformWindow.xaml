@@ -38,83 +38,100 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Label
-            Grid.Row="0"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            Content="{tombLib:Localize Translation}" />
-        <controls:NumericUpDown
-            Grid.Row="0"
-            Grid.Column="1"
+        <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Content="{tombLib:Localize Translation}" />
+        <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Content="{tombLib:Localize Rotation}" />
+        <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Content="{tombLib:Localize Scale}" />
+        <DockPanel Grid.Row="0" Grid.Column="1">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="X" />
+            <controls:NumericUpDown
+            Increment="1"
+            LargeIncrement="16"
             Maximum="1048576"
             Minimum="-1048576"
             Value="{Binding TranslationX, Mode=TwoWay}" />
-        <controls:NumericUpDown
-            Grid.Row="0"
-            Grid.Column="2"
+        </DockPanel>
+        <DockPanel Grid.Row="0" Grid.Column="2">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="Y" />
+            <controls:NumericUpDown
+            Increment="1"
+            LargeIncrement="16"
             Maximum="1048576"
             Minimum="-1048576"
             Value="{Binding TranslationY, Mode=TwoWay}" />
-        <controls:NumericUpDown
-            Grid.Row="0"
-            Grid.Column="3"
+        </DockPanel>
+        <DockPanel Grid.Row="0" Grid.Column="3">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="Z" />
+            <controls:NumericUpDown
+            Increment="1"
+            LargeIncrement="16"
             Maximum="1048576"
             Minimum="-1048576"
             Value="{Binding TranslationZ, Mode=TwoWay}" />
-
-        <Label
-            Grid.Row="1"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            Content="{tombLib:Localize Rotation}" />
-        <controls:NumericUpDown
-            Grid.Row="1"
-            Grid.Column="1"
+        </DockPanel>
+        <DockPanel Grid.Row="1" Grid.Column="1">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="P" />
+            <controls:NumericUpDown
+            DecimalPlaces="2"
+            FormatString="F2"
             IsEnabled="{Binding IsRotationXEnabled}"
+            LargeIncrement="5"
+            LoopValues="True"
             Maximum="360"
             Minimum="-360"
             Value="{Binding RotationX, Mode=TwoWay}" />
-        <controls:NumericUpDown
-            Grid.Row="1"
-            Grid.Column="2"
+        </DockPanel>
+        <DockPanel Grid.Row="1" Grid.Column="2">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="Y" />
+            <controls:NumericUpDown
+            DecimalPlaces="2"
+            FormatString="F2"
             IsEnabled="{Binding IsRotationYEnabled}"
+            LargeIncrement="5"
+            LoopValues="True"
             Maximum="360"
             Minimum="-360"
             Value="{Binding RotationY, Mode=TwoWay}" />
-        <controls:NumericUpDown
-            Grid.Row="1"
-            Grid.Column="3"
+        </DockPanel>
+        <DockPanel Grid.Row="1" Grid.Column="3">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="R" />
+            <controls:NumericUpDown
+            DecimalPlaces="2"
+            FormatString="F2"
             IsEnabled="{Binding IsRotationZEnabled}"
+            LargeIncrement="5"
+            LoopValues="True"
             Maximum="360"
             Minimum="-360"
             Value="{Binding RotationZ, Mode=TwoWay}" />
-
-        <Label
-            Grid.Row="2"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            Content="{tombLib:Localize Scale}" />
-        <controls:NumericUpDown
-            Grid.Row="2"
-            Grid.Column="1"
-            FormatString="F4"
+        </DockPanel>
+        <DockPanel Grid.Row="2" Grid.Column="1">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="X" />
+            <controls:NumericUpDown
+            DecimalPlaces="2"
+            FormatString="F2"
             Increment="0.1"
             IsEnabled="{Binding IsScaleEnabled}"
+            LargeIncrement="1"
             Maximum="1024"
-            Minimum="0.001"
+            Minimum="0.01"
             Value="{Binding ScaleX, Mode=TwoWay}" />
-        <controls:NumericUpDown
-            Grid.Row="2"
-            Grid.Column="2"
-            FormatString="F4"
+        </DockPanel>
+        <DockPanel Grid.Row="2" Grid.Column="2">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="Y" />
+            <controls:NumericUpDown
+            DecimalPlaces="2"
+            FormatString="F2"
             IsEnabled="False"
             Value="{Binding ScaleY, Mode=OneWay}" />
-        <controls:NumericUpDown
-            Grid.Row="2"
-            Grid.Column="3"
-            FormatString="F4"
+        </DockPanel>
+        <DockPanel Grid.Row="2" Grid.Column="3">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="Z" />
+            <controls:NumericUpDown
+            DecimalPlaces="2"
+            FormatString="F2"
             IsEnabled="False"
             Value="{Binding ScaleZ, Mode=OneWay}" />
+        </DockPanel>
 
         <controls:SpacedStack
             Grid.Row="3"
