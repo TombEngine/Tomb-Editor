@@ -8,6 +8,7 @@
     xmlns:local="clr-namespace:TombEditor.Features.Dialogs.TextureRemap"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.TextureRemap"
     Title="{tombLib:Localize Title}"
@@ -110,10 +111,13 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <ComboBox
-                        Grid.Row="0"
+                    <DockPanel Grid.Row="0">
+<Button Width="23" Margin="2,0,0,0" Command="{x:Static tombLib:ComboSearch.OpenCommand}" CommandParameter="{Binding ElementName=sourceCombo}" DockPanel.Dock="Right" ToolTip="Search"><Image Width="16" Height="16" Source="{tomb:Icon General/search}" /></Button>
+<controls:SearchableComboBox
+                        x:Name="sourceCombo"
                                                 ItemsSource="{Binding Textures}"
                         SelectedItem="{Binding SourceTexture, Mode=TwoWay}" />
+</DockPanel>
                     <local:TextureRemapMapView
                         x:Name="SourceMapView"
                         Grid.Row="1"
@@ -130,10 +134,13 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <ComboBox
-                        Grid.Row="0"
+                    <DockPanel Grid.Row="0">
+<Button Width="23" Margin="2,0,0,0" Command="{x:Static tombLib:ComboSearch.OpenCommand}" CommandParameter="{Binding ElementName=destinationCombo}" DockPanel.Dock="Right" ToolTip="Search"><Image Width="16" Height="16" Source="{tomb:Icon General/search}" /></Button>
+<controls:SearchableComboBox
+                        x:Name="destinationCombo"
                                                 ItemsSource="{Binding Textures}"
                         SelectedItem="{Binding DestinationTexture, Mode=TwoWay}" />
+</DockPanel>
                     <local:TextureRemapMapView
                         x:Name="DestinationMapView"
                         Grid.Row="1"
