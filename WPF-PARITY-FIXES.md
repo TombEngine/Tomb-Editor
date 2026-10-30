@@ -156,6 +156,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Search icon button next to the texture combos of Texture remap (source and destination), Texture sounds and Bumpmaps (shared ComboSearch.OpenCommand opens the combo drop-down with the search box focused); the Remap combos are now searchable combos. Checked on screen in Remap and Texture sounds; Bumpmaps built with the same markup. The same search icon was added next to the texture combo of Animated textures and the Bumpmaps one was rechecked (both seen on screen); the Animated textures map now starts at the top of the texture like the other map windows (seen on screen). The black frame thumbnails of the test set come from textures missing in that level, not compared with WinForms | Search button like WinForms | (this commit) |
 
+| Event set editor node editor driven with the real mouse on the real level (global event sets): new set, function chosen, Add pressed three times (nodes chained under the selected node as WinForms does), Ctrl+A selects all three nodes (blue borders), toolbar at the bottom with icons. Rubber band drag and the WinForms comparison of these gestures were not conclusive on the captures | Verified in WPF only | n/a |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
