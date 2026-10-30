@@ -334,11 +334,21 @@
 
 			<!--  ========================  RIGHT: texture map  ========================  -->
 			<DockPanel Grid.Column="2">
-				<controls:SearchableComboBox
-					DockPanel.Dock="Top"
-					Margin="0,0,0,4"
-					ItemsSource="{Binding AvailableTextures}"
-					SelectedItem="{Binding CurrentTexture, Mode=TwoWay}" />
+				<DockPanel DockPanel.Dock="Top" Margin="0,0,0,4">
+					<Button
+						DockPanel.Dock="Right"
+						Width="23"
+						Margin="2,0,0,0"
+						Command="{x:Static tombLib:ComboSearch.OpenCommand}"
+						CommandParameter="{Binding ElementName=textureCombo}"
+						ToolTip="Search">
+						<Image Width="16" Height="16" Source="{tomb:Icon General/search}" />
+					</Button>
+					<controls:SearchableComboBox
+						x:Name="textureCombo"
+						ItemsSource="{Binding AvailableTextures}"
+						SelectedItem="{Binding CurrentTexture, Mode=TwoWay}" />
+				</DockPanel>
 				<Border
 					x:Name="textureMapContainer"
 					Background="{DynamicResource Brush_Background_Low}"

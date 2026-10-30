@@ -154,7 +154,7 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Texture sounds and Bumpmaps windows compared on screen with the WinForms editor on the real level: same combos, sound/bump labels on the texture tiles and buttons. Fixed the combo names (now "Maya09b (at ...)") and the initial map view (top of the texture at the top, as in Texture remap). Still different: WinForms has a search icon next to the texture combo and scroll bars in the map | Display name and start position | (this commit) |
 
-| Search icon button next to the texture combos of Texture remap (source and destination), Texture sounds and Bumpmaps (shared ComboSearch.OpenCommand opens the combo drop-down with the search box focused); the Remap combos are now searchable combos. Checked on screen in Remap and Texture sounds; Bumpmaps built with the same markup. Animated textures still has no such button | Search button like WinForms | (this commit) |
+| Search icon button next to the texture combos of Texture remap (source and destination), Texture sounds and Bumpmaps (shared ComboSearch.OpenCommand opens the combo drop-down with the search box focused); the Remap combos are now searchable combos. Checked on screen in Remap and Texture sounds; Bumpmaps built with the same markup. The same search icon was added next to the texture combo of Animated textures (built only, not yet seen on screen) | Search button like WinForms | (this commit) |
 
 ## Subagent batch (built only, NOT yet verified on screen)
 
