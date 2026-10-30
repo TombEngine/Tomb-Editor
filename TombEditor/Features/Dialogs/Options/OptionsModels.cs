@@ -1,6 +1,7 @@
 #nullable enable
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,7 +19,10 @@ namespace TombEditor.Features.Dialogs.Options
         Text,
         Combo,
         Color,
-        ColorSchemePreset
+        ColorSchemePreset,
+        BoolWithNumber,
+        ComboWithBool,
+        BoolRow
     }
 
     /// <summary>
@@ -42,6 +46,15 @@ namespace TombEditor.Features.Dialogs.Options
         // Combo / preset items.
         public IReadOnlyList<object>? Items { get; init; }
 
+        /// <summary>Companion options shown on the same row as this option (composite kinds only).</summary>
+        public List<OptionItem> Children { get; } = new();
+
+        /// <summary>Returns true when the label of this option or of any companion contains the query.</summary>
+        public bool MatchesQuery(string query)
+            => query.Length == 0
+                || Label.Contains(query, StringComparison.OrdinalIgnoreCase)
+                || Children.Any(c => c.Label.Contains(query, StringComparison.OrdinalIgnoreCase));
+
         /// <summary>The live value bound to the editor control (bool, double, string, combo item or Color).</summary>
         [ObservableProperty] private object? _value;
 
@@ -61,7 +74,7 @@ namespace TombEditor.Features.Dialogs.Options
         public string Header { get; init; } = string.Empty;
         public List<OptionGroup> Groups { get; } = new();
 
-        public IEnumerable<OptionItem> AllItems => Groups.SelectMany(g => g.Items);
+        public IEnumerable<OptionItem> AllItems => Groups.SelectMany(g => g.Items).SelectMany(i => i.Children.Prepend(i));
 
         [ObservableProperty] private bool _isVisible = true;
     }

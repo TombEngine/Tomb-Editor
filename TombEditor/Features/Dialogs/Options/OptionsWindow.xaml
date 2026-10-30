@@ -108,9 +108,77 @@
             </DockPanel>
         </DataTemplate>
 
+        <!--  Checkbox followed by a numeric box on the same row (the numeric option is the first child)  -->
+        <DataTemplate x:Key="BoolWithNumberTemplate">
+            <DockPanel Margin="0,3">
+                <CheckBox
+                    MinWidth="260"
+                    VerticalAlignment="Center"
+                    Content="{Binding Label}"
+                    DockPanel.Dock="Left"
+                    IsChecked="{Binding Value, Mode=TwoWay}" />
+                <controls:NumericUpDown
+                    Width="120"
+                    HorizontalAlignment="Left"
+                    DataContext="{Binding Children[0]}"
+                    DecimalPlaces="{Binding DecimalPlaces}"
+                    Increment="{Binding Increment}"
+                    Maximum="{Binding Maximum}"
+                    Minimum="{Binding Minimum}"
+                    Value="{Binding Value, Mode=TwoWay}" />
+            </DockPanel>
+        </DataTemplate>
+
+        <!--  Label and combo box followed by a checkbox on the same row (the checkbox option is the first child)  -->
+        <DataTemplate x:Key="ComboWithBoolTemplate">
+            <DockPanel Margin="0,3">
+                <TextBlock
+                    Width="260"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding Label}" />
+                <CheckBox
+                    Margin="6,0,0,0"
+                    VerticalAlignment="Center"
+                    Content="{Binding Children[0].Label}"
+                    DockPanel.Dock="Right"
+                    IsChecked="{Binding Children[0].Value, Mode=TwoWay}" />
+                <ComboBox ItemsSource="{Binding Items}" SelectedItem="{Binding Value, Mode=TwoWay}" />
+            </DockPanel>
+        </DataTemplate>
+
+        <!--  Label followed by several checkboxes on the same row (the checkboxes are the children)  -->
+        <DataTemplate x:Key="BoolRowTemplate">
+            <DockPanel Margin="0,3">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding Label}" />
+                <ItemsControl Margin="6,0,0,0" ItemsSource="{Binding Children}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox
+                                Margin="0,0,12,0"
+                                VerticalAlignment="Center"
+                                Content="{Binding Label}"
+                                IsChecked="{Binding Value, Mode=TwoWay}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </DockPanel>
+        </DataTemplate>
+
         <local:OptionTemplateSelector
             x:Key="OptionSelector"
+            BoolRowTemplate="{StaticResource BoolRowTemplate}"
             BoolTemplate="{StaticResource BoolTemplate}"
+            BoolWithNumberTemplate="{StaticResource BoolWithNumberTemplate}"
+            ComboWithBoolTemplate="{StaticResource ComboWithBoolTemplate}"
             ColorTemplate="{StaticResource ColorTemplate}"
             ComboTemplate="{StaticResource ComboTemplate}"
             NumberTemplate="{StaticResource NumberTemplate}"
@@ -123,8 +191,8 @@
         </Style>
 
         <!--  A group: a titled box containing its options  -->
-        <DataTemplate x:Key="GroupTemplate">
-            <GroupBox Header="{Binding Header}" Visibility="{Binding IsVisible, Converter={StaticResource BoolToVis}}">
+        <DataTemplate x:Key="BoxedGroupTemplate">
+            <GroupBox Header="{Binding Header}">
                 <GroupBox.Margin>
                     <Thickness Bottom="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
                 </GroupBox.Margin>
@@ -133,6 +201,30 @@
                     ItemTemplateSelector="{StaticResource OptionSelector}"
                     ItemsSource="{Binding Items}" />
             </GroupBox>
+        </DataTemplate>
+
+        <!--  A group without a header is shown as a plain list of options, like the tab pages without group boxes  -->
+        <DataTemplate x:Key="PlainGroupTemplate">
+            <ItemsControl
+                Margin="6,3,6,0"
+                ItemContainerStyle="{StaticResource OptionContainerStyle}"
+                ItemTemplateSelector="{StaticResource OptionSelector}"
+                ItemsSource="{Binding Items}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="GroupTemplate">
+            <ContentControl Content="{Binding}" Visibility="{Binding IsVisible, Converter={StaticResource BoolToVis}}">
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Setter Property="ContentTemplate" Value="{StaticResource BoxedGroupTemplate}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Header}" Value="">
+                                <Setter Property="ContentTemplate" Value="{StaticResource PlainGroupTemplate}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
         </DataTemplate>
     </Window.Resources>
 

@@ -138,7 +138,7 @@ namespace TombEditor.Features.Dialogs.Options
 
             foreach (var item in items)
             {
-                if (item.Kind == OptionKind.ColorSchemePreset)
+                if (item.Kind is OptionKind.ColorSchemePreset or OptionKind.BoolRow)
                     continue;
 
                 var option = GetOption(config, item.ConfigName);
@@ -173,7 +173,7 @@ namespace TombEditor.Features.Dialogs.Options
         {
             foreach (var item in Tabs.SelectMany(t => t.AllItems))
             {
-                if (item.Kind == OptionKind.ColorSchemePreset)
+                if (item.Kind is OptionKind.ColorSchemePreset or OptionKind.BoolRow)
                     continue;
 
                 var option = GetOption(_config, item.ConfigName);
@@ -255,7 +255,7 @@ namespace TombEditor.Features.Dialogs.Options
                     bool anyGroup = false;
                     foreach (var item in group.Items)
                     {
-                        bool match = query.Length == 0 || item.Label.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0;
+                        bool match = item.MatchesQuery(query);
                         item.IsVisible = match;
                         anyGroup |= match;
                     }
@@ -307,182 +307,181 @@ namespace TombEditor.Features.Dialogs.Options
             var presetNames = GetColorSchemePresetNames();
 
             // General
-            Tabs.Add(Tab(_localizationService["Tab_General"],
-                Group(_localizationService["Group_Misc"],
-                    Bool(_localizationService["Opt_Editor_EnableStepHeightControlsForUnsupportedEngines"], "Editor_EnableStepHeightControlsForUnsupportedEngines"),
-                    Bool(_localizationService["Opt_Log_WriteToFile"], "Log_WriteToFile"),
-                    Num(_localizationService["Opt_Log_ArchiveN"], "Log_ArchiveN")),
-                Group(_localizationService["Group_Defaults"],
-                    Bool(_localizationService["Opt_Editor_GridNewRoom"], "Editor_GridNewRoom"),
-                    Num(_localizationService["Opt_Editor_DefaultNewRoomSize"], "Editor_DefaultNewRoomSize", 3, 31),
-                    Combo(_localizationService["Opt_Editor_DefaultProjectGameVersion"], "Editor_DefaultProjectGameVersion", gameVersions),
-                    Bool(_localizationService["Opt_Editor_UseHalfPixelCorrectionOnPrjImport"], "Editor_UseHalfPixelCorrectionOnPrjImport"),
-                    Bool(_localizationService["Opt_Editor_RespectFlybyPatchOnPrjImport"], "Editor_RespectFlybyPatchOnPrjImport")),
-                Group(_localizationService["Group_System"],
-                    Bool(_localizationService["Opt_Editor_AllowMultipleInstances"], "Editor_AllowMultipleInstances"),
-                    Bool(_localizationService["Opt_Editor_OpenLastProjectOnStartup"], "Editor_OpenLastProjectOnStartup"),
-                    Num(_localizationService["Opt_Editor_UndoDepth"], "Editor_UndoDepth", 1, 1000),
-                    Bool(_localizationService["Opt_Editor_ReloadFilesAutomaticallyWhenChanged"], "Editor_ReloadFilesAutomaticallyWhenChanged")),
-                Group(_localizationService["Group_Autosave"],
-                    Bool(_localizationService["Opt_AutoSave_Enable"], "AutoSave_Enable"),
-                    Num(_localizationService["Opt_AutoSave_TimeInSeconds"], "AutoSave_TimeInSeconds", 0, 10000),
-                    Bool(_localizationService["Opt_AutoSave_NamePutDateFirst"], "AutoSave_NamePutDateFirst"),
-                    Text(_localizationService["Opt_AutoSave_DateTimeFormat"], "AutoSave_DateTimeFormat"),
-                    Bool(_localizationService["Opt_AutoSave_CleanupEnable"], "AutoSave_CleanupEnable"),
-                    Num(_localizationService["Opt_AutoSave_CleanupMaxAutoSaves"], "AutoSave_CleanupMaxAutoSaves"))));
+            Tabs.Add(Tab(Loc("Tab_General"),
+                Group(Loc("Group_Autosave"),
+                    Bool("Opt_AutoSave_Enable", "AutoSave_Enable"),
+                    Num("Opt_AutoSave_TimeInSeconds", "AutoSave_TimeInSeconds", 0, 10000),
+                    Text("Opt_AutoSave_DateTimeFormat", "AutoSave_DateTimeFormat"),
+                    Bool("Opt_AutoSave_NamePutDateFirst", "AutoSave_NamePutDateFirst"),
+                    BoolWithNumber("Opt_AutoSave_CleanupEnable", "AutoSave_CleanupEnable", "AutoSave_CleanupMaxAutoSaves")),
+                Group(Loc("Group_System"),
+                    Bool("Opt_Editor_AllowMultipleInstances", "Editor_AllowMultipleInstances"),
+                    Bool("Opt_Editor_OpenLastProjectOnStartup", "Editor_OpenLastProjectOnStartup"),
+                    Bool("Opt_Editor_ReloadFilesAutomaticallyWhenChanged", "Editor_ReloadFilesAutomaticallyWhenChanged"),
+                    Num("Opt_Editor_UndoDepth", "Editor_UndoDepth", 1, 1000)),
+                Group(Loc("Group_Defaults"),
+                    Combo("Opt_Editor_DefaultProjectGameVersion", "Editor_DefaultProjectGameVersion", gameVersions),
+                    Num("Opt_Editor_DefaultNewRoomSize", "Editor_DefaultNewRoomSize", 3, 31),
+                    Bool("Opt_Editor_GridNewRoom", "Editor_GridNewRoom"),
+                    Bool("Opt_Editor_RespectFlybyPatchOnPrjImport", "Editor_RespectFlybyPatchOnPrjImport"),
+                    Bool("Opt_Editor_UseHalfPixelCorrectionOnPrjImport", "Editor_UseHalfPixelCorrectionOnPrjImport")),
+                Group(Loc("Group_Misc"),
+                    Bool("Opt_Log_WriteToFile", "Log_WriteToFile"),
+                    Num("Opt_Log_ArchiveN", "Log_ArchiveN"),
+                    Bool("Opt_Editor_EnableStepHeightControlsForUnsupportedEngines", "Editor_EnableStepHeightControlsForUnsupportedEngines"))));
 
             // User interface
-            Tabs.Add(Tab(_localizationService["Tab_UserInterface"],
-                Group(_localizationService["Group_General"],
-                    Bool(_localizationService["Opt_Palette_PickColorFromSelectedObject"], "Palette_PickColorFromSelectedObject"),
-                    Bool(_localizationService["Opt_UI_GenerateRoomDescriptions"], "UI_GenerateRoomDescriptions"),
-                    Bool(_localizationService["Opt_UI_WarnBeforeDeletingObjects"], "UI_WarnBeforeDeletingObjects"),
-                    Bool(_localizationService["Opt_UI_AutoSwitchRoomToOutsideOnAppliedInvisibleTexture"], "UI_AutoSwitchRoomToOutsideOnAppliedInvisibleTexture"),
-                    Bool(_localizationService["Opt_UI_AutoFillTriggerTypesForSwitchAndKey"], "UI_AutoFillTriggerTypesForSwitchAndKey"),
-                    Bool(_localizationService["Opt_UI_SetAttributesAtOnce"], "UI_SetAttributesAtOnce"),
-                    Bool(_localizationService["Opt_UI_DiscardSelectionOnModeSwitch"], "UI_DiscardSelectionOnModeSwitch"),
-                    Bool(_localizationService["Opt_UI_ProbeAttributesThroughPortals"], "UI_ProbeAttributesThroughPortals"),
-                    Bool(_localizationService["Opt_UI_AutoSwitchSectorColoringInfo"], "UI_AutoSwitchSectorColoringInfo"),
-                    Bool(_localizationService["Opt_UI_OnlyShowSmallMessageWhenRoomIsLocked"], "UI_OnlyShowSmallMessageWhenRoomIsLocked")),
-                Group(_localizationService["Group_ColorScheme"],
-                    Preset(_localizationService["Opt_ColorSchemePreset"], presetNames),
-                    Num(_localizationService["Opt_UI_FormColor_Brightness"], "UI_FormColor_Brightness", 50, 100, 1, 0, "%"),
-                    Color(_localizationService["Opt_UI_FormColor_ButtonHighlight"], "UI_FormColor_ButtonHighlight"),
-                    Color(_localizationService["Opt_Color2DRoomsMoved"], "Color2DRoomsMoved"),
-                    Color(_localizationService["Opt_Color2DRoomsBelow"], "Color2DRoomsBelow"),
-                    Color(_localizationService["Opt_Color2DRoomsAbove"], "Color2DRoomsAbove"),
-                    Color(_localizationService["Opt_ColorSlideDirection"], "ColorSlideDirection"),
-                    Color(_localizationService["Opt_ColorIllegalSlope"], "ColorIllegalSlope"),
-                    Color(_localizationService["Opt_ColorSelection"], "ColorSelection"),
-                    Color(_localizationService["Opt_ColorForceSolidFloor"], "ColorForceSolidFloor"),
-                    Color(_localizationService["Opt_ColorTriggerTriggerer"], "ColorTriggerTriggerer"),
-                    Color(_localizationService["Opt_ColorBeetle"], "ColorBeetle"),
-                    Color(_localizationService["Opt_ColorNotWalkable"], "ColorNotWalkable"),
-                    Color(_localizationService["Opt_ColorDeath"], "ColorDeath"),
-                    Color(_localizationService["Opt_ColorBox"], "ColorBox"),
-                    Color(_localizationService["Opt_ColorClimb"], "ColorClimb"),
-                    Color(_localizationService["Opt_ColorMonkey"], "ColorMonkey"),
-                    Color(_localizationService["Opt_ColorTrigger"], "ColorTrigger"),
-                    Color(_localizationService["Opt_ColorWallUpper"], "ColorWallUpper"),
-                    Color(_localizationService["Opt_ColorWallLower"], "ColorWallLower"),
-                    Color(_localizationService["Opt_ColorWall"], "ColorWall"),
-                    Color(_localizationService["Opt_ColorBorderWall"], "ColorBorderWall"),
-                    Color(_localizationService["Opt_ColorFloor"], "ColorFloor"),
-                    Color(_localizationService["Opt_ColorPortalFace"], "ColorPortalFace"),
-                    Color(_localizationService["Opt_ColorPortal"], "ColorPortal"),
-                    Color(_localizationService["Opt_ColorPortalEffect"], "ColorPortalEffect"),
-                    Color(_localizationService["Opt_ColorFlipRoom"], "ColorFlipRoom"),
-                    Color(_localizationService["Opt_Color2DBackground"], "Color2DBackground"),
-                    Color(_localizationService["Opt_Color3DBackground"], "Color3DBackground"))));
+            Tabs.Add(Tab(Loc("Tab_UserInterface"),
+                Group(Loc("Group_General"),
+                    Bool("Opt_UI_WarnBeforeDeletingObjects", "UI_WarnBeforeDeletingObjects"),
+                    Bool("Opt_UI_OnlyShowSmallMessageWhenRoomIsLocked", "UI_OnlyShowSmallMessageWhenRoomIsLocked"),
+                    Bool("Opt_UI_DiscardSelectionOnModeSwitch", "UI_DiscardSelectionOnModeSwitch"),
+                    Bool("Opt_UI_AutoSwitchSectorColoringInfo", "UI_AutoSwitchSectorColoringInfo"),
+                    Bool("Opt_UI_ProbeAttributesThroughPortals", "UI_ProbeAttributesThroughPortals"),
+                    Bool("Opt_UI_SetAttributesAtOnce", "UI_SetAttributesAtOnce"),
+                    Bool("Opt_UI_AutoFillTriggerTypesForSwitchAndKey", "UI_AutoFillTriggerTypesForSwitchAndKey"),
+                    Bool("Opt_UI_AutoSwitchRoomToOutsideOnAppliedInvisibleTexture", "UI_AutoSwitchRoomToOutsideOnAppliedInvisibleTexture"),
+                    Bool("Opt_UI_GenerateRoomDescriptions", "UI_GenerateRoomDescriptions"),
+                    Bool("Opt_Palette_PickColorFromSelectedObject", "Palette_PickColorFromSelectedObject")),
+                Group(Loc("Group_ColorScheme"),
+                    Num("Opt_UI_FormColor_Brightness", "UI_FormColor_Brightness", 50, 100, 1, 0, "%"),
+                    Preset("Opt_ColorSchemePreset", presetNames),
+                    Color("Opt_UI_FormColor_ButtonHighlight", "UI_FormColor_ButtonHighlight"),
+                    Color("Opt_ColorSelection", "ColorSelection"),
+                    Color("Opt_Color3DBackground", "Color3DBackground"),
+                    Color("Opt_Color2DBackground", "Color2DBackground"),
+                    Color("Opt_ColorFlipRoom", "ColorFlipRoom"),
+                    Color("Opt_ColorPortal", "ColorPortal"),
+                    Color("Opt_ColorPortalEffect", "ColorPortalEffect"),
+                    Color("Opt_ColorPortalFace", "ColorPortalFace"),
+                    Color("Opt_ColorFloor", "ColorFloor"),
+                    Color("Opt_ColorBorderWall", "ColorBorderWall"),
+                    Color("Opt_ColorWall", "ColorWall"),
+                    Color("Opt_ColorWallLower", "ColorWallLower"),
+                    Color("Opt_ColorWallUpper", "ColorWallUpper"),
+                    Color("Opt_ColorTrigger", "ColorTrigger"),
+                    Color("Opt_ColorMonkey", "ColorMonkey"),
+                    Color("Opt_ColorClimb", "ColorClimb"),
+                    Color("Opt_ColorBox", "ColorBox"),
+                    Color("Opt_ColorDeath", "ColorDeath"),
+                    Color("Opt_ColorNotWalkable", "ColorNotWalkable"),
+                    Color("Opt_ColorBeetle", "ColorBeetle"),
+                    Color("Opt_ColorTriggerTriggerer", "ColorTriggerTriggerer"),
+                    Color("Opt_ColorForceSolidFloor", "ColorForceSolidFloor"),
+                    Color("Opt_ColorIllegalSlope", "ColorIllegalSlope"),
+                    Color("Opt_ColorSlideDirection", "ColorSlideDirection"),
+                    Color("Opt_Color2DRoomsAbove", "Color2DRoomsAbove"),
+                    Color("Opt_Color2DRoomsBelow", "Color2DRoomsBelow"),
+                    Color("Opt_Color2DRoomsMoved", "Color2DRoomsMoved"))));
 
             // 3D window
-            Tabs.Add(Tab(_localizationService["Tab_3DWindow"],
-                Group(_localizationService["Group_Text"],
-                    Bool(_localizationService["Opt_Rendering3D_DrawFontOverlays"], "Rendering3D_DrawFontOverlays"),
-                    Bool(_localizationService["Opt_Rendering3D_FontIsBold"], "Rendering3D_FontIsBold"),
-                    Num(_localizationService["Opt_Rendering3D_FontSize"], "Rendering3D_FontSize", 0, 1000, 1, 2),
-                    Combo(_localizationService["Opt_Rendering3D_FontName"], "Rendering3D_FontName", fonts)),
-                Group(_localizationService["Group_Rendering"],
-                    Combo(_localizationService["Opt_Rendering3D_ObjectQuality"], "Rendering3D_ObjectQuality", objectQuality),
-                    Bool(_localizationService["Opt_Rendering3D_UseRoomEditorDirections"], "Rendering3D_UseRoomEditorDirections"),
-                    Bool(_localizationService["Opt_Rendering3D_AnimateGhostBlockUnfolding"], "Rendering3D_AnimateGhostBlockUnfolding"),
-                    Bool(_localizationService["Opt_Rendering3D_HighQualityLightPreview"], "Rendering3D_HighQualityLightPreview"),
-                    Bool(_localizationService["Opt_Rendering3D_AutoBookmarkSelectedObject"], "Rendering3D_AutoBookmarkSelectedObject"),
-                    Bool(_localizationService["Opt_Rendering3D_AutoswitchCurrentRoom"], "Rendering3D_AutoswitchCurrentRoom"),
-                    Bool(_localizationService["Opt_Rendering3D_SelectObjectsInAnyRoom"], "Rendering3D_SelectObjectsInAnyRoom"),
-                    Bool(_localizationService["Opt_Rendering3D_AnimateCameraOnReset"], "Rendering3D_AnimateCameraOnReset"),
-                    Bool(_localizationService["Opt_Rendering3D_AlwaysShowCurrentRoomBounds"], "Rendering3D_AlwaysShowCurrentRoomBounds"),
-                    Bool(_localizationService["Opt_Rendering3D_AllowTexturingInLightingMode"], "Rendering3D_AllowTexturingInLightingMode"),
-                    Bool(_localizationService["Opt_Rendering3D_AnimateCameraOnRelocation"], "Rendering3D_AnimateCameraOnRelocation"),
-                    Bool(_localizationService["Opt_Rendering3D_AnimateCameraOnDoubleClickRoomSwitch"], "Rendering3D_AnimateCameraOnDoubleClickRoomSwitch"),
-                    Bool(_localizationService["Opt_Rendering3D_UseSpritesForServiceObjects"], "Rendering3D_UseSpritesForServiceObjects"),
-                    Bool(_localizationService["Opt_Rendering3D_ShowFPS"], "Rendering3D_ShowFPS"),
-                    Bool(_localizationService["Opt_Rendering3D_ResetCameraOnRoomSwitch"], "Rendering3D_ResetCameraOnRoomSwitch"),
-                    Bool(_localizationService["Opt_Rendering3D_Antialias"], "Rendering3D_Antialias"),
-                    Num(_localizationService["Opt_Rendering3D_LineWidth"], "Rendering3D_LineWidth"),
-                    Num(_localizationService["Opt_Rendering3D_DrawRoomsMaxDepth"], "Rendering3D_DrawRoomsMaxDepth"),
-                    Num(_localizationService["Opt_Rendering3D_FieldOfView"], "Rendering3D_FieldOfView", 10, 179))));
+            Tabs.Add(Tab(Loc("Tab_3DWindow"),
+                Group(Loc("Group_Rendering"),
+                    Bool("Opt_Rendering3D_Antialias", "Rendering3D_Antialias"),
+                    Bool("Opt_Rendering3D_HighQualityLightPreview", "Rendering3D_HighQualityLightPreview"),
+                    Bool("Opt_Rendering3D_AllowTexturingInLightingMode", "Rendering3D_AllowTexturingInLightingMode"),
+                    Bool("Opt_Rendering3D_AlwaysShowCurrentRoomBounds", "Rendering3D_AlwaysShowCurrentRoomBounds"),
+                    Bool("Opt_Rendering3D_SelectObjectsInAnyRoom", "Rendering3D_SelectObjectsInAnyRoom"),
+                    Bool("Opt_Rendering3D_AutoswitchCurrentRoom", "Rendering3D_AutoswitchCurrentRoom"),
+                    Bool("Opt_Rendering3D_AutoBookmarkSelectedObject", "Rendering3D_AutoBookmarkSelectedObject"),
+                    Bool("Opt_Rendering3D_UseRoomEditorDirections", "Rendering3D_UseRoomEditorDirections"),
+                    Bool("Opt_Rendering3D_UseSpritesForServiceObjects", "Rendering3D_UseSpritesForServiceObjects"),
+                    Bool("Opt_Rendering3D_ShowFPS", "Rendering3D_ShowFPS"),
+                    Bool("Opt_Rendering3D_ResetCameraOnRoomSwitch", "Rendering3D_ResetCameraOnRoomSwitch"),
+                    Bool("Opt_Rendering3D_AnimateGhostBlockUnfolding", "Rendering3D_AnimateGhostBlockUnfolding"),
+                    BoolRow("Opt_Rendering3D_AnimateCameraOn",
+                        ("Opt_Rendering3D_AnimateCameraOnDoubleClickRoomSwitch", "Rendering3D_AnimateCameraOnDoubleClickRoomSwitch"),
+                        ("Opt_Rendering3D_AnimateCameraOnRelocation", "Rendering3D_AnimateCameraOnRelocation"),
+                        ("Opt_Rendering3D_AnimateCameraOnReset", "Rendering3D_AnimateCameraOnReset")),
+                    Num("Opt_Rendering3D_FieldOfView", "Rendering3D_FieldOfView", 10, 179),
+                    Num("Opt_Rendering3D_DrawRoomsMaxDepth", "Rendering3D_DrawRoomsMaxDepth"),
+                    Num("Opt_Rendering3D_LineWidth", "Rendering3D_LineWidth"),
+                    Combo("Opt_Rendering3D_ObjectQuality", "Rendering3D_ObjectQuality", objectQuality)),
+                Group(Loc("Group_Text"),
+                    ComboWithBool("Opt_Rendering3D_FontName", "Rendering3D_FontName", fonts, "Opt_Rendering3D_FontIsBold", "Rendering3D_FontIsBold"),
+                    Num("Opt_Rendering3D_FontSize", "Rendering3D_FontSize", 0, 1000, 1, 2),
+                    Bool("Opt_Rendering3D_DrawFontOverlays", "Rendering3D_DrawFontOverlays"))));
 
             // 3D controls
-            Tabs.Add(Tab(_localizationService["Tab_3DControls"],
-                Group(_localizationService["Group_Other"],
-                    Num(_localizationService["Opt_Rendering3D_FlyModeMoveSpeed"], "Rendering3D_FlyModeMoveSpeed")),
-                Group(_localizationService["Group_MouseControls"],
-                    Bool(_localizationService["Opt_Rendering3D_CursorWarping"], "Rendering3D_CursorWarping"),
-                    Bool(_localizationService["Opt_Rendering3D_InvertMouseZoom"], "Rendering3D_InvertMouseZoom"),
-                    Num(_localizationService["Opt_Rendering3D_DragMouseSensitivity"], "Rendering3D_DragMouseSensitivity", 0, 1, 0.01, 2),
-                    Num(_localizationService["Opt_Rendering3D_NavigationSpeedMouseRotate"], "Rendering3D_NavigationSpeedMouseRotate"),
-                    Num(_localizationService["Opt_Rendering3D_NavigationSpeedMouseTranslate"], "Rendering3D_NavigationSpeedMouseTranslate", 0, 500000),
-                    Num(_localizationService["Opt_Rendering3D_NavigationSpeedMouseZoom"], "Rendering3D_NavigationSpeedMouseZoom", 0, 500000),
-                    Num(_localizationService["Opt_Rendering3D_NavigationSpeedMouseWheelZoom"], "Rendering3D_NavigationSpeedMouseWheelZoom")),
-                Group(_localizationService["Group_KeyboardControls"],
-                    Num(_localizationService["Opt_Rendering3D_NavigationSpeedKeyZoom"], "Rendering3D_NavigationSpeedKeyZoom", 0, 10000),
-                    Num(_localizationService["Opt_Rendering3D_NavigationSpeedKeyRotate"], "Rendering3D_NavigationSpeedKeyRotate", 0, 10, 0.1, 2))));
+            Tabs.Add(Tab(Loc("Tab_3DControls"),
+                Group(Loc("Group_KeyboardControls"),
+                    Num("Opt_Rendering3D_NavigationSpeedKeyZoom", "Rendering3D_NavigationSpeedKeyZoom", 0, 10000),
+                    Num("Opt_Rendering3D_NavigationSpeedKeyRotate", "Rendering3D_NavigationSpeedKeyRotate", 0, 10, 0.1, 2)),
+                Group(Loc("Group_MouseControls"),
+                    Num("Opt_Rendering3D_NavigationSpeedMouseWheelZoom", "Rendering3D_NavigationSpeedMouseWheelZoom"),
+                    Num("Opt_Rendering3D_NavigationSpeedMouseZoom", "Rendering3D_NavigationSpeedMouseZoom", 0, 500000),
+                    Num("Opt_Rendering3D_NavigationSpeedMouseTranslate", "Rendering3D_NavigationSpeedMouseTranslate", 0, 500000),
+                    Num("Opt_Rendering3D_NavigationSpeedMouseRotate", "Rendering3D_NavigationSpeedMouseRotate"),
+                    Num("Opt_Rendering3D_DragMouseSensitivity", "Rendering3D_DragMouseSensitivity", 0, 1, 0.01, 2),
+                    Bool("Opt_Rendering3D_InvertMouseZoom", "Rendering3D_InvertMouseZoom"),
+                    Bool("Opt_Rendering3D_CursorWarping", "Rendering3D_CursorWarping")),
+                Group(Loc("Group_Other"),
+                    Num("Opt_Rendering3D_FlyModeMoveSpeed", "Rendering3D_FlyModeMoveSpeed"))));
 
             // Gizmo
-            Tabs.Add(Tab(_localizationService["Tab_Gizmo"],
-                Group(_localizationService["Group_Gizmo"],
-                    Num(_localizationService["Opt_Gizmo_LineThickness"], "Gizmo_LineThickness", 0, 1000),
-                    Num(_localizationService["Opt_Gizmo_ScaleCubeSize"], "Gizmo_ScaleCubeSize", 0, 1000),
-                    Num(_localizationService["Opt_Gizmo_CenterCubeSize"], "Gizmo_CenterCubeSize", 0, 1000),
-                    Num(_localizationService["Opt_Gizmo_TranslationConeSize"], "Gizmo_TranslationConeSize", 0, 1000),
-                    Num(_localizationService["Opt_Gizmo_Size"], "Gizmo_Size", 0, 10000))));
+            Tabs.Add(Tab(Loc("Tab_Gizmo"),
+                Group(string.Empty,
+                    Num("Opt_Gizmo_Size", "Gizmo_Size", 0, 10000),
+                    Num("Opt_Gizmo_TranslationConeSize", "Gizmo_TranslationConeSize", 0, 1000),
+                    Num("Opt_Gizmo_CenterCubeSize", "Gizmo_CenterCubeSize", 0, 1000),
+                    Num("Opt_Gizmo_ScaleCubeSize", "Gizmo_ScaleCubeSize", 0, 1000),
+                    Num("Opt_Gizmo_LineThickness", "Gizmo_LineThickness", 0, 1000))));
 
             // Item browser
-            Tabs.Add(Tab(_localizationService["Tab_ItemBrowser"],
-                Group(_localizationService["Group_ItemBrowser"],
-                    Bool(_localizationService["Opt_RenderingItem_Animate"], "RenderingItem_Animate"),
-                    Bool(_localizationService["Opt_RenderingItem_ShowMultipleWadsPrompt"], "RenderingItem_ShowMultipleWadsPrompt"),
-                    Bool(_localizationService["Opt_RenderingItem_HideInternalObjects"], "RenderingItem_HideInternalObjects"),
-                    Bool(_localizationService["Opt_RenderingItem_Antialias"], "RenderingItem_Antialias"),
-                    Num(_localizationService["Opt_RenderingItem_FieldOfView"], "RenderingItem_FieldOfView", 10, 179),
-                    Num(_localizationService["Opt_RenderingItem_NavigationSpeedMouseRotate"], "RenderingItem_NavigationSpeedMouseRotate"),
-                    Num(_localizationService["Opt_RenderingItem_NavigationSpeedMouseTranslate"], "RenderingItem_NavigationSpeedMouseTranslate", 0, 2000),
-                    Num(_localizationService["Opt_RenderingItem_NavigationSpeedMouseZoom"], "RenderingItem_NavigationSpeedMouseZoom", 0, 2000),
-                    Num(_localizationService["Opt_RenderingItem_NavigationSpeedMouseWheelZoom"], "RenderingItem_NavigationSpeedMouseWheelZoom"))));
+            Tabs.Add(Tab(Loc("Tab_ItemBrowser"),
+                Group(string.Empty,
+                    Num("Opt_RenderingItem_NavigationSpeedMouseWheelZoom", "RenderingItem_NavigationSpeedMouseWheelZoom"),
+                    Num("Opt_RenderingItem_NavigationSpeedMouseZoom", "RenderingItem_NavigationSpeedMouseZoom", 0, 2000),
+                    Num("Opt_RenderingItem_NavigationSpeedMouseTranslate", "RenderingItem_NavigationSpeedMouseTranslate", 0, 2000),
+                    Num("Opt_RenderingItem_NavigationSpeedMouseRotate", "RenderingItem_NavigationSpeedMouseRotate"),
+                    Num("Opt_RenderingItem_FieldOfView", "RenderingItem_FieldOfView", 10, 179),
+                    Bool("Opt_RenderingItem_Antialias", "RenderingItem_Antialias"),
+                    Bool("Opt_RenderingItem_HideInternalObjects", "RenderingItem_HideInternalObjects"),
+                    Bool("Opt_RenderingItem_ShowMultipleWadsPrompt", "RenderingItem_ShowMultipleWadsPrompt"),
+                    Bool("Opt_RenderingItem_Animate", "RenderingItem_Animate"))));
 
             // 2D window
-            Tabs.Add(Tab(_localizationService["Tab_2DWindow"],
-                Group(_localizationService["Group_2DWindow"],
-                    Num(_localizationService["Opt_Map2D_NavigationSpeedKeyZoom"], "Map2D_NavigationSpeedKeyZoom", 0.01, 10, 0.05, 2),
-                    Num(_localizationService["Opt_Map2D_NavigationSpeedKeyMove"], "Map2D_NavigationSpeedKeyMove", 0, 500),
-                    Num(_localizationService["Opt_Map2D_NavigationSpeedMouseZoom"], "Map2D_NavigationSpeedMouseZoom", 0, 1_000_000, 0.5, 2),
-                    Num(_localizationService["Opt_Map2D_NavigationMinZoom"], "Map2D_NavigationMinZoom", 0.01, 1_000_000, 0.05, 2),
-                    Num(_localizationService["Opt_Map2D_NavigationSpeedMouseWheelZoom"], "Map2D_NavigationSpeedMouseWheelZoom", 0.001, 1, 0.001, 4),
-                    Num(_localizationService["Opt_Map2D_NavigationMaxZoom"], "Map2D_NavigationMaxZoom", 0, 5000))));
+            Tabs.Add(Tab(Loc("Tab_2DWindow"),
+                Group(string.Empty,
+                    Num("Opt_Map2D_NavigationMinZoom", "Map2D_NavigationMinZoom", 0.01, 1_000_000, 0.05, 2),
+                    Num("Opt_Map2D_NavigationMaxZoom", "Map2D_NavigationMaxZoom", 0, 5000),
+                    Num("Opt_Map2D_NavigationSpeedMouseWheelZoom", "Map2D_NavigationSpeedMouseWheelZoom", 0.001, 1, 0.001, 4),
+                    Num("Opt_Map2D_NavigationSpeedMouseZoom", "Map2D_NavigationSpeedMouseZoom", 0, 1_000_000, 0.5, 2),
+                    Num("Opt_Map2D_NavigationSpeedKeyZoom", "Map2D_NavigationSpeedKeyZoom", 0.01, 10, 0.05, 2),
+                    Num("Opt_Map2D_NavigationSpeedKeyMove", "Map2D_NavigationSpeedKeyMove", 0, 500))));
 
             // Texture map
-            Tabs.Add(Tab(_localizationService["Tab_TextureMap"],
-                Group(_localizationService["Group_TextureMap"],
-                    Bool(_localizationService["Opt_TextureMap_WarnAboutIncorrectAttributes"], "TextureMap_WarnAboutIncorrectAttributes"),
-                    Bool(_localizationService["Opt_TextureMap_ResetAttributesOnNewSelection"], "TextureMap_ResetAttributesOnNewSelection"),
-                    Bool(_localizationService["Opt_TextureMap_PickTextureWithoutAttributes"], "TextureMap_PickTextureWithoutAttributes"),
-                    Bool(_localizationService["Opt_TextureMap_MouseWheelMovesTheTextureInsteadOfZooming"], "TextureMap_MouseWheelMovesTheTextureInsteadOfZooming"),
-                    Bool(_localizationService["Opt_TextureMap_DrawSelectionDirectionIndicators"], "TextureMap_DrawSelectionDirectionIndicators"),
-                    Num(_localizationService["Opt_TextureMap_NavigationSpeedKeyZoom"], "TextureMap_NavigationSpeedKeyZoom", 0, 1_000_000, 0.05, 2),
-                    Num(_localizationService["Opt_TextureMap_NavigationSpeedKeyMove"], "TextureMap_NavigationSpeedKeyMove", 0, 500),
-                    Num(_localizationService["Opt_TextureMap_NavigationSpeedMouseZoom"], "TextureMap_NavigationSpeedMouseZoom", 0, 1_000_000, 0.5, 2),
-                    Num(_localizationService["Opt_TextureMap_NavigationMinZoom"], "TextureMap_NavigationMinZoom", 0.01, 1_000_000, 0.05, 2),
-                    Num(_localizationService["Opt_TextureMap_NavigationSpeedMouseWheelZoom"], "TextureMap_NavigationSpeedMouseWheelZoom", 0, 1_000_000, 0.0005, 4),
-                    Num(_localizationService["Opt_TextureMap_NavigationMaxZoom"], "TextureMap_NavigationMaxZoom", 0, 5000))));
+            Tabs.Add(Tab(Loc("Tab_TextureMap"),
+                Group(string.Empty,
+                    Num("Opt_TextureMap_NavigationMinZoom", "TextureMap_NavigationMinZoom", 0.01, 1_000_000, 0.05, 2),
+                    Num("Opt_TextureMap_NavigationMaxZoom", "TextureMap_NavigationMaxZoom", 0, 5000),
+                    Num("Opt_TextureMap_NavigationSpeedMouseWheelZoom", "TextureMap_NavigationSpeedMouseWheelZoom", 0, 1_000_000, 0.0005, 4),
+                    Num("Opt_TextureMap_NavigationSpeedMouseZoom", "TextureMap_NavigationSpeedMouseZoom", 0, 1_000_000, 0.5, 2),
+                    Num("Opt_TextureMap_NavigationSpeedKeyZoom", "TextureMap_NavigationSpeedKeyZoom", 0, 1_000_000, 0.05, 2),
+                    Num("Opt_TextureMap_NavigationSpeedKeyMove", "TextureMap_NavigationSpeedKeyMove", 0, 500),
+                    Bool("Opt_TextureMap_DrawSelectionDirectionIndicators", "TextureMap_DrawSelectionDirectionIndicators"),
+                    Bool("Opt_TextureMap_MouseWheelMovesTheTextureInsteadOfZooming", "TextureMap_MouseWheelMovesTheTextureInsteadOfZooming"),
+                    Bool("Opt_TextureMap_PickTextureWithoutAttributes", "TextureMap_PickTextureWithoutAttributes"),
+                    Bool("Opt_TextureMap_ResetAttributesOnNewSelection", "TextureMap_ResetAttributesOnNewSelection"),
+                    Bool("Opt_TextureMap_WarnAboutIncorrectAttributes", "TextureMap_WarnAboutIncorrectAttributes"))));
 
             // Node editor
-            Tabs.Add(Tab(_localizationService["Tab_NodeEditor"],
-                Group(_localizationService["Group_NodeEditor"],
-                    Bool(_localizationService["Opt_NodeEditor_ShowGrips"], "NodeEditor_ShowGrips"),
-                    Bool(_localizationService["Opt_NodeEditor_LinksAsRopes"], "NodeEditor_LinksAsRopes"),
-                    Combo(_localizationService["Opt_NodeEditor_DefaultEventMode"], "NodeEditor_DefaultEventMode", eventMode),
-                    Combo(_localizationService["Opt_NodeEditor_DefaultEventToEdit"], "NodeEditor_DefaultEventToEdit", volumeEvents),
-                    Combo(_localizationService["Opt_NodeEditor_DefaultGlobalEventToEdit"], "NodeEditor_DefaultGlobalEventToEdit", globalEvents),
-                    Num(_localizationService["Opt_NodeEditor_Size"], "NodeEditor_Size", 1, 1024, 0.05, 0),
-                    Num(_localizationService["Opt_NodeEditor_GridStep"], "NodeEditor_GridStep", 1, 64, 0.0005, 0),
-                    Num(_localizationService["Opt_NodeEditor_DefaultNodeWidth"], "NodeEditor_DefaultNodeWidth", 128, 1024))));
+            Tabs.Add(Tab(Loc("Tab_NodeEditor"),
+                Group(string.Empty,
+                    Num("Opt_NodeEditor_Size", "NodeEditor_Size", 1, 1024, 0.05, 0),
+                    Num("Opt_NodeEditor_GridStep", "NodeEditor_GridStep", 1, 64, 0.0005, 0),
+                    Num("Opt_NodeEditor_DefaultNodeWidth", "NodeEditor_DefaultNodeWidth", 128, 1024),
+                    Combo("Opt_NodeEditor_DefaultEventMode", "NodeEditor_DefaultEventMode", eventMode),
+                    Combo("Opt_NodeEditor_DefaultEventToEdit", "NodeEditor_DefaultEventToEdit", volumeEvents),
+                    Combo("Opt_NodeEditor_DefaultGlobalEventToEdit", "NodeEditor_DefaultGlobalEventToEdit", globalEvents),
+                    Bool("Opt_NodeEditor_LinksAsRopes", "NodeEditor_LinksAsRopes"),
+                    Bool("Opt_NodeEditor_ShowGrips", "NodeEditor_ShowGrips"))));
 
             // Drop options whose exact config property wasn't resolved (placeholders) - only keep ones
             // that actually exist on the configuration so reflection read/write stays correct.
             foreach (var tab in Tabs)
                 foreach (var group in tab.Groups)
-                    group.Items.RemoveAll(o => o.Kind != OptionKind.ColorSchemePreset && GetOption(_config, o.ConfigName) == null);
+                    group.Items.RemoveAll(o => o.Kind is not (OptionKind.ColorSchemePreset or OptionKind.BoolRow) && GetOption(_config, o.ConfigName) == null);
 
             // Apply the preset as soon as one is picked (the view binds the combo's SelectedItem to Value).
             foreach (var item in Tabs.SelectMany(t => t.AllItems).Where(i => i.Kind == OptionKind.ColorSchemePreset))
@@ -521,6 +520,8 @@ namespace TombEditor.Features.Dialogs.Options
 
         // Schema helpers.
 
+        private string Loc(string key) => _localizationService[key];
+
         private static OptionTab Tab(string header, params OptionGroup[] groups)
         {
             var tab = new OptionTab { Header = header };
@@ -528,29 +529,53 @@ namespace TombEditor.Features.Dialogs.Options
             return tab;
         }
 
-        private static OptionGroup Group(string header, params OptionItem?[] items)
+        private static OptionGroup Group(string header, params OptionItem[] items)
         {
             var group = new OptionGroup { Header = header };
-            group.Items.AddRange(items.Where(i => i != null)!);
+            group.Items.AddRange(items);
             return group;
         }
 
-        private static OptionItem? Bool(string label, string cfg, bool skip = false)
-            => skip ? null : new OptionItem { Kind = OptionKind.Bool, Label = label, ConfigName = cfg };
+        private OptionItem Bool(string labelKey, string cfg)
+            => new() { Kind = OptionKind.Bool, Label = Loc(labelKey), ConfigName = cfg };
 
-        private static OptionItem? Num(string label, string cfg, double min = 0, double max = 100, double inc = 1, int dec = 0, string? suffix = null, bool skip = false)
-            => skip ? null : new OptionItem { Kind = OptionKind.Number, Label = label, ConfigName = cfg, Minimum = min, Maximum = max, Increment = inc, DecimalPlaces = dec, Suffix = suffix };
+        private OptionItem Num(string labelKey, string cfg, double min = 0, double max = 100, double inc = 1, int dec = 0, string? suffix = null)
+            => new() { Kind = OptionKind.Number, Label = Loc(labelKey), ConfigName = cfg, Minimum = min, Maximum = max, Increment = inc, DecimalPlaces = dec, Suffix = suffix };
 
-        private static OptionItem Text(string label, string cfg)
-            => new() { Kind = OptionKind.Text, Label = label, ConfigName = cfg };
+        private OptionItem Text(string labelKey, string cfg)
+            => new() { Kind = OptionKind.Text, Label = Loc(labelKey), ConfigName = cfg };
 
-        private static OptionItem Combo(string label, string cfg, IReadOnlyList<object> items)
-            => new() { Kind = OptionKind.Combo, Label = label, ConfigName = cfg, Items = items };
+        private OptionItem Combo(string labelKey, string cfg, IReadOnlyList<object> items)
+            => new() { Kind = OptionKind.Combo, Label = Loc(labelKey), ConfigName = cfg, Items = items };
 
-        private static OptionItem Color(string label, string cfg)
-            => new() { Kind = OptionKind.Color, Label = label, ConfigName = cfg };
+        private OptionItem Color(string labelKey, string cfg)
+            => new() { Kind = OptionKind.Color, Label = Loc(labelKey), ConfigName = cfg };
 
-        private static OptionItem Preset(string label, IReadOnlyList<object> items)
-            => new() { Kind = OptionKind.ColorSchemePreset, Label = label, Items = items };
+        private OptionItem Preset(string labelKey, IReadOnlyList<object> items)
+            => new() { Kind = OptionKind.ColorSchemePreset, Label = Loc(labelKey), Items = items };
+
+        // A checkbox followed by a numeric box on the same row.
+        private OptionItem BoolWithNumber(string labelKey, string boolCfg, string numberCfg)
+        {
+            var item = new OptionItem { Kind = OptionKind.BoolWithNumber, Label = Loc(labelKey), ConfigName = boolCfg };
+            item.Children.Add(new OptionItem { Kind = OptionKind.Number, ConfigName = numberCfg });
+            return item;
+        }
+
+        // A combo box followed by a checkbox on the same row.
+        private OptionItem ComboWithBool(string labelKey, string comboCfg, IReadOnlyList<object> items, string boolLabelKey, string boolCfg)
+        {
+            var item = new OptionItem { Kind = OptionKind.ComboWithBool, Label = Loc(labelKey), ConfigName = comboCfg, Items = items };
+            item.Children.Add(new OptionItem { Kind = OptionKind.Bool, Label = Loc(boolLabelKey), ConfigName = boolCfg });
+            return item;
+        }
+
+        // A caption followed by several checkboxes on the same row.
+        private OptionItem BoolRow(string labelKey, params (string LabelKey, string Cfg)[] checkboxes)
+        {
+            var item = new OptionItem { Kind = OptionKind.BoolRow, Label = Loc(labelKey) };
+            item.Children.AddRange(checkboxes.Select(c => new OptionItem { Kind = OptionKind.Bool, Label = Loc(c.LabelKey), ConfigName = c.Cfg }));
+            return item;
+        }
     }
 }

@@ -17,6 +17,9 @@ namespace TombEditor.Features.Dialogs.Options
         public DataTemplate? ComboTemplate { get; set; }
         public DataTemplate? ColorTemplate { get; set; }
         public DataTemplate? PresetTemplate { get; set; }
+        public DataTemplate? BoolWithNumberTemplate { get; set; }
+        public DataTemplate? ComboWithBoolTemplate { get; set; }
+        public DataTemplate? BoolRowTemplate { get; set; }
 
         public override DataTemplate? SelectTemplate(object item, DependencyObject container)
         {
@@ -28,6 +31,9 @@ namespace TombEditor.Features.Dialogs.Options
                 OptionKind.Combo => ComboTemplate,
                 OptionKind.Color => ColorTemplate,
                 OptionKind.ColorSchemePreset => PresetTemplate,
+                OptionKind.BoolWithNumber => BoolWithNumberTemplate,
+                OptionKind.ComboWithBool => ComboWithBoolTemplate,
+                OptionKind.BoolRow => BoolRowTemplate,
                 _ => base.SelectTemplate(item, container)
             };
         }
