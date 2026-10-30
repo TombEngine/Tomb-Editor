@@ -1,13 +1,13 @@
-# WPF Visual Parity Plan (Tomb Editor, WadTool, SoundTool)
+# WPF Visual and Functional Parity Plan (Tomb Editor, WadTool, SoundTool)
 
-Goal: every WPF window looks "close enough" to its WinForms counterpart (develop branch) that a user would not notice a major difference. Not pixel-identical. Colors, density, grouping and control order must feel the same.
+Goal: every WPF window looks "close enough" to its WinForms counterpart (develop branch) that a user would not notice a major difference, and does the same things. Not pixel-identical. Colors, density, grouping, control order and behavior must feel the same.
 
 ## 1. Ground rules
 
-- Reference = WinForms build of `develop` (separate worktree: `git worktree add ../Tomb-Editor-develop develop`).
+- Reference = WinForms build of `develop` (separate worktree: `git worktree add ../Tomb-Editor-develop develop`, built to its own `Build (x64)` folder).
 - Fix order of preference (cleanest first):
   1. Fix the window's own layout (Grid/StackPanel structure, margins via shared styles/resources).
-  2. Fix a DarkUI.WPF theme resource (brush, spacing constant, AvalonDock style). Safe because it is data, not a primitive.
+  2. Fix a DarkUI.WPF theme resource (brush, spacing constant, AvalonDock style, implicit style for an unstyled control).
   3. Fix a DarkUI.WPF primitive (Button, TextBox, ...). Only if the same gap shows up in 3+ windows. Needs a ripple check: re-screenshot the 5 most complex already-approved windows.
   4. Never: inline pixel sizes, inline colors, hardcoded Width/Height on a control just to match WinForms.
 - Do NOT bring back worse WinForms design. Explicit exceptions:
@@ -15,16 +15,17 @@ Goal: every WPF window looks "close enough" to its WinForms counterpart (develop
   - `ToolPaletteFloating` is not reproduced; the docked toolbox is the design.
   - Any case where docking, resizing, DPI scaling or localization behave better in WPF stays WPF.
   - Report each such case in the window's notes as "intentional divergence".
+- A layout change must never silently drop a feature. If a WinForms control has no WPF counterpart, either port it or list it as a deliberate removal in the window's notes.
 - Files: Windows line endings, ASCII only, trailing newline (AGENTS.md).
 
 ## 2. Method (per window)
 
+### 2.1 Visual parity
 1. Capture WinForms screenshot (default size, then resized larger, then minimum size if resizable).
 2. Capture WPF screenshot, same state, same data (same test level / wad2 / sound XML).
 3. Sonnet 5.5 agent compares the pair against the checklist below and returns a ranked diff list.
 4. Triage: S1 = noticeable at first glance (wrong colors, missing/misplaced controls, clipped text, window far too large/small). S2 = visible on comparison (spacing, alignment, label wrap, group box styling). S3 = nitpicks (1-2 px). Fix S1 and S2 only; log S3.
 5. Fix using the preference order in section 1; rebuild; re-capture; confirm.
-6. Tick the window in the tracking table.
 
 Checklist per window:
 - Window size, resizability, startup position, min size, title.
@@ -37,21 +38,31 @@ Checklist per window:
 - Special content: 3D viewports, timelines, color pickers, curves, texture panels.
 - DPI: check at 100% and 150%.
 
-## 3. Screenshot tooling (Phase 0, once)
+### 2.2 Functional parity (mandatory, runs after every visual change to a window)
+Visual work often rewires bindings and moves controls, so behavior must be re-verified, not assumed.
+1. Inventory: read the WinForms form code (`Form*.cs` and its event handlers) and list every user-visible action and rule: buttons, menu items, shortcuts, context menus, double-click and drag/drop behavior, validation and value limits, enable/disable conditions, default and cancel buttons, tab order, state persisted in the configuration, messages and confirmation prompts.
+2. Map: for each item find the WPF equivalent (XAML element plus ViewModel command/property). Mark each as same / different / missing.
+3. Verify by driving the real app, not just by reading code: open the window with real data, perform each action in both builds (mouse, keyboard or UI Automation scripts via the screenshot helper), and compare the results (state change, saved file content, dialog shown, enabled state). Capture before/after screenshots for non-obvious cases.
+4. Resolve every "different" or "missing" item: fix it, or record it as an intentional divergence with a reason (and get user approval for removals).
+5. Record the result in the tracking table (section 6) and add a regression test when the logic lives in a ViewModel that can be tested without UI.
 
-- Small PowerShell/C# helper that launches an exe, waits for a window by title, captures that window (PrintWindow, DPI aware) to `artifacts/parity/<tool>/<window>/{winforms,wpf}-<state>.png`.
-- Per-window launch recipe (menu path, command line flag, or test hook) recorded in the tracking table, so the walk is repeatable.
-- Launch once, screenshot, kill (user's windows must not be disturbed; run on a dedicated desktop/virtual display if possible).
-- Add `--winforms` fallback usage notes for WadTool (already present).
+Typical things to check: Apply vs OK vs Cancel semantics, values committed on lost focus vs on every keystroke, min/max clamps, commands that were disabled in WinForms when there is no selection, keyboard shortcuts, context menu entries, hints or status texts that change with state, multi-selection behavior, and anything the old form saved to the configuration file.
+
+## 3. Screenshot and automation tooling (Phase 0, once)
+
+- Small PowerShell helper that launches an exe, waits for its main window, optionally sends keystrokes (menu accelerators, Enter, etc.) to reach a dialog, captures the foreground window (PrintWindow or screen copy, DPI aware) to `artifacts/parity/<tool>/<window>/{winforms,wpf}-<state>.png`, then kills the process.
+- Per-window launch recipe (menu path, command line arguments, or key sequence) recorded in the tracking table, so the walk is repeatable. Test data is passed on the command line where the tool supports it.
+- Launch once, screenshot, kill (the user's own windows must not be disturbed).
+- `artifacts/` is not committed.
 
 ## 4. Execution waves (shell first, because theme fixes ripple everywhere)
 
-- Wave A: three main windows and docking theme (AvalonDock styles, menus, toolbars, status bars). Done by one agent per tool, sequentially reviewed by me, because they set colors for everything else.
+- Wave A: main windows and docking theme (AvalonDock styles, menus, toolbars, status bars). One agent per tool, results reviewed by hand, because they set colors for everything else.
 - Wave B: simple dialogs (few controls) per tool, up to 4 Sonnet agents in parallel, each owning disjoint files.
 - Wave C: complex dialogs and editors (one agent per window, serial where they touch the same DarkUI file).
-- Wave D: ripple regression pass: re-capture all Wave A and a sample of B/C after any primitive change; final side-by-side contact sheet per tool.
+- Wave D: ripple regression pass: re-capture all Wave A windows and a sample of B/C after any theme or primitive change; final side-by-side contact sheet per tool.
 
-Agents never edit the same DarkUI.WPF file concurrently; primitive changes are proposed to me first with the list of affected windows.
+Agents never edit the same DarkUI.WPF file concurrently; primitive changes are proposed first with the list of affected windows.
 
 ## 5. Window inventory and order
 
@@ -76,7 +87,7 @@ Agents never edit the same DarkUI.WPF file concurrently; primitive changes are p
 
 ### 5.2 Tomb Editor dialogs (Waves B/C)
 Wave B (simple): FormChooseRoom, FormMemo, FormResizeRoom, FormSelectRoomByTags, FormQuickItemgroup, FormSearch, FormReplaceObject, FormTransform, FormCamera, FormSink, FormSprite, FormOperationDialog, FormFootStepSounds, FormBumpMaps, FormPreviewTexture, FormPreviewWad, FormToolBarLayout, FormImportPrj.
-Wave C (complex): FormOptions, FormKeyboardLayout, FormRoomProperties, FormPortal, FormMoveable, FormStatic, FormSoundSource, FormFlybyCamera, FormTrigger, FormEventSetEditor (+ NodeEditorView), FormFindTextures, FormTextureRemap, FormImportedGeometry, LevelSettings (WinForms: level settings form).
+Wave C (complex): FormOptions, FormKeyboardLayout, FormRoomProperties, FormPortal, FormMoveable, FormStatic, FormSoundSource, FormFlybyCamera, FormTrigger, FormEventSetEditor (+ NodeEditorView), FormFindTextures, FormTextureRemap, FormImportedGeometry, level settings form (LevelSettingsWindow).
 Each maps to the `*Window.xaml` of the same name under `TombEditor/Features/Dialogs/`.
 
 ### 5.3 WadTool
@@ -94,29 +105,30 @@ Each maps to the `*Window.xaml` of the same name under `TombEditor/Features/Dial
 
 ## 6. Tracking table (copy per tool and fill in while working)
 
-| Window | WF shot | WPF shot | S1 | S2 | Fix level (layout/theme/primitive) | Intentional divergence | Done |
-|--------|---------|----------|----|----|-----------------------------------|------------------------|------|
+| Window | WF shot | WPF shot | S1 | S2 | Fix level (layout/theme/primitive) | Intentional divergence | Functional parity (inventory / verified) | Done |
+|--------|---------|----------|----|----|-----------------------------------|------------------------|------------------------------------------|------|
 
 ## 7. Recommended start
 
-1. Phase 0: worktree + screenshot helper + launch recipes (one tool at a time, SoundTool first as a pilot because it has only 2 windows).
-2. SoundTool full pass (validates the method and the budget).
+1. Phase 0: worktree + screenshot/automation helper + launch recipes (SoundTool first as a pilot because it has only 2 windows).
+2. SoundTool full pass, visual and functional (validates the method and the budget).
 3. WadTool Wave A, then Tomb Editor Wave A (theme-level decisions).
 4. Remaining waves per tool.
 
 ## 8. Open questions
 
-- Test data to use for screenshots (a standard level `.prj2`, a `.wad2` with animations/sprites, a sound catalog XML)? I will pick repo samples unless you point me to others.
+- Test data to use for screenshots (a standard level `.prj2`, a `.wad2` with animations/sprites, a sound catalog XML)? Repo samples are used unless other data is provided. So far: `Catalogs/Sounds.tr2.xml` for SoundTool.
 - Is it acceptable to tune AvalonDock styles (tab height, header colors) globally in DarkUI.WPF in Wave A?
 - DPI targets besides 100% and 150%?
 
 ## 9. Progress log
 
-### SoundTool - done (2026-10-30)
-- Main window: layout of the details pane rebuilt to follow WinForms (ID/Global/Include row, name + icon buttons, single parameters group with units, sample buttons above the sample list, no scrolling). Menu structure aligned (Options under Tools, Build/Select labels).
+### SoundTool - visual pass done (2026-10-30), functional pass PENDING
+- Main window: layout of the details pane rebuilt to follow WinForms (ID/Global/Include row, name plus icon buttons, single parameters group with units, sample buttons above the sample list, no scrolling). Menu structure aligned (Options under Tools, Build/Select labels).
 - Options window: unit "%" and colon label added.
-- Theme fixes (ripple to all tools): DataGrid VisualStates no longer animate shared brushes (caused #525252 window background); implicit GridSplitter style; window title trims with ellipsis and no longer runs under caption buttons.
-- Intentional divergences: dark custom title bar instead of system accent color; details pane always visible but disabled when nothing is selected; Options has a single page, no "Apply" and no page list.
+- Theme fixes (ripple to all tools): DataGrid visual states no longer animate shared brushes (this caused the #525252 window background); implicit GridSplitter style; window title trims with ellipsis and no longer runs under the caption buttons.
+- Intentional divergences (to be confirmed): dark custom title bar instead of the system accent color; details pane always visible but disabled when nothing is selected; Options has a single page, no "Apply" and no page list.
+- Known unverified behavior: all rewired bindings in the details pane (Global, Indexed, Randomize, Disable 3D positioning, Mode, copy/paste/reset/play/stop, sample add/browse/delete), the reordered Tools menu actions, keyboard shortcuts, Options OK/Cancel and brightness persistence. The WinForms hint "Play in any case" under Mode was dropped and must be re-evaluated.
 
 ### WadTool main window - first look
-- Background and palette now match. Remaining checks: panel headers, bottom action buttons, status bar, toolbar spacing.
+- Background and palette now match. Remaining checks: panel headers, bottom action buttons, status bar, toolbar spacing, and the functional inventory.
