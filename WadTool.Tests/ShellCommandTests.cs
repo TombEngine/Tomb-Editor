@@ -26,7 +26,7 @@ public class ShellCommandTests
     }
 
     [TestMethod]
-    public void LoadedCleanDestinationAllowsSaveAsAndCreation()
+    public void LoadedCleanDestinationAllowsCreationButSaveAsWaitsForAChange()
     {
         using var scope = new EditorScope();
         scope.Tool.DestinationWad = new Wad2 { FileName = "loaded.wad2" };
@@ -34,8 +34,24 @@ public class ShellCommandTests
         using var viewModel = CreateViewModel(scope.Tool, () => { });
 
         Assert.IsFalse(viewModel.CanSave);
-        Assert.IsTrue(viewModel.Commands["SaveAsMenu_Click"].CanExecute(null));
+        Assert.IsFalse(viewModel.Commands["SaveAsMenu_Click"].CanExecute(null));
         Assert.IsTrue(viewModel.Commands["NewMoveableMenu_Click"].CanExecute(null));
+
+        scope.Tool.ToggleUnsavedChanges(true);
+        Assert.IsTrue(viewModel.Commands["SaveAsMenu_Click"].CanExecute(null));
+
+        scope.Tool.ToggleUnsavedChanges(false);
+        Assert.IsTrue(viewModel.Commands["SaveAsMenu_Click"].CanExecute(null));
+    }
+
+    [TestMethod]
+    public void NewUntitledDestinationAllowsSaveAsImmediately()
+    {
+        using var scope = new EditorScope();
+        scope.Tool.DestinationWad = new Wad2();
+        using var viewModel = CreateViewModel(scope.Tool, () => { });
+
+        Assert.IsTrue(viewModel.Commands["SaveAsMenu_Click"].CanExecute(null));
     }
 
     [TestMethod]
@@ -58,18 +74,19 @@ public class ShellCommandTests
     }
 
     [TestMethod]
-    public void CopyAndDeleteRequireTheirOwnSelectionAndADestination()
+    public void ObjectButtonsStayAvailableAndReportProblemsThemselves()
     {
         using var scope = new EditorScope();
-        scope.Tool.DestinationWad = new Wad2();
         using var viewModel = CreateViewModel(scope.Tool, () => { });
-        Assert.IsFalse(viewModel.Commands["DeleteObjectButton_Click"].CanExecute(null));
-        Assert.IsFalse(viewModel.Commands["AddObjectButton_Click"].CanExecute(null));
 
-        viewModel.HasDestinationSelection = true;
         Assert.IsTrue(viewModel.Commands["DeleteObjectButton_Click"].CanExecute(null));
-        Assert.IsFalse(viewModel.Commands["AddObjectButton_Click"].CanExecute(null));
+        Assert.IsTrue(viewModel.Commands["AddObjectButton_Click"].CanExecute(null));
+
+        scope.Tool.DestinationWad = new Wad2();
+        viewModel.HasDestinationSelection = true;
         viewModel.HasSourceSelection = true;
+
+        Assert.IsTrue(viewModel.Commands["DeleteObjectButton_Click"].CanExecute(null));
         Assert.IsTrue(viewModel.Commands["AddObjectButton_Click"].CanExecute(null));
     }
 

@@ -44,6 +44,7 @@
                 x:Name="searchPanel"
                 Margin="0,0,0,4"
                 DockPanel.Dock="Top"
+                LostKeyboardFocus="searchPanel_LostKeyboardFocus"
                 Visibility="Collapsed">
                 <Button
                     Width="50"
@@ -51,7 +52,7 @@
                     Click="butSearchNext_Click"
                     Content="Next"
                     DockPanel.Dock="Right" />
-                <TextBox x:Name="tbSearch" KeyDown="tbSearch_KeyDown" />
+                <TextBox x:Name="tbSearch" KeyDown="tbSearch_KeyDown" TextChanged="tbSearch_TextChanged" />
             </DockPanel>
 
             <!--  Bottom: metadata  -->

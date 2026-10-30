@@ -334,12 +334,18 @@ public partial class MainWindow : Window
         RefreshRecentWadsList();
     }
 
-    private bool CanDiscardChanges() => CheckIfSaved() switch
+    private bool CanDiscardChanges()
     {
-        DialogChoice.Yes => WadActions.SaveWad(_tool, this.GetWin32Window(), _tool.DestinationWad, false),
-        DialogChoice.Cancel => false,
-        _ => true
-    };
+        var choice = CheckIfSaved();
+        if (choice == DialogChoice.Cancel)
+            return false;
+
+        // Like the original form, the outcome of a requested save does not block the follow-up action.
+        if (choice == DialogChoice.Yes)
+            WadActions.SaveWad(_tool, this.GetWin32Window(), _tool.DestinationWad, false);
+
+        return true;
+    }
 
     private void CopyObject(bool otherSlot)
     {

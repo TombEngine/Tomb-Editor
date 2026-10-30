@@ -9,8 +9,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using TombLib.LevelData;
+using TombLib.Utils;
 using TombLib.Wad;
 
 namespace TombLib.WPF.CustomControls;
@@ -372,6 +374,8 @@ public partial class WadTreeView : UserControl
             ClickOnEmpty?.Invoke(this, EventArgs.Empty);
     }
 
+    private int _searchIndex = -1;
+
     private void butSearch_Click(object sender, RoutedEventArgs e)
     {
         if (searchPanel.Visibility == Visibility.Visible)
@@ -404,26 +408,83 @@ public partial class WadTreeView : UserControl
 
     private void FindNext()
     {
-        string query = tbSearch.Text;
-        if (string.IsNullOrWhiteSpace(query))
-            return;
-
+        var query = tbSearch.Text;
         var allNodes = CollectAllNodes(RootNodes).ToList();
-        if (allNodes.Count == 0)
+        int index = FindNextMatch(allNodes, query, _searchIndex);
+        _searchIndex = index;
+
+        if (index == -1)
+        {
+            FlashSearchFailure();
+            return;
+        }
+
+        var node = allNodes[index];
+        SetSelection(new[] { node }, node);
+        ExpandAncestors(node);
+        BringNodeIntoView(node);
+    }
+
+    /// <summary>
+    /// Mirrors the legacy search pop-up: exact substring matches win, otherwise nodes within a small edit
+    /// distance match; the search wraps around once and returns -1 when nothing matches.
+    /// </summary>
+    private static int FindNextMatch(IReadOnlyList<WadTreeNode> nodes, string query, int currentIndex)
+    {
+        bool exactMatch = nodes.Any(node => node.Text.Contains(query, StringComparison.OrdinalIgnoreCase));
+
+        if (nodes.Count == 1)
+            return 0;
+
+        for (int i = currentIndex + 1; i <= nodes.Count; i++)
+        {
+            if (i == nodes.Count)
+            {
+                if (currentIndex == -1)
+                    break;
+
+                i = -1;
+                currentIndex = -1;
+                continue;
+            }
+
+            bool match = nodes[i].Text.Contains(query, StringComparison.OrdinalIgnoreCase);
+            int distance = Levenshtein.DistanceSubstring(nodes[i].Text.ToLowerInvariant(), query.ToLowerInvariant(), out _);
+
+            if ((exactMatch && match) || (!exactMatch && distance < 2))
+                return i;
+        }
+
+        return -1;
+    }
+
+    private void FlashSearchFailure()
+    {
+        var normal = tbSearch.Background;
+        tbSearch.Background = new SolidColorBrush(MixColors((normal as SolidColorBrush)?.Color ?? Colors.Black, Colors.DarkRed, 0.55));
+
+        var timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(700) };
+        timer.Tick += (_, _) =>
+        {
+            timer.Stop();
+            tbSearch.ClearValue(Control.BackgroundProperty);
+        };
+        timer.Start();
+    }
+
+    private static Color MixColors(Color from, Color to, double amount) => Color.FromRgb(
+        (byte)(from.R + (to.R - from.R) * amount),
+        (byte)(from.G + (to.G - from.G) * amount),
+        (byte)(from.B + (to.B - from.B) * amount));
+
+    private void tbSearch_TextChanged(object sender, TextChangedEventArgs e) => _searchIndex = -1;
+
+    private void searchPanel_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+    {
+        // The legacy pop-up closed as soon as it was deactivated.
+        if (e.NewFocus is DependencyObject target && (target == butSearch || searchPanel.IsAncestorOf(target)))
             return;
 
-        // Cycle through matches, starting after the last selected node.
-        int start = _selection.Count > 0 ? allNodes.IndexOf(_selection[_selection.Count - 1]) : -1;
-        for (int i = 1; i <= allNodes.Count; i++)
-        {
-            WadTreeNode node = allNodes[(start + i) % allNodes.Count];
-            if (node.Text.Contains(query, StringComparison.OrdinalIgnoreCase))
-            {
-                SetSelection(new[] { node }, node);
-                ExpandAncestors(node);
-                BringNodeIntoView(node);
-                return;
-            }
-        }
+        searchPanel.Visibility = Visibility.Collapsed;
     }
 }
