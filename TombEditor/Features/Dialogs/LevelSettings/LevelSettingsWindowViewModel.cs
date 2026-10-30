@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using TombLib.GeometryIO;
 using TombLib.LevelData;
 using TombLib.Services;
@@ -70,11 +71,13 @@ namespace TombEditor.Features.Dialogs.LevelSettings
                 _localizationService["LightQualityHigh"]
             };
 
-            PathVariables = System.Enum.GetValues(typeof(VariableType))
-                .Cast<VariableType>()
-                .Select(t => LevelSettingsData.VariableCreate(t))
-                .Select(name => new PathVariableRow(name, _settings.ParseVariables(name)))
+            PathVariables = Enum.GetValues<VariableType>()
+                .Select(type => new PathVariableRow(_settings, LevelSettingsData.VariableCreate(type)))
                 .ToList();
+
+            Font = CreateCustomResource("Font.pc", "BrowseFontTitle", () => _settings.FontTextureFilePath, path => _settings.FontTextureFilePath = path, _settings.LoadFontTexture);
+            Sky = CreateCustomResource("pcsky.raw", "BrowseSkyTitle", () => _settings.SkyTextureFilePath, path => _settings.SkyTextureFilePath = path, _settings.LoadSkyTexture);
+            Tr5Sprites = CreateCustomResource("Extra.Tr5.pc", "BrowseTr5SpritesTitle", () => _settings.Tr5ExtraSpritesFilePath, path => _settings.Tr5ExtraSpritesFilePath = path, _settings.LoadTr5ExtraSprites);
 
             BuildStaticMeshMerges();
 
@@ -83,12 +86,33 @@ namespace TombEditor.Features.Dialogs.LevelSettings
             foreach (var wad in _settings.Wads)
                 WadRows.Add(new WadRow(_settings, wad));
             foreach (var catalog in _settings.SoundCatalogs)
-                SoundCatalogs.Add(new SoundCatalogRow(_settings, catalog));
+                SoundCatalogs.Add(CreateSoundCatalogRow(catalog));
             foreach (var soundPath in _settings.WadSoundPaths)
                 SampleRows.Add(new SampleRow(_settings, soundPath.Clone()));
             foreach (var geometry in _settings.ImportedGeometries)
                 ImportedGeometries.Add(new ImportedGeometryRow(_settings, geometry));
 
+            WadRows.CollectionChanged += (_, _) =>
+            {
+                SyncResources();
+                BuildStaticMeshMerges();
+            };
+            SoundCatalogs.CollectionChanged += (_, _) => OnSoundSourcesChanged();
+            SampleRows.CollectionChanged += (_, _) => OnSoundSourcesChanged();
+
+            PopulateSoundInfoList();
+        }
+
+        private CustomResourceViewModel CreateCustomResource(string defaultFile, string browseTitleKey, Func<string?> getPath, Action<string?> setPath, Func<string?, ImageC> loadImage)
+            => new(_settings, defaultFile, _localizationService.Format("UseDefaultFile", defaultFile), _localizationService[browseTitleKey], getPath, setPath, loadImage);
+
+        private SoundCatalogRow CreateSoundCatalogRow(ReferencedSoundCatalog catalog)
+            => new(_settings, catalog, OnSoundSourcesChanged, IncludeAllSounds);
+
+        private void OnSoundSourcesChanged()
+        {
+            SyncResources();
+            SoundFilter = string.Empty;
             PopulateSoundInfoList();
         }
 
@@ -140,10 +164,57 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         [RelayCommand(CanExecute = nameof(HasSelectedTexture))] private void MoveTextureDown() => Move(Textures, SelectedTexture, 1);
 
         [RelayCommand]
-        private void AddWads()
+        private async Task AddWadsAsync()
         {
-            foreach (var path in LevelFileDialog.BrowseFiles(Owner, _settings, _settings.LevelFilePath, _localizationService["BrowseWadsTitle"], Wad2.FileExtensions, VariableType.LevelDirectory))
-                WadRows.Add(new WadRow(_settings, new ReferencedWad(_settings, path)));
+            var paths = LevelFileDialog.BrowseFiles(Owner, _settings, _settings.LevelFilePath, _localizationService["BrowseWadsTitle"], Wad2.FileExtensions, VariableType.LevelDirectory).ToList();
+
+            if (paths.Count == 0)
+                return;
+
+            // Loading happens off the UI thread so the dialog handler can still show prompts on it.
+            var dialogHandler = new GraphicalDialogHandler(Owner);
+            var loaded = await Task.Run(() => ReferencedWadLoader.Load(_settings, paths, dialogHandler));
+
+            foreach (var catalog in loaded.SoundCatalogs.Where(catalog => SoundCatalogs.All(row => row.Path != catalog.Path)))
+            {
+                SoundCatalogs.Add(CreateSoundCatalogRow(catalog));
+                IncludeAllSounds(catalog);
+            }
+
+            foreach (var wad in loaded.Wads)
+                WadRows.Add(new WadRow(_settings, wad));
+
+            // Autoswitch game version if necessary.
+            if (EditorActions.AutoswitchGameVersion(_settings, loaded.Wads.Select(wad => wad.Wad)))
+                NotifyGameVersionChanged();
+        }
+
+        /// <summary>Copies the wad and catalog lists from the grid rows into the edited settings.</summary>
+        private void SyncResources()
+        {
+            _settings.Textures.Clear();
+            _settings.Textures.AddRange(Textures.Select(row => row.Texture));
+
+            _settings.Wads.Clear();
+            _settings.Wads.AddRange(WadRows.Select(row => row.Wad));
+
+            _settings.SoundCatalogs.Clear();
+            _settings.SoundCatalogs.AddRange(SoundCatalogs.Select(row => row.Catalog));
+
+            _settings.WadSoundPaths.Clear();
+            _settings.WadSoundPaths.AddRange(SampleRows.Select(row => row.SoundPath.Clone()));
+        }
+
+        private void IncludeAllSounds(ReferencedSoundCatalog catalog)
+        {
+            if (catalog.Sounds is null)
+                return;
+
+            foreach (var sound in catalog.Sounds.SoundInfos.Where(sound => !_settings.SelectedSounds.Contains(sound.Id)))
+                _settings.SelectedSounds.Add(sound.Id);
+
+            SoundFilter = string.Empty;
+            PopulateSoundInfoList();
         }
 
         [RelayCommand(CanExecute = nameof(HasSelectedWad))] private void DeleteWad() => Remove(WadRows, SelectedWad);
@@ -155,7 +226,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         {
             foreach (var path in LevelFileDialog.BrowseFiles(Owner, _settings, _settings.LevelFilePath, _localizationService["BrowseSoundCatalogsTitle"], WadSounds.FileExtensions, VariableType.LevelDirectory)
                 .Where(p => SoundCatalogs.All(c => c.Path != p)))
-                SoundCatalogs.Add(new SoundCatalogRow(_settings, new ReferencedSoundCatalog(_settings, path)));
+                SoundCatalogs.Add(CreateSoundCatalogRow(new ReferencedSoundCatalog(_settings, path)));
         }
 
         [RelayCommand(CanExecute = nameof(HasSelectedSoundCatalog))] private void DeleteSoundCatalog() => Remove(SoundCatalogs, SelectedSoundCatalog);
@@ -201,20 +272,36 @@ namespace TombEditor.Features.Dialogs.LevelSettings
                 if (_settings.GameVersion == value)
                     return;
                 _settings.GameVersion = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(IsTRNG));
-                OnPropertyChanged(nameof(IsTombEngine));
-                OnPropertyChanged(nameof(IsNotTombEngine));
-                OnPropertyChanged(nameof(IsTR4Native));
-                OnPropertyChanged(nameof(IsTR5));
-                OnPropertyChanged(nameof(Supports16BitDithering));
-                OnPropertyChanged(nameof(CanDither16BitTextures));
-                OnPropertyChanged(nameof(SupportsFontAndSky));
-                OnPropertyChanged(nameof(IsTRX));
-                RaiseAllValidity();
-                PopulateSoundInfoList();
+                _settings.ConvertLevelExtension();
+                NotifyGameVersionChanged();
             }
         }
+
+        private void NotifyGameVersionChanged()
+        {
+            OnPropertyChanged(nameof(GameVersion));
+            OnPropertyChanged(nameof(GameLevelFilePath));
+            OnPropertyChanged(nameof(IsTRNG));
+            OnPropertyChanged(nameof(IsTombEngine));
+            OnPropertyChanged(nameof(IsNotTombEngine));
+            OnPropertyChanged(nameof(IsTR4Native));
+            OnPropertyChanged(nameof(IsTR5));
+            OnPropertyChanged(nameof(Supports16BitDithering));
+            OnPropertyChanged(nameof(CanDither16BitTextures));
+            OnPropertyChanged(nameof(SupportsFontAndSky));
+            OnPropertyChanged(nameof(IsTRX));
+            OnPropertyChanged(nameof(UsesMainSfx));
+            OnPropertyChanged(nameof(SupportsSamplePaths));
+            OnPropertyChanged(nameof(CatalogsPrompt));
+            OnPropertyChanged(nameof(SamplesPrompt));
+            RaiseAllValidity();
+            PopulateSoundInfoList();
+        }
+
+        public bool UsesMainSfx => _settings.GameVersion.UsesMainSfx();
+        public bool SupportsSamplePaths => !UsesMainSfx;
+        public string CatalogsPrompt => _localizationService["CatalogsPromptBase"] + "\n" + _localizationService[UsesMainSfx ? "CatalogsPromptMainSfx" : "CatalogsPromptNew"];
+        public string SamplesPrompt => _localizationService[UsesMainSfx ? "SamplesPromptMainSfx" : "SamplesPromptNew"];
 
         public string GameExecutableFilePath { get => _settings.GameExecutableFilePath; set { SetSetting(_settings.GameExecutableFilePath, value, v => _settings.GameExecutableFilePath = v); RaiseAllValidity(); } }
         public string GameLevelFilePath { get => _settings.GameLevelFilePath; set { SetSetting(_settings.GameLevelFilePath, value, v => _settings.GameLevelFilePath = v); RaiseAllValidity(); } }
@@ -227,8 +314,15 @@ namespace TombEditor.Features.Dialogs.LevelSettings
 
         // Paths tab.
 
-        public string LevelFilePath { get => _settings.LevelFilePath; set { SetSetting(_settings.LevelFilePath, value, v => _settings.LevelFilePath = v); RaiseAllValidity(); } }
-        public string GameDirectory { get => _settings.GameDirectory; set { SetSetting(_settings.GameDirectory, value, v => _settings.GameDirectory = v); RaiseAllValidity(); } }
+        public string LevelFilePath { get => _settings.LevelFilePath; set { SetSetting(_settings.LevelFilePath, value, v => _settings.LevelFilePath = v); RaiseAllValidity(); RefreshResourcePreviews(); } }
+        public string GameDirectory { get => _settings.GameDirectory; set { SetSetting(_settings.GameDirectory, value, v => _settings.GameDirectory = v); RaiseAllValidity(); RefreshResourcePreviews(); } }
+
+        private void RefreshResourcePreviews()
+        {
+            Font.Refresh();
+            Sky.Refresh();
+            Tr5Sprites.Refresh();
+        }
 
         // Path validity (true = path exists; bound to red highlight when false).
 
@@ -248,6 +342,9 @@ namespace TombEditor.Features.Dialogs.LevelSettings
 
         private void RaiseAllValidity()
         {
+            foreach (var variable in PathVariables)
+                variable.Refresh();
+
             OnPropertyChanged(nameof(LevelFilePathValid));
             OnPropertyChanged(nameof(GameDirectoryValid));
             OnPropertyChanged(nameof(GameLevelFilePathValid));
@@ -303,26 +400,9 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         public Tr5WeatherType Tr5WeatherType { get => _settings.Tr5WeatherType; set => SetSetting(_settings.Tr5WeatherType, value, v => _settings.Tr5WeatherType = v); }
         public Tr5LaraType Tr5LaraType { get => _settings.Tr5LaraType; set => SetSetting(_settings.Tr5LaraType, value, v => _settings.Tr5LaraType = v); }
 
-        public bool FontUseCustom
-        {
-            get => !string.IsNullOrEmpty(_settings.FontTextureFilePath);
-            set => ToggleCustomResource(value, "Font.pc", () => _settings.FontTextureFilePath, p => _settings.FontTextureFilePath = p, nameof(FontUseCustom), nameof(FontTextureFilePath));
-        }
-        public string FontTextureFilePath { get => _settings.FontTextureFilePath ?? string.Empty; set => SetOptionalPath(value, () => _settings.FontTextureFilePath, p => _settings.FontTextureFilePath = p, nameof(FontTextureFilePath)); }
-
-        public bool SkyUseCustom
-        {
-            get => !string.IsNullOrEmpty(_settings.SkyTextureFilePath);
-            set => ToggleCustomResource(value, "pcsky.raw", () => _settings.SkyTextureFilePath, p => _settings.SkyTextureFilePath = p, nameof(SkyUseCustom), nameof(SkyTextureFilePath));
-        }
-        public string SkyTextureFilePath { get => _settings.SkyTextureFilePath ?? string.Empty; set => SetOptionalPath(value, () => _settings.SkyTextureFilePath, p => _settings.SkyTextureFilePath = p, nameof(SkyTextureFilePath)); }
-
-        public bool Tr5SpritesUseCustom
-        {
-            get => !string.IsNullOrEmpty(_settings.Tr5ExtraSpritesFilePath);
-            set => ToggleCustomResource(value, "Extra.Tr5.pc", () => _settings.Tr5ExtraSpritesFilePath, p => _settings.Tr5ExtraSpritesFilePath = p, nameof(Tr5SpritesUseCustom), nameof(Tr5ExtraSpritesFilePath));
-        }
-        public string Tr5ExtraSpritesFilePath { get => _settings.Tr5ExtraSpritesFilePath ?? string.Empty; set => SetOptionalPath(value, () => _settings.Tr5ExtraSpritesFilePath, p => _settings.Tr5ExtraSpritesFilePath = p, nameof(Tr5ExtraSpritesFilePath)); }
+        public CustomResourceViewModel Font { get; }
+        public CustomResourceViewModel Sky { get; }
+        public CustomResourceViewModel Tr5Sprites { get; }
 
         // Misc tab.
 
@@ -398,15 +478,6 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         [RelayCommand]
         private void BrowseLua()
             => SetIfBrowsed(LevelFileDialog.BrowseFile(Owner, _settings, _settings.TenLuaScriptFile, _localizationService["BrowseLuaTitle"], new[] { new FileFormat("Lua script", "lua") }, VariableType.LevelDirectory, false), v => TenLuaScriptFile = v);
-
-        [RelayCommand]
-        private void BrowseFont() => BrowseResource(() => _settings.FontTextureFilePath, p => _settings.FontTextureFilePath = p, _localizationService["BrowseFontTitle"], nameof(FontTextureFilePath), nameof(FontUseCustom));
-
-        [RelayCommand]
-        private void BrowseSky() => BrowseResource(() => _settings.SkyTextureFilePath, p => _settings.SkyTextureFilePath = p, _localizationService["BrowseSkyTitle"], nameof(SkyTextureFilePath), nameof(SkyUseCustom));
-
-        [RelayCommand]
-        private void BrowseTr5Sprites() => BrowseResource(() => _settings.Tr5ExtraSpritesFilePath, p => _settings.Tr5ExtraSpritesFilePath = p, _localizationService["BrowseTr5SpritesTitle"], nameof(Tr5ExtraSpritesFilePath), nameof(Tr5SpritesUseCustom));
 
         // Static meshes tab.
 
@@ -548,6 +619,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         private void PopulateSoundInfoList()
         {
             SoundInfos.Clear();
+            var rows = new List<SoundInfoRow>();
             var paths = _settings.GetRecursiveListOfSoundPaths();
 
             foreach (var info in _settings.GlobalSoundMap)
@@ -558,7 +630,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
                 string area = GetNgDescription(info.Id, out int originalId);
                 int sampleCount = info.SampleCount(_settings, paths);
                 string samples = sampleCount == 0 ? _localizationService["SamplesMissing"] : sampleCount == -1 ? _localizationService["SamplesNone"] : sampleCount.ToString();
-                SoundInfos.Add(new SoundInfoRow(_settings.SelectedSounds, UpdateSoundStatistics, info.Id, info.Name, info.SoundCatalog, samples, area, originalId, sampleCount == 0));
+                rows.Add(new SoundInfoRow(_settings.SelectedSounds, UpdateSoundStatistics, info.Id, info.Name, info.SoundCatalog, samples, area, originalId, sampleCount == 0));
             }
 
             foreach (var missing in _settings.SelectedAndMissingSounds)
@@ -568,8 +640,11 @@ namespace TombEditor.Features.Dialogs.LevelSettings
                     continue;
 
                 string area = GetNgDescription(missing, out int originalId);
-                SoundInfos.Add(new SoundInfoRow(_settings.SelectedSounds, UpdateSoundStatistics, missing, name, _localizationService["CatalogNotPresent"], string.Empty, area, originalId, true));
+                rows.Add(new SoundInfoRow(_settings.SelectedSounds, UpdateSoundStatistics, missing, name, _localizationService["CatalogNotPresent"], string.Empty, area, originalId, true));
             }
+
+            foreach (var row in rows.OrderBy(row => row.Id))
+                SoundInfos.Add(row);
 
             UpdateSoundStatistics();
         }
@@ -624,52 +699,12 @@ namespace TombEditor.Features.Dialogs.LevelSettings
 
         private void CommitCollections()
         {
-            _settings.Textures.Clear();
-            _settings.Textures.AddRange(Textures.Select(r => r.Texture));
-
-            _settings.Wads.Clear();
-            _settings.Wads.AddRange(WadRows.Select(r => r.Wad));
-
-            _settings.SoundCatalogs.Clear();
-            _settings.SoundCatalogs.AddRange(SoundCatalogs.Select(r => r.Catalog));
-
-            _settings.WadSoundPaths.Clear();
-            _settings.WadSoundPaths.AddRange(SampleRows.Select(r => r.SoundPath.Clone()));
+            SyncResources();
 
             _settings.AutoStaticMeshMerges.Clear();
             foreach (var row in StaticMeshMerges)
                 if (row.Merge)
                     _settings.AutoStaticMeshMerges.Add(row.Entry.Clone()); // Clone(), otherwise merge entries won't update
-        }
-
-        private string GetLevelResourcePath(string file)
-            => LevelSettingsData.VariableCreate(VariableType.LevelDirectory) + LevelSettingsData.Dir + file;
-
-        private void ToggleCustomResource(bool useCustom, string defaultFile, Func<string?> get, Action<string?> set, string customProp, string pathProp)
-        {
-            if (useCustom == !string.IsNullOrEmpty(get()))
-                return;
-            set(useCustom ? GetLevelResourcePath(defaultFile) : null);
-            OnPropertyChanged(customProp);
-            OnPropertyChanged(pathProp);
-        }
-
-        private void SetOptionalPath(string value, Func<string?> get, Action<string?> set, string pathProp)
-        {
-            if (string.IsNullOrEmpty(get()) || string.IsNullOrEmpty(value) || get() == value)
-                return; // auto mode, or no real change
-            set(value);
-            OnPropertyChanged(pathProp);
-        }
-
-        private void BrowseResource(Func<string?> get, Action<string?> set, string title, string pathProp, string customProp)
-        {
-            string? result = LevelFileDialog.BrowseFile(Owner, _settings, get(), title, LevelSettingsData.FileFormatsLoadRawExtraTexture, VariableType.LevelDirectory, false);
-            if (result == null)
-                return;
-            set(result);
-            OnPropertyChanged(pathProp);
-            OnPropertyChanged(customProp);
         }
 
         private bool SetSetting<T>(T current, T value, System.Action<T> setter, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
@@ -686,8 +721,6 @@ namespace TombEditor.Features.Dialogs.LevelSettings
             if (result != null)
                 apply(result);
         }
-
-        public sealed record PathVariableRow(string Variable, string Value);
 
         public partial class StaticMeshMergeRow : ObservableObject
         {

@@ -17,6 +17,28 @@ public partial class LevelSettingsWindow : Window
         this.HookModalAutoClose();
         Loaded += (_, _) => WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormLevelSettings");
         Closed += (_, _) => _preview?.Close();
+        DataContextChanged += OnDataContextChanged;
+    }
+
+    // The NG sound area columns are only meaningful for TRNG levels.
+    private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (e.NewValue is not LevelSettingsWindowViewModel viewModel)
+            return;
+
+        UpdateAreaColumns(viewModel);
+        viewModel.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(LevelSettingsWindowViewModel.IsTRNG))
+                UpdateAreaColumns(viewModel);
+        };
+    }
+
+    private void UpdateAreaColumns(LevelSettingsWindowViewModel viewModel)
+    {
+        var visibility = viewModel.IsTRNG ? Visibility.Visible : Visibility.Collapsed;
+        AreaColumn.Visibility = visibility;
+        OriginalIdColumn.Visibility = visibility;
     }
 
     private void ShowTexturePreview_Click(object sender, RoutedEventArgs e)

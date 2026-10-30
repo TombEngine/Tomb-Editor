@@ -5,8 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using LevelSettingsData = TombLib.LevelData.LevelSettings;
 using TombLib.GeometryIO;
 using TombLib.LevelData;
-using TombLib.Utils;
-using TombLib.Wad;
 using TombLib.WPF;
 using TombLib.WPF.Services;
 
@@ -23,7 +21,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
     }
 
     /// <summary>Row view-model for the Textures grid (wraps a <see cref="LevelTexture"/>).</summary>
-    public partial class TextureRow : ObservableObject
+    public partial class TextureRow : ReloadableRow
     {
         private readonly LevelSettingsData _settings;
         public LevelTexture Texture { get; private set; }
@@ -85,16 +83,11 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         public string Size => Texture.LoadException != null || Texture.Image == TombLib.Utils.Texture.UnloadedPlaceholder ? "-" : Texture.Image.Width + " x " + Texture.Image.Height;
 
         [RelayCommand]
-        private void Browse()
-        {
-            string? result = LevelFileDialog.BrowseFile(WPFUtils.GetWindowOwner(), _settings, Texture.Path, LevelSettingsStrings.Get("BrowseTextureFileTitle"), ImageC.FileExtensions, VariableType.LevelDirectory, false);
-            if (result != null)
-                Path = result;
-        }
+        private void Browse() => ReloadFromNewFile(_settings, Texture);
     }
 
     /// <summary>Row view-model for the Objects grid (wraps a <see cref="ReferencedWad"/>).</summary>
-    public partial class WadRow : ObservableObject
+    public partial class WadRow : ReloadableRow
     {
         private readonly LevelSettingsData _settings;
         public ReferencedWad Wad { get; private set; }
@@ -140,52 +133,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         }
 
         [RelayCommand]
-        private void Browse()
-        {
-            string? result = LevelFileDialog.BrowseFile(WPFUtils.GetWindowOwner(), _settings, Wad.Path, LevelSettingsStrings.Get("BrowseObjectFileTitle"), Wad2.FileExtensions, VariableType.LevelDirectory, false);
-            if (result != null)
-                Path = result;
-        }
-    }
-
-    /// <summary>Row view-model for the Sound catalogs grid (wraps a <see cref="ReferencedSoundCatalog"/>).</summary>
-    public partial class SoundCatalogRow : ObservableObject
-    {
-        private readonly LevelSettingsData _settings;
-        public ReferencedSoundCatalog Catalog { get; private set; }
-
-        public SoundCatalogRow(LevelSettingsData settings, ReferencedSoundCatalog catalog)
-        {
-            _settings = settings;
-            Catalog = catalog;
-        }
-
-        public string Path
-        {
-            get => Catalog.Path;
-            set
-            {
-                if (Catalog.Path == value)
-                    return;
-                Catalog = new ReferencedSoundCatalog(_settings, value);
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(Message));
-                OnPropertyChanged(nameof(SoundsCount));
-                OnPropertyChanged(nameof(IsValid));
-            }
-        }
-
-        public bool IsValid => Catalog.LoadException == null;
-        public string Message => Catalog.LoadException == null ? LevelSettingsStrings.Get("StatusLoaded") : Catalog.LoadException.Message + " (" + Catalog.LoadException.GetType().Name + ")";
-        public int SoundsCount => Catalog.LoadException == null ? Catalog.Sounds.SoundInfos.Count : 0;
-
-        [RelayCommand]
-        private void Browse()
-        {
-            string? result = LevelFileDialog.BrowseFile(WPFUtils.GetWindowOwner(), _settings, Catalog.Path, LevelSettingsStrings.Get("BrowseSoundCatalogTitle"), WadSounds.FileExtensions, VariableType.LevelDirectory, false);
-            if (result != null)
-                Path = result;
-        }
+        private void Browse() => ReloadFromNewFile(_settings, Wad);
     }
 
     /// <summary>Row view-model for the Imported geometry grid (wraps an <see cref="ImportedGeometry"/>).</summary>

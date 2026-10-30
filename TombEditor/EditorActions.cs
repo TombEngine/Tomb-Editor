@@ -4878,7 +4878,7 @@ namespace TombEditor
             _editor.LoadedWadsChange();
         }
 
-        public static bool ReloadResource(IWindowOwner owner, LevelSettings settings, IReloadableResource toReplace, bool sendEvent = true, bool searchForOthers = true)
+        public static bool ReloadResource(IWindowOwner owner, LevelSettings settings, IReloadableResource toReplace, bool sendEvent = true, bool searchForOthers = true, Action onCompleted = null)
         {
             string path = LevelFileDialog.BrowseFile(owner, settings, toReplace.GetPath(),
                 "Select a new file for " + toReplace.ResourceType.ToString(), toReplace.FileExtensions, VariableType.LevelDirectory, false);
@@ -4925,6 +4925,7 @@ namespace TombEditor
                         message(item.Value);
                         item.Key.SetPath(settings, item.Value);
                         if (sendEvent) _editor.LoadedImportedGeometriesChange();
+                        onCompleted?.Invoke();
                     }, null);
                 });
             }
@@ -4949,6 +4950,8 @@ namespace TombEditor
                                 _editor.LoadedSoundsCatalogsChange();
                         }
                     });
+
+                    onCompleted?.Invoke();
                 });
             }
 
