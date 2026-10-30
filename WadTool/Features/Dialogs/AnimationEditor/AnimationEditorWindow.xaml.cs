@@ -50,6 +50,44 @@ public partial class AnimationEditorWindow : Window
         _vm?.AttachControls(_panel, _timeline, _bezier);
     }
 
+    /// <summary>
+    /// Keyboard shortcuts of the previous form, mapped to the existing commands. They are ignored while a text
+    /// input has focus.
+    /// </summary>
+    protected override void OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e)
+    {
+        base.OnPreviewKeyDown(e);
+
+        if (e.Handled || _vm is null || System.Windows.Input.Keyboard.FocusedElement is System.Windows.Controls.Primitives.TextBoxBase or System.Windows.Controls.ComboBox)
+            return;
+
+        bool control = System.Windows.Input.Keyboard.Modifiers == System.Windows.Input.ModifierKeys.Control;
+        bool none = System.Windows.Input.Keyboard.Modifiers == System.Windows.Input.ModifierKeys.None;
+
+        System.Windows.Input.ICommand? command = e.Key switch
+        {
+            System.Windows.Input.Key.Z when control => _vm.UndoCommand,
+            System.Windows.Input.Key.Y when control => _vm.RedoCommand,
+            System.Windows.Input.Key.S when control => _vm.SaveCommand,
+            System.Windows.Input.Key.I when control => _vm.InterpolateCommand,
+            System.Windows.Input.Key.X when control => _vm.CutFrameCommand,
+            System.Windows.Input.Key.C when control => _vm.CopyFrameCommand,
+            System.Windows.Input.Key.V when control => _vm.PasteFrameCommand,
+            System.Windows.Input.Key.Space when none => _vm.PlayCommand,
+            System.Windows.Input.Key.Left when none => _vm.GotoPrevCommand,
+            System.Windows.Input.Key.Right when none => _vm.GotoNextCommand,
+            System.Windows.Input.Key.Up when none => _vm.GotoStartCommand,
+            System.Windows.Input.Key.Down when none => _vm.GotoEndCommand,
+            System.Windows.Input.Key.Delete when none => _vm.DeleteFrameCommand,
+            _ => null
+        };
+
+        if (command is null || !command.CanExecute(null))
+            return;
+
+        command.Execute(null);
+        e.Handled = true;
+    }
     private void OnTimelineValueChanged(object? sender, EventArgs e) => _vm?.OnTimelineValueChanged();
 
     private void OnTimelineSelectionChanged(object? sender, EventArgs e) => _vm?.OnTimelineSelectionChanged();
