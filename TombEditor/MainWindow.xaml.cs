@@ -58,6 +58,8 @@ public partial class MainWindow : Window
         _localizationService = ServiceLocator.ResolveService<ILocalizationService>();
         InitializeComponent();
         _menuState = new MainMenuStateUpdater(_editor, mainMenu, stepHeightSeparator);
+        InitializeShell();
+        WindowConfiguration.ConfigureWindow(this, _editor.Configuration, "FormMain");
 
         // The native WPF viewport owns the Direct3D swap chain and input.
         _panel3D = new Panel3D();
