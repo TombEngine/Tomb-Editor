@@ -160,6 +160,19 @@
                           SelectedItem="{Binding GameVersion, Mode=TwoWay}" HorizontalAlignment="Left" Width="372" />
                         </StackPanel>        
 
+                        <!-- Game directory -->
+                        <StackPanel Margin="10,3">
+                            <Label Content="{tombLib:Localize GameFolderLabel}" HorizontalAlignment="Left" Width="500" />
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right"
+                            Width="103"
+                            Margin="4,0,0,0"
+                            Command="{Binding BrowseGameDirectoryCommand}"
+                            Content="{tombLib:Localize ~Generic.Browse}" />
+                                <TextBox Style="{StaticResource GameDirBox}"
+                             Text="{Binding GameDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" />
+                            </DockPanel>
+                        </StackPanel>
                         <!-- Compiled level file -->
                         <StackPanel 
                             Margin="10,3">
