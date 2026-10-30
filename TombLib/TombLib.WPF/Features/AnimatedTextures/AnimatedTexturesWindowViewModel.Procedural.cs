@@ -79,8 +79,8 @@ namespace TombLib.WPF.Features.AnimatedTextures
         [ObservableProperty] private ProceduralPreset? _selectedPreset;
         [ObservableProperty] private double _genFrameCount = MaxLegacyFrames;
         [ObservableProperty] private double _genStrength = 100.0;
-        [ObservableProperty] private bool _genSmooth = true;
-        [ObservableProperty] private bool _genLoop = true;
+        [ObservableProperty] private bool _genSmooth;
+        [ObservableProperty] private bool _genLoop;
 
         [RelayCommand] private void GenerateNew() => Generate(AnimGenerationType.New);
         [RelayCommand] private void GenerateClone() => Generate(AnimGenerationType.Clone);
