@@ -446,6 +446,20 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         public bool HasCurrentEvent => CurrentEvent != null;
 
+        /// <summary>Gets or sets whether the selected event is enabled by default.</summary>
+        public bool CurrentEventEnabled
+        {
+            get => CurrentEvent?.Enabled ?? false;
+            set
+            {
+                if (CurrentEvent == null || CurrentEvent.Enabled == value)
+                    return;
+
+                CurrentEvent.Enabled = value;
+                OnPropertyChanged();
+            }
+        }
+
         partial void OnCurrentEventChanged(Event? value)
         {
             NodeEditor = value != null
@@ -453,6 +467,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                 : null;
 
             OnPropertyChanged(nameof(HasCurrentEvent));
+            OnPropertyChanged(nameof(CurrentEventEnabled));
             OnPropertyChanged(nameof(IsNodeEditorMode));
             OnPropertyChanged(nameof(IsLevelScriptMode));
             OnPropertyChanged(nameof(EventFunction));
@@ -679,7 +694,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             return null;
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(HasSelectedSet))]
         private void UnassignSet()
         {
             if (!GenericMode)

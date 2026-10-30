@@ -63,7 +63,7 @@
                     <Button Command="{Binding NewFolderCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize NewFolderTooltip}">
                         <Image Source="{tomb:Icon General/folder}" />
                     </Button>
-                    <Button Command="{Binding UnassignSetCommand}" Content="{tombLib:Localize Unassign}" Visibility="{Binding ShowVolumeOptions, Converter={StaticResource BoolToVis}}" />
+                    <Button Command="{Binding UnassignSetCommand}" ToolTip="{tombLib:Localize UnassignTooltip}" Content="{tombLib:Localize Unassign}" Visibility="{Binding ShowVolumeOptions, Converter={StaticResource BoolToVis}}" />
                 </controls:SpacedStack>
                 <controls:AlternatingTreeView
                     x:Name="setsTree"
@@ -111,6 +111,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="180" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,6,0" Text="{tombLib:Localize Name}" />
                     <TextBox Grid.Column="1" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
@@ -125,6 +126,14 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
+                    <CheckBox
+                        Grid.Column="4"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="{tombLib:Localize EnableEvent}"
+                        IsChecked="{Binding CurrentEventEnabled, Mode=TwoWay}"
+                        IsEnabled="{Binding HasCurrentEvent}"
+                        ToolTip="{tombLib:Localize EnableEventTooltip}" />
                 </Grid>
 
                 <!--  Volume options  -->
@@ -132,15 +141,15 @@
                     <StackPanel>
                         <controls:SpacedStack Orientation="Horizontal" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
                             <TextBlock VerticalAlignment="Center" Text="{tombLib:Localize Activators}" />
-                            <CheckBox Content="{tombLib:Localize Lara}" IsChecked="{Binding ActivatorLara, Mode=TwoWay}" />
-                            <CheckBox Content="{tombLib:Localize Npcs}" IsChecked="{Binding ActivatorNpc, Mode=TwoWay}" />
-                            <CheckBox Content="{tombLib:Localize OtherMoveables}" IsChecked="{Binding ActivatorOtherMoveables, Mode=TwoWay}" />
-                            <CheckBox Content="{tombLib:Localize Statics}" IsChecked="{Binding ActivatorStatics, Mode=TwoWay}" />
-                            <CheckBox Content="{tombLib:Localize Flyby}" IsChecked="{Binding ActivatorFlyBy, Mode=TwoWay}" />
+                            <CheckBox Content="{tombLib:Localize Lara}" IsChecked="{Binding ActivatorLara, Mode=TwoWay}" ToolTip="{tombLib:Localize LaraTooltip}" />
+                            <CheckBox Content="{tombLib:Localize Npcs}" IsChecked="{Binding ActivatorNpc, Mode=TwoWay}" ToolTip="{tombLib:Localize NpcsTooltip}" />
+                            <CheckBox Content="{tombLib:Localize OtherMoveables}" IsChecked="{Binding ActivatorOtherMoveables, Mode=TwoWay}" ToolTip="{tombLib:Localize OtherMoveablesTooltip}" />
+                            <CheckBox Content="{tombLib:Localize Statics}" IsChecked="{Binding ActivatorStatics, Mode=TwoWay}" ToolTip="{tombLib:Localize StaticsTooltip}" />
+                            <CheckBox Content="{tombLib:Localize Flyby}" IsChecked="{Binding ActivatorFlyBy, Mode=TwoWay}" ToolTip="{tombLib:Localize FlybyTooltip}" />
                         </controls:SpacedStack>
                         <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-                            <CheckBox Content="{tombLib:Localize EnableVolume}" IsChecked="{Binding EnableVolume, Mode=TwoWay}" />
-                            <CheckBox Content="{tombLib:Localize DetectInAdjacentRooms}" IsChecked="{Binding DetectInAdjacentRooms, Mode=TwoWay}" />
+                            <CheckBox Content="{tombLib:Localize EnableVolume}" IsChecked="{Binding EnableVolume, Mode=TwoWay}" ToolTip="{tombLib:Localize EnableVolumeTooltip}" />
+                            <CheckBox Content="{tombLib:Localize DetectInAdjacentRooms}" IsChecked="{Binding DetectInAdjacentRooms, Mode=TwoWay}" ToolTip="{tombLib:Localize DetectInAdjacentRoomsTooltip}" />
                         </controls:SpacedStack>
                     </StackPanel>
                 </Border>
