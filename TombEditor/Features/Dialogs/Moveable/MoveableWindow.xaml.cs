@@ -1,9 +1,11 @@
+using System;
 #nullable enable
 
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using TombLib.WPF;
 
 namespace TombEditor.Features.Dialogs.Moveable;
@@ -14,7 +16,17 @@ public partial class MoveableWindow : Window
     {
         InitializeComponent();
         this.HookModalAutoClose();
-        Loaded += (_, _) => WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormMoveable");
+        Loaded += (_, _) =>
+        {
+            WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormMoveable");
+
+            // The previous form selected the OCB text when it opened.
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                ocbBox.Focus();
+                ocbBox.SelectAll();
+            }), DispatcherPriority.ApplicationIdle);
+        };
     }
 
     // Like the previous dialog, the OCB field accepts digits, plus a minus sign only as the first character.
