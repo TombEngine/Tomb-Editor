@@ -265,8 +265,12 @@ namespace TombEditor.Features.Dialogs.LevelSettings
                     return;
                 SoundPath = new WadSoundPath(value);
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(IsValid));
             }
         }
+
+        /// <summary>The sample folder exists (like the red rows of the previous grid).</summary>
+        public bool IsValid => !System.IO.Path.IsPathRooted(_settings.ParseVariables(SoundPath.Path)) || System.IO.Directory.Exists(_settings.MakeAbsolute(SoundPath.Path));
 
         [RelayCommand]
         private void Browse()

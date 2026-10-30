@@ -122,6 +122,13 @@
         </DataTemplate>
 
         <!--  Status cells: green when loaded, red on error  -->
+        <Style x:Key="InvalidPathCell" BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="DataGridCell">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsValid}" Value="False">
+                    <Setter Property="Background" Value="{StaticResource InvalidBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
         <Style x:Key="StatusCell" BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="DataGridCell">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsValid}" Value="True">
@@ -294,17 +301,17 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
-                            <DataGridTemplateColumn Width="32">
+                            <DataGridTemplateColumn Width="72">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Margin="1" Command="{Binding BrowseCommand}" Content="..." />
+                                        <Button Margin="1" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="60" Header="{tombLib:Localize ColumnShow}">
+                            <DataGridTemplateColumn Width="44" Header="{tombLib:Localize ColumnShow}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Margin="1" Click="ShowTexturePreview_Click" Content="{tombLib:Localize ColumnShow}" IsEnabled="{Binding CanPreview}" />
+                                        <Button Margin="1" Click="ShowTexturePreview_Click" IsEnabled="{Binding CanPreview}" ToolTip="{tombLib:Localize ColumnShow}"><Image Width="12" Height="12" Source="{tomb:Icon General/angle_left}" /></Button>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -347,17 +354,17 @@
                         SelectedItem="{Binding SelectedWad, Mode=TwoWay}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
-                            <DataGridTemplateColumn Width="32">
+                            <DataGridTemplateColumn Width="72">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Margin="1" Command="{Binding BrowseCommand}" Content="..." />
+                                        <Button Margin="1" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Width="60" Header="{tombLib:Localize ColumnShow}">
+                            <DataGridTemplateColumn Width="44" Header="{tombLib:Localize ColumnShow}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Margin="1" Click="ShowWadPreview_Click" Content="{tombLib:Localize ColumnShow}" IsEnabled="{Binding CanPreview}" />
+                                        <Button Margin="1" Click="ShowWadPreview_Click" IsEnabled="{Binding CanPreview}" ToolTip="{tombLib:Localize ColumnShow}"><Image Width="12" Height="12" Source="{tomb:Icon General/angle_left}" /></Button>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -386,26 +393,26 @@
                         ItemsSource="{Binding ImportedGeometries}"
                         SelectedItem="{Binding SelectedImportedGeometry, Mode=TwoWay}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Width="120" Binding="{Binding Name}" Header="{tombLib:Localize ColumnName}" IsReadOnly="True" />
+                            <DataGridTextColumn Width="100" Binding="{Binding Name}" Header="{tombLib:Localize ColumnName}" IsReadOnly="True" />
                             <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
-                            <DataGridTemplateColumn Width="70">
+                            <DataGridTemplateColumn Width="64">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button Margin="1" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Width="60" Binding="{Binding Scale, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnScale}" />
-                            <DataGridTextColumn Width="140" Binding="{Binding ErrorMessage}" CellStyle="{StaticResource StatusCell}" Header="{tombLib:Localize ColumnMessage}" IsReadOnly="True" />
-                            <DataGridCheckBoxColumn Width="44" Binding="{Binding SwapXY, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSwapXY}" />
-                            <DataGridCheckBoxColumn Width="44" Binding="{Binding SwapXZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSwapXZ}" />
-                            <DataGridCheckBoxColumn Width="44" Binding="{Binding SwapYZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSwapYZ}" />
-                            <DataGridCheckBoxColumn Width="36" Binding="{Binding FlipX, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipX}" />
-                            <DataGridCheckBoxColumn Width="36" Binding="{Binding FlipY, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipY}" />
-                            <DataGridCheckBoxColumn Width="36" Binding="{Binding FlipZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipZ}" />
-                            <DataGridCheckBoxColumn Width="60" Binding="{Binding MappedUV, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnMappedUV}" />
-                            <DataGridCheckBoxColumn Width="50" Binding="{Binding FlipUV_V, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipUV}" />
-                            <DataGridCheckBoxColumn Width="50" Binding="{Binding InvertFaces, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnInvertFaces}" />
+                            <DataGridTextColumn Width="50" Binding="{Binding Scale, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnScale}" />
+                            <DataGridTextColumn Width="100" Binding="{Binding ErrorMessage}" CellStyle="{StaticResource StatusCell}" Header="{tombLib:Localize ColumnMessage}" IsReadOnly="True" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding SwapXY, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSwapXY}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding SwapXZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSwapXZ}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding SwapYZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSwapYZ}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding FlipX, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipX}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding FlipY, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipY}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding FlipZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipZ}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding MappedUV, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnMappedUV}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding FlipUV_V, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipUV}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding InvertFaces, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnInvertFaces}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </DockPanel>
@@ -503,14 +510,14 @@
                             SelectedItem="{Binding SelectedSoundCatalog, Mode=TwoWay}">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
-                                <DataGridTemplateColumn Width="32">
+                                <DataGridTemplateColumn Width="72">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Margin="1" Command="{Binding BrowseCommand}" Content="..." />
+                                            <Button Margin="1" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Width="32">
+                                <DataGridTemplateColumn Width="72">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Button Margin="1" Command="{Binding ReloadCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize ReloadTooltip}">
@@ -519,7 +526,7 @@
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Width="32">
+                                <DataGridTemplateColumn Width="72">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Button Margin="1" Command="{Binding EditCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize EditInSoundToolTooltip}" Visibility="{Binding CanEdit, Converter={StaticResource BoolToVis}}">
@@ -652,14 +659,14 @@
                         CanUserAddRows="False"
                         HeadersVisibility="Column"
                         Visibility="{Binding SupportsSamplePaths, Converter={StaticResource BoolToVis}}"
-                        ItemsSource="{Binding SampleRows}"
+                        RowHeight="30" ItemsSource="{Binding SampleRows}"
                         SelectedItem="{Binding SelectedSample, Mode=TwoWay}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
+                            <DataGridTextColumn Width="*" CellStyle="{StaticResource InvalidPathCell}" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
                             <DataGridTemplateColumn Width="80">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Margin="1" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
+                                        <Button Height="26" Margin="1" Padding="0" VerticalContentAlignment="Center" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>

@@ -144,6 +144,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Moveable ("Object") dialog compared on screen with the WinForms editor on a real TombEngine level (PUZZLE_HOLE3): same layout (bits, invisible, no reflection, OCB, tint with reset icon, OK and Cancel). Only difference: the WinForms OCB box selects its text on open, the WPF box shows the caret. Also confirmed on this level: statistics bar, status line, texture and wad loading, Edit menu | Verified side by side | n/a |
 
+| Level settings compared on screen with real data (TombEngine level): Texture and Object file rows use a text Browse button and a small icon Show button like WinForms; Sound sample paths are red only when the parsed path is rooted and the folder is missing (the rule of the WinForms grid) and use a compact row; Imported geometry fixed columns narrowed so the Path column is visible. Texture, object and sample tabs now match; Static meshes and Sound infos matched earlier | Layout and validity rule | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
