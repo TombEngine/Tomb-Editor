@@ -93,7 +93,13 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Flyby camera: value ranges and steps as in WinForms (sequence and number 0..255, roll 0..360 and rotations with wrap-around, DOF distance/range up to 1,000,000 step 128, DOF strength 0..1), unused flag bits labeled "Unused" outside TR5/TombEngine, shorter DOF labels | Ranges were wider and flag captions wrong for other games | (this commit) |
 | Options: numeric fields without an explicit limit are capped at 100 like in WinForms, zoom steps and minimums as in WinForms, title "Options" and "Set page to default" | The WPF defaults allowed up to 1,000,000 | (this commit) |
 | Keyboard layout: hotkeys with Alt can be captured (WPF reports Key.System while Alt is held) | Alt combinations could not be recorded | (this commit) |
-| Portal, Imported geometry: WinForms captions ("Edit portal", "Portal effect:", "Mirror options", "Chosen entry:", "Force sharp edges", "Hide in editor", "Faster alpha testing") | Wording differed | (this commit) |## Open items
+| Portal, Imported geometry: WinForms captions ("Edit portal", "Portal effect:", "Mirror options", "Chosen entry:", "Force sharp edges", "Hide in editor", "Faster alpha testing") | Wording differed | (this commit) |## WadTool dialogs
+
+| Fix | Why | Commit |
+|-----|-----|--------|
+| English strings added for Select slot, Item Properties (Lua), Find & replace anim commands and Animation fixer (titles, labels, tooltips, status and warning messages, with the WinForms wording) | These windows had no strings and would have shown raw keys such as "ChosenId" or "EndFrameTooltip" | (this commit) |
+| WadTool options: missing "Auto-consolidate textures when copying objects" option added, captions and the "Options" / "Set page to default" texts restored | The option could not be toggled; wording differed | (this commit) |
+## Open items
 | Event set editor: closing with the window X or Escape restores the backup (only OK keeps changes), Unassign clears the volume's event set, generic mode starts with no set selected and hides the volume options | The X button committed; Unassign did nothing; generic mode preselected a set | (this commit) |
 | Level settings: size and position remembered; "Dither 16-bit textures" also enabled for TRX games; "Map animated textures to imported geometry" disabled for TombEngine | Window did not remember its place; enable rules differed | (this commit) |
 | Level settings: "Show" button on texture and wad rows opens the texture preview and the wad 3D preview next to the row (they close on focus loss), enabled only for loaded files; wad rows with a version mismatch or unknown data are flagged | The preview windows existed but nothing opened them | (this commit) |

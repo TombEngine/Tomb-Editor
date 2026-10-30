@@ -201,6 +201,7 @@ namespace WadTool.Features.Dialogs.Options
                     Bool(_localizationService["Opt_MeshEditor_MouseWheelMovesTheTextureInsteadOfZooming"], "MeshEditor_MouseWheelMovesTheTextureInsteadOfZooming"),
                     Bool(_localizationService["Opt_AnimationEditor_RewindAfterChainPlayback"], "AnimationEditor_RewindAfterChainPlayback"),
                     Bool(_localizationService["Opt_AnimationEditor_ClampStateChangeValues"], "AnimationEditor_ClampStateChangeValues"),
+                    Bool(_localizationService["Opt_Tool_AutoConsolidateTexturesOnCopy"], "Tool_AutoConsolidateTexturesOnCopy"),
                     Num(_localizationService["Opt_AnimationEditor_UndoDepth"], "AnimationEditor_UndoDepth", 1, 1000)),
                 Group(_localizationService["Group_UserInterface"],
                     Bool(_localizationService["Opt_RenderingItem_Antialias"], "RenderingItem_Antialias"),
