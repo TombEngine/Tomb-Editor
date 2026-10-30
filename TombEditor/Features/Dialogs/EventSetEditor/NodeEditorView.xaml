@@ -8,6 +8,7 @@
     xmlns:local="clr-namespace:TombEditor.Features.Dialogs.EventSetEditor"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     d:DataContext="{d:DesignInstance Type=local:NodeEditorViewModel}"
     d:DesignHeight="400"
@@ -158,8 +159,8 @@
 
         <!--  Toolbar  -->
         <controls:SpacedStack
-            DockPanel.Dock="Top"
-            Margin="0,0,0,6"
+            DockPanel.Dock="Bottom"
+            Margin="0,6,0,0"
             Orientation="Horizontal"
             Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
             <TextBlock VerticalAlignment="Center" Text="{tombLib:Localize Function}" />
@@ -190,36 +191,44 @@
             <!--  Node actions (operate on the last selected node).  -->
             <Button
                 Command="{Binding RenameSelectedCommand}"
-                Content="{tombLib:Localize Rename}"
-                ToolTip="{tombLib:Localize RenameTooltip}" />
+                ToolTip="{tombLib:Localize RenameTooltip}">
+                <Image Width="16" Height="16" Source="{tomb:Icon General/edit}" />
+            </Button>
             <Button
                 Command="{Binding ColorSelectedCommand}"
-                Content="{tombLib:Localize Colour}"
-                ToolTip="{tombLib:Localize ColourTooltip}" />
+                ToolTip="{tombLib:Localize ColourTooltip}">
+                <Image Width="16" Height="16" Source="{tomb:Icon Actions/StaticTint}" />
+            </Button>
             <Button
                 Command="{Binding LockSelectedCommand}"
-                Content="{tombLib:Localize Lock}"
-                ToolTip="{tombLib:Localize LockTooltip}" />
+                ToolTip="{tombLib:Localize LockTooltip}">
+                <Image Width="16" Height="16" Source="{tomb:Icon General/Lock}" />
+            </Button>
             <Button
                 Command="{Binding LinkSelectedCommand}"
-                Content="{tombLib:Localize Link}"
-                ToolTip="{tombLib:Localize LinkTooltip}" />
+                ToolTip="{tombLib:Localize LinkTooltip}">
+                <Image Width="16" Height="16" Source="{tomb:Icon General/copy_link}" />
+            </Button>
             <Button
                 Command="{Binding DeleteSelectedNodeCommand}"
-                Content="{tombLib:Localize Delete}"
-                ToolTip="{tombLib:Localize DeleteTooltip}" />
+                ToolTip="{tombLib:Localize DeleteTooltip}">
+                <Image Width="16" Height="16" Source="{tomb:Icon General/trash}" />
+            </Button>
             <Button
                 Command="{Binding ExportSelectedCommand}"
-                Content="{tombLib:Localize Export}"
-                ToolTip="{tombLib:Localize ExportTooltip}" />
+                ToolTip="{tombLib:Localize ExportTooltip}">
+                <Image Width="16" Height="16" Source="{tomb:Icon General/Export}" />
+            </Button>
             <Button
                 Command="{Binding ClearNodesCommand}"
-                Content="{tombLib:Localize Clear}"
-                ToolTip="{tombLib:Localize ClearTooltip}" />
+                ToolTip="{tombLib:Localize ClearTooltip}">
+                <Image Width="16" Height="16" Source="{tomb:Icon Misc/Close_16xLG}" />
+            </Button>
             <Button
                 Command="{Binding FindNodeCommand}"
-                Content="{tombLib:Localize Find}"
-                ToolTip="{tombLib:Localize FindTooltip}" />
+                ToolTip="{tombLib:Localize FindTooltip}">
+                <Image Width="16" Height="16" Source="{tomb:Icon General/search}" />
+            </Button>
 
             <TextBlock VerticalAlignment="Center" Text="{tombLib:Localize CallCount}" />
             <controls:NumericUpDown
