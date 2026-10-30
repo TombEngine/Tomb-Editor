@@ -1,6 +1,8 @@
 #nullable enable
 
+using System;
 using System.Windows;
+using System.Windows.Threading;
 using TombLib.WPF;
 
 namespace TombEditor.Features.Dialogs.FootStepSounds;
@@ -11,8 +13,20 @@ public partial class FootStepSoundsWindow : Window
     {
         InitializeComponent();
         this.HookModalAutoClose();
-        Loaded += (_, _) => WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormFootStepSounds");
+        Loaded += (_, _) =>
+        {
+            WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormFootStepSounds");
+
+            // The map needs its final size to place the top of the texture at the top of the view.
+            Dispatcher.BeginInvoke(new Action(ResetMap), DispatcherPriority.Loaded);
+        };
         DataContextChanged += OnDataContextChanged;
+    }
+
+    private void ResetMap()
+    {
+        if (DataContext is FootStepSoundsWindowViewModel vm)
+            mapView.ResetVisibleTexture(vm.SelectedTexture);
     }
 
     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

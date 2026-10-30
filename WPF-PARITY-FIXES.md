@@ -152,6 +152,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Texture remapping assistant compared on screen with the WinForms editor on the real level (texture area selected with the real mouse): same title, texts, options, scale factor and buttons. Fixed: the texture combos show "Maya09b (at $(LevelDirectory)\Maya09b.TGA)" like WinForms (they showed only the path) and the maps start with the top of the texture at the top of the view (they were created before the final size was known and started in the middle). Still different: WinForms maps have scroll bars and section-style headers; the same start-position issue may exist in the Footstep sounds and Bump maps windows | Display name and start position | (this commit) |
 
+| Texture sounds and Bumpmaps windows compared on screen with the WinForms editor on the real level: same combos, sound/bump labels on the texture tiles and buttons. Fixed the combo names (now "Maya09b (at ...)") and the initial map view (top of the texture at the top, as in Texture remap). Still different: WinForms has a search icon next to the texture combo and scroll bars in the map | Display name and start position | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.

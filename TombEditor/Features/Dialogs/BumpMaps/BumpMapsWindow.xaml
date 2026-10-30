@@ -34,7 +34,6 @@
 
         <controls:SearchableComboBox
             Grid.Row="0"
-            DisplayMemberPath="Path"
             ItemsSource="{Binding Textures}"
             KeyboardNavigation.TabIndex="21"
             SelectedItem="{Binding SelectedTexture, Mode=TwoWay}" />
