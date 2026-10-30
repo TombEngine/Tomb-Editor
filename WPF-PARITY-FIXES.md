@@ -78,6 +78,7 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Search & replace objects: Enter runs "New search" (not Replace); picking up the object selected in the level when the selection type changes; the Select buttons start with the right enabled state | Enter replaced objects by mistake; selected object was ignored | (this commit) |
 | Memo: Tab moves focus (no tab character) and Ctrl+Enter saves even while typing | AcceptsTab inserted tabs; Enter handling could swallow Ctrl+Enter | (this commit) |
 | Operation dialog: Cancel closes the dialog after a cancelled run (it could stay stuck); the log supports selection and Ctrl+C | Cancel did nothing the second time; log was not copyable | (this commit) |
+| Search dialog: multi-selection with delete of rooms and objects together (triggers first, partial-delete notice), keywords field first and focused, columns Type / Room / Name, trash icon button on the left and OK on the right (Enter closes), default size 650x350, delete never disabled (verified on screen) | Only one entry could be selected and deleted; layout and Enter behavior differed | (this commit) |
 
 ## Open items
 

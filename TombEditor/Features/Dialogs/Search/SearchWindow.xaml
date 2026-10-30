@@ -6,15 +6,17 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
 	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
 	xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.Search"
 	Title="{tombLib:Localize Title}"
-	Width="640"
-	Height="520"
-	MinWidth="540"
-	MinHeight="400"
+	Width="650"
+	Height="350"
+	MinWidth="420"
+	MinHeight="260"
 	d:DataContext="{d:DesignInstance Type=vm:SearchWindowViewModel}"
 	Background="{DynamicResource Brush_Background}"
+	FocusManager.FocusedElement="{Binding ElementName=keywordBox}"
 	ShowInTaskbar="False"
 	Style="{DynamicResource CustomWindowStyle}"
 	WindowStartupLocation="CenterOwner"
@@ -45,13 +47,12 @@
 			<Label
 				Grid.Column="0"
 				VerticalAlignment="Center"
-				Content="{tombLib:Localize Scope}" />
-			<ComboBox
+				Content="{tombLib:Localize Keyword}" />
+			<TextBox
+				x:Name="keywordBox"
 				Grid.Column="1"
-				DisplayMemberPath="DisplayName"
-				ItemsSource="{Binding Scopes}"
-				SelectedValue="{Binding Scope, Mode=TwoWay}"
-				SelectedValuePath="Mode" />
+				VerticalAlignment="Center"
+				Text="{Binding Keyword, UpdateSourceTrigger=PropertyChanged}" />
 		</controls:SpacedGrid>
 
 		<controls:SpacedGrid
@@ -64,11 +65,13 @@
 			<Label
 				Grid.Column="0"
 				VerticalAlignment="Center"
-				Content="{tombLib:Localize Keyword}" />
-			<TextBox
+				Content="{tombLib:Localize Scope}" />
+			<ComboBox
 				Grid.Column="1"
-				VerticalAlignment="Center"
-				Text="{Binding Keyword, UpdateSourceTrigger=PropertyChanged}" />
+				DisplayMemberPath="DisplayName"
+				ItemsSource="{Binding Scopes}"
+				SelectedValue="{Binding Scope, Mode=TwoWay}"
+				SelectedValuePath="Mode" />
 		</controls:SpacedGrid>
 
 		<DataGrid
@@ -79,37 +82,41 @@
 			IsReadOnly="True"
 			ItemsSource="{Binding Rows}"
 			SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
-			SelectionMode="Single">
+			SelectionChanged="ResultsGrid_SelectionChanged"
+			SelectionMode="Extended">
 			<DataGrid.Columns>
 				<DataGridTextColumn
-					Width="*"
-					Binding="{Binding Name}"
-					Header="{tombLib:Localize ColumnName}" />
+					Width="100"
+					Binding="{Binding Type}"
+					Header="{tombLib:Localize ColumnType}" />
 				<DataGridTextColumn
 					Width="160"
 					Binding="{Binding Room}"
 					Header="{tombLib:Localize ColumnRoom}" />
 				<DataGridTextColumn
-					Width="100"
-					Binding="{Binding Type}"
-					Header="{tombLib:Localize ColumnType}" />
+					Width="*"
+					Binding="{Binding Name}"
+					Header="{tombLib:Localize ColumnName}" />
 			</DataGrid.Columns>
 		</DataGrid>
 
-		<controls:SpacedStack
-			Grid.Row="3"
-			HorizontalAlignment="Right"
-			Orientation="Horizontal"
-			Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+		<DockPanel Grid.Row="3">
 			<Button
-				Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+				Width="30"
+				HorizontalAlignment="Left"
 				Command="{Binding DeleteSelectedCommand}"
-				Content="{tombLib:Localize Delete}" />
+				DockPanel.Dock="Left"
+				Style="{DynamicResource ButtonWithIconOnly}"
+				ToolTip="{tombLib:Localize Delete}">
+				<Image Source="{tomb:Icon General/trash}" />
+			</Button>
 			<Button
 				Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+				HorizontalAlignment="Right"
 				Command="{Binding CloseCommand}"
-				Content="{tombLib:Localize ~Common.Close}"
-				IsCancel="True" />
-		</controls:SpacedStack>
+				Content="{tombLib:Localize ~Common.OK}"
+				IsCancel="True"
+				IsDefault="True" />
+		</DockPanel>
 	</controls:SpacedGrid>
 </Window>

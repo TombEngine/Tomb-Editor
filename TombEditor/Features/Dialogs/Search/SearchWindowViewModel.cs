@@ -45,7 +45,6 @@ public partial class SearchWindowViewModel : ObservableObject, IModalDialogViewM
     [ObservableProperty] private ScopeMode _scope = ScopeMode.Everything;
     [ObservableProperty] private string _keyword = string.Empty;
     [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(DeleteSelectedCommand))]
     private SearchResultRow? _selectedRow;
 
     public ObservableCollection<SearchResultRow> Rows { get; } = new();
@@ -210,35 +209,45 @@ public partial class SearchWindowViewModel : ObservableObject, IModalDialogViewM
         return name;
     }
 
-    private bool CanDeleteSelected() => SelectedRow is not null;
+    /// <summary>Gets or sets every row highlighted in the results (the list allows multi-selection).</summary>
+    public IReadOnlyList<SearchResultRow> SelectedRows { get; set; } = [];
 
-    [RelayCommand(CanExecute = nameof(CanDeleteSelected))]
+    [RelayCommand]
     private void DeleteSelected()
     {
-        if (SelectedRow is null)
-            return;
+        var rows = SelectedRows.Count > 0 ? SelectedRows : SelectedRow is null ? [] : [SelectedRow];
 
-        bool ok = _messageService.ShowConfirmation(
-            _localizationService["DeleteConfirmationMessage"],
-            _localizationService["DeleteConfirmationTitle"]);
-        if (!ok)
-            return;
+        var roomsToDelete = new List<Room>();
+        var objectsToDelete = new List<ObjectInstance>();
+        bool illegalOperation = false;
 
-        switch (SelectedRow.Target)
+        foreach (var row in rows)
         {
-            case Room room:
-                EditorActions.DeleteRooms(new[] { room }, null);
-                break;
-            case TriggerInstance:
-            case ObjectInstance oi when oi is ISpatial:
-                EditorActions.DeleteObjects(new[] { (ObjectInstance)SelectedRow.Target }, null, false);
-                break;
-            default:
-                _messageService.ShowError(_localizationService["MapOnlyDeleteMessage"]);
-                break;
+            switch (row.Target)
+            {
+                case Room room:
+                    roomsToDelete.Add(room);
+                    break;
+                case TriggerInstance or ISpatial:
+                    objectsToDelete.Add((ObjectInstance)row.Target);
+                    break;
+                default:
+                    illegalOperation = true;
+                    break;
+            }
         }
-    }
 
+        if ((objectsToDelete.Count > 0 || roomsToDelete.Count > 0) &&
+            _messageService.ShowConfirmation(_localizationService["DeleteConfirmationMessage"], _localizationService["DeleteConfirmationTitle"]))
+        {
+            // Triggers go first to avoid clashes with the objects they reference.
+            EditorActions.DeleteObjects(objectsToDelete.OrderBy(o => o is not TriggerInstance).ToList(), null, false);
+            EditorActions.DeleteRooms(roomsToDelete, null);
+        }
+
+        if (illegalOperation)
+            _messageService.ShowInformation(_localizationService["MapOnlyDeleteMessage"]);
+    }
     [RelayCommand]
     private void Close() => DialogResult = false;
 
