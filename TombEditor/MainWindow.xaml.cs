@@ -116,7 +116,13 @@ public partial class MainWindow : Window
 
         var activeName = _editor.Configuration.Window_ActiveLayoutName;
         if (string.IsNullOrEmpty(activeName))
+        {
+            // No custom layout: restore the dock state the previous session ended with.
+            if (!string.IsNullOrEmpty(_editor.Configuration.Window_Layout.AvalonDockState))
+                LoadDockState(_editor.Configuration.Window_Layout.AvalonDockState);
+
             return;
+        }
 
         var active = _editor.Configuration.Window_CustomLayouts.FirstOrDefault(l => l.Name == activeName);
         if (active is not null && !string.IsNullOrEmpty(active.AvalonDockState))
@@ -714,12 +720,12 @@ public partial class MainWindow : Window
     {
         var active = ActiveLayout();
 
-        // The dock layout is only persisted for named custom layouts; the default falls back to the
-        // XAML baseline. The floating toolbox positions, however, belong to every layout (incl. default).
+        // The dock state is saved for the active layout, including the default one, so the next
+        // session restores what the user left (the previous form saved its live state on close).
+        active.AvalonDockState = SerializeDockState();
+
         if (!string.IsNullOrEmpty(_editor.Configuration.Window_ActiveLayoutName))
         {
-            active.AvalonDockState = SerializeDockState();
-
             // Panel flags live on Window_Layout (the current-state layout); snapshot them into
             // the named layout so they round-trip on the next switch (FormMain parity).
             active.ShowStats = _editor.Configuration.Window_Layout.ShowStats;

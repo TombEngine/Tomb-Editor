@@ -2,7 +2,9 @@
 
 using System;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using TombLib.Icons;
 using TombLib.LevelData;
 using static TombLib.LevelData.TRVersion;
 
@@ -47,6 +49,8 @@ internal static class ToolbarEnableRules
         {
             case "Undo" when editorEvent is Editor.UndoStackChangedEvent undo:
                 button.IsEnabled = undo.UndoPossible;
+                if (button.Content is Image image)
+                    image.Source = IconSources.Load(undo.UndoPossible && !undo.UndoReversible ? "General/undo_irreversible" : "General/undo");
                 break;
 
             case "Redo" when editorEvent is Editor.UndoStackChangedEvent redo:
@@ -75,6 +79,8 @@ internal static class ToolbarEnableRules
 
             case "ToggleFlipMap":
                 button.IsEnabled = editor.SelectedRoom?.Alternated ?? false;
+                if (button is ToggleButton flipMap)
+                    flipMap.IsChecked = editor.SelectedRoom?.AlternateBaseRoom is not null;
                 break;
 
             case "AddBoxVolume" or "AddSphereVolume":

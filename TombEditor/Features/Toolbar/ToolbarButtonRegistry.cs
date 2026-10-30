@@ -72,7 +72,7 @@ internal static class ToolbarButtonRegistry
         new(DrawObjectsToken, "", "Actions/DrawObjects", ToolbarButtonKind.DrawObjectsMenu),
 
         // Flipmap + clipboard
-        new("FlipMap", "ToggleFlipMap", "General/copy_link"),
+        new("FlipMap", "ToggleFlipMap", "General/copy_link", ToolbarButtonKind.Toggle),
         new("Copy", "Copy", "General/copy"),
         new("Paste", "Paste", "General/clipboard"),
         new("Stamp", "StampObject", "Actions/rubber_stamp"),
