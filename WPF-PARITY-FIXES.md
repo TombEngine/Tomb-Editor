@@ -160,6 +160,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Event set editor nodes now carry a function combo inside the node (like WinForms, where the node shows its function in an editable combo): picking another function of the same kind rebuilds the node arguments. Driven with the real mouse on the real level (Run volume event -> Set OCB, arguments rebuilt). WinForms also has search icons on every argument and Action / Condition toolbar buttons that create blank nodes: not done | Function change per node | (this commit) |
 
+| Event set editor toolbar: the Function box and Add button are replaced by Action and Condition buttons like WinForms; each adds a node with the default function of that kind (Ctrl skips linking, Alt links through Else) and the function is then changed in the node combo. Toolbar seen on screen; clicking the buttons was not tested because the display went off before the run | Action and Condition buttons | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.

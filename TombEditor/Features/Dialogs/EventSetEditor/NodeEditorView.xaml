@@ -163,30 +163,18 @@
             Margin="0,6,0,0"
             Orientation="Horizontal"
             Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
-            <TextBlock VerticalAlignment="Center" Text="{tombLib:Localize Function}" />
-            <controls:SearchableComboBox
-                Width="240"
-                DisplayMemberPath="Name"
-                ItemsSource="{Binding Functions}"
-                SelectedItem="{Binding FunctionToAdd, Mode=TwoWay}">
-                <controls:SearchableComboBox.GroupStyle>
-                    <GroupStyle>
-                        <GroupStyle.HeaderTemplate>
-                            <DataTemplate>
-                                <TextBlock
-                                    Margin="2,4,0,2"
-                                    FontWeight="Bold"
-                                    Foreground="{DynamicResource Brush_Text_Warning}"
-                                    Text="{Binding Name}" />
-                            </DataTemplate>
-                        </GroupStyle.HeaderTemplate>
-                    </GroupStyle>
-                </controls:SearchableComboBox.GroupStyle>
-            </controls:SearchableComboBox>
-            <Button
-                Width="56"
-                Command="{Binding AddNodeCommand}"
-                Content="{tombLib:Localize Add}" />
+            <Button Width="88" Command="{Binding AddActionNodeCommand}" ToolTip="{tombLib:Localize AddActionTooltip}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="16" Height="16" Margin="0,0,4,0" Source="{tomb:Icon General/plus_math}" />
+                    <TextBlock Text="{tombLib:Localize AddAction}" />
+                </StackPanel>
+            </Button>
+            <Button Width="100" Command="{Binding AddConditionNodeCommand}" ToolTip="{tombLib:Localize AddConditionTooltip}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Width="16" Height="16" Margin="0,0,4,0" Source="{tomb:Icon General/plus_math}" />
+                    <TextBlock Text="{tombLib:Localize AddCondition}" />
+                </StackPanel>
+            </Button>
 
             <!--  Node actions (operate on the last selected node).  -->
             <Button

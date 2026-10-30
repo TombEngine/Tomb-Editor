@@ -152,6 +152,19 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             CreateNode(FunctionToAdd, modifiers != ModifierKeys.Control, modifiers == ModifierKeys.Alt, null);
         }
 
+        [RelayCommand]
+        private void AddActionNode() => AddNodeFromToolbar(false);
+
+        [RelayCommand]
+        private void AddConditionNode() => AddNodeFromToolbar(true);
+
+        /// <summary>Toolbar Action / Condition buttons: Ctrl skips linking to the selected node, Alt links through Else.</summary>
+        private void AddNodeFromToolbar(bool condition)
+        {
+            var modifiers = Keyboard.Modifiers;
+            AddNodeOfKind(condition, modifiers != ModifierKeys.Control, modifiers == ModifierKeys.Alt);
+        }
+
         /// <summary>Adds an action or condition node (keyboard shortcuts), reusing the toolbar function when its kind matches.</summary>
         public void AddNodeOfKind(bool condition, bool linkToPrevious, bool linkToElse)
         {
