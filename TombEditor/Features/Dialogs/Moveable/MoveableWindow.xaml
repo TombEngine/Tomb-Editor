@@ -69,7 +69,7 @@
             Grid.Column="1"
             VerticalAlignment="Center"
             IsEnabled="{Binding IsOcbEnabled}"
-            Text="{Binding OcbText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            PreviewTextInput="OcbTextBox_PreviewTextInput" Text="{Binding OcbText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <Label
             Grid.Row="2"

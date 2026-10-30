@@ -13,8 +13,7 @@
     Title="{tombLib:Localize Title}"
     Width="520"
     Height="600"
-    MinWidth="420"
-    MinHeight="420"
+    
     d:DataContext="{d:DesignInstance Type=vm:SoundSourceWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
     ShowInTaskbar="False"

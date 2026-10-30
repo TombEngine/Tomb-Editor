@@ -98,7 +98,7 @@
             <TextBox
                 Grid.Column="1"
                 VerticalAlignment="Center"
-                Text="{Binding OcbText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                PreviewTextInput="OcbTextBox_PreviewTextInput" Text="{Binding OcbText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </controls:SpacedGrid>
 
         <controls:SpacedGrid

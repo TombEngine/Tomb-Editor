@@ -73,6 +73,7 @@
                 IsEnabled="{Binding IsListening, Converter={StaticResource InverseBool}}"
                 ItemsSource="{Binding Rows}"
                 SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
+                SelectionChanged="HotkeysGrid_SelectionChanged"
                 SelectionMode="Single">
                 <DataGrid.InputBindings>
                     <!--  Legacy double-click behaviour: listen for a hotkey that replaces the row's existing ones.

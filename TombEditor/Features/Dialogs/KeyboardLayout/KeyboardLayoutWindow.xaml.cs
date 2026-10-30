@@ -17,6 +17,13 @@ public partial class KeyboardLayoutWindow : Window
 
     private KeyboardLayoutWindowViewModel? Vm => DataContext as KeyboardLayoutWindowViewModel;
 
+    // A found or newly selected row is scrolled into view, like the previous grid did.
+    private void HotkeysGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        if (sender is System.Windows.Controls.DataGrid { SelectedItem: { } selected } grid)
+            grid.ScrollIntoView(selected);
+    }
+
     private void OnPreviewKeyDown(object sender, KeyEventArgs e)
     {
         if (Vm is not { IsListening: true } vm)
