@@ -188,6 +188,101 @@ public class CatalogEditingTests
         CollectionAssert.Contains(changed, nameof(SoundInfoViewModel.LoopBehaviourHint));
         Assert.AreEqual("Rewind if already playing", sound.LoopBehaviourHint);
     }
+    [TestMethod]
+    public void BuiltMainSfxCanBeUnpackedBackToTheSampleFiles()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "soundtool-sfx-" + Guid.NewGuid().ToString("N"));
+        string samples = Path.Combine(root, "samples");
+        string unpacked = Path.Combine(root, "unpacked");
+        string sfx = Path.Combine(root, "MAIN.SFX");
+        Directory.CreateDirectory(samples);
+        Directory.CreateDirectory(unpacked);
+
+        try
+        {
+            File.WriteAllBytes(Path.Combine(samples, "one.wav"), CreateWave(200));
+            File.WriteAllBytes(Path.Combine(samples, "two.wav"), CreateWave(300));
+
+            var context = new EditorContext();
+            var first = context.AddSound(0);
+            first.Indexed = true;
+            first.Samples.Add(new SampleViewModel("one.wav"));
+            var second = context.AddSound(1);
+            second.Indexed = true;
+            second.Samples.Add(new SampleViewModel("two.wav"));
+
+            context.Dialogs.FolderPath = samples;
+            context.Dialogs.SavePath = sfx;
+            context.ViewModel.CompileTr2Command.Execute(null);
+
+            Assert.AreEqual(0, context.Messages.Errors.Count, string.Join(" | ", context.Messages.Errors));
+            Assert.IsTrue(File.Exists(sfx), "MAIN.SFX was not written.");
+            Assert.IsTrue(new FileInfo(sfx).Length > 0);
+
+            context.Dialogs.OpenPath = sfx;
+            context.Dialogs.FolderPath = unpacked;
+            context.ViewModel.UnpackCommand.Execute(null);
+
+            Assert.AreEqual(0, context.Messages.Errors.Count, string.Join(" | ", context.Messages.Errors));
+            Assert.IsTrue(File.Exists(Path.Combine(unpacked, "one.wav")), "one.wav was not unpacked.");
+            Assert.IsTrue(File.Exists(Path.Combine(unpacked, "two.wav")), "two.wav was not unpacked.");
+            Assert.IsTrue(context.Messages.Information.Exists(message => message.Contains("Extracted 2 samples in 2 sound infos")));
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [TestMethod]
+    public void UnpackRejectsSampleNamesThatEscapeTheDestinationFolder()
+    {
+        string root = Path.Combine(Path.GetTempPath(), "soundtool-sfx-" + Guid.NewGuid().ToString("N"));
+        string unpacked = Path.Combine(root, "unpacked");
+        string sfx = Path.Combine(root, "MAIN.SFX");
+        Directory.CreateDirectory(unpacked);
+
+        try
+        {
+            File.WriteAllBytes(sfx, CreateWave(100));
+
+            var context = new EditorContext();
+            var sound = context.AddSound(0);
+            sound.Indexed = true;
+            sound.Samples.Add(new SampleViewModel(@"..\escape.wav"));
+
+            context.Dialogs.OpenPath = sfx;
+            context.Dialogs.FolderPath = unpacked;
+            context.ViewModel.UnpackCommand.Execute(null);
+
+            Assert.IsFalse(File.Exists(Path.Combine(root, "escape.wav")));
+            Assert.AreEqual(1, context.Messages.Errors.Count);
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    private static byte[] CreateWave(int dataLength)
+    {
+        using var stream = new MemoryStream();
+        using var writer = new BinaryWriter(stream);
+        writer.Write(new[] { (byte)'R', (byte)'I', (byte)'F', (byte)'F' });
+        writer.Write(36 + dataLength);
+        writer.Write(new[] { (byte)'W', (byte)'A', (byte)'V', (byte)'E', (byte)'f', (byte)'m', (byte)'t', (byte)' ' });
+        writer.Write(16);
+        writer.Write((short)1);
+        writer.Write((short)1);
+        writer.Write(22050);
+        writer.Write(44100);
+        writer.Write((short)2);
+        writer.Write((short)16);
+        writer.Write(new[] { (byte)'d', (byte)'a', (byte)'t', (byte)'a' });
+        writer.Write(dataLength);
+        writer.Write(new byte[dataLength]);
+        return stream.ToArray();
+    }
     private sealed class EditorContext
     {
         public MainViewModel ViewModel { get; }
@@ -208,13 +303,15 @@ public class CatalogEditingTests
     {
         public Queue<string?> Prompts { get; } = new();
         public string? SavePath { get; set; }
+        public string? OpenPath { get; set; }
+        public string? FolderPath { get; set; }
         public int OpenRequests { get; private set; }
         public int SaveRequests { get; private set; }
 
         public string? OpenFile(string title, string filter, string? initialPath = null)
         {
             OpenRequests++;
-            return null;
+            return OpenPath;
         }
 
         public string[] OpenSamples() => [];
@@ -225,7 +322,7 @@ public class CatalogEditingTests
             return SavePath;
         }
 
-        public string? SelectFolder(string title, string? initialPath = null) => null;
+        public string? SelectFolder(string title, string? initialPath = null) => FolderPath;
         public string? Prompt(string title, string label, string value = "") => Prompts.Dequeue();
         public void ShowOptions(Configuration configuration) { }
         public void ShowAbout() { }
@@ -236,8 +333,9 @@ public class CatalogEditingTests
     {
         public int Answer { get; set; }
         public List<string> Errors { get; } = [];
+        public List<string> Information { get; } = [];
 
-        public void ShowInformation(string message, string caption = "Information") { }
+        public void ShowInformation(string message, string caption = "Information") => Information.Add(message);
         public void ShowError(string message, string caption = "Error") => Errors.Add(message);
         public bool ShowConfirmation(string message, string caption = "Are you sure?", bool? defaultValue = null, bool isRisky = false) => true;
 

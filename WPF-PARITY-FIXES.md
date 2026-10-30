@@ -23,6 +23,7 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Ctrl+C / Ctrl+V on the sound list copy and paste the sound info; menu shows the gestures | Shortcuts did nothing | 065890b56 |
 | Unit tests: default new-sound values, select/deselect all, delete, playback mode names and hint updates | Protect the restored behavior | 065890b56 |
 | Options: page list ("General"), "Set page to default", Apply / OK / Cancel (Apply applies without closing) | Dialog was a simplified single page with OK/Cancel only | f9e6b0ec7 |
+| Unit tests for MAIN.SFX build and unpack (round trip through real files, and rejection of sample names that escape the destination folder) | Build/unpack had only been checked by reading the code | (this commit) |
 | File menu: WinForms labels ("New XML", "Open XML, TXT or SFX...", "Save XML", "Save XML as..."), "Open recent..." submenu containing "Clear recent file list", disabled when empty | Menu wording and structure differed | f9e6b0ec7 |
 | "Save XML" enabled only for a new or modified catalog (command `CanExecute`, so Ctrl+S follows it) | Always enabled | f9e6b0ec7 |
 | Preview and stop buttons hidden when no reference project is loaded | They were only disabled | f9e6b0ec7 |
@@ -67,17 +68,15 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 ## Open items
 
-- Tomb Editor: none left from the functional audit. Not verified on screen: file drops onto the window, saved window placement, list selection behavior, trigger deletion, Palette adaptive layout.
-- SoundTool: a failed or cancelled save still aborts New / Open / Close (WinForms continues); left as is on request.
-- SoundTool: double-click preview needs a loaded reference project; MAIN.SFX build/unpack not driven live.
-- WadTool: tree search is an inline row, not the WinForms pop-up; destination panel header is not highlighted when active (S3); tree rows are about 3 px denser (S3).
-- All tools: dialogs (Waves B/C) not started.
-
+- Tomb Editor: not verified on screen (verified by build and code only): file drops onto the window, saved window placement, selection behavior of the Objects in Room / Rooms lists, trigger deletion with Delete/Backspace, Palette layout when the panel is narrow (wide layout verified).
+- Waves B/C (dialogs): in progress, see the plan.
 ## Intentional divergences (kept on purpose)
 
 - Dark custom title bar instead of the system accent color.
 - Tomb Editor: the Debug menu (developer scratch actions, visible only with a debugger attached) is not ported; room tags are normalized to lowercase.
 - Theme font is 11 px (WinForms 9 pt = 12 px), so menus and labels are slightly smaller everywhere; changing it would touch every control.
 - Tomb Editor: dockable flyby timeline, extra "Rooms" panel, 2D/3D tabs, pin/dropdown buttons in dock headers, extra status bar fields.
+- SoundTool: a failed or cancelled save still aborts New / Open / Close (WinForms continues anyway); kept on request. Double-click preview needs a loaded reference project (WinForms without one fails silently, so the outcome is the same).
+- WadTool: tree search is an inline row, not the WinForms pop-up; the destination panel header is not highlighted when active and tree rows are about 3 px denser (S3).
 - SoundTool: details pane always visible but disabled without a selection; extra Stop button; "Select/Deselect all" marks the catalog as modified; build/unpack iterate sounds ordered by ID; Ctrl+C/V bound to the sound list only.
 - WadTool: inline tree search row with an extra "Next" button.
