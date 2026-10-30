@@ -80,15 +80,17 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Operation dialog: Cancel closes the dialog after a cancelled run (it could stay stuck); the log supports selection and Ctrl+C | Cancel did nothing the second time; log was not copyable | (this commit) |
 | Search dialog: multi-selection with delete of rooms and objects together (triggers first, partial-delete notice), keywords field first and focused, columns Type / Room / Name, trash icon button on the left and OK on the right (Enter closes), default size 650x350, delete never disabled (verified on screen) | Only one entry could be selected and deleted; layout and Enter behavior differed | (this commit) |
 | Toolbar layout dialog: every button shows its toolbar icon, double-click moves a button between the lists, window cannot grow horizontally (not verified on screen: opens from the toolbar context menu) | Lists were plain text and double-click did nothing | (this commit) |
+| Tag autocomplete (Select Rooms by Tags and Room Options): suggestions are words that start with what was typed, never a tag already entered, the first match is highlighted and Enter inserts it (not verified on screen) | It matched any substring, repeated tags and needed the mouse or arrow keys | (this commit) |
 | Import PRJ: title shows the PRJ file name, groups "Base sound catalog (optional)" and "Import settings" with the always-visible description texts, no extra PRJ path row (not verified on screen) | Descriptions were hidden in tooltips | (this commit) |
 
 ## Open items
 
 - Tomb Editor: not verified on screen (verified by build and code only): file drops onto the window, saved window placement, selection behavior of the Objects in Room / Rooms lists, trigger deletion with Delete/Backspace, Palette layout when the panel is narrow (wide layout verified).
-- Waves B/C (dialogs): in progress, see the plan. Level settings must wire the texture and wad hover previews (TexturePreviewWindow / WadPreviewWindow exist but nothing opens them).
+- Wave B (simple Tomb Editor dialogs) done: the 18 dialogs were audited and the differences fixed, except the ones listed in the divergences. Wave C (complex dialogs) not started. Level settings must wire the texture and wad hover previews (TexturePreviewWindow / WadPreviewWindow exist but nothing opens them).
 ## Intentional divergences (kept on purpose)
 
 - Dark custom title bar instead of the system accent color.
+- Tomb Editor dialogs: Select Rooms by Tags keeps lowercase tags (consistent with Room Options); Transform scale is limited to 0.01..1024 (WinForms accepted 0 and any value) and positions to +-1048576; Operation dialog colors are darker row bars; ChooseRoom, QuickItemGroup, Camera, Sink and Sprite differ from WinForms only in window size and auto-sizing; Search does not shade rows by match quality; Sprite preview is a flat image, not a 3D render; Memo and FootStepSounds default sizes follow the saved configuration.
 - Tomb Editor: the Debug menu (developer scratch actions, visible only with a debugger attached) is not ported; room tags are normalized to lowercase.
 - Theme font is 11 px (WinForms 9 pt = 12 px), so menus and labels are slightly smaller everywhere; changing it would touch every control.
 - Tomb Editor: dockable flyby timeline, extra "Rooms" panel, 2D/3D tabs, pin/dropdown buttons in dock headers, extra status bar fields.
