@@ -682,8 +682,8 @@ namespace TombEditor.Forms
             cbDither16BitTextures.Enabled = !_levelSettings.FastMode;
 
             // Hide version-specific controls
-            // TRNG only
-            bool currentVersionToCheck = (_levelSettings.GameVersion == Game.TRNG);
+            // NG-based engines only
+            bool currentVersionToCheck = _levelSettings.GameVersion.IsNG();
             cbUse32BitLighting.Enabled = currentVersionToCheck;
             panelScripts.Height = currentVersionToCheck ? _scriptPathPanelSize : 0;
             if (currentVersionToCheck)
@@ -1525,7 +1525,7 @@ namespace TombEditor.Forms
             string result = "";
             originalId = id;
 
-            if (_levelSettings.GameVersion == Game.TRNG)
+            if (_levelSettings.GameVersion.IsNG())
             {
                 if (id < 370)
                 {

@@ -249,7 +249,7 @@ namespace TombLib.Wad.Catalog
         public static uint GetTombEngineSound(TRVersion.Game version, uint id)
         {
             // In the new soundmap, first 370 sound slots are the same of TR4 for compatibility
-            if ((version == TRVersion.Game.TR4 || version == TRVersion.Game.TRNG) && id < 370)
+            if ((version == TRVersion.Game.TR4 || version.IsNG()) && id < 370)
                 return id;
 
             Game game;
@@ -573,6 +573,8 @@ namespace TombLib.Wad.Catalog
                     return "Tomb Raider 4";
                 case TRVersion.Game.TRNG:
                     return "TRNG";
+                case TRVersion.Game.TRNGCE:
+                    return "TRNGCE";
                 case TRVersion.Game.TR5:
                     return "Tomb Raider 5";
                 case TRVersion.Game.TombEngine:
