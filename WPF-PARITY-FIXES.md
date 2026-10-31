@@ -176,6 +176,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Trigger editor, Raw mode and layout compared on screen with the WinForms editor: Raw mode gives the same numeric Type 2, What 0 and keeps the object parameter in both; fixed the trigger type field, which used 5 columns even without NG (WinForms uses the full row when the level is not NG) | Layout | (this commit) |
 
+| Trigger editor "Trigger invalid" message compared on screen (OK pressed with an invalid Switch / Object trigger): the WinForms editor asks with OK and Cancel and a warning icon, the WPF editor asked with Yes and No; now OK and Cancel with the warning icon, same text and title. Seen on screen | Button set | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.

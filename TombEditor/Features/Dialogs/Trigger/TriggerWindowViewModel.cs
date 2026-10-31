@@ -8,6 +8,8 @@ using System.Windows;
 using TombLib;
 using TombLib.LevelData;
 using TombLib.NG;
+using TombLib.Services;
+using TombLib.WPF;
 using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
@@ -258,13 +260,11 @@ public partial class TriggerWindowViewModel : ObservableObject, IModalDialogView
     {
         if (!NgParameterInfo.TriggerIsValid(_level.Settings, MakeTestTrigger()))
         {
-            bool proceed = _messageService.ShowConfirmation(
-                _localizationService["TriggerInvalidMessage"],
-                _localizationService["TriggerInvalidTitle"],
-                defaultValue: true,
-                isRisky: true);
+            // The previous form asked with OK and Cancel and a warning icon.
+            var choice = UserDialogs.Show(WPFUtils.GetWindowOwner(), _localizationService["TriggerInvalidMessage"],
+                _localizationService["TriggerInvalidTitle"], DialogButtons.OKCancel, DialogIcon.Warning);
 
-            if (!proceed)
+            if (choice != DialogChoice.OK)
                 return;
         }
 
