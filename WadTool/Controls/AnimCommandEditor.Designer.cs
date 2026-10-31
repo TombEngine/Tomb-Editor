@@ -62,6 +62,9 @@
 			tabDisableInterpolation = new System.Windows.Forms.TabPage();
 			darkLabel12 = new DarkUI.Controls.DarkLabel();
 			tbFrameDisableInterpolation = new DarkUI.Controls.DarkNumericUpDown();
+			tabDetachFromParent = new System.Windows.Forms.TabPage();
+			darkLabel13 = new DarkUI.Controls.DarkLabel();
+			tbFrameDetachFromParent = new DarkUI.Controls.DarkNumericUpDown();
 			panelView = new System.Windows.Forms.Panel();
 			commandControls.SuspendLayout();
 			tabSetPosition.SuspendLayout();
@@ -79,6 +82,8 @@
 			((System.ComponentModel.ISupportInitialize)tbPlaySoundFrame).BeginInit();
 			tabDisableInterpolation.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)tbFrameDisableInterpolation).BeginInit();
+			tabDetachFromParent.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)tbFrameDetachFromParent).BeginInit();
 			panelView.SuspendLayout();
 			SuspendLayout();
 			// 
@@ -111,6 +116,7 @@
 			commandControls.Controls.Add(tabFlipeffect);
 			commandControls.Controls.Add(tabPlaySound);
 			commandControls.Controls.Add(tabDisableInterpolation);
+			commandControls.Controls.Add(tabDetachFromParent);
 			commandControls.Location = new System.Drawing.Point(0, 29);
 			commandControls.Name = "commandControls";
 			commandControls.SelectedIndex = 0;
@@ -479,6 +485,40 @@
 			tbFrameDisableInterpolation.TabIndex = 5;
 			tbFrameDisableInterpolation.ValueChanged += tbFrameDisableInterpolation_ValueChanged;
 			// 
+			// tabDetachFromParent
+			// 
+			tabDetachFromParent.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+			tabDetachFromParent.Controls.Add(darkLabel13);
+			tabDetachFromParent.Controls.Add(tbFrameDetachFromParent);
+			tabDetachFromParent.Location = new System.Drawing.Point(4, 22);
+			tabDetachFromParent.Name = "tabDetachFromParent";
+			tabDetachFromParent.Padding = new System.Windows.Forms.Padding(3);
+			tabDetachFromParent.Size = new System.Drawing.Size(362, 102);
+			tabDetachFromParent.TabIndex = 5;
+			tabDetachFromParent.Text = "detachFromParent";
+			// 
+			// darkLabel13
+			// 
+			darkLabel13.AutoSize = true;
+			darkLabel13.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+			darkLabel13.Location = new System.Drawing.Point(6, 8);
+			darkLabel13.Name = "darkLabel13";
+			darkLabel13.Size = new System.Drawing.Size(41, 13);
+			darkLabel13.TabIndex = 6;
+			darkLabel13.Text = "Frame:";
+			// 
+			// tbFrameDetachFromParent
+			// 
+			tbFrameDetachFromParent.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 204);
+			tbFrameDetachFromParent.IncrementAlternate = new decimal(new int[] { 10, 0, 0, 65536 });
+			tbFrameDetachFromParent.Location = new System.Drawing.Point(9, 24);
+			tbFrameDetachFromParent.LoopValues = false;
+			tbFrameDetachFromParent.Maximum = new decimal(new int[] { 32767, 0, 0, 0 });
+			tbFrameDetachFromParent.Name = "tbFrameDetachFromParent";
+			tbFrameDetachFromParent.Size = new System.Drawing.Size(73, 23);
+			tbFrameDetachFromParent.TabIndex = 5;
+			tbFrameDetachFromParent.ValueChanged += tbFrameDetachFromParent_ValueChanged;
+			// 
 			// panelView
 			// 
 			panelView.Controls.Add(commandControls);
@@ -520,6 +560,9 @@
 			tabDisableInterpolation.ResumeLayout(false);
 			tabDisableInterpolation.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)tbFrameDisableInterpolation).EndInit();
+			tabDetachFromParent.ResumeLayout(false);
+			tabDetachFromParent.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)tbFrameDetachFromParent).EndInit();
 			panelView.ResumeLayout(false);
 			panelView.PerformLayout();
 			ResumeLayout(false);
@@ -561,5 +604,8 @@
 		private System.Windows.Forms.TabPage tabDisableInterpolation;
 		private DarkUI.Controls.DarkLabel darkLabel12;
 		private DarkUI.Controls.DarkNumericUpDown tbFrameDisableInterpolation;
+		private System.Windows.Forms.TabPage tabDetachFromParent;
+		private DarkUI.Controls.DarkLabel darkLabel13;
+		private DarkUI.Controls.DarkNumericUpDown tbFrameDetachFromParent;
 	}
 }

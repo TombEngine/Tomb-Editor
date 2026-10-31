@@ -129,6 +129,14 @@ namespace WadTool
 
                         break;
 
+                    case WadAnimCommandType.DetachFromParent:
+                        commandControls.Visible = true;
+                        commandControls.SelectedTab = tabDetachFromParent;
+
+                        tbFrameDetachFromParent.Value = cmd.Parameter1;
+
+                        break;
+
                     case WadAnimCommandType.PlaySound:
                         commandControls.Visible = true;
                         commandControls.SelectedTab = tabPlaySound;
@@ -295,6 +303,14 @@ namespace WadTool
             if (_command == null || _command.Type != WadAnimCommandType.DisableInterpolation)
                 return;
             _command.Parameter1 = (short)tbFrameDisableInterpolation.Value;
+            InvokeChanged();
+        }
+
+        private void tbFrameDetachFromParent_ValueChanged(object sender, EventArgs e)
+        {
+            if (_command == null || _command.Type != WadAnimCommandType.DetachFromParent)
+                return;
+            _command.Parameter1 = (short)tbFrameDetachFromParent.Value;
             InvokeChanged();
         }
     }

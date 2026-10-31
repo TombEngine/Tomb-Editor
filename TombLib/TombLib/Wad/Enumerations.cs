@@ -14,7 +14,8 @@
         KillEntity = 4,
         PlaySound = 5,
         FlipEffect = 6,
-        DisableInterpolation = 7 // TEN specific
+        DisableInterpolation = 7, // TEN specific
+        DetachFromParent = 8 // TEN specific
     }
 
     public enum WadSoundEnvironmentType

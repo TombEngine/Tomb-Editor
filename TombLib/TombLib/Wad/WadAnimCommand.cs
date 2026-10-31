@@ -38,6 +38,8 @@ namespace TombLib.Wad
                         " on Frame = " + Parameter1;
                 case WadAnimCommandType.DisableInterpolation:
                     return "Disable interpolation on Frame = " + Parameter1;
+                case WadAnimCommandType.DetachFromParent:
+                    return "Detach from parent on Frame = " + Parameter1;
                 default:
                     return Type.ToString().SplitCamelcase();
             }
