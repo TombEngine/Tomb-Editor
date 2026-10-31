@@ -64,10 +64,6 @@
                     <Button Command="{Binding DeleteSoundsCommand}" IsEnabled="{Binding HasSelection}" Style="{DynamicResource ButtonWithIconAndText}"><StackPanel Orientation="Horizontal"><Image Source="{icons:Icon General/trash}" /><TextBlock Text="{tomb:Localize DeleteSounds}" /></StackPanel></Button>
                 </StackPanel>
                 <DataGrid x:Name="SoundList" ItemsSource="{Binding Sounds}" SelectedItem="{Binding SelectedSound}" AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Extended" SelectionChanged="SoundsSelectionChanged" MouseDoubleClick="SoundListDoubleClick" CanUserAddRows="False">
-                    <DataGrid.InputBindings>
-                        <KeyBinding Key="C" Modifiers="Control" Command="{Binding CopyCommand}" />
-                        <KeyBinding Key="V" Modifiers="Control" Command="{Binding PasteCommand}" />
-                    </DataGrid.InputBindings>
                     <DataGrid.Columns><DataGridTextColumn Header="ID" Binding="{Binding Id, StringFormat=D4}" Width="60" /><DataGridTextColumn Header="{tomb:Localize Name}" Binding="{Binding Name}" Width="*" /></DataGrid.Columns>
                 </DataGrid>
             </DockPanel>

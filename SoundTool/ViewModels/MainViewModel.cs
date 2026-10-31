@@ -181,6 +181,12 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void Search()
     {
+        if (Sounds.Count == 0)
+        {
+            _messages.ShowInformation("No sounds present. Nothing to search.", "SoundTool");
+            return;
+        }
+
         int start = SelectedSound is null ? -1 : Sounds.IndexOf(SelectedSound);
         for (int offset = 1; offset <= Sounds.Count; offset++)
         {
@@ -246,7 +252,7 @@ public partial class MainViewModel : ObservableObject
         if (SelectedSound is null)
             return;
 
-        foreach (var file in _dialogs.OpenSamples())
+        foreach (var file in _dialogs.OpenSamples(GetFirstReferenceSamplePath()))
         {
             var name = Path.GetFileName(file);
             if (!SelectedSound.Samples.Any(sample => sample.FileName.Equals(name, StringComparison.OrdinalIgnoreCase)))
@@ -256,6 +262,14 @@ public partial class MainViewModel : ObservableObject
         ResolveSamples();
         if (HasReferenceLevel && SelectedSound.Samples.Any(sample => sample.ResolvedPath == "[not found]"))
             Warn("Some samples are outside the reference project's sample paths. Copy them to a sample path or update the reference project.");
+    }
+
+    private string? GetFirstReferenceSamplePath()
+    {
+        var settings = _referenceLevel?.Settings;
+        var firstPath = settings?.WadSoundPaths.FirstOrDefault();
+
+        return settings is null || firstPath is null ? null : settings.MakeAbsolute(firstPath.Path);
     }
 
     [RelayCommand]

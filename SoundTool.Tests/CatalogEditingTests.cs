@@ -314,7 +314,7 @@ public class CatalogEditingTests
             return OpenPath;
         }
 
-        public string[] OpenSamples() => [];
+        public string[] OpenSamples(string? initialDirectory = null) => [];
 
         public string? SaveFile(string title, string filter, string? initialPath = null)
         {

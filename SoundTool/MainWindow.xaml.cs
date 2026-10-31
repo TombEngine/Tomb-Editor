@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using TombLib.Utils;
@@ -32,6 +33,28 @@ public partial class MainWindow : Window
             if (e.PropertyName == nameof(MainViewModel.SelectedSound) && viewModel.SelectedSound is not null)
                 SoundList.ScrollIntoView(viewModel.SelectedSound);
         };
+    }
+
+    // Copy and paste of sound infos work window-wide, except while a text input has the focus.
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
+    {
+        base.OnPreviewKeyDown(e);
+
+        if (e.Handled || Keyboard.Modifiers != ModifierKeys.Control || Keyboard.FocusedElement is TextBoxBase or PasswordBox)
+            return;
+
+        var command = e.Key switch
+        {
+            Key.C => _viewModel.CopyCommand,
+            Key.V => _viewModel.PasteCommand,
+            _ => null
+        };
+
+        if (command is null)
+            return;
+
+        command.Execute(null);
+        e.Handled = true;
     }
 
     private void SoundsSelectionChanged(object sender, SelectionChangedEventArgs e) =>

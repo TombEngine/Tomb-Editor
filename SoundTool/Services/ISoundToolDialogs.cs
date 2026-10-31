@@ -6,7 +6,7 @@ namespace SoundTool.Services;
 public interface ISoundToolDialogs
 {
     string? OpenFile(string title, string filter, string? initialPath = null);
-    string[] OpenSamples();
+    string[] OpenSamples(string? initialDirectory = null);
     string? SaveFile(string title, string filter, string? initialPath = null);
     string? SelectFolder(string title, string? initialPath = null);
     string? Prompt(string title, string label, string value = "");

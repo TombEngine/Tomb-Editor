@@ -30,9 +30,10 @@ public sealed class SoundToolDialogs : ISoundToolDialogs
         return dialog.ShowDialog(Owner) == true ? dialog.FileName : null;
     }
 
-    public string[] OpenSamples()
+    public string[] OpenSamples(string? initialDirectory = null)
     {
         var dialog = new OpenFileDialog { Title = "Choose samples", Filter = "Waveform audio|*.wav", Multiselect = true };
+        SetPath(dialog, initialDirectory);
         return dialog.ShowDialog(Owner) == true ? dialog.FileNames : [];
     }
 
