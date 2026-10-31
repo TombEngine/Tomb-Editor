@@ -1,0 +1,75 @@
+<Window
+	x:Class="TombEditor.Features.Dialogs.RoomProperties.RoomPropertiesWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+	xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.RoomProperties"
+	Title="{tombLib:Localize Title}"
+	Width="320"
+	Height="450"
+	MinWidth="320"
+	MinHeight="450"
+	d:DataContext="{d:DesignInstance Type=vm:RoomPropertiesWindowViewModel}"
+	Background="{DynamicResource Brush_Background}"
+	ShowInTaskbar="False"
+	Style="{DynamicResource CustomWindowStyle}"
+	WindowStartupLocation="CenterOwner"
+	mc:Ignorable="d">
+
+	<controls:SpacedGrid
+		Margin="{x:Static darkUI:Defaults.MediumThickness}"
+		RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<TextBlock Grid.Row="0" Text="{tombLib:Localize Description}" TextWrapping="Wrap" />
+
+		<DataGrid
+			Grid.Row="1"
+			AutoGenerateColumns="False"
+			CanUserAddRows="False"
+			CanUserDeleteRows="False"
+			CanUserReorderColumns="False"
+			CanUserResizeColumns="False"
+			CanUserSortColumns="False"
+			GridLinesVisibility="Horizontal"
+			HeadersVisibility="Column"
+			ItemsSource="{Binding Rows}"
+			RowHeaderWidth="0"
+			SelectionMode="Single">
+			<DataGrid.Columns>
+				<DataGridCheckBoxColumn Width="32" Binding="{Binding Replace, UpdateSourceTrigger=PropertyChanged}" />
+				<DataGridTextColumn
+					Width="*"
+					Binding="{Binding DisplayName}"
+					Header="{tombLib:Localize ColumnName}"
+					IsReadOnly="True" />
+			</DataGrid.Columns>
+		</DataGrid>
+
+		<controls:SpacedStack
+			Grid.Row="2"
+			HorizontalAlignment="Right"
+			Orientation="Horizontal"
+			Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+			<Button
+				Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+				Command="{Binding ApplyCommand}"
+				Content="{tombLib:Localize Apply}"
+				IsDefault="True" />
+			<Button
+				Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+				Command="{Binding CloseCommand}"
+				Content="{tombLib:Localize ~Common.Close}"
+				IsCancel="True" />
+		</controls:SpacedStack>
+	</controls:SpacedGrid>
+</Window>

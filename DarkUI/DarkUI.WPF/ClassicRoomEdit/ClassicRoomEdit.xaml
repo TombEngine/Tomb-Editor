@@ -1,0 +1,20 @@
+<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<!--
+		Aggregator for the WinRoomEdit-style skin. Pulls in the classic color palette
+		plus the chunky 90s control templates (implicit styles override the modern
+		Generic.xaml ones for any merged scope).
+	-->
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="/DarkUI.WPF;component/ClassicRoomEdit/ClassicColors.xaml" />
+
+		<ResourceDictionary Source="/DarkUI.WPF;component/ClassicRoomEdit/Button.xaml" />
+		<ResourceDictionary Source="/DarkUI.WPF;component/ClassicRoomEdit/CheckBox.xaml" />
+		<ResourceDictionary Source="/DarkUI.WPF;component/ClassicRoomEdit/ColorPickerButton.xaml" />
+		<ResourceDictionary Source="/DarkUI.WPF;component/ClassicRoomEdit/ComboBox.xaml" />
+		<ResourceDictionary Source="/DarkUI.WPF;component/ClassicRoomEdit/TextBox.xaml" />
+		<ResourceDictionary Source="/DarkUI.WPF;component/ClassicRoomEdit/ToggleButton.xaml" />
+	</ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

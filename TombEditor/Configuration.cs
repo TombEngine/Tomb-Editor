@@ -1,8 +1,12 @@
-using DarkUI.Docking;
+#nullable enable
+
+using DarkUI.WPF;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
+using System.Xml;
+using System.Xml.Serialization;
 using TombLib;
 using TombLib.LevelData;
 using TombLib.LevelData.VisualScripting;
@@ -199,6 +203,7 @@ namespace TombEditor
         public float UI_FormColor_Brightness { get; set; } = 100.0f;
         public string UI_FormColor_ButtonHighlight { get; set; } = ColorTranslator.ToHtml(Color.FromArgb(104, 151, 187));
         public ColorScheme UI_ColorScheme { get; set; } = ColorScheme.Default;
+        public Theme UI_WpfTheme { get; set; } = Theme.Dark;
         public HotkeySets UI_Hotkeys { get; set; } = new HotkeySets();
 
         // Toolbar button order
@@ -296,7 +301,7 @@ namespace TombEditor
         public Size Window_FormMaterialEditor_Size { get; set; } = new Size(537, 724);
         public bool Window_FormMaterialEditor_Maximized { get; set; } = false;
 
-        public NamedLayout Window_Layout { get; set; } = new NamedLayout { State = Window_LayoutDefault.Clone() };
+        public NamedLayout Window_Layout { get; set; } = new NamedLayout();
         public List<NamedLayout> Window_CustomLayouts { get; set; } = new List<NamedLayout>();
         public string Window_ActiveLayoutName { get; set; } = string.Empty;
 
@@ -317,113 +322,18 @@ namespace TombEditor
         }
 
         public static readonly Size Window_SizeDefault = new Size(1212, 763);
-        public static readonly DockPanelState Window_LayoutDefault = new DockPanelState
-        {
-            Regions = new List<DockRegionState>
-            {
-                new DockRegionState
-                {
-                    Area = DarkDockArea.Document,
-                    Size = new Size(0, 0),
-                    Groups = new List<DockGroupState>
-                    {
-                        new DockGroupState
-                        {
-                            Contents = new List<string> { "MainView" },
-                            VisibleContent = "MainView",
-                            Order = 0,
-                            Size = new Size(0 ,0)
-                        }
-                    }
-                },
-                new DockRegionState
-                {
-                    Area = DarkDockArea.Left,
-                    Size = new Size(286, 893),
-                    Groups = new List<DockGroupState>
-                    {
-                        new DockGroupState
-                        {
-                            Contents = new List<string> { "SectorOptions" },
-                            VisibleContent = "SectorOptions",
-                            Order = 0,
-                            Size = new Size(284,280)
-                        },
-                        //new DockGroupState
-                        //{
-                        //    Contents = new List<string> { "ToolPalette" },
-                        //    VisibleContent = "ToolPalette",
-                        //    Order = 0,
-                        //    Size = new Size(284,52)
-                        //},
-                        new DockGroupState
-                        {
-                            Contents = new List<string> { "RoomOptions" },
-                            VisibleContent = "RoomOptions",
-                            Order = 1,
-                            Size = new Size(284,236)
-                        },
-                        new DockGroupState
-                        {
-                            Contents = new List<string> { "ItemBrowser", "ImportedGeometryBrowser" },
-                            VisibleContent = "ItemBrowser",
-                            Order = 2,
-                            Size = new Size(284,259)
-                        },
-                        new DockGroupState
-                        {
-                            Contents = new List<string> { "TriggerList", "ObjectList" },
-                            VisibleContent = "TriggerList",
-                            Order = 3,
-                            Size = new Size(284,174)
-                        }
-                    }
-                },
-                new DockRegionState
-                {
-                    Area = DarkDockArea.Right,
-                    Size = new Size(286, 0),
-                    Groups = new List<DockGroupState>
-                    {
-                        new DockGroupState
-                        {
-                            Contents = new List<string> { "TexturePanel", "ItemProperties" },
-                            VisibleContent = "TexturePanel",
-                            Order = 0,
-                            Size = new Size(286,700)
-                        }
-                    }
-                },
-                new DockRegionState
-                {
-                    Area = DarkDockArea.Bottom,
-                    Size = new Size(1007, 128),
-                    Groups = new List<DockGroupState>
-                    {
-                        new DockGroupState
-                        {
-                            Contents = new List<string> { "Lighting" },
-                            VisibleContent = "Lighting",
-                            Order = 0,
-                            Size = new Size(371,141)
-                        },
-                        new DockGroupState
-                        {
-                            Contents = new List<string> { "ContentBrowser", "Palette" },
-                            VisibleContent = "ContentBrowser",
-                            Order = 1,
-                            Size = new Size(645,141)
-                        }
-                    }
-                }
-            }
-        };
     }
 
     public class NamedLayout : ICloneable
     {
         public string Name { get; set; } = string.Empty;
-        public DockPanelState State { get; set; } = Configuration.Window_LayoutDefault.Clone();
+        [XmlAnyElement("State")]
+        public XmlElement? LegacyState { get; set; }
+
+        // Serialized AvalonDock layout (XmlLayoutSerializer output) for the WPF shell.
+        // Older docking metadata is preserved as XML without loading its original UI types.
+        public string AvalonDockState { get; set; } = string.Empty;
+
         public Point ToolboxPosition { get; set; } = new Point(15, 15);
         public Point ObjectBrushToolboxPosition { get; set; } = new Point(50, 15);
         public bool ShowToolbox { get; set; } = true;
@@ -433,7 +343,8 @@ namespace TombEditor
         public NamedLayout Clone() => new NamedLayout
         {
             Name = Name,
-            State = State.Clone(),
+            LegacyState = (XmlElement?)LegacyState?.CloneNode(true),
+            AvalonDockState = AvalonDockState,
             ToolboxPosition = ToolboxPosition,
             ObjectBrushToolboxPosition = ObjectBrushToolboxPosition,
             ShowToolbox = ShowToolbox,

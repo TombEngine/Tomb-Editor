@@ -1,0 +1,487 @@
+<Window
+    x:Class="TombEditor.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avalonDock="https://github.com/Dirkster99/AvalonDock"
+    xmlns:darkDock="clr-namespace:DarkUI.WPF.AvalonDock;assembly=DarkUI.WPF"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:editor="clr-namespace:TombEditor"
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:contentBrowser="clr-namespace:TombEditor.Features.DockableViews.ContentBrowser"
+    xmlns:importedGeometryBrowser="clr-namespace:TombEditor.Features.DockableViews.ImportedGeometryBrowser"
+    xmlns:itemBrowser="clr-namespace:TombEditor.Features.DockableViews.ItemBrowser"
+    xmlns:itemPropertiesPanel="clr-namespace:TombEditor.Features.DockableViews.ItemPropertiesPanel"
+    xmlns:lightingPanel="clr-namespace:TombEditor.Features.DockableViews.LightingPanel"
+    xmlns:objectList="clr-namespace:TombEditor.Features.DockableViews.ObjectList"
+    xmlns:palettePanel="clr-namespace:TombEditor.Features.DockableViews.PalettePanel"
+    xmlns:roomOptionsPanel="clr-namespace:TombEditor.Features.DockableViews.RoomOptionsPanel"
+    xmlns:roomsPanel="clr-namespace:TombEditor.Features.DockableViews.RoomsPanel"
+    xmlns:sectorOptionsPanel="clr-namespace:TombEditor.Features.DockableViews.SectorOptionsPanel"
+    xmlns:texturePanel="clr-namespace:TombEditor.Features.DockableViews.TexturePanel"
+    xmlns:triggerList="clr-namespace:TombEditor.Features.DockableViews.TriggerList"
+    xmlns:flybyTimeline="clr-namespace:TombEditor.Features.FlybyTimeline.UI"
+    xmlns:map2d="clr-namespace:TombEditor.Features.Map2D"
+    xmlns:statisticsBar="clr-namespace:TombEditor.Features.StatisticsBar"
+    xmlns:statusBar="clr-namespace:TombEditor.Features.StatusBar"
+    xmlns:toolbar="clr-namespace:TombEditor.Features.Toolbar"
+    Title="Tomb Editor"
+    Icon="pack://application:,,,/TE.ico"
+    Width="1280"
+    Height="800"
+    MinWidth="800"
+    MinHeight="500"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+
+    <DockPanel LastChildFill="True">
+
+        <!--
+            Top: main editor menu. Mirrors FormMain.menuStrip 1:1. Each leaf MenuItem declares
+            editor:EditorMenu.Command="<TagName>", which populates Header (FriendlyName) and
+            InputGestureText (hotkey) at load via lookup into the same CommandHandler registry
+            that the previous FormMain uses through GenerateMenusRecursive.
+        -->
+        <DockPanel DockPanel.Dock="Top">
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+            <TextBox
+                x:Name="tbSearchMenu"
+                Width="200"
+                VerticalAlignment="Center"
+                KeyDown="TbSearchMenu_KeyDown"
+                ToolTip="Search for menu entry" />
+            <Button
+                x:Name="butFindMenu"
+                Margin="4,0,4,0"
+                VerticalAlignment="Center"
+                Click="ButFindMenu_Click"
+                ToolTip="Search for menu entry">
+                <Image Width="16" Source="{tomb:Icon General/search}" />
+            </Button>
+        </StackPanel>
+        <Menu x:Name="mainMenu">
+            <MenuItem Header="File">
+                <MenuItem editor:EditorMenu.Command="NewLevel" editor:EditorMenu.Icon="General/create_new" />
+                <MenuItem editor:EditorMenu.Command="OpenLevel" editor:EditorMenu.Icon="General/Open" />
+                <MenuItem x:Name="openRecentMenu" Header="Open recent" SubmenuOpened="OpenRecentMenu_SubmenuOpened">
+                    <MenuItem /><!-- placeholder so SubmenuOpened fires -->
+                </MenuItem>
+                <MenuItem editor:EditorMenu.Command="SaveLevel" editor:EditorMenu.Icon="General/Save" />
+                <MenuItem editor:EditorMenu.Command="SaveLevelAs" editor:EditorMenu.Icon="General/Save_As" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="ImportPrj" editor:EditorMenu.Icon="General/Import" />
+                <MenuItem editor:EditorMenu.Command="ConvertLevelToTombEngine" editor:EditorMenu.Icon="Actions/TEN" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="BuildAndPlay" editor:EditorMenu.Icon="Actions/play" />
+                <MenuItem editor:EditorMenu.Command="BuildLevel" editor:EditorMenu.Icon="Actions/compile" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="QuitEditor" />
+            </MenuItem>
+
+            <MenuItem Header="Edit" SubmenuOpened="EditMenu_SubmenuOpened">
+                <MenuItem editor:EditorMenu.Command="Undo" editor:EditorMenu.Icon="General/undo" />
+                <MenuItem editor:EditorMenu.Command="Redo" editor:EditorMenu.Icon="General/redo" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="Cut" editor:EditorMenu.Icon="Actions/cut" />
+                <MenuItem editor:EditorMenu.Command="Copy" editor:EditorMenu.Icon="General/copy" />
+                <MenuItem editor:EditorMenu.Command="Paste" editor:EditorMenu.Icon="General/paste" />
+                <MenuItem editor:EditorMenu.Command="StampObject" editor:EditorMenu.Icon="Actions/rubber_stamp" />
+                <MenuItem editor:EditorMenu.Command="Delete" editor:EditorMenu.Icon="Actions/delete" />
+                <MenuItem editor:EditorMenu.Command="SelectAll" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="BookmarkObject" editor:EditorMenu.Icon="Actions/StarOutlined" />
+                <MenuItem editor:EditorMenu.Command="SelectBookmarkedObject" editor:EditorMenu.Icon="Actions/StarFilled" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="EditObject" editor:EditorMenu.Icon="General/edit" />
+                <MenuItem editor:EditorMenu.Command="EditVolumeEventSets" />
+                <MenuItem editor:EditorMenu.Command="EditGlobalEventSets" />
+                <MenuItem editor:EditorMenu.Command="Search" editor:EditorMenu.Icon="General/search" />
+                <MenuItem editor:EditorMenu.Command="SearchAndReplaceObjects" editor:EditorMenu.Icon="General/Find-and-replace" />
+            </MenuItem>
+
+            <MenuItem Header="View" SubmenuOpened="ViewMenu_SubmenuOpened">
+                <MenuItem editor:EditorMenu.Command="ResetCamera" editor:EditorMenu.Icon="Actions/center_direction" />
+                <MenuItem editor:EditorMenu.Command="RelocateCamera" editor:EditorMenu.Icon="General/target" />
+                <MenuItem editor:EditorMenu.Command="ToggleFlyMode" editor:EditorMenu.Icon="General/airplane" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="DrawWhiteTextureLightingOnly" editor:EditorMenu.Icon="Actions/DrawUntexturedLights" />
+                <MenuItem editor:EditorMenu.Command="ShowRealTintForObjects" editor:EditorMenu.Icon="Actions/StaticTint" />
+            </MenuItem>
+
+            <MenuItem Header="Rooms">
+                <MenuItem Header="New room">
+                    <MenuItem editor:EditorMenu.Command="NewRoomUp" editor:EditorMenu.Icon="Actions/NewRoomUp" />
+                    <MenuItem editor:EditorMenu.Command="NewRoomDown" editor:EditorMenu.Icon="Actions/NewRoomDown" />
+                    <MenuItem editor:EditorMenu.Command="NewRoomLeft" />
+                    <MenuItem editor:EditorMenu.Command="NewRoomRight" />
+                    <MenuItem editor:EditorMenu.Command="NewRoomFront" />
+                    <MenuItem editor:EditorMenu.Command="NewRoomBack" />
+                </MenuItem>
+                <MenuItem editor:EditorMenu.Command="DuplicateRoom" editor:EditorMenu.Icon="General/copy" />
+                <MenuItem editor:EditorMenu.Command="CropRoom" editor:EditorMenu.Icon="General/crop" />
+                <MenuItem editor:EditorMenu.Command="SplitRoom" editor:EditorMenu.Icon="Actions/Split" />
+                <MenuItem editor:EditorMenu.Command="MergeRoomsHorizontally" editor:EditorMenu.Icon="Actions/Merge" />
+                <MenuItem editor:EditorMenu.Command="DeleteRooms" editor:EditorMenu.Icon="Actions/delete" />
+                <Separator />
+                <MenuItem Header="Move rooms">
+                    <MenuItem editor:EditorMenu.Command="MoveRoomUp" editor:EditorMenu.Icon="General/ArrowUp" />
+                    <MenuItem editor:EditorMenu.Command="MoveRoomUp4Clicks" />
+                    <MenuItem editor:EditorMenu.Command="MoveRoomDown" editor:EditorMenu.Icon="General/ArrowDown" />
+                    <MenuItem editor:EditorMenu.Command="MoveRoomDown4Clicks" />
+                    <MenuItem editor:EditorMenu.Command="MoveRoomLeft" />
+                    <MenuItem editor:EditorMenu.Command="MoveRoomRight" />
+                    <MenuItem editor:EditorMenu.Command="MoveRoomForward" />
+                    <MenuItem editor:EditorMenu.Command="MoveRoomBack" />
+                </MenuItem>
+                <MenuItem Header="Transform rooms">
+                    <MenuItem editor:EditorMenu.Command="RotateRoomsClockwise" editor:EditorMenu.Icon="General/Rotate" />
+                    <MenuItem editor:EditorMenu.Command="RotateRoomsCounterClockwise" editor:EditorMenu.Icon="General/Rotate" />
+                    <MenuItem editor:EditorMenu.Command="MirrorRoomsX" editor:EditorMenu.Icon="General/Mirror" />
+                    <MenuItem editor:EditorMenu.Command="MirrorRoomsZ" editor:EditorMenu.Icon="General/Mirror" />
+                </MenuItem>
+                <MenuItem Header="Select rooms">
+                    <MenuItem editor:EditorMenu.Command="SelectWaterRooms" />
+                    <MenuItem editor:EditorMenu.Command="SelectSkyRooms" />
+                    <MenuItem editor:EditorMenu.Command="SelectOutsideRooms" />
+                    <MenuItem editor:EditorMenu.Command="SelectQuicksandRooms" />
+                    <Separator />
+                    <MenuItem editor:EditorMenu.Command="SelectConnectedRooms" />
+                    <MenuItem editor:EditorMenu.Command="SelectRoomsByTags" />
+                </MenuItem>
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="ExportRooms" editor:EditorMenu.Icon="General/Export" />
+                <MenuItem editor:EditorMenu.Command="ImportRooms" editor:EditorMenu.Icon="General/Import" />
+                <MenuItem editor:EditorMenu.Command="ApplyRoomProperties" />
+            </MenuItem>
+
+            <MenuItem Header="Items">
+                <MenuItem editor:EditorMenu.Command="AddWad" editor:EditorMenu.Icon="General/folder" />
+                <MenuItem editor:EditorMenu.Command="RemoveWads" />
+                <MenuItem editor:EditorMenu.Command="ReloadWads" editor:EditorMenu.Icon="Actions/refresh" />
+                <MenuItem editor:EditorMenu.Command="ReloadSounds" editor:EditorMenu.Icon="Actions/refresh" />
+                <Separator />
+                <MenuItem Header="Add item">
+                    <MenuItem editor:EditorMenu.Command="AddCamera" editor:EditorMenu.Icon="Objects/Camera" />
+                    <MenuItem editor:EditorMenu.Command="AddFlybyCamera" editor:EditorMenu.Icon="Objects/movie_projector" />
+                    <MenuItem editor:EditorMenu.Command="AddSprite" editor:EditorMenu.Icon="Objects/Sprite" />
+                    <MenuItem editor:EditorMenu.Command="AddSink" editor:EditorMenu.Icon="Objects/tornado" />
+                    <MenuItem editor:EditorMenu.Command="AddSoundSource" editor:EditorMenu.Icon="Objects/speaker" />
+                    <MenuItem editor:EditorMenu.Command="AddImportedGeometry" editor:EditorMenu.Icon="Objects/custom-geometry" />
+                    <MenuItem editor:EditorMenu.Command="AddGhostBlock" editor:EditorMenu.Icon="Objects/geometry-override" />
+                    <MenuItem editor:EditorMenu.Command="AddMemo" editor:EditorMenu.Icon="Objects/Memo" />
+                </MenuItem>
+                <MenuItem editor:EditorMenu.Command="AddPortal" />
+                <MenuItem editor:EditorMenu.Command="AddTrigger" />
+                <MenuItem editor:EditorMenu.Command="AddBoxVolume" editor:EditorMenu.Icon="Objects/volume-box" />
+                <MenuItem editor:EditorMenu.Command="AddSphereVolume" editor:EditorMenu.Icon="Objects/volume-sphere" />
+                <Separator />
+                <MenuItem Header="Delete...">
+                    <MenuItem editor:EditorMenu.Command="DeleteAllLights" editor:EditorMenu.Icon="Actions/delete" />
+                    <MenuItem editor:EditorMenu.Command="DeleteAllObjects" editor:EditorMenu.Icon="Actions/delete" />
+                    <MenuItem editor:EditorMenu.Command="DeleteAllTriggers" editor:EditorMenu.Icon="Actions/delete" />
+                    <MenuItem editor:EditorMenu.Command="DeleteMissingObjects" editor:EditorMenu.Icon="General/trash" />
+                </MenuItem>
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="LocateItem" editor:EditorMenu.Icon="General/target" />
+                <MenuItem editor:EditorMenu.Command="MoveLara" />
+                <MenuItem editor:EditorMenu.Command="SelectAllObjectsInArea" />
+                <MenuItem editor:EditorMenu.Command="SelectFloorBelowObject" />
+                <MenuItem editor:EditorMenu.Command="SplitSectorObjectOnSelection" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="SetStaticMeshesColorToRoomLight" />
+                <MenuItem editor:EditorMenu.Command="SetStaticMeshesColor" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="MakeQuickItemGroup" />
+                <MenuItem editor:EditorMenu.Command="GetObjectStatistics" />
+                <MenuItem editor:EditorMenu.Command="GenerateObjectNames" />
+            </MenuItem>
+
+            <MenuItem Header="Textures">
+                <MenuItem editor:EditorMenu.Command="AddTexture" editor:EditorMenu.Icon="General/Import" />
+                <MenuItem editor:EditorMenu.Command="RemoveTextures" />
+                <MenuItem editor:EditorMenu.Command="UnloadTextures" />
+                <MenuItem editor:EditorMenu.Command="ReloadTextures" editor:EditorMenu.Icon="Actions/refresh" />
+                <MenuItem editor:EditorMenu.Command="ConvertTexturesToPNG" />
+                <MenuItem editor:EditorMenu.Command="RemapTexture" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="TextureFloor" editor:EditorMenu.Icon="Texture/Floor2" />
+                <MenuItem editor:EditorMenu.Command="TextureWalls" editor:EditorMenu.Icon="Texture/Walls2" />
+                <MenuItem editor:EditorMenu.Command="TextureCeiling" editor:EditorMenu.Icon="Texture/Ceiling2" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="ClearAllTexturesInRoom" />
+                <MenuItem editor:EditorMenu.Command="ClearAllTexturesInLevel" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="SearchTextures" editor:EditorMenu.Icon="General/search-texture" />
+                <MenuItem editor:EditorMenu.Command="EditAnimationRanges" editor:EditorMenu.Icon="Texture/anim_ranges" />
+            </MenuItem>
+
+            <MenuItem Header="Transform">
+                <MenuItem editor:EditorMenu.Command="IncreaseStepHeight" />
+                <MenuItem editor:EditorMenu.Command="DecreaseStepHeight" />
+                <Separator x:Name="stepHeightSeparator" />
+                <MenuItem editor:EditorMenu.Command="SmoothRandomFloorUp" />
+                <MenuItem editor:EditorMenu.Command="SmoothRandomFloorDown" />
+                <MenuItem editor:EditorMenu.Command="SmoothRandomCeilingUp" />
+                <MenuItem editor:EditorMenu.Command="SmoothRandomCeilingDown" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="SharpRandomFloorUp" />
+                <MenuItem editor:EditorMenu.Command="SharpRandomFloorDown" />
+                <MenuItem editor:EditorMenu.Command="SharpRandomCeilingUp" />
+                <MenuItem editor:EditorMenu.Command="SharpRandomCeilingDown" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="RealignFloorToStepHeight" />
+                <MenuItem editor:EditorMenu.Command="RealignCeilingToStepHeight" />
+                <MenuItem editor:EditorMenu.Command="SmoothFloor" />
+                <MenuItem editor:EditorMenu.Command="SmoothCeiling" />
+                <MenuItem editor:EditorMenu.Command="AverageFloor" />
+                <MenuItem editor:EditorMenu.Command="AverageCeiling" />
+                <MenuItem editor:EditorMenu.Command="FlattenFloor" />
+                <MenuItem editor:EditorMenu.Command="FlattenCeiling" />
+                <MenuItem editor:EditorMenu.Command="ResetGeometry" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="GridWallsIn3" />
+                <MenuItem editor:EditorMenu.Command="GridWallsIn5" />
+                <MenuItem editor:EditorMenu.Command="GridWallsIn3Squares" />
+                <MenuItem editor:EditorMenu.Command="GridWallsIn5Squares" />
+                <MenuItem editor:EditorMenu.Command="ConvertFloorToQuads" />
+                <MenuItem editor:EditorMenu.Command="ConvertCeilingToQuads" />
+            </MenuItem>
+
+            <MenuItem Header="Tools">
+                <MenuItem editor:EditorMenu.Command="EditLevelSettings" editor:EditorMenu.Icon="General/settings" />
+                <MenuItem editor:EditorMenu.Command="EditOptions" editor:EditorMenu.Icon="General/options" />
+                <MenuItem editor:EditorMenu.Command="EditKeyboardLayout" />
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="StartWadTool" />
+                <MenuItem editor:EditorMenu.Command="StartSoundTool" />
+            </MenuItem>
+
+            <MenuItem Header="Window" SubmenuOpened="WindowMenu_SubmenuOpened">
+                <MenuItem Header="{tombLib:Localize Layouts_Header}" SubmenuOpened="LayoutsMenu_SubmenuOpened">
+                    <!--  Placeholder so the SubmenuOpened event fires when the menu is opened.  -->
+                    <MenuItem />
+                </MenuItem>
+                <Separator />
+                <MenuItem editor:EditorMenu.Command="ShowSectorOptions" />
+                <MenuItem editor:EditorMenu.Command="ShowRoomOptions" />
+                <MenuItem editor:EditorMenu.Command="ShowItemBrowser" />
+                <MenuItem editor:EditorMenu.Command="ShowImportedGeometryBrowser" />
+                <MenuItem editor:EditorMenu.Command="ShowContentBrowser" />
+                <MenuItem editor:EditorMenu.Command="ShowTriggerList" />
+                <MenuItem editor:EditorMenu.Command="ShowLighting" />
+                <MenuItem editor:EditorMenu.Command="ShowPalette" />
+                <MenuItem editor:EditorMenu.Command="ShowTexturePanel" />
+                <MenuItem editor:EditorMenu.Command="ShowObjectList" />
+                <MenuItem editor:EditorMenu.Command="ShowItemProperties" />
+                <MenuItem editor:EditorMenu.Command="ShowStatistics" />
+                <MenuItem editor:EditorMenu.Command="ShowToolPalette" />
+                <MenuItem editor:EditorMenu.Command="ShowFlybyTimeline" editor:EditorMenu.Icon="Objects/movie_projector" />
+            </MenuItem>
+
+            <MenuItem Header="Help">
+                <MenuItem Header="About Tomb Editor..." Click="AboutMenu_Click">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon General/AboutIcon}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+        </DockPanel>
+
+        <!--  Bottom-most: status bar (selected room | selection area | selection size | autosave).
+            Port of the previous FormMain DarkStatusStrip; docked at the very bottom of the window,
+            matching the legacy layout.  -->
+        <statusBar:StatusBarView x:Name="statusBarView" DockPanel.Dock="Bottom" />
+
+        <!--  Center: AvalonDock  -->
+        <avalonDock:DockingManager x:Name="dockManager">
+            <avalonDock:DockingManager.Theme>
+                <darkDock:DarkUIDockTheme />
+            </avalonDock:DockingManager.Theme>
+
+            <avalonDock:LayoutRoot>
+                <!--  Mirrors the legacy previous default (Configuration.Window_LayoutDefault):  -->
+                <!--  Left column: Sector options / Room options / Items+Imported geometry / Triggers+Objects.  -->
+                <!--  Right column: Textures. Center bottom: Lighting | Content browser+Palette.  -->
+                <!--  Rooms (a WPF-only panel) is tabbed with Room options; the flyby timeline strip  -->
+                <!--  (also WPF-only) sits directly under the viewport.  -->
+                <avalonDock:LayoutPanel Orientation="Horizontal">
+
+                    <!--  Left column  -->
+                    <avalonDock:LayoutAnchorablePaneGroup DockWidth="286" Orientation="Vertical">
+                        <avalonDock:LayoutAnchorablePane DockHeight="300" DockMinHeight="285">
+                            <avalonDock:LayoutAnchorable
+                                ContentId="sectorOptions"
+                                CanClose="False"
+                                IconSource="{tomb:Icon Sectortype/Floor_1}"
+                                Title="Sector Options">
+                                <sectorOptionsPanel:SectorOptionsView x:Name="sectorOptionsView" />
+                            </avalonDock:LayoutAnchorable>
+                        </avalonDock:LayoutAnchorablePane>
+                        <avalonDock:LayoutAnchorablePane DockHeight="278" DockMinHeight="272">
+                            <avalonDock:LayoutAnchorable
+                                ContentId="rooms"
+                                CanClose="False"
+                                IconSource="{tomb:Icon Actions/DrawAllRooms}"
+                                Title="Rooms">
+                                <roomsPanel:RoomsView x:Name="roomsView" />
+                            </avalonDock:LayoutAnchorable>
+                            <avalonDock:LayoutAnchorable
+                                ContentId="roomOptions"
+                                CanClose="False"
+                                IconSource="{tomb:Icon General/options}"
+                                IsSelected="True"
+                                Title="Room Options">
+                                <roomOptionsPanel:RoomOptionsView x:Name="roomOptionsView" />
+                            </avalonDock:LayoutAnchorable>
+                        </avalonDock:LayoutAnchorablePane>
+                        <avalonDock:LayoutAnchorablePane DockHeight="192">
+                            <avalonDock:LayoutAnchorable
+                                ContentId="itemBrowser"
+                                CanClose="False"
+                                IconSource="{tomb:Icon Toolbox/ObjectPlacement}"
+                                Title="Items">
+                                <itemBrowser:ItemBrowserView x:Name="itemBrowserView" />
+                            </avalonDock:LayoutAnchorable>
+                            <avalonDock:LayoutAnchorable
+                                ContentId="importedGeometryBrowser"
+                                CanClose="False"
+                                IconSource="{tomb:Icon Objects/custom-geometry}"
+                                Title="Imported Geometry">
+                                <importedGeometryBrowser:ImportedGeometryBrowserView x:Name="importedGeometryBrowserView" />
+                            </avalonDock:LayoutAnchorable>
+                        </avalonDock:LayoutAnchorablePane>
+                        <avalonDock:LayoutAnchorablePane DockHeight="170">
+                            <avalonDock:LayoutAnchorable
+                                ContentId="triggerList"
+                                CanClose="False"
+                                IconSource="{tomb:Icon Sectortype/TriggerTriggerer}"
+                                Title="Triggers">
+                                <triggerList:TriggerListView x:Name="triggerListView" />
+                            </avalonDock:LayoutAnchorable>
+                            <avalonDock:LayoutAnchorable
+                                ContentId="objectList"
+                                CanClose="False"
+                                IconSource="{tomb:Icon Actions/DrawObjects}"
+                                Title="Objects in Room">
+                                <objectList:ObjectListView x:Name="objectListView" />
+                            </avalonDock:LayoutAnchorable>
+                            <avalonDock:LayoutAnchorable
+                                ContentId="itemProperties"
+                                CanClose="False"
+                                IconSource="{tomb:Icon General/edit}"
+                                Title="Item Properties">
+                                <itemPropertiesPanel:ItemPropertiesView x:Name="itemPropertiesView" />
+                            </avalonDock:LayoutAnchorable>
+                        </avalonDock:LayoutAnchorablePane>
+                    </avalonDock:LayoutAnchorablePaneGroup>
+
+                    <!--  Center: single editor area (3D view / 2D map switch by mode), flyby timeline strip, then the bottom dock region  -->
+                    <avalonDock:LayoutPanel Orientation="Vertical">
+                        <avalonDock:LayoutDocumentPaneGroup>
+                            <avalonDock:LayoutDocumentPane ShowHeader="False">
+                                <avalonDock:LayoutDocument
+                                    x:Name="editorDocument"
+                                    ContentId="mainView"
+                                    CanClose="False"
+                                    Title="Editor">
+                                    <!--  Single editor area: one toolbar and one statistics bar shared by the 3D view and the
+                                        2D map, which live in their own nested DockingManager below. This keeps the toolbar/stats a
+                                        single instance directly above the viewport (never above the side panels) while still
+                                        letting the 3D and 2D views be tabbed or split side by side.  -->
+                                    <DockPanel x:Name="editorAreaHost" LastChildFill="True">
+                                        <toolbar:EditorToolbarView DockPanel.Dock="Top" />
+                                        <statisticsBar:StatisticsBarView x:Name="statisticsBarView" DockPanel.Dock="Bottom" />
+                                        <avalonDock:DockingManager x:Name="editorDockManager">
+                                            <avalonDock:DockingManager.Theme>
+                                                <darkDock:DarkUIDockTheme />
+                                            </avalonDock:DockingManager.Theme>
+                                            <avalonDock:LayoutRoot>
+                                                <avalonDock:LayoutPanel>
+                                                    <avalonDock:LayoutDocumentPaneGroup>
+                                                        <avalonDock:LayoutDocumentPane>
+                                                            <avalonDock:LayoutDocument
+                                                                x:Name="view3DDocument"
+                                                                ContentId="view3D"
+                                                                CanClose="False"
+                                                                Title="3D View">
+                                                                <Border x:Name="panel3DHost" Background="{DynamicResource Brush_Background_Low}" />
+                                                            </avalonDock:LayoutDocument>
+                                                            <avalonDock:LayoutDocument
+                                                                x:Name="view2DDocument"
+                                                                ContentId="view2D"
+                                                                CanClose="False"
+                                                                Title="2D Map">
+                                                                <map2d:Panel2DMap x:Name="panel2DMap" />
+                                                            </avalonDock:LayoutDocument>
+                                                        </avalonDock:LayoutDocumentPane>
+                                                    </avalonDock:LayoutDocumentPaneGroup>
+                                                </avalonDock:LayoutPanel>
+                                            </avalonDock:LayoutRoot>
+                                        </avalonDock:DockingManager>
+                                    </DockPanel>
+                                </avalonDock:LayoutDocument>
+                            </avalonDock:LayoutDocumentPane>
+                        </avalonDock:LayoutDocumentPaneGroup>
+                        <avalonDock:LayoutAnchorablePaneGroup DockHeight="160">
+                            <avalonDock:LayoutAnchorablePane>
+                                <avalonDock:LayoutAnchorable
+                                    x:Name="flybyTimelineAnchorable"
+                                    ContentId="flybyTimeline"
+                                    CanClose="False"
+                                    IconSource="{tomb:Icon Objects/movie_projector}"
+                                    Title="Flyby timeline">
+                                    <flybyTimeline:FlybyTimelineView x:Name="flybyTimelineView" />
+                                </avalonDock:LayoutAnchorable>
+                            </avalonDock:LayoutAnchorablePane>
+                        </avalonDock:LayoutAnchorablePaneGroup>
+                        <avalonDock:LayoutAnchorablePaneGroup DockHeight="150" Orientation="Horizontal">
+                            <avalonDock:LayoutAnchorablePane DockWidth="371">
+                                <avalonDock:LayoutAnchorable
+                                    ContentId="lighting"
+                                    CanClose="False"
+                                    IconSource="{tomb:Icon Actions/light_on}"
+                                    Title="Lighting">
+                                    <lightingPanel:LightingView x:Name="lightingView" />
+                                </avalonDock:LayoutAnchorable>
+                            </avalonDock:LayoutAnchorablePane>
+                            <avalonDock:LayoutAnchorablePane DockWidth="645">
+                                <avalonDock:LayoutAnchorable
+                                    ContentId="contentBrowser"
+                                    CanClose="False"
+                                    IconSource="{tomb:Icon General/folder}"
+                                    Title="Content Browser">
+                                    <contentBrowser:ContentBrowserView x:Name="contentBrowserView" />
+                                </avalonDock:LayoutAnchorable>
+                                <avalonDock:LayoutAnchorable
+                                    ContentId="palette"
+                                    CanClose="False"
+                                    IconSource="{tomb:Icon Toolbox/Paint}"
+                                    Title="Palette">
+                                    <palettePanel:PaletteView x:Name="paletteView" />
+                                </avalonDock:LayoutAnchorable>
+                            </avalonDock:LayoutAnchorablePane>
+                        </avalonDock:LayoutAnchorablePaneGroup>
+                    </avalonDock:LayoutPanel>
+
+                    <!--  Right column  -->
+                    <avalonDock:LayoutAnchorablePaneGroup DockWidth="286" Orientation="Vertical">
+                        <avalonDock:LayoutAnchorablePane>
+                            <avalonDock:LayoutAnchorable
+                                ContentId="texturePanel"
+                                CanClose="False"
+                                IconSource="{tomb:Icon Actions/TextureMode}"
+                                Title="Texturing">
+                                <texturePanel:TexturePanelView x:Name="texturePanelView" />
+                            </avalonDock:LayoutAnchorable>
+                        </avalonDock:LayoutAnchorablePane>
+                    </avalonDock:LayoutAnchorablePaneGroup>
+
+                </avalonDock:LayoutPanel>
+            </avalonDock:LayoutRoot>
+        </avalonDock:DockingManager>
+    </DockPanel>
+</Window>

@@ -1,0 +1,140 @@
+<Window
+	x:Class="WadTool.Features.Dialogs.ReplaceAnimCommands.ReplaceAnimCommandsWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+	xmlns:vm="clr-namespace:WadTool.Features.Dialogs.ReplaceAnimCommands"
+	xmlns:wadTool="clr-namespace:WadTool"
+	Title="{tombLib:Localize Title}"
+	Width="811"
+	Height="460"
+	MinWidth="811"
+	MinHeight="400"
+	MaxWidth="811"
+	d:DataContext="{d:DesignInstance Type=vm:ReplaceAnimCommandsWindowViewModel}"
+	Background="{DynamicResource Brush_Background}"
+	ShowInTaskbar="False"
+	Style="{DynamicResource CustomWindowStyle}"
+	WindowStartupLocation="CenterOwner"
+	mc:Ignorable="d">
+
+	<controls:SpacedGrid
+		Margin="{x:Static darkUI:Defaults.MediumThickness}"
+		RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<controls:SpacedGrid Grid.Row="0" ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+
+			<GroupBox Grid.Column="0" Header="{tombLib:Localize SearchFor}">
+				<wadTool:AnimCommandEditor x:Name="findCommandEditor" Height="140" />
+			</GroupBox>
+			<GroupBox Grid.Column="1" Header="{tombLib:Localize ReplaceWith}">
+				<wadTool:AnimCommandEditor x:Name="replaceCommandEditor" Height="140" />
+			</GroupBox>
+		</controls:SpacedGrid>
+
+		<controls:SpacedGrid Grid.Row="1" ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<Button
+				Grid.Column="0"
+				Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+				Command="{Binding FindCommand}"
+				Content="{tombLib:Localize Find}" />
+			<Button
+				Grid.Column="1"
+				Width="110"
+				Command="{Binding ReplaceCommand}"
+				Content="{tombLib:Localize ReplaceSelected}" />
+			<Button
+				Grid.Column="2"
+				Width="110"
+				Command="{Binding DeleteCommand}"
+				Content="{tombLib:Localize DeleteSelected}" />
+			<Button
+				Grid.Column="4"
+				Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+				Command="{Binding SelectAllCommand}"
+				Content="{tombLib:Localize SelectAll}" />
+			<Button
+				Grid.Column="5"
+				Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+				Command="{Binding DeselectAllCommand}"
+				Content="{tombLib:Localize DeselectAll}" />
+		</controls:SpacedGrid>
+
+		<DataGrid
+			Grid.Row="2"
+			AutoGenerateColumns="False"
+			CanUserAddRows="False"
+			CanUserDeleteRows="False"
+			CanUserReorderColumns="False"
+			HeadersVisibility="Column"
+			ItemsSource="{Binding Rows}"
+			SelectionMode="Single">
+			<DataGrid.Columns>
+				<DataGridTemplateColumn Width="60" Header="{tombLib:Localize ColumnReplace}">
+					<DataGridTemplateColumn.CellTemplate>
+						<DataTemplate>
+							<CheckBox
+								HorizontalAlignment="Center"
+								VerticalAlignment="Center"
+								IsChecked="{Binding Selected, UpdateSourceTrigger=PropertyChanged}" />
+						</DataTemplate>
+					</DataGridTemplateColumn.CellTemplate>
+				</DataGridTemplateColumn>
+				<DataGridTextColumn
+					Width="50"
+					Binding="{Binding AnimIndex}"
+					Header="{tombLib:Localize ColumnAnimNumber}"
+					IsReadOnly="True" />
+				<DataGridTextColumn
+					Width="*"
+					Binding="{Binding Description}"
+					Header="{tombLib:Localize ColumnDescription}"
+					IsReadOnly="True" />
+			</DataGrid.Columns>
+		</DataGrid>
+
+		<controls:SpacedGrid Grid.Row="3" ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<TextBlock
+				Grid.Column="0"
+				VerticalAlignment="Center"
+				Foreground="{DynamicResource Brush_Text_Low}"
+				Text="{Binding StatusText}"
+				TextTrimming="CharacterEllipsis" />
+			<Button
+				Grid.Column="1"
+				Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+				Command="{Binding CloseCommand}"
+				Content="{tombLib:Localize ~Common.OK}"
+				IsCancel="True" />
+		</controls:SpacedGrid>
+	</controls:SpacedGrid>
+</Window>

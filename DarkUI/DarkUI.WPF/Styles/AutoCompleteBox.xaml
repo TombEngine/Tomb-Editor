@@ -13,7 +13,7 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type controls:AutoCompleteBox}">
 					<Grid>
-						<TextBox x:Name="PART_InputTextBox" />
+						<TextBox x:Name="PART_InputTextBox" CharacterCasing="{TemplateBinding CharacterCasing}" ToolTip="{TemplateBinding ToolTip}" />
 
 						<Popup
 							x:Name="PART_Popup"

@@ -1,0 +1,48 @@
+<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<ResourceDictionary.MergedDictionaries>
+		<!--
+			Baseline: AvalonDock VS2013 Dark theme. Brush keys are overridden below so the dock
+			respects the active DarkUI palette (BlackColors / DarkColors / LightColors) via
+			DynamicResource. Switching DarkUI palette at runtime re-skins the dock automatically.
+		-->
+		<ResourceDictionary Source="pack://application:,,,/AvalonDock.Themes.VS2013;component/DarkTheme.xaml" />
+	</ResourceDictionary.MergedDictionaries>
+
+	<!--
+		Brush overrides
+		Approach: the VS2013 theme defines SolidColorBrush resources keyed by simple names
+		(e.g. "BackgroundBrush", "BorderBrush", "AvalonDock_BaseColor3"). We override the
+		highest-impact ones to reference the DarkUI palette. Remaining keys inherit from
+		VS2013 dark and will be tuned iteratively after the smoke test.
+	-->
+
+	<!--  Main surfaces  -->
+	<SolidColorBrush x:Key="BackgroundBrush" Color="{DynamicResource Color_Background}" />
+	<SolidColorBrush x:Key="BorderBrush" Color="{DynamicResource Color_Border}" />
+
+	<!--  Document & anchorable tab backgrounds  -->
+	<SolidColorBrush x:Key="DocumentWellTabSelectedActiveBackground" Color="{DynamicResource Color_Selection}" />
+	<SolidColorBrush x:Key="DocumentWellTabSelectedInactiveBackground" Color="{DynamicResource Color_Selection_LostFocus}" />
+	<SolidColorBrush x:Key="DocumentWellTabUnselectedBackground" Color="{DynamicResource Color_Background_Low}" />
+	<SolidColorBrush x:Key="DocumentWellTabUnselectedHoveredBackground" Color="{DynamicResource Color_Background_High}" />
+	<SolidColorBrush x:Key="DocumentWellTabSelectedActiveText" Color="{DynamicResource Color_Text}" />
+	<SolidColorBrush x:Key="DocumentWellTabSelectedInactiveText" Color="{DynamicResource Color_Text}" />
+	<SolidColorBrush x:Key="DocumentWellTabUnselectedText" Color="{DynamicResource Color_Text}" />
+
+	<!--  Title bars / captions  -->
+	<SolidColorBrush x:Key="AnchorableTitleForeground" Color="{DynamicResource Color_Text}" />
+	<SolidColorBrush x:Key="AnchorableTitleBackground" Color="{DynamicResource Color_Background_Low}" />
+	<SolidColorBrush x:Key="AnchorableTitleBackgroundActive" Color="{DynamicResource Color_Selection}" />
+	<SolidColorBrush x:Key="AnchorableTitleForegroundActive" Color="{DynamicResource Color_Text}" />
+
+	<!--  Resize splitter  -->
+	<SolidColorBrush x:Key="ResizerBrush" Color="{DynamicResource Color_Background}" />
+
+	<!--  Auto-hide tab strip  -->
+	<SolidColorBrush x:Key="AutoHideTabBackground" Color="{DynamicResource Color_Background_Low}" />
+	<SolidColorBrush x:Key="AutoHideTabForeground" Color="{DynamicResource Color_Text}" />
+	<SolidColorBrush x:Key="AutoHideTabHoveredBackground" Color="{DynamicResource Color_Background_High}" />
+</ResourceDictionary>

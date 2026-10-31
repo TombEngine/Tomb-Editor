@@ -1,0 +1,431 @@
+<Window
+    x:Class="WadTool.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+    xmlns:tombLibControls="clr-namespace:TombLib.WPF.CustomControls;assembly=TombLib.WPF"
+    Title="{Binding Title}"
+    Icon="pack://application:,,,/WT.ico"
+    Width="1200"
+    Height="700"
+    MinWidth="800"
+    MinHeight="500"
+    Background="{DynamicResource Brush_Background}"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+
+    <DockPanel LastChildFill="True">
+
+        <!--  Top: main menu. Mirrors FormMain.darkMenuStrip1 1:1.  -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem
+                    Command="{Binding Commands[NewWad2Menu_Click]}"
+                    Header="New Wad2"
+                    InputGestureText="Ctrl+N">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon General/create_new}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem
+                    Command="{Binding Commands[OpenSourceWadMenu_Click]}"
+                    Header="Open source"
+                    InputGestureText="Ctrl+O">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon General/Open}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem
+                    Command="{Binding Commands[OpenDestinationWadMenu_Click]}"
+                    Header="Open destination"
+                    InputGestureText="Ctrl+Shift+O">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon General/folder}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem x:Name="openRecentMenu" Header="Open recent..." />
+                <MenuItem
+                    Command="{Binding Commands[OpenReferenceLevelMenu_Click]}"
+                    Header="Open reference Tomb Editor project"
+                    InputGestureText="Ctrl+Alt+O" />
+                <MenuItem
+                    x:Name="closeReferenceLevelMenu"
+                    Command="{Binding Commands[CloseReferenceLevelMenu_Click]}"
+                    Header="Close reference Tomb Editor project" />
+                <Separator />
+                <MenuItem
+                    x:Name="saveWad2Menu"
+                    Command="{Binding Commands[SaveMenu_Click]}"
+                    Header="Save Wad2"
+                    InputGestureText="Ctrl+S">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon General/Save}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem
+                    x:Name="saveWad2AsMenu"
+                    Command="{Binding Commands[SaveAsMenu_Click]}"
+                    Header="Save Wad2 as..."
+                    InputGestureText="Ctrl+Shift+S">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon General/Save_As}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator />
+                <MenuItem
+                    Command="{Binding Commands[ExitMenu_Click]}"
+                    Header="Exit"
+                    InputGestureText="Alt+F4">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon Misc/door_opened}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+
+            <MenuItem Header="_Create">
+                <MenuItem Command="{Binding Commands[NewMoveableMenu_Click]}" Header="New moveable" />
+                <MenuItem Command="{Binding Commands[NewStaticMenu_Click]}" Header="New static" />
+                <MenuItem Command="{Binding Commands[NewSpriteSequenceMenu_Click]}" Header="New sprite sequence" />
+            </MenuItem>
+
+            <MenuItem Header="_Selection">
+                <MenuItem Header="Lighting">
+                    <MenuItem
+                        x:Name="convertToStaticLightingMenu"
+                        Command="{Binding Commands[ConvertToStaticLightingMenu_Click]}"
+                        Header="Convert to static" />
+                    <MenuItem
+                        x:Name="convertToDynamicLightingMenu"
+                        Command="{Binding Commands[ConvertToDynamicLightingMenu_Click]}"
+                        Header="Convert to dynamic" />
+                </MenuItem>
+                <MenuItem Header="Textures">
+                    <MenuItem
+                        x:Name="convertToTiledMenu"
+                        Command="{Binding Commands[ConvertToTiledMenu_Click]}"
+                        Header="Convert to tiled" />
+                    <MenuItem
+                        x:Name="convertToUVMappedMenu"
+                        Command="{Binding Commands[ConvertToUVMappedMenu_Click]}"
+                        Header="Convert to UV-mapped" />
+                    <MenuItem
+                        x:Name="consolidateTexturesMenu"
+                        Command="{Binding Commands[ConsolidateTexturesMenu_Click]}"
+                        Header="Consolidate textures" />
+                </MenuItem>
+            </MenuItem>
+
+            <MenuItem Header="_Tools">
+                <MenuItem
+                    x:Name="animatedTexturesMenu"
+                    Command="{Binding Commands[AnimatedTexturesMenu_Click]}"
+                    Header="Animated textures" />
+                <MenuItem
+                    x:Name="meshEditorMenu"
+                    Command="{Binding Commands[MeshEditorMenu_Click]}"
+                    Header="Mesh editor" />
+                <MenuItem
+                    x:Name="itemPropertiesMenu"
+                    Command="{Binding Commands[ItemPropertiesMenu_Click]}"
+                    Header="Property editor" />
+                <Separator />
+                <MenuItem
+                    x:Name="convertWadToTombEngineMenu"
+                    Command="{Binding Commands[ConvertWadToTombEngineMenu_Click]}"
+                    Header="Convert wad to TombEngine..." />
+                <Separator />
+                <MenuItem Command="{Binding Commands[OptionsMenu_Click]}" Header="Options...">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon General/settings}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+
+            <MenuItem Header="_Help">
+                <MenuItem Command="{Binding Commands[AboutMenu_Click]}" Header="About Wad Tool...">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon General/AboutIcon}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+
+            <!--  Only shown when a debugger is attached, mirroring FormMain.  -->
+            <MenuItem
+                x:Name="debugMenu"
+                Header="Debug"
+                Visibility="Collapsed">
+                <MenuItem Command="{Binding Commands[DebugReloadCatalogMenu_Click]}" Header="Debug action 5 (reload catalog)" />
+                <MenuItem Command="{Binding Commands[DebugMeshEditorMenu_Click]}" Header="Debug action 9 (mesh editor)" />
+            </MenuItem>
+        </Menu>
+
+        <!--  Top toolbar: Destination | Source | Reference project. Mirrors FormMain.darkToolStrip1.  -->
+        <Border
+            BorderBrush="{DynamicResource Brush_Border}"
+            BorderThickness="0,0,0,1"
+            DockPanel.Dock="Top">
+            <StackPanel Margin="{x:Static darkUI:Defaults.SmallThickness}" Orientation="Horizontal">
+                <Label Content="Destination:" Foreground="{DynamicResource Brush_Text}" VerticalAlignment="Center" />
+                <Button
+                    Command="{Binding Commands[NewWad2Menu_Click]}"
+                    Style="{DynamicResource ButtonWithIconOnly}"
+                    ToolTip="New empty Wad2">
+                    <Image Source="{tomb:Icon General/create_new}" />
+                </Button>
+                <Button
+                    Command="{Binding Commands[OpenDestinationWadMenu_Click]}"
+                    Style="{DynamicResource ButtonWithIconOnly}"
+                    ToolTip="Open destination file">
+                    <Image Source="{tomb:Icon General/folder}" />
+                </Button>
+                <Button
+                    x:Name="butSave"
+                    Command="{Binding Commands[SaveMenu_Click]}"
+                    Style="{DynamicResource ButtonWithIconOnly}"
+                    ToolTip="Save Wad2">
+                    <Image Source="{tomb:Icon General/Save}" />
+                </Button>
+                <Button
+                    x:Name="butSaveAs"
+                    Command="{Binding Commands[SaveAsMenu_Click]}"
+                    Style="{DynamicResource ButtonWithIconOnly}"
+                    ToolTip="Save Wad2 as...">
+                    <Image Source="{tomb:Icon General/Save_As}" />
+                </Button>
+
+                <Separator Margin="4,2" />
+
+                <Label Content="Source:" Foreground="{DynamicResource Brush_Text}" VerticalAlignment="Center" />
+                <Button
+                    Command="{Binding Commands[OpenSourceWadMenu_Click]}"
+                    Style="{DynamicResource ButtonWithIconOnly}"
+                    ToolTip="Open source file">
+                    <Image Source="{tomb:Icon General/Open}" />
+                </Button>
+
+                <Separator Margin="4,2" />
+
+                <Label Content="Reference project:" Foreground="{DynamicResource Brush_Text}" VerticalAlignment="Center" />
+                <Label
+                    x:Name="lblRefLevel"
+                    Content="(project not loaded)"
+                    Foreground="{DynamicResource Brush_Text}"
+                    Opacity="0.6"
+                    MouseLeftButtonUp="RefLevelLabel_Click"
+                    VerticalAlignment="Center" />
+                <Button
+                    Command="{Binding Commands[OpenReferenceLevelMenu_Click]}"
+                    Style="{DynamicResource ButtonWithIconOnly}"
+                    ToolTip="Open reference project">
+                    <Image Source="{tomb:Icon General/Open}" />
+                </Button>
+                <Button
+                    x:Name="butCloseRefLevel"
+                    Command="{Binding Commands[CloseReferenceLevelMenu_Click]}"
+                    Style="{DynamicResource ButtonWithIconOnly}"
+                    ToolTip="Close reference project">
+                    <Image Source="{tomb:Icon Actions/delete}" />
+                </Button>
+            </StackPanel>
+        </Border>
+
+        <!--  Bottom: status bar with destination wad statistics. Mirrors FormMain.statusStrip.  -->
+        <Border
+            Background="{DynamicResource Brush_Background_Alternative}"
+            BorderBrush="{DynamicResource Brush_Border}"
+            BorderThickness="0,1,0,0"
+            DockPanel.Dock="Bottom">
+            <TextBlock
+                x:Name="labelStatistics" Text="{Binding Statistics}"
+                Margin="{x:Static darkUI:Defaults.SmallThickness}"
+                Foreground="{DynamicResource Brush_Text}" />
+        </Border>
+
+        <!--  Center: Destination tree | 3D preview | Source tree, same 26/48/26 split as
+            FormMain.tableLayoutPanel1 (plus grid splitters, which the previous shell lacked).  -->
+        <Grid Margin="{x:Static darkUI:Defaults.SmallThickness}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="26*" MinWidth="150" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="48*" MinWidth="200" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="26*" MinWidth="150" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Destination wad  -->
+            <DockPanel Grid.Column="0" LastChildFill="True">
+                <StackPanel
+                    Margin="0,2,0,0"
+                    DockPanel.Dock="Bottom"
+                    Orientation="Horizontal">
+                    <Button
+                        Command="{Binding Commands[EditItemButton_Click]}"
+                        Style="{DynamicResource ButtonWithIconAndText}"
+                        ToolTip="Edit selected item">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{tomb:Icon General/edit}" />
+                            <TextBlock Text="Edit item" />
+                        </StackPanel>
+                    </Button>
+                    <Button
+                        Command="{Binding Commands[ChangeSlotButton_Click]}"
+                        Style="{DynamicResource ButtonWithIconAndText}"
+                        ToolTip="Change slot of selected item">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{tomb:Icon General/Find-and-replace}" />
+                            <TextBlock Text="Change slot" />
+                        </StackPanel>
+                    </Button>
+                    <Button
+                        Command="{Binding Commands[DeleteObjectButton_Click]}"
+                        Style="{DynamicResource ButtonWithIconAndText}"
+                        ToolTip="Delete selected objects">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{tomb:Icon General/trash}" />
+                            <TextBlock Text="Delete" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="{x:Static darkUI:Defaults.BorderThickness}">
+                    <DockPanel LastChildFill="True">
+                        <Border
+                            Background="{DynamicResource Brush_Background_Alternative}"
+                            BorderBrush="{DynamicResource Brush_Border}"
+                            BorderThickness="0,0,0,1"
+                            DockPanel.Dock="Top">
+                            <TextBlock
+                                Margin="{x:Static darkUI:Defaults.SmallThickness}"
+                                Foreground="{DynamicResource Brush_Text}"
+                                Text="Destination" />
+                        </Border>
+                        <tombLibControls:WadTreeView
+                            x:Name="treeDestWad"
+                            Padding="3"
+                            Background="{DynamicResource Brush_Background}" />
+                    </DockPanel>
+                </Border>
+            </DockPanel>
+
+            <GridSplitter
+                Grid.Column="1"
+                Width="4"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Stretch"
+                Background="Transparent" />
+
+            <!--  3D preview  -->
+            <DockPanel Grid.Column="2" LastChildFill="True">
+                <StackPanel
+                    Margin="0,2,0,0"
+                    DockPanel.Dock="Bottom"
+                    Orientation="Horizontal">
+                    <Button
+                        x:Name="butEditAnimations"
+                        Command="{Binding Commands[EditItemButton_Click]}"
+                        Style="{DynamicResource ButtonWithIconAndText}"
+                        Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{tomb:Icon Misc/animations}" />
+                            <TextBlock Text="Edit animations" />
+                        </StackPanel>
+                    </Button>
+                    <Button
+                        x:Name="butEditSkeleton"
+                        Command="{Binding Commands[EditSkeletonButton_Click]}"
+                        Style="{DynamicResource ButtonWithIconAndText}"
+                        Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{tomb:Icon Misc/skeleton}" />
+                            <TextBlock Text="Edit skeleton" />
+                        </StackPanel>
+                    </Button>
+                    <Button
+                        x:Name="butEditStaticModel"
+                        Command="{Binding Commands[EditItemButton_Click]}"
+                        Style="{DynamicResource ButtonWithIconAndText}"
+                        Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{tomb:Icon General/edit}" />
+                            <TextBlock Text="Edit static model" />
+                        </StackPanel>
+                    </Button>
+                    <Button
+                        x:Name="butEditSpriteSequence"
+                        Command="{Binding Commands[EditItemButton_Click]}"
+                        Style="{DynamicResource ButtonWithIconAndText}"
+                        Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{tomb:Icon Objects/movie_projector}" />
+                            <TextBlock Text="Edit sprite sequence" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="{x:Static darkUI:Defaults.BorderThickness}">
+                    <Border x:Name="panel3DHost" Background="{DynamicResource Brush_Background_Low}" />
+                </Border>
+            </DockPanel>
+
+            <GridSplitter
+                Grid.Column="3"
+                Width="4"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Stretch"
+                Background="Transparent" />
+
+            <!--  Source wad  -->
+            <DockPanel Grid.Column="4" LastChildFill="True">
+                <StackPanel
+                    Margin="0,2,0,0"
+                    DockPanel.Dock="Bottom"
+                    Orientation="Horizontal">
+                    <Button
+                        Command="{Binding Commands[AddObjectButton_Click]}"
+                        Style="{DynamicResource ButtonWithIconAndText}"
+                        ToolTip="Copy selected objects to destination wad">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{tomb:Icon General/angle_left}" />
+                            <TextBlock Text="Add object" />
+                        </StackPanel>
+                    </Button>
+                    <Button
+                        Command="{Binding Commands[AddObjectToDifferentSlotButton_Click]}"
+                        Style="{DynamicResource ButtonWithIconAndText}"
+                        ToolTip="Copy selected objects to destination wad, choosing the slot">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{tomb:Icon General/angle_left}" />
+                            <TextBlock Text="Add object to different slot" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="{x:Static darkUI:Defaults.BorderThickness}">
+                    <DockPanel LastChildFill="True">
+                        <Border
+                            Background="{DynamicResource Brush_Background_Alternative}"
+                            BorderBrush="{DynamicResource Brush_Border}"
+                            BorderThickness="0,0,0,1"
+                            DockPanel.Dock="Top">
+                            <TextBlock
+                                x:Name="sourceHeaderLabel"
+                                Margin="{x:Static darkUI:Defaults.SmallThickness}"
+                                Foreground="{DynamicResource Brush_Text}"
+                                Text="{Binding SourceHeader}" />
+                        </Border>
+                        <tombLibControls:WadTreeView
+                            x:Name="treeSourceWad"
+                            Padding="3"
+                            Background="{DynamicResource Brush_Background}" />
+                    </DockPanel>
+                </Border>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</Window>

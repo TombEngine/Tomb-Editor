@@ -1,9 +1,11 @@
-﻿using NLog;
+#nullable enable
+
+using Keys = TombLib.Input.EditorKey;
+using NLog;
 using System;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
 namespace TombEditor
 {
@@ -24,6 +26,9 @@ namespace TombEditor
         private const int KL_NAMELENGTH = 9;
         [DllImport("user32.dll")]
         private static extern int MapVirtualKey(int uCode, int uMapType);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetKeyboardLayout(uint threadId);
         private const int MAPVK_VK_TO_VSC = 0;
         private const int MAPVK_VSC_TO_VK = 1;
 
@@ -147,7 +152,19 @@ namespace TombEditor
 
             logger.Info("Keyboard layout chosen: '" + _currentLayout + "' (" +
                 "Language: " + CultureInfo.CurrentCulture.EnglishName +
-                ", Input Language: " + InputLanguage.CurrentInputLanguage.LayoutName + ", Decision key map " + keysString + ")");
+                ", Input Language: " + GetInputLanguageName() + ", Decision key map " + keysString + ")");
+        }
+
+        private static string GetInputLanguageName()
+        {
+            try
+            {
+                return CultureInfo.GetCultureInfo((int)(GetKeyboardLayout(0).ToInt64() & 0xffff)).DisplayName;
+            }
+            catch (CultureNotFoundException)
+            {
+                return CultureInfo.CurrentCulture.DisplayName;
+            }
         }
 
         private static KeyboardLayout _currentLayout;

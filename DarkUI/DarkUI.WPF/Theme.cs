@@ -3,5 +3,7 @@
 public enum Theme
 {
 	Dark,
-	Light
+	Black,
+	Light,
+	WinRoomEdit
 }

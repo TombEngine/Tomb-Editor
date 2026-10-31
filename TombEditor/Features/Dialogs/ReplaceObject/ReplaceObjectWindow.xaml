@@ -1,0 +1,219 @@
+<Window
+	x:Class="TombEditor.Features.Dialogs.ReplaceObject.ReplaceObjectWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+	xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.ReplaceObject"
+	Title="{tombLib:Localize Title}"
+	Width="600"
+	Height="270"
+	MinWidth="540"
+	MinHeight="270"
+	MaxHeight="270"
+	AllowDrop="True"
+	d:DataContext="{d:DesignInstance Type=vm:ReplaceObjectWindowViewModel}"
+	Background="{DynamicResource Brush_Background}"
+	DragEnter="OnDragEnter"
+	Drop="OnDrop"
+	ShowInTaskbar="False"
+	Style="{DynamicResource CustomWindowStyle}"
+	WindowStartupLocation="CenterOwner"
+	mc:Ignorable="d">
+
+	<Window.Resources>
+		<BooleanToVisibilityConverter x:Key="BoolToVis" />
+	</Window.Resources>
+
+	<DockPanel>
+		<StatusBar DockPanel.Dock="Bottom">
+			<StatusBarItem>
+				<TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="{Binding ResultText}" />
+			</StatusBarItem>
+		</StatusBar>
+
+		<controls:SpacedGrid
+			Margin="{x:Static darkUI:Defaults.MediumThickness}"
+			ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}"
+			RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<Label
+				Grid.Row="0"
+				Grid.Column="0"
+				Grid.ColumnSpan="3"
+				Content="{tombLib:Localize SourceLabel}" />
+
+			<TextBox
+				x:Name="tbSource"
+				Grid.Row="1"
+				Grid.Column="0"
+				IsReadOnly="True"
+				Text="{Binding SourceText}" />
+			<Border
+				Grid.Row="1"
+				Grid.Column="1"
+				Width="60"
+				Background="{Binding SourceColor}"
+				BorderBrush="{DynamicResource Brush_Border}"
+				BorderThickness="1"
+				Visibility="{Binding IsSourceColorVisible, Converter={StaticResource BoolToVis}}">
+				<Border.InputBindings>
+					<MouseBinding Command="{Binding EditSourceLightColorCommand}" MouseAction="LeftClick" />
+				</Border.InputBindings>
+			</Border>
+			<Button
+				Grid.Row="1"
+				Grid.Column="2"
+				Width="100"
+				Command="{Binding SelectSourceCommand}"
+				Content="{tombLib:Localize SelectInLevel}"
+				IsEnabled="{Binding IsSelectSourceEnabled}"
+				KeyboardNavigation.TabIndex="0" />
+
+			<controls:SpacedGrid
+				Grid.Row="2"
+				Grid.Column="0"
+				Grid.ColumnSpan="3"
+				ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Label
+					Grid.Column="0"
+					Width="76"
+					VerticalAlignment="Center"
+					Content="{tombLib:Localize SearchType}" />
+				<ComboBox
+					Grid.Column="1"
+					IsEnabled="{Binding IsSearchTypeEnabled}"
+					ItemsSource="{Binding SearchTypes}"
+					KeyboardNavigation.TabIndex="1"
+					SelectedIndex="{Binding SelectedSearchTypeIndex, Mode=TwoWay}" />
+			</controls:SpacedGrid>
+
+			<Label
+				Grid.Row="3"
+				Grid.Column="0"
+				Grid.ColumnSpan="3"
+				Content="{tombLib:Localize DestLabel}" />
+
+			<TextBox
+				x:Name="tbDest"
+				Grid.Row="4"
+				Grid.Column="0"
+				IsReadOnly="True"
+				Text="{Binding DestText}" />
+			<Border
+				Grid.Row="4"
+				Grid.Column="1"
+				Width="60"
+				Background="{Binding DestColor}"
+				BorderBrush="{DynamicResource Brush_Border}"
+				BorderThickness="1"
+				Visibility="{Binding IsDestColorVisible, Converter={StaticResource BoolToVis}}">
+				<Border.InputBindings>
+					<MouseBinding Command="{Binding EditDestLightColorCommand}" MouseAction="LeftClick" />
+				</Border.InputBindings>
+			</Border>
+			<Button
+				Grid.Row="4"
+				Grid.Column="2"
+				Width="100"
+				Command="{Binding SelectDestCommand}"
+				Content="{tombLib:Localize SelectInLevel}"
+				IsEnabled="{Binding IsSelectDestEnabled}"
+				KeyboardNavigation.TabIndex="2" />
+
+			<controls:SpacedGrid
+				Grid.Row="5"
+				Grid.Column="0"
+				Grid.ColumnSpan="3"
+				ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Label
+					Grid.Column="0"
+					Width="76"
+					VerticalAlignment="Center"
+					Content="{tombLib:Localize ReplaceType}" />
+				<ComboBox
+					Grid.Column="1"
+					IsEnabled="{Binding IsReplaceTypeEnabled}"
+					ItemsSource="{Binding ReplaceTypes}"
+					KeyboardNavigation.TabIndex="3"
+					SelectedIndex="{Binding SelectedReplaceTypeIndex, Mode=TwoWay}" />
+			</controls:SpacedGrid>
+
+			<controls:SpacedGrid
+				Grid.Row="7"
+				Grid.Column="0"
+				Grid.ColumnSpan="3"
+				ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+
+				<CheckBox
+					Grid.Column="0"
+					VerticalAlignment="Center"
+					Content="{tombLib:Localize SelectedRoomsOnly}"
+					IsChecked="{Binding SelectedRoomsOnly}"
+					KeyboardNavigation.TabIndex="4" />
+				<Button
+					Grid.Column="2"
+					Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+					Command="{Binding NewSearchCommand}"
+					Content="{tombLib:Localize NewSearch}"
+					IsDefault="True"
+					KeyboardNavigation.TabIndex="5" />
+				<Button
+					Grid.Column="3"
+					Width="160"
+					Command="{Binding SwapSourceDestCommand}"
+					Content="{tombLib:Localize SwapSourceDest}"
+					KeyboardNavigation.TabIndex="6" />
+				<Button
+					Grid.Column="4"
+					Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+					Command="{Binding ReplaceCommand}"
+					Content="{tombLib:Localize Replace}"
+					IsEnabled="{Binding IsReplaceEnabled}"
+					KeyboardNavigation.TabIndex="7" />
+				<Button
+					Grid.Column="5"
+					Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+					Command="{Binding CloseCommand}"
+					Content="{tombLib:Localize ~Common.Close}"
+					IsCancel="True"
+					KeyboardNavigation.TabIndex="8" />
+			</controls:SpacedGrid>
+		</controls:SpacedGrid>
+	</DockPanel>
+</Window>

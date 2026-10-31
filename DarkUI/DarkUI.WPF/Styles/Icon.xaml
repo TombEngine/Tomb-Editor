@@ -7,6 +7,7 @@
 
 	<Style x:Key="ImageIcon" TargetType="{x:Type Image}">
 		<Setter Property="FlowDirection" Value="LeftToRight" />
+		<Setter Property="Opacity" Value="{DynamicResource Opacity_Icon}" />
 
 		<Style.Triggers>
 			<DataTrigger Binding="{Binding Path=(local:Defaults.ShouldIconsInvert)}" Value="True">
@@ -20,6 +21,7 @@
 		<Setter Property="MaxHeight" Value="{x:Static local:Defaults.Image_MaxIconHeight}" />
 
 		<Setter Property="FlowDirection" Value="LeftToRight" />
+		<Setter Property="Opacity" Value="{DynamicResource Opacity_Icon}" />
 
 		<Style.Triggers>
 			<DataTrigger Binding="{Binding Path=(local:Defaults.ShouldIconsInvert)}" Value="True">

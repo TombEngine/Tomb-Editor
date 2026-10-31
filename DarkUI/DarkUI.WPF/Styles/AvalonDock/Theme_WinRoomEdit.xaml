@@ -1,0 +1,60 @@
+<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:reskeys="clr-namespace:AvalonDock.Themes.VS2013.Themes;assembly=AvalonDock.Themes.VS2013">
+
+	<!--
+		WinRoomEdit dock skin. AvalonDock's DockingManager.Theme is dock-scoped,
+		so brushes must be defined here (not in a merged sub-dict — sub-dicts
+		don't override the VS2013 baseline reliably). Colors are hard-coded to
+		match the Win95 look the original WinRoomEdit had.
+	-->
+	<ResourceDictionary.MergedDictionaries>
+		<!--  VS2013 baseline brings in the dock control templates.  -->
+		<ResourceDictionary Source="pack://application:,,,/AvalonDock.Themes.VS2013;component/DarkTheme.xaml" />
+	</ResourceDictionary.MergedDictionaries>
+
+	<!--  Win95 palette  -->
+	<Color x:Key="WRE_Panel">#C0C0C0</Color>
+	<Color x:Key="WRE_PanelAlt">#989898</Color>
+	<Color x:Key="WRE_PanelDark">#7F7F7F</Color>
+	<Color x:Key="WRE_TitleActive">#000080</Color>
+	<Color x:Key="WRE_TitleInactive">#404040</Color>
+	<Color x:Key="WRE_TitleText">White</Color>
+	<Color x:Key="WRE_Border">Black</Color>
+	<Color x:Key="WRE_BorderHigh">White</Color>
+
+	<!--  Tool Window : Caption  -->
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionActiveBackground}" Color="{DynamicResource WRE_TitleActive}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionActiveGrip}" Color="{DynamicResource WRE_TitleText}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionActiveText}" Color="{DynamicResource WRE_TitleText}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionInactiveBackground}" Color="{DynamicResource WRE_TitleInactive}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionInactiveGrip}" Color="{DynamicResource WRE_TitleText}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionInactiveText}" Color="{DynamicResource WRE_TitleText}" />
+
+	<!--  Tool Window : Caption Buttons (close, pin, etc.)  -->
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonActiveGlyph}" Color="{DynamicResource WRE_TitleText}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonActiveHoveredBackground}" Color="{DynamicResource WRE_TitleActive}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonActiveHoveredBorder}" Color="{DynamicResource WRE_BorderHigh}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonActiveHoveredGlyph}" Color="{DynamicResource WRE_TitleText}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonInactiveGlyph}" Color="{DynamicResource WRE_TitleText}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonInactiveHoveredBackground}" Color="{DynamicResource WRE_TitleInactive}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonInactiveHoveredBorder}" Color="{DynamicResource WRE_BorderHigh}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowCaptionButtonInactiveHoveredGlyph}" Color="{DynamicResource WRE_TitleText}" />
+
+	<!--  Tool Window : Tabs  -->
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowTabSelectedActiveBackground}" Color="{DynamicResource WRE_Panel}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowTabSelectedActiveText}" Color="{DynamicResource WRE_Border}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowTabUnselectedBackground}" Color="{DynamicResource WRE_PanelDark}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.ToolWindowTabUnselectedText}" Color="{DynamicResource WRE_TitleText}" />
+
+	<!--  Document Well (tabs at top of editor area)  -->
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabSelectedActiveBackground}" Color="{DynamicResource WRE_Panel}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabSelectedActiveText}" Color="{DynamicResource WRE_Border}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabUnselectedBackground}" Color="{DynamicResource WRE_PanelAlt}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.DocumentWellTabUnselectedText}" Color="{DynamicResource WRE_Border}" />
+
+	<!--  General dock surface  -->
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.Background}" Color="{DynamicResource WRE_PanelAlt}" />
+	<SolidColorBrush x:Key="{x:Static reskeys:ResourceKeys.PanelBorderBrush}" Color="{DynamicResource WRE_Border}" />
+</ResourceDictionary>

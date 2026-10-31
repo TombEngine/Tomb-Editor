@@ -1,0 +1,274 @@
+<Window
+    x:Class="TombEditor.Features.Dialogs.Options.OptionsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:TombEditor.Features.Dialogs.Options"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    Title="{tombLib:Localize Title}"
+    Width="660"
+    Height="600"
+    MinWidth="520"
+    MinHeight="420"
+    d:DataContext="{d:DesignInstance Type=local:OptionsWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ShowInTaskbar="False"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <!--  Editor templates, one per OptionKind  -->
+        <DataTemplate x:Key="BoolTemplate">
+            <CheckBox Margin="0,3" Content="{Binding Label}" IsChecked="{Binding Value, Mode=TwoWay}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="NumberTemplate">
+            <DockPanel Margin="0,3">
+                <TextBlock
+                    Width="260"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding Label}" />
+                <TextBlock
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Right"
+                    Text="{Binding Suffix}">
+                    <TextBlock.Margin>
+                        <Thickness Left="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+                    </TextBlock.Margin>
+                </TextBlock>
+                <controls:NumericUpDown
+                    Width="120"
+                    HorizontalAlignment="Left"
+                    DecimalPlaces="{Binding DecimalPlaces}"
+                    Increment="{Binding Increment}"
+                    Maximum="{Binding Maximum}"
+                    Minimum="{Binding Minimum}"
+                    Value="{Binding Value, Mode=TwoWay}" />
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="TextTemplate">
+            <DockPanel Margin="0,3">
+                <TextBlock
+                    Width="260"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding Label}" />
+                <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ComboTemplate">
+            <DockPanel Margin="0,3">
+                <TextBlock
+                    Width="260"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding Label}" />
+                <ComboBox ItemsSource="{Binding Items}" SelectedItem="{Binding Value, Mode=TwoWay}" />
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ColorTemplate">
+            <DockPanel Margin="0,3">
+                <TextBlock
+                    Width="260"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding Label}" />
+                <Button
+                    Width="120"
+                    Height="20"
+                    HorizontalAlignment="Left"
+                    Command="{Binding DataContext.PickColorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                    CommandParameter="{Binding}">
+                    <Button.Background>
+                        <SolidColorBrush Color="{Binding Value}" />
+                    </Button.Background>
+                </Button>
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="PresetTemplate">
+            <DockPanel Margin="0,3">
+                <TextBlock
+                    Width="260"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding Label}" />
+                <ComboBox ItemsSource="{Binding Items}" SelectedItem="{Binding Value, Mode=TwoWay}" />
+            </DockPanel>
+        </DataTemplate>
+
+        <!--  Checkbox followed by a numeric box on the same row (the numeric option is the first child)  -->
+        <DataTemplate x:Key="BoolWithNumberTemplate">
+            <DockPanel Margin="0,3">
+                <CheckBox
+                    MinWidth="260"
+                    VerticalAlignment="Center"
+                    Content="{Binding Label}"
+                    DockPanel.Dock="Left"
+                    IsChecked="{Binding Value, Mode=TwoWay}" />
+                <controls:NumericUpDown
+                    Width="120"
+                    HorizontalAlignment="Left"
+                    DataContext="{Binding Children[0]}"
+                    DecimalPlaces="{Binding DecimalPlaces}"
+                    Increment="{Binding Increment}"
+                    Maximum="{Binding Maximum}"
+                    Minimum="{Binding Minimum}"
+                    Value="{Binding Value, Mode=TwoWay}" />
+            </DockPanel>
+        </DataTemplate>
+
+        <!--  Label and combo box followed by a checkbox on the same row (the checkbox option is the first child)  -->
+        <DataTemplate x:Key="ComboWithBoolTemplate">
+            <DockPanel Margin="0,3">
+                <TextBlock
+                    Width="260"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding Label}" />
+                <CheckBox
+                    Margin="6,0,0,0"
+                    VerticalAlignment="Center"
+                    Content="{Binding Children[0].Label}"
+                    DockPanel.Dock="Right"
+                    IsChecked="{Binding Children[0].Value, Mode=TwoWay}" />
+                <ComboBox ItemsSource="{Binding Items}" SelectedItem="{Binding Value, Mode=TwoWay}" />
+            </DockPanel>
+        </DataTemplate>
+
+        <!--  Label followed by several checkboxes on the same row (the checkboxes are the children)  -->
+        <DataTemplate x:Key="BoolRowTemplate">
+            <DockPanel Margin="0,3">
+                <TextBlock
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Left"
+                    Text="{Binding Label}" />
+                <ItemsControl Margin="6,0,0,0" ItemsSource="{Binding Children}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <CheckBox
+                                Margin="0,0,12,0"
+                                VerticalAlignment="Center"
+                                Content="{Binding Label}"
+                                IsChecked="{Binding Value, Mode=TwoWay}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </DockPanel>
+        </DataTemplate>
+
+        <local:OptionTemplateSelector
+            x:Key="OptionSelector"
+            BoolRowTemplate="{StaticResource BoolRowTemplate}"
+            BoolTemplate="{StaticResource BoolTemplate}"
+            BoolWithNumberTemplate="{StaticResource BoolWithNumberTemplate}"
+            ComboWithBoolTemplate="{StaticResource ComboWithBoolTemplate}"
+            ColorTemplate="{StaticResource ColorTemplate}"
+            ComboTemplate="{StaticResource ComboTemplate}"
+            NumberTemplate="{StaticResource NumberTemplate}"
+            PresetTemplate="{StaticResource PresetTemplate}"
+            TextTemplate="{StaticResource TextTemplate}" />
+
+        <!--  Hide options / groups filtered out by the search box  -->
+        <Style x:Key="OptionContainerStyle" TargetType="ContentPresenter">
+            <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BoolToVis}}" />
+        </Style>
+
+        <!--  A group: a titled box containing its options  -->
+        <DataTemplate x:Key="BoxedGroupTemplate">
+            <GroupBox Header="{Binding Header}">
+                <GroupBox.Margin>
+                    <Thickness Bottom="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+                </GroupBox.Margin>
+                <ItemsControl
+                    ItemContainerStyle="{StaticResource OptionContainerStyle}"
+                    ItemTemplateSelector="{StaticResource OptionSelector}"
+                    ItemsSource="{Binding Items}" />
+            </GroupBox>
+        </DataTemplate>
+
+        <!--  A group without a header is shown as a plain list of options, like the tab pages without group boxes  -->
+        <DataTemplate x:Key="PlainGroupTemplate">
+            <ItemsControl
+                Margin="6,3,6,0"
+                ItemContainerStyle="{StaticResource OptionContainerStyle}"
+                ItemTemplateSelector="{StaticResource OptionSelector}"
+                ItemsSource="{Binding Items}" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="GroupTemplate">
+            <ContentControl Content="{Binding}" Visibility="{Binding IsVisible, Converter={StaticResource BoolToVis}}">
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Setter Property="ContentTemplate" Value="{StaticResource BoxedGroupTemplate}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Header}" Value="">
+                                <Setter Property="ContentTemplate" Value="{StaticResource PlainGroupTemplate}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+        </DataTemplate>
+    </Window.Resources>
+
+    <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
+
+        <!--  Search box  -->
+        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
+            <TextBlock VerticalAlignment="Center" Margin="0,0,6,0" Text="{tombLib:Localize Search}" />
+            <TextBox Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </DockPanel>
+
+        <!--  Buttons  -->
+        <controls:SpacedStack
+            DockPanel.Dock="Bottom"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <StackPanel.Margin>
+                <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+            </StackPanel.Margin>
+            <Button Width="120" Command="{Binding PageDefaultsCommand}" Content="{tombLib:Localize ResetPageToDefaults}" />
+            <Button Width="80" Command="{Binding ApplyCommand}" Content="{tombLib:Localize ~Common.Apply}" />
+            <Button Width="80" Command="{Binding OkCommand}" Content="{tombLib:Localize ~Common.OK}" IsDefault="True" />
+            <Button Width="80" Command="{Binding CancelCommand}" Content="{tombLib:Localize ~Common.Cancel}" IsCancel="True" />
+        </controls:SpacedStack>
+
+        <!--  Tabs  -->
+        <TabControl
+            ItemsSource="{Binding Tabs}"
+            SelectedItem="{Binding SelectedTab, Mode=TwoWay}"
+            Style="{DynamicResource SidebarTabControlStyle}">
+            <TabControl.ItemContainerStyle>
+                <Style BasedOn="{StaticResource SidebarTabItemStyle}" TargetType="TabItem">
+                    <Setter Property="Header" Value="{Binding Header}" />
+                    <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BoolToVis}}" />
+                </Style>
+            </TabControl.ItemContainerStyle>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <ScrollViewer Margin="{x:Static darkUI:Defaults.SmallThickness}" VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemTemplate="{StaticResource GroupTemplate}" ItemsSource="{Binding Groups}" />
+                    </ScrollViewer>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+    </DockPanel>
+</Window>

@@ -1,0 +1,345 @@
+<Window
+    x:Class="WadTool.Features.Dialogs.StaticEditor.StaticEditorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:local="clr-namespace:WadTool.Features.Dialogs.StaticEditor"
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="{Binding Title}"
+    Width="900"
+    Height="800"
+    MinWidth="900"
+    MinHeight="765"
+    d:DataContext="{d:DesignInstance Type=local:StaticEditorWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ShowInTaskbar="False"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <Style BasedOn="{StaticResource {x:Type controls:NumericUpDown}}" TargetType="controls:NumericUpDown">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="Minimum" Value="-65535" />
+            <Setter Property="Maximum" Value="65535" />
+            <Setter Property="DecimalPlaces" Value="0" />
+        </Style>
+        <Style x:Key="AxisLabel" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+        </Style>
+    </Window.Resources>
+
+    <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
+
+
+        <!--  Right column: editing controls  -->
+        <controls:SpacedStack
+            Width="252"
+            DockPanel.Dock="Right"
+            Orientation="Vertical"
+            Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <controls:SpacedStack.Margin>
+                <Thickness Left="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+            </controls:SpacedStack.Margin>
+
+                <!--  Transform  -->
+                <GroupBox>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Style="{StaticResource AxisLabel}" Text="Pos X:" />
+                        <TextBlock Grid.Column="1" Style="{StaticResource AxisLabel}" Text="Pos Y:" />
+                        <TextBlock Grid.Column="2" Style="{StaticResource AxisLabel}" Text="Pos Z:" />
+                        <controls:NumericUpDown Grid.Row="1" Value="{Binding PositionX, Mode=TwoWay}" />
+                        <controls:NumericUpDown Grid.Row="1" Grid.Column="1" Value="{Binding PositionY, Mode=TwoWay}" />
+                        <controls:NumericUpDown Grid.Row="1" Grid.Column="2" Value="{Binding PositionZ, Mode=TwoWay}" />
+                        <TextBlock Grid.Row="2" Style="{StaticResource AxisLabel}" Text="Reset:" />
+                        <Button Grid.Row="3" Command="{Binding ResetTranslationCommand}" Content="Translation" />
+                        <Button Grid.Row="3" Grid.Column="1" Command="{Binding ResetRotationCommand}" Content="Rotation" />
+                        <Button Grid.Row="3" Grid.Column="2" Command="{Binding ResetScaleCommand}" Content="Scale" />
+                    </Grid>
+                </GroupBox>
+
+                <!--  Visibility Box  -->
+                <GroupBox>
+                    <GroupBox.Header>
+                        <CheckBox Content="Visibility Box" IsChecked="{Binding DrawVisibilityBox, Mode=TwoWay}" />
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel
+                            Grid.ColumnSpan="3"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal">
+                            <Button
+                                Width="56"
+                                Command="{Binding ClearVisibilityBoxCommand}"
+                                Content="Clear" />
+                            <Button
+                                Width="72"
+                                Margin="6,0,0,0"
+                                Command="{Binding CalculateVisibilityBoxCommand}"
+                                Content="Calculate" />
+                        </StackPanel>
+                        <TextBlock Grid.Row="1" Style="{StaticResource AxisLabel}" Text="X min:" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource AxisLabel}" Text="Y min:" />
+                        <TextBlock Grid.Row="1" Grid.Column="2" Style="{StaticResource AxisLabel}" Text="Z min:" />
+                        <controls:NumericUpDown Grid.Row="2" Value="{Binding VisBoxMinX, Mode=TwoWay}" />
+                        <controls:NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding VisBoxMinY, Mode=TwoWay}" />
+                        <controls:NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding VisBoxMinZ, Mode=TwoWay}" />
+                        <TextBlock Grid.Row="3" Style="{StaticResource AxisLabel}" Text="X max:" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource AxisLabel}" Text="Y max:" />
+                        <TextBlock Grid.Row="3" Grid.Column="2" Style="{StaticResource AxisLabel}" Text="Z max:" />
+                        <controls:NumericUpDown Grid.Row="4" Value="{Binding VisBoxMaxX, Mode=TwoWay}" />
+                        <controls:NumericUpDown Grid.Row="4" Grid.Column="1" Value="{Binding VisBoxMaxY, Mode=TwoWay}" />
+                        <controls:NumericUpDown Grid.Row="4" Grid.Column="2" Value="{Binding VisBoxMaxZ, Mode=TwoWay}" />
+                    </Grid>
+                </GroupBox>
+
+                <!--  Collision Box  -->
+                <GroupBox>
+                    <GroupBox.Header>
+                        <CheckBox Content="Collision Box" IsChecked="{Binding DrawCollisionBox, Mode=TwoWay}" />
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel
+                            Grid.ColumnSpan="3"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal">
+                            <Button
+                                Width="56"
+                                Command="{Binding ClearCollisionBoxCommand}"
+                                Content="Clear" />
+                            <Button
+                                Width="72"
+                                Margin="6,0,0,0"
+                                Command="{Binding CalculateCollisionBoxCommand}"
+                                Content="Calculate" />
+                        </StackPanel>
+                        <TextBlock Grid.Row="1" Style="{StaticResource AxisLabel}" Text="X min:" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource AxisLabel}" Text="Y min:" />
+                        <TextBlock Grid.Row="1" Grid.Column="2" Style="{StaticResource AxisLabel}" Text="Z min:" />
+                        <controls:NumericUpDown Grid.Row="2" Value="{Binding ColBoxMinX, Mode=TwoWay}" />
+                        <controls:NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding ColBoxMinY, Mode=TwoWay}" />
+                        <controls:NumericUpDown Grid.Row="2" Grid.Column="2" Value="{Binding ColBoxMinZ, Mode=TwoWay}" />
+                        <TextBlock Grid.Row="3" Style="{StaticResource AxisLabel}" Text="X max:" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource AxisLabel}" Text="Y max:" />
+                        <TextBlock Grid.Row="3" Grid.Column="2" Style="{StaticResource AxisLabel}" Text="Z max:" />
+                        <controls:NumericUpDown Grid.Row="4" Value="{Binding ColBoxMaxX, Mode=TwoWay}" />
+                        <controls:NumericUpDown Grid.Row="4" Grid.Column="1" Value="{Binding ColBoxMaxY, Mode=TwoWay}" />
+                        <controls:NumericUpDown Grid.Row="4" Grid.Column="2" Value="{Binding ColBoxMaxZ, Mode=TwoWay}" />
+                    </Grid>
+                </GroupBox>
+
+                <!--  Shatter  -->
+                <GroupBox>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <CheckBox
+                            VerticalAlignment="Center"
+                            Content="Shatter"
+                            IsChecked="{Binding Shatter, Mode=TwoWay}"
+                            IsEnabled="{Binding ShatterControlsEnabled}" />
+                        <Button
+                            Grid.Column="1"
+                            Width="120"
+                            Command="{Binding ResetShatterAttributesCommand}"
+                            Content="Reset to default"
+                            IsEnabled="{Binding ShatterControlsEnabled}" />
+                        <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="0,4,0,0">
+                            <Button
+                                Width="28"
+                                DockPanel.Dock="Right"
+                                Command="{Binding PlaySoundCommand}"
+                                IsEnabled="{Binding PlayEnabled}">
+                                <Image Width="16" Height="16" Source="{tomb:Icon Actions/Transport/Play}" />
+                            </Button>
+                            <controls:SearchableComboBox
+                                IsEnabled="{Binding SoundEnabled}"
+                                ItemsSource="{Binding SoundIds}"
+                                SelectedIndex="{Binding SoundIdIndex, Mode=TwoWay}" />
+                        </DockPanel>
+                    </Grid>
+                </GroupBox>
+
+                <!--  Lighting and mesh  -->
+                <GroupBox>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <DockPanel Grid.ColumnSpan="2">
+                            <Button
+                                Width="28"
+                                DockPanel.Dock="Right"
+                                Command="{Binding DeleteLightCommand}"
+                                IsEnabled="{Binding DeleteLightEnabled}">
+                                <Image Width="16" Height="16" Source="{tomb:Icon General/trash}" />
+                            </Button>
+                            <Button
+                                Width="28"
+                                Margin="4,0"
+                                DockPanel.Dock="Right"
+                                Command="{Binding AddLightCommand}"
+                                IsEnabled="{Binding AddLightEnabled}">
+                                <Image Width="16" Height="16" Source="{tomb:Icon General/plus_math}" />
+                            </Button>
+                            <ComboBox SelectedIndex="{Binding LightingTypeIndex, Mode=TwoWay}">
+                                <ComboBoxItem Content="Dynamic Lighting" />
+                                <ComboBoxItem Content="Static Lighting" />
+                            </ComboBox>
+                        </DockPanel>
+                        <ListBox
+                            Grid.Row="1"
+                            Width="90"
+                            Height="136"
+                            Margin="0,4,6,0"
+                            DisplayMemberPath="Name"
+                            IsEnabled="{Binding LightsEnabled}"
+                            ItemsSource="{Binding Lights}"
+                            SelectedItem="{Binding SelectedLight, Mode=TwoWay}" />
+                        <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,4,0,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Style="{StaticResource AxisLabel}" Text="Intensity:" />
+                                <controls:NumericUpDown
+                                    Grid.Column="1"
+                                    Margin="4,0,0,2"
+                                    DecimalPlaces="2"
+                                    Increment="0.03"
+                                    IsEnabled="{Binding IntensityEnabled}"
+                                    LargeIncrement="0.12"
+                                    Maximum="128"
+                                    Minimum="-128"
+                                    Value="{Binding Intensity, Mode=TwoWay}" />
+                                <TextBlock Grid.Row="1" Style="{StaticResource AxisLabel}" Text="Radius:" />
+                                <controls:NumericUpDown
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Margin="4,0,0,2"
+                                    DecimalPlaces="2"
+                                    Increment="0.03"
+                                    IsEnabled="{Binding RadiusEnabled}"
+                                    LargeIncrement="1.0"
+                                    Maximum="256"
+                                    Minimum="0"
+                                    Value="{Binding Radius, Mode=TwoWay}" />
+                                <TextBlock Grid.Row="2" Style="{StaticResource AxisLabel}" Text="Ambient:" />
+                                <controls:NumericUpDown
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Margin="4,0,0,2"
+                                    IsEnabled="{Binding AmbientEnabled}"
+                                    Maximum="255"
+                                    Minimum="0"
+                                    Value="{Binding Ambient, Mode=TwoWay}" />
+                            </Grid>
+                            <Button Margin="0,4,0,0" Command="{Binding RecalculateNormalsCommand}" Content="Recalculate normals" />
+                            <Button Margin="0,4,0,0" Command="{Binding EditMeshCommand}" Content="Edit mesh" />
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+
+                <!--  Draw options  -->
+                <GroupBox>
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource AxisLabel}" Text="Draw:" />
+                        <controls:SpacedStack Margin="0,2,0,0" Orientation="Horizontal" Spacing="8">
+                            <CheckBox Content="Lights" IsChecked="{Binding DrawLights, Mode=TwoWay}" />
+                            <CheckBox Content="Gizmo" IsChecked="{Binding DrawGizmo, Mode=TwoWay}" />
+                            <CheckBox Content="Grid" IsChecked="{Binding DrawGrid, Mode=TwoWay}" />
+                            <CheckBox Content="Normals" IsChecked="{Binding DrawNormals, Mode=TwoWay}" />
+                        </controls:SpacedStack>
+                    </StackPanel>
+                </GroupBox>
+        </controls:SpacedStack>
+
+        <!--  Footer: mesh import/export + OK / Cancel  -->
+        <controls:SpacedStack
+            DockPanel.Dock="Bottom"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <controls:SpacedStack.Margin>
+                <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+            </controls:SpacedStack.Margin>
+            <Button
+                Width="80"
+                Command="{Binding ImportMeshCommand}"
+                Content="Import" />
+            <Button
+                Width="80"
+                Command="{Binding ExportMeshCommand}"
+                Content="Export" />
+            <Button
+                Width="80"
+                Command="{Binding SaveCommand}"
+                Content="OK" />
+            <Button
+                Width="80"
+                Command="{Binding CancelCommand}"
+                Content="Cancel" />
+        </controls:SpacedStack>
+
+        <!--  The 3D view is the legacy previous PanelRenderingStaticEditor, hosted as-is.  -->
+        <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
+            <Border x:Name="renderingHost" />
+        </Border>
+    </DockPanel>
+</Window>

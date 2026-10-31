@@ -1,9 +1,10 @@
-﻿using NLog;
+using NLog;
 using SharpDX.Toolkit.Graphics;
 using System;
 using System.IO;
 using System.Reflection;
-using System.Windows.Forms;
+using TombLib.Services;
+using TombLib.WPF;
 
 namespace TombEditor
 {
@@ -30,7 +31,7 @@ namespace TombEditor
             catch (Exception exc)
             {
                 logger.Error(exc, "Could not load effect file.");
-                MessageBox.Show("Could not load effect file. " + Environment.NewLine + exc.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UserDialogs.Show("Could not load effect file. " + Environment.NewLine + exc.Message, "Error", DialogButtons.OK, DialogIcon.Error);
                 return false;
             }
 
@@ -49,7 +50,7 @@ namespace TombEditor
                     errors += err + Environment.NewLine;
 
                 LogManager.GetCurrentClassLogger().Log(LogLevel.Error, "Could not compile effect '" + name + ".fx'");
-                MessageBox.Show("Could not compile effect '" + name + ".fx'" + Environment.NewLine + errors, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UserDialogs.Show("Could not compile effect '" + name + ".fx'" + Environment.NewLine + errors, "Error", DialogButtons.OK, DialogIcon.Error);
                 return null;
             }
 

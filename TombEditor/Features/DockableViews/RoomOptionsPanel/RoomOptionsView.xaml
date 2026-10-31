@@ -1,0 +1,331 @@
+﻿<UserControl
+	x:Class="TombEditor.Features.DockableViews.RoomOptionsPanel.RoomOptionsView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:editor="clr-namespace:TombEditor"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+	MinWidth="285"
+	MinHeight="215"
+	d:DesignHeight="215"
+	d:DesignWidth="295"
+	Background="{DynamicResource Brush_Background}"
+	mc:Ignorable="d">
+
+	<Grid Margin="{x:Static darkUI:Defaults.SmallThickness}">
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<controls:SpacedGrid ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<controls:SpacedGrid RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
+				</Grid.RowDefinitions>
+
+				<controls:SearchableComboBox
+					x:Name="RoomSearchComboBox"
+					FilterIgnoredString="{tombLib:Localize EmptyRoom}"
+					IsSynchronizedWithCurrentItem="True"
+					ItemsSource="{Binding Rooms}"
+					SelectedIndex="{Binding SelectedRoom}"
+					VirtualizingPanel.IsVirtualizing="True"
+					VirtualizingPanel.VirtualizationMode="Recycling">
+					<ComboBox.ItemsPanel>
+						<ItemsPanelTemplate>
+							<VirtualizingStackPanel />
+						</ItemsPanelTemplate>
+					</ComboBox.ItemsPanel>
+				</controls:SearchableComboBox>
+
+				<controls:SpacedGrid Grid.Row="1" ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto" />
+						<ColumnDefinition />
+					</Grid.ColumnDefinitions>
+
+					<Label VerticalAlignment="Center" Content="{tombLib:Localize Tags}" />
+					<controls:AutoCompleteBox
+						Grid.Column="1"
+						CharacterCasing="Lower"
+						ItemsSource="{Binding TagsAutoCompleteData}"
+						Text="{Binding Tags}"
+						ToolTip="{tombLib:Localize TagsTooltip}" />
+				</controls:SpacedGrid>
+
+				<controls:SpacedGrid Grid.Row="2" ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition />
+						<ColumnDefinition Width="58" />
+						<ColumnDefinition />
+					</Grid.ColumnDefinitions>
+
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+
+					<Label Content="{tombLib:Localize RoomType}" />
+					<ComboBox
+						Grid.Row="1"
+						ItemsSource="{Binding RoomTypes}"
+						SelectedIndex="{Binding SelectedRoomType}" />
+
+					<Label Grid.Column="1" Content="{tombLib:Localize Flipmap}" />
+					<ComboBox
+						Grid.Row="1"
+						Grid.Column="1"
+						ItemsSource="{Binding FlipMaps}"
+						SelectedIndex="{Binding SelectedFlipMap}" />
+
+					<Label Grid.Column="2" Content="{tombLib:Localize Reverb}" />
+					<ComboBox
+						Grid.Row="1"
+						Grid.Column="2"
+						IsEnabled="{Binding SupportsReverb}"
+						ItemsSource="{Binding ReverbValues}"
+						SelectedIndex="{Binding SelectedReverb}"
+						ToolTip="{Binding ReverbTooltip}" />
+				</controls:SpacedGrid>
+
+				<controls:SpacedGrid
+					Grid.Row="3"
+					ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}"
+					RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+					<Grid.Margin>
+						<Thickness Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+					</Grid.Margin>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition />
+						<ColumnDefinition />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+
+					<CheckBox
+						Content="{tombLib:Localize Skybox}"
+						IsChecked="{Binding Skybox}"
+						IsEnabled="{Binding SupportsHorizon}"
+						ToolTip="{editor:CommandToolTip SetRoomSkybox, Key=SkyboxTooltip}" />
+					<CheckBox
+						Grid.Row="1"
+						Content="{tombLib:Localize Wind}"
+						IsChecked="{Binding Wind}"
+						IsEnabled="{Binding SupportsFlagOutside}"
+						ToolTip="{editor:CommandToolTip SetRoomOutside, Key=WindTooltip}" />
+
+					<CheckBox
+						Grid.Column="1"
+						Content="{tombLib:Localize Damage}"
+						IsChecked="{Binding Damage}"
+						IsEnabled="{Binding SupportsFlagDamage}"
+						ToolTip="{editor:CommandToolTip SetRoomDamage, Key=DamageTooltip}" />
+					<CheckBox
+						Grid.Row="1"
+						Grid.Column="1"
+						Content="{tombLib:Localize Cold}"
+						IsChecked="{Binding Cold}"
+						IsEnabled="{Binding SupportsFlagCold}"
+						ToolTip="{editor:CommandToolTip SetRoomCold, Key=ColdTooltip}" />
+
+					<CheckBox
+						Grid.Column="2"
+						Content="{tombLib:Localize NoPathfinding}"
+						IsChecked="{Binding NoPathfinding}"
+						ToolTip="{editor:CommandToolTip SetRoomNoPathfinding, Key=NoPathfindingTooltip}" />
+					<CheckBox
+						Grid.Row="1"
+						Grid.Column="2"
+						Content="{tombLib:Localize NoLensflare}"
+						IsChecked="{Binding NoLensflare}"
+						IsEnabled="{Binding SupportsNoLensflare}"
+						ToolTip="{editor:CommandToolTip SetRoomNoLensflare, Key=NoLensflareTooltip}" />
+
+					<CheckBox
+						Grid.Row="2"
+						Grid.Column="2"
+						Content="{tombLib:Localize NoCaustics}"
+						IsChecked="{Binding NoCaustics}"
+						IsEnabled="{Binding SupportsNoCaustics}"
+						ToolTip="{editor:CommandToolTip SetRoomNoCaustics, Key=NoCausticsTooltip}" />
+				</controls:SpacedGrid>
+
+				<controls:SpacedGrid Grid.Row="4" ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="60" />
+						<ColumnDefinition Width="70" />
+						<ColumnDefinition />
+					</Grid.ColumnDefinitions>
+
+					<Label VerticalAlignment="Bottom" Content="{tombLib:Localize Ambient}" />
+					<Label
+						Grid.Column="1"
+						VerticalAlignment="Bottom"
+						Content="{tombLib:Localize PortalShade}" />
+					<Label
+						Grid.Column="2"
+						VerticalAlignment="Bottom"
+						Content="{tombLib:Localize Effect}" />
+				</controls:SpacedGrid>
+			</controls:SpacedGrid>
+
+			<controls:SpacedGrid
+				Grid.Column="1"
+				ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}"
+				RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
+				</Grid.RowDefinitions>
+
+				<Button
+					Command="{Binding EditRoomNameCommand}"
+					Style="{DynamicResource ButtonWithIconOnly}"
+					ToolTip="{editor:CommandToolTip EditRoomName, Key=EditRoomNameTooltip}">
+					<Image Source="{tomb:Icon General/edit}" />
+				</Button>
+				<Button
+					Grid.Row="1"
+					Command="{Binding DuplicateRoomCommand}"
+					Style="{DynamicResource ButtonWithIconOnly}"
+					ToolTip="{editor:CommandToolTip DuplicateRoom, Key=DuplicateRoomTooltip}">
+					<Image Source="{tomb:Icon General/copy}" />
+				</Button>
+				<Button
+					Grid.Row="2"
+					Command="{Binding CropRoomCommand}"
+					Style="{DynamicResource ButtonWithIconOnly}"
+					ToolTip="{editor:CommandToolTip CropRoom, Key=CropRoomTooltip}">
+					<Image Source="{tomb:Icon General/crop}" />
+				</Button>
+				<Button
+					Grid.Row="3"
+					Command="{Binding SplitRoomCommand}"
+					Style="{DynamicResource ButtonWithIconOnly}"
+					ToolTip="{editor:CommandToolTip SplitRoom, Key=SplitRoomTooltip}">
+					<Image Source="{tomb:Icon Actions/Split}" />
+				</Button>
+				<Button
+					Grid.Row="4"
+					Command="{Binding SelectPreviousRoomCommand}"
+					Style="{DynamicResource ButtonWithIconOnly}"
+					ToolTip="{editor:CommandToolTip SelectPreviousRoom, Key=SelectPreviousRoomTooltip}">
+					<Image Source="{tomb:Icon Actions/back}" />
+				</Button>
+
+				<Button
+					Grid.Column="1"
+					Command="{Binding AddNewRoomCommand}"
+					Style="{DynamicResource ButtonWithIconOnly}"
+					ToolTip="{editor:CommandToolTip AddNewRoom, Key=AddNewRoomTooltip}">
+					<Image Source="{tomb:Icon General/plus_math}" />
+				</Button>
+				<Button
+					Grid.Row="1"
+					Grid.Column="1"
+					Command="{Binding DeleteRoomsCommand}"
+					Style="{DynamicResource ButtonWithIconOnly}"
+					ToolTip="{editor:CommandToolTip DeleteRooms, Key=DeleteRoomsTooltip}">
+					<Image Source="{tomb:Icon General/trash}" />
+				</Button>
+				<Button
+					Grid.Row="2"
+					Grid.Column="1"
+					Command="{Binding MoveRoomUpCommand}"
+					Style="{DynamicResource ButtonWithIconOnly}"
+					ToolTip="{editor:CommandToolTip MoveRoomUp, Key=MoveRoomUpTooltip}">
+					<Image Source="{tomb:Icon General/ArrowUp}" />
+				</Button>
+				<Button
+					Grid.Row="3"
+					Grid.Column="1"
+					Command="{Binding MoveRoomDownCommand}"
+					Style="{DynamicResource ButtonWithIconOnly}"
+					ToolTip="{editor:CommandToolTip MoveRoomDown, Key=MoveRoomDownTooltip}">
+					<Image Source="{tomb:Icon General/ArrowDown}" />
+				</Button>
+				<ToggleButton
+					Grid.Row="4"
+					Grid.Column="1"
+					Command="{Binding LockRoomCommand}"
+					IsChecked="{Binding Locked, Mode=OneWay}"
+					IsEnabled="{Binding CanLockRoom}"
+					Style="{DynamicResource ToggleButtonWithIconOnly}"
+					ToolTip="{editor:CommandToolTip LockRoom, Key=LockRoomTooltip}">
+					<Image Source="{tomb:Icon General/Lock}" />
+				</ToggleButton>
+
+				<ToggleButton
+					Grid.Row="5"
+					Grid.ColumnSpan="2"
+					Command="{Binding HideRoomCommand}"
+					IsChecked="{Binding Hidden, Mode=OneWay}"
+					Style="{DynamicResource ToggleButtonWithIconOnly}"
+					ToolTip="{editor:CommandToolTip HideRoom, Key=HideRoomTooltip}">
+					<Image Source="{tomb:Icon General/Invisible}" />
+				</ToggleButton>
+			</controls:SpacedGrid>
+		</controls:SpacedGrid>
+
+		<controls:SpacedGrid Grid.Row="1" ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="60" />
+				<ColumnDefinition Width="70" />
+				<ColumnDefinition />
+				<ColumnDefinition Width="40" />
+			</Grid.ColumnDefinitions>
+
+			<controls:ColorPickerButton
+				Width="60"
+				Command="{Binding EditAmbientLightCommand}"
+				SelectedColor="{Binding AmbientLightColor, Mode=OneWay}"
+				ToolTip="{editor:CommandToolTip EditAmbientLight, Key=EditAmbientLightTooltip}" />
+			<ComboBox
+				Grid.Column="1"
+				ItemsSource="{Binding PortalShades}"
+				SelectedIndex="{Binding SelectedPortalShade}"
+				ToolTip="{tombLib:Localize PortalShadeTooltip}" />
+			<ComboBox
+				Grid.Column="2"
+				IsEnabled="{Binding SupportsLightEffect}"
+				ItemsSource="{Binding Effects}"
+				SelectedIndex="{Binding SelectedEffect}"
+				ToolTip="{tombLib:Localize EffectTooltip}" />
+			<controls:NumericUpDown
+				Grid.Column="3"
+				IsEnabled="{Binding SupportsLightEffectStrength}"
+				Maximum="4"
+				Minimum="0"
+				ToolTip="{tombLib:Localize EffectStrengthTooltip}"
+				Value="{Binding EffectStrength}" />
+		</controls:SpacedGrid>
+	</Grid>
+</UserControl>

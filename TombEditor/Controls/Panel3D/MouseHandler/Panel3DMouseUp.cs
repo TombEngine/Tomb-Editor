@@ -1,11 +1,13 @@
-﻿using System.Drawing;
+#nullable enable
+
+using Keys = TombLib.Input.EditorKey;
+using System.Drawing;
 using System.Numerics;
-using System.Windows.Forms;
+using TombEditor.Features.ContextMenus;
+using TombLib;
+using TombLib.Graphics;
 using TombLib.LevelData;
 using TombLib.Rendering;
-using TombLib;
-using TombEditor.Controls.ContextMenus;
-using TombLib.Graphics;
 
 namespace TombEditor.Controls.Panel3D
 {
@@ -37,7 +39,7 @@ namespace TombEditor.Controls.Panel3D
                         EditorActions.RotateSectors(_editor.SelectedRoom, zone, belongsToFloor);
                         return;
                     }
-                    else if (_editor.Tool.Tool == EditorToolType.Selection || 
+                    else if (_editor.Tool.Tool == EditorToolType.Selection ||
                             (_editor.Tool.Tool >= EditorToolType.Drag && _editor.Tool.Tool < EditorToolType.PortalDigger))
                     {
                         if (!_doSectorSelection && _editor.SelectedSectors.Valid && _editor.SelectedSectors.Area.Contains(pos))
@@ -80,7 +82,7 @@ namespace TombEditor.Controls.Panel3D
 
             // Handle multiple object selection
             if (_editor.Tool.Tool == EditorToolType.Selection && _toolHandler.Engaged && ModifierKeys.HasFlag(Keys.Control))
-                EditorActions.SelectObjectsInArea(FindForm(), _editor.HighlightedSectors, false);
+                EditorActions.SelectObjectsInArea(this, _editor.HighlightedSectors, false);
         }
 
         private void OnMouseButtonUpRight(Point location)
@@ -88,25 +90,29 @@ namespace TombEditor.Controls.Panel3D
             var distance = new Vector2(_startMousePosition.X, _startMousePosition.Y) - new Vector2(location.X, location.Y);
             if (distance.Length() < 4.0f)
             {
-                _currentContextMenu?.Dispose();
-                _currentContextMenu = null;
+                if (_currentWpfContextMenu != null)
+                {
+                    _currentWpfContextMenu.IsOpen = false;
+                    _currentWpfContextMenu = null;
+                }
 
                 PickingResult newPicking = DoPicking(GetRay(location.X, location.Y), true);
+                var screen = PointToScreen(location);
                 if (newPicking is PickingResultObject)
                 {
                     ObjectInstance target = ((PickingResultObject)newPicking).ObjectInstance;
                     if (target is ISpatial)
-                        _currentContextMenu = new MaterialObjectContextMenu(_editor, this, target);
+                        _currentWpfContextMenu = MaterialObjectWpfContextMenu.Show(_editor, this, target, screen);
                 }
-                else if (newPicking is PickingResultSector)
+                else if (newPicking is PickingResultSector pickedSector)
                 {
-                    var pickedSector = newPicking as PickingResultSector;
                     if (_editor.SelectedSectors.Valid && _editor.SelectedSectors.Area.Contains(pickedSector.Pos))
-                        _currentContextMenu = new SelectedGeometryContextMenu(_editor, this, pickedSector.Room, _editor.SelectedSectors.Area, pickedSector.Pos);
+                        _currentWpfContextMenu = SelectedGeometryWpfContextMenu.Show(
+                            _editor, this, pickedSector.Room, _editor.SelectedSectors.Area, pickedSector.Pos, screen);
                     else
-                        _currentContextMenu = new SectorContextMenu(_editor, this, pickedSector.Room, pickedSector.Pos);
+                        _currentWpfContextMenu = SectorWpfContextMenu.Show(
+                            _editor, this, pickedSector.Room, pickedSector.Pos, screen);
                 }
-                _currentContextMenu?.Show(PointToScreen(location));
             }
         }
     }

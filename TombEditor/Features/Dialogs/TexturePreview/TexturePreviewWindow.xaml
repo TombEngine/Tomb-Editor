@@ -1,0 +1,25 @@
+<Window
+	x:Class="TombEditor.Features.Dialogs.TexturePreview.TexturePreviewWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:local="clr-namespace:TombEditor.Features.Dialogs.TexturePreview"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	Width="378"
+	Height="503"
+	d:DataContext="{d:DesignInstance Type=local:TexturePreviewWindowViewModel}"
+	Background="{DynamicResource Brush_Background}"
+	ResizeMode="NoResize"
+	ShowInTaskbar="False"
+	WindowStartupLocation="Manual"
+	WindowStyle="None"
+	mc:Ignorable="d">
+
+	<Border
+		Margin="{x:Static darkUI:Defaults.TinyThickness}"
+		BorderBrush="{DynamicResource Brush_Border}"
+		BorderThickness="{x:Static darkUI:Defaults.BorderThickness}">
+		<local:TexturePreviewMapView x:Name="MapView" Margin="{x:Static darkUI:Defaults.TinyThickness}" />
+	</Border>
+</Window>

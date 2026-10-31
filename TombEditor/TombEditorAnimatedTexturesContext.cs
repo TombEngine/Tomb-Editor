@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TombLib.Forms;
 using TombLib.LevelData;
 using TombLib.Utils;
 
 namespace TombEditor;
 
-public class TombEditorAnimatedTexturesContext : FormAnimatedTextures.IAnimatedTexturesContext
+public class TombEditorAnimatedTexturesContext : TombLib.WPF.Features.AnimatedTextures.IAnimatedTexturesContext, IDisposable
 {
 	private readonly Editor _editor;
 
@@ -16,6 +15,9 @@ public class TombEditorAnimatedTexturesContext : FormAnimatedTextures.IAnimatedT
 		_editor = editor;
 		_editor.EditorEventRaised += EditorEventRaised;
 	}
+
+	/// <summary>Stops listening to editor events.</summary>
+	public void Dispose() => _editor.EditorEventRaised -= EditorEventRaised;
 
 	private void EditorEventRaised(IEditorEvent obj)
 	{

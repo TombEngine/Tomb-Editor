@@ -1,0 +1,896 @@
+<Window
+    x:Class="TombEditor.Features.Dialogs.LevelSettings.LevelSettingsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:local="clr-namespace:TombEditor.Features.Dialogs.LevelSettings"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    Title="{tombLib:Localize Title}"
+    Width="1000"
+    Height="560"
+    MinWidth="720"
+    MinHeight="420"
+    d:DataContext="{d:DesignInstance Type=local:LevelSettingsWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ShowInTaskbar="False"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <SolidColorBrush x:Key="ValidBrush" Color="#FF356B35" />
+        <SolidColorBrush x:Key="InvalidBrush" Color="#FF8B3A3A" />
+
+        <!--  A labeled "path text + browse button" row  -->
+        <Style x:Key="PathLabel" TargetType="TextBlock">
+            <Setter Property="Width" Value="150" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <!--  Path text boxes turn red when the path doesn't exist  -->
+        <Style x:Key="LevelFileBox" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LevelFilePathValid}" Value="False">
+                    <Setter Property="Background" Value="{StaticResource InvalidBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="GameDirBox" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding GameDirectoryValid}" Value="False">
+                    <Setter Property="Background" Value="{StaticResource InvalidBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="GameExeBox" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding GameExecutableValid}" Value="False">
+                    <Setter Property="Background" Value="{StaticResource InvalidBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="GameLevelBox" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding GameLevelFilePathValid}" Value="False">
+                    <Setter Property="Background" Value="{StaticResource InvalidBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ScriptBox" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ScriptDirectoryValid}" Value="False">
+                    <Setter Property="Background" Value="{StaticResource InvalidBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="LuaBox" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding LuaValid}" Value="False">
+                    <Setter Property="Background" Value="{StaticResource InvalidBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--  Auto or custom raw texture with a live preview (font, sky, TR5 extra sprites)  -->
+        <DataTemplate x:Key="CustomResourceTemplate" DataType="{x:Type local:CustomResourceViewModel}">
+            <Grid HorizontalAlignment="Stretch">
+                <Border
+                    Width="32"
+                    Height="32"
+                    Margin="8,0,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    BorderBrush="{DynamicResource Brush_Border}"
+                    BorderThickness="1">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsPreviewValid}" Value="False">
+                                    <Setter Property="Background" Value="{StaticResource InvalidBrush}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <Image RenderOptions.BitmapScalingMode="NearestNeighbor" Source="{Binding Preview}" Stretch="Uniform" />
+                </Border>
+                <StackPanel HorizontalAlignment="Stretch">
+                    <RadioButton Margin="0,2" Content="{Binding AutoLabel}" IsChecked="{Binding IsAuto, Mode=TwoWay}" />
+                    <RadioButton Margin="0,2" Content="{tombLib:Localize CustomFile256}" IsChecked="{Binding IsCustom, Mode=TwoWay}" />
+                    <DockPanel Margin="0,4,0,0">
+                        <Button
+                            Width="80"
+                            Margin="4,0,0,0"
+                            Command="{Binding BrowseCommand}"
+                            Content="{tombLib:Localize ~Generic.Browse}"
+                            DockPanel.Dock="Right"
+                            IsEnabled="{Binding IsCustom}" />
+                        <TextBox
+                            HorizontalAlignment="Stretch"
+                            IsEnabled="{Binding IsCustom}"
+                            Text="{Binding Path, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            ToolTip="{Binding AbsolutePath}" />
+                    </DockPanel>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+
+        <!--  Status cells: green when loaded, red on error  -->
+        <Style x:Key="InvalidPathCell" BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="DataGridCell">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsValid}" Value="False">
+                    <Setter Property="Background" Value="{StaticResource InvalidBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="StatusCell" BasedOn="{StaticResource {x:Type DataGridCell}}" TargetType="DataGridCell">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsValid}" Value="True">
+                    <Setter Property="Background" Value="{StaticResource ValidBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsValid}" Value="False">
+                    <Setter Property="Background" Value="{StaticResource InvalidBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
+
+        <controls:SpacedStack
+            DockPanel.Dock="Bottom"
+            Margin="0,8,0,0"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <Button Width="80" Command="{Binding ApplyCommand}" Content="{tombLib:Localize ~Common.Apply}" />
+            <Button Width="80" Command="{Binding OkCommand}" Content="{tombLib:Localize ~Common.OK}" IsDefault="True" />
+            <Button Width="80" Command="{Binding CancelCommand}" Content="{tombLib:Localize ~Common.Cancel}" IsCancel="True" />
+        </controls:SpacedStack>
+
+        <TabControl Style="{DynamicResource SidebarTabControlStyle}">
+
+            <!--  Game  -->
+            <TabItem Header="{tombLib:Localize TabGame}" HorizontalContentAlignment="Stretch">
+                <ScrollViewer Margin="0,6,0,6" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+
+                        <!-- Game version -->
+                        <StackPanel 
+                            Margin="10,3">
+                            <Label Content="{tombLib:Localize GameVersionLabel}" HorizontalAlignment="Left" Width="500" />
+                            <ComboBox ItemsSource="{Binding GameVersions}" Margin="10,10"
+                          SelectedItem="{Binding GameVersion, Mode=TwoWay}" HorizontalAlignment="Left" Width="372" />
+                        </StackPanel>        
+
+                        <!-- Game directory -->
+                        <StackPanel Margin="10,3">
+                            <Label Content="{tombLib:Localize GameFolderLabel}" HorizontalAlignment="Left" Width="500" />
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right"
+                            Width="103"
+                            Margin="4,0,0,0"
+                            Command="{Binding BrowseGameDirectoryCommand}"
+                            Content="{tombLib:Localize ~Generic.Browse}" />
+                                <TextBox Style="{StaticResource GameDirBox}"
+                             Text="{Binding GameDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" />
+                            </DockPanel>
+                        </StackPanel>
+                        <!-- Compiled level file -->
+                        <StackPanel 
+                            Margin="10,3">
+                            <Label Content="{tombLib:Localize CompiledLevelFileLabel}" HorizontalAlignment="Left" Width="500" />
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right"
+                            Width="103"
+                            Margin="4,0,0,0"
+                            Command="{Binding BrowseGameLevelFileCommand}"
+                            Content="{tombLib:Localize ~Generic.Browse}" />
+                                <TextBox Style="{StaticResource GameLevelBox}"
+                             Text="{Binding GameLevelFilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" />
+                            </DockPanel>
+                        </StackPanel>
+
+                        <!-- Script folder (TRNG only) -->
+                        <StackPanel 
+                            Margin="10,3"
+                            Visibility="{Binding IsTRNG, Converter={StaticResource BoolToVis}}">
+                            <Label Content="{tombLib:Localize ScriptPathLabel}" HorizontalAlignment="Left" Width="500"/>
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right"
+                            Width="103"
+                            Margin="4,0,0,0"
+                            Command="{Binding BrowseScriptCommand}"
+                            Content="{tombLib:Localize ~Generic.Browse}" />
+                                <TextBox Style="{StaticResource ScriptBox}"
+                             Text="{Binding ScriptDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" />
+                            </DockPanel>
+                        </StackPanel>
+
+                        <!-- Lua script file (TombEngine only) -->
+                        <StackPanel Margin="10,3"
+                        Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}">
+                            <Label Content="{tombLib:Localize LuaPathLabel}" HorizontalAlignment="Left" Width="500" />
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right"
+                            Width="103"
+                            Margin="4,0,0,0"
+                            Command="{Binding BrowseLuaCommand}"
+                            Content="{tombLib:Localize ~Generic.Browse}" />
+                                <TextBox Style="{StaticResource LuaBox}"
+                             Text="{Binding TenLuaScriptFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" />
+                            </DockPanel>
+                        </StackPanel>
+
+                        <!-- Game executable -->
+                        <StackPanel Margin="10,3">
+                            <Label Content="{tombLib:Localize GameExecutableLabel}" HorizontalAlignment="Left" Width="500" />
+                            <DockPanel>
+                                <Button DockPanel.Dock="Right"
+                            Width="103"
+                            Margin="4,0,0,0"
+                            Command="{Binding BrowseGameExecutableCommand}"
+                            Content="{tombLib:Localize ~Generic.Browse}" />
+                                <TextBox Style="{StaticResource GameExeBox}"
+                             Text="{Binding GameExecutableFilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" />
+                            </DockPanel>
+                        </StackPanel>
+
+                        <!-- Checkboxes -->
+
+                        <CheckBox Margin="20,3"
+                      Content="{tombLib:Localize ShowExtraBlendingModes}"
+                      IsChecked="{Binding GameEnableExtraBlendingModes, Mode=TwoWay}"
+                      Visibility="{Binding IsTR4Native, Converter={StaticResource BoolToVis}}" />
+                        
+                        <CheckBox Margin="20,3"
+                      Content="{tombLib:Localize ShowFlepReverbPresets}"
+                      IsChecked="{Binding GameEnableExtraReverbPresets, Mode=TwoWay}"
+                      Visibility="{Binding IsTR4Native, Converter={StaticResource BoolToVis}}" />
+
+                        <CheckBox Margin="20,3"
+                      Content="{tombLib:Localize EnableQuickStartFeature}"
+                      IsChecked="{Binding GameEnableQuickStartFeature, Mode=TwoWay}"
+                      Visibility="{Binding IsTR4Native, Converter={StaticResource BoolToVis}}" />
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+
+            <!--  Texture Files -->
+            <TabItem Header="{tombLib:Localize TabTextureFiles}" HorizontalContentAlignment="Stretch">
+                <DockPanel Margin="6">
+                    <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6" Text="{tombLib:Localize TexturesPrompt}" TextWrapping="Wrap" />
+                    <DockPanel DockPanel.Dock="Right" Margin="6,0,0,0" LastChildFill="False">
+                        <StackPanel DockPanel.Dock="Top">
+                            <Button Command="{Binding AddTexturesCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize AddTooltip}">
+                                <Image Source="{tomb:Icon General/plus_math}" />
+                            </Button>
+                            <Button Margin="0,4,0,0" Command="{Binding DeleteTextureCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize DeleteTooltip}">
+                                <Image Source="{tomb:Icon General/trash}" />
+                            </Button>
+                        </StackPanel>
+                        <StackPanel DockPanel.Dock="Bottom">
+                            <Button Command="{Binding MoveTextureUpCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize MoveUpTooltip}">
+                                <Image Source="{tomb:Icon General/ArrowUp}" />
+                            </Button>
+                            <Button Margin="0,4,0,0" Command="{Binding MoveTextureDownCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize MoveDownTooltip}">
+                                <Image Source="{tomb:Icon General/ArrowDown}" />
+                            </Button>
+                        </StackPanel>
+                    </DockPanel>
+                    <DataGrid
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False"
+                        HeadersVisibility="Column"
+                        ItemsSource="{Binding Textures}"
+                        tombLib:DataGridSelection.SelectedItemsList="{Binding SelectedTextures, Mode=OneWayToSource}">
+                        <DataGrid.InputBindings>
+                            <KeyBinding Key="Delete" Command="{Binding DeleteTextureCommand}" />
+                        </DataGrid.InputBindings>
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Width="56" Header="{tombLib:Localize ColumnPreview}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Image Width="32" Height="32" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode="NearestNeighbor" Source="{Binding Preview}" Stretch="Uniform" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
+                            <DataGridTemplateColumn Width="72">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Margin="1" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="44" Header="{tombLib:Localize ColumnShow}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Margin="1" Click="ShowTexturePreview_Click" IsEnabled="{Binding CanPreview}" ToolTip="{tombLib:Localize ColumnShow}"><Image Width="12" Height="12" Source="{tomb:Icon General/angle_left}" /></Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Width="160" Binding="{Binding Message}" CellStyle="{StaticResource StatusCell}" Header="{tombLib:Localize ColumnMessage}" IsReadOnly="True" />
+                            <DataGridTextColumn Width="90" Binding="{Binding Size}" Header="{tombLib:Localize ColumnSize}" IsReadOnly="True" />
+                            <DataGridCheckBoxColumn Width="120" Binding="{Binding ReplaceMagentaWithTransparency, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnMagentaToAlpha}" />
+                            <DataGridCheckBoxColumn Width="150" Binding="{Binding Convert512PixelsToDoubleRows, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSet512To256}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+
+            <!--  Object Files -->
+            <TabItem Header="{tombLib:Localize TabObjectFiles}" HorizontalContentAlignment="Stretch">
+                <DockPanel Margin="6">
+                    <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6" Text="{tombLib:Localize ObjectsPrompt}" TextWrapping="Wrap" />
+                    <DockPanel DockPanel.Dock="Right" Margin="6,0,0,0" LastChildFill="False">
+                        <StackPanel DockPanel.Dock="Top">
+                            <Button Command="{Binding AddWadsCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize AddTooltip}">
+                                <Image Source="{tomb:Icon General/plus_math}" />
+                            </Button>
+                            <Button Margin="0,4,0,0" Command="{Binding DeleteWadCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize DeleteTooltip}">
+                                <Image Source="{tomb:Icon General/trash}" />
+                            </Button>
+                        </StackPanel>
+                        <StackPanel DockPanel.Dock="Bottom">
+                            <Button Command="{Binding MoveWadUpCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize MoveUpTooltip}">
+                                <Image Source="{tomb:Icon General/ArrowUp}" />
+                            </Button>
+                            <Button Margin="0,4,0,0" Command="{Binding MoveWadDownCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize MoveDownTooltip}">
+                                <Image Source="{tomb:Icon General/ArrowDown}" />
+                            </Button>
+                        </StackPanel>
+                    </DockPanel>
+                    <DataGrid
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False"
+                        HeadersVisibility="Column"
+                        ItemsSource="{Binding WadRows}"
+                        tombLib:DataGridSelection.SelectedItemsList="{Binding SelectedWads, Mode=OneWayToSource}">
+                        <DataGrid.InputBindings>
+                            <KeyBinding Key="Delete" Command="{Binding DeleteWadCommand}" />
+                        </DataGrid.InputBindings>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
+                            <DataGridTemplateColumn Width="72">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Margin="1" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Width="44" Header="{tombLib:Localize ColumnShow}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Margin="1" Click="ShowWadPreview_Click" IsEnabled="{Binding CanPreview}" ToolTip="{tombLib:Localize ColumnShow}"><Image Width="12" Height="12" Source="{tomb:Icon General/angle_left}" /></Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Width="220" Binding="{Binding Message}" CellStyle="{StaticResource StatusCell}" Header="{tombLib:Localize ColumnMessage}" IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+
+            <!--  Imported Geometry -->
+            <TabItem Header="{tombLib:Localize TabImportedGeometry}" HorizontalContentAlignment="Stretch">
+                <DockPanel Margin="6">
+                    <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6" Text="{tombLib:Localize ImportedGeometryPrompt}" TextWrapping="Wrap" />
+                    <StackPanel DockPanel.Dock="Right" Margin="6,0,0,0">
+                        <Button Command="{Binding AddImportedGeometryCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize AddTooltip}">
+                            <Image Source="{tomb:Icon General/plus_math}" />
+                        </Button>
+                        <Button Margin="0,4,0,0" Command="{Binding DeleteImportedGeometryCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize DeleteTooltip}">
+                            <Image Source="{tomb:Icon General/trash}" />
+                        </Button>
+                    </StackPanel>
+                    <DataGrid
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False"
+                        HeadersVisibility="Column"
+                        ItemsSource="{Binding ImportedGeometries}"
+                        tombLib:DataGridSelection.SelectedItemsList="{Binding SelectedImportedGeometries, Mode=OneWayToSource}">
+                        <DataGrid.InputBindings>
+                            <KeyBinding Key="Delete" Command="{Binding DeleteImportedGeometryCommand}" />
+                        </DataGrid.InputBindings>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Width="100" Binding="{Binding Name}" Header="{tombLib:Localize ColumnName}" IsReadOnly="True" />
+                            <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
+                            <DataGridTemplateColumn Width="64">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Margin="1" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Width="50" Binding="{Binding Scale, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnScale}" />
+                            <DataGridTextColumn Width="100" Binding="{Binding ErrorMessage}" CellStyle="{StaticResource StatusCell}" Header="{tombLib:Localize ColumnMessage}" IsReadOnly="True" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding SwapXY, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSwapXY}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding SwapXZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSwapXZ}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding SwapYZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSwapYZ}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding FlipX, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipX}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding FlipY, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipY}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding FlipZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipZ}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding MappedUV, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnMappedUV}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding FlipUV_V, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipUV}" />
+                            <DataGridCheckBoxColumn Width="34" Binding="{Binding InvertFaces, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnInvertFaces}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+
+            <!--  Static Meshes -->
+            <TabItem Header="{tombLib:Localize TabStaticMeshes}" HorizontalContentAlignment="Stretch">
+                <DockPanel Margin="6">
+                    <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6" Text="{tombLib:Localize StaticMeshesPrompt}" TextWrapping="Wrap" />
+                    <TextBlock DockPanel.Dock="Bottom" Margin="0,6,0,0" Text="{tombLib:Localize StaticMeshesWarning}" TextWrapping="Wrap" />
+                    <TextBlock DockPanel.Dock="Bottom" Margin="0,6,0,0" Text="{tombLib:Localize StaticMeshesShadesNote}" TextWrapping="Wrap" />
+                    <controls:SpacedStack
+                        DockPanel.Dock="Bottom"
+                        Margin="0,6,0,0"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+                        <Button Command="{Binding SelectAllButShatterStaticsCommand}" Content="{tombLib:Localize SelectAllButShatterable}" />
+                        <Button Command="{Binding SelectAllStaticsCommand}" Content="{tombLib:Localize SelectAll}" />
+                        <Button Command="{Binding DeselectAllStaticsCommand}" Content="{tombLib:Localize DeselectAll}" />
+                    </controls:SpacedStack>
+                    <DataGrid
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False"
+                        HeadersVisibility="Column"
+                        ItemsSource="{Binding StaticMeshMerges}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Width="*" Binding="{Binding StaticMesh}" Header="{tombLib:Localize ColumnStaticMesh}" IsReadOnly="True" />
+                            <DataGridCheckBoxColumn Width="70" Binding="{Binding Merge, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnMerge}" />
+                            <DataGridCheckBoxColumn Width="170" Binding="{Binding InterpretShadesAsEffect, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnShadesAsEffect}" />
+                            <DataGridCheckBoxColumn Width="170" Binding="{Binding TintAsAmbient, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnTintAsAmbient}" />
+                            <DataGridCheckBoxColumn Width="150" Binding="{Binding ClearShades, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnClearShades}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+
+            <!--  Sky and Font -->
+            <TabItem Header="{tombLib:Localize TabSkyAndFont}" HorizontalContentAlignment="Stretch">
+                <Grid Margin="6">
+                    <StackPanel HorizontalAlignment="Stretch" IsEnabled="{Binding SupportsFontAndSky}">
+                        <TextBlock Margin="0,0,0,4" Text="{tombLib:Localize SkyTextureLabel}" />
+                        <ContentPresenter Content="{Binding Sky}" ContentTemplate="{StaticResource CustomResourceTemplate}" />
+
+                        <TextBlock Margin="0,12,0,4" Text="{tombLib:Localize FontTextureLabel}" />
+                        <ContentPresenter Content="{Binding Font}" ContentTemplate="{StaticResource CustomResourceTemplate}" />
+
+                        <StackPanel Visibility="{Binding IsTR5, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Margin="0,12,0,4" Text="{tombLib:Localize Tr5SpritesTextureLabel}" />
+                            <ContentPresenter Content="{Binding Tr5Sprites}" ContentTemplate="{StaticResource CustomResourceTemplate}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <!--  Sound Infos -->
+            <TabItem Header="{tombLib:Localize TabSoundInfos}" HorizontalContentAlignment="Stretch">
+                <Grid Margin="6">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*" MinHeight="90" />
+                        <RowDefinition Height="6" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="3*" MinHeight="120" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!--  Catalogs grid  -->
+                    <DockPanel Grid.Row="0">
+                        <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6" Text="{Binding CatalogsPrompt}" TextWrapping="Wrap" />
+                        <!--  Vertical icon-button strip on the right, mirroring the previous DarkDataGridViewControls.  -->
+                        <DockPanel DockPanel.Dock="Right" Margin="6,0,0,0" LastChildFill="False">
+                            <StackPanel DockPanel.Dock="Top">
+                                <Button Command="{Binding AddSoundCatalogsCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize AddTooltip}">
+                                    <Image Source="{tomb:Icon General/plus_math}" />
+                                </Button>
+                                <Button Margin="0,4,0,0" Command="{Binding DeleteSoundCatalogCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize DeleteTooltip}">
+                                    <Image Source="{tomb:Icon General/trash}" />
+                                </Button>
+                            </StackPanel>
+                            <StackPanel DockPanel.Dock="Bottom">
+                                <Button Command="{Binding MoveSoundCatalogUpCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize MoveUpTooltip}">
+                                    <Image Source="{tomb:Icon General/ArrowUp}" />
+                                </Button>
+                                <Button Margin="0,4,0,0" Command="{Binding MoveSoundCatalogDownCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize MoveDownTooltip}">
+                                    <Image Source="{tomb:Icon General/ArrowDown}" />
+                                </Button>
+                            </StackPanel>
+                        </DockPanel>
+                        <DataGrid
+                            AutoGenerateColumns="False"
+                            CanUserAddRows="False"
+                            CanUserDeleteRows="False"
+                            HeadersVisibility="Column"
+                            ItemsSource="{Binding SoundCatalogs}"
+                            tombLib:DataGridSelection.SelectedItemsList="{Binding SelectedSoundCatalogs, Mode=OneWayToSource}">
+                            <DataGrid.InputBindings>
+                                <KeyBinding Key="Delete" Command="{Binding DeleteSoundCatalogCommand}" />
+                            </DataGrid.InputBindings>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
+                                <DataGridTemplateColumn Width="72">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Margin="1" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Width="72">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Margin="1" Command="{Binding ReloadCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize ReloadTooltip}">
+                                                <Image Source="{tomb:Icon Actions/refresh}" />
+                                            </Button>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Width="72">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Margin="1" Command="{Binding EditCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize EditInSoundToolTooltip}" Visibility="{Binding CanEdit, Converter={StaticResource BoolToVis}}">
+                                                <Image Source="{tomb:Icon General/edit}" />
+                                            </Button>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Width="70">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Margin="1" Command="{Binding IncludeAllCommand}" Content="{tombLib:Localize IncludeAll}" ToolTip="{tombLib:Localize IncludeAllTooltip}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Width="90" Binding="{Binding SoundsCount}" Header="{tombLib:Localize ColumnNumSounds}" IsReadOnly="True" />
+                                <DataGridTextColumn Width="180" Binding="{Binding Message}" CellStyle="{StaticResource StatusCell}" Header="{tombLib:Localize ColumnMessage}" IsReadOnly="True" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+
+                    <GridSplitter
+                        Grid.Row="1"
+                        Height="6"
+                        HorizontalAlignment="Stretch"
+                        Background="{DynamicResource Brush_Border}" />
+
+                    <!--  Sound selection  -->
+                    <DockPanel Grid.Row="2" Margin="0,6,0,4">
+                        <CheckBox
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Content="{tombLib:Localize AutoAssignSounds}"
+                            DockPanel.Dock="Right"
+                            IsChecked="{Binding AutoAssignSoundsIfNoSelection, Mode=TwoWay}" />
+                        <TextBlock VerticalAlignment="Center" Text="{tombLib:Localize SoundInfosPrompt}" />
+                    </DockPanel>
+
+                    <DockPanel Grid.Row="3" Margin="0,0,0,6">
+                        <controls:SpacedStack DockPanel.Dock="Right" Orientation="Horizontal" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+                            <Button Command="{Binding SelectAllSoundsCommand}" Content="{tombLib:Localize SelectAll}" />
+                            <Button Command="{Binding DeselectAllSoundsCommand}" Content="{tombLib:Localize DeselectAll}" />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack Orientation="Horizontal" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+                            <Button Background="{StaticResource ValidBrush}" Command="{Binding AutodetectSoundsCommand}" Style="{DynamicResource ButtonWithIconAndText}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Source="{tomb:Icon Actions/light_on}" />
+                                    <TextBlock Text="{tombLib:Localize Autodetect}" />
+                                </StackPanel>
+                            </Button>
+                            <Button Command="{Binding AssignHardcodedSoundsCommand}" Content="{tombLib:Localize Hardcoded}" />
+                            <Button Command="{Binding AssignFromSelectedCatalogCommand}" Content="{tombLib:Localize FromCatalog}" />
+                            <Button Command="{Binding AssignFromSoundSourcesCommand}" Content="{tombLib:Localize FromSources}" />
+                            <Button Command="{Binding AssignFromWadsCommand}" Content="{tombLib:Localize FromWads}" />
+                        </controls:SpacedStack>
+                    </DockPanel>
+
+                    <DockPanel Grid.Row="4">
+                        <DataGrid
+                            AlternationCount="0"
+                            AutoGenerateColumns="False"
+                            CanUserAddRows="False"
+                            CanUserDeleteRows="False"
+                            HeadersVisibility="Column"
+                            ItemsSource="{Binding SoundInfos}">
+                            <DataGrid.Columns>
+                                <DataGridCheckBoxColumn Width="32" Binding="{Binding Selected, UpdateSourceTrigger=PropertyChanged}" Header="" />
+                                <DataGridTextColumn Width="50" Binding="{Binding Id}" Header="{tombLib:Localize ColumnId}" IsReadOnly="True" />
+                                <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="{tombLib:Localize ColumnName}" IsReadOnly="True" />
+                                <DataGridTextColumn Width="120" Binding="{Binding Catalog}" Header="{tombLib:Localize ColumnFromCatalog}" IsReadOnly="True" />
+                                <DataGridTextColumn Width="80" Binding="{Binding Samples}" Header="{tombLib:Localize ColumnSamples}" IsReadOnly="True" />
+                                <DataGridTextColumn x:Name="AreaColumn" Width="90" Binding="{Binding Area}" Header="{tombLib:Localize ColumnRange}" IsReadOnly="True" />
+                                <DataGridTextColumn x:Name="OriginalIdColumn" Width="80" Binding="{Binding OriginalId}" Header="{tombLib:Localize ColumnOriginalId}" IsReadOnly="True" />
+                            </DataGrid.Columns>
+                            <DataGrid.RowStyle>
+                                <Style BasedOn="{StaticResource {x:Type DataGridRow}}" TargetType="DataGridRow">
+                                    <Style.Triggers>
+                                        <!--  Colour every row by sample availability - green when the sample is
+                                            found, red when it is missing - independent of the Selected (assigned)
+                                            checkbox, so a row is never left at the default grey background.  -->
+                                        <DataTrigger Binding="{Binding IsMissing}" Value="False">
+                                            <Setter Property="Background" Value="{StaticResource ValidBrush}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsMissing}" Value="True">
+                                            <Setter Property="Background" Value="{StaticResource InvalidBrush}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
+                        </DataGrid>
+                    </DockPanel>
+
+                    <DockPanel Grid.Row="5" Margin="0,6,0,0" LastChildFill="False">
+                        <Button DockPanel.Dock="Right" Command="{Binding RemoveMissingSoundsCommand}" Content="{tombLib:Localize ClearMissing}" />
+                        <TextBox
+                            Width="200"
+                            Margin="0,0,6,0"
+                            DockPanel.Dock="Right"
+                            Text="{Binding SoundFilter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Return" Command="{Binding ApplySoundFilterCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+                        <Button Margin="0,0,4,0" Command="{Binding ApplySoundFilterCommand}" DockPanel.Dock="Right" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize FilterTooltip}">
+                            <Image Width="16" Height="16" Source="{tomb:Icon General/filter}" />
+                        </Button>
+                        <TextBlock VerticalAlignment="Center" Margin="0,0,6,0" DockPanel.Dock="Right" Text="{tombLib:Localize FilterLabel}" />
+                        <TextBlock VerticalAlignment="Center" DockPanel.Dock="Left" Text="{Binding SoundStatistics}" />
+                    </DockPanel>
+                </Grid>
+            </TabItem>
+
+            <!--  Sound Sample Paths -->
+            <TabItem Header="{tombLib:Localize TabSoundSamplePaths}" HorizontalContentAlignment="Stretch">
+                <DockPanel Margin="6">
+                    <TextBlock DockPanel.Dock="Top" Margin="0,0,0,6" Text="{Binding SamplesPrompt}" TextWrapping="Wrap" />
+                    <!--  Vertical icon-button strip on the right, mirroring the previous DarkDataGridViewControls.  -->
+                    <DockPanel DockPanel.Dock="Right" Margin="6,0,0,0" LastChildFill="False" Visibility="{Binding SupportsSamplePaths, Converter={StaticResource BoolToVis}}">
+                        <StackPanel DockPanel.Dock="Top">
+                            <Button Command="{Binding AddSampleCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize AddTooltip}">
+                                <Image Source="{tomb:Icon General/plus_math}" />
+                            </Button>
+                            <Button Margin="0,4,0,0" Command="{Binding DeleteSampleCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize DeleteTooltip}">
+                                <Image Source="{tomb:Icon General/trash}" />
+                            </Button>
+                        </StackPanel>
+                        <StackPanel DockPanel.Dock="Bottom">
+                            <Button Command="{Binding MoveSampleUpCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize MoveUpTooltip}">
+                                <Image Source="{tomb:Icon General/ArrowUp}" />
+                            </Button>
+                            <Button Margin="0,4,0,0" Command="{Binding MoveSampleDownCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize MoveDownTooltip}">
+                                <Image Source="{tomb:Icon General/ArrowDown}" />
+                            </Button>
+                        </StackPanel>
+                    </DockPanel>
+                    <DataGrid
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        CanUserDeleteRows="False"
+                        HeadersVisibility="Column"
+                        Visibility="{Binding SupportsSamplePaths, Converter={StaticResource BoolToVis}}"
+                        RowHeight="30" ItemsSource="{Binding SampleRows}"
+                        tombLib:DataGridSelection.SelectedItemsList="{Binding SelectedSamples, Mode=OneWayToSource}">
+                        <DataGrid.InputBindings>
+                            <KeyBinding Key="Delete" Command="{Binding DeleteSampleCommand}" />
+                        </DataGrid.InputBindings>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Width="*" CellStyle="{StaticResource InvalidPathCell}" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
+                            <DataGridTemplateColumn Width="80">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Height="26" Margin="1" Padding="0" VerticalContentAlignment="Center" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+
+            <!--  TRX -->
+            <TabItem Header="{tombLib:Localize TabTrx}" Visibility="{Binding IsTRX, Converter={StaticResource BoolToVis}}">
+                <ScrollViewer Margin="6" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <DockPanel Margin="0,3">
+                            <Label Content="{tombLib:Localize TextureBitDepthLabel}" />
+                            <ComboBox Width="120" HorizontalAlignment="Left" ItemsSource="{Binding TrxTextureDepths}" SelectedItem="{Binding SelectedTrxDepth, Mode=TwoWay}" />
+                        </DockPanel>
+
+                        <CheckBox Margin="0,3" Content="{tombLib:Localize TrxConvertFlybysToCinematicFrames}" IsChecked="{Binding TrxConvertFlybysToCinematicFrames, Mode=TwoWay}" />
+                        <CheckBox Margin="0,3" Content="{tombLib:Localize TrxUseAlternateGroups}" IsChecked="{Binding TrxUseAlternateGroups, Mode=TwoWay}" />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!--  Misc -->
+            <TabItem Header="{tombLib:Localize TabMisc}" HorizontalContentAlignment="Stretch">
+                <ScrollViewer Margin="6" VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+
+                        <StackPanel Visibility="{Binding IsTR5, Converter={StaticResource BoolToVis}}">
+                            <DockPanel Margin="0,3">
+                                <Label VerticalAlignment="Center" Content="{tombLib:Localize Tr5WeatherLabel}" />
+                                <ComboBox Width="119" HorizontalAlignment="Left" ItemsSource="{Binding Tr5WeatherTypes}" SelectedItem="{Binding Tr5WeatherType, Mode=TwoWay}" />
+                            </DockPanel>
+                            <DockPanel Margin="0,3">
+                                <Label VerticalAlignment="Center" Content="{tombLib:Localize LaraTypeLabel}" />
+                                <ComboBox Width="119" HorizontalAlignment="Left" ItemsSource="{Binding Tr5LaraTypes}" SelectedItem="{Binding Tr5LaraType, Mode=TwoWay}" />
+                            </DockPanel>
+                        </StackPanel>
+
+                        <DockPanel Margin="0,3">
+                            <Label
+                                VerticalAlignment="Center"
+                                Content="{tombLib:Localize DefaultAmbientLightLabel}">
+                            </Label>
+                            <Button Width="120"
+                        Height="20"
+                        HorizontalAlignment="Left"
+                        Command="{Binding PickAmbientLightCommand}">
+                                <Button.Background>
+                                    <SolidColorBrush Color="{Binding AmbientLightColor}" />
+                                </Button.Background>
+                            </Button>
+                        </DockPanel>
+
+                        <DockPanel Margin="0,3">
+                            <Label VerticalAlignment="Center" Content="{tombLib:Localize DefaultLightQualityLabel}" />
+                            <ComboBox 
+                                Width="119"
+                                HorizontalAlignment="Left"
+                                ItemsSource="{Binding LightQualities}"
+                                SelectedIndex="{Binding DefaultLightQualityIndex, Mode=TwoWay}" 
+                                ToolTip="{tombLib:Localize DefaultLightQualityTooltip}"
+                            />
+                        </DockPanel>
+
+                        <DockPanel Margin="0,3">
+                            <Label VerticalAlignment="Center" Content="{tombLib:Localize TexturePaddingLabel}" />
+                            <controls:NumericUpDown
+                                Width="100"
+                                HorizontalAlignment="Left"
+                                Maximum="128"
+                                Minimum="0"
+                                Value="{Binding TexturePadding, Mode=TwoWay}"
+                                ToolTip="{tombLib:Localize TexturePaddingTooltip}"
+                            />
+                            <Label VerticalAlignment="Center" Content="{tombLib:Localize PixelsLabel}" />
+                        </DockPanel>
+
+                        <CheckBox 
+                            Margin="0,3"
+                            Content="{tombLib:Localize AggressiveTexturePacking}"
+                            IsChecked="{Binding AgressiveTexturePacking}"
+                            IsEnabled="{Binding IsNotTombEngine}"
+                            ToolTip="{tombLib:Localize AggressiveTexturePackingTooltip}"
+                        />
+
+                        <CheckBox
+                            Margin="0,3"
+                            Content="{tombLib:Localize AggressiveFloordataPacking}"
+                            IsChecked="{Binding AgressiveFloordataPacking, Mode=TwoWay}"
+                            IsEnabled="{Binding IsNotTombEngine}"
+                            ToolTip="{tombLib:Localize AggressiveFloordataPackingTooltip}"
+                        />
+
+                        <CheckBox
+                            Margin="0,3"
+                            Content="{tombLib:Localize Room32BitLighting}"
+                            IsChecked="{Binding Room32BitLighting, Mode=TwoWay}"
+                            IsEnabled="{Binding IsTRNG}"
+                            ToolTip="{tombLib:Localize Room32BitLightingTooltip}"
+                        />
+
+                        <CheckBox 
+                            Margin="0,3"
+                            Content="{tombLib:Localize Dither16BitTextures}"
+                            IsChecked="{Binding Dither16BitTextures, Mode=TwoWay}"
+                            IsEnabled="{Binding CanDither16BitTextures}"
+                            ToolTip="{tombLib:Localize Dither16BitTexturesTooltip}"
+                        />
+
+                        <CheckBox
+                            Margin="0,3"
+                            Content="{tombLib:Localize CompressTextures}"
+                            IsChecked="{Binding CompressTextures, Mode=TwoWay}"
+                            IsEnabled="{Binding IsTombEngine}"
+                            ToolTip="{tombLib:Localize CompressTexturesTooltip}"
+                        />                        
+
+                        <CheckBox 
+                            Margin="0,3"
+                            Content="{tombLib:Localize RemapAnimatedTextures}"
+                            IsChecked="{Binding RemapAnimatedTextures, Mode=TwoWay}"
+                            IsEnabled="{Binding IsNotTombEngine}"
+                            ToolTip="{tombLib:Localize RemapAnimatedTexturesTooltip}"
+                        />
+
+                        <CheckBox
+                            Margin="0,3"
+                            Content="{tombLib:Localize RearrangeVerticalRooms}"
+                            IsChecked="{Binding RearrangeVerticalRooms, Mode=TwoWay}"
+                            IsEnabled="{Binding IsNotTombEngine}"
+                            ToolTip="{tombLib:Localize RearrangeVerticalRoomsTooltip}"
+                        />
+
+                        <CheckBox
+                            Margin="0,3"
+                            Content="{tombLib:Localize RemoveUnusedObjects}"
+                            IsChecked="{Binding RemoveUnusedObjects, Mode=TwoWay}"
+                            ToolTip="{tombLib:Localize RemoveUnusedObjectsTooltip}"
+                        />
+
+                        <DockPanel Margin="0,3">
+                            <CheckBox
+                                Width="230"
+                                VerticalAlignment="Center"
+                                Content="{tombLib:Localize CustomSampleRate}"
+                                ToolTip="{tombLib:Localize CustomSampleRateTooltip}"
+                                IsChecked="{Binding EnableCustomSampleRate, Mode=TwoWay}"
+                            />
+                            <ComboBox
+                                Width="100"
+                                HorizontalAlignment="Left"
+                                IsEnabled="{Binding CanEditSampleRate}"
+                                ItemsSource="{Binding SampleRates}"
+                                SelectedItem="{Binding SelectedSampleRate, Mode=TwoWay}" />
+                        </DockPanel>
+
+                        <TextBlock Margin="0,12,0,4" Text="{tombLib:Localize LevelFileLabel}" />
+                        <DockPanel Margin="0,3">
+                            <Button DockPanel.Dock="Right" Width="80" Margin="4,0,0,0" Command="{Binding BrowseLevelFileCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
+                            <TextBox Style="{StaticResource LevelFileBox}" Text="{Binding LevelFilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </DockPanel>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!--  Path Placeholders  -->
+            <TabItem Header="{tombLib:Localize TabPathPlaceholders}" HorizontalContentAlignment="Stretch">
+                <DockPanel Margin="6">
+                    <TextBlock DockPanel.Dock="Top" Margin="0,0,0,4" Text="{tombLib:Localize PathVariablesLabel}" />
+                    <DataGrid
+            AutoGenerateColumns="False"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            HeadersVisibility="Column"
+            IsReadOnly="True"
+            ItemsSource="{Binding PathVariables}"
+            PreviewMouseRightButtonDown="PathVariables_PreviewMouseRightButtonDown"
+            SelectionMode="Single"
+            SelectionUnit="Cell"
+            x:Name="PathVariablesGrid">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Click="CopyPathVariable_Click" Header="{tombLib:Localize CopyCell}" />
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Width="200" Binding="{Binding Variable}" Header="{tombLib:Localize ColumnPlaceholder}" />
+                            <DataGridTextColumn Width="*" Binding="{Binding Value}" Header="{tombLib:Localize ColumnCurrentValue}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </TabItem>
+
+        </TabControl>
+    </DockPanel>
+</Window>

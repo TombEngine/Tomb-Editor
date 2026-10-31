@@ -1,14 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <LangVersion>12</LangVersion>
     <OutputType>WinExe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <Configurations>Debug;Release</Configurations>
     <Platforms>x64;x86</Platforms>
+    <ApplicationIcon>TE.ico</ApplicationIcon>
+    <StartupObject>TombEditor.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <OutputPath>..\Build ($(Platform))\</OutputPath>
@@ -24,12 +25,6 @@
   <PropertyGroup Condition="'$(Platform)'=='x86'">
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>TE.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>TombEditor.Program</StartupObject>
-  </PropertyGroup>
   <ItemGroup>
     <Page Update="Properties\DesignTimeResources.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -38,9 +33,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CustomTabControl">
-      <HintPath>..\Libs\CustomTabControl.dll</HintPath>
-    </Reference>
     <Reference Include="SharpDX, Version=2.4.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\SharpDX.dll</HintPath>
@@ -78,103 +70,28 @@
     <Compile Include="..\GlobalPaths.cs">
       <Link>GlobalPaths.cs</Link>
     </Compile>
-    <Compile Update="Controls\ContextMenus\GridPaintContextMenu.cs" />
-    <Compile Update="Controls\ContextMenus\Space2DMapContextMenu.cs" />
-    <Compile Update="Controls\PanelRenderingImportedGeometry.cs" />
-    <Compile Update="Controls\PanelRenderingSprite.cs" />
-    <Compile Update="Controls\RichTextLabel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Controls\ToolBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\ContextMenus\BaseContextMenu.cs" />
-    <Compile Update="Controls\ContextMenus\SelectedGeometryContextMenu.cs" />
-    <Compile Update="Controls\ContextMenus\SectorContextMenu.cs" />
-    <Compile Update="Controls\ContextMenus\SelectedRoomContextMenu.cs" />
-    <Compile Update="Controls\ContextMenus\MaterialObjectContextMenu.cs" />
-    <Compile Update="Controls\ImportedGeometryManager.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\TriggerManager.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\PanelPalette.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Controls\PanelRenderingItem.cs" />
-    <Compile Update="Forms\FormPortal.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
+    <Compile Remove="EditorCommands.cs" />
     <Compile Update="Properties\Settings.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Update="ToolWindows\ImportedGeometryBrowser.cs" />
-    <Compile Update="ToolWindows\Lighting.cs" />
-    <Compile Update="ToolWindows\MainView.cs" />
-    <Compile Update="ToolWindows\ObjectList.cs" />
-    <Compile Update="ToolWindows\Palette.cs" />
-    <Compile Update="ToolWindows\TexturePanel.cs" />
-    <Compile Update="ToolWindows\ToolPalette.cs" />
-    <Compile Update="ToolWindows\ToolPaletteFloating.cs" />
-    <Compile Update="ToolWindows\TriggerList.cs" />
-    <Compile Update="ToolWindows\RoomOptions.cs" />
-    <Compile Update="ToolWindows\ContentBrowser.cs" />
-    <Compile Update="ToolWindows\ItemBrowser.cs" />
-    <Compile Update="ToolWindows\SectorOptions.cs" />
-    <Compile Update="Controls\Panel2DMap.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Controls\Panel2DGrid.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Controls\Panel3D\Panel3D.cs" />
-    <Compile Update="Controls\PanelTextureMap.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DarkUI\DarkUI\DarkUI.csproj" />
     <ProjectReference Include="..\DarkUI\DarkUI.WPF\DarkUI.WPF.csproj" />
-    <ProjectReference Include="..\TombLib\TombLib.Forms\TombLib.Forms.csproj" />
+    <ProjectReference Include="..\TombLib\TombLib.Icons\TombLib.Icons.csproj" />
     <ProjectReference Include="..\TombLib\TombLib.Rendering\TombLib.Rendering.csproj" />
     <ProjectReference Include="..\TombLib\TombLib.WPF\TombLib.WPF.csproj" />
     <ProjectReference Include="..\TombLib\TombLib\TombLib.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="TE.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\icons_toolbox\*.png" />
-    <Resource Include="Resources\icons_objects\objects_volume-sphere-16.png" />
-    <Resource Include="Resources\icons_objects\objects_volume-box-16.png" />
-    <Resource Include="Resources\icons_actions\actions_TextureMode-16.png" />
-    <Resource Include="Resources\icons_actions\actions_StarOutlined-16.png" />
-    <Resource Include="Resources\icons_actions\actions_StarFilled-16.png" />
-    <Resource Include="Resources\icons_actions\actions_play-16.png" />
-    <Resource Include="Resources\icons_actions\actions_3DView-16.png" />
-    <Resource Include="Resources\icons_actions\actions_delete-16.png" />
-    <Resource Include="Resources\icons_general\general_plus_math-16.png" />
-    <Resource Include="Resources\icons_general\general_trash-16.png" />
-    <Resource Include="Resources\icons_transport\*.png" />
+    <Resource Include="TE.ico" />
+    <Resource Include="Resources\misc\misc_AboutScreen_800.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     <PackageReference Include="NLog" Version="5.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="EditorCommands.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Update="Properties\Settings.settings">

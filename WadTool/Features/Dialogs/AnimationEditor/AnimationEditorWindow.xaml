@@ -1,0 +1,616 @@
+<Window
+    x:Class="WadTool.Features.Dialogs.AnimEditor.AnimationEditorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:local="clr-namespace:WadTool.Features.Dialogs.AnimEditor"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+    xmlns:tombLibControls="clr-namespace:TombLib.WPF.CustomControls;assembly=TombLib.WPF"
+    xmlns:wadControls="clr-namespace:WadTool.Controls"
+    Title="{Binding Title}"
+    Width="1055"
+    Height="834"
+    MinWidth="906"
+    MinHeight="699"
+    d:DataContext="{d:DesignInstance Type=local:AnimationEditorWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ShowInTaskbar="False"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <Style x:Key="Lbl" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Text_Low}" />
+            <Setter Property="Margin" Value="0,4,0,0" />
+        </Style>
+        <Style x:Key="Val" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+        </Style>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <Style x:Key="FieldLbl" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Width" Value="64" />
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Text_Low}" />
+        </Style>
+        <Style x:Key="Nud" BasedOn="{StaticResource {x:Type controls:NumericUpDown}}" TargetType="controls:NumericUpDown">
+            <EventSetter Event="LostKeyboardFocus" Handler="OnParameterLostFocus" />
+            <Setter Property="DecimalPlaces" Value="0" />
+            <Setter Property="Minimum" Value="-1000000" />
+            <Setter Property="Maximum" Value="1000000" />
+        </Style>
+        <Style x:Key="Axis" BasedOn="{StaticResource {x:Type controls:NumericUpDown}}" TargetType="controls:NumericUpDown">
+            <Setter Property="DecimalPlaces" Value="4" />
+            <Setter Property="Minimum" Value="-32768" />
+            <Setter Property="Maximum" Value="32767" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+        <!--  Icon toolbar button (16px icon, like the legacy topBar)  -->
+        <Style
+            x:Key="TbBtn"
+            BasedOn="{StaticResource {x:Type Button}}"
+            TargetType="Button">
+            <Setter Property="Width" Value="26" />
+            <Setter Property="Height" Value="26" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+        <Style x:Key="TbImg" TargetType="Image">
+            <Setter Property="Width" Value="16" />
+            <Setter Property="Height" Value="16" />
+        </Style>
+        <Style x:Key="TbLbl" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="4,0,2,0" />
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Text_Low}" />
+        </Style>
+        <Style x:Key="TbSep" TargetType="Border">
+            <Setter Property="Width" Value="1" />
+            <Setter Property="Margin" Value="3,3" />
+            <Setter Property="Background" Value="{DynamicResource Brush_Border}" />
+        </Style>
+        <!--  Transport button (24px icon, like the legacy transport strip)  -->
+        <Style
+            x:Key="TransportBtn"
+            BasedOn="{StaticResource {x:Type Button}}"
+            TargetType="Button">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+        <Style
+            x:Key="TransportToggle"
+            BasedOn="{StaticResource {x:Type ToggleButton}}"
+            TargetType="ToggleButton">
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+        <Style x:Key="TransportImg" TargetType="Image">
+            <Setter Property="Width" Value="24" />
+            <Setter Property="Height" Value="24" />
+        </Style>
+    </Window.Resources>
+
+    <DockPanel LastChildFill="True">
+
+        <!--  Menu bar (mirrors the legacy top menu)  -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Edit">
+                <MenuItem Command="{Binding UndoCommand}" Header="Undo" InputGestureText="Ctrl+Z"><MenuItem.Icon><Image Source="{tomb:Icon General/undo}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding RedoCommand}" Header="Redo" InputGestureText="Ctrl+Y"><MenuItem.Icon><Image Source="{tomb:Icon General/redo}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding SaveCommand}" Header="Save changes" InputGestureText="Ctrl+S"><MenuItem.Icon><Image Source="{tomb:Icon General/Save}" /></MenuItem.Icon></MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding CancelCommand}" Header="Close" />
+            </MenuItem>
+            <MenuItem Header="Animations">
+                <MenuItem Command="{Binding AddAnimationCommand}" Header="New animation"><MenuItem.Icon><Image Source="{tomb:Icon General/plus_math}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding DeleteAnimationCommand}" Header="Delete animation"><MenuItem.Icon><Image Source="{tomb:Icon General/trash}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding SplitAnimationCommand}" Header="Split animation"><MenuItem.Icon><Image Source="{tomb:Icon Actions/Split}" /></MenuItem.Icon></MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding CutAnimationCommand}" Header="Cut"><MenuItem.Icon><Image Source="{tomb:Icon Actions/cut}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding CopyAnimationCommand}" Header="Copy"><MenuItem.Icon><Image Source="{tomb:Icon General/copy}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding PasteAnimationCommand}" Header="Paste"><MenuItem.Icon><Image Source="{tomb:Icon General/paste}" /></MenuItem.Icon></MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding ImportAnimationCommand}" Header="Import..."><MenuItem.Icon><Image Source="{tomb:Icon General/Import}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding ExportAnimationCommand}" Header="Export..."><MenuItem.Icon><Image Source="{tomb:Icon General/Export}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Header="Batch">
+                    <MenuItem Command="{Binding BatchImportCommand}" Header="Import..." />
+                    <MenuItem Command="{Binding BatchExportSelectedCommand}" Header="Export selected..." />
+                    <MenuItem Command="{Binding BatchExportAllCommand}" Header="Export all..." />
+                </MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding ResampleAnimationCommand}" Header="Resample animation"><MenuItem.Icon><Image Source="{tomb:Icon Actions/interpolate}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding ResampleAnimationToFramerateCommand}" Header="Resample animation to framerate" />
+                <MenuItem Command="{Binding MirrorCommand}" Header="Mirror animation"><MenuItem.Icon><Image Source="{tomb:Icon General/Mirror}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding ReverseCommand}" Header="Reverse animation" />
+                <Separator />
+                <MenuItem Header="Fix">
+                    <MenuItem Command="{Binding FixCurrentAnimationCommand}" Header="Current animation..." />
+                    <MenuItem Command="{Binding FixSelectedAnimationsCommand}" Header="Selected animations..." />
+                    <MenuItem Command="{Binding FixAllAnimationsCommand}" Header="All animations..." />
+                </MenuItem>
+                <MenuItem Command="{Binding FindReplaceAnimCommandsCommand}" Header="Find &amp; replace animcommands..."><MenuItem.Icon><Image Source="{tomb:Icon General/Find-and-replace}" /></MenuItem.Icon></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Frames">
+                <MenuItem Command="{Binding AddFrameCommand}" Header="Insert frame after current one"><MenuItem.Icon><Image Source="{tomb:Icon General/plus_math}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding InsertFramesAfterCurrentCommand}" Header="Insert (n) frames after current one" />
+                <MenuItem Command="{Binding DeleteFrameCommand}" Header="Delete frames" InputGestureText="Del"><MenuItem.Icon><Image Source="{tomb:Icon General/trash}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding DeleteEveryNthFrameCommand}" Header="Delete every (n)th frame" />
+                <Separator />
+                <MenuItem Command="{Binding CutFrameCommand}" Header="Cut" InputGestureText="Ctrl+X"><MenuItem.Icon><Image Source="{tomb:Icon Actions/cut}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding CopyFrameCommand}" Header="Copy" InputGestureText="Ctrl+C"><MenuItem.Icon><Image Source="{tomb:Icon General/copy}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding PasteFrameCommand}" Header="Paste" InputGestureText="Ctrl+V"><MenuItem.Icon><Image Source="{tomb:Icon General/paste}" /></MenuItem.Icon></MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding InterpolateCommand}" Header="Interpolate frames" InputGestureText="Ctrl+I"><MenuItem.Icon><Image Source="{tomb:Icon Actions/interpolate}" /></MenuItem.Icon></MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding CalculateCurrentFrameBoundingBoxCommand}" Header="Calculate bounding box"><MenuItem.Icon><Image Source="{tomb:Icon General/box}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding DeleteCurrentFrameBoundingBoxCommand}" Header="Delete bounding box" />
+            </MenuItem>
+            <MenuItem Header="Rendering">
+                <MenuItem Header="Draw gizmo" IsCheckable="True" IsChecked="{Binding ShowGizmo, Mode=TwoWay}" />
+                <MenuItem Header="Draw grid" IsCheckable="True" IsChecked="{Binding ShowGrid, Mode=TwoWay}" />
+                <MenuItem Header="Draw collision box" IsCheckable="True" IsChecked="{Binding ShowCollisionBox, Mode=TwoWay}" />
+                <MenuItem Header="Draw skinned mesh" IsCheckable="True" IsChecked="{Binding ShowSkin, Mode=TwoWay}" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}" />
+                <Separator />
+                <MenuItem Header="Smooth animation" IsCheckable="True" IsChecked="{Binding SmoothAnimation, Mode=TwoWay}" />
+                <MenuItem Header="Scroll grid" IsCheckable="True" IsChecked="{Binding ScrollGrid, Mode=TwoWay}" />
+                <MenuItem Header="Restore grid height" IsCheckable="True" IsChecked="{Binding RestoreGridHeight, Mode=TwoWay}" />
+            </MenuItem>
+        </Menu>
+
+        <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
+
+        <!--  Footer: OK / Cancel  -->
+        <controls:SpacedStack
+            DockPanel.Dock="Bottom"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <controls:SpacedStack.Margin>
+                <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+            </controls:SpacedStack.Margin>
+            <Button Width="80" Command="{Binding OkCommand}" Content="OK" />
+            <Button Width="80" Command="{Binding CancelCommand}" Content="Cancel" />
+        </controls:SpacedStack>
+
+        <!--  Left: animation list  -->
+        <GroupBox
+            Width="240"
+            DockPanel.Dock="Left"
+            Header="Animations">
+            <GroupBox.Margin>
+                <Thickness Right="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+            </GroupBox.Margin>
+            <DockPanel>
+                <!--  Filter  -->
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,4">
+                    <Button
+                        DockPanel.Dock="Right"
+                        Style="{StaticResource TbBtn}"
+                        Margin="2,0,0,0"
+                        Command="{Binding ResetFilterCommand}"
+                        ToolTip="Reset filtering">
+                        <Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/delete}" />
+                    </Button>
+                    <Button
+                        DockPanel.Dock="Right"
+                        Style="{StaticResource TbBtn}"
+                        Margin="2,0,0,0"
+                        Command="{Binding ApplyFilterCommand}"
+                        ToolTip="Filter list.&#13;&#10;Numerical input - filter by state ID&#13;&#10;String input - filter by name">
+                        <Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/filter}" />
+                    </Button>
+                    <TextBox
+                        VerticalContentAlignment="Center"
+                        Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        ToolTip="Numerical input - filter by state ID.&#13;&#10;String input - filter by animation name.&#13;&#10;&#13;&#10;Tokens:&#13;&#10;s:[name or ID] - state name or ID&#13;&#10;a:[name or ID] - anim name or ID">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Return" Command="{Binding ApplyFilterCommand}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
+                </DockPanel>
+
+                <!--  Add / delete  -->
+                <controls:SpacedStack
+                    DockPanel.Dock="Bottom"
+                    HorizontalAlignment="Right"
+                    Margin="0,4,0,0"
+                    Orientation="Horizontal"
+                    Spacing="2">
+                    <Button Style="{StaticResource TbBtn}" Command="{Binding AddAnimationCommand}" ToolTip="Add new animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
+                    <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteSelectedAnimationsCommand}" ToolTip="Delete selected animations"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
+                </controls:SpacedStack>
+
+                <ListBox
+                    x:Name="animationList"
+                    PreviewMouseLeftButtonUp="OnAnimationListClick"
+                    DisplayMemberPath="Label"
+                    ItemsSource="{Binding Animations}"
+                    SelectedItem="{Binding SelectedAnim, Mode=TwoWay}"
+                    SelectionMode="Extended" />
+            </DockPanel>
+        </GroupBox>
+
+        <!--  Right: properties + transform + bounding box + bones  -->
+        <ScrollViewer
+            Width="300"
+            DockPanel.Dock="Right"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <ScrollViewer.Margin>
+                <Thickness Left="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+            </ScrollViewer.Margin>
+            <controls:SpacedStack Orientation="Vertical" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+
+                <GroupBox Header="Animation">
+                    <StackPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Name:" /><TextBox LostKeyboardFocus="OnParameterLostFocus" Text="{Binding AnimName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="State:" /><TextBox x:Name="stateIdBox" Text="{Binding StateIdText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Framerate" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="1" Maximum="255" Value="{Binding FrameRate, Mode=TwoWay}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="End frame" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding EndFrame, Mode=TwoWay}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Next anim" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding NextAnimation, Mode=TwoWay}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Next frame" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding NextFrame, Mode=TwoWay}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Start X vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding StartVertVel, Mode=TwoWay}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="End X vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding EndVertVel, Mode=TwoWay}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Start Z vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding StartHorVel, Mode=TwoWay}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="End Z vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding EndHorVel, Mode=TwoWay}" /></DockPanel>
+                        <DockPanel Margin="0,2" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Blend frames" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="255" Value="{Binding BlendFrameCount, Mode=TwoWay}" /></DockPanel>
+                        <Border Height="110" Margin="0,6,0,0" BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}">
+                            <wadControls:BezierCurveEditor x:Name="bezierEditor" />
+                        </Border>
+                        <ComboBox Margin="0,4,0,0" SelectedIndex="{Binding BlendPresetIndex, Mode=TwoWay}" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}">
+                            <ComboBoxItem Content="Linear" />
+                            <ComboBoxItem Content="Ease In" />
+                            <ComboBoxItem Content="Ease Out" />
+                            <ComboBoxItem Content="Ease In and Out" />
+                        </ComboBox>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Root motion" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Val}" Text="Translation" />
+                        <controls:SpacedStack Margin="0,2,0,0" Orientation="Horizontal" Spacing="10">
+                            <CheckBox Content="X" IsChecked="{Binding RootPosX, Mode=TwoWay}" />
+                            <CheckBox Content="Y" IsChecked="{Binding RootPosY, Mode=TwoWay}" />
+                            <CheckBox Content="Z" IsChecked="{Binding RootPosZ, Mode=TwoWay}" />
+                        </controls:SpacedStack>
+                        <TextBlock Margin="0,6,0,0" Style="{StaticResource Val}" Text="Rotation" />
+                        <controls:SpacedStack Margin="0,2,0,0" Orientation="Horizontal" Spacing="10">
+                            <CheckBox Content="X" IsChecked="{Binding RootRotX, Mode=TwoWay}" />
+                            <CheckBox Content="Y" IsChecked="{Binding RootRotY, Mode=TwoWay}" />
+                            <CheckBox Content="Z" IsChecked="{Binding RootRotZ, Mode=TwoWay}" />
+                        </controls:SpacedStack>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="{Binding TransformHeader}">
+                    <StackPanel>
+                        <ComboBox SelectedIndex="{Binding TransformModeIndex, Mode=TwoWay}">
+                            <ComboBoxItem Content="None" />
+                            <ComboBoxItem Content="Smooth" />
+                            <ComboBoxItem Content="Smooth reverse" />
+                            <ComboBoxItem Content="Linear" />
+                            <ComboBoxItem Content="Linear reverse" />
+                            <ComboBoxItem Content="Symmetric smooth" />
+                            <ComboBoxItem Content="Symmetric linear" />
+                        </ComboBox>
+                        <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="28" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Rot" />
+                            <controls:NumericUpDown Grid.Column="1" Style="{StaticResource Axis}" Minimum="-360" Maximum="360" Value="{Binding RotationX, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" Minimum="-360" Maximum="360" Value="{Binding RotationY, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="3" Style="{StaticResource Axis}" Minimum="-360" Maximum="360" Value="{Binding RotationZ, Mode=TwoWay}" />
+                        </controls:SpacedGrid>
+                        <controls:SpacedGrid Margin="0,4,0,0" ColumnSpacing="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="28" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Pos" />
+                            <controls:NumericUpDown Grid.Column="1" Style="{StaticResource Axis}" Value="{Binding TranslationX, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" Value="{Binding TranslationY, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="3" Style="{StaticResource Axis}" Value="{Binding TranslationZ, Mode=TwoWay}" />
+                        </controls:SpacedGrid>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Bounding box (keyframe)">
+                    <StackPanel>
+                        <controls:SpacedGrid ColumnSpacing="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="28" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Min" />
+                            <controls:NumericUpDown Grid.Column="1" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMinX, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMinY, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="3" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMinZ, Mode=TwoWay}" />
+                        </controls:SpacedGrid>
+                        <controls:SpacedGrid Margin="0,4,0,0" ColumnSpacing="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="28" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Max" />
+                            <controls:NumericUpDown Grid.Column="1" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMaxX, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMaxY, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="3" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMaxZ, Mode=TwoWay}" />
+                        </controls:SpacedGrid>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Bones">
+                    <DataGrid
+                        Height="160"
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        CanUserReorderColumns="False"
+                        HeadersVisibility="Column"
+                        ItemsSource="{Binding Bones}"
+                        SelectedItem="{Binding SelectedBoneItem, Mode=TwoWay}"
+                        SelectionMode="Single">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Width="30">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Checked, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="Bone" IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </GroupBox>
+
+                <GroupBox Header="Animation bounding box">
+                    <StackPanel>
+                        <controls:SpacedGrid ColumnSpacing="6" RowSpacing="6">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button Command="{Binding SelectAllMeshesCommand}" Content="All meshes" />
+                            <Button Grid.Column="1" Command="{Binding SelectNoMeshesCommand}" Content="No meshes" />
+                            <Button Grid.Row="1" Command="{Binding CalcBoundingBoxCommand}" Content="Calculate" />
+                            <Button Grid.Row="1" Grid.Column="1" Command="{Binding ClearBoundingBoxCommand}" Content="Clear" />
+                        </controls:SpacedGrid>
+                        <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <controls:NumericUpDown Style="{StaticResource Axis}" DecimalPlaces="0" Minimum="0" Maximum="512" Value="{Binding GrowX, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="1" Style="{StaticResource Axis}" DecimalPlaces="0" Minimum="0" Maximum="512" Value="{Binding GrowY, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" DecimalPlaces="0" Minimum="0" Maximum="512" Value="{Binding GrowZ, Mode=TwoWay}" />
+                        </controls:SpacedGrid>
+                        <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button Command="{Binding GrowBoundingBoxCommand}" Content="Grow" />
+                            <Button Grid.Column="1" Command="{Binding ShrinkBoundingBoxCommand}" Content="Shrink" />
+                        </controls:SpacedGrid>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="View">
+                    <StackPanel>
+                        <CheckBox Content="Smooth animation" IsChecked="{Binding SmoothAnimation, Mode=TwoWay}" />
+                        <CheckBox Margin="0,3,0,0" Content="Scroll grid" IsChecked="{Binding ScrollGrid, Mode=TwoWay}" />
+                        <CheckBox Margin="0,3,0,0" Content="Restore grid height" IsChecked="{Binding RestoreGridHeight, Mode=TwoWay}" />
+                        <CheckBox Margin="0,3,0,0" Content="Draw gizmo" IsChecked="{Binding ShowGizmo, Mode=TwoWay}" />
+                        <CheckBox Margin="0,3,0,0" Content="Draw grid" IsChecked="{Binding ShowGrid, Mode=TwoWay}" />
+                        <CheckBox Margin="0,3,0,0" Content="Draw collision box" IsChecked="{Binding ShowCollisionBox, Mode=TwoWay}" />
+                        <CheckBox Margin="0,3,0,0" Content="Draw skin" IsChecked="{Binding ShowSkin, Mode=TwoWay}" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}" />
+                    </StackPanel>
+                </GroupBox>
+            </controls:SpacedStack>
+        </ScrollViewer>
+
+        <!--  Center: toolbar + 3D view + timeline + transport  -->
+        <DockPanel LastChildFill="True">
+
+            <!--  Operations toolbar (mirrors the legacy topBar: icons + tooltips)  -->
+            <Border
+                Margin="0,0,0,4"
+                Padding="2"
+                Background="{DynamicResource Brush_BackgroundSlightlyDark}"
+                DockPanel.Dock="Top">
+                <DockPanel LastChildFill="True">
+                    <controls:SpacedStack
+                        DockPanel.Dock="Left"
+                        Orientation="Horizontal"
+                        Spacing="2">
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding SaveCommand}" ToolTip="Save all changes"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Save}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding UndoCommand}" ToolTip="Undo"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/undo}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding RedoCommand}" ToolTip="Redo"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/redo}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding ResetCameraCommand}" ToolTip="Reset camera"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/target}" /></Button>
+                        <Border Style="{StaticResource TbSep}" />
+                        <TextBlock Style="{StaticResource TbLbl}" Text="Anims:" />
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding AddAnimationCommand}" ToolTip="Add animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding ImportAnimationCommand}" ToolTip="Import..."><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Import}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding ExportAnimationCommand}" ToolTip="Export..."><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Export}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteAnimationCommand}" ToolTip="Delete animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding CutAnimationCommand}" ToolTip="Cut animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/cut}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding CopyAnimationCommand}" ToolTip="Copy animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/copy}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding PasteAnimationCommand}" ToolTip="Paste animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding ReplaceAnimationCommand}" ToolTip="Replace animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste-new}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding SplitAnimationCommand}" ToolTip="Split animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/Split}" /></Button>
+                        <Border Style="{StaticResource TbSep}" />
+                        <TextBlock Style="{StaticResource TbLbl}" Text="Frames:" />
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding AddFrameCommand}" ToolTip="Add frame"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteFrameCommand}" ToolTip="Delete frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding CutFrameCommand}" ToolTip="Cut frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/cut}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding CopyFrameCommand}" ToolTip="Copy frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/copy}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding PasteFrameCommand}" ToolTip="Paste frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste}" /></Button>
+                        <Border Style="{StaticResource TbSep}" />
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding EditAnimCommandsCommand}" ToolTip="Edit anim commands"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/anim-commands}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding EditStateChangesCommand}" ToolTip="Edit state changes"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/state-changes}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding FixAnimationCommand}" ToolTip="Fix animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/tick}" /></Button>
+                        <Border Style="{StaticResource TbSep}" />
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding InterpolateCommand}" ToolTip="Interpolate frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/interpolate}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding ReverseCommand}" ToolTip="Reverse animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/back}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding MirrorCommand}" ToolTip="Mirror animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Mirror}" /></Button>
+                        <Border Style="{StaticResource TbSep}" />
+                        <TextBlock Style="{StaticResource TbLbl}" Text="Room:" />
+                    </controls:SpacedStack>
+                    <ComboBox
+                        MinWidth="120"
+                        VerticalAlignment="Center"
+                        IsEnabled="{Binding RoomsEnabled}"
+                        ItemsSource="{Binding Rooms}"
+                        SelectedItem="{Binding SelectedRoomItem, Mode=TwoWay}"
+                        ToolTip="Reference room" />
+                </DockPanel>
+            </Border>
+
+            <!--  Transport + status (icons mirror the legacy transport strip)  -->
+            <Grid DockPanel.Dock="Bottom">
+                <Grid.Margin>
+                    <Thickness Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+                </Grid.Margin>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <controls:SpacedStack Grid.Column="0" Orientation="Horizontal" Spacing="3">
+                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoStartCommand}" ToolTip="Go to start"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/Start}" /></Button>
+                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoPrevCommand}" ToolTip="Back 1 frame"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/FrameBack}" /></Button>
+                    <Button Style="{StaticResource TransportBtn}" Command="{Binding PlayCommand}" ToolTip="Playback">
+                        <Image>
+                            <Image.Style>
+                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
+                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Play}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Stop}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </Button>
+                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoNextCommand}" ToolTip="Forward 1 frame"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/FrameForward}" /></Button>
+                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoEndCommand}" ToolTip="Go to end"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/End}" /></Button>
+                    <Border Style="{StaticResource TbSep}" />
+                    <ToggleButton Style="{StaticResource TransportToggle}" IsChecked="{Binding ChainPlayback, Mode=TwoWay}" ToolTip="Chain playback">
+                        <Image>
+                            <Image.Style>
+                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
+                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/ChainDisabled}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ChainPlayback}" Value="True">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/ChainEnabled}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </ToggleButton>
+                    <ToggleButton
+                        Style="{StaticResource TransportToggle}"
+                        Command="{Binding ToggleSoundCommand}"
+                        IsChecked="{Binding SoundPreview, Mode=OneWay}"
+                        ToolTip="Toggle sound preview">
+                        <Image>
+                            <Image.Style>
+                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
+                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Mute}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SoundPreview}" Value="True">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Audio}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </ToggleButton>
+                    <Button
+                        Style="{StaticResource TransportBtn}"
+                        Command="{Binding CycleSoundConditionCommand}"
+                        ToolTip="{Binding SoundConditionLabel, StringFormat='Sound preview condition: {0}'}">
+                        <Image>
+                            <Image.Style>
+                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
+                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/OnNothing}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="LandWithMaterial">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/OnLand}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="Water">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/InShallowWater}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="Quicksand">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Sand}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="Underwater">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Underwater}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </Button>
+                </controls:SpacedStack>
+                <TextBlock
+                    Grid.Column="1"
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    Foreground="{DynamicResource Brush_Text_Low}"
+                    Text="{Binding StatusText}"
+                    TextTrimming="CharacterEllipsis" />
+            </Grid>
+
+            <!--  Timeline  -->
+            <Border
+                Height="84"
+                DockPanel.Dock="Bottom"
+                BorderBrush="{DynamicResource Brush_Border}"
+                BorderThickness="1">
+                <Border.Margin>
+                    <Thickness Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+                </Border.Margin>
+                <tombLibControls:AnimationTrackBar x:Name="timeline">
+                    <tombLibControls:AnimationTrackBar.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem Command="{Binding MarkInCommand}" Header="Mark in" InputGestureText="I" />
+                            <MenuItem Command="{Binding MarkOutCommand}" Header="Mark out" InputGestureText="O" />
+                            <MenuItem Command="{Binding SelectAllCommand}" Header="Select all" InputGestureText="Ctrl+A" />
+                            <MenuItem Command="{Binding ClearSelectionCommand}" Header="Clear selection" />
+                            <Separator />
+                            <MenuItem Command="{Binding CreateAnimCommandCommand}" Header="Create anim command..." />
+                            <MenuItem Command="{Binding CreateStateChangeCommand}" Header="Create state change..." />
+                        </ContextMenu>
+                    </tombLibControls:AnimationTrackBar.ContextMenu>
+                </tombLibControls:AnimationTrackBar>
+            </Border>
+
+            <!--  3D view (hosted)  -->
+            <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
+                <Border x:Name="panelRenderingHost" />
+            </Border>
+        </DockPanel>
+        </DockPanel>
+    </DockPanel>
+</Window>

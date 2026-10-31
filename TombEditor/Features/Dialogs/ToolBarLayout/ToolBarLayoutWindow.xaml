@@ -1,0 +1,155 @@
+<Window
+    x:Class="TombEditor.Features.Dialogs.ToolBarLayout.ToolBarLayoutWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.ToolBarLayout"
+    Title="{tombLib:Localize Title}"
+    Width="540"
+    Height="440"
+    MinWidth="540"
+    MaxWidth="540"
+    MinHeight="440"
+    d:DataContext="{d:DesignInstance Type=vm:ToolBarLayoutWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ShowInTaskbar="False"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <vm:ToolbarTokenIconConverter x:Key="TokenIcon" />
+        <DataTemplate x:Key="TokenTemplate">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="16" Height="16" Margin="0,0,6,0" Source="{Binding Converter={StaticResource TokenIcon}}" />
+                <TextBlock VerticalAlignment="Center" Text="{Binding}" />
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+
+    <controls:SpacedGrid
+        Margin="{x:Static darkUI:Defaults.MediumThickness}"
+        ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}"
+        RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Content="{tombLib:Localize AvailableHeader}" />
+        <Label Grid.Row="0" Grid.Column="2" Content="{tombLib:Localize CurrentHeader}" />
+
+        <ListBox
+            Grid.Row="1"
+            Grid.Column="0"
+            ItemTemplate="{StaticResource TokenTemplate}"
+            ItemsSource="{Binding Available}"
+            MouseDoubleClick="AvailableList_MouseDoubleClick"
+            SelectedItem="{Binding SelectedAvailable, Mode=TwoWay}" />
+
+        <controls:SpacedGrid
+            Grid.Row="1"
+            Grid.Column="1"
+            RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Button
+                Grid.Row="0"
+                Width="30"
+                Command="{Binding AddCommand}"
+                Style="{DynamicResource ButtonWithIconOnly}"
+                ToolTip="{tombLib:Localize AddTooltip}">
+                <Image Source="{tomb:Icon General/angle_right}" />
+            </Button>
+            <Button
+                Grid.Row="1"
+                Width="30"
+                Command="{Binding RemoveCommand}"
+                Style="{DynamicResource ButtonWithIconOnly}"
+                ToolTip="{tombLib:Localize RemoveTooltip}">
+                <Image Source="{tomb:Icon General/angle_left}" />
+            </Button>
+        </controls:SpacedGrid>
+
+        <ListBox
+            Grid.Row="1"
+            Grid.Column="2"
+            ItemTemplate="{StaticResource TokenTemplate}"
+            ItemsSource="{Binding Current}"
+            MouseDoubleClick="CurrentList_MouseDoubleClick"
+            SelectedItem="{Binding SelectedCurrent, Mode=TwoWay}" />
+
+        <controls:SpacedStack
+            Grid.Row="1"
+            Grid.Column="3"
+            VerticalAlignment="Center"
+            Orientation="Vertical"
+            Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <Button
+                Width="30"
+                Command="{Binding MoveUpCommand}"
+                Style="{DynamicResource ButtonWithIconOnly}"
+                ToolTip="{tombLib:Localize MoveUpTooltip}">
+                <Image Source="{tomb:Icon General/ArrowUp}" />
+            </Button>
+            <Button
+                Width="30"
+                Command="{Binding MoveDownCommand}"
+                Style="{DynamicResource ButtonWithIconOnly}"
+                ToolTip="{tombLib:Localize MoveDownTooltip}">
+                <Image Source="{tomb:Icon General/ArrowDown}" />
+            </Button>
+        </controls:SpacedStack>
+
+        <Grid
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button
+                Grid.Column="0"
+                Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+                Command="{Binding RestoreDefaultsCommand}"
+                Content="{tombLib:Localize Defaults}" />
+            <controls:SpacedStack
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal"
+                Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+                <Button
+                    Width="80"
+                    Command="{Binding ApplyCommand}"
+                    Content="{tombLib:Localize Apply}" />
+                <Button
+                    Width="80"
+                    Command="{Binding OkCommand}"
+                    Content="{tombLib:Localize ~Common.OK}"
+                    IsDefault="True" />
+                <Button
+                    Width="80"
+                    Command="{Binding CancelCommand}"
+                    Content="{tombLib:Localize ~Common.Cancel}"
+                    IsCancel="True" />
+            </controls:SpacedStack>
+        </Grid>
+    </controls:SpacedGrid>
+</Window>

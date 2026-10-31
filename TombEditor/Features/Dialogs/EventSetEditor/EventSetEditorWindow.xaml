@@ -1,0 +1,228 @@
+<Window
+    x:Class="TombEditor.Features.Dialogs.EventSetEditor.EventSetEditorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:local="clr-namespace:TombEditor.Features.Dialogs.EventSetEditor"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    Title="{Binding Title}"
+    Width="930"
+    Height="500"
+    MinWidth="930"
+    MinHeight="460"
+    d:DataContext="{d:DesignInstance Type=local:EventSetEditorWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ShowInTaskbar="False"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        <local:EventTypeDisplayConverter x:Key="EventTypeDisplay" />
+    </Window.Resources>
+
+    <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
+
+        <controls:SpacedStack
+            DockPanel.Dock="Bottom"
+            Margin="0,8,0,0"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <Button Width="80" Command="{Binding OkCommand}" Content="{tombLib:Localize ~Common.OK}" IsDefault="True" />
+            <Button Width="80" Command="{Binding CancelCommand}" Content="{tombLib:Localize ~Common.Cancel}" IsCancel="True" />
+        </controls:SpacedStack>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="listColumn" Width="240" MinWidth="180" />
+                <ColumnDefinition Width="6" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Event set list  -->
+            <DockPanel Grid.Column="0">
+                <!--  Management buttons at the top of the list (icon buttons, mirroring the legacy editor).  -->
+                <controls:SpacedStack DockPanel.Dock="Top" Margin="0,0,0,6" Orientation="Horizontal" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+                    <Button Command="{Binding NewSetCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize NewSetTooltip}">
+                        <Image Source="{tomb:Icon General/plus_math}" />
+                    </Button>
+                    <Button Command="{Binding NewFolderCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize NewFolderTooltip}">
+                        <Image Source="{tomb:Icon General/folder}" />
+                    </Button>
+                    <Button Command="{Binding CloneSetCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize CloneSetTooltip}">
+                        <Image Source="{tomb:Icon General/copy}" />
+                    </Button>
+                    <Button Command="{Binding DeleteSetCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize DeleteSetTooltip}">
+                        <Image Source="{tomb:Icon General/trash}" />
+                    </Button>
+                    <Button
+                        x:Name="searchButton"
+                        Click="SearchButton_Click"
+                        IsEnabled="{Binding HasTreeNodes}"
+                        Style="{DynamicResource ButtonWithIconOnly}"
+                        ToolTip="{tombLib:Localize SearchTooltip}">
+                        <Image Source="{tomb:Icon General/search}" />
+                    </Button>
+                    <Button Command="{Binding UnassignSetCommand}" ToolTip="{tombLib:Localize UnassignTooltip}" Content="{tombLib:Localize Unassign}" Visibility="{Binding ShowVolumeOptions, Converter={StaticResource BoolToVis}}" />
+                </controls:SpacedStack>
+                <controls:AlternatingTreeView
+                    x:Name="setsTree"
+                    AllowDrop="True"
+                    DragOver="SetsTree_DragOver"
+                    Drop="SetsTree_Drop"
+                    ItemsSource="{Binding TreeRoots}"
+                    KeyDown="SetsTree_KeyDown"
+                    MouseDoubleClick="SetsTree_MouseDoubleClick"
+                    PreviewMouseLeftButtonDown="SetsTree_PreviewMouseLeftButtonDown"
+                    PreviewMouseMove="SetsTree_PreviewMouseMove"
+                    SelectedItemChanged="SetsTree_SelectedItemChanged">
+                    <TreeView.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource {x:Type controls:AlternatingTreeViewItem}}" TargetType="controls:AlternatingTreeViewItem">
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type local:SetTreeNode}" ItemsSource="{Binding Children}">
+                            <StackPanel Orientation="Horizontal">
+                                <Image
+                                    Width="16"
+                                    Height="16"
+                                    Margin="0,0,4,0"
+                                    Source="{tomb:Icon General/folder}"
+                                    Visibility="{Binding IsFolder, Converter={StaticResource BoolToVis}}" />
+                                <TextBlock Text="{Binding DisplayName}" />
+                            </StackPanel>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </controls:AlternatingTreeView>
+            </DockPanel>
+
+            <!--  Event set search (opened by the search button)  -->
+            <Popup
+                x:Name="searchPopup"
+                Grid.Column="0"
+                Placement="Bottom"
+                PlacementTarget="{Binding ElementName=searchButton}"
+                StaysOpen="False">
+                <Border
+                    Padding="4"
+                    Background="{DynamicResource Brush_Background}"
+                    BorderBrush="{DynamicResource Brush_Border}"
+                    BorderThickness="1">
+                    <TextBox
+                        x:Name="searchBox"
+                        Width="200"
+                        PreviewKeyDown="SearchBox_PreviewKeyDown"
+                        TextChanged="SearchBox_TextChanged"
+                        ToolTip="{tombLib:Localize SearchBoxTooltip}" />
+                </Border>
+            </Popup>
+
+            <GridSplitter
+                Grid.Column="1"
+                DragCompleted="Splitter_DragCompleted"
+                Width="6"
+                HorizontalAlignment="Stretch"
+                Background="{DynamicResource Brush_Border}" />
+
+            <!--  Selected set editor  -->
+            <DockPanel x:Name="editorPanel" Grid.Column="2" IsEnabled="{Binding HasSelectedSet}">
+                <Grid DockPanel.Dock="Top" Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="180" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,6,0" Text="{tombLib:Localize Name}" />
+                    <TextBox Grid.Column="1" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                    <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="10,0,6,0" Text="{tombLib:Localize Event}" />
+                    <ComboBox
+                        Grid.Column="3"
+                        ItemsSource="{Binding EventTypes}"
+                        SelectedItem="{Binding SelectedEventType, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource EventTypeDisplay}}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <CheckBox
+                        Grid.Column="4"
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Center"
+                        Content="{tombLib:Localize EnableEvent}"
+                        IsChecked="{Binding CurrentEventEnabled, Mode=TwoWay}"
+                        IsEnabled="{Binding HasCurrentEvent}"
+                        ToolTip="{tombLib:Localize EnableEventTooltip}" />
+                </Grid>
+
+                <!--  Volume options  -->
+                <Border DockPanel.Dock="Bottom" Margin="0,6,0,0" Visibility="{Binding ShowVolumeOptions, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <controls:SpacedStack Orientation="Horizontal" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+                            <TextBlock VerticalAlignment="Center" Text="{tombLib:Localize Activators}" />
+                            <CheckBox Content="{tombLib:Localize Lara}" IsChecked="{Binding ActivatorLara, Mode=TwoWay}" ToolTip="{tombLib:Localize LaraTooltip}" />
+                            <CheckBox Content="{tombLib:Localize Npcs}" IsChecked="{Binding ActivatorNpc, Mode=TwoWay}" ToolTip="{tombLib:Localize NpcsTooltip}" />
+                            <CheckBox Content="{tombLib:Localize OtherMoveables}" IsChecked="{Binding ActivatorOtherMoveables, Mode=TwoWay}" ToolTip="{tombLib:Localize OtherMoveablesTooltip}" />
+                            <CheckBox Content="{tombLib:Localize Statics}" IsChecked="{Binding ActivatorStatics, Mode=TwoWay}" ToolTip="{tombLib:Localize StaticsTooltip}" />
+                            <CheckBox Content="{tombLib:Localize Flyby}" IsChecked="{Binding ActivatorFlyBy, Mode=TwoWay}" ToolTip="{tombLib:Localize FlybyTooltip}" />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+                            <CheckBox Content="{tombLib:Localize EnableVolume}" IsChecked="{Binding EnableVolume, Mode=TwoWay}" ToolTip="{tombLib:Localize EnableVolumeTooltip}" />
+                            <CheckBox Content="{tombLib:Localize DetectInAdjacentRooms}" IsChecked="{Binding DetectInAdjacentRooms, Mode=TwoWay}" ToolTip="{tombLib:Localize DetectInAdjacentRoomsTooltip}" />
+                        </controls:SpacedStack>
+                    </StackPanel>
+                </Border>
+
+                <!--  Event editor: mode toggle + level-script panel or pure-WPF node canvas  -->
+                <Grid IsEnabled="{Binding HasCurrentEvent}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <controls:SpacedStack
+                        Grid.Row="0"
+                        Margin="0,0,0,6"
+                        Orientation="Horizontal"
+                        Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+                        <TextBlock VerticalAlignment="Center" Text="{tombLib:Localize Mode}" />
+                        <RadioButton
+                            Content="{tombLib:Localize NodeEditorMode}"
+                            GroupName="EventMode"
+                            IsChecked="{Binding IsNodeEditorMode, Mode=TwoWay}" />
+                        <RadioButton
+                            Content="{tombLib:Localize LevelScriptMode}"
+                            GroupName="EventMode"
+                            IsChecked="{Binding IsLevelScriptMode, Mode=TwoWay}" />
+                    </controls:SpacedStack>
+
+                    <!--  Node editor mode  -->
+                    <local:NodeEditorView
+                        Grid.Row="1"
+                        DataContext="{Binding NodeEditor}"
+                        Visibility="{Binding DataContext.IsNodeEditorShown, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}" />
+
+                    <!--  Level script mode  -->
+                    <Border
+                        Grid.Row="1"
+                        BorderBrush="{DynamicResource Brush_Border}"
+                        BorderThickness="1"
+                        Visibility="{Binding IsLevelScriptMode, Converter={StaticResource BoolToVis}}">
+                        <local:LevelScriptView DataContext="{Binding LevelScript}" />
+                    </Border>
+                </Grid>
+            </DockPanel>
+        </Grid>
+    </DockPanel>
+</Window>

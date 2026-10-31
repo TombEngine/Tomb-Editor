@@ -1,0 +1,23 @@
+<UserControl
+    x:Class="TombEditor.Features.Toolbar.EditorToolbarView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        Editor toolbar. The buttons are built in code from Configuration.UI_ToolbarButtons (see
+        EditorToolbarView.xaml.cs + ToolbarButtonRegistry) so the "Customize..." dialog actually
+        drives the layout, mirroring the legacy previous MainView.UpdateToolStripLayout.
+    -->
+    <Border
+        Background="{DynamicResource Brush_Background_Low}"
+        BorderBrush="{DynamicResource Brush_Border}"
+        BorderThickness="0,0,0,1">
+        <ToolBarTray x:Name="ToolBarTray" Orientation="Horizontal">
+            <ToolBarTray.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Click="CustomizeToolbar_Click" Header="Customize..." />
+                </ContextMenu>
+            </ToolBarTray.ContextMenu>
+        </ToolBarTray>
+    </Border>
+</UserControl>

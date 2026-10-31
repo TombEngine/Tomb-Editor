@@ -1,0 +1,158 @@
+<Window
+    x:Class="TombEditor.Features.Dialogs.ImportedGeometryEditor.ImportedGeometryWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:local="clr-namespace:TombEditor.Features.Dialogs.ImportedGeometryEditor"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    Title="{tombLib:Localize Title}"
+    Width="920"
+    Height="520"
+    MinWidth="820"
+    MinHeight="488"
+    d:DataContext="{d:DesignInstance Type=local:ImportedGeometryWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ShowInTaskbar="False"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
+
+        <controls:SpacedStack
+            DockPanel.Dock="Bottom"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <StackPanel.Margin>
+                <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+            </StackPanel.Margin>
+            <Button Width="80" Command="{Binding OkCommand}" Content="{tombLib:Localize ~Common.OK}" IsDefault="True" />
+            <Button Width="80" Command="{Binding CancelCommand}" Content="{tombLib:Localize ~Common.Cancel}" IsCancel="True" />
+        </controls:SpacedStack>
+
+        <!--  Instance properties (bottom strip, full width)  -->
+        <Border
+            DockPanel.Dock="Bottom"
+            Padding="6"
+            BorderBrush="{DynamicResource Brush_Border}"
+            BorderThickness="1">
+            <Border.Margin>
+                <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+            </Border.Margin>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!--  Row 0: assigned model + Assign  -->
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,6,0" VerticalAlignment="Center" Text="{tombLib:Localize AssignedModel}" />
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Text="{Binding AssignedModelDisplay}"
+                    TextTrimming="CharacterEllipsis" />
+                <Button
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Width="98"
+                    HorizontalAlignment="Right"
+                    Command="{Binding AssignCommand}"
+                    Content="{tombLib:Localize Assign}" />
+
+                <!--  Row 1: lighting model, color, flags + Edit materials  -->
+                <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,8,6,0" VerticalAlignment="Center" Text="{tombLib:Localize LightingModel}" />
+                <controls:SpacedStack
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Orientation="Horizontal"
+                    Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+                    <StackPanel.Margin>
+                        <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+                    </StackPanel.Margin>
+                    <ComboBox Width="150" DisplayMemberPath="Name" ItemsSource="{Binding LightingModels}" SelectedValue="{Binding LightingModel, Mode=TwoWay}" SelectedValuePath="Value" />
+                    <Button Width="48" Height="22" Command="{Binding PickColorCommand}" ToolTip="{tombLib:Localize ColorTooltip}">
+                        <Button.Background>
+                            <SolidColorBrush Color="{Binding Color}" />
+                        </Button.Background>
+                    </Button>
+                    <CheckBox VerticalAlignment="Center" Content="{tombLib:Localize SharpEdges}" IsChecked="{Binding SharpEdges, Mode=TwoWay}" ToolTip="{tombLib:Localize SharpEdgesTooltip}" />
+                    <CheckBox VerticalAlignment="Center" Content="{tombLib:Localize UseAlphaTest}" IsChecked="{Binding UseAlphaTest, Mode=TwoWay}" IsEnabled="{Binding IsTombEngine}" ToolTip="{tombLib:Localize UseAlphaTestTooltip}" />
+                    <CheckBox VerticalAlignment="Center" Content="{tombLib:Localize Hidden}" IsChecked="{Binding Hidden, Mode=TwoWay}" ToolTip="{tombLib:Localize HiddenTooltip}" />
+                </controls:SpacedStack>
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Width="98"
+                    HorizontalAlignment="Right"
+                    Command="{Binding EditMaterialsCommand}"
+                    Content="{tombLib:Localize EditMaterials}">
+                    <Button.Margin>
+                        <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+                    </Button.Margin>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!--  Instructions (top)  -->
+        <TextBlock
+            DockPanel.Dock="Top"
+            Margin="0,0,0,6"
+            Text="{tombLib:Localize Instructions}"
+            TextWrapping="Wrap" />
+
+        <!--  List actions (top)  -->
+        <controls:SpacedStack DockPanel.Dock="Top" Margin="0,0,0,6" Orientation="Horizontal" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <Button Width="70" Command="{Binding AddImportedGeometryCommand}" Content="{tombLib:Localize Add}" />
+            <Button Width="70" Command="{Binding DeleteImportedGeometryCommand}" Content="{tombLib:Localize Delete}" />
+        </controls:SpacedStack>
+
+        <!--  Geometry list (fills, full width)  -->
+        <DataGrid
+            AutoGenerateColumns="False"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            HeadersVisibility="Column"
+            ItemsSource="{Binding Geometries}"
+            SelectedItem="{Binding SelectedGeometry, Mode=TwoWay}"
+            tombLib:DataGridSelection.SelectedItemsList="{Binding SelectedGeometries, Mode=OneWayToSource}">
+            <DataGrid.InputBindings>
+                <KeyBinding Key="Delete" Command="{Binding DeleteImportedGeometryCommand}" />
+                <MouseBinding Command="{Binding AssignCommand}" MouseAction="LeftDoubleClick" />
+            </DataGrid.InputBindings>
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="160" Binding="{Binding Name}" Header="{tombLib:Localize ColumnName}" IsReadOnly="True" />
+                <DataGridTemplateColumn Width="32">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Margin="1" Command="{Binding BrowseCommand}" Content="..." />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
+                <DataGridTextColumn Width="60" Binding="{Binding Scale, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnScale}" />
+                <DataGridCheckBoxColumn Width="44" Binding="{Binding SwapXY, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnSwapXY}" />
+                <DataGridCheckBoxColumn Width="44" Binding="{Binding SwapXZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnSwapXZ}" />
+                <DataGridCheckBoxColumn Width="44" Binding="{Binding SwapYZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnSwapYZ}" />
+                <DataGridCheckBoxColumn Width="36" Binding="{Binding FlipX, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnFlipX}" />
+                <DataGridCheckBoxColumn Width="36" Binding="{Binding FlipY, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnFlipY}" />
+                <DataGridCheckBoxColumn Width="36" Binding="{Binding FlipZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnFlipZ}" />
+                <DataGridCheckBoxColumn Width="60" Binding="{Binding MappedUV, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnMappedUV}" />
+                <DataGridCheckBoxColumn Width="50" Binding="{Binding FlipUV_V, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnFlipUV}" />
+                <DataGridCheckBoxColumn Width="50" Binding="{Binding InvertFaces, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ~LevelSettings.ColumnInvertFaces}" />
+                <DataGridTextColumn Width="160" Binding="{Binding ErrorMessage}" Header="{tombLib:Localize ColumnStatus}" IsReadOnly="True" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </DockPanel>
+</Window>

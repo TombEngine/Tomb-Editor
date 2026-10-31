@@ -1,4 +1,7 @@
-﻿using DarkUI.Forms;
+#nullable enable
+
+using LevelFileDialog = TombLib.WPF.Services.LevelFileDialog;
+using Microsoft.Win32;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -6,23 +9,30 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
-using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using TombLib;
-using TombLib.Forms;
-using TombLib.Forms.ViewModels;
-using TombLib.Forms.Views;
 using TombLib.GeometryIO;
 using TombLib.GeometryIO.Importers;
 using TombLib.Graphics;
 using TombLib.IO;
 using TombLib.LevelData;
 using TombLib.LevelData.IO;
+using TombLib.Services;
 using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
 using TombLib.WPF;
+using TombLib.WPF.Services;
+using TombLib.WPF.ViewModels;
+using TombLib.WPF.Views;
+using WadTool.Features.Dialogs.AnimEditor;
+using WadTool.Features.Dialogs.LuaProperties;
+using WadTool.Features.Dialogs.NewWad2;
+using WadTool.Features.Dialogs.SelectSlot;
+using WadTool.Features.Dialogs.SkeletonEditor;
+using WadTool.Features.Dialogs.SpriteSequenceEditor;
+using WadTool.Features.Dialogs.StaticEditor;
 
 namespace WadTool
 {
@@ -30,7 +40,7 @@ namespace WadTool
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
-        public static void LoadWad(WadToolClass tool, IWin32Window owner, bool destination, string fileName)
+        public static void LoadWad(WadToolClass tool, IWindowOwner owner, bool destination, string fileName)
         {
             bool isWad2 = Path.GetExtension(fileName).ToLower() == ".wad2";
 
@@ -74,48 +84,46 @@ namespace WadTool
             }
         }
 
-        public static void LoadWadOpenFileDialog(WadToolClass tool, IWin32Window owner, bool destination)
+        public static void LoadWadOpenFileDialog(WadToolClass tool, IWindowOwner owner, bool destination)
         {
             // Open the file dialog
-            using (var dialog = new OpenFileDialog())
+            var dialog = new OpenFileDialog();
+            string previousFilePath;
+            if (destination)
             {
-                string previousFilePath;
-                if (destination)
-                {
-                    previousFilePath = tool.DestinationWad?.FileName;
-                }
-                else
-                {
-                    previousFilePath = tool.SourceWad?.FileName;
-                }
-
-                if (!string.IsNullOrWhiteSpace(previousFilePath))
-                {
-                    try
-                    {
-                        dialog.InitialDirectory = Path.GetDirectoryName(previousFilePath);
-                        dialog.FileName = Path.GetFileName(previousFilePath);
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-                }
-
-                dialog.Filter = Wad2.FileExtensions.GetFilter();
-                dialog.Title = "Open " + (destination ? "destination" : "source") + " WAD - Wad2 - Level";
-                if (dialog.ShowDialog(owner) != DialogResult.OK)
-                {
-                    return;
-                }
-
-                LoadWad(tool, owner, destination, dialog.FileName);
+                previousFilePath = tool.DestinationWad?.FileName;
             }
+            else
+            {
+                previousFilePath = tool.SourceWad?.FileName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(previousFilePath))
+            {
+                try
+                {
+                    dialog.InitialDirectory = Path.GetDirectoryName(previousFilePath);
+                    dialog.FileName = Path.GetFileName(previousFilePath);
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+
+            dialog.Filter = Wad2.FileExtensions.GetFilter();
+            dialog.Title = "Open " + (destination ? "destination" : "source") + " WAD - Wad2 - Level";
+            if (dialog.ShowDialog(owner) != true)
+            {
+                return;
+            }
+
+            LoadWad(tool, owner, destination, dialog.FileName);
         }
 
-        public static bool SaveWad(WadToolClass tool, IWin32Window owner, Wad2 wadToSave, bool ask)
+        public static bool SaveWad(WadToolClass tool, IWindowOwner owner, Wad2 wadToSave, bool ask)
         {
-            if (wadToSave == null)
+            if (wadToSave is null)
             {
                 tool.SendMessage("You have no wad opened. Nothing to save.", PopupType.Warning);
                 return false;
@@ -139,23 +147,21 @@ namespace WadTool
             // Ask about it
             if (ask || string.IsNullOrWhiteSpace(outPath))
             {
-                using (var dialog = new SaveFileDialog())
+                var dialog = new SaveFileDialog();
+                if (!string.IsNullOrWhiteSpace(outPath))
                 {
-                    if (!string.IsNullOrWhiteSpace(outPath))
-                    {
-                        dialog.InitialDirectory = Path.GetDirectoryName(outPath);
-                        dialog.FileName = Path.GetFileName(outPath);
-                    }
-                    dialog.Filter = Wad2Writer.FileFormats.GetFilter();
-                    dialog.Title = "Save Wad2";
-                    dialog.AddExtension = true;
-                    if (dialog.ShowDialog(owner) != DialogResult.OK)
-                    {
-                        return false;
-                    }
-
-                    outPath = dialog.FileName;
+                    dialog.InitialDirectory = Path.GetDirectoryName(outPath);
+                    dialog.FileName = Path.GetFileName(outPath);
                 }
+                dialog.Filter = Wad2Writer.FileFormats.GetFilter();
+                dialog.Title = "Save Wad2";
+                dialog.AddExtension = true;
+                if (dialog.ShowDialog(owner) != true)
+                {
+                    return false;
+                }
+
+                outPath = dialog.FileName;
             }
 
             // Save the wad2
@@ -165,7 +171,7 @@ namespace WadTool
                 Wad2Writer.SaveToFile(wadToSave, outPath);
 
                 // Immediately reload new wad, if it wasn't saved before (new or imported)
-                if (wadToSave.FileName == null)
+                if (wadToSave.FileName is null)
                 {
                     LoadWad(tool, owner, true, outPath);
                 }
@@ -190,19 +196,24 @@ namespace WadTool
             return true;
         }
 
-        public static void CreateNewWad(WadToolClass tool, IWin32Window owner)
+        public static void CreateNewWad(WadToolClass tool, IWindowOwner owner)
         {
-            using (var form = new FormNewWad2())
-            {
-                if (form.ShowDialog(owner) == DialogResult.Cancel)
-                    return;
+            var viewModel = new NewWad2WindowViewModel();
+            var dialog = new NewWad2Window { DataContext = viewModel };
 
-                tool.DestinationWad = new Wad2 { GameVersion = form.Version };
-                tool.ToggleUnsavedChanges(false);
-            }
+            if (owner is not null)
+                dialog.SetOwner(owner);
+
+            dialog.ShowDialog();
+
+            if (viewModel.DialogResult != true)
+                return;
+
+            tool.DestinationWad = new Wad2 { GameVersion = viewModel.SelectedGameVersion };
+            tool.ToggleUnsavedChanges(false);
         }
 
-        public static bool LoadReferenceLevel(WadToolClass tool, IWin32Window owner, string path = null)
+        public static bool LoadReferenceLevel(WadToolClass tool, IWindowOwner owner, string path = null)
         {
             if (string.IsNullOrEmpty(path))
             {
@@ -214,7 +225,7 @@ namespace WadTool
 
             tool.ReferenceLevel = Prj2Loader.LoadFromPrj2(path, null, CancellationToken.None, new Prj2Loader.Settings { IgnoreTextures = true, IgnoreWads = true });
 
-            if (tool.ReferenceLevel != null)
+            if (tool.ReferenceLevel is not null)
             {
                 tool.Configuration.Tool_ReferenceProject = path;
                 return true;
@@ -231,87 +242,43 @@ namespace WadTool
             tool.Configuration.Tool_ReferenceProject = string.Empty;
         }
 
-        public static IWadObjectId ChangeSlot(WadToolClass tool, IWin32Window owner)
+        public static IWadObjectId ChangeSlot(WadToolClass tool, IWindowOwner owner)
         {
             if (tool.MainSelection?.WadArea == WadArea.Source)
                 return null;
 
             Wad2 wad = tool.GetWad(tool.MainSelection?.WadArea);
             IWadObject wadObject = wad?.TryGet(tool.MainSelection?.Id);
-            if (wad == null || wadObject == null)
+            if (wad is null || wadObject is null)
             {
                 tool.SendMessage("You must have an object selected", PopupType.Error);
                 return null;
             }
 
             // Ask for the new slot
-            using (var form = new FormSelectSlot(tool.DestinationWad, wadObject.Id))
+            var slotViewModel = new SelectSlotWindowViewModel(tool.DestinationWad, wadObject.Id);
+            var slotDialog = new SelectSlotWindow { DataContext = slotViewModel };
+
+            if (owner is not null)
+                slotDialog.SetOwner(owner);
+
+            slotDialog.ShowDialog();
+
+            if (slotViewModel.DialogResult != true)
+                return null;
+
+            if (slotViewModel.NewId == wadObject.Id)
+                return null;
+
+            if (wad.Contains(slotViewModel.NewId))
             {
-                if (form.ShowDialog(owner) != DialogResult.OK)
-                    return null;
-
-                if (form.NewId == wadObject.Id)
-                    return null;
-
-                if (wad.Contains(form.NewId))
-                {
-                    tool.SendMessage("The slot " + form.NewId.ToString(wad.GameVersion) + " is already occupied.", PopupType.Error);
-                    return null;
-                }
-                wad.AssignNewId(wadObject.Id, form.NewId);
+                tool.SendMessage("The slot " + slotViewModel.NewId.ToString(wad.GameVersion) + " is already occupied.", PopupType.Error);
+                return null;
             }
+            wad.AssignNewId(wadObject.Id, slotViewModel.NewId);
             tool.WadChanged(tool.MainSelection.Value.WadArea);
             return wadObject.Id;
         }
-
-        /*public static void ExportMoveable(WadToolClass tool, IWin32Window owner, WadMoveable m)
-        {
-            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-            {
-                saveFileDialog.Title = "Export model";
-                saveFileDialog.Filter = BaseGeometryExporter.FileExtensions.GetFilter(true);
-                saveFileDialog.AddExtension = true;
-                saveFileDialog.DefaultExt = "dae";
-                saveFileDialog.FileName = m.Id.ShortName(TRVersion.Game.TRNG);
-
-                if (saveFileDialog.ShowDialog(owner) == DialogResult.OK)
-                {
-                    using (var settingsDialog = new GeometryIOSettingsDialog(new IOGeometrySettings() { Export = true }))
-                    {
-                        settingsDialog.AddPreset(IOSettingsPresets.GeometryExportSettingsPresets);
-                        settingsDialog.SelectPreset("Normal scale");
-
-                        if (settingsDialog.ShowDialog(owner) == DialogResult.OK)
-                        {
-                            BaseGeometryExporter.GetTextureDelegate getTextureCallback = txt =>
-                            {
-                                return "";
-                            };
-
-                            BaseGeometryExporter exporter = BaseGeometryExporter.CreateForFile(saveFileDialog.FileName, settingsDialog.Settings, getTextureCallback);
-                            new Thread(() =>
-                            {
-                                var resultModel = PrepareModelForExport(saveFileDialog.FileName, m);
-
-                                if (resultModel != null)
-                                {
-                                    if (exporter.ExportToFile(resultModel, saveFileDialog.FileName))
-                                    {
-                                        return;
-                                    }
-                                }
-                                else
-                                {
-                                    string errorMessage = "";
-                                    return;
-                                }
-                            }).Start();
-                        }
-                    }
-                }
-            }
-        }
-        */
 
         private static void UpdateBoneAbsolutePositions(List<WadBone> bones)
         {
@@ -530,64 +497,62 @@ namespace WadTool
             return model;
         }*/
 
-        public static void ImportModelAsStaticMesh(WadToolClass tool, IWin32Window owner)
+        public static void ImportModelAsStaticMesh(WadToolClass tool, IWindowOwner owner)
         {
-            if (tool.DestinationWad == null)
+            if (tool.DestinationWad is null)
             {
                 tool.SendMessage("You must have a wad opened", PopupType.Error);
                 return;
             }
 
-            using (var dialog = new OpenFileDialog())
+            var dialog = new OpenFileDialog();
+            try
             {
-                try
-                {
-                    dialog.InitialDirectory = Path.GetDirectoryName(tool.DestinationWad.FileName);
-                    dialog.FileName = Path.GetFileName(tool.DestinationWad.FileName);
-                }
-                catch
-                {
-                    // ignored
-                }
-
-                dialog.Filter = BaseGeometryImporter.FileExtensions.GetFilter();
-                dialog.Title = "Select a 3D file that you want to see imported.";
-                if (dialog.ShowDialog(owner) != DialogResult.OK)
-                {
-                    return;
-                }
-
-                var viewModel = new GeometryIOSettingsWindowViewModel(IOSettingsPresets.GeometryImportSettingsPresets, new() { ImportWadMesh = true });
-                viewModel.SelectPreset(tool.Configuration.GeometryIO_LastUsedGeometryImportPresetName);
-
-                var settingsDialog = new GeometryIOSettingsWindow { DataContext = viewModel };
-                settingsDialog.SetOwner(owner);
-                settingsDialog.ShowDialog();
-
-                if (viewModel.DialogResult != true)
-                    return;
-
-                tool.Configuration.GeometryIO_LastUsedGeometryImportPresetName = viewModel.SelectedPreset?.Name;
-
-                var settings = viewModel.GetCurrentSettings();
-                var @static = new WadStatic(tool.DestinationWad.GetFirstFreeStaticMesh());
-                var mesh = WadMesh.ImportFromExternalModel(dialog.FileName, settings, tool.DestinationWad.MeshTexInfosUnique.FirstOrDefault());
-                if (mesh == null)
-                {
-
-                    tool.SendMessage("Error while loading the 3D model. Please check that the file " +
-                                        "is one of the supported formats and that the meshes are textured", PopupType.Error);
-                    return;
-                }
-                @static.Mesh = mesh;
-                @static.VisibilityBox = @static.Mesh.BoundingBox;
-                @static.CollisionBox = @static.Mesh.BoundingBox;
-                tool.DestinationWad.Statics.Add(@static.Id, @static);
-                tool.WadChanged(WadArea.Destination);
+                dialog.InitialDirectory = Path.GetDirectoryName(tool.DestinationWad.FileName);
+                dialog.FileName = Path.GetFileName(tool.DestinationWad.FileName);
             }
+            catch
+            {
+                // ignored
+            }
+
+            dialog.Filter = BaseGeometryImporter.FileExtensions.GetFilter();
+            dialog.Title = "Select a 3D file that you want to see imported.";
+            if (dialog.ShowDialog(owner) != true)
+            {
+                return;
+            }
+
+            var viewModel = new GeometryIOSettingsWindowViewModel(IOSettingsPresets.GeometryImportSettingsPresets, new() { ImportWadMesh = true });
+            viewModel.SelectPreset(tool.Configuration.GeometryIO_LastUsedGeometryImportPresetName);
+
+            var settingsDialog = new GeometryIOSettingsWindow { DataContext = viewModel };
+            settingsDialog.SetOwner(owner);
+            settingsDialog.ShowDialog();
+
+            if (viewModel.DialogResult != true)
+                return;
+
+            tool.Configuration.GeometryIO_LastUsedGeometryImportPresetName = viewModel.SelectedPreset?.Name;
+
+            var settings = viewModel.GetCurrentSettings();
+            var @static = new WadStatic(tool.DestinationWad.GetFirstFreeStaticMesh());
+            var mesh = WadMesh.ImportFromExternalModel(dialog.FileName, settings, tool.DestinationWad.MeshTexInfosUnique.FirstOrDefault());
+            if (mesh is null)
+            {
+
+                tool.SendMessage("Error while loading the 3D model. Please check that the file " +
+                                    "is one of the supported formats and that the meshes are textured", PopupType.Error);
+                return;
+            }
+            @static.Mesh = mesh;
+            @static.VisibilityBox = @static.Mesh.BoundingBox;
+            @static.CollisionBox = @static.Mesh.BoundingBox;
+            tool.DestinationWad.Statics.Add(@static.Id, @static);
+            tool.WadChanged(WadArea.Destination);
         }
 
-        public static Wad2 ConvertWad2ToTombEngine(WadToolClass tool, IWin32Window owner, Wad2 src)
+        public static Wad2 ConvertWad2ToTombEngine(WadToolClass tool, IWindowOwner owner, Wad2 src)
         {
             Wad2 dest = new Wad2 { GameVersion = TRVersion.Game.TombEngine };
             Wad2 referenceWad = Wad2Loader.LoadFromFile(TombEngineConverter.ReferenceWadPath, true);
@@ -600,16 +565,16 @@ namespace WadTool
 
                 var newId = new WadMoveableId(compatibleSlots[0]);
 
-				WadMoveable mov;
-				if (newId.TypeId == 0) // Copy Lara object directly from reference wad.
-				{
-					mov = referenceWad.Moveables[new WadMoveableId(0)].Clone();
-				}
-				else
-				{
-					mov = moveable.Value.Clone();
-					mov.ConvertMoveable(src.GameVersion, referenceWad);
-				}
+                WadMoveable mov;
+                if (newId.TypeId == 0) // Copy Lara object directly from reference wad.
+                {
+                    mov = referenceWad.Moveables[new WadMoveableId(0)].Clone();
+                }
+                else
+                {
+                    mov = moveable.Value.Clone();
+                    mov.ConvertMoveable(src.GameVersion, referenceWad);
+                }
 
                 dest.Add(newId, mov);
             }
@@ -631,9 +596,9 @@ namespace WadTool
             return dest;
         }
 
-        public static void ConvertSelectedObjectUVMapping(WadToolClass tool, IWin32Window owner, List<IWadObjectId> objects, bool uvMapped)
+        public static void ConvertSelectedObjectUVMapping(WadToolClass tool, IWindowOwner owner, List<IWadObjectId> objects, bool uvMapped)
         {
-            if (objects == null || objects.Count == 0 || tool.MainSelection?.WadArea == WadArea.Source)
+            if (objects is null || objects.Count == 0 || tool.MainSelection?.WadArea == WadArea.Source)
                 return;
 
             int counter = 0;
@@ -665,7 +630,7 @@ namespace WadTool
             foreach (var o in objects)
             {
                 var obj = tool.DestinationWad.TryGet(o);
-                if (obj == null)
+                if (obj is null)
                     continue;
 
                 if (obj is WadMoveable)
@@ -688,9 +653,9 @@ namespace WadTool
             tool.SendMessage(counter + " mesh" + (counter > 1 ? "es were" : " was") + " converted to " + (uvMapped ? "UV-mapped" : "tiled") + " texture mapping mode.", PopupType.Info);
         }
 
-        public static void ConvertSelectedObjectLighting(WadToolClass tool, IWin32Window owner, List<IWadObjectId> objects, WadMeshLightingType type)
+        public static void ConvertSelectedObjectLighting(WadToolClass tool, IWindowOwner owner, List<IWadObjectId> objects, WadMeshLightingType type)
         {
-            if (objects == null || objects.Count == 0 || tool.MainSelection?.WadArea == WadArea.Source)
+            if (objects is null || objects.Count == 0 || tool.MainSelection?.WadArea == WadArea.Source)
                 return;
 
             int counter = 0;
@@ -698,7 +663,7 @@ namespace WadTool
             foreach (var o in objects)
             {
                 var obj = tool.DestinationWad.TryGet(o);
-                if (obj == null)
+                if (obj is null)
                     continue;
 
                 if (obj is WadMoveable)
@@ -750,19 +715,19 @@ namespace WadTool
             foreach (var o in objectIds)
             {
                 var obj = wad?.TryGet(o);
-                if (obj == null)
+                if (obj is null)
                     continue;
 
                 if (obj is WadMoveable moveable)
                 {
-                    var moveableMeshes = moveable.Meshes.Where(mesh => mesh != null).ToList();
+                    var moveableMeshes = moveable.Meshes.Where(mesh => mesh is not null).ToList();
                     if (moveableMeshes.Count > 0)
                     {
                         meshes.AddRange(moveableMeshes);
                         objectCount++;
                     }
                 }
-                else if (obj is WadStatic @static && @static.Mesh != null)
+                else if (obj is WadStatic @static && @static.Mesh is not null)
                 {
                     meshes.Add(@static.Mesh);
                     objectCount++;
@@ -773,9 +738,9 @@ namespace WadTool
             return meshes.Distinct().ToList();
         }
 
-        public static void ConsolidateSelectedObjectTextures(WadToolClass tool, IWin32Window owner, List<IWadObjectId> objects)
+        public static void ConsolidateSelectedObjectTextures(WadToolClass tool, IWindowOwner owner, List<IWadObjectId> objects)
         {
-            if (objects == null || objects.Count == 0 || tool.MainSelection?.WadArea == WadArea.Source)
+            if (objects is null || objects.Count == 0 || tool.MainSelection?.WadArea == WadArea.Source)
             {
                 tool.SendMessage("You must have at least one object selected and it must be in the destination wad.\nNothing was done.", PopupType.Info);
                 return;
@@ -793,12 +758,12 @@ namespace WadTool
             tool.SendMessage(counter + " object" + (counter > 1 ? "s were" : " was") + " consolidated into shared texture pages.", PopupType.Info);
         }
 
-        public static List<IWadObjectId> CopyObject(WadToolClass tool, IWin32Window owner, List<IWadObjectId> objectIdsToMove, bool alwaysChooseId)
+        public static List<IWadObjectId> CopyObject(WadToolClass tool, IWindowOwner owner, List<IWadObjectId> objectIdsToMove, bool alwaysChooseId)
         {
             Wad2 sourceWad = tool.SourceWad;
             Wad2 destinationWad = tool.DestinationWad;
 
-            if (destinationWad == null || sourceWad == null || objectIdsToMove.Count == 0)
+            if (destinationWad is null || sourceWad is null || objectIdsToMove.Count == 0)
             {
                 tool.SendMessage("You must have two wads loaded and at least one source object selected.", PopupType.Error);
                 return null;
@@ -859,52 +824,57 @@ namespace WadTool
                 // Ask for the new slot
                 do
                 {
-                    DialogResult dialogResult;
+                    DialogChoice dialogResult;
                     if (askConfirm)
                     {
-                        dialogResult = DarkMessageBox.Show(owner, "The id " + newIds[i].ToString(destinationWad.GameVersion) + " is already occupied in the destination wad.\n" +
+                        dialogResult = UserDialogs.Show(owner, "The id " + newIds[i].ToString(destinationWad.GameVersion) + " is already occupied in the destination wad.\n" +
                                                          "Do you want to replace it (Yes) or to select another Id (No)?",
-                                                         "Occupied slot", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                                                         "Occupied slot", DialogButtons.YesNoCancel, DialogIcon.Question);
                     }
                     else
                     {
-                        dialogResult = DialogResult.No;
+                        dialogResult = DialogChoice.No;
                     }
 
                     // From this time, always ask for confirm
                     askConfirm = true;
 
-                    if (dialogResult == DialogResult.Cancel)
+                    if (dialogResult == DialogChoice.Cancel)
                     {
                         return null;
                     }
-                    else if (dialogResult == DialogResult.No)
+                    else if (dialogResult == DialogChoice.No)
                     {
                         IEnumerable<uint> allowedSlots = null;
                         if (newIds[i] is WadMoveableId && allowedMoveableSlots.TryGetValue(i, out filteredSlots))
                             allowedSlots = filteredSlots;
 
-                        using (var form = new FormSelectSlot(destinationWad, newIds[i], listInProgress, allowedSlots))
+                        var slotViewModel = new SelectSlotWindowViewModel(destinationWad, newIds[i], listInProgress, allowedSlots);
+                        var slotDialog = new SelectSlotWindow { DataContext = slotViewModel };
+
+                        if (owner is not null)
+                            slotDialog.SetOwner(owner);
+
+                        slotDialog.ShowDialog();
+
+                        if (slotViewModel.DialogResult != true)
+                            return null;
+
+                        if (destinationWad.Contains(slotViewModel.NewId) || newIds.Take(i).Contains(slotViewModel.NewId))
                         {
-                            if (form.ShowDialog(owner) != DialogResult.OK)
-                                return null;
-
-                            if (destinationWad.Contains(form.NewId) || newIds.Take(i).Contains(form.NewId))
-                            {
-                                destinationWad.Remove(form.NewId);
-                                tool.WadChanged(WadArea.Destination);
-                            }
-                            newIds[i] = form.NewId;
-
-                            if (form.NewId is WadStaticId)
-                                listInProgress.Add(((WadStaticId)form.NewId).TypeId);
-                            else if (form.NewId is WadMoveableId)
-                                listInProgress.Add(((WadMoveableId)form.NewId).TypeId);
-                            else if (form.NewId is WadSpriteSequenceId)
-                                listInProgress.Add(((WadSpriteSequenceId)form.NewId).TypeId);
-
-                            break;
+                            destinationWad.Remove(slotViewModel.NewId);
+                            tool.WadChanged(WadArea.Destination);
                         }
+                        newIds[i] = slotViewModel.NewId;
+
+                        if (slotViewModel.NewId is WadStaticId)
+                            listInProgress.Add(((WadStaticId)slotViewModel.NewId).TypeId);
+                        else if (slotViewModel.NewId is WadMoveableId)
+                            listInProgress.Add(((WadMoveableId)slotViewModel.NewId).TypeId);
+                        else if (slotViewModel.NewId is WadSpriteSequenceId)
+                            listInProgress.Add(((WadSpriteSequenceId)slotViewModel.NewId).TypeId);
+
+                        break;
                     }
                     else
                     {
@@ -921,7 +891,7 @@ namespace WadTool
             for (int i = 0; i < objectIdsToMove.Count; ++i)
             {
                 var obj = sourceWad.TryGet(objectIdsToMove[i]);
-                if (obj == null)
+                if (obj is null)
                     continue;
 
                 // TEN moveables sometimes need conversion procedures.
@@ -929,7 +899,7 @@ namespace WadTool
                 {
                     var mov = (obj as WadMoveable).Clone();
 
-                    if (referenceWad == null)
+                    if (referenceWad is null)
                     {
                         if (File.Exists((TombEngineConverter.ReferenceWadPath)))
                             referenceWad = Wad2Loader.LoadFromFile(TombEngineConverter.ReferenceWadPath, true);
@@ -941,20 +911,20 @@ namespace WadTool
                     {
                         if (referenceWad.Moveables.ContainsKey(mov.Id))
                         {
-                            var dialogResult = DarkMessageBox.Show(owner,
+                            var dialogResult = UserDialogs.Show(owner,
                                 "You are trying to copy incompatible Lara object from legacy wad to TEN wad. \n" +
                                 "Replace it with compatible Lara object from reference wad?",
-                                "Incompatible Lara object", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                                "Incompatible Lara object", DialogButtons.YesNo, DialogIcon.Question);
 
-                            if (dialogResult == DialogResult.Yes)
+                            if (dialogResult == DialogChoice.Yes)
                                 mov = referenceWad.Moveables[new WadMoveableId(0)].Clone();
                         }
                         else
                         {
-                            DarkMessageBox.Show(owner,
+                            UserDialogs.Show(owner,
                                 "Reference wad can't be loaded.\n" + 
                                 "Copying original Lara object which is incompatible with TEN.",
-                                "Incompatible Lara object", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                "Incompatible Lara object", DialogButtons.OK, DialogIcon.Warning);
                         }
                     }
                     else
@@ -986,15 +956,15 @@ namespace WadTool
             return newIds.ToList();
         }
 
-        public static void EditObject(WadToolClass tool, IWin32Window owner, DeviceManager deviceManager)
+        public static void EditObject(WadToolClass tool, IWindowOwner owner, DeviceManager deviceManager)
         {
             Wad2 wad = tool.GetWad(tool.MainSelection?.WadArea);
             var wadObject = wad?.TryGet(tool.MainSelection?.Id);
 
-            if (wadObject == null || tool.MainSelection?.WadArea == WadArea.Source)
+            if (wadObject is null || tool.MainSelection?.WadArea == WadArea.Source)
                 return;
 
-            if (wad == null)
+            if (wad is null)
             {
                 tool.SendMessage("You must have a wad loaded and an object selected.", PopupType.Error);
                 return;
@@ -1003,55 +973,75 @@ namespace WadTool
             // Choose behaviour
             if (wadObject is WadStatic)
             {
-                using (var form = new FormStaticEditor(tool, deviceManager, wad, (WadStatic)wadObject))
-                {
-                    if (form.ShowDialog(owner) != DialogResult.OK)
-                        return;
-                }
+                var staticViewModel = new StaticEditorWindowViewModel(tool, deviceManager, wad, (WadStatic)wadObject);
+                var staticDialog = new StaticEditorWindow { DataContext = staticViewModel };
+
+                if (owner is not null)
+                    staticDialog.SetOwner(owner);
+
+                staticDialog.ShowDialog();
+
+                if (staticViewModel.DialogResult != true)
+                    return;
 
                 tool.WadChanged(tool.MainSelection.Value.WadArea);
             }
             else if (wadObject is WadMoveable)
             {
-                using (var form = new FormAnimationEditor(tool, deviceManager, wad, ((WadMoveable)wadObject).Id))
-                {
-                    if (form.ShowDialog(owner) != DialogResult.OK)
-                        return;
+                var animViewModel = new AnimationEditorWindowViewModel(tool, deviceManager, wad, ((WadMoveable)wadObject).Id);
+                var animDialog = new AnimationEditorWindow { DataContext = animViewModel };
 
-                    tool.WadChanged(tool.MainSelection.Value.WadArea);
-                }
+                if (owner is not null)
+                    animDialog.SetOwner(owner);
+
+                animDialog.ShowDialog();
+
+                if (animViewModel.DialogResult != true)
+                    return;
+
+                tool.WadChanged(tool.MainSelection.Value.WadArea);
             }
             else if (wadObject is WadSpriteSequence)
             {
-                using (var form = new FormSpriteSequenceEditor(tool, wad, (WadSpriteSequence)wadObject))
-                {
-                    if (form.ShowDialog(owner) != DialogResult.OK)
-                        return;
-                }
+                var spriteViewModel = new SpriteSequenceEditorWindowViewModel(tool, wad, (WadSpriteSequence)wadObject);
+                var spriteDialog = new SpriteSequenceEditorWindow { DataContext = spriteViewModel };
+
+                if (owner is not null)
+                    spriteDialog.SetOwner(owner);
+
+                spriteDialog.ShowDialog();
+
+                if (spriteViewModel.DialogResult != true)
+                    return;
 
                 tool.WadChanged(tool.MainSelection.Value.WadArea);
             }
         }
 
-        public static void EditLuaProperties(WadToolClass tool, IWin32Window owner, IWadObjectId focusObjectId = null)
+        public static void EditLuaProperties(WadToolClass tool, IWindowOwner owner, IWadObjectId focusObjectId = null)
         {
-            if (tool.DestinationWad == null)
+            if (tool.DestinationWad is null)
             {
                 tool.SendMessage("No destination wad is loaded.", PopupType.Info);
                 return;
             }
 
-            using (var form = new FormLuaProperties(tool, tool.DestinationWad, focusObjectId))
-                form.ShowDialog(owner);
+            var luaViewModel = new LuaPropertiesWindowViewModel(tool, tool.DestinationWad, focusObjectId);
+            var luaDialog = new LuaPropertiesWindow { DataContext = luaViewModel };
+
+            if (owner is not null)
+                luaDialog.SetOwner(owner);
+
+            luaDialog.ShowDialog();
         }
 
-        public static void DeleteObjects(WadToolClass tool, IWin32Window owner, WadArea wadArea, List<IWadObjectId> ObjectIdsToDelete)
+        public static void DeleteObjects(WadToolClass tool, IWindowOwner owner, WadArea wadArea, List<IWadObjectId> ObjectIdsToDelete)
         {
             if (ObjectIdsToDelete.Count == 0)
                 return;
 
-            if (DarkMessageBox.Show(owner, "You are about to delete " + ObjectIdsToDelete.Count + " objects. Are you sure?",
-                "A question just in case...", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+            if (UserDialogs.Show(owner, "You are about to delete " + ObjectIdsToDelete.Count + " objects. Are you sure?",
+                "A question just in case...", DialogButtons.YesNo, DialogIcon.Question) != DialogChoice.Yes)
             {
                 return;
             }
@@ -1065,10 +1055,10 @@ namespace WadTool
             tool.WadChanged(wadArea);
         }
 
-        public static IWadObjectId CreateObject(WadToolClass tool, IWin32Window owner, IWadObject initialWadObject)
+        public static IWadObjectId CreateObject(WadToolClass tool, IWindowOwner owner, IWadObject initialWadObject)
         {
             Wad2 destinationWad = tool.DestinationWad;
-            if (destinationWad == null)
+            if (destinationWad is null)
             {
                 tool.SendMessage("You must have a destination wad opened.", PopupType.Error);
                 return null;
@@ -1076,31 +1066,36 @@ namespace WadTool
 
             IWadObjectId result;
 
-            using (var form = new FormSelectSlot(tool.DestinationWad, initialWadObject.Id))
+            var slotViewModel = new SelectSlotWindowViewModel(tool.DestinationWad, initialWadObject.Id);
+            var slotDialog = new SelectSlotWindow { DataContext = slotViewModel };
+
+            if (owner is not null)
+                slotDialog.SetOwner(owner);
+
+            slotDialog.ShowDialog();
+
+            if (slotViewModel.DialogResult != true)
+                return null;
+
+            if (destinationWad.Contains(slotViewModel.NewId))
             {
-                if (form.ShowDialog(owner) != DialogResult.OK)
-                    return null;
-
-                if (destinationWad.Contains(form.NewId))
-                {
-                    tool.SendMessage("The slot " + form.NewId.ToString(destinationWad.GameVersion) + " is already occupied.", PopupType.Error);
-                    return null;
-                }
-
-                if (initialWadObject is WadMoveable)
-                {
-                    var moveable = initialWadObject as WadMoveable;
-                    WadBone bone = new WadBone
-                    {
-                        Name = "Root",
-                        Mesh = CreateFakeMesh("Root")
-                    };
-                    moveable.Bones.Add(bone);
-                }
-
-                destinationWad.Add(form.NewId, initialWadObject);
-                result = form.NewId;
+                tool.SendMessage("The slot " + slotViewModel.NewId.ToString(destinationWad.GameVersion) + " is already occupied.", PopupType.Error);
+                return null;
             }
+
+            if (initialWadObject is WadMoveable)
+            {
+                var moveable = initialWadObject as WadMoveable;
+                WadBone bone = new WadBone
+                {
+                    Name = "Root",
+                    Mesh = CreateFakeMesh("Root")
+                };
+                moveable.Bones.Add(bone);
+            }
+
+            destinationWad.Add(slotViewModel.NewId, initialWadObject);
+            result = slotViewModel.NewId;
 
             tool.WadChanged(WadArea.Destination);
             tool.ToggleUnsavedChanges();
@@ -1455,7 +1450,7 @@ namespace WadTool
             return result;
         }
 
-        public static WadAnimation ImportAnimationFromModel(WadToolClass tool, IWin32Window owner, int nodeCount, string fileName)
+        public static WadAnimation ImportAnimationFromModel(WadToolClass tool, IWindowOwner owner, int nodeCount, string fileName)
         {
             IOModel tmpModel = null;
 
@@ -1509,18 +1504,12 @@ namespace WadTool
 
             if (tmpModel.Animations.Count > 1)
             {
-                using (var dialog = new AnimationImportDialog(tmpModel.Animations.Select(o => o.Name).ToList()))
-                {
-                    dialog.ShowDialog(owner);
-                    if (dialog.DialogResult == DialogResult.Cancel)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        animToImport = tmpModel.Animations[dialog.AnimationToImport];
-                    }
-                }
+                int? index = TombLib.WPF.Features.Pickers.ComboPickerBox.Show(owner, "Import animation",
+                    "Select animation to import:", tmpModel.Animations.Select(o => o.Name).ToList());
+                if (index is null)
+                    return null;
+
+                animToImport = tmpModel.Animations[index.Value];
             }
             else
             {
@@ -1529,7 +1518,7 @@ namespace WadTool
 
 
             // Integrity check, for cases when something totally went wrong with assimp
-            if (animToImport == null)
+            if (animToImport is null)
             {
                 tool.SendMessage("Animation importer encountered serious error. No animation imported.", PopupType.Error);
                 return null;
@@ -1570,25 +1559,30 @@ namespace WadTool
             return animation;
         }
 
-        public static void EditSkeleton(WadToolClass tool, IWin32Window owner)
+        public static void EditSkeleton(WadToolClass tool, IWindowOwner owner)
         {
             if (tool.MainSelection?.WadArea == WadArea.Source)
                 return;
 
             Wad2 wad = tool.GetWad(tool.MainSelection.Value.WadArea);
             var moveableId = (WadMoveableId)tool.MainSelection.Value.Id;
-            using (var form = new FormSkeletonEditor(tool, DeviceManager.DefaultDeviceManager, wad, moveableId))
-            {
-                if (form.ShowDialog(owner) != DialogResult.OK)
-                    return;
+            var skeletonViewModel = new SkeletonEditorWindowViewModel(tool, DeviceManager.DefaultDeviceManager, wad, moveableId);
+            var skeletonDialog = new SkeletonEditorWindow { DataContext = skeletonViewModel };
 
-                tool.WadChanged(WadArea.Destination);
-            }
+            if (owner is not null)
+                skeletonDialog.SetOwner(owner);
+
+            skeletonDialog.ShowDialog();
+
+            if (skeletonViewModel.DialogResult != true)
+                return;
+
+            tool.WadChanged(WadArea.Destination);
         }
 
         private static void AddWadToRecent(string fileName)
         {
-            if (Properties.Settings.Default.RecentProjects == null)
+            if (Properties.Settings.Default.RecentProjects is null)
             {
                 Properties.Settings.Default.RecentProjects = new List<string>();
             }
@@ -1604,127 +1598,123 @@ namespace WadTool
             Properties.Settings.Default.Save();
         }
 
-        public static void ExportMesh(WadMesh mesh, WadToolClass tool, IWin32Window owner)
+        public static void ExportMesh(WadMesh mesh, WadToolClass tool, IWindowOwner owner)
         {
-            using (var saveFileDialog = new SaveFileDialog())
+            var saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Title = "Export mesh";
+            saveFileDialog.InitialDirectory = PathC.GetDirectoryNameTry(tool.DestinationWad.FileName);
+            saveFileDialog.Filter = BaseGeometryExporter.FileExtensions.GetFilter(true);
+            saveFileDialog.AddExtension = true;
+            saveFileDialog.DefaultExt = "obj";
+            saveFileDialog.FileName = mesh.Name;
+
+            if (saveFileDialog.ShowDialog(owner) != true)
+                return;
+
+            if (!saveFileDialog.FileName.IsANSI())
             {
-                saveFileDialog.Title = "Export mesh";
-                saveFileDialog.InitialDirectory = PathC.GetDirectoryNameTry(tool.DestinationWad.FileName);
-                saveFileDialog.Filter = BaseGeometryExporter.FileExtensions.GetFilter(true);
-                saveFileDialog.AddExtension = true;
-                saveFileDialog.DefaultExt = "obj";
-                saveFileDialog.FileName = mesh.Name;
+                UserDialogs.NonANSIFilePathError(owner);
+                ExportMesh(mesh, tool, owner);
+                return;
+            }
 
-                if (saveFileDialog.ShowDialog(owner) != DialogResult.OK)
+            try
+            {
+                var viewModel = new GeometryIOSettingsWindowViewModel(
+                    IOSettingsPresets.GeometryExportSettingsPresets,
+                    new() { Export = true }
+                );
+
+                viewModel.SelectPreset(tool.Configuration.GeometryIO_LastUsedGeometryExportPresetName);
+
+                var settingsDialog = new GeometryIOSettingsWindow { DataContext = viewModel };
+                settingsDialog.SetOwner(owner);
+                settingsDialog.ShowDialog();
+
+                if (viewModel.DialogResult != true)
                     return;
 
-                if (!saveFileDialog.FileName.IsANSI())
+                tool.Configuration.GeometryIO_LastUsedGeometryExportPresetName = viewModel.SelectedPreset?.Name;
+
+                var settings = viewModel.GetCurrentSettings();
+
+                BaseGeometryExporter.GetTextureDelegate getTextureCallback = txt => "";
+                BaseGeometryExporter exporter = BaseGeometryExporter.CreateForFile(saveFileDialog.FileName, settings, getTextureCallback);
+                new Thread(() =>
                 {
-                    MessageBoxes.NonANSIFilePathError(owner);
-                    ExportMesh(mesh, tool, owner);
-                    return;
-                }
-
-                try
-                {
-                    var viewModel = new GeometryIOSettingsWindowViewModel(
-                        IOSettingsPresets.GeometryExportSettingsPresets,
-                        new() { Export = true }
-                    );
-
-                    viewModel.SelectPreset(tool.Configuration.GeometryIO_LastUsedGeometryExportPresetName);
-
-                    var settingsDialog = new GeometryIOSettingsWindow { DataContext = viewModel };
-                    settingsDialog.SetOwner(owner);
-                    settingsDialog.ShowDialog();
-
-                    if (viewModel.DialogResult != true)
-                        return;
-
-                    tool.Configuration.GeometryIO_LastUsedGeometryExportPresetName = viewModel.SelectedPreset?.Name;
-
-                    var settings = viewModel.GetCurrentSettings();
-
-                    BaseGeometryExporter.GetTextureDelegate getTextureCallback = txt => "";
-                    BaseGeometryExporter exporter = BaseGeometryExporter.CreateForFile(saveFileDialog.FileName, settings, getTextureCallback);
-                    new Thread(() =>
+                    IOModel resultModel = WadMesh.PrepareForExport(saveFileDialog.FileName, settings, mesh);
+                    if (resultModel is not null)
                     {
-                        IOModel resultModel = WadMesh.PrepareForExport(saveFileDialog.FileName, settings, mesh);
-                        if (resultModel != null)
-                        {
-                            if (exporter.ExportToFile(resultModel, saveFileDialog.FileName))
-                                return;
-                        }
+                        if (exporter.ExportToFile(resultModel, saveFileDialog.FileName))
+                            return;
+                    }
 
-                        tool.SendMessage("Selected mesh is broken and can't be exported.\nPlease replace this mesh with another.");
-                        return;
+                    tool.SendMessage("Selected mesh is broken and can't be exported.\nPlease replace this mesh with another.");
+                    return;
 
-                    }).Start();
-                }
-                catch (Exception ex)
-                {
-                    tool.SendMessage("There was an error exporting 3D model.\nException: " + ex.Message, PopupType.Error);
-                }
+                }).Start();
+            }
+            catch (Exception ex)
+            {
+                tool.SendMessage("There was an error exporting 3D model.\nException: " + ex.Message, PopupType.Error);
             }
         }
 
-        public static WadMesh ImportMesh(WadToolClass tool, IWin32Window owner)
+        public static WadMesh ImportMesh(WadToolClass tool, IWindowOwner owner)
         {
-            if (tool.DestinationWad == null)
+            if (tool.DestinationWad is null)
             {
                 tool.SendMessage("You must have a wad opened", PopupType.Error);
                 return null;
             }
 
-            using (var dialog = new OpenFileDialog())
+            var dialog = new OpenFileDialog();
+            dialog.Title = "Select a 3D file that you want to see imported";
+            dialog.InitialDirectory = PathC.GetDirectoryNameTry(tool.DestinationWad.FileName);
+            dialog.Filter = BaseGeometryImporter.FileExtensions.GetFilter();
+
+            if (dialog.ShowDialog(owner) != true)
+                return null;
+
+            if (!dialog.FileName.IsANSI())
             {
-                dialog.Title = "Select a 3D file that you want to see imported";
-                dialog.InitialDirectory = PathC.GetDirectoryNameTry(tool.DestinationWad.FileName);
-                dialog.Filter = BaseGeometryImporter.FileExtensions.GetFilter();
+                UserDialogs.NonANSIFilePathError(owner);
+                return ImportMesh(tool, owner);
+            }
 
-                if (dialog.ShowDialog(owner) != DialogResult.OK)
+            try
+            {
+                var viewModel = new GeometryIOSettingsWindowViewModel(IOSettingsPresets.GeometryImportSettingsPresets, new() { ImportWadMesh = true });
+                viewModel.SelectPreset(tool.Configuration.GeometryIO_LastUsedGeometryImportPresetName);
+
+                var settingsDialog = new GeometryIOSettingsWindow { DataContext = viewModel };
+                settingsDialog.SetOwner(owner);
+                settingsDialog.ShowDialog();
+
+                if (viewModel.DialogResult != true)
                     return null;
 
-                if (!dialog.FileName.IsANSI())
+                tool.Configuration.GeometryIO_LastUsedGeometryImportPresetName = viewModel.SelectedPreset?.Name;
+
+                var settings = viewModel.GetCurrentSettings();
+
+                // A flag which allows to import untextured meshes.
+                settings.ProcessUntexturedGeometry = true;
+
+                WadMesh mesh = WadMesh.ImportFromExternalModel(dialog.FileName, settings, tool.DestinationWad.MeshTexInfosUnique.FirstOrDefault());
+                if (mesh is null)
                 {
-                    MessageBoxes.NonANSIFilePathError(owner);
-                    return ImportMesh(tool, owner);
-                }
-
-                try
-                {
-                    var viewModel = new GeometryIOSettingsWindowViewModel(IOSettingsPresets.GeometryImportSettingsPresets, new() { ImportWadMesh = true });
-                    viewModel.SelectPreset(tool.Configuration.GeometryIO_LastUsedGeometryImportPresetName);
-
-                    var settingsDialog = new GeometryIOSettingsWindow { DataContext = viewModel };
-                    settingsDialog.SetOwner(owner);
-                    settingsDialog.ShowDialog();
-
-                    if (viewModel.DialogResult != true)
-                        return null;
-
-                    tool.Configuration.GeometryIO_LastUsedGeometryImportPresetName = viewModel.SelectedPreset?.Name;
-
-                    var settings = viewModel.GetCurrentSettings();
-
-                    // A flag which allows to import untextured meshes.
-                    settings.ProcessUntexturedGeometry = true;
-
-                    WadMesh mesh = WadMesh.ImportFromExternalModel(dialog.FileName, settings, tool.DestinationWad.MeshTexInfosUnique.FirstOrDefault());
-                    if (mesh == null)
-                    {
-                        tool.SendMessage("Error loading 3D model. Check that the file format \n" +
-                                            "is supported, meshes are textured and texture file is present.", PopupType.Error);
-                        return null;
-                    }
-
-                    return mesh;
-                }
-                catch (Exception ex)
-                {
-                    tool.SendMessage("There was an error importing 3D model.\nException: " + ex.Message, PopupType.Error);
+                    tool.SendMessage("Error loading 3D model. Check that the file format \n" +
+                                        "is supported, meshes are textured and texture file is present.", PopupType.Error);
                     return null;
                 }
+
+                return mesh;
+            }
+            catch (Exception ex)
+            {
+                tool.SendMessage("There was an error importing 3D model.\nException: " + ex.Message, PopupType.Error);
+                return null;
             }
         }
     }

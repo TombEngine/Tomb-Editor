@@ -1,4 +1,4 @@
-﻿using NLog;
+using NLog;
 using SharpDX;
 using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows.Forms;
 using TombLib.Utils;
 using Buffer = SharpDX.Direct3D11.Buffer;
 using Factory = SharpDX.DXGI.Factory;
@@ -58,20 +57,20 @@ namespace TombLib.Rendering.DirectX11
                 Factory = new Factory();
                 if (!Factory.Adapters.Any())
                 {
-                    MessageBox.Show("Your system have no video adapters. Try to install video adapter.", "DirectX error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    logger.Error("Your system have no video adapters. Try to install video adapter.");
                     throw new Exception("There are no valid video adapters in system.");
                 }
 
                 var adapter = Factory.GetAdapter(0);
                 if (adapter == null)
                 {
-                    MessageBox.Show("DirectX wasn't able to acquire video adapter. Try to restart your system.", "DirectX error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    logger.Error("DirectX wasn't able to acquire video adapter. Try to restart your system.");
                     throw new Exception("DirectX wasn't able to acquire video adapter.");
                 }
 
                 if (adapter.Outputs == null || !adapter.Outputs.Any())
                 {
-                    MessageBox.Show("There are no video displays connected to your system. Try to connect a display.", "DirectX error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    logger.Error("There are no video displays connected to your system. Try to connect a display.");
                     throw new Exception("No connected displays found.");
                 }
 
@@ -85,17 +84,17 @@ namespace TombLib.Rendering.DirectX11
                 switch ((uint)exc.HResult)
                 {
                     case 0x887A0004:
-                        MessageBox.Show("Your DirectX version, videocard or drivers are out of date.\nDirectX 11 installation and videocard with DirectX 10 support is required.", "DirectX error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        logger.Error("Your DirectX version, videocard or drivers are out of date.\nDirectX 11 installation and videocard with DirectX 10 support is required.");
                         break;
                     case 0x887A002D:
-                        MessageBox.Show("Warning: provided build is a debug build.\nPlease install DirectX SDK or request release build from QA team.", "DirectX error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        logger.Error("Warning: provided build is a debug build.\nPlease install DirectX SDK or request release build from QA team.");
                         break;
                     case 0x887A0005:
                     case 0x887A0020:
-                        MessageBox.Show("There was a serious video system error while initializing Direct3D device.\nTry to restart your system.", "DirectX error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        logger.Error("There was a serious video system error while initializing Direct3D device.\nTry to restart your system.");
                         break;
                     default:
-                        MessageBox.Show("Unknown error while creating Direct3D device!\nShutting down now.", "DirectX error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        logger.Error("Unknown error while creating Direct3D device!\nShutting down now.");
                         break;
                 }
 

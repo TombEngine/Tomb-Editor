@@ -1,0 +1,144 @@
+<Window
+	x:Class="WadTool.Features.Dialogs.AnimCommandsEditor.AnimCommandsEditorWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:local="clr-namespace:WadTool.Features.Dialogs.AnimCommandsEditor"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+	xmlns:wadTool="clr-namespace:WadTool"
+	Title="{tombLib:Localize Title}"
+	Width="381"
+	Height="382"
+	MinWidth="397"
+	MinHeight="420"
+	d:DataContext="{d:DesignInstance Type=local:AnimCommandsEditorWindowViewModel}"
+	Background="{DynamicResource Brush_Background}"
+	ShowInTaskbar="False"
+	Style="{DynamicResource CustomWindowStyle}"
+	WindowStartupLocation="CenterOwner"
+	mc:Ignorable="d">
+
+	<Window.InputBindings>
+		<KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
+	</Window.InputBindings>
+
+	<DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
+
+		<!--  Bottom strip: Apply / OK / Cancel  -->
+		<controls:SpacedStack
+			DockPanel.Dock="Bottom"
+			HorizontalAlignment="Right"
+			Orientation="Horizontal"
+			Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+			<controls:SpacedStack.Margin>
+				<Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+			</controls:SpacedStack.Margin>
+			<Button
+				Width="80"
+				Command="{Binding ApplyCommand}"
+				Content="{tombLib:Localize ~Common.Apply}" />
+			<Button
+				Width="80"
+				Command="{Binding ConfirmCommand}"
+				Content="{tombLib:Localize ~Common.OK}"
+				IsDefault="True" />
+			<Button
+				Width="80"
+				Command="{Binding CancelCommand}"
+				Content="{tombLib:Localize ~Common.Cancel}"
+				IsCancel="True" />
+		</controls:SpacedStack>
+
+		<wadTool:AnimCommandEditor
+			x:Name="commandEditor"
+			Height="150"
+			DockPanel.Dock="Bottom">
+			<wadTool:AnimCommandEditor.Margin>
+				<Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+			</wadTool:AnimCommandEditor.Margin>
+		</wadTool:AnimCommandEditor>
+
+		<GroupBox Header="{tombLib:Localize GroupTitle}">
+			<DockPanel LastChildFill="True">
+
+				<!--  Side controls in the order of the legacy form: add / copy / copy to all / delete on top, up / down at the bottom  -->
+				<DockPanel DockPanel.Dock="Right" LastChildFill="False">
+					<DockPanel.Margin>
+						<Thickness Left="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+					</DockPanel.Margin>
+					<controls:SpacedStack DockPanel.Dock="Top" Orientation="Vertical" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+					<Button
+						Width="26"
+						Height="22"
+						Command="{Binding AddRowCommand}"
+						ToolTip="{tombLib:Localize AddTooltip}">
+						<Image Width="16" Height="16" Source="{tomb:Icon General/plus_math}" />
+					</Button>
+					<Button
+						Width="26"
+						Height="22"
+						Command="{Binding CopyCommand}"
+						ToolTip="{tombLib:Localize CopyTooltip}">
+						<Image Width="16" Height="16" Source="{tomb:Icon General/copy}" />
+					</Button>
+					<Button
+						Width="26"
+						Height="22"
+						Command="{Binding CopyToAllCommand}"
+						ToolTip="{tombLib:Localize CopyToAllTooltip}">
+						<Image Width="16" Height="16" Source="{tomb:Icon Misc/copy-to-all}" />
+					</Button>
+					<Button
+						Width="26"
+						Height="22"
+						Command="{Binding DeleteCommand}"
+						ToolTip="{tombLib:Localize DeleteTooltip}">
+						<Image Width="16" Height="16" Source="{tomb:Icon General/trash}" />
+					</Button>
+					</controls:SpacedStack>
+					<controls:SpacedStack DockPanel.Dock="Bottom" Orientation="Vertical" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+					<Button
+						Width="26"
+						Height="22"
+						Command="{Binding MoveUpCommand}"
+						ToolTip="{tombLib:Localize MoveUpTooltip}">
+						<Image Width="16" Height="16" Source="{tomb:Icon General/ArrowUp}" />
+					</Button>
+					<Button
+						Width="26"
+						Height="22"
+						Command="{Binding MoveDownCommand}"
+						ToolTip="{tombLib:Localize MoveDownTooltip}">
+						<Image Width="16" Height="16" Source="{tomb:Icon General/ArrowDown}" />
+					</Button>
+					</controls:SpacedStack>
+				</DockPanel>
+
+				<DataGrid
+					x:Name="dataGrid"
+					AutoGenerateColumns="False"
+					CanUserAddRows="False"
+					CanUserDeleteRows="False"
+					CanUserReorderColumns="False"
+					CanUserResizeRows="False"
+					CanUserSortColumns="False"
+					HeadersVisibility="None"
+					ItemsSource="{Binding Rows}"
+					SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
+					SelectionMode="Single"
+					SelectionUnit="FullRow">
+					<DataGrid.Columns>
+						<DataGridTextColumn
+							Width="*"
+							Binding="{Binding Description}"
+							IsReadOnly="True" />
+					</DataGrid.Columns>
+				</DataGrid>
+			</DockPanel>
+		</GroupBox>
+	</DockPanel>
+</Window>

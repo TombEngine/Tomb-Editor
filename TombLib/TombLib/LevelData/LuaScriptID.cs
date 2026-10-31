@@ -1,12 +1,12 @@
-﻿using System.Windows.Forms;
+#nullable enable
 
-namespace TombLib.LevelData
+
+namespace TombLib.LevelData;
+
+public interface IHasLuaName
 {
-    public interface IHasLuaName
-    {
-        string LuaName { get; set; }
-        void AllocateNewLuaName();
-        bool SupportsLuaName();
-        bool CanSetLuaName(string newScriptId);
-    }
+    string LuaName { get; set; }
+    void AllocateNewLuaName();
+    bool SupportsLuaName();
+    bool CanSetLuaName(string newScriptId);
 }

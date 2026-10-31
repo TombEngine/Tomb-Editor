@@ -17,7 +17,7 @@
 		<Setter Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
 
 		<!--  Thicknesses  -->
-		<Setter Property="BorderThickness" Value="{x:Static local:Defaults.InputControl_DefaultPadding}" />
+		<Setter Property="BorderThickness" Value="{x:Static local:Defaults.BorderThickness}" />
 
 		<!--  Template  -->
 		<Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />

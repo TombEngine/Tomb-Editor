@@ -1,0 +1,127 @@
+<Window
+	x:Class="TombEditor.Features.Dialogs.Search.SearchWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+	xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.Search"
+	Title="{tombLib:Localize Title}"
+	Width="650"
+	Height="350"
+	MinWidth="420"
+	MinHeight="260"
+	d:DataContext="{d:DesignInstance Type=vm:SearchWindowViewModel}"
+	Background="{DynamicResource Brush_Background}"
+	FocusManager.FocusedElement="{Binding ElementName=keywordBox}"
+	ShowInTaskbar="False"
+	Style="{DynamicResource CustomWindowStyle}"
+	WindowStartupLocation="CenterOwner"
+	mc:Ignorable="d">
+
+	<Window.InputBindings>
+		<KeyBinding Key="Delete" Command="{Binding DeleteSelectedCommand}" />
+	</Window.InputBindings>
+
+	<controls:SpacedGrid
+		Margin="{x:Static darkUI:Defaults.MediumThickness}"
+		RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<controls:SpacedGrid
+			Grid.Row="0"
+			ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Label
+				Grid.Column="0"
+				Width="84"
+				HorizontalContentAlignment="Right"
+				VerticalAlignment="Center"
+				Content="{tombLib:Localize Keyword}" />
+			<TextBox
+				x:Name="keywordBox"
+				Grid.Column="1"
+				VerticalAlignment="Center"
+				Text="{Binding Keyword, UpdateSourceTrigger=PropertyChanged}" />
+		</controls:SpacedGrid>
+
+		<controls:SpacedGrid
+			Grid.Row="1"
+			ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Label
+				Grid.Column="0"
+				Width="84"
+				HorizontalContentAlignment="Right"
+				VerticalAlignment="Center"
+				Content="{tombLib:Localize Scope}" />
+			<ComboBox
+				Grid.Column="1"
+				DisplayMemberPath="DisplayName"
+				ItemsSource="{Binding Scopes}"
+				SelectedValue="{Binding Scope, Mode=TwoWay}"
+				SelectedValuePath="Mode" />
+		</controls:SpacedGrid>
+
+		<DataGrid
+			x:Name="resultsGrid"
+			Grid.Row="2"
+			AutoGenerateColumns="False"
+			CanUserAddRows="False"
+			CanUserDeleteRows="False"
+			IsReadOnly="True"
+			ItemsSource="{Binding Rows}"
+			SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
+			SelectionChanged="ResultsGrid_SelectionChanged"
+			SelectionMode="Extended">
+			<DataGrid.Columns>
+				<DataGridTextColumn
+					Width="100"
+					Binding="{Binding Type}"
+					Header="{tombLib:Localize ColumnType}" />
+				<DataGridTextColumn
+					Width="160"
+					Binding="{Binding Room}"
+					Header="{tombLib:Localize ColumnRoom}" />
+				<DataGridTextColumn
+					Width="*"
+					Binding="{Binding Name}"
+					Header="{tombLib:Localize ColumnName}" />
+			</DataGrid.Columns>
+		</DataGrid>
+
+		<DockPanel Grid.Row="3">
+			<Button
+				Width="30"
+				HorizontalAlignment="Left"
+				Command="{Binding DeleteSelectedCommand}"
+				DockPanel.Dock="Left"
+				Style="{DynamicResource ButtonWithIconOnly}"
+				ToolTip="{tombLib:Localize Delete}">
+				<Image Source="{tomb:Icon General/trash}" />
+			</Button>
+			<Button
+				Width="{x:Static darkUI:Defaults.StandardButtonWidth}"
+				HorizontalAlignment="Right"
+				Command="{Binding CloseCommand}"
+				Content="{tombLib:Localize ~Common.OK}"
+				IsCancel="True"
+				IsDefault="True" />
+		</DockPanel>
+	</controls:SpacedGrid>
+</Window>

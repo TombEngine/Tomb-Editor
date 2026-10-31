@@ -1,0 +1,330 @@
+﻿<UserControl
+	x:Class="TombEditor.Features.DockableViews.LightingPanel.LightingView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+	d:DesignHeight="120"
+	d:DesignWidth="375"
+	Background="{DynamicResource Brush_Background}"
+	mc:Ignorable="d">
+
+	<controls:SpacedGrid Margin="{x:Static darkUI:Defaults.SmallThickness}" ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+
+		<controls:SpacedGrid RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<controls:SpacedGrid RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+
+				<controls:SpacedGrid ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+
+					<ComboBox SelectedIndex="{Binding SelectedLightType}" ToolTip="{tombLib:Localize LightTypeTooltip}">
+						<ComboBoxItem Style="{DynamicResource ComboBoxItemWithIconAndText}">
+							<StackPanel Orientation="Horizontal">
+								<Image Source="{tomb:Icon Objects/LightPoint}" />
+								<TextBlock Text="{tombLib:Localize TypePoint}" />
+							</StackPanel>
+						</ComboBoxItem>
+
+						<ComboBoxItem Style="{DynamicResource ComboBoxItemWithIconAndText}">
+							<StackPanel Orientation="Horizontal">
+								<Image Source="{tomb:Icon Objects/Shadow}" />
+								<TextBlock Text="{tombLib:Localize TypeShadow}" />
+							</StackPanel>
+						</ComboBoxItem>
+
+						<ComboBoxItem Style="{DynamicResource ComboBoxItemWithIconAndText}">
+							<StackPanel Orientation="Horizontal">
+								<Image Source="{tomb:Icon Objects/Spotlight}" />
+								<TextBlock Text="{tombLib:Localize TypeSpot}" />
+							</StackPanel>
+						</ComboBoxItem>
+
+						<ComboBoxItem Style="{DynamicResource ComboBoxItemWithIconAndText}">
+							<StackPanel Orientation="Horizontal">
+								<Image Source="{tomb:Icon Objects/Effect}" />
+								<TextBlock Text="{tombLib:Localize TypeEffect}" />
+							</StackPanel>
+						</ComboBoxItem>
+
+						<ComboBoxItem Style="{DynamicResource ComboBoxItemWithIconAndText}">
+							<StackPanel Orientation="Horizontal">
+								<Image Source="{tomb:Icon Objects/sun}" />
+								<TextBlock Text="{tombLib:Localize TypeSun}" />
+							</StackPanel>
+						</ComboBoxItem>
+
+						<ComboBoxItem Style="{DynamicResource ComboBoxItemWithIconAndText}">
+							<StackPanel Orientation="Horizontal">
+								<Image Source="{tomb:Icon Objects/Fog}" />
+								<TextBlock Text="{tombLib:Localize TypeFogBulb}" />
+							</StackPanel>
+						</ComboBoxItem>
+					</ComboBox>
+
+					<Button
+						Grid.Column="1"
+						Command="{Binding AddLightCommand}"
+						Style="{DynamicResource ButtonWithIconOnly}"
+						ToolTip="{tombLib:Localize AddLightTooltip}">
+						<Image Source="{tomb:Icon General/plus_math}" />
+					</Button>
+				</controls:SpacedGrid>
+
+				<ComboBox
+					Grid.Row="1"
+					Grid.ColumnSpan="2"
+					IsEnabled="{Binding CanEditQuality}"
+					SelectedIndex="{Binding SelectedLightQuality}"
+					ToolTip="{tombLib:Localize QualityTooltip}">
+					<ComboBoxItem Content="{tombLib:Localize DefaultQuality}" />
+					<ComboBoxItem Content="{tombLib:Localize LowQuality}" />
+					<ComboBoxItem Content="{tombLib:Localize MediumQuality}" />
+					<ComboBoxItem Content="{tombLib:Localize HighQuality}" />
+				</ComboBox>
+			</controls:SpacedGrid>
+
+			<controls:SpacedGrid
+				Grid.Row="1"
+				ColumnSpacing="{x:Static darkUI:Defaults.LargeThicknessWidth}"
+				RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition />
+				</Grid.RowDefinitions>
+
+				<CheckBox
+					Content="{tombLib:Localize Enabled}"
+					IsChecked="{Binding LightEnabled}"
+					IsEnabled="{Binding HasLight}"
+					ToolTip="{tombLib:Localize EnabledTooltip}" />
+				<CheckBox
+					Grid.Row="1"
+					Content="{tombLib:Localize Obstruct}"
+					IsChecked="{Binding ObstructedByGeometry}"
+					IsEnabled="{Binding CanCastShadows}"
+					ToolTip="{tombLib:Localize ObstructTooltip}" />
+				<CheckBox
+					Grid.Row="2"
+					Content="{tombLib:Localize Shadow}"
+					IsChecked="{Binding CastsShadow}"
+					IsEnabled="{Binding CanCastDynamicShadows}"
+					ToolTip="{tombLib:Localize ShadowTooltip}" />
+
+				<CheckBox
+					Grid.Column="1"
+					Content="{tombLib:Localize Static}"
+					IsChecked="{Binding StaticallyUsed}"
+					IsEnabled="{Binding CanIlluminateGeometry}"
+					ToolTip="{tombLib:Localize StaticTooltip}" />
+				<CheckBox
+					Grid.Row="1"
+					Grid.Column="1"
+					Content="{tombLib:Localize Dynamic}"
+					IsChecked="{Binding DynamicallyUsed}"
+					IsEnabled="{Binding CanIlluminateGeometry}"
+					ToolTip="{tombLib:Localize DynamicTooltip}" />
+				<CheckBox
+					Grid.Row="2"
+					Grid.Column="1"
+					Content="{tombLib:Localize Imported}"
+					IsChecked="{Binding UsedForImportedGeometry}"
+					IsEnabled="{Binding CanIlluminateGeometry}"
+					ToolTip="{tombLib:Localize ImportedTooltip}" />
+			</controls:SpacedGrid>
+		</controls:SpacedGrid>
+
+		<controls:SpacedGrid Grid.Column="1" RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<Label
+				HorizontalAlignment="Right"
+				Content="{tombLib:Localize Color}"
+				Style="{DynamicResource ExtraHorizontalMarginLabel}" />
+			<controls:ColorPickerButton
+				Grid.Column="1"
+				Height="22"
+				Command="{Binding EditLightColorCommand}"
+				IsEnabled="{Binding HasLight}"
+				SelectedColor="{Binding LightColor, Mode=OneWay}"
+				ToolTip="{tombLib:Localize ColorTooltip}" />
+			<Label
+				Grid.Row="1"
+				HorizontalAlignment="Right"
+				Content="{tombLib:Localize Intensity}"
+				Style="{DynamicResource ExtraHorizontalMarginLabel}" />
+			<controls:NumericUpDown
+				Grid.Row="1"
+				Grid.Column="1"
+				DecimalPlaces="2"
+				FormatString="F2"
+				Increment="0.03"
+				IsEnabled="{Binding HasLight}"
+				LargeIncrement="0.12"
+				Maximum="128"
+				Minimum="-128"
+				ToolTip="{tombLib:Localize IntensityTooltip}"
+				Value="{Binding Intensity}" />
+			<Label
+				Grid.Row="2"
+				HorizontalAlignment="Right"
+				Content="{tombLib:Localize InnerDistance}"
+				Style="{DynamicResource ExtraHorizontalMarginLabel}" />
+			<controls:NumericUpDown
+				Grid.Row="2"
+				Grid.Column="1"
+				DecimalPlaces="2"
+				FormatString="F2"
+				Increment="0.03"
+				IsEnabled="{Binding CanEditInRange}"
+				LargeIncrement="1"
+				Maximum="256"
+				Minimum="0"
+				ToolTip="{tombLib:Localize InnerDistanceTooltip}"
+				Value="{Binding InnerRange}" />
+			<Label
+				Grid.Row="3"
+				HorizontalAlignment="Right"
+				Content="{tombLib:Localize OuterDistance}"
+				Style="{DynamicResource ExtraHorizontalMarginLabel}" />
+			<controls:NumericUpDown
+				Grid.Row="3"
+				Grid.Column="1"
+				DecimalPlaces="2"
+				FormatString="F2"
+				Increment="0.03"
+				IsEnabled="{Binding CanEditOutRange}"
+				LargeIncrement="1"
+				Maximum="256"
+				Minimum="0"
+				ToolTip="{tombLib:Localize OuterDistanceTooltip}"
+				Value="{Binding OuterRange}" />
+
+			<Label
+				Grid.Column="2"
+				HorizontalAlignment="Right"
+				Content="{tombLib:Localize InnerAngle}"
+				Style="{DynamicResource ExtraHorizontalMarginLabel}">
+				<Label.Margin>
+					<Thickness Left="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+				</Label.Margin>
+			</Label>
+			<controls:NumericUpDown
+				Grid.Column="3"
+				DecimalPlaces="2"
+				FormatString="F2"
+				Increment="1"
+				IsEnabled="{Binding CanEditInOutAngle}"
+				LargeIncrement="10"
+				Maximum="180"
+				Minimum="0"
+				ToolTip="{tombLib:Localize InnerAngleTooltip}"
+				Value="{Binding InnerAngle}" />
+			<Label
+				Grid.Row="1"
+				Grid.Column="2"
+				HorizontalAlignment="Right"
+				Content="{tombLib:Localize OuterAngle}"
+				Style="{DynamicResource ExtraHorizontalMarginLabel}">
+				<Label.Margin>
+					<Thickness Left="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+				</Label.Margin>
+			</Label>
+			<controls:NumericUpDown
+				Grid.Row="1"
+				Grid.Column="3"
+				DecimalPlaces="2"
+				FormatString="F2"
+				Increment="1"
+				IsEnabled="{Binding CanEditInOutAngle}"
+				LargeIncrement="10"
+				Maximum="180"
+				Minimum="0"
+				ToolTip="{tombLib:Localize OuterAngleTooltip}"
+				Value="{Binding OuterAngle}" />
+			<Label
+				Grid.Row="2"
+				Grid.Column="2"
+				HorizontalAlignment="Right"
+				Content="{tombLib:Localize DirectionY}"
+				Style="{DynamicResource ExtraHorizontalMarginLabel}">
+				<Label.Margin>
+					<Thickness Left="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+				</Label.Margin>
+			</Label>
+			<controls:NumericUpDown
+				Grid.Row="2"
+				Grid.Column="3"
+				DecimalPlaces="2"
+				FormatString="F2"
+				Increment="1"
+				IsEnabled="{Binding CanEditDirection}"
+				LargeIncrement="10"
+				Maximum="720"
+				Minimum="-360"
+				ToolTip="{tombLib:Localize DirectionYTooltip}"
+				Value="{Binding DirectionY}" />
+			<Label
+				Grid.Row="3"
+				Grid.Column="2"
+				HorizontalAlignment="Right"
+				Content="{tombLib:Localize DirectionX}"
+				Style="{DynamicResource ExtraHorizontalMarginLabel}">
+				<Label.Margin>
+					<Thickness Left="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+				</Label.Margin>
+			</Label>
+			<controls:NumericUpDown
+				Grid.Row="3"
+				Grid.Column="3"
+				DecimalPlaces="2"
+				FormatString="F2"
+				Increment="1"
+				IsEnabled="{Binding CanEditDirection}"
+				LargeIncrement="10"
+				Maximum="90"
+				Minimum="-90"
+				ToolTip="{tombLib:Localize DirectionXTooltip}"
+				Value="{Binding DirectionX}" />
+		</controls:SpacedGrid>
+	</controls:SpacedGrid>
+</UserControl>

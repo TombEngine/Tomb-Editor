@@ -17,6 +17,7 @@ public class AutoCompleteBox : Control
 	public static readonly DependencyProperty IsSuggestionVisibleProperty;
 	public static readonly DependencyProperty ItemsSourceProperty;
 	public static readonly DependencyProperty SelectItemProperty;
+	public static readonly DependencyProperty CharacterCasingProperty;
 
 	public string Text
 	{
@@ -40,6 +41,12 @@ public class AutoCompleteBox : Control
 	{
 		get => (ICommand)GetValue(SelectItemProperty);
 		set => SetValue(SelectItemProperty, value);
+	}
+
+	public CharacterCasing CharacterCasing
+	{
+		get => (CharacterCasing)GetValue(CharacterCasingProperty);
+		set => SetValue(CharacterCasingProperty, value);
 	}
 
 	public TextBox? InputTextBox { get; set; }
@@ -71,6 +78,12 @@ public class AutoCompleteBox : Control
 			typeof(ICommand),
 			typeof(AutoCompleteBox),
 			new PropertyMetadata(null));
+
+		CharacterCasingProperty = DependencyProperty.Register(
+			nameof(CharacterCasing),
+			typeof(CharacterCasing),
+			typeof(AutoCompleteBox),
+			new PropertyMetadata(CharacterCasing.Normal));
 	}
 
 	public override void OnApplyTemplate()
@@ -122,7 +135,12 @@ public class AutoCompleteBox : Control
 	protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
 	{
 		if (e.Property == TextProperty && InputTextBox is not null)
-			InputTextBox.Text = (string)e.NewValue;
+		{
+			string newValue = (string)e.NewValue;
+
+			if (!string.Equals(InputTextBox.Text, newValue, StringComparison.Ordinal))
+				InputTextBox.Text = newValue;
+		}
 
 		base.OnPropertyChanged(e);
 	}
@@ -135,6 +153,20 @@ public class AutoCompleteBox : Control
 
 	private void InputTextBox_PreviewKeyDown(object sender, KeyEventArgs e)
 	{
+		if (e.Key == Key.Enter && InputTextBox is not null)
+		{
+			// An open suggestion list with a highlighted match takes the Enter key and inserts the match.
+			if (IsSuggestionVisible && SuggestionBox?.SelectedItem is { } highlighted)
+			{
+				SelectItem.Execute(highlighted);
+				e.Handled = true;
+				return;
+			}
+
+			// Otherwise Enter commits the typed text without waiting for the box to lose focus.
+			Text = InputTextBox.Text;
+		}
+
 		if (e.Key == Key.Down &&
 			IsSuggestionVisible &&
 			InputTextBox?.IsFocused == true &&
@@ -163,7 +195,8 @@ public class AutoCompleteBox : Control
 
 		SuggestionBox.SelectedIndex = -1;
 
-		string lastItem = InputTextBox.Text.Split(' ').Last();
+		var words = InputTextBox.Text.Split(' ');
+		string lastItem = words.Last();
 
 		if (string.IsNullOrWhiteSpace(lastItem))
 		{
@@ -171,13 +204,21 @@ public class AutoCompleteBox : Control
 			return;
 		}
 
+		// Like the previous autocomplete box: only words that start with what was typed, and
+		// never a word that was already entered.
+		var alreadyTyped = words.Take(words.Length - 1).Where(word => word.Length > 0).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
 		SuggestionBox.Items.Filter = obj =>
 		{
 			string? text = obj?.ToString();
 
 			return !string.IsNullOrEmpty(text)
-				&& text.Contains(lastItem, StringComparison.OrdinalIgnoreCase);
+				&& text.StartsWith(lastItem, StringComparison.OrdinalIgnoreCase)
+				&& !alreadyTyped.Contains(text);
 		};
+
+		// The first match is highlighted so Enter accepts it.
+		SuggestionBox.SelectedIndex = SuggestionBox.Items.Count > 0 ? 0 : -1;
 
 		IsSuggestionVisible = InputTextBox.IsKeyboardFocusWithin && !string.IsNullOrWhiteSpace(InputTextBox.Text);
 	}

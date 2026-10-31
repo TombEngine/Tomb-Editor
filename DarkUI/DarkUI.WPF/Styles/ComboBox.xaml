@@ -1,14 +1,11 @@
 ﻿<ResourceDictionary
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:converters="clr-namespace:DarkUI.WPF.Converters"
 	xmlns:local="clr-namespace:DarkUI.WPF">
 
 	<ResourceDictionary.MergedDictionaries>
 		<ResourceDictionary Source="/DarkUI.WPF;component/Styles/Icon.xaml" />
 	</ResourceDictionary.MergedDictionaries>
-
-	<converters:AddValueConverter x:Key="AddValueConverter" />
 
 	<Style x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
 		<!--  Layout  -->
@@ -93,7 +90,6 @@
 						</Grid.ColumnDefinitions>
 
 						<Popup
-							Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Converter={StaticResource AddValueConverter}, ConverterParameter={x:Static local:Defaults.ShadowMarginThicknessWidth}}"
 							MaxHeight="{x:Static local:Defaults.ComboBox_Popup_MaxHeight}"
 							AllowsTransparency="True"
 							IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
@@ -101,6 +97,7 @@
 							PopupAnimation="Slide">
 							<Border
 								x:Name="dropDownBorder"
+								MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
 								Margin="{x:Static local:Defaults.Thickness_ShadowMargin}"
 								Background="{DynamicResource Brush_Background}"
 								BorderBrush="{TemplateBinding BorderBrush}"

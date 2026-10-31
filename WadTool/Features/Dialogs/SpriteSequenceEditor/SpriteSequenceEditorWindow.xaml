@@ -1,0 +1,340 @@
+<Window
+	x:Class="WadTool.Features.Dialogs.SpriteSequenceEditor.SpriteSequenceEditorWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+	xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+	xmlns:vm="clr-namespace:WadTool.Features.Dialogs.SpriteSequenceEditor"
+	Title="{Binding Title}"
+	Width="940"
+	Height="640"
+	MinWidth="560"
+	MinHeight="420"
+	d:DataContext="{d:DesignInstance Type=vm:SpriteSequenceEditorWindowViewModel}"
+	Background="{DynamicResource Brush_Background}"
+	ShowInTaskbar="False"
+	Style="{DynamicResource CustomWindowStyle}"
+	WindowStartupLocation="CenterOwner"
+	mc:Ignorable="d">
+
+	<Window.Resources>
+		<!--  Classic alpha-checker background, same pattern as TombLib.WPF's TextureMapBase  -->
+		<DrawingBrush
+			x:Key="CheckerboardBrush"
+			Stretch="None"
+			TileMode="Tile"
+			Viewport="0,0,16,16"
+			ViewportUnits="Absolute">
+			<DrawingBrush.Drawing>
+				<DrawingGroup>
+					<GeometryDrawing Brush="#FF666666">
+						<GeometryDrawing.Geometry>
+							<RectangleGeometry Rect="0,0,16,16" />
+						</GeometryDrawing.Geometry>
+					</GeometryDrawing>
+					<GeometryDrawing Brush="#FF999999">
+						<GeometryDrawing.Geometry>
+							<GeometryGroup>
+								<RectangleGeometry Rect="0,0,8,8" />
+								<RectangleGeometry Rect="8,8,8,8" />
+							</GeometryGroup>
+						</GeometryDrawing.Geometry>
+					</GeometryDrawing>
+				</DrawingGroup>
+			</DrawingBrush.Drawing>
+		</DrawingBrush>
+	</Window.Resources>
+
+	<DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
+
+		<!--  OK / Cancel  -->
+		<controls:SpacedStack
+			DockPanel.Dock="Bottom"
+			Margin="0,8,0,0"
+			HorizontalAlignment="Right"
+			Orientation="Horizontal"
+			Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+			<Button
+				Width="80"
+				Command="{Binding ConfirmCommand}"
+				Content="{tombLib:Localize ~Common.OK}" />
+			<Button
+				Width="80"
+				Command="{Binding CancelCommand}"
+				Content="{tombLib:Localize ~Common.Cancel}"
+				IsCancel="True" />
+		</controls:SpacedStack>
+
+		<controls:SpacedGrid ColumnSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+
+			<!--  ========================  LEFT: sprite preview  ========================  -->
+			<Border
+				Grid.Column="0"
+				Padding="3"
+				Background="{StaticResource CheckerboardBrush}"
+				BorderBrush="{DynamicResource Brush_Border}"
+				BorderThickness="{x:Static darkUI:Defaults.BorderThickness}">
+				<Image Source="{Binding SelectedSprite.Image}" Stretch="Uniform" />
+			</Border>
+
+			<!--  ========================  RIGHT: sprite list + alignment  ========================  -->
+			<DockPanel Grid.Column="1" LastChildFill="True">
+
+				<!--  Alignment (legacy darkGroupBox1)  -->
+				<GroupBox
+					DockPanel.Dock="Bottom"
+					Margin="0,8,0,0"
+					Header="{tombLib:Localize AlignmentGroup}"
+					IsEnabled="{Binding HasSelection}">
+					<controls:SpacedStack Orientation="Vertical" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+
+						<controls:SpacedGrid ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+
+							<Label
+								Grid.Column="0"
+								VerticalAlignment="Center"
+								Content="{tombLib:Localize LabelLeft}"
+								Target="{Binding ElementName=leftNumericUpDown}" />
+							<controls:NumericUpDown
+								x:Name="leftNumericUpDown"
+								Grid.Column="1"
+								Increment="1"
+								LargeIncrement="10"
+								Maximum="32767"
+								Minimum="-32767"
+								Value="{Binding SelectedSprite.AlignmentLeft, Mode=TwoWay}" />
+
+							<Label
+								Grid.Column="2"
+								VerticalAlignment="Center"
+								Content="{tombLib:Localize LabelTop}"
+								Target="{Binding ElementName=topNumericUpDown}" />
+							<controls:NumericUpDown
+								x:Name="topNumericUpDown"
+								Grid.Column="3"
+								Increment="1"
+								LargeIncrement="10"
+								Maximum="32767"
+								Minimum="-32767"
+								Value="{Binding SelectedSprite.AlignmentTop, Mode=TwoWay}" />
+
+							<Label
+								Grid.Column="4"
+								VerticalAlignment="Center"
+								Content="{tombLib:Localize LabelRight}"
+								Target="{Binding ElementName=rightNumericUpDown}" />
+							<controls:NumericUpDown
+								x:Name="rightNumericUpDown"
+								Grid.Column="5"
+								Increment="1"
+								LargeIncrement="10"
+								Maximum="32767"
+								Minimum="-32767"
+								Value="{Binding SelectedSprite.AlignmentRight, Mode=TwoWay}" />
+
+							<Label
+								Grid.Column="6"
+								VerticalAlignment="Center"
+								Content="{tombLib:Localize LabelBottom}"
+								Target="{Binding ElementName=bottomNumericUpDown}" />
+							<controls:NumericUpDown
+								x:Name="bottomNumericUpDown"
+								Grid.Column="7"
+								Increment="1"
+								LargeIncrement="10"
+								Maximum="32767"
+								Minimum="-32767"
+								Value="{Binding SelectedSprite.AlignmentBottom, Mode=TwoWay}" />
+						</controls:SpacedGrid>
+
+						<controls:SpacedGrid ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}" RowSpacing="2">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" />
+								<RowDefinition Height="Auto" />
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="Auto" />
+							</Grid.ColumnDefinitions>
+
+							<Label
+								Grid.Row="0"
+								Grid.Column="0"
+								Content="{tombLib:Localize LabelScale}"
+								Target="{Binding ElementName=scaleNumericUpDown}" />
+							<Label
+								Grid.Row="0"
+								Grid.Column="1"
+								Content="{tombLib:Localize LabelVerticalAdj}"
+								Target="{Binding ElementName=verticalAdjCombo}" />
+							<Label
+								Grid.Row="0"
+								Grid.Column="2"
+								Content="{tombLib:Localize LabelHorizontalAdj}"
+								Target="{Binding ElementName=horizontalAdjCombo}" />
+
+							<controls:NumericUpDown
+								x:Name="scaleNumericUpDown"
+								Grid.Row="1"
+								Grid.Column="0"
+								DecimalPlaces="1"
+								Increment="1"
+								LargeIncrement="10"
+								Maximum="100"
+								Minimum="0.1"
+								Value="{Binding Scale, Mode=TwoWay}" />
+							<ComboBox
+								x:Name="verticalAdjCombo"
+								Grid.Row="1"
+								Grid.Column="1"
+								ItemsSource="{Binding VerticalAlignments}"
+								SelectedItem="{Binding SelectedVerticalAlignment, Mode=TwoWay}" />
+							<ComboBox
+								x:Name="horizontalAdjCombo"
+								Grid.Row="1"
+								Grid.Column="2"
+								ItemsSource="{Binding HorizontalAlignments}"
+								SelectedItem="{Binding SelectedHorizontalAlignment, Mode=TwoWay}" />
+							<Button
+								Grid.Row="1"
+								Grid.Column="3"
+								Command="{Binding RecalculateAlignmentCommand}"
+								Style="{DynamicResource ButtonWithIconOnly}"
+								ToolTip="{tombLib:Localize RecalculateTooltip}">
+								<Image Source="{tomb:Icon Actions/refresh}" />
+							</Button>
+						</controls:SpacedGrid>
+					</controls:SpacedStack>
+				</GroupBox>
+
+				<!--  Sprite list + vertical button strip  -->
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="Auto" />
+					</Grid.ColumnDefinitions>
+
+					<DataGrid
+						x:Name="spritesGrid"
+						Grid.Column="0"
+						Width="280"
+						AutoGenerateColumns="False"
+						CanUserAddRows="False"
+						CanUserDeleteRows="False"
+						HeadersVisibility="Column"
+						IsReadOnly="True"
+						ItemsSource="{Binding Sprites}"
+						RowHeight="50"
+						SelectedItem="{Binding SelectedSprite, Mode=TwoWay}"
+						SelectionMode="Extended"
+						SelectionUnit="FullRow">
+						<DataGrid.InputBindings>
+							<KeyBinding
+								Key="Delete"
+								Command="{Binding DeleteCommand}"
+								CommandParameter="{Binding SelectedItems, ElementName=spritesGrid}" />
+						</DataGrid.InputBindings>
+						<DataGrid.Columns>
+							<DataGridTemplateColumn Width="80" Header="{tombLib:Localize ColumnPreview}">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<Border
+											Width="48"
+											Height="48"
+											Background="{StaticResource CheckerboardBrush}">
+											<Image Source="{Binding Image}" Stretch="Uniform" />
+										</Border>
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+							<DataGridTextColumn
+								Width="80"
+								Binding="{Binding Size}"
+								Header="{tombLib:Localize ColumnSize}"
+								IsReadOnly="True" />
+							<DataGridTextColumn
+								Width="*"
+								Binding="{Binding Index}"
+								Header="{tombLib:Localize ColumnId}"
+								IsReadOnly="True" />
+						</DataGrid.Columns>
+					</DataGrid>
+
+					<!--  Legacy layout: add / delete / export / replace at the top, move up / down at the bottom  -->
+					<Grid Grid.Column="1" Margin="4,0,0,0">
+					<controls:SpacedStack
+						VerticalAlignment="Top"
+						Orientation="Vertical"
+						Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+						<Button
+							Command="{Binding AddSpritesCommand}"
+							Style="{DynamicResource ButtonWithIconOnly}"
+							ToolTip="{tombLib:Localize AddTooltip}">
+							<Image Source="{tomb:Icon General/plus_math}" />
+						</Button>
+						<Button
+							Command="{Binding DeleteCommand}"
+							CommandParameter="{Binding SelectedItems, ElementName=spritesGrid}"
+							Style="{DynamicResource ButtonWithIconOnly}"
+							ToolTip="{tombLib:Localize DeleteTooltip}">
+							<Image Source="{tomb:Icon General/trash}" />
+						</Button>
+						<Button
+							Command="{Binding ExportCommand}"
+							CommandParameter="{Binding SelectedItems, ElementName=spritesGrid}"
+							Style="{DynamicResource ButtonWithIconOnly}"
+							ToolTip="{tombLib:Localize ExportTooltip}">
+							<Image Source="{tomb:Icon General/Export}" />
+						</Button>
+						<Button
+							Command="{Binding ReplaceSpriteCommand}"
+							Style="{DynamicResource ButtonWithIconOnly}"
+							ToolTip="{tombLib:Localize ReplaceTooltip}">
+							<Image Source="{tomb:Icon General/Find-and-replace}" />
+						</Button>
+					</controls:SpacedStack>
+					<controls:SpacedStack
+						VerticalAlignment="Bottom"
+						Orientation="Vertical"
+						Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+						<Button
+							Command="{Binding MoveUpCommand}"
+							CommandParameter="{Binding SelectedItems, ElementName=spritesGrid}"
+							Style="{DynamicResource ButtonWithIconOnly}"
+							ToolTip="{tombLib:Localize MoveUpTooltip}">
+							<Image Source="{tomb:Icon General/ArrowUp}" />
+						</Button>
+						<Button
+							Command="{Binding MoveDownCommand}"
+							CommandParameter="{Binding SelectedItems, ElementName=spritesGrid}"
+							Style="{DynamicResource ButtonWithIconOnly}"
+							ToolTip="{tombLib:Localize MoveDownTooltip}">
+							<Image Source="{tomb:Icon General/ArrowDown}" />
+						</Button>
+					</controls:SpacedStack>
+					</Grid>
+				</Grid>
+			</DockPanel>
+		</controls:SpacedGrid>
+	</DockPanel>
+</Window>

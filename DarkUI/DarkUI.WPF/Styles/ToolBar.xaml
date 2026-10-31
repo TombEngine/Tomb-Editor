@@ -304,8 +304,6 @@
 												KeyboardNavigation.DirectionalNavigation="Cycle"
 												KeyboardNavigation.TabNavigation="Cycle"
 												WrapWidth="{x:Static local:Defaults.ToolBar_MaxOverflowPopupWidth}" />
-											<Separator />
-											<MenuItem Header="Add or remove buttons..." />
 										</StackPanel>
 									</Border>
 								</Popup>

@@ -4,6 +4,80 @@
 	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls"
 	xmlns:local="clr-namespace:DarkUI.WPF">
 
+	<Style x:Key="NumericUpDownSpinnerButton" TargetType="{x:Type RepeatButton}">
+		<!--  Layout  -->
+		<Setter Property="HorizontalContentAlignment" Value="Center" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="SnapsToDevicePixels" Value="{x:Static local:Defaults.SnapsToDevicePixels}" />
+		<Setter Property="UseLayoutRounding" Value="{x:Static local:Defaults.UseLayoutRounding}" />
+
+		<!--  Brushes  -->
+		<Setter Property="Background" Value="{DynamicResource Brush_Background_ClickableControl}" />
+		<Setter Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+		<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+
+		<!--  Template  -->
+		<Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type RepeatButton}">
+					<Grid SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+						<Border
+							Background="{TemplateBinding Background}"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							BorderThickness="{TemplateBinding BorderThickness}" />
+
+						<Rectangle
+							x:Name="hoverRect"
+							Margin="{TemplateBinding BorderThickness}"
+							Fill="{DynamicResource Brush_HoverHighlight}"
+							Opacity="{DynamicResource Opacity_HoveredHighlight}"
+							Visibility="Hidden" />
+						<Rectangle
+							x:Name="pressRect"
+							Margin="{TemplateBinding BorderThickness}"
+							Fill="{DynamicResource Brush_PressHighlight}"
+							Opacity="{DynamicResource Opacity_PressedHighlight}"
+							Visibility="Hidden" />
+
+						<Border Padding="{TemplateBinding Padding}" BorderThickness="{TemplateBinding BorderThickness}">
+							<ContentPresenter
+								x:Name="contentPresenter"
+								HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+								VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+								Content="{TemplateBinding Content}"
+								ContentTemplate="{TemplateBinding ContentTemplate}" />
+						</Border>
+					</Grid>
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter Property="Background" Value="{DynamicResource Brush_Background_Disabled}" />
+							<Setter TargetName="contentPresenter" Property="Opacity" Value="{DynamicResource Opacity_DisabledContent}" />
+						</Trigger>
+
+						<Trigger Property="IsFocused" Value="True">
+							<Setter Property="BorderBrush" Value="{DynamicResource Brush_FocusHighlight}" />
+						</Trigger>
+
+						<MultiTrigger>
+							<MultiTrigger.Conditions>
+								<Condition Property="IsMouseOver" Value="True" />
+								<Condition Property="IsPressed" Value="False" />
+							</MultiTrigger.Conditions>
+
+							<Setter TargetName="hoverRect" Property="Visibility" Value="Visible" />
+						</MultiTrigger>
+
+						<Trigger Property="IsPressed" Value="True">
+							<Setter TargetName="pressRect" Property="Visibility" Value="Visible" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 	<Style TargetType="{x:Type controls:NumericUpDown}">
 		<!--  Control properties  -->
 		<Setter Property="FontSize" Value="{x:Static local:Defaults.DefaultFontSize}" />
@@ -16,6 +90,7 @@
 
 		<!--  Brushes  -->
 		<Setter Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+		<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
 
 		<!--  Thicknesses  -->
 		<Setter Property="BorderThickness" Value="{x:Static local:Defaults.BorderThickness}" />
@@ -45,18 +120,24 @@
 								x:Name="PART_TextBox"
 								Grid.RowSpan="2"
 								Height="Auto"
-								BorderThickness="0" />
+								BorderThickness="0"
+								ToolTip="{TemplateBinding ToolTip}" />
 
-							<Button
+							<RepeatButton
 								x:Name="PART_IncreaseButton"
 								Grid.Row="0"
 								Grid.Column="1"
-								Width="{x:Static local:Defaults.NumericUpDown_SpinnerWidth}"
+								Delay="{TemplateBinding RepeatDelay}"
+								Focusable="False"
 								Height="Auto"
-								Padding="{x:Static local:Defaults.NumericUpDown_RepeatButtonPadding}">
-								<Button.BorderThickness>
+								Interval="{TemplateBinding RepeatInterval}"
+								Padding="{x:Static local:Defaults.NumericUpDown_RepeatButtonPadding}"
+								Style="{StaticResource NumericUpDownSpinnerButton}"
+								ToolTip="{TemplateBinding ToolTip}"
+								Width="{x:Static local:Defaults.NumericUpDown_SpinnerWidth}">
+								<RepeatButton.BorderThickness>
 									<Thickness Bottom="{x:Static local:Defaults.BorderThicknessWidth}" Left="{x:Static local:Defaults.BorderThicknessWidth}" />
-								</Button.BorderThickness>
+								</RepeatButton.BorderThickness>
 
 								<Path
 									x:Name="arrowUp"
@@ -65,18 +146,23 @@
 									SnapsToDevicePixels="False"
 									Stretch="Uniform"
 									UseLayoutRounding="False" />
-							</Button>
+							</RepeatButton>
 
-							<Button
+							<RepeatButton
 								x:Name="PART_DecreaseButton"
 								Grid.Row="1"
 								Grid.Column="1"
-								Width="{x:Static local:Defaults.NumericUpDown_SpinnerWidth}"
+								Delay="{TemplateBinding RepeatDelay}"
+								Focusable="False"
 								Height="Auto"
-								Padding="{x:Static local:Defaults.NumericUpDown_RepeatButtonPadding}">
-								<Button.BorderThickness>
+								Interval="{TemplateBinding RepeatInterval}"
+								Padding="{x:Static local:Defaults.NumericUpDown_RepeatButtonPadding}"
+								Style="{StaticResource NumericUpDownSpinnerButton}"
+								ToolTip="{TemplateBinding ToolTip}"
+								Width="{x:Static local:Defaults.NumericUpDown_SpinnerWidth}">
+								<RepeatButton.BorderThickness>
 									<Thickness Left="{x:Static local:Defaults.BorderThicknessWidth}" Top="{x:Static local:Defaults.BorderThicknessWidth}" />
-								</Button.BorderThickness>
+								</RepeatButton.BorderThickness>
 
 								<Path
 									x:Name="arrowDown"
@@ -85,19 +171,9 @@
 									SnapsToDevicePixels="False"
 									Stretch="Uniform"
 									UseLayoutRounding="False" />
-							</Button>
+							</RepeatButton>
 						</Grid>
 					</Border>
-
-					<ControlTemplate.Triggers>
-						<Trigger SourceName="PART_IncreaseButton" Property="IsFocused" Value="True">
-							<Setter TargetName="PART_IncreaseButton" Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
-						</Trigger>
-
-						<Trigger SourceName="PART_DecreaseButton" Property="IsFocused" Value="True">
-							<Setter TargetName="PART_DecreaseButton" Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
-						</Trigger>
-					</ControlTemplate.Triggers>
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>

@@ -1,17 +1,19 @@
-﻿using System;
+using Clipboard = System.Windows.Clipboard;
+using Keys = TombLib.Input.EditorKey;
+using NLog;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Windows.Forms;
-using DarkUI.Forms;
 using TombEditor.Forms;
 using TombLib;
-using TombLib.Forms;
 using TombLib.LevelData;
+using TombLib.Services;
 using TombLib.Utils;
-using NLog;
+using TombLib.WPF;
+using TombLib.WPF.Services;
 
 namespace TombEditor
 {
@@ -28,7 +30,7 @@ namespace TombEditor
         View,
         Settings
     }
-    
+
     public class HotkeySet : ICloneable
     {
         public static List<Keys> ReservedCameraKeys = new List<Keys>
@@ -62,14 +64,14 @@ namespace TombEditor
     public class CommandHandler
     {
         private readonly Editor _editor;
-        private IWin32Window _editorWindow;
+        private IWindowOwner _editorWindow;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         private bool _primaryControlFocused;
 
         public List<EditorCommand> Commands { get; private set; }
 
-        public CommandHandler(IWin32Window window, Editor editor)
+        public CommandHandler(IWindowOwner window, Editor editor)
         {
             _editorWindow = window;
             _editor = editor;
@@ -675,8 +677,19 @@ namespace TombEditor
 
             AddCommand("Search", "Search...", CommandType.Edit, delegate ()
             {
-                Forms.FormSearch searchForm = new Forms.FormSearch(_editor);
-                searchForm.Show(_editorWindow); // Also disposes: https://social.msdn.microsoft.com/Forums/windows/en-US/5cbf16a9-1721-4861-b7c0-ea20cf328d48/any-difference-between-formclose-and-formdispose?forum=winformsdesigner
+                foreach (System.Windows.Window w in System.Windows.Application.Current.Windows)
+                {
+                    if (w is TombEditor.Features.Dialogs.Search.SearchWindow existing)
+                    {
+                        existing.Activate();
+                        return;
+                    }
+                }
+
+                var searchVm = new TombEditor.Features.Dialogs.Search.SearchWindowViewModel(_editor);
+                var searchWindow = new TombEditor.Features.Dialogs.Search.SearchWindow { DataContext = searchVm };
+                searchWindow.Owner = System.Windows.Application.Current.MainWindow;
+                searchWindow.Show();
             });
 
             AddCommand("DeleteRooms", "Delete", CommandType.Rooms, delegate ()
@@ -749,8 +762,8 @@ namespace TombEditor
 
             AddCommand("ApplyAmbientLightToAllRooms", "Apply current ambient light to all rooms", CommandType.Rooms, delegate ()
             {
-                if (DarkMessageBox.Show(_editorWindow, "Do you really want to apply the ambient light of the current room to all rooms?",
-                                       "Apply ambient light", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (UserDialogs.Show(_editorWindow, "Do you really want to apply the ambient light of the current room to all rooms?",
+                                       "Apply ambient light", DialogButtons.YesNo, DialogIcon.Question) == DialogChoice.Yes)
                 {
                     EditorActions.ApplyCurrentAmbientLightToAllRooms();
                     _editor.SendMessage("Ambient light was applied to all rooms.", PopupType.Info);
@@ -853,9 +866,9 @@ namespace TombEditor
 
                     if (File.Exists(pngFilePath))
                     {
-                        if (DarkMessageBox.Show(_editorWindow,
+                        if (UserDialogs.Show(_editorWindow,
                                 "There is already a file at \"" + pngFilePath + "\". Continue and overwrite the file?",
-                                "File already exists", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                                "File already exists", DialogButtons.YesNo, DialogIcon.Warning) != DialogChoice.Yes)
                             return;
                     }
                     texture.Image.Save(pngFilePath);
@@ -868,8 +881,11 @@ namespace TombEditor
 
             AddCommand("RemapTexture", "Remap texture...", CommandType.Textures, delegate ()
             {
-                using (var form = new Forms.FormTextureRemap(_editor))
-                    form.ShowDialog(_editorWindow);
+                var vm = new ViewModels.TextureRemapWindowViewModel(_editor);
+                var dialog = new Views.TextureRemapWindow { DataContext = vm };
+                if (_editorWindow is not null)
+                    dialog.SetOwner(_editorWindow);
+                dialog.ShowDialog();
             });
 
             AddCommand("TextureFloor", "Texture floor", CommandType.Textures, delegate ()
@@ -889,8 +905,12 @@ namespace TombEditor
 
             AddCommand("EditAnimationRanges", "Edit animation ranges...", CommandType.Textures, delegate ()
             {
-                using (Forms.FormAnimatedTextures form = new Forms.FormAnimatedTextures(_editor, null))
-                    form.ShowDialog(_editorWindow);
+                var context = new TombEditorAnimatedTexturesContext(_editor);
+                var textureMap = new Controls.WpfAnimatedTextureMapView();
+                var viewModel = new TombLib.WPF.Features.AnimatedTextures.AnimatedTexturesWindowViewModel(context, textureMap);
+                var window = new TombLib.WPF.Features.AnimatedTextures.AnimatedTexturesWindow { DataContext = viewModel };
+                window.SetOwner(_editorWindow);
+                window.ShowDialog();
             });
 
             AddCommand("SmoothRandomFloorUp", "Smooth random floor up", CommandType.Geometry, delegate ()
@@ -975,12 +995,6 @@ namespace TombEditor
                     EditorActions.GridWalls(_editor.SelectedRoom, _editor.SelectedSectors.Area, true);
             });
 
-            AddCommand("EditLevelSettings", "Level settings...", CommandType.Settings, delegate ()
-            {
-                using (Forms.FormLevelSettings form = new Forms.FormLevelSettings(_editor))
-                    form.ShowDialog(_editorWindow);
-            });
-
             AddCommand("StartWadTool", "Start Wad Tool...", CommandType.Settings, delegate ()
             {
                 try
@@ -1009,8 +1023,11 @@ namespace TombEditor
 
             AddCommand("EditKeyboardLayout", "Edit keyboard layout...", CommandType.Settings, delegate ()
             {
-                using (var f = new FormKeyboardLayout(_editor))
-                    f.ShowDialog();
+                var kbVm = new TombEditor.Features.Dialogs.KeyboardLayout.KeyboardLayoutWindowViewModel(_editor);
+                var kbDialog = new TombEditor.Features.Dialogs.KeyboardLayout.KeyboardLayoutWindow { DataContext = kbVm };
+                if (_editorWindow is not null)
+                    kbDialog.SetOwner(_editorWindow);
+                kbDialog.ShowDialog();
             });
 
             AddCommand("SwitchTool1", "Switch tool 1", CommandType.General, delegate ()
