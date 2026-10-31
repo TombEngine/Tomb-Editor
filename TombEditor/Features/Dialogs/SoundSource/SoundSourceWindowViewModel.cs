@@ -64,8 +64,11 @@ public partial class SoundSourceWindowViewModel : ObservableObject, IModalDialog
         foreach (WadSoundInfo info in _editor.Level.Settings.GlobalSoundMap.OrderBy(s => s.Id))
             Sounds.Add(new SoundEntry(info, $"{info.Id.ToString().PadLeft(4, '0')}: {info.Name}"));
 
+        _originalSoundId = soundSource.SoundId;
         _selectedSound = Sounds.FirstOrDefault(s => s.Info.Id == soundSource.SoundId);
     }
+
+    private readonly int _originalSoundId;
 
     [RelayCommand]
     private void Search()
@@ -110,7 +113,8 @@ public partial class SoundSourceWindowViewModel : ObservableObject, IModalDialog
     [RelayCommand]
     private void Confirm()
     {
-        _soundSource.SoundId = SelectedSound?.Info.Id ?? -1;
+        // A sound that is missing from the current sound map keeps its id unless another sound is picked, like the previous form.
+        _soundSource.SoundId = SelectedSound?.Info.Id ?? _originalSoundId;
         _soundSource.PlayMode = SelectedPlayMode.Mode;
         WadSoundPlayer.StopSample();
         DialogResult = true;

@@ -180,6 +180,9 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Trigger create and edit flow in the WPF editor on the real level with the real mouse: new trigger on selected sectors, OK stores it (statistics 6/143 -> 7/144, list shows "Switch [Object] for KICK_DOOR1 (Room1) (Timer: 0) in Room38"), double click on the list entry reopens the editor with the stored values and OK focused. The WinForms equivalent was not captured (blank capture), compared in code only | Verified in WPF, code review for WinForms | n/a |
 
+| Behaviour audit fix (HIGH): Sound source dialog overwrote the sound id with -1 on OK when the id was not in the current sound map (missing catalog), destroying the reference even if only the play mode changed; now the original id is kept unless another sound is picked, like WinForms. Built only | Data loss | (this commit) |
+| Behaviour audit fix: Footstep sounds and Bump maps keep the selection rectangle of the previous texture after the texture combo changes, so Assign wrote it into the new texture; the selection is cleared like WinForms. Built only | Wrong data | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.

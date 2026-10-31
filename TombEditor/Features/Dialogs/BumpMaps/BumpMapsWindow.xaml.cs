@@ -55,7 +55,12 @@ public partial class BumpMapsWindow : Window
     }
 
     private void OnResetVisible(object? sender, TombLib.LevelData.LevelTexture? texture)
-        => mapView.ResetVisibleTexture(texture);
+    {
+        mapView.ResetVisibleTexture(texture);
+
+        // The previous form cleared the selection when the texture changed.
+        mapView.SelectedTexture = TombLib.Utils.TextureArea.None;
+    }
 
     private void OnInvalidate(object? sender, System.EventArgs e)
         => mapView.InvalidateVisual();
