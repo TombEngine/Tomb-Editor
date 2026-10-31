@@ -1,5 +1,6 @@
 #nullable enable
 
+using System;
 using System.Windows;
 using TombLib.LevelData;
 using TombLib.WPF;
@@ -15,6 +16,7 @@ public partial class ImportedGeometryWindow : Window
         this.HookModalAutoClose();
         Loaded += (_, _) => WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormImportedGeometry");
         DataContextChanged += OnDataContextChanged;
+        Closed += (_, _) => (DataContext as IDisposable)?.Dispose();
     }
 
     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

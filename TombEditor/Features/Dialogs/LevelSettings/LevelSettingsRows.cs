@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using LevelSettingsData = TombLib.LevelData.LevelSettings;
 using System.ComponentModel;
 using System.Windows.Media.Imaging;
-using TombLib.GeometryIO;
 using TombLib.LevelData;
 using TombLib.WPF;
 using TombLib.WPF.Imaging;
@@ -156,7 +155,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
     }
 
     /// <summary>Row view-model for the Imported geometry grid (wraps an <see cref="ImportedGeometry"/>).</summary>
-    public partial class ImportedGeometryRow : ObservableObject
+    public partial class ImportedGeometryRow : ReloadableRow
     {
         private readonly LevelSettingsData _settings;
         public ImportedGeometry Object { get; }
@@ -190,12 +189,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         public bool InvertFaces { get => Object.Info.InvertFaces; set { if (Object.Info.InvertFaces == value) return; Update(i => { i.InvertFaces = value; return i; }); } }
 
         [RelayCommand]
-        private void Browse()
-        {
-            string? result = LevelFileDialog.BrowseFile(WPFUtils.GetWindowOwner(), _settings, Object.Info.Path, LevelSettingsStrings.Get("Browse3DFileTitle"), BaseGeometryImporter.FileExtensions, VariableType.LevelDirectory, false);
-            if (result != null)
-                Path = result;
-        }
+        private void Browse() => ReloadFromNewFile(_settings, Object);
     }
 
     /// <summary>Row view-model for the selected-sounds grid in the Sound catalogs tab.</summary>

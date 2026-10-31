@@ -4,15 +4,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LevelSettingsData = TombLib.LevelData.LevelSettings;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Numerics;
 using TombEditor.Features.Dialogs.LevelSettings;
-using TombLib.GeometryIO;
 using TombLib.LevelData;
 using TombLib.Services;
-using TombLib.Utils;
 using TombLib.WPF;
 using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
@@ -30,13 +29,12 @@ namespace TombEditor.Features.Dialogs.ImportedGeometryEditor
     /// </summary>
     public sealed record LightingModelOption(ImportedGeometryLightingModel Value, string Name);
 
-    public partial class ImportedGeometryWindowViewModel : ObservableObject, IModalDialogViewModel
+    public partial class ImportedGeometryWindowViewModel : ObservableObject, IModalDialogViewModel, IDisposable
     {
         private readonly ImportedGeometryInstance _instance;
         private readonly Editor _editor;
         private readonly IMessageService _messageService;
-        private readonly IDialogService _dialogService;
-        private readonly IColorPickerService _colorPickerService;
+        private readonly ImportedGeometryListEditor _geometryListEditor;
         private readonly ILocalizationService _localizationService;
         private readonly Vector3 _oldColor;
         private ImportedGeometry.UniqueIDType? _currentModel;
@@ -75,15 +73,12 @@ namespace TombEditor.Features.Dialogs.ImportedGeometryEditor
             ImportedGeometryInstance instance,
             LevelSettingsData levelSettings,
             IDialogService? dialogService = null,
-            IColorPickerService? colorPickerService = null,
             ILocalizationService? localizationService = null,
             Editor? editor = null)
         {
             _instance = instance;
             _editor = editor ?? Editor.Instance;
             _messageService = ServiceLocator.ResolveService<IMessageService>();
-            _dialogService = ServiceLocator.ResolveService(dialogService);
-            _colorPickerService = ServiceLocator.ResolveService(colorPickerService);
             _localizationService = ServiceLocator.ResolveService(localizationService)
                 .WithKeysFor(this);
 
@@ -102,10 +97,30 @@ namespace TombEditor.Features.Dialogs.ImportedGeometryEditor
             foreach (var geometry in NewLevelSettings.ImportedGeometries)
                 Geometries.Add(new ImportedGeometryRow(NewLevelSettings, geometry));
 
+            _geometryListEditor = new ImportedGeometryListEditor(NewLevelSettings, Geometries, _editor, ServiceLocator.ResolveService(dialogService), _messageService);
+
             if (_currentModel != null)
                 SelectedGeometry = Geometries.FirstOrDefault(g => g.Object.UniqueID == _currentModel);
 
             UpdateAssignedModelDisplay();
+            _editor.EditorEventRaised += OnEditorEvent;
+        }
+
+        /// <summary>Gets or sets every highlighted row of the geometry list (see DataGridSelection).</summary>
+        [ObservableProperty]
+        private IList? _selectedGeometries;
+
+        /// <summary>Stops listening to editor events once the dialog is closed.</summary>
+        public void Dispose() => _editor.EditorEventRaised -= OnEditorEvent;
+
+        // Reloading a geometry from its row raises this event; the rows are refreshed like the previous grid did.
+        private void OnEditorEvent(IEditorEvent editorEvent)
+        {
+            if (editorEvent is not Editor.LoadedImportedGeometriesChangedEvent)
+                return;
+
+            foreach (var row in Geometries.ToList())
+                row.Refresh();
         }
 
         private void UpdateAssignedModelDisplay()
@@ -124,87 +139,13 @@ namespace TombEditor.Features.Dialogs.ImportedGeometryEditor
         }
 
         [RelayCommand]
-        private void AddImportedGeometry()
-        {
-            var paths = LevelFileDialog.BrowseFiles(Owner, NewLevelSettings, NewLevelSettings.LevelFilePath, _localizationService["BrowseFilesTitle"], BaseGeometryImporter.FileExtensions, VariableType.LevelDirectory).ToList();
-
-            // Non-ANSI paths are skipped with a message, like in the previous dialog.
-            if (paths.RemoveAll(path => !path.IsANSI()) > 0)
-                UserDialogs.NonANSIFilePathError(Owner);
-            var importInfos = new List<KeyValuePair<ImportedGeometry, ImportedGeometryInfo>>();
-            var config = _editor?.Configuration;
-
-            foreach (string path in paths)
-            {
-                var ioViewModel = new GeometryIOSettingsWindowViewModel(IOSettingsPresets.GeometryImportSettingsPresets);
-                ioViewModel.SelectPreset(config?.GeometryIO_LastUsedGeometryImportPresetName);
-
-                if (_dialogService.ShowDialog(this, ioViewModel) != true)
-                    continue;
-
-                if (config != null)
-                    config.GeometryIO_LastUsedGeometryImportPresetName = ioViewModel.SelectedPreset?.Name;
-
-                var info = new ImportedGeometryInfo(NewLevelSettings.MakeRelative(path, VariableType.LevelDirectory), ioViewModel.GetCurrentSettings());
-                importInfos.Add(new KeyValuePair<ImportedGeometry, ImportedGeometryInfo>(new ImportedGeometry(), info));
-            }
-
-            if (importInfos.Count == 0)
-                return;
-
-            NewLevelSettings.ImportedGeometryUpdate(importInfos);
-            NewLevelSettings.ImportedGeometries.AddRange(importInfos.Select(e => e.Key));
-            foreach (var entry in importInfos)
-                Geometries.Add(new ImportedGeometryRow(NewLevelSettings, entry.Key));
-        }
+        private void AddImportedGeometry() => _geometryListEditor.Add(this);
 
         [RelayCommand]
-        private void DeleteImportedGeometry()
-        {
-            if (SelectedGeometry == null)
-                return;
-
-            if (!_messageService.ShowConfirmation(_localizationService.Format("DeleteConfirmation", 1), _localizationService["DeleteConfirmationTitle"], false, true))
-                return;
-
-            NewLevelSettings.ImportedGeometries.Remove(SelectedGeometry.Object);
-            Geometries.Remove(SelectedGeometry);
-        }
+        private void DeleteImportedGeometry() => _geometryListEditor.Delete(SelectedGeometries);
 
         [RelayCommand]
-        private void PickColor()
-        {
-            // Mirrors EditorActions.EditColor: realtime preview on the instance while the dialog
-            // is open, selection temporarily hidden, undo pushed only when the user confirms.
-            Vector3 oldColor = _instance.Color;
-
-            _editor.ToggleHiddenSelection(true);
-
-            Vector3? pickedColor = _colorPickerService.PickColor(oldColor * 0.5f, c =>
-            {
-                _instance.Color = c * 2.0f;
-                _editor.ObjectChange(_instance, ObjectChangeType.Change);
-            });
-
-            _editor.ToggleHiddenSelection(false);
-
-            if (pickedColor == null)
-            {
-                // Cancelled: roll back any realtime preview changes.
-                _instance.Color = oldColor;
-                _editor.ObjectChange(_instance, ObjectChangeType.Change);
-                Color = (oldColor * 0.5f).ToWPFColor();
-                return;
-            }
-
-            // Confirmed: push undo against the original color, then apply the picked one.
-            _instance.Color = oldColor;
-            _editor.UndoManager.PushObjectPropertyChanged(_instance);
-
-            _instance.Color = pickedColor.Value * 2.0f;
-            _editor.ObjectChange(_instance, ObjectChangeType.Change);
-            Color = pickedColor.Value.ToWPFColor();
-        }
+        private void PickColor() => EditorActions.EditColor(Owner, _instance, pickedColor => Color = pickedColor.ToWPFColor());
 
         [RelayCommand]
         private void EditMaterials()

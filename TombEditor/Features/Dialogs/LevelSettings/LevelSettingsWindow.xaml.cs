@@ -1,6 +1,9 @@
 #nullable enable
 
+using System;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using TombEditor.Features.Dialogs.TexturePreview;
 using TombEditor.Features.Dialogs.WadPreview;
 using TombLib.WPF;
@@ -16,7 +19,11 @@ public partial class LevelSettingsWindow : Window
         InitializeComponent();
         this.HookModalAutoClose();
         Loaded += (_, _) => WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormLevelSettings");
-        Closed += (_, _) => _preview?.Close();
+        Closed += (_, _) =>
+        {
+            _preview?.Close();
+            (DataContext as IDisposable)?.Dispose();
+        };
         DataContextChanged += OnDataContextChanged;
     }
 
@@ -39,6 +46,29 @@ public partial class LevelSettingsWindow : Window
         var visibility = viewModel.IsTRNG ? Visibility.Visible : Visibility.Collapsed;
         AreaColumn.Visibility = visibility;
         OriginalIdColumn.Visibility = visibility;
+    }
+
+    // Right-clicking a cell selects it first so the context menu copies that cell.
+    private void PathVariables_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+    {
+        if (e.OriginalSource is not DependencyObject source)
+            return;
+
+        var cell = source as DataGridCell ?? source.FindAncestor<DataGridCell>();
+
+        if (cell is null)
+            return;
+
+        PathVariablesGrid.SelectedCells.Clear();
+        PathVariablesGrid.SelectedCells.Add(new DataGridCellInfo(cell));
+    }
+
+    private void CopyPathVariable_Click(object sender, RoutedEventArgs e)
+    {
+        if (PathVariablesGrid.SelectedCells is not [{ Item: PathVariableRow row } cell, ..])
+            return;
+
+        Clipboard.SetText(cell.Column == PathVariablesGrid.Columns[0] ? row.Variable : row.Value);
     }
 
     private void ShowTexturePreview_Click(object sender, RoutedEventArgs e)

@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using LevelSettingsData = TombLib.LevelData.LevelSettings;
 using static TombLib.LevelData.TRVersion;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -32,9 +33,10 @@ namespace TombEditor.Features.Dialogs.LevelSettings
     /// on Apply/OK, mirroring the previous form. The remaining tabs (Textures, Objects, sounds,
     /// imported geometry, static meshes, sky/font, misc) are ported in later phases.
     /// </summary>
-    public partial class LevelSettingsWindowViewModel : ObservableObject, IModalDialogViewModel
+    public partial class LevelSettingsWindowViewModel : ObservableObject, IModalDialogViewModel, IDisposable
     {
         private readonly Editor _editor;
+        private readonly ImportedGeometryListEditor _importedGeometryEditor;
         private readonly LevelSettingsData _settings;
         private readonly IDialogService _dialogService;
         private readonly IColorPickerService _colorPickerService;
@@ -92,6 +94,9 @@ namespace TombEditor.Features.Dialogs.LevelSettings
             foreach (var geometry in _settings.ImportedGeometries)
                 ImportedGeometries.Add(new ImportedGeometryRow(_settings, geometry));
 
+            _importedGeometryEditor = new ImportedGeometryListEditor(_settings, ImportedGeometries, _editor, _dialogService, ServiceLocator.ResolveService<IMessageService>());
+
+            Textures.CollectionChanged += (_, _) => SyncResources();
             WadRows.CollectionChanged += (_, _) =>
             {
                 SyncResources();
@@ -101,6 +106,37 @@ namespace TombEditor.Features.Dialogs.LevelSettings
             SampleRows.CollectionChanged += (_, _) => OnSoundSourcesChanged();
 
             PopulateSoundInfoList();
+            _editor.EditorEventRaised += OnEditorEvent;
+        }
+
+        /// <summary>Stops listening to editor events once the dialog is closed.</summary>
+        public void Dispose() => _editor.EditorEventRaised -= OnEditorEvent;
+
+        // Reloading a resource from a row raises these events; the matching rows are refreshed like the previous grids did.
+        private void OnEditorEvent(IEditorEvent editorEvent)
+        {
+            switch (editorEvent)
+            {
+                case Editor.LoadedSoundsCatalogsChangedEvent:
+                    RefreshRows(SoundCatalogs);
+                    PopulateSoundInfoList();
+                    break;
+                case Editor.LoadedTexturesChangedEvent:
+                    RefreshRows(Textures);
+                    break;
+                case Editor.LoadedWadsChangedEvent:
+                    RefreshRows(WadRows);
+                    break;
+                case Editor.LoadedImportedGeometriesChangedEvent:
+                    RefreshRows(ImportedGeometries);
+                    break;
+            }
+        }
+
+        private static void RefreshRows<T>(IEnumerable<T> rows) where T : ReloadableRow
+        {
+            foreach (var row in rows.ToList())
+                row.Refresh();
         }
 
         private CustomResourceViewModel CreateCustomResource(string defaultFile, string browseTitleKey, Func<string?> getPath, Action<string?> setPath, Func<string?, ImageC> loadImage)
@@ -112,8 +148,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         private void OnSoundSourcesChanged()
         {
             SyncResources();
-            SoundFilter = string.Empty;
-            PopulateSoundInfoList();
+            ResetSoundFilterAndPopulate();
         }
 
         // Editable resource grids (Textures / Objects / Sound catalogs / Samples).
@@ -123,45 +158,54 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         public ObservableCollection<SoundCatalogRow> SoundCatalogs { get; } = new();
         public ObservableCollection<SampleRow> SampleRows { get; } = new();
 
+        // Every grid publishes all of its highlighted rows (see DataGridSelection), like the multi-row buttons of the previous dialog.
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(DeleteTextureCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveTextureUpCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveTextureDownCommand))]
-        private TextureRow? _selectedTexture;
+        private IList? _selectedTextures;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(DeleteWadCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveWadUpCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveWadDownCommand))]
-        private WadRow? _selectedWad;
+        private IList? _selectedWads;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(DeleteSoundCatalogCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveSoundCatalogUpCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveSoundCatalogDownCommand))]
-        private SoundCatalogRow? _selectedSoundCatalog;
+        [NotifyCanExecuteChangedFor(nameof(AssignFromSelectedCatalogCommand))]
+        private IList? _selectedSoundCatalogs;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(DeleteSampleCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveSampleUpCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveSampleDownCommand))]
-        private SampleRow? _selectedSample;
+        private IList? _selectedSamples;
 
-        public bool HasSelectedTexture => SelectedTexture != null;
-        public bool HasSelectedWad => SelectedWad != null;
-        public bool HasSelectedSoundCatalog => SelectedSoundCatalog != null;
-        public bool HasSelectedSample => SelectedSample != null;
+        public bool HasSelectedTexture => SelectedTextures is { Count: > 0 };
+        public bool HasSelectedWad => SelectedWads is { Count: > 0 };
+        public bool HasSelectedSoundCatalog => SelectedSoundCatalogs is { Count: > 0 };
+        public bool HasSelectedSample => SelectedSamples is { Count: > 0 };
 
         [RelayCommand]
         private void AddTextures()
         {
-            foreach (var path in LevelFileDialog.BrowseFiles(Owner, _settings, _settings.LevelFilePath, _localizationService["BrowseTexturesTitle"], ImageC.FileExtensions, VariableType.LevelDirectory))
-                Textures.Add(new TextureRow(_settings, new LevelTexture(_settings, path)));
+            var paths = LevelFileDialog.BrowseFiles(Owner, _settings, _settings.LevelFilePath, _localizationService["BrowseTexturesTitle"], ImageC.FileExtensions, VariableType.LevelDirectory).ToList();
+
+            // Textures are loaded concurrently.
+            var textures = new LevelTexture[paths.Count];
+            Parallel.For(0, paths.Count, i => textures[i] = new LevelTexture(_settings, paths[i]));
+
+            foreach (var texture in textures)
+                Textures.Add(new TextureRow(_settings, texture));
         }
 
-        [RelayCommand(CanExecute = nameof(HasSelectedTexture))] private void DeleteTexture() => Remove(Textures, SelectedTexture);
-        [RelayCommand(CanExecute = nameof(HasSelectedTexture))] private void MoveTextureUp() => Move(Textures, SelectedTexture, -1);
-        [RelayCommand(CanExecute = nameof(HasSelectedTexture))] private void MoveTextureDown() => Move(Textures, SelectedTexture, 1);
+        [RelayCommand(CanExecute = nameof(HasSelectedTexture))] private void DeleteTexture() => SelectionListOperations.Remove(Textures, SelectedTextures);
+        [RelayCommand(CanExecute = nameof(HasSelectedTexture))] private void MoveTextureUp() => SelectionListOperations.MoveUp(Textures, SelectedTextures);
+        [RelayCommand(CanExecute = nameof(HasSelectedTexture))] private void MoveTextureDown() => SelectionListOperations.MoveDown(Textures, SelectedTextures);
 
         [RelayCommand]
         private async Task AddWadsAsync()
@@ -207,31 +251,45 @@ namespace TombEditor.Features.Dialogs.LevelSettings
 
         private void IncludeAllSounds(ReferencedSoundCatalog catalog)
         {
+            AddSoundsToSelection(catalog);
+            ResetSoundFilterAndPopulate();
+        }
+
+        private void AddSoundsToSelection(ReferencedSoundCatalog catalog)
+        {
             if (catalog.Sounds is null)
                 return;
 
             foreach (var sound in catalog.Sounds.SoundInfos.Where(sound => !_settings.SelectedSounds.Contains(sound.Id)))
                 _settings.SelectedSounds.Add(sound.Id);
-
-            SoundFilter = string.Empty;
-            PopulateSoundInfoList();
         }
 
-        [RelayCommand(CanExecute = nameof(HasSelectedWad))] private void DeleteWad() => Remove(WadRows, SelectedWad);
-        [RelayCommand(CanExecute = nameof(HasSelectedWad))] private void MoveWadUp() => Move(WadRows, SelectedWad, -1);
-        [RelayCommand(CanExecute = nameof(HasSelectedWad))] private void MoveWadDown() => Move(WadRows, SelectedWad, 1);
+        [RelayCommand(CanExecute = nameof(HasSelectedWad))] private void DeleteWad() => SelectionListOperations.Remove(WadRows, SelectedWads);
+        [RelayCommand(CanExecute = nameof(HasSelectedWad))] private void MoveWadUp() => SelectionListOperations.MoveUp(WadRows, SelectedWads);
+        [RelayCommand(CanExecute = nameof(HasSelectedWad))] private void MoveWadDown() => SelectionListOperations.MoveDown(WadRows, SelectedWads);
 
         [RelayCommand]
-        private void AddSoundCatalogs()
+        private async Task AddSoundCatalogsAsync()
         {
-            foreach (var path in LevelFileDialog.BrowseFiles(Owner, _settings, _settings.LevelFilePath, _localizationService["BrowseSoundCatalogsTitle"], WadSounds.FileExtensions, VariableType.LevelDirectory)
-                .Where(p => SoundCatalogs.All(c => c.Path != p)))
-                SoundCatalogs.Add(CreateSoundCatalogRow(new ReferencedSoundCatalog(_settings, path)));
+            var paths = LevelFileDialog.BrowseFiles(Owner, _settings, _settings.LevelFilePath, _localizationService["BrowseSoundCatalogsTitle"], WadSounds.FileExtensions, VariableType.LevelDirectory)
+                .Where(path => SoundCatalogs.All(catalog => catalog.Path != path))
+                .ToList();
+
+            if (paths.Count == 0)
+                return;
+
+            // Loading happens off the UI thread so the dialog handler can still show prompts on it.
+            var dialogHandler = new GraphicalDialogHandler(Owner);
+            var catalogs = new ReferencedSoundCatalog[paths.Count];
+            await Task.Run(() => Parallel.For(0, paths.Count, i => catalogs[i] = new ReferencedSoundCatalog(_settings, paths[i], dialogHandler)));
+
+            foreach (var catalog in catalogs)
+                SoundCatalogs.Add(CreateSoundCatalogRow(catalog));
         }
 
-        [RelayCommand(CanExecute = nameof(HasSelectedSoundCatalog))] private void DeleteSoundCatalog() => Remove(SoundCatalogs, SelectedSoundCatalog);
-        [RelayCommand(CanExecute = nameof(HasSelectedSoundCatalog))] private void MoveSoundCatalogUp() => Move(SoundCatalogs, SelectedSoundCatalog, -1);
-        [RelayCommand(CanExecute = nameof(HasSelectedSoundCatalog))] private void MoveSoundCatalogDown() => Move(SoundCatalogs, SelectedSoundCatalog, 1);
+        [RelayCommand(CanExecute = nameof(HasSelectedSoundCatalog))] private void DeleteSoundCatalog() => SelectionListOperations.Remove(SoundCatalogs, SelectedSoundCatalogs);
+        [RelayCommand(CanExecute = nameof(HasSelectedSoundCatalog))] private void MoveSoundCatalogUp() => SelectionListOperations.MoveUp(SoundCatalogs, SelectedSoundCatalogs);
+        [RelayCommand(CanExecute = nameof(HasSelectedSoundCatalog))] private void MoveSoundCatalogDown() => SelectionListOperations.MoveDown(SoundCatalogs, SelectedSoundCatalogs);
 
         [RelayCommand]
         private void AddSample()
@@ -241,26 +299,9 @@ namespace TombEditor.Features.Dialogs.LevelSettings
                 SampleRows.Add(new SampleRow(_settings, new WadSoundPath(result)));
         }
 
-        [RelayCommand(CanExecute = nameof(HasSelectedSample))] private void DeleteSample() => Remove(SampleRows, SelectedSample);
-        [RelayCommand(CanExecute = nameof(HasSelectedSample))] private void MoveSampleUp() => Move(SampleRows, SelectedSample, -1);
-        [RelayCommand(CanExecute = nameof(HasSelectedSample))] private void MoveSampleDown() => Move(SampleRows, SelectedSample, 1);
-
-        private static void Remove<T>(ObservableCollection<T> list, T? item) where T : class
-        {
-            if (item != null)
-                list.Remove(item);
-        }
-
-        private static void Move<T>(ObservableCollection<T> list, T? item, int direction) where T : class
-        {
-            if (item == null)
-                return;
-            int index = list.IndexOf(item);
-            int target = index + direction;
-            if (index < 0 || target < 0 || target >= list.Count)
-                return;
-            list.Move(index, target);
-        }
+        [RelayCommand(CanExecute = nameof(HasSelectedSample))] private void DeleteSample() => SelectionListOperations.Remove(SampleRows, SelectedSamples);
+        [RelayCommand(CanExecute = nameof(HasSelectedSample))] private void MoveSampleUp() => SelectionListOperations.MoveUp(SampleRows, SelectedSamples);
+        [RelayCommand(CanExecute = nameof(HasSelectedSample))] private void MoveSampleDown() => SelectionListOperations.MoveDown(SampleRows, SelectedSamples);
 
         // Game tab.
 
@@ -524,57 +565,40 @@ namespace TombEditor.Features.Dialogs.LevelSettings
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(DeleteImportedGeometryCommand))]
-        private ImportedGeometryRow? _selectedImportedGeometry;
+        private IList? _selectedImportedGeometries;
 
-        public bool HasSelectedImportedGeometry => SelectedImportedGeometry != null;
+        public bool HasSelectedImportedGeometry => SelectedImportedGeometries is { Count: > 0 };
 
         [RelayCommand]
-        private void AddImportedGeometry()
-        {
-            var paths = LevelFileDialog.BrowseFiles(Owner, _settings, _settings.LevelFilePath, _localizationService["BrowseImportedGeometryTitle"], BaseGeometryImporter.FileExtensions, VariableType.LevelDirectory).ToList();
-            var importInfos = new List<KeyValuePair<ImportedGeometry, ImportedGeometryInfo>>();
-            var config = _editor.Configuration;
-
-            foreach (string path in paths)
-            {
-                var ioViewModel = new GeometryIOSettingsWindowViewModel(IOSettingsPresets.GeometryImportSettingsPresets);
-                ioViewModel.SelectPreset(config?.GeometryIO_LastUsedGeometryImportPresetName);
-
-                if (_dialogService.ShowDialog(this, ioViewModel) != true)
-                    continue;
-
-                if (config != null)
-                    config.GeometryIO_LastUsedGeometryImportPresetName = ioViewModel.SelectedPreset?.Name;
-
-                var info = new ImportedGeometryInfo(_settings.MakeRelative(path, VariableType.LevelDirectory), ioViewModel.GetCurrentSettings());
-                importInfos.Add(new KeyValuePair<ImportedGeometry, ImportedGeometryInfo>(new ImportedGeometry(), info));
-            }
-
-            if (importInfos.Count == 0)
-                return;
-
-            _settings.ImportedGeometryUpdate(importInfos);
-            _settings.ImportedGeometries.AddRange(importInfos.Select(e => e.Key));
-            foreach (var entry in importInfos)
-                ImportedGeometries.Add(new ImportedGeometryRow(_settings, entry.Key));
-        }
+        private void AddImportedGeometry() => _importedGeometryEditor.Add(this);
 
         [RelayCommand(CanExecute = nameof(HasSelectedImportedGeometry))]
-        private void DeleteImportedGeometry()
-        {
-            if (SelectedImportedGeometry == null)
-                return;
-            _settings.ImportedGeometries.Remove(SelectedImportedGeometry.Object);
-            ImportedGeometries.Remove(SelectedImportedGeometry);
-        }
+        private void DeleteImportedGeometry() => _importedGeometryEditor.Delete(SelectedImportedGeometries);
 
         // Sound selection (Sound catalogs tab).
 
         public ObservableCollection<SoundInfoRow> SoundInfos { get; } = new();
 
         private string _soundFilter = string.Empty;
-        public string SoundFilter { get => _soundFilter; set { if (SetProperty(ref _soundFilter, value)) PopulateSoundInfoList(); } }
 
+        /// <summary>Gets or sets the filter text; it is applied by <see cref="ApplySoundFilterCommand"/> only.</summary>
+        public string SoundFilter { get => _soundFilter; set => SetProperty(ref _soundFilter, value); }
+
+        /// <summary>Gets the totals shown below the sound list; missing sounds are only mentioned when there are any.</summary>
+        public string SoundStatistics
+        {
+            get
+            {
+                int missingCount = _settings.SelectedAndMissingSounds.Count;
+                string text = _localizationService.Format("SoundStatistics", _settings.GlobalSoundMap.Count, _settings.SelectedSounds.Count);
+
+                return missingCount == 0 ? text : text + _localizationService.Format("SoundStatisticsMissing", missingCount);
+            }
+        }
+
+        public bool HasMissingSounds => _settings.SelectedAndMissingSounds.Count > 0;
+
+        [RelayCommand] private void ApplySoundFilter() => PopulateSoundInfoList();
         [RelayCommand] private void AssignFromWads() { EditorActions.AssignWadSounds(_settings); PopulateSoundInfoList(); }
         [RelayCommand] private void AssignFromSoundSources() { EditorActions.AssignSoundSourcesSounds(_settings); PopulateSoundInfoList(); }
         [RelayCommand] private void AssignHardcodedSounds() { EditorActions.AssignHardcodedSounds(_settings); PopulateSoundInfoList(); }
@@ -583,8 +607,9 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         [RelayCommand]
         private void AssignFromSelectedCatalog()
         {
-            if (SelectedSoundCatalog != null)
-                EditorActions.AssignCatalogSounds(_settings, SelectedSoundCatalog.Catalog);
+            foreach (var row in SelectedSoundCatalogs?.OfType<SoundCatalogRow>().ToList() ?? [])
+                EditorActions.AssignCatalogSounds(_settings, row.Catalog);
+
             PopulateSoundInfoList();
         }
 
@@ -592,26 +617,32 @@ namespace TombEditor.Features.Dialogs.LevelSettings
         private void SelectAllSounds()
         {
             foreach (var catalog in _settings.SoundCatalogs)
-                if (catalog.Sounds != null)
-                    foreach (var sound in catalog.Sounds.SoundInfos)
-                        if (!_settings.SelectedSounds.Contains(sound.Id))
-                            _settings.SelectedSounds.Add(sound.Id);
-            PopulateSoundInfoList();
+                AddSoundsToSelection(catalog);
+
+            ResetSoundFilterAndPopulate();
         }
 
         [RelayCommand]
         private void DeselectAllSounds()
         {
             _settings.SelectedSounds.Clear();
-            PopulateSoundInfoList();
+            ResetSoundFilterAndPopulate();
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(HasMissingSounds))]
         private void RemoveMissingSounds()
         {
             _settings.SelectedSounds = _settings.SelectedSounds.Except(_settings.SelectedAndMissingSounds).ToList();
             PopulateSoundInfoList();
         }
+
+        private void ResetSoundFilterAndPopulate()
+        {
+            SoundFilter = string.Empty;
+            PopulateSoundInfoList();
+        }
+
+        private void RaiseSoundStatisticsChanged() => OnPropertyChanged(nameof(SoundStatistics));
 
         private void PopulateSoundInfoList()
         {
@@ -627,7 +658,7 @@ namespace TombEditor.Features.Dialogs.LevelSettings
                 string area = GetNgDescription(info.Id, out int originalId);
                 int sampleCount = info.SampleCount(_settings, paths);
                 string samples = sampleCount == 0 ? _localizationService["SamplesMissing"] : sampleCount == -1 ? _localizationService["SamplesNone"] : sampleCount.ToString();
-                rows.Add(new SoundInfoRow(_settings.SelectedSounds, null, info.Id, info.Name, info.SoundCatalog, samples, area, originalId, sampleCount == 0));
+                rows.Add(new SoundInfoRow(_settings.SelectedSounds, RaiseSoundStatisticsChanged, info.Id, info.Name, info.SoundCatalog, samples, area, originalId, sampleCount == 0));
             }
 
             foreach (var missing in _settings.SelectedAndMissingSounds)
@@ -637,11 +668,15 @@ namespace TombEditor.Features.Dialogs.LevelSettings
                     continue;
 
                 string area = GetNgDescription(missing, out int originalId);
-                rows.Add(new SoundInfoRow(_settings.SelectedSounds, null, missing, name, _localizationService["CatalogNotPresent"], string.Empty, area, originalId, true));
+                rows.Add(new SoundInfoRow(_settings.SelectedSounds, RaiseSoundStatisticsChanged, missing, name, _localizationService["CatalogNotPresent"], string.Empty, area, originalId, true));
             }
 
             foreach (var row in rows.OrderBy(row => row.Id))
                 SoundInfos.Add(row);
+
+            RaiseSoundStatisticsChanged();
+            OnPropertyChanged(nameof(HasMissingSounds));
+            RemoveMissingSoundsCommand.NotifyCanExecuteChanged();
         }
 
         private string GetNgDescription(int id, out int originalId)

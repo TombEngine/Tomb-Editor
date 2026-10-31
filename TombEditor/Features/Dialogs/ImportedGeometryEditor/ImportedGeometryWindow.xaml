@@ -122,10 +122,13 @@
         <DataGrid
             AutoGenerateColumns="False"
             CanUserAddRows="False"
+            CanUserDeleteRows="False"
             HeadersVisibility="Column"
             ItemsSource="{Binding Geometries}"
-            SelectedItem="{Binding SelectedGeometry, Mode=TwoWay}">
+            SelectedItem="{Binding SelectedGeometry, Mode=TwoWay}"
+            tombLib:DataGridSelection.SelectedItemsList="{Binding SelectedGeometries, Mode=OneWayToSource}">
             <DataGrid.InputBindings>
+                <KeyBinding Key="Delete" Command="{Binding DeleteImportedGeometryCommand}" />
                 <MouseBinding Command="{Binding AssignCommand}" MouseAction="LeftDoubleClick" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
