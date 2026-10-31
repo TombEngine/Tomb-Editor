@@ -4,6 +4,9 @@ Version 2.0.2
 Tomb Editor:
  * Fixed slide direction indication for TEN.
 
+TEN nodes:
+ * Fixed KEYPAD nodes breaking post process settings.
+
 Version 2.0.1
 =============
 
