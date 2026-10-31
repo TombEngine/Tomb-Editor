@@ -1,6 +1,6 @@
 <sounds max="8192">
 
-		<!-- TR4 Sounds -->
+		<!-- TR4 Sounds of the police -->
 			<sound id="0" name="TR4_LARA_FOOTSTEPS" ten="0" />
 			<sound id="1" name="TR4_LARA_CLIMB2" ten="1" />
 			<sound id="2" name="TR4_LARA_NO_ENGLISH" ten="2" />
