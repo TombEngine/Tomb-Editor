@@ -179,24 +179,35 @@ public partial class KeyboardLayoutWindowViewModel : ObservableObject, IModalDia
         if (string.IsNullOrEmpty(SearchText))
             return;
 
-        int startIndex = SelectedRow is null ? 0 : Rows.IndexOf(SelectedRow) + 1;
-        if (startIndex >= Rows.Count) startIndex = 0;
+        // The search starts after the current row and restarts once after the first row (the first row itself is never a match), like the previous dialog.
+        int currentRow = SelectedRow is null ? -1 : Rows.IndexOf(SelectedRow);
+        if (currentRow == -1 || currentRow == Rows.Count - 1)
+            currentRow = 0;
 
-        for (int pass = 0; pass < 2; pass++)
-        {
-            int from = pass == 0 ? startIndex : 0;
-            int to = pass == 0 ? Rows.Count : startIndex;
-            for (int i = from; i < to; i++)
-            {
-                if (Rows[i].FriendlyName.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0
-                    || Rows[i].Command.Name.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    SelectedRow = Rows[i];
-                    return;
-                }
-            }
-        }
+        if (TrySelectMatch(currentRow + 1))
+            return;
+
+        if (currentRow > 0)
+            TrySelectMatch(1);
     }
+
+    private bool TrySelectMatch(int startIndex)
+    {
+        for (int i = startIndex; i < Rows.Count; i++)
+        {
+            if (!MatchesSearch(Rows[i]))
+                continue;
+
+            SelectedRow = Rows[i];
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool MatchesSearch(HotkeyRow row)
+        => row.FriendlyName.IndexOf(SearchText, StringComparison.InvariantCultureIgnoreCase) >= 0
+        || row.Command.Name.IndexOf(SearchText, StringComparison.InvariantCultureIgnoreCase) >= 0;
 
     [RelayCommand]
     private void RestoreDefaults()

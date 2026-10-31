@@ -11,7 +11,9 @@ using System.Threading.Tasks;
 using TombLib;
 using TombLib.LevelData;
 using TombLib.LevelData.SectorEnums;
+using TombLib.Services;
 using TombLib.Utils;
+using TombLib.WPF;
 using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
@@ -21,7 +23,6 @@ namespace TombEditor.Features.Dialogs.TextureRemap;
 public partial class TextureRemapWindowViewModel : ObservableObject, IModalDialogViewModel
 {
     private readonly Editor _editor;
-    private readonly IMessageService _messageService;
     private readonly ILocalizationService _localizationService;
 
     [ObservableProperty] private bool? _dialogResult;
@@ -58,11 +59,9 @@ public partial class TextureRemapWindowViewModel : ObservableObject, IModalDialo
 
     public TextureRemapWindowViewModel(
         Editor? editor = null,
-        IMessageService? messageService = null,
         ILocalizationService? localizationService = null)
     {
         _editor = editor ?? Editor.Instance;
-        _messageService = ServiceLocator.ResolveService(messageService);
         _localizationService = ServiceLocator.ResolveService(localizationService).WithKeysFor(this);
 
         foreach (var tex in _editor.Level.Settings.Textures)
@@ -243,7 +242,7 @@ public partial class TextureRemapWindowViewModel : ObservableObject, IModalDialo
     {
         if (SourceTexture is null || DestinationTexture is null)
         {
-            _messageService.ShowError(_localizationService["MissingTextureMessage"]);
+            UserDialogs.Show(_localizationService["MissingTextureMessage"], _localizationService["MissingTextureTitle"], icon: DialogIcon.Warning);
             return;
         }
 

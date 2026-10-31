@@ -46,8 +46,8 @@
             <controls:NumericUpDown
             Increment="1"
             LargeIncrement="16"
-            Maximum="1048576"
-            Minimum="-1048576"
+            Maximum="2147483647"
+            Minimum="-2147483647"
             Value="{Binding TranslationX, Mode=TwoWay}" />
         </DockPanel>
         <DockPanel Grid.Row="0" Grid.Column="2">
@@ -55,8 +55,8 @@
             <controls:NumericUpDown
             Increment="1"
             LargeIncrement="16"
-            Maximum="1048576"
-            Minimum="-1048576"
+            Maximum="2147483647"
+            Minimum="-2147483647"
             Value="{Binding TranslationY, Mode=TwoWay}" />
         </DockPanel>
         <DockPanel Grid.Row="0" Grid.Column="3">
@@ -64,8 +64,8 @@
             <controls:NumericUpDown
             Increment="1"
             LargeIncrement="16"
-            Maximum="1048576"
-            Minimum="-1048576"
+            Maximum="2147483647"
+            Minimum="-2147483647"
             Value="{Binding TranslationZ, Mode=TwoWay}" />
         </DockPanel>
         <DockPanel Grid.Row="1" Grid.Column="1">
@@ -112,8 +112,8 @@
             Increment="0.1"
             IsEnabled="{Binding IsScaleEnabled}"
             LargeIncrement="1"
-            Maximum="1024"
-            Minimum="0.01"
+            Maximum="2147483647"
+            Minimum="0"
             Value="{Binding ScaleX, Mode=TwoWay}" />
         </DockPanel>
         <DockPanel Grid.Row="2" Grid.Column="2">

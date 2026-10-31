@@ -106,7 +106,7 @@ public partial class SoundSourceWindowViewModel : ObservableObject, IModalDialog
         catch (Exception ex)
         {
             _logger.Warn(ex, "Unable to play sample");
-            _messageService.ShowError(_localizationService.Format("PlayFailedMessage", ex.Message));
+            _messageService.ShowInformation(_localizationService.Format("PlayFailedMessage", ex), _localizationService["PlayFailedTitle"]);
         }
     }
 

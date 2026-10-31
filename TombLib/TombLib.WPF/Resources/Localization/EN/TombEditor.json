@@ -554,7 +554,8 @@
         "PlayModeFlipmapsOff": "Only when flipmaps are off",
         "PlayModeFlipmapsOn": "Only when flipmaps are on",
         "PlayModeAuto": "Auto-decide based on room type",
-        "PlayFailedMessage": "Unable to play sound: {0}"
+        "PlayFailedMessage": "Playing sound failed. {0}",
+        "PlayFailedTitle": "Unable to play sound."
     },
 
     "Memo": {
@@ -813,6 +814,7 @@
         "RestrictToSelectedRooms": "Restrict to selected rooms",
         "Apply": "Remap",
         "MissingTextureMessage": "Source or destination texture may not be unset.",
+        "MissingTextureTitle": "Problem",
         "StatusRoomsOnly": "Successfully remapped {0} textures in rooms.",
         "StatusWithAnims": "Successfully remapped {0} textures in rooms, {1} in texture animations."
     },
