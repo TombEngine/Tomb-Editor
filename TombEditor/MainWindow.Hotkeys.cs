@@ -95,7 +95,11 @@ namespace TombEditor
             var wpfFocused = System.Windows.Input.Keyboard.FocusedElement;
             if (wpfFocused is System.Windows.Controls.Primitives.TextBoxBase ||
                 wpfFocused is System.Windows.Controls.PasswordBox ||
-                (wpfFocused is System.Windows.Controls.ComboBox comboBox && comboBox.IsEditable))
+                wpfFocused is System.Windows.Controls.ComboBox ||
+                wpfFocused is System.Windows.Controls.ListBox ||
+                wpfFocused is System.Windows.Controls.ListBoxItem ||
+                wpfFocused is System.Windows.Controls.DataGrid ||
+                wpfFocused is System.Windows.Controls.DataGridCell)
                 return true;
 
             return false;

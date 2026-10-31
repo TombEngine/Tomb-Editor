@@ -93,7 +93,8 @@ public partial class StatisticsBarViewModel : ObservableObject
             32 => 0,
             64 => 1,
             128 => 2,
-            _ => 3
+            256 => 3,
+            _ => -1
         };
     }
 
@@ -101,6 +102,10 @@ public partial class StatisticsBarViewModel : ObservableObject
     {
         // Mirrors comboStepHeight_SelectedIndexChanged: the 3D panel reads IncrementReference
         // live from the configuration, so writing the value is enough (no event needed).
+        // A non-standard configured step height maps to -1 and must not overwrite the configuration.
+        if (value < 0)
+            return;
+
         _editor.Configuration.Editor_StepHeight = value switch
         {
             0 => 32,

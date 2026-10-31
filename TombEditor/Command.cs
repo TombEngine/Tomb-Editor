@@ -1440,14 +1440,24 @@ namespace TombEditor
 
             AddCommand("EditAnimationRanges", "Edit animation ranges...", CommandType.Textures, delegate (CommandArgs args)
             {
+                foreach (System.Windows.Window w in System.Windows.Application.Current.Windows)
+                {
+                    if (w is TombLib.WPF.Features.AnimatedTextures.AnimatedTexturesWindow existing)
+                    {
+                        existing.Activate();
+                        return;
+                    }
+                }
+
                 var context = new TombEditorAnimatedTexturesContext(args.Editor);
                 var textureMap = new Controls.WpfAnimatedTextureMapView();
                 var viewModel = new TombLib.WPF.Features.AnimatedTextures.AnimatedTexturesWindowViewModel(context, textureMap);
                 var window = new TombLib.WPF.Features.AnimatedTextures.AnimatedTexturesWindow { DataContext = viewModel };
 
-                if (args.Window is not null)
-                    window.SetOwner(args.Window);
-                window.ShowDialog();
+                // The window is modeless; the context listens to editor events and must be released on close.
+                window.Closed += (_, _) => context.Dispose();
+                window.Owner = System.Windows.Application.Current.MainWindow;
+                window.Show();
             });
 
             AddCommand("SmoothRandomFloorUp", "Smooth random floor up", CommandType.Geometry, delegate (CommandArgs args)

@@ -86,6 +86,9 @@ public partial class ItemBrowserViewModel : ObservableObject
     // Raised when SelectedItem changes; the View applies FindLaraSkin / sets panelItem.CurrentObject.
     public event EventHandler<IWadObject?>? SelectedItemChanged;
 
+    /// <summary>Raised when the chosen item changed elsewhere so the preview camera is reset even if the item is the same.</summary>
+    public event EventHandler? ResetCameraRequested;
+
     public ICommand AddCommand { get; }
     public ICommand LocateCommand { get; }
     public ICommand PreviousCommand { get; }
@@ -144,6 +147,8 @@ public partial class ItemBrowserViewModel : ObservableObject
             {
                 _suppressEditorSync = false;
             }
+
+            ResetCameraRequested?.Invoke(this, EventArgs.Empty);
         }
 
         if (obj is Editor.ConfigurationChangedEvent || obj is Editor.InitEvent)

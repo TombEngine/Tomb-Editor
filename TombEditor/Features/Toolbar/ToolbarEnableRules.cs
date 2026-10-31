@@ -68,7 +68,7 @@ internal static class ToolbarEnableRules
                 break;
 
             case "Paste":
-                button.IsEnabled = ClipboardHelper.CanPaste(editor.Mode == EditorMode.Map2D, includeSectors: false);
+                button.IsEnabled = editor.Mode != EditorMode.Map2D && ClipboardHelper.CanPaste(roomMode: false, includeSectors: false);
                 break;
 
             case "ResetCamera":

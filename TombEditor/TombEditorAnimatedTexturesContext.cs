@@ -6,7 +6,7 @@ using TombLib.Utils;
 
 namespace TombEditor;
 
-public class TombEditorAnimatedTexturesContext : TombLib.WPF.Features.AnimatedTextures.IAnimatedTexturesContext
+public class TombEditorAnimatedTexturesContext : TombLib.WPF.Features.AnimatedTextures.IAnimatedTexturesContext, IDisposable
 {
 	private readonly Editor _editor;
 
@@ -15,6 +15,9 @@ public class TombEditorAnimatedTexturesContext : TombLib.WPF.Features.AnimatedTe
 		_editor = editor;
 		_editor.EditorEventRaised += EditorEventRaised;
 	}
+
+	/// <summary>Stops listening to editor events.</summary>
+	public void Dispose() => _editor.EditorEventRaised -= EditorEventRaised;
 
 	private void EditorEventRaised(IEditorEvent obj)
 	{

@@ -120,6 +120,7 @@ public partial class ObjectListViewModel : ObservableObject
                         else
                         {
                             RebuildList();
+                            SyncSelection();
                         }
                         break;
                 }

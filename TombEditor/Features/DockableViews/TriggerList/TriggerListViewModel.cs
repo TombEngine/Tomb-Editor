@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Input;
 using TombLib;
 using TombLib.LevelData;
+using TombLib.Rendering;
 using TombLib.WPF;
 
 namespace TombEditor.Features.DockableViews.TriggerList;
@@ -67,6 +68,15 @@ public partial class TriggerListViewModel : ObservableObject
 
         EditTriggerCommand = new RelayCommand(EditSelected, () => SelectedItem is not null);
         DeleteTriggersCommand = new RelayCommand(DeleteSelected, () => SelectedItem is not null || SelectedItems.Count > 0);
+    }
+
+    [RelayCommand]
+    private void SetSectorColoringInfoPriority(SectorColoringType type)
+    {
+        if (!_editor.Configuration.UI_AutoSwitchSectorColoringInfo)
+            return;
+
+        _editor.SectorColoringManager.SetPriority(type);
     }
 
     public void Cleanup()

@@ -16,7 +16,7 @@ namespace TombEditor.Features.DockableViews.TexturePanel;
 
 public partial class TexturePanelViewModel : ObservableObject
 {
-    private static readonly float[] _tileSizes = { 1, 2, 4, 8, 16, 32, 64, 128, 256 };
+    private static readonly float[] _tileSizes = { 2, 4, 8, 16, 32, 64, 128, 256 };
 
     private readonly Editor _editor;
     private bool _suppressEditorSync;
@@ -122,6 +122,7 @@ public partial class TexturePanelViewModel : ObservableObject
 
     public event EventHandler<LevelTexture?>? RequestResetVisibleTexture;
     public event EventHandler<TextureArea>? RequestShowTexture;
+    public event EventHandler<TextureArea>? RequestSelectTexture;
 
     /// <summary>Raised when the panel should be brought to the front (a texture was centered from elsewhere).</summary>
     public event EventHandler? RequestActivation;
@@ -213,6 +214,7 @@ public partial class TexturePanelViewModel : ObservableObject
                 if (e.Current.Texture is LevelTexture toSelect)
                     SelectedTexture = toSelect;
                 ApplyTextureControls(e.Current);
+                RequestSelectTexture?.Invoke(this, e.Current);
             }
             finally
             {
@@ -222,11 +224,13 @@ public partial class TexturePanelViewModel : ObservableObject
 
         if (obj is Editor.SelectTextureAndCenterViewEvent center)
         {
+            if (center.Texture.Texture is not LevelTexture tex)
+                return;
+
             _suppressEditorSync = true;
             try
             {
-                if (center.Texture.Texture is LevelTexture tex)
-                    SelectedTexture = tex;
+                SelectedTexture = tex;
                 ApplyTextureControls(center.Texture);
                 RequestShowTexture?.Invoke(this, center.Texture);
                 RequestActivation?.Invoke(this, EventArgs.Empty);

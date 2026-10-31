@@ -5,7 +5,9 @@
 	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:rendering="clr-namespace:TombLib.Rendering;assembly=TombLib.Rendering"
 	xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
 	d:DesignHeight="220"
 	d:DesignWidth="285"
@@ -57,6 +59,11 @@
 				Command="{Binding AddTriggerCommand}"
 				Style="{DynamicResource ButtonWithIconOnly}"
 				ToolTip="Add trigger...">
+				<i:Interaction.Triggers>
+					<i:EventTrigger EventName="MouseEnter">
+						<i:InvokeCommandAction Command="{Binding SetSectorColoringInfoPriorityCommand}" CommandParameter="{x:Static rendering:SectorColoringType.Trigger}" />
+					</i:EventTrigger>
+				</i:Interaction.Triggers>
 				<Image Source="{tomb:Icon General/plus_math}" />
 			</Button>
 

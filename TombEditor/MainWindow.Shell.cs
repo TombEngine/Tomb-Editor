@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using TombEditor.Features.Toolbar;
-using TombLib.Input;
 using TombLib.Utils;
 using TombLib.WPF;
 using TombLib.WPF.Input;
@@ -42,28 +41,15 @@ public partial class MainWindow
     protected override void OnDragOver(System.Windows.DragEventArgs e)
     {
         base.OnDragOver(e);
-        e.Effects = EditorActions.DragDropFileSupported(CreateDragArgs(e)) ? DragDropEffects.Move : DragDropEffects.None;
+        e.Effects = EditorActions.DragDropFileSupported(e.ToPointerDragEventArgs()) ? DragDropEffects.Move : DragDropEffects.None;
         e.Handled = true;
     }
 
     protected override void OnDrop(System.Windows.DragEventArgs e)
     {
         base.OnDrop(e);
-        EditorActions.DragDropCommonFiles(CreateDragArgs(e), this.GetWin32Window());
+        EditorActions.DragDropCommonFiles(e.ToPointerDragEventArgs(), this.GetWin32Window());
         e.Handled = true;
-    }
-
-    private static PointerDragEventArgs CreateDragArgs(System.Windows.DragEventArgs e)
-    {
-        var data = new WpfDataTransfer();
-        foreach (var format in e.Data.GetFormats())
-        {
-            var value = e.Data.GetData(format);
-            if (value is not null)
-                data.SetData(format, value);
-        }
-
-        return new PointerDragEventArgs(data, (int)e.KeyStates, 0, 0, (TransferEffects)e.AllowedEffects, (TransferEffects)e.Effects);
     }
 
     private IntPtr WindowMessage(IntPtr handle, int messageId, IntPtr wParam, IntPtr lParam, ref bool handled)

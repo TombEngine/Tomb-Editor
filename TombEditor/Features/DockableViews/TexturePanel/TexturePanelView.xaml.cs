@@ -19,6 +19,7 @@ public partial class TexturePanelView : UserControl
 		_viewModel = new TexturePanelViewModel(Editor.Instance);
 		_viewModel.RequestResetVisibleTexture += (_, tex) => MapView.ResetVisibleTexture(tex);
 		_viewModel.RequestShowTexture += (_, area) => MapView.ShowTexture(area);
+		_viewModel.RequestSelectTexture += (_, area) => MapView.SelectedTexture = area;
 		_viewModel.RequestActivation += (_, _) => ActivationRequested?.Invoke(this, System.EventArgs.Empty);
 		_viewModel.RequestInvalidate += (_, _) => MapView.InvalidateBitmapCache();
 

@@ -138,6 +138,9 @@ public static class EditorToolButton
             return;
 
         ApplyMode(toggle, mode);
+
+        // Clicking the already-active mode must not leave the button unchecked.
+        toggle.Click += (_, _) => ApplyMode(toggle, mode);
         SubscribeWeak(toggle, ev =>
         {
             if (ev is Editor.ModeChangedEvent or Editor.InitEvent)

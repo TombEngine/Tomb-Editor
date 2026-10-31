@@ -51,6 +51,8 @@ public partial class MainWindow : Window
     // this back so the user can always recover the baseline arrangement.
     private string _defaultDockState = string.Empty;
 
+    private bool _sessionEnding;
+
     public MainWindow(Editor editor)
     {
         _editor = editor;
@@ -85,6 +87,7 @@ public partial class MainWindow : Window
         _objectBrushToolbox = new FloatingToolbox(panel3DHost, _objectBrushView, horizontalGrip: false);
 
         _editor.EditorEventRaised += OnEditorEventRaised;
+        Application.Current.SessionEnding += (_, _) => _sessionEnding = true;
 
         // Route global editor hotkeys (the WPF shell has no ProcessCmdKey). Without this, keys
         // pressed while the hosted Panel3D has focus never reach the editor command system.
@@ -190,11 +193,16 @@ public partial class MainWindow : Window
             UpdateWindowTitle();
         }
 
-        // Floating info/warning/error popup over the 3D viewport, mirroring MainView. Owner is
-        // null so it always shows (the static guard only gates previous owners); messages are
-        // dismissed when the level changes.
+        // Floating info/warning/error popup over the 3D viewport, mirroring MainView. Unless forced,
+        // the toast is suppressed while another window is active; messages are dismissed when the level changes.
         if (obj is Editor.MessageEvent message)
-            PopUpInfo.Show(_popup, null, _panel3D, message.Message, message.Type);
+            PopUpInfo.Show(_popup, message.ForceInMainWindow ? null : this.GetWin32Window(), _panel3D, message.Message, message.Type);
+
+        if (obj is Editor.AutosaveEvent { Exception: not null } autosave)
+        {
+            _editor.SendMessage("Autosave failed. Error: " + autosave.Exception.Message +
+                                "\nRestart Tomb Editor and continue from last valid version.", PopupType.Warning);
+        }
 
         if (obj is Editor.LevelChangedEvent)
             _popup.Hide();
@@ -330,11 +338,12 @@ public partial class MainWindow : Window
 
     protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
     {
-        // Ask to save unsaved changes before quitting, mirroring FormMain.OnFormClosing.
-        if (!EditorActions.ContinueOnFileDrop(this.GetWin32Window(), "Exit"))
-            e.Cancel = true;
-
         base.OnClosing(e);
+
+        // Ask to save unsaved changes before quitting (not when Windows is ending the session),
+        // mirroring FormMain.OnFormClosing. Window state is saved in OnClosed, so a cancelled close saves nothing.
+        if (!_sessionEnding && !EditorActions.ContinueOnFileDrop(this.GetWin32Window(), "Exit"))
+            e.Cancel = true;
     }
 
     protected override void OnClosed(System.EventArgs e)
@@ -907,6 +916,7 @@ public partial class MainWindow : Window
             AvalonDockState = SerializeDockState(),
             ShowStats = config.Window_Layout.ShowStats,
             ShowFlybyTimeline = config.Window_Layout.ShowFlybyTimeline,
+            ShowToolbox = _toolPalette.IsShown,
         };
         SaveToolboxPositionsTo(newLayout);
 

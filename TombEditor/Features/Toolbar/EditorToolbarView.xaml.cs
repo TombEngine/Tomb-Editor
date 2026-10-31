@@ -154,6 +154,10 @@ public partial class EditorToolbarView : UserControl
 
             item.IsCheckable = true;
             item.IsChecked = (bool)prop.GetValue(Editor.Instance.Configuration)!;
+
+            // Volumes only exist in TombEngine levels.
+            if (flagName == "Rendering3D_ShowVolumes")
+                item.IsEnabled = Editor.Instance.Level?.IsTombEngine ?? false;
         }
     }
 

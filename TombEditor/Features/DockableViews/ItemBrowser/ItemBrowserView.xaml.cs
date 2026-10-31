@@ -21,6 +21,7 @@ public partial class ItemBrowserView : UserControl
 
         _viewModel = new ItemBrowserViewModel(Editor.Instance);
         _viewModel.SelectedItemChanged += OnSelectedItemChanged;
+        _viewModel.ResetCameraRequested += (_, _) => _panelItem.ResetCamera();
 
         DataContext = _viewModel;
         Editor.Instance.EditorEventRaised += OnEditorEvent;

@@ -8,6 +8,7 @@ using TombEditor.Features.ContextMenus;
 using TombLib;
 using TombLib.LevelData;
 using TombLib.WPF;
+using TombLib.WPF.Input;
 
 #nullable disable
 
@@ -430,6 +431,8 @@ namespace TombEditor.Features.Map2D
                     InvalidateVisual();
                 }
             }
+            else if (e.Data.GetDataPresent(DataFormats.FileDrop) && EditorActions.DragDropFileSupported(e.ToPointerDragEventArgs(), true))
+                e.Effects = DragDropEffects.Copy;
             else
                 e.Effects = DragDropEffects.None;
 
@@ -455,6 +458,8 @@ namespace TombEditor.Features.Map2D
             RoomClipboardData clipboardData = e.Data.GetData(typeof(RoomClipboardData)) as RoomClipboardData;
             if (clipboardData != null)
                 clipboardData.MergeInto(_editor, GetDragDropOffset(e));
+            else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                EditorActions.DragDropCommonFiles(e.ToPointerDragEventArgs(), WPFUtils.GetWindowOwner());
             InvalidateVisual();
         }
 
