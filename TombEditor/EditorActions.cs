@@ -4483,7 +4483,7 @@ namespace TombEditor
                     operationDialog.SetOwner(owner);
 
                 operationDialog.ShowDialog();
-                return operationVm.DialogResult != false;
+                return operationVm.DialogResult == true;
             }
         }
 
