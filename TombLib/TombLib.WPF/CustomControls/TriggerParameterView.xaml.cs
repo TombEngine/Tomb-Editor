@@ -205,7 +205,7 @@ public partial class TriggerParameterView : UserControl
 						}
 
 						if (shouldSort)
-							Array.Sort(cachedNames, listOfThings, StringComparer.Ordinal);
+							Array.Sort(cachedNames, listOfThings);
 					}
 					comboPart.ItemsSource = listOfThings;
 				}

@@ -754,6 +754,10 @@
     },
 
     "NodeEditor": {
+        "AddAction": "Action",
+        "AddCondition": "Condition",
+        "AddActionTooltip": "Add action node",
+        "AddConditionTooltip": "Add condition node",
         "NotSupported": "Not supported for this event type",
         "Function": "Function:",
         "Add": "Add",
