@@ -162,6 +162,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Event set editor toolbar: the Function box and Add button are replaced by Action and Condition buttons like WinForms; each adds a node with the default function of that kind (Ctrl skips linking, Alt links through Else) and the function is then changed in the node combo. Tried with the real mouse on the real level: Action, Condition and Action create three chained nodes (the condition with its Else port), seen on screen | Action and Condition buttons | (this commit) |
 
+| Main window placement compared in both editors by moving and resizing the window through UI Automation (300,200 1500x900), closing and reopening: both restore size 1500x900 at the same position (228,183, the same offset in each), so the saved placement behaves the same. The saved placement was set back afterwards | Verified side by side | n/a |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
