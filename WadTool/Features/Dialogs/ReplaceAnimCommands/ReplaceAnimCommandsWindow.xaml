@@ -105,7 +105,7 @@
 					</DataGridTemplateColumn.CellTemplate>
 				</DataGridTemplateColumn>
 				<DataGridTextColumn
-					Width="50"
+					Width="64"
 					Binding="{Binding AnimIndex}"
 					Header="{tombLib:Localize ColumnAnimNumber}"
 					IsReadOnly="True" />

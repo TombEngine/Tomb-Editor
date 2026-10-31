@@ -22,7 +22,7 @@ public partial class AboutWindow : Window
         headerImage.Source = aboutScreen;
 
         string bitness = Environment.Is64BitProcess ? "64-bit" : "32-bit";
-        versionText.Text = "Version " + Assembly.GetEntryAssembly()?.GetName().Version?.ToString() +
+        versionText.Text = "Version " + System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly()?.Location ?? string.Empty).ProductVersion +
             " (.NET " + Logging.FrameworkVersion + ", " + bitness + ")";
     }
 

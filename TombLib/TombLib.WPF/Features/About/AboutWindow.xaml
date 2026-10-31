@@ -92,13 +92,13 @@
                 <TextBlock Grid.Column="1" Style="{StaticResource BodyText}" Text="MontyTRC" />
 
                 <TextBlock Grid.Row="1" FontWeight="Bold" Style="{StaticResource BodyText}" Text="Code:" />
-                <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource BodyText}" Text="MontyTRC, TRTombLevBauer, stohrendorf, Banderi, Lwmte, Nickelony, Raildex, ChocolateFan, sapper, wjwilimowski, Remrem, Sezz, DavidDMRR, Stranger1992" />
+                <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource BodyText}" Text="Banderi, ChocolateFan, dash, DavidDMRR, lahm86, Lwmte, MontyTRC, Nickelony, Raildex, Remrem, sapper, Sezz, stohrendorf, Stranger1992, TRTombLevBauer, wjwilimowski" />
 
                 <TextBlock Grid.Row="2" FontWeight="Bold" Style="{StaticResource BodyText}" Text="Assets and support:" />
                 <TextBlock Grid.Row="2" Grid.Column="1" Style="{StaticResource BodyText}" Text="teme9, Lwmte, Nickelony, Dominik, Joey79100, Danath, piano_raider, Kubsy, Stranger1992, Frjttr" />
 
                 <TextBlock Grid.Row="3" FontWeight="Bold" Style="{StaticResource BodyText}" Text="Beta testing:" />
-                <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource BodyText}" Text="Dustie, Titak, Gemini, Caesum, Lore, JMN, Joey79100, 1mustard" />
+                <TextBlock Grid.Row="3" Grid.Column="1" Style="{StaticResource BodyText}" Text="1mustard, Caesum, Dark Enchanter, Dustie, Gecko, Gemini, JMN, Joey79100, Lore, Titak" />
             </Grid>
 
             <!--  Licensing  -->

@@ -40,7 +40,7 @@
     },
     "AnimationFixer": {
         "Title": "Animation fixer",
-        "Description": "Select parameters that you want to fix.\nHover on a checkbox for more information",
+        "Description": "Select parameters that you want to fix.\nHover on a checkbox for more information.",
         "EndFrame": "End frame",
         "EndFrameTooltip": "Clamp end frame value to animation's frame count.",
         "NextAnimation": "Next animation",
