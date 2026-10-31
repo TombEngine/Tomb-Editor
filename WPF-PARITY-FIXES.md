@@ -206,6 +206,37 @@ Implemented by subagents in separate worktrees and merged; each item compiles bu
 | Texture remap / Options | Instruction label and destination clamp; colour preset resets on manual colour edit, refresh on configuration change | 99712b794 |
 
 Known gaps reported by the agents: node grid overlay stays at a fixed 32 px tile, NodeEditor_ShowGrips unused, Export in the node editor still copies one node, blank nodes cannot be created, chain-playback reset on list click not ported, Imported geometry Browse does not use the reload logic, From catalog button handles a single row.
+## Window inventory (what has really been looked at)
+
+Legend: BOTH = opened in the WPF and in the WinForms editor and compared on screen; WPF = seen on screen in the WPF editor only; CODE = compared only by reading the code (or audited by agents), never seen on screen by me; NONE = not examined.
+
+| Tool | Window | Status | Note |
+|------|--------|--------|------|
+| Tomb Editor | Main window (menus, panels, status bar) | BOTH | menus read by UI Automation, panels on the real level |
+| Tomb Editor | Search | BOTH | |
+| Tomb Editor | Keyboard layout | BOTH | |
+| Tomb Editor | Crop room (Resize room) | BOTH | |
+| Tomb Editor | Editor options (9 pages) | BOTH | order checked by reading labels |
+| Tomb Editor | Level settings (10 tabs) | BOTH | Imported geometry tab empty in the test level |
+| Tomb Editor | Moveable / object dialog | BOTH | |
+| Tomb Editor | Trigger editor | BOTH | create, edit, raw mode, invalid message |
+| Tomb Editor | Search textures | BOTH | |
+| Tomb Editor | Apply room properties | BOTH | |
+| Tomb Editor | Animated textures | BOTH | empty set and one real set |
+| Tomb Editor | Texture remap | BOTH | |
+| Tomb Editor | Texture sounds (footstep) | BOTH | |
+| Tomb Editor | Bumpmaps | BOTH | |
+| Tomb Editor | Event set editor | BOTH | global event sets; node gestures WPF only |
+| Tomb Editor | Static object dialog (colour) | WPF | the WinForms equivalent could not be opened reliably |
+| Tomb Editor | Camera, Sink, Portal, Memo, Transform, Operation, Replace object, Import PRJ, Imported geometry dialog, Sound source, Flyby camera, Toolbar layout, Quick item group, Choose room, Select room by tags, Sprite | CODE | layout by designer comparison or agents, behaviour by audit; not seen |
+| Tomb Editor | Texture preview, Wad preview, Material editor, Geometry IO settings, About, colour picker, input boxes | NONE | |
+| WadTool | Main window | BOTH | |
+| WadTool | Animation editor | BOTH | menus, list filter, timeline menu, keys, camera reset, close prompt |
+| WadTool | Mesh editor | BOTH | opened from the Static editor |
+| WadTool | Static editor | BOTH | |
+| WadTool | State changes | WPF | WinForms capture not obtained |
+| WadTool | Anim commands, Animation fixer, Blend curve, Lua properties, New wad, Options, Replace anim commands, Select slot, Skeleton editor, Sprite sequence | CODE | strings added, behaviour audited; not seen on screen |
+| SoundTool | Main window, Options | BOTH | early pass, before the behaviour fixes |
 ## Open items
 | Event set editor: closing with the window X or Escape restores the backup (only OK keeps changes), Unassign clears the volume's event set, generic mode starts with no set selected and hides the volume options | The X button committed; Unassign did nothing; generic mode preselected a set | (this commit) |
 | Level settings: size and position remembered; "Dither 16-bit textures" also enabled for TRX games; "Map animated textures to imported geometry" disabled for TombEngine | Window did not remember its place; enable rules differed | (this commit) |
