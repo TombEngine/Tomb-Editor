@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -102,8 +102,8 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
 
     // Face attributes
     [ObservableProperty] private bool _applyTexture = true;
-    [ObservableProperty] private bool _applyBlend;
-    [ObservableProperty] private bool _applySheen;
+    [ObservableProperty] private bool _applyBlend = true;
+    [ObservableProperty] private bool _applySheen = true;
     [ObservableProperty] private double _shineStrength;
     [ObservableProperty] private int _blendModeIndex;
     [ObservableProperty] private bool _doubleSided;
@@ -282,7 +282,9 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
     /// <summary>Called by the window when the tree selection changes.</summary>
     public void SelectTreeNode(MeshEditorTreeNode? node)
     {
-        if (node is null || !node.IsMesh || _panelMesh is null)
+        node = node?.FirstMeshNode();
+
+        if (node is null || _panelMesh is null)
             return;
 
         SaveCurrentMesh();
@@ -309,15 +311,15 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
         if (obj is WadMoveable mov)
         {
             if (mov.Meshes.Count == _currentNode.MeshIndex)
-                mov.Skin = _panelMesh.Mesh;
+                mov.Skin = _currentNode.WadMesh = _panelMesh.Mesh;
             else
-                mov.Meshes[_currentNode.MeshIndex] = mov.Bones[_currentNode.MeshIndex].Mesh = _panelMesh.Mesh;
+                mov.Meshes[_currentNode.MeshIndex] = mov.Bones[_currentNode.MeshIndex].Mesh = _currentNode.WadMesh = _panelMesh.Mesh;
 
             mov.Version = DataVersion.GetNext();
         }
         else if (obj is WadStatic stat)
         {
-            stat.Mesh = _panelMesh.Mesh;
+            stat.Mesh = _currentNode.WadMesh = _panelMesh.Mesh;
             stat.Version = DataVersion.GetNext();
         }
     }

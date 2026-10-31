@@ -74,8 +74,8 @@
                 <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding AlphaTest, Mode=TwoWay}" ToolTip="Toggle transparency"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/AlphaTest}" /></ToggleButton>
                 <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Bilinear, Mode=TwoWay}" ToolTip="Toggle bilinear filter"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/blur}" /></ToggleButton>
                 <Border Style="{StaticResource TbSep}" />
-                <Button Style="{StaticResource TbBtn}" Command="{Binding FindTextureCommand}" ToolTip="Search for mesh by selected texture area (Ctrl+F)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/search-texture}" /></Button>
-                <Border Style="{StaticResource TbSep}" />
+                <Button Style="{StaticResource TbBtn}" Command="{Binding FindTextureCommand}" Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}" ToolTip="Search for mesh by selected texture area (Ctrl+F)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/search-texture}" /></Button>
+                <Border Style="{StaticResource TbSep}" Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}" />
                 <Button Style="{StaticResource TbBtn}" Command="{Binding RotateTextureCommand}" ToolTip="Rotate current texture (~)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Rotate}" /></Button>
                 <Button Style="{StaticResource TbBtn}" Command="{Binding MirrorTextureCommand}" ToolTip="Mirror current texture (Shift+~)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Mirror}" /></Button>
                 <Border Style="{StaticResource TbSep}" />
@@ -102,8 +102,8 @@
                 Grid.Column="1"
                 Orientation="Horizontal"
                 Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-                <Button Width="80" Command="{Binding OkCommand}" Content="OK" IsDefault="True" />
-                <Button Width="80" Command="{Binding CancelCommand}" Content="Cancel" IsCancel="True" Visibility="{Binding CancelVisible, Converter={StaticResource BoolToVis}}" />
+                <Button Width="80" Command="{Binding OkCommand}" Content="OK" />
+                <Button Width="80" Command="{Binding CancelCommand}" Content="Cancel" Visibility="{Binding CancelVisible, Converter={StaticResource BoolToVis}}" />
             </controls:SpacedStack>
         </Grid>
 

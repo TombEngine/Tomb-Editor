@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Linq;
 using TombLib.Wad;
 
 namespace WadTool.Features.Dialogs.MeshEditor;
@@ -20,13 +21,22 @@ public sealed partial class MeshEditorTreeNode : ObservableObject
     /// <summary>Set on leaf nodes only.</summary>
     public IWadObjectId? ObjectId { get; }
     public int MeshIndex { get; }
-    public WadMesh? WadMesh { get; }
+    public WadMesh? WadMesh { get; set; }
     public bool IsSkin { get; }
 
     public ObservableCollection<MeshEditorTreeNode> Children { get; } = new();
 
     /// <summary>True for a leaf node that actually references a mesh.</summary>
     public bool IsMesh => WadMesh is not null;
+
+    /// <summary>Returns this node if it is a mesh, otherwise its first descendant mesh node (null when there is none).</summary>
+    public MeshEditorTreeNode? FirstMeshNode()
+    {
+        if (IsMesh)
+            return this;
+
+        return Children.Select(child => child.FirstMeshNode()).FirstOrDefault(node => node is not null);
+    }
 
     public MeshEditorTreeNode(string text, IWadObjectId? objectId = null, int meshIndex = 0, WadMesh? wadMesh = null, bool isSkin = false)
     {
