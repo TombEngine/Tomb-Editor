@@ -3,6 +3,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using TombLib.LevelData;
 using TombLib.NG;
 using TombLib.WPF;
@@ -25,6 +26,10 @@ public partial class TriggerWindow : Window
 
         _level = level;
         _trigger = trigger;
+
+        // Without the NG plugin box the trigger type uses the full row, like the previous form.
+        if (!level.IsNG)
+            Grid.SetColumnSpan(paramTriggerType, 7);
 
         foreach (var ctl in new[] { paramTriggerType, paramPlugin, paramTargetType, paramTarget, paramTimer, paramExtra })
         {
