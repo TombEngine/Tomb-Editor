@@ -5,6 +5,9 @@ on:
     branches:
       - develop
 
+permissions:
+  pull-requests: read
+
 jobs:
   changelog:
     runs-on: ubuntu-latest
@@ -24,11 +27,11 @@ jobs:
             );
 
             const changelogUpdated = files.some(
-              f => f.filename.toLowerCase() === "changes.txt"
+              f => f.filename.toLowerCase().endsWith("installer/changes.txt")
             );
 
             if (!changelogUpdated) {
               core.setFailed(
-                "Pull requests must update changes.txt."
+                "Pull requests must update Installer/Changes.txt."
               );
             }
