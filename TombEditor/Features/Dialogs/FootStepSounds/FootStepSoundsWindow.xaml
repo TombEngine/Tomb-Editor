@@ -33,7 +33,7 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0">
-<Button Width="23" Margin="2,0,0,0" Command="{x:Static tombLib:ComboSearch.OpenCommand}" CommandParameter="{Binding ElementName=textureCombo}" DockPanel.Dock="Right" ToolTip="Search"><Image Width="16" Height="16" Source="{tomb:Icon General/search}" /></Button>
+<Button Style="{DynamicResource ButtonWithIconOnly}" Width="23" Margin="2,0,0,0" Command="{x:Static tombLib:ComboSearch.OpenCommand}" CommandParameter="{Binding ElementName=textureCombo}" DockPanel.Dock="Right" ToolTip="Search"><Image Width="16" Height="16" Source="{tomb:Icon General/search}" /></Button>
 <controls:SearchableComboBox
             x:Name="textureCombo"
             ItemsSource="{Binding Textures}"

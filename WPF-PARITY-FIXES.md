@@ -172,6 +172,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Trigger parameter combos (target, timer, extra, type, what): the WPF control sorted the fixed and plugin enumerations with the ordinal comparer, while the WinForms control uses the default culture comparer, so entries could appear in a different order; now the same comparer. Rest of the control (visibility rules, raw mode, wrong parameter label, reset and locate buttons, colour preview, empty label) compared line by line and identical. Built only | Sort order | (this commit) |
 
+| Trigger editor driven with the real mouse in both editors on the TombEngine level (new trigger on a selected sector; type changed to Switch, What to Object, Reset of the wrong parameter): same title, same default values (FlipEffect, Param 0, Timer 0, Extra "-"), same "Wrong parameter: 0" with Reset, same first object (886) KICK_DOOR1 after Reset, same Locate button. Fixed from this comparison: the search icon is placed before the Locate/Reset button like WinForms, it keeps its space when hidden so numeric boxes end where the combos end, and every search icon I had added was clipped by the button padding (now drawn with the icon button style in the trigger editor, texture remap, texture sounds, bumpmaps and animated textures; seen on screen in the trigger editor and texture sounds) | Layout and icon fixes | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
