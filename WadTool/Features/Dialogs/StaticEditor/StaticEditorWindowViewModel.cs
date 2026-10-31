@@ -317,9 +317,24 @@ public partial class StaticEditorWindowViewModel : ObservableObject, IModalDialo
 
     private void RefreshLightsList()
     {
-        Lights.Clear();
-        foreach (var light in _static.Lights)
-            Lights.Add(new StaticLightItem(light, "Light #" + _static.Lights.IndexOf(light)));
+        var selectedLight = _panel?.SelectedLight;
+
+        // Rebuilding the list clears its selection, which must not reset the panel selection.
+        _suppressLightSelectionSync = true;
+
+        try
+        {
+            Lights.Clear();
+
+            foreach (var light in _static.Lights)
+                Lights.Add(new StaticLightItem(light, "Light #" + _static.Lights.IndexOf(light)));
+
+            SelectedLight = Lights.FirstOrDefault(item => ReferenceEquals(item.Light, selectedLight));
+        }
+        finally
+        {
+            _suppressLightSelectionSync = false;
+        }
     }
 
     private void UpdateLightUI()

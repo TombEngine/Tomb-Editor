@@ -334,8 +334,7 @@
             <Button
                 Width="80"
                 Command="{Binding CancelCommand}"
-                Content="Cancel"
-                IsCancel="True" />
+                Content="Cancel" />
         </controls:SpacedStack>
 
         <!--  The 3D view is the legacy previous PanelRenderingStaticEditor, hosted as-is.  -->
