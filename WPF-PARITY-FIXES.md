@@ -166,6 +166,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | File drop on the main window: not driven on screen (a file drop cannot be simulated with mouse and keyboard). Compared in code: both windows allow drops, accept the same file kinds through the shared EditorActions.DragDropFileSupported (wad2, images, .prj, .prj2) and process them through the shared EditorActions.DragDropCommonFiles, so the behaviour is the same by construction | Code review only | n/a |
 
+| Classic Triggers list compared in code: both editors fill it from the triggers inside the selected sector area (not from the room), sort them the same way and delete the selected ones through EditorActions.DeleteObjects; with only a room selected the list is empty in both. Deleting a trigger was not driven on screen because the search does not select a sector | Code review only | n/a |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
