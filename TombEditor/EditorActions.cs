@@ -1,4 +1,4 @@
-﻿using DarkUI.Forms;
+using DarkUI.Forms;
 using NLog;
 using System;
 using System.Collections.Concurrent;
@@ -730,8 +730,11 @@ namespace TombEditor
                 objectList = objectList.OrderByDescending(o =>
                 {
                     var objectName = string.Empty;
-					if (o is MoveableInstance)
-						objectName = (o as MoveableInstance).WadObjectId.ShortName(_editor.Level.Settings.GameVersion).ToLower();
+                    if (o is MoveableInstance mov)
+                    {
+                        var tenSlot = TrCatalog.GetMoveableTombEngineSlot(_editor.Level.Settings.GameVersion, mov.WadObjectId.TypeId);
+                        objectName = (!string.IsNullOrEmpty(tenSlot) ? tenSlot : mov.WadObjectId.ShortName(_editor.Level.Settings.GameVersion)).ToLower();
+                    }
 
                     bool isSwitch = objectName.Contains("switch") || objectName.Contains("pulley");
                     bool isHole = objectName.Contains("hole") &&
