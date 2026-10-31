@@ -146,12 +146,18 @@ namespace TombLib.GeometryIO.Importers
 
                     // Create the new material
                     material.Texture = textures[i];
-                    material.AdditiveBlending = (mat.HasBlendMode && mat.BlendMode == Assimp.BlendMode.Additive) || mat.Opacity < 1.0f 
-                        || mat.Name.StartsWith(Graphics.Material.Material_AdditiveBlending)
-                        || mat.Name.StartsWith(Graphics.Material.Material_AdditiveBlendingDoubleSided);
-                    material.DoubleSided = (mat.HasTwoSided && mat.IsTwoSided) 
-                        || mat.Name.StartsWith(Graphics.Material.Material_OpaqueDoubleSided)
-                        || mat.Name.StartsWith(Graphics.Material.Material_AdditiveBlendingDoubleSided);
+
+                    if (mat.Name.StartsWith("Te"))
+                    {
+                        material.BlendMode = Graphics.Material.GetBlendModeFromName(mat.Name);
+                        material.DoubleSided = Graphics.Material.GetDoubleSidedFromName(mat.Name);
+                    }
+                    else
+                    {
+                        material.BlendMode = (mat.HasBlendMode && mat.BlendMode == Assimp.BlendMode.Additive) || mat.Opacity < 1.0f
+                            ? TombLib.Utils.BlendMode.Additive : TombLib.Utils.BlendMode.Normal;
+                        material.DoubleSided = mat.HasTwoSided && mat.IsTwoSided;
+                    }
 
                     // HACK: Ass-imp uses different numbering for shininess in different formats!
 
