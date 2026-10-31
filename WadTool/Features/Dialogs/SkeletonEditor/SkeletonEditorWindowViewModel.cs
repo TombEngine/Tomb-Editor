@@ -3,6 +3,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -415,6 +416,10 @@ public partial class SkeletonEditorWindowViewModel : ObservableObject, IModalDia
         var node = new WadMeshBoneNode(mesh, bone);
 
         int index = _bones.IndexOf(parentNode);
+
+        if (index < 0 && _bones.Count > 0)
+            return;
+
         _bones.Insert(index + 1, node);
 
         if (_bones.Count == 1 && index == -1)
@@ -465,13 +470,25 @@ public partial class SkeletonEditorWindowViewModel : ObservableObject, IModalDia
             return;
 
         int index = _bones.IndexOf(theNode);
+
+        if (index < 0)
+            return;
+
         _bones.RemoveAt(index);
 
         foreach (var animation in _moveable.Animations)
             foreach (var kf in animation.KeyFrames)
                 kf.Angles.RemoveAt(index);
 
-        ReloadAfterChange(null, updateModel: false);
+        // Select the previous bone so the panel never keeps pointing at the deleted one.
+        var neighbour = _bones.Count == 0 ? null : _bones[Math.Max(index - 1, 0)];
+
+        ReloadAfterChange(neighbour, updateModel: false);
+
+        if (_panel is not null)
+            _panel.SelectedNode = neighbour;
+
+        UpdateUI();
     }
 
     [RelayCommand]

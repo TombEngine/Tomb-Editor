@@ -55,24 +55,24 @@
                     <controls:SpacedStack Orientation="Horizontal" Spacing="6">
                         <TextBlock Style="{StaticResource AxisLabel}" Text="X" />
                         <controls:NumericUpDown
-                            Width="74"
-                            DecimalPlaces="0"
-                            Maximum="1000000"
-                            Minimum="-1000000"
+                            Width="88"
+                            DecimalPlaces="4"
+                            Maximum="32767"
+                            Minimum="-32768"
                             Value="{Binding TranslationX, Mode=TwoWay}" />
                         <TextBlock Style="{StaticResource AxisLabel}" Text="Y" />
                         <controls:NumericUpDown
-                            Width="74"
-                            DecimalPlaces="0"
-                            Maximum="1000000"
-                            Minimum="-1000000"
+                            Width="88"
+                            DecimalPlaces="4"
+                            Maximum="32767"
+                            Minimum="-32768"
                             Value="{Binding TranslationY, Mode=TwoWay}" />
                         <TextBlock Style="{StaticResource AxisLabel}" Text="Z" />
                         <controls:NumericUpDown
-                            Width="74"
-                            DecimalPlaces="0"
-                            Maximum="1000000"
-                            Minimum="-1000000"
+                            Width="88"
+                            DecimalPlaces="4"
+                            Maximum="32767"
+                            Minimum="-32768"
                             Value="{Binding TranslationZ, Mode=TwoWay}" />
                     </controls:SpacedStack>
                 </GroupBox>
@@ -123,13 +123,11 @@
                     <Button
                         Width="80"
                         Command="{Binding SaveCommand}"
-                        Content="OK"
-                        IsDefault="True" />
+                        Content="OK" />
                     <Button
                         Width="80"
                         Command="{Binding CancelCommand}"
-                        Content="Cancel"
-                        IsCancel="True" />
+                        Content="Cancel" />
                 </controls:SpacedStack>
             </controls:SpacedStack>
 
