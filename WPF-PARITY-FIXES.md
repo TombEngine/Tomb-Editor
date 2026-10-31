@@ -164,6 +164,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Main window placement compared in both editors by moving and resizing the window through UI Automation (300,200 1500x900), closing and reopening: both restore size 1500x900 at the same position (228,183, the same offset in each), so the saved placement behaves the same. The saved placement was set back afterwards | Verified side by side | n/a |
 
+| File drop on the main window: not driven on screen (a file drop cannot be simulated with mouse and keyboard). Compared in code: both windows allow drops, accept the same file kinds through the shared EditorActions.DragDropFileSupported (wad2, images, .prj, .prj2) and process them through the shared EditorActions.DragDropCommonFiles, so the behaviour is the same by construction | Code review only | n/a |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
