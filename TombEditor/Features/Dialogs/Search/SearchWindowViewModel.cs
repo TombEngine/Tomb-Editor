@@ -38,6 +38,7 @@ public partial class SearchWindowViewModel : ObservableObject, IModalDialogViewM
     }
 
     private readonly Editor _editor;
+    private bool _suppressNavigation;
     private readonly IMessageService _messageService;
     private readonly ILocalizationService _localizationService;
 
@@ -79,7 +80,7 @@ public partial class SearchWindowViewModel : ObservableObject, IModalDialogViewM
 
     partial void OnSelectedRowChanged(SearchResultRow? value)
     {
-        if (value is null)
+        if (value is null || _suppressNavigation)
             return;
 
         switch (value.Target)
@@ -100,53 +101,132 @@ public partial class SearchWindowViewModel : ObservableObject, IModalDialogViewM
 
     private void OnEditorEvent(IEditorEvent obj)
     {
-        // Conservative: any change that could shift results triggers a rebuild.
-        if (obj is Editor.LoadedWadsChangedEvent
-            || obj is Editor.RoomListChangedEvent
-            || (obj is Editor.SelectedRoomChangedEvent && Scope == ScopeMode.ObjectsInSelectedRooms)
-            || obj is IEditorObjectChangedEvent)
+        switch (obj)
         {
-            Rebuild();
+            case Editor.LoadedWadsChangedEvent when Scope is ScopeMode.ItemTypes or ScopeMode.Everything:
+            case Editor.RoomListChangedEvent:
+            case Editor.SelectedRoomChangedEvent when Scope == ScopeMode.ObjectsInSelectedRooms:
+                Rebuild();
+                break;
+            case IEditorObjectChangedEvent objectEvent when IsObjectEventRelevant(objectEvent):
+                ApplyObjectEvent(objectEvent);
+                break;
         }
     }
 
-    private void Rebuild()
+    private bool IsObjectEventRelevant(IEditorObjectChangedEvent objectEvent) => Scope switch
     {
+        ScopeMode.AllObjects or ScopeMode.Everything => true,
+        ScopeMode.ObjectsInSelectedRooms => _editor.SelectedRooms.Contains(objectEvent.Room),
+        ScopeMode.Triggers => objectEvent.Object is TriggerInstance,
+        _ => false
+    };
+
+    private void ApplyObjectEvent(IEditorObjectChangedEvent objectEvent)
+    {
+        switch (objectEvent.ChangeType)
+        {
+            case ObjectChangeType.Add:
+                AddObject(objectEvent.Object);
+                break;
+            case ObjectChangeType.Change:
+                RemoveObject(objectEvent.Object);
+                AddObject(objectEvent.Object);
+                break;
+            case ObjectChangeType.Remove:
+                RemoveObject(objectEvent.Object);
+                break;
+        }
+    }
+
+    private void AddObject(object target)
+    {
+        var row = CreateRow(target, Keyword.ToLower());
+        int index = 0;
+
+        while (index < Rows.Count && Rows[index].Rate <= row.Rate)
+            index++;
+
+        RunWithoutNavigation(() =>
+        {
+            var selected = SelectedRow;
+            Rows.Insert(index, row);
+            SelectedRow = selected;
+        });
+    }
+
+    private void RemoveObject(object target)
+    {
+        RunWithoutNavigation(() =>
+        {
+            var selected = SelectedRow;
+
+            // Rows of objects that were removed together with their room are dropped as well.
+            foreach (var row in Rows.Where(r => ReferenceEquals(r.Target, target) || r.Target is ObjectInstance { Room: null }).ToList())
+            {
+                Rows.Remove(row);
+
+                if (ReferenceEquals(row, selected))
+                    selected = null;
+            }
+
+            SelectedRow = selected;
+        });
+    }
+
+    private void RunWithoutNavigation(Action action)
+    {
+        bool previous = _suppressNavigation;
+        _suppressNavigation = true;
+
+        try
+        {
+            action();
+        }
+        finally
+        {
+            _suppressNavigation = previous;
+        }
+    }
+
+    private void Rebuild() => RunWithoutNavigation(() =>
+    {
+        var previousTarget = SelectedRow?.Target;
+        string lowerKeyword = Keyword.ToLower();
+
         Rows.Clear();
 
-        string lowerKeyword = (Keyword ?? string.Empty).ToLower();
-        var relevant = GetRelevant(Scope);
-
-        var ranked = new List<SearchResultRow>();
-        foreach (var target in relevant)
-        {
-            int levenshtein = Levenshtein.DistanceSubstring(target.ToString()!.ToLower(), lowerKeyword, out int startIndex);
-            int rate = Math.Min(levenshtein * 256 + Math.Min(startIndex, 255), 1 << 16);
-
-            Room? room = GetRoom(target);
-            string roomLabel = room is null
-                ? _localizationService["UnknownRoom"]
-                : _editor.Level.Rooms.ReferenceIndexOf(room) + ":   " + room.Name;
-
-            string name = target switch
-            {
-                Room r when r.Properties.Tags.Count > 0 => r.Name + " / " + string.Join(" ", r.Properties.Tags) + " /",
-                Room r => r.Name,
-                _ => target.ToString()!
-            };
-
-            ranked.Add(new SearchResultRow
-            {
-                Target = target,
-                Name = name,
-                Room = roomLabel,
-                Type = FormatType(target),
-                Rate = rate
-            });
-        }
-
-        foreach (var row in ranked.OrderBy(r => r.Rate))
+        foreach (var row in GetRelevant(Scope).Select(target => CreateRow(target, lowerKeyword)).OrderBy(r => r.Rate))
             Rows.Add(row);
+
+        SelectedRow = previousTarget is null ? null : Rows.FirstOrDefault(r => ReferenceEquals(r.Target, previousTarget));
+    });
+
+    private SearchResultRow CreateRow(object target, string lowerKeyword)
+    {
+        int levenshtein = Levenshtein.DistanceSubstring(target.ToString()!.ToLower(), lowerKeyword, out int startIndex);
+        int rate = Math.Min(levenshtein * 256 + Math.Min(startIndex, 255), 1 << 16);
+
+        var room = GetRoom(target);
+        string roomLabel = room is null
+            ? _localizationService["UnknownRoom"]
+            : _editor.Level.Rooms.ReferenceIndexOf(room) + ":   " + room.Name;
+
+        string name = target switch
+        {
+            Room r when r.Properties.Tags.Count > 0 => r.Name + " / " + string.Join(" ", r.Properties.Tags) + " /",
+            Room r => r.Name,
+            _ => target.ToString()!
+        };
+
+        return new SearchResultRow
+        {
+            Target = target,
+            Name = name,
+            Room = roomLabel,
+            Type = FormatType(target),
+            Rate = rate
+        };
     }
 
     private IEnumerable<object> GetRelevant(ScopeMode scope)
