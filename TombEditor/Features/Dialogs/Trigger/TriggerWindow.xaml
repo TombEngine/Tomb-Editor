@@ -16,6 +16,7 @@
     MinWidth="600"
     d:DataContext="{d:DesignInstance Type=vm:TriggerWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
+    FocusManager.FocusedElement="{Binding ElementName=okButton}"
     ResizeMode="CanResize"
     ShowInTaskbar="False"
     SizeToContent="Height"
@@ -281,6 +282,7 @@
                 <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
             </StackPanel.Margin>
             <Button
+                x:Name="okButton"
                 Width="80"
                 Command="{Binding ConfirmCommand}"
                 Content="{tombLib:Localize ~Common.OK}"

@@ -42,6 +42,9 @@ public partial class TriggerWindow : Window
     {
         WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormTrigger");
         Initialize(_trigger);
+
+        // The previous form locked the height; only the width can be changed.
+        Dispatcher.BeginInvoke(new Action(() => MinHeight = MaxHeight = ActualHeight), System.Windows.Threading.DispatcherPriority.Loaded);
     }
 
     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

@@ -168,6 +168,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Classic Triggers list compared in code: both editors fill it from the triggers inside the selected sector area (not from the room), sort them the same way and delete the selected ones through EditorActions.DeleteObjects; with only a room selected the list is empty in both. Deleting a trigger was not driven on screen because the search does not select a sector | Code review only | n/a |
 
+| Trigger editor, code comparison with FormTrigger (logic is the same: parameter ranges, population order, one-shot rule, button flags, validity check, script export, import): title "Classic trigger editor" on TombEngine levels confirmed on screen; the window height is now locked like WinForms (LockHeight) and the OK button has the initial focus (butOK.Select). Built only; the dialog behaviour with the type and target combos was not driven in both editors because the foreground was refused | Height lock and initial focus | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
