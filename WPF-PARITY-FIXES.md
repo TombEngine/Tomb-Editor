@@ -230,7 +230,9 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 | Tomb Editor | Bumpmaps | BOTH | |
 | Tomb Editor | Event set editor | BOTH | global event sets; node gestures WPF only |
 | Tomb Editor | Static object dialog (colour) | WPF | the WinForms equivalent could not be opened reliably |
-| Tomb Editor | Camera, Sink, Portal, Memo, Transform, Operation, Replace object, Import PRJ, Imported geometry dialog, Sound source, Flyby camera, Toolbar layout, Quick item group, Choose room, Select room by tags, Sprite | CODE | layout by designer comparison or agents, behaviour by audit; not seen |
+| Tomb Editor | About (shared window, also used by WadTool and SoundTool) | BOTH | version and credits fixed |
+| Tomb Editor | Search and replace objects | BOTH | layout and enable rule identical |
+| Tomb Editor | Camera, Sink, Portal, Memo, Transform, Operation, Import PRJ, Imported geometry dialog, Sound source, Flyby camera, Toolbar layout, Quick item group, Choose room, Select room by tags, Sprite | CODE | layout by designer comparison or agents, behaviour by audit; not seen |
 | Tomb Editor | Texture preview, Wad preview, Material editor, Geometry IO settings, About, colour picker, input boxes | NONE | |
 | WadTool | Main window | BOTH | |
 | WadTool | Animation editor | BOTH | menus, list filter, timeline menu, keys, camera reset, close prompt |
