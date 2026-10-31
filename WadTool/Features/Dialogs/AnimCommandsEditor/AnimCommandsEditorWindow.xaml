@@ -22,6 +22,10 @@
 	WindowStartupLocation="CenterOwner"
 	mc:Ignorable="d">
 
+	<Window.InputBindings>
+		<KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
+	</Window.InputBindings>
+
 	<DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
 
 		<!--  Bottom strip: Apply / OK / Cancel  -->
@@ -127,9 +131,6 @@
 					SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
 					SelectionMode="Single"
 					SelectionUnit="FullRow">
-					<DataGrid.InputBindings>
-						<KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
-					</DataGrid.InputBindings>
 					<DataGrid.Columns>
 						<DataGridTextColumn
 							Width="*"
