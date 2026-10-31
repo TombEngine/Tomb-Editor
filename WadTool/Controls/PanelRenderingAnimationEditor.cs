@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using RenderingPanel = TombLib.WPF.Controls.Rendering.RenderingPanel;
 using SharpDX.Toolkit.Graphics;
@@ -340,10 +340,17 @@ public class PanelRenderingAnimationEditor : RenderingPanel
         }
     }
 
+    /// <summary>Raised when the pointer enters the viewport.</summary>
+    public event EventHandler? PointerEntered;
+
+    /// <summary>Raised while the pointer moves with the left button held (e.g. a gizmo drag).</summary>
+    public event EventHandler? PointerDragged;
+
     protected override void OnMouseEnter(EventArgs e)
     {
         // Make this control able to receive scroll and key board events...
         base.OnMouseEnter(e);
+        PointerEntered?.Invoke(this, EventArgs.Empty);
 
         if (IsOwnerActive)
             Focus();
@@ -431,6 +438,9 @@ public class PanelRenderingAnimationEditor : RenderingPanel
     protected override void OnMouseMove(PointerEventArgs e)
     {
         base.OnMouseMove(e);
+
+        if (e.Button == PointerButtons.Left)
+            PointerDragged?.Invoke(this, EventArgs.Empty);
 
         var ray = Ray.GetPickRay(Camera, ClientSize, e.X, e.Y);
 

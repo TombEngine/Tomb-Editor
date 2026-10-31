@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using System;
 using System.ComponentModel;
@@ -36,6 +36,8 @@ public partial class AnimationEditorWindow : Window
         _timeline.AnimCommandDoubleClick += OnTimelineAnimCommandDoubleClick;
         animationList.SelectionChanged += OnAnimationListSelectionChanged;
         _bezier.ValueChanged += OnBezierValueChanged;
+        _panel.PointerEntered += OnPanelPointerEntered;
+        _panel.PointerDragged += OnPanelPointerDragged;
 
         stateIdBox.LostKeyboardFocus += (_, _) => _vm?.CommitStateId();
         stateIdBox.KeyDown += (_, e) => { if (e.Key == System.Windows.Input.Key.Enter) _vm?.CommitStateId(); };
@@ -64,11 +66,16 @@ public partial class AnimationEditorWindow : Window
     {
         base.OnPreviewKeyDown(e);
 
-        if (e.Handled || _vm is null || System.Windows.Input.Keyboard.FocusedElement is System.Windows.Controls.Primitives.TextBoxBase or System.Windows.Controls.ComboBox)
+        if (e.Handled || _vm is null)
             return;
 
         bool control = System.Windows.Input.Keyboard.Modifiers == System.Windows.Input.ModifierKeys.Control;
         bool none = System.Windows.Input.Keyboard.Modifiers == System.Windows.Input.ModifierKeys.None;
+        bool textInput = System.Windows.Input.Keyboard.FocusedElement is System.Windows.Controls.Primitives.TextBoxBase or System.Windows.Controls.ComboBox;
+
+        // Text inputs keep plain keys and Ctrl+A/X/C/V; the other Ctrl shortcuts stay global like in the previous form.
+        if (textInput && !(control && e.Key is System.Windows.Input.Key.S or System.Windows.Input.Key.Z or System.Windows.Input.Key.Y or System.Windows.Input.Key.I))
+            return;
 
         if (HandleSelectionKey(e, control, none))
             return;
@@ -146,6 +153,12 @@ public partial class AnimationEditorWindow : Window
 
     private void OnBezierValueChanged(object? sender, EventArgs e) => _vm?.OnBlendCurveEdited();
 
+    private void OnPanelPointerEntered(object? sender, EventArgs e) => _vm?.ResetUndoCoalescing();
+
+    private void OnPanelPointerDragged(object? sender, EventArgs e) => _vm?.RefreshTransformUI();
+
+    private void OnParameterLostFocus(object sender, KeyboardFocusChangedEventArgs e) => _vm?.ResetUndoCoalescing();
+
     private void OnClosingHandler(object? sender, CancelEventArgs e)
     {
         if (_vm is not null && !_vm.HandleClosing())
@@ -161,6 +174,8 @@ public partial class AnimationEditorWindow : Window
         _timeline.AnimCommandDoubleClick -= OnTimelineAnimCommandDoubleClick;
         animationList.SelectionChanged -= OnAnimationListSelectionChanged;
         _bezier.ValueChanged -= OnBezierValueChanged;
+        _panel.PointerEntered -= OnPanelPointerEntered;
+        _panel.PointerDragged -= OnPanelPointerDragged;
         _vm?.Detach();
     }
 }

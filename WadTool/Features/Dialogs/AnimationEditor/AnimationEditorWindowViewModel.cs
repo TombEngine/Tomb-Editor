@@ -177,6 +177,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     {
         if (_playTimer is not null) _playTimer.Stop();
         _editor.Tool.EditorEventRaised -= OnEditorEventRaised;
+        _editor.Tool.UndoManager.ClearAll();
         _popup.Dispose();
     }
 
@@ -212,7 +213,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
             // Sync the bone list selection to the 3D-picked mesh.
             int index = meshSelected.Mesh is null ? -1 : meshSelected.Model.Meshes.IndexOf(meshSelected.Mesh);
             var item = Bones.FirstOrDefault(b => b.Index == index);
-            if (item is not null && !ReferenceEquals(item, SelectedBoneItem))
+            if (!ReferenceEquals(item, SelectedBoneItem))
             {
                 bool prev = _allowUpdate;
                 _allowUpdate = false; // avoid re-driving panel selection
@@ -220,6 +221,9 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
                 _allowUpdate = prev;
             }
         }
+
+        if (obj is WadToolClass.AnimationEditorAnimationChangedEvent animationChanged)
+            ReplaceAnimationItem(animationChanged.Animation, animationChanged.Focus);
 
         if (obj is WadToolClass.ReferenceLevelChangedEvent)
             UpdateReferenceLevel();
@@ -344,6 +348,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         else
         {
             _panel.Model.BuildAnimationPose(keyFrames[frameIndex]);
+            OnKeyframesListChanged();
             UpdateTransformUI();
         }
 
@@ -493,9 +498,13 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
                 if (possibleID >= 0) break;
                 searchString = searchString.Replace(' ', '_');
             }
-            if (possibleID < 0)
-                return;
-            newValue = (ushort)possibleID;
+            if (possibleID >= 0)
+                newValue = (ushort)possibleID;
+            else
+            {
+                ShowPopup("State ID with given name wasn't found.", PopupType.Error);
+                newValue = oldValue;
+            }
         }
 
         var possibleName = TrCatalog.GetStateName(_editor.Wad.GameVersion, _editor.Moveable.Id.TypeId, newValue);
@@ -622,9 +631,13 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     /// <summary>Called by the window when the blend-curve editor value changes (legacy resets the preset combo).</summary>
     public void OnBlendCurveEdited()
     {
+        if (!_allowUpdate)
+            return;
+
         _allowUpdate = false;
         BlendPresetIndex = -1;
         _allowUpdate = true;
+        SetSaved(false);
     }
 
     // ---- Transport toggles ----
@@ -666,7 +679,6 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
             return;
         }
 
-        _frameCount = _timeline.Value * _editor.CurrentAnim.WadAnimation.FrameRate;
         StatusText = "Frame: " + _frameCount + " / " + Math.Max(_editor.GetRealNumberOfFrames() - 1, 0) +
                      "   Keyframe: " + _timeline.Value + " / " + Math.Max(_editor.CurrentAnim.DirectXAnimation.KeyFrames.Count - 1, 0);
 
@@ -728,8 +740,23 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     private bool SelectAnimByIndex(int index)
     {
         var item = Animations.FirstOrDefault(a => a.Node.Index == index);
-        if (item is null) return false;
-        if (!ReferenceEquals(item, SelectedAnim)) SelectedAnim = item;
+
+        if (item is null)
+        {
+            // Animation is hidden by the list filter, so jump to it directly.
+            var node = _editor.Animations.FirstOrDefault(a => a.Index == index);
+
+            if (node is null)
+                return false;
+
+            SelectedAnim = null;
+            SelectAnimation(node);
+            return true;
+        }
+
+        if (!ReferenceEquals(item, SelectedAnim))
+            SelectedAnim = item;
+
         return true;
     }
 
@@ -990,7 +1017,6 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
     [RelayCommand]
     private void GotoStart() { if (_timeline is not null) _timeline.Value = _timeline.Minimum; }
-    [RelayCommand]
     /// <summary>Steps one frame and wraps around at the ends (keyboard navigation of the previous form).</summary>
     public void StepFrameLooping(bool forward)
     {
@@ -1020,10 +1046,18 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     /// <summary>Clears the mesh, bone list and timeline selections (Escape).</summary>
     public void ClearSelections()
     {
+        if (_panel is not null)
+        {
+            _panel.SelectedMesh = null;
+            UpdateTransformUI();
+            _panel.Invalidate();
+        }
+
         SelectedBoneItem = null;
         _timeline?.ResetSelection();
     }
 
+    [RelayCommand]
     private void GotoPrev() { if (_timeline is not null && _timeline.Value > _timeline.Minimum) _timeline.Value--; }
     [RelayCommand]
     private void GotoNext() { if (_timeline is not null && _timeline.Value < _timeline.Maximum) _timeline.Value++; }
@@ -1040,11 +1074,13 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         if (_timeline is null) return;
         if (_editor.ValidAnimationAndFrames)
         {
+            _frameCount = _timeline.Value * _editor.CurrentAnim.WadAnimation.FrameRate;
             _timeline.Minimum = 0;
             _timeline.Maximum = _editor.CurrentAnim.DirectXAnimation.KeyFrames.Count - 1;
+            bool previousAllowUpdate = _allowUpdate;
             _allowUpdate = false;
             EndFrame = _editor.CurrentAnim.WadAnimation.EndFrame;
-            _allowUpdate = true;
+            _allowUpdate = previousAllowUpdate;
             UpdateStatusLabel();
         }
         else
@@ -1108,6 +1144,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         var item = new AnimListItem(node, "(" + node.Index + ") " + node.WadAnimation.Name);
         Animations.Add(item);
         SelectedAnim = item;
+        SetSaved(false);
     }
 
     [RelayCommand]
@@ -1318,7 +1355,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     {
         if (_editor.CurrentAnim is null) { ShowPopup("No animation to cut!", PopupType.Warning); return; }
         _editor.ClipboardNode = _editor.CurrentAnim;
-        DeleteAnimationCore(_editor.CurrentAnim);
+        DeleteAnimation();
     }
 
     [RelayCommand]
@@ -1338,6 +1375,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         pastedAnim.WadAnimation.Name += " - Copy";
         RebuildAnimationsList();
         SelectAnimByIndex(animationIndex);
+        SetSaved(false);
     }
 
     [RelayCommand]
@@ -1351,6 +1389,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         pastedAnim.WadAnimation.Name += " - Copy";
         RebuildAnimationsList();
         SelectAnimByIndex(animationIndex);
+        SetSaved(false);
     }
 
     [RelayCommand]
@@ -1377,6 +1416,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
         RebuildAnimationsList();
         SelectAnimByIndex(_editor.Animations.Count - 1);
+        SetSaved(false);
     }
 
     // ---- Bounding box (slice 3d) ----

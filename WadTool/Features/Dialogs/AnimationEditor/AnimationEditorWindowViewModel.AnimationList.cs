@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TombLib.Graphics;
 using TombLib.Services;
 using TombLib.Wad.Catalog;
 using TombLib.WPF;
@@ -55,6 +56,64 @@ public partial class AnimationEditorWindowViewModel
             SelectedAnim = (hadCurrent ? Animations.FirstOrDefault(item => item.Node.Index == currentIndex) : null) ?? Animations[0];
 
         UpdateStatusLabel();
+    }
+
+    /// <summary>Allows the next parameter edit to push a fresh undo step.</summary>
+    public void ResetUndoCoalescing() => _editor.MadeChanges = false;
+
+    /// <summary>Refreshes the transform fields from the current keyframe, e.g. while a gizmo is being dragged.</summary>
+    public void RefreshTransformUI() => UpdateTransformUI();
+
+    private static string GetAnimationLabel(AnimationNode node) => "(" + node.Index + ") " + node.WadAnimation.Name;
+
+    /// <summary>Handles an animation replaced by undo/redo: swaps the list item for the new node and optionally selects it.</summary>
+    private void ReplaceAnimationItem(AnimationNode animation, bool focus)
+    {
+        var item = Animations.FirstOrDefault(entry => entry.Node.Index == animation.Index);
+
+        if (item is null)
+            return;
+
+        var oldNode = item.Node;
+        var cursorPosition = -1;
+
+        if (_timeline is not null &&
+            animation.DirectXAnimation.KeyFrames.Count == oldNode.DirectXAnimation.KeyFrames.Count &&
+            animation.WadAnimation.FrameRate == oldNode.WadAnimation.FrameRate)
+            cursorPosition = _timeline.Value;
+
+        var newItem = new AnimListItem(animation, GetAnimationLabel(animation));
+        var wasSelected = ReferenceEquals(item, SelectedAnim);
+        var index = Animations.IndexOf(item);
+
+        _rebuildingList = true;
+
+        try
+        {
+            Animations[index] = newItem;
+
+            if (wasSelected)
+                SelectedAnim = newItem;
+        }
+        finally
+        {
+            _rebuildingList = false;
+        }
+
+        if (focus)
+        {
+            if (ReferenceEquals(SelectedAnim, newItem))
+                SelectAnimation(animation);
+            else
+                SelectedAnim = newItem;
+
+            if (_timeline is not null)
+                _timeline.Value = cursorPosition != -1 ? cursorPosition : _timeline.Minimum;
+
+            UpdateTransformUI();
+        }
+
+        SetSaved(false);
     }
 
     private int FindStateByName(string name)
