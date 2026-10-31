@@ -46,6 +46,7 @@ public static class TrxInjector
             CreateChunk(TrxChunkType.CameraData, data, WriteCameraData),
             CreateChunk(TrxChunkType.DataEdits, data, WriteEdits),
             CreateChunk(TrxChunkType.SFX, data, WriteSFXData),
+            CreateChunk(TrxChunkType.PathingData, data, WritePathingData),
         };
 
         chunks.RemoveAll(c => c.BlockCount == 0);
@@ -127,6 +128,12 @@ public static class TrxInjector
             s => data.SFX.ForEach(f => f.Serialize(s)));
     }
 
+    private static int WritePathingData(TrxInjectionData data, BinaryWriterEx writer)
+    {
+        return WriteBlock(TrxBlockType.OverlapIndices, data.OverlapIndices.Count, writer,
+            w => data.OverlapIndices.ForEach(i => w.Write(i)));
+    }
+
     private static int WriteBlock(TrxBlockType type, int elementCount,
         BinaryWriterEx writer, Action<BinaryWriterEx> subCallback)
     {
@@ -170,6 +177,7 @@ public static class TrxInjector
         SFX = 5,
         DataEdits = 6,
         CameraData = 7,
+        PathingData = 9,
     }
 
     private enum TrxBlockType
@@ -180,6 +188,7 @@ public static class TrxInjector
         ItemNameEdits = 37,
         FlybyCameras = 38,
         PropertyEdits = 39,
+        OverlapIndices = 44,
     }
 }
 
@@ -191,6 +200,7 @@ public class TrxInjectionData
     public List<TrxSFXData> SFX { get; set; } = new();
     public List<TrxItemNameEdit> ItemNameEdits = new();
     public List<TrxPropertyEdit> PropertyEdits { get; set; } = new();
+    public List<uint> OverlapIndices { get; set; } = new();
 }
 
 public abstract class TrxSectorEdit

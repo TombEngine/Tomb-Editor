@@ -103,6 +103,9 @@ namespace TombLib.Wad.Catalog
 
         private static readonly Dictionary<TRVersion.Game, Game> Games = new Dictionary<TRVersion.Game, Game>();
 
+        // Engine variants only override selected entries of their native game catalog.
+        private static readonly Dictionary<TRVersion.Game, Game> Variants = new Dictionary<TRVersion.Game, Game>();
+
         /// <summary>
         /// Parses a comma-separated list of IDs, ranges, and string names into a flat list of uint values.
         /// String entries are resolved via GetItemIndex when a game version is provided.
@@ -505,6 +508,11 @@ namespace TombLib.Wad.Catalog
         {
             Game game;
             int value = int.MinValue;
+
+            if (Variants.TryGetValue(version, out game) && game.Limits.TryGetValue(limit, out value))
+                return value;
+
+            value = int.MinValue;
             Games.TryGetValue(version.Native(), out game);
 
             if (game != null)
@@ -588,7 +596,7 @@ namespace TombLib.Wad.Catalog
             combinedCatalog.AppendChild(combinedCatalog.CreateXmlDeclaration("1.0", "UTF-8",null));
             combinedCatalog.AppendChild(combinedCatalog.CreateElement("trcatalog"));
 
-			foreach (var gameString in TRVersion.NativeVersions.Select(v => v.Native().ToString()))
+			foreach (var gameString in TRVersion.AllVersions.Select(v => v.ToString()))
 			{
 				var gameCatalogFolder = Path.Combine(rootFolder, gameString);
                 if (!Directory.Exists(gameCatalogFolder))
@@ -777,7 +785,10 @@ namespace TombLib.Wad.Catalog
                     }
                 }
 
-                Games.Add(version, game);
+                if (version == version.Native())
+                    Games.Add(version, game);
+                else
+                    Variants.Add(version, game);
             }
 
             // Resolve TEN slot names now that all game catalogs are loaded.

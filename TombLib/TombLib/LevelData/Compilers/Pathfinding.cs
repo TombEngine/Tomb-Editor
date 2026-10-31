@@ -50,7 +50,7 @@ namespace TombLib.LevelData.Compilers
                     Zmin = (byte)dec_boxes[i].Zmin,
                     Zmax = (byte)dec_boxes[i].Zmax,
                     TrueFloor = (short)-Clicks.ToWorld(dec_boxes[i].TrueFloor),
-                    OverlapIndex = (ushort)((ushort)dec_boxes[i].OverlapIndex | (dec_boxes[i].IsolatedBox ? 0x8000 : 0))
+                    OverlapIndex = (ushort)((dec_boxes[i].OverlapIndex & _legacyOverlapIndexMask) | (dec_boxes[i].IsolatedBox ? 0x8000 : 0))
                 };
                 _zones[i] = new tr_zone()
                 {
@@ -242,17 +242,20 @@ namespace TombLib.LevelData.Compilers
             // All reachable boxes must have the same water flag and same flipped flag
             var isWater = (_tempRooms[dec_boxes[box].Room].Flags & 0x01) != 0;
 
+            // TR4 keeps the jump and monkey flags above the 11-bit box number.
+            var boxNumberMask = _level.Settings.GameVersion.Native() >= TRVersion.Game.TR4 ? 0x7ff : 0x7fff;
+
             while (stack.Count > 0)
             {
                 var next = stack.Pop();
                 var last = false;
 
-                for (int i = _boxes[next].OverlapIndex & 0x3fff; i < _overlaps.Length && !last; i++)
+                for (int i = dec_boxes[next].OverlapIndex; i < _overlaps.Length && !last; i++)
                 {
                     int overlapIndex = i;
                     last = (_overlaps[overlapIndex] & 0x8000) != 0;
 
-                    var boxIndex = _overlaps[overlapIndex] & 0x7ff;
+                    var boxIndex = _overlaps[overlapIndex] & boxNumberMask;
 
                     var add = false;
 
