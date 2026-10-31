@@ -3,6 +3,7 @@ Version 2.0.2
 
 Tomb Editor:
  * Fixed slide direction indication for TEN.
+ * Added support for TR:Catalyst engine targets
 
 Version 2.0.1
 =============
