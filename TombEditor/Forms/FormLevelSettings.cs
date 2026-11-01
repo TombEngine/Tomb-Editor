@@ -523,6 +523,7 @@ namespace TombEditor.Forms
             tbLuaPath.Text = _levelSettings.TenLuaScriptFile;
             comboTrxTextureDepth.Text = GetDisplayName(_levelSettings.TrxTextureBitDepth);
             cbTrxConvertFlybysToCinematicFrames.Checked = _levelSettings.TrxConvertFlybysToCinematicFrames;
+            cbTrxUseAlternateGroups.Checked = _levelSettings.TrxUseAlternateGroups;
 
             fontTextureFilePathOptAuto.Checked = string.IsNullOrEmpty(_levelSettings.FontTextureFilePath);
             fontTextureFilePathOptCustom.Checked = !string.IsNullOrEmpty(_levelSettings.FontTextureFilePath);
@@ -1407,6 +1408,12 @@ namespace TombEditor.Forms
         private void cbTrxUseFlybysForCinematics_CheckedChanged(object sender, EventArgs e)
         {
             _levelSettings.TrxConvertFlybysToCinematicFrames = cbTrxConvertFlybysToCinematicFrames.Checked;
+            UpdateDialog();
+        }
+
+        private void cbTrxUseAlternateGroups_CheckedChanged(object sender, EventArgs e)
+        {
+            _levelSettings.TrxUseAlternateGroups = cbTrxUseAlternateGroups.Checked;
             UpdateDialog();
         }
 

@@ -6,7 +6,7 @@ using TombLib.LevelData;
 namespace TombIDE.ProjectMaster.Services.ArchiveCreation;
 
 /// <summary>
-/// Unified archive service for TRX-based engines (TR1X and TR2X).
+/// Unified archive service for TRX-based engines (TR1X, TR2X and TR3X).
 /// </summary>
 public sealed class TRXArchiveService : GameArchiveServiceBase
 {
@@ -20,6 +20,8 @@ public sealed class TRXArchiveService : GameArchiveServiceBase
 		Path.Combine(engineDirectory, "data"),
 		Path.Combine(engineDirectory, "shaders"),
 		Path.Combine(engineDirectory, "game"),
+		Path.Combine(engineDirectory, "modules"),
+		Path.Combine(engineDirectory, "scripts"),
 	];
 
 	protected override IReadOnlyList<string> GetImportantFiles(string engineDirectory) => [

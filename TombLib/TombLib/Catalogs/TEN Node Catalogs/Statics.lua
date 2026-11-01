@@ -79,7 +79,7 @@ LevelFuncs.Engine.Node.TestStaticCollisionMode = function(staticName)
 	return TEN.Objects.GetStaticByName(staticName):GetSolid()
 end
 
--- !Name "If color of a static is..."
+-- !Name "If color of a static mesh is..."
 -- !Section "Static mesh parameters"
 -- !Description "Checks if the specified static is a certain color."
 -- !Conditional "True"

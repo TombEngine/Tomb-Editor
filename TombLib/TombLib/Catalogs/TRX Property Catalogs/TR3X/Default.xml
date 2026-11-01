@@ -168,6 +168,7 @@
     </moveable>
     <moveable id="64">
         <property category="TRX" defaultValue="10" description="Damage dealt when the sentry gun hits Lara." displayName="Damage" internalName="damage" minValue="0" type="Int" />
+        <property category="TRX" defaultValue="true" description="Require an alert, such as a security laser Lara has crossed, before the sentry gun opens fire. With this off, it fires for as long as its own trigger is active." displayName="Requires Alert" internalName="requires_alert" type="Bool" />
         <property category="TRX" defaultValue="100" description="Maximum hit points." displayName="Max Hit Points" internalName="max_hit_points" minValue="0" type="Int" />
     </moveable>
     <moveable id="65">
@@ -207,6 +208,9 @@
     <moveable id="74-82">
         <property category="TRX" defaultValue="0" description="Maximum hit points." displayName="Max Hit Points" internalName="max_hit_points" minValue="0" type="Int" />
     </moveable>
+    <moveable id="83-85">
+        <property category="TRX" defaultValue="false" description="Whether the block can only be activated from heavy triggers." displayName="Requires Heavy Trigger" internalName="requires_heavy_trigger" type="Bool" />
+    </moveable>
     <moveable id="86,121">
         <property category="TRX" defaultValue="50" description="Damage dealt while Lara is touching the pendulum." displayName="Damage" internalName="damage" minValue="0" type="Int" />
     </moveable>
@@ -227,6 +231,9 @@
         <property category="TRX" defaultValue="3" description="The time to wait before the lift begins moving, in seconds." displayName="Wait Time" internalName="wait_time" minValue="1" type="Int" />
         <property category="TRX" defaultValue="22" description="The vertical distance the lift will travel, in clicks." displayName="Travel Distance" internalName="travel_distance" minValue="1" type="Int" />
         <property category="TRX" defaultValue="16" description="The speed at which the lift moves, in world units." displayName="Speed" internalName="speed" maxValue="64" minValue="1" type="Int" />
+    </moveable>
+    <moveable id="105">
+        <property category="TRX" defaultValue="200" description="Damage dealt while Lara is touching the power saw." displayName="Damage" internalName="damage" minValue="0" type="Int" />
     </moveable>
     <moveable id="106">
         <property category="TRX" defaultValue="50" description="Damage dealt while Lara is touching the hook." displayName="Damage" internalName="damage" minValue="0" type="Int" />
@@ -262,10 +269,24 @@
         <property category="TRX" defaultValue="true" description="Whether the trapdoor opens automatically when triggered." displayName="Auto Open" internalName="auto_open" type="Bool" />
     </moveable>
     <moveable id="160-178,205-208,221-227,236,237,240-243,381,382,386,387,391,392">
-        <property category="TRX" defaultValue="Normal" description="Pickup animation mode." displayName="Pickup Mode" entries="Normal, Low Pedestal, High Pedestal" internalName="pickup_mode" type="Enum" />
+        <property category="TRX" defaultValue="Normal" description="Pickup animation mode." displayName="Pickup Mode" entries="Normal, Low Pedestal, High Pedestal, Hidden Reach-in, Crowbar, Hidden Sarcophagus, Scion Pedestal" internalName="pickup_mode" type="Enum" />
+        <property category="TRX" defaultValue="true" description="Show a twinkle effect above the item; applies only to normal and pedestal pickup modes." displayName="Show Pickup Aid" internalName="show_pickup_aid" type="Bool" />
+        <property category="TRX" defaultValue="true" description="Move the item to the middle of its sector where a carrier drops it." displayName="Snap To Sector" internalName="snap_to_sector" type="Bool" />
+        <property category="TRX" defaultValue="false" description="Simulate the item again once it becomes visible, so that it goes on rotating, glowing and showing its twinkle after a carrier drops it or a trigger brings it back." displayName="Keep Simulated" internalName="keep_simulated" type="Bool" />
+        <property category="TRX" defaultValue="0" description="How much to rotate the item by each frame while it's active, in engine angle units." displayName="Rotation" internalName="rotation" maxValue="16384" minValue="-16384" type="Int" />
+        <property category="TRX" defaultValue="TEN.Color(0, 0, 0)" description="The color of the item's glow while it's active. Black infers no glow." displayName="Glow Color" internalName="glow_color" type="Color" />
     </moveable>
     <moveable id="179">
         <property category="TRX" defaultValue="30" description="How long the flare burns for, in seconds." displayName="Burn Time" internalName="burn_time" minValue="0" type="Float" />
+    </moveable>
+    <moveable id="180">
+        <property category="TRX" defaultValue="true" description="Whether the crystal hovers and bobs in place." displayName="Bob" internalName="bob" type="Bool" />
+        <property category="TRX" defaultValue="TEN.Color(0, 0, 0)" description="Color of the light the crystal casts. Black picks one from the save crystal mode." displayName="Glow Color" internalName="glow_color" type="Color" />
+        <property category="TRX" defaultValue="-1" description="Mesh the crystal is drawn with. -1 picks one from the save crystal mode." displayName="Mesh Index" internalName="mesh_index" minValue="-1" type="Int" />
+        <property category="TRX" defaultValue="500" description="Health restored by a healing crystal." displayName="Heal Amount" internalName="heal_amount" minValue="0" type="Int" />
+    </moveable>
+    <moveable id="213-220">
+        <property category="TRX" defaultValue="true" description="Whether or not Lara can collide with the slot after using it." displayName="Collidable When Done" internalName="collidable_when_done" type="Bool" />
     </moveable>
     <moveable id="287">
         <property category="TRX" defaultValue="800" description="Maximum hit points." displayName="Max Hit Points" internalName="max_hit_points" minValue="0" type="Int" />
@@ -290,13 +311,13 @@
         <property category="TRX" defaultValue="2" description="Interval between flame bursts, in seconds." displayName="Interval" internalName="interval" minValue="0" type="Float" />
     </moveable>
     <moveable id="338">
-        <property category="TRX" defaultValue="TEN.Vec3(1, 1, 1)" description="Swim range, in quarter tiles." displayName="Range" internalName="range" type="Vec3" />
-        <property category="TRX" defaultValue="False" description="Whether the shoal uses the surrounding room lighting." displayName="Use Room Lighting" internalName="use_room_lighting" type="Bool" />
+        <property category="TRX" defaultValue="TEN.Vec3(1, 1, 1)" description="Swim range, in quarter tiles. Value range: minimum 1 on each axis." displayName="Range" internalName="range" type="Vec3" />
+        <property category="TRX" defaultValue="false" description="Whether the shoal uses the surrounding room lighting." displayName="Use Room Lighting" internalName="use_room_lighting" type="Bool" />
     </moveable>
     <moveable id="339">
         <property category="TRX" defaultValue="0" description="Texture offset in `O_TROPICAL_FISH_GFX`." displayName="Sprite Offset" internalName="sprite_offset" minValue="0" type="Int" />
-        <property category="TRX" defaultValue="TEN.Vec3(1, 1, 1)" description="Swim range, in quarter tiles." displayName="Range" internalName="range" type="Vec3" />
-        <property category="TRX" defaultValue="False" description="Whether the shoal uses the surrounding room lighting." displayName="Use Room Lighting" internalName="use_room_lighting" type="Bool" />
+        <property category="TRX" defaultValue="TEN.Vec3(1, 1, 1)" description="Swim range, in quarter tiles. Value range: minimum 1 on each axis." displayName="Range" internalName="range" type="Vec3" />
+        <property category="TRX" defaultValue="false" description="Whether the shoal uses the surrounding room lighting." displayName="Use Room Lighting" internalName="use_room_lighting" type="Bool" />
     </moveable>
     <moveable id="349-354">
         <property category="TRX" defaultValue="true" description="Whether or not Lara can collide with the animating." displayName="Collidable" internalName="collidable" type="Bool" />

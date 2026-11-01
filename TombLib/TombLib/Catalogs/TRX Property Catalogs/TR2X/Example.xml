@@ -37,6 +37,7 @@
     <!--placeholder for O_BACON_LARA-->
     <moveable id="-1">
         <property category="TRX" defaultValue="1000" description="Maximum hit points." displayName="Max Hit Points" internalName="max_hit_points" minValue="0" type="Int" />
+        <property category="TRX" defaultValue="-1" description="Room whose center Bacon Lara mirrors Lara's movement about. -1 uses the room she is placed in." displayName="Anchor Room" internalName="anchor_room" minValue="-1" type="Int" />
     </moveable>
     <!--placeholder for O_BALDY-->
     <moveable id="-1">
@@ -50,7 +51,17 @@
     </moveable>
     <!--placeholder for O_BINOCULARS_ITEM..O_WATERSKIN_2_EMPTY-->
     <moveable id="-1">
-        <property category="TRX" defaultValue="Normal" description="Pickup animation mode." displayName="Pickup Mode" entries="Normal, Low Pedestal, High Pedestal" internalName="pickup_mode" type="Enum" />
+        <property category="TRX" defaultValue="Normal" description="Pickup animation mode." displayName="Pickup Mode" entries="Normal, Low Pedestal, High Pedestal, Hidden Reach-in, Crowbar, Hidden Sarcophagus, Scion Pedestal" internalName="pickup_mode" type="Enum" />
+        <property category="TRX" defaultValue="true" description="Show a twinkle effect above the item; applies only to normal and pedestal pickup modes." displayName="Show Pickup Aid" internalName="show_pickup_aid" type="Bool" />
+        <property category="TRX" defaultValue="true" description="Move the item to the middle of its sector where a carrier drops it." displayName="Snap To Sector" internalName="snap_to_sector" type="Bool" />
+        <property category="TRX" defaultValue="false" description="Simulate the item again once it becomes visible, so that it goes on rotating, glowing and showing its twinkle after a carrier drops it or a trigger brings it back." displayName="Keep Simulated" internalName="keep_simulated" type="Bool" />
+        <property category="TRX" defaultValue="0" description="How much to rotate the item by each frame while it's active, in engine angle units." displayName="Rotation" internalName="rotation" maxValue="16384" minValue="-16384" type="Int" />
+        <property category="TRX" defaultValue="TEN.Color(0, 0, 0)" description="The color of the item's glow while it's active. Black infers no glow." displayName="Glow Color" internalName="glow_color" type="Color" />
+    </moveable>
+    <!--placeholder for O_BOAR-->
+    <moveable id="-1">
+        <property category="TRX" defaultValue="40" description="Maximum hit points." displayName="Max Hit Points" internalName="max_hit_points" minValue="0" type="Int" />
+        <property category="TRX" defaultValue="30" description="Damage dealt by the boar's attack." displayName="Damage" internalName="damage" minValue="0" type="Int" />
     </moveable>
     <!--placeholder for O_CEILING_TRAPDOOR_1..O_FLOOR_TRAPDOOR_2-->
     <moveable id="-1">
@@ -111,7 +122,7 @@
         <property category="TRX" defaultValue="50" description="Damage dealt on hit." displayName="Damage" internalName="damage" minValue="0" type="Int" />
         <property category="TRX" defaultValue="false" description="Apply poison buildup in addition to hit damage." displayName="Poison" internalName="poison" type="Bool" />
     </moveable>
-    <!--placeholder for O_DINO_WARRIOR-->
+    <!--placeholder for O_DINO_MUTANT-->
     <moveable id="-1">
         <property category="TRX" defaultValue="100" description="Maximum hit points." displayName="Max Hit Points" internalName="max_hit_points" minValue="0" type="Int" />
         <property category="TRX" defaultValue="1" description="Damage dealt by body contact." displayName="Touch Damage" internalName="touch_damage" minValue="0" type="Int" />
@@ -122,7 +133,7 @@
     <moveable id="-1">
         <property category="TRX" defaultValue="300" description="Damage dealt while Lara is touching the falling ceiling." displayName="Damage" internalName="damage" minValue="0" type="Int" />
     </moveable>
-    <!--placeholder for O_FISH-->
+    <!--placeholder for O_FISH_MUTANT-->
     <moveable id="-1">
         <property category="TRX" defaultValue="12" description="Maximum hit points." displayName="Max Hit Points" internalName="max_hit_points" minValue="0" type="Int" />
         <property category="TRX" defaultValue="100" description="Damage dealt by the barracuda bite." displayName="Damage" internalName="damage" minValue="0" type="Int" />
@@ -225,10 +236,10 @@
         <property category="TRX" defaultValue="70" description="Maximum hit points." displayName="Max Hit Points" internalName="max_hit_points" minValue="0" type="Int" />
         <property category="TRX" defaultValue="50" description="Damage dealt by shots." displayName="Damage" internalName="damage" minValue="0" type="Int" />
     </moveable>
-    <!--placeholder for O_PIRAHNAS-->
+    <!--placeholder for O_PIRANHAS-->
     <moveable id="-1">
-        <property category="TRX" defaultValue="TEN.Vec3(1, 1, 1)" description="Swim range, in quarter tiles." displayName="Range" internalName="range" type="Vec3" />
-        <property category="TRX" defaultValue="True" description="Whether the shoal uses the surrounding room lighting." displayName="Use Room Lighting" internalName="use_room_lighting" type="Bool" />
+        <property category="TRX" defaultValue="TEN.Vec3(1, 1, 1)" description="Swim range, in quarter tiles. Value range: minimum 1 on each axis." displayName="Range" internalName="range" type="Vec3" />
+        <property category="TRX" defaultValue="true" description="Whether the shoal uses the surrounding room lighting." displayName="Use Room Lighting" internalName="use_room_lighting" type="Bool" />
     </moveable>
     <!--placeholder for O_POISON_DART-->
     <moveable id="-1">
@@ -237,7 +248,7 @@
     </moveable>
     <!--placeholder for O_PORTACABIN-->
     <moveable id="-1">
-        <property category="TRX" defaultValue="3" description="The flip map slot to alter once the cabin has landed. -1 = no flipmap is performed." displayName="Flip Slot" internalName="flip_slot" maxValue="10" minValue="-1" type="Int" />
+        <property category="TRX" defaultValue="3" description="The flip map slot to alter once the cabin has landed. -1 = no flipmap is performed." displayName="Flip Slot" internalName="flip_slot" maxValue="9" minValue="-1" type="Int" />
     </moveable>
     <!--placeholder for O_PRISONER-->
     <moveable id="-1">
@@ -257,6 +268,10 @@
         <property category="TRX" defaultValue="20" description="Maximum hit points." displayName="Max Hit Points" internalName="max_hit_points" minValue="0" type="Int" />
         <property category="TRX" defaultValue="80" description="Damage dealt by punches 1 and 2." displayName="Hit Damage" internalName="hit_damage" minValue="0" type="Int" />
         <property category="TRX" defaultValue="100" description="Damage dealt by punch 3." displayName="Swipe Damage" internalName="swipe_damage" minValue="0" type="Int" />
+    </moveable>
+    <!--placeholder for O_PUZZLE_DONE_5..O_PUZZLE_HOLE_12-->
+    <moveable id="-1">
+        <property category="TRX" defaultValue="true" description="Whether or not Lara can collide with the slot after using it." displayName="Collidable When Done" internalName="collidable_when_done" type="Bool" />
     </moveable>
     <!--placeholder for O_QUAD_BIKE-->
     <moveable id="-1">
@@ -310,6 +325,12 @@
     <moveable id="-1">
         <property category="TRX" defaultValue="36" description="Maximum hit points." displayName="Max Hit Points" internalName="max_hit_points" minValue="0" type="Int" />
     </moveable>
+    <!--placeholder for O_SCALED_SPIKES-->
+    <moveable id="-1">
+        <property category="TRX" defaultValue="8" description="Damage dealt when Lara hits the spikes without dying instantly." displayName="Damage" internalName="damage" minValue="0" type="Int" />
+        <property category="TRX" defaultValue="4" description="The orientation configuration of the spikes." displayName="Orientation" internalName="orientation" maxValue="15" minValue="0" type="Int" />
+        <property category="TRX" defaultValue="Looping" description="The behavior of the spikes when triggered." displayName="Scaled Spikes Mode" entries="Looping, Permanently Extended, One-shot" internalName="scaled_spikes_mode" type="Enum" />
+    </moveable>
     <!--placeholder for O_SCION_ITEM_3-->
     <moveable id="-1">
         <property category="TRX" defaultValue="5" description="Maximum hit points." displayName="Max Hit Points" internalName="max_hit_points" minValue="0" type="Int" />
@@ -332,6 +353,7 @@
     <!--placeholder for O_SENTRY_GUN-->
     <moveable id="-1">
         <property category="TRX" defaultValue="10" description="Damage dealt when the sentry gun hits Lara." displayName="Damage" internalName="damage" minValue="0" type="Int" />
+        <property category="TRX" defaultValue="true" description="Require an alert, such as a security laser Lara has crossed, before the sentry gun opens fire. With this off, it fires for as long as its own trigger is active." displayName="Requires Alert" internalName="requires_alert" type="Bool" />
         <property category="TRX" defaultValue="100" description="Maximum hit points." displayName="Max Hit Points" internalName="max_hit_points" minValue="0" type="Int" />
     </moveable>
     <!--placeholder for O_SHIVA-->
@@ -340,7 +362,7 @@
         <property category="TRX" defaultValue="150" description="Damage dealt by the pincer attack." displayName="Pincer Damage" internalName="pincer_damage" minValue="0" type="Int" />
         <property category="TRX" defaultValue="180" description="Damage dealt by the chopper attack." displayName="Chopper Damage" internalName="chopper_damage" minValue="0" type="Int" />
     </moveable>
-    <!--placeholder for O_SKATEKID-->
+    <!--placeholder for O_SKATE_KID-->
     <moveable id="-1">
         <property category="TRX" defaultValue="125" description="Maximum hit points." displayName="Max Hit Points" internalName="max_hit_points" minValue="0" type="Int" />
         <property category="TRX" defaultValue="50" description="Damage dealt by shots while stopped." displayName="Stop Shot Damage" internalName="stop_shot_damage" minValue="0" type="Int" />
@@ -374,6 +396,15 @@
     <!--placeholder for O_SWINGING_AXE-->
     <moveable id="-1">
         <property category="TRX" defaultValue="100" description="Damage dealt while Lara is touching the swinging axe." displayName="Damage" internalName="damage" minValue="0" type="Int" />
+    </moveable>
+    <!--placeholder for O_SWITCH_TYPE_GENERIC_1..O_SWITCH_TYPE_GENERIC_6-->
+    <moveable id="-1">
+        <property category="TRX" defaultValue="Normal" description="Switch animation mode." displayName="Switch Mode" entries="Normal, Hidden Reach, Hidden Pickup, Single-use Shove" internalName="switch_mode" type="Enum" />
+    </moveable>
+    <!--placeholder for O_SWITCH_TYPE_PULLEY-->
+    <moveable id="-1">
+        <property category="TRX" defaultValue="1" description="The number of pulls required before activating the trigger under the pulley." displayName="Required Pulls" internalName="required_pulls" minValue="1" type="Int" />
+        <property category="TRX" defaultValue="false" description="Whether or not the pulley can only be used once." displayName="Is Single Use" internalName="is_single_use" type="Bool" />
     </moveable>
     <!--placeholder for O_TONY-->
     <moveable id="-1">
@@ -419,8 +450,13 @@
     <!--placeholder for O_TROPICAL_FISH-->
     <moveable id="-1">
         <property category="TRX" defaultValue="0" description="Texture offset in `O_TROPICAL_FISH_GFX`." displayName="Sprite Offset" internalName="sprite_offset" minValue="0" type="Int" />
-        <property category="TRX" defaultValue="TEN.Vec3(1, 1, 1)" description="Swim range, in quarter tiles." displayName="Range" internalName="range" type="Vec3" />
-        <property category="TRX" defaultValue="True" description="Whether the shoal uses the surrounding room lighting." displayName="Use Room Lighting" internalName="use_room_lighting" type="Bool" />
+        <property category="TRX" defaultValue="TEN.Vec3(1, 1, 1)" description="Swim range, in quarter tiles. Value range: minimum 1 on each axis." displayName="Range" internalName="range" type="Vec3" />
+        <property category="TRX" defaultValue="true" description="Whether the shoal uses the surrounding room lighting." displayName="Use Room Lighting" internalName="use_room_lighting" type="Bool" />
+    </moveable>
+    <!--placeholder for O_VON_CROY-->
+    <moveable id="-1">
+        <property category="TRX" defaultValue="15" description="Maximum hit points." displayName="Max Hit Points" internalName="max_hit_points" minValue="0" type="Int" />
+        <property category="TRX" defaultValue="false" description="Whether he waits for Lara and lectures her at the markers he walks to, rather than running them on his own." displayName="Guides Lara" internalName="guides_lara" type="Bool" />
     </moveable>
     <!--placeholder for O_VULTURE-->
     <moveable id="-1">
@@ -431,6 +467,11 @@
     <moveable id="-1">
         <property category="TRX" defaultValue="24" description="Maximum hit points." displayName="Max Hit Points" internalName="max_hit_points" minValue="0" type="Int" />
         <property category="TRX" defaultValue="50" description="Damage dealt by the sting attack." displayName="Damage" internalName="damage" minValue="0" type="Int" />
+    </moveable>
+    <!--placeholder for O_WATERFALL_1..O_WATERFALL_3-->
+    <moveable id="-1">
+        <property category="TRX" defaultValue="None" description="The sound the waterfall loops while it runs." displayName="Loop Sound" entries="None, Sand, Water" internalName="loop_sound" type="Enum" />
+        <property category="TRX" defaultValue="false" description="Hide the waterfall while its trigger is inactive." displayName="Hide When Inactive" internalName="hide_when_inactive" type="Bool" />
     </moveable>
     <!--placeholder for O_WILLARD-->
     <moveable id="-1">

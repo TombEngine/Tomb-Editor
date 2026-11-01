@@ -175,7 +175,7 @@ LevelFuncs.Engine.Node.SetCollisionModeForSpecifiedStatics = function(slotId, na
     end
 end
 
--- !Name "Change position of specified statics"
+-- !Name "Change position of specified static meshes"
 -- !Section "Batch actions"
 -- !Description "Change position of statics matching the criteria."
 -- !Arguments "NewLine, Numerical, 34, [ 0 | 1000 | 0 ], Static mesh ID to use" "String, 66, Word to search in a static name"

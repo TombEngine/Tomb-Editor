@@ -510,7 +510,7 @@ namespace WadTool
                     cbRootPosX.Checked = node.WadAnimation.RootMotion.TranslationX;
                     cbRootPosY.Checked = node.WadAnimation.RootMotion.TranslationY;
                     cbRootPosZ.Checked = node.WadAnimation.RootMotion.TranslationZ;
-                    cbRootRotationX.Checked = node.WadAnimation.RootMotion.RotationY;
+                    cbRootRotationX.Checked = node.WadAnimation.RootMotion.RotationX;
                     cbRootRotationY.Checked = node.WadAnimation.RootMotion.RotationY;
                     cbRootRotationZ.Checked = node.WadAnimation.RootMotion.RotationZ;
 
@@ -2445,15 +2445,26 @@ namespace WadTool
                         case 23: // ROLL_BACK
                         case 25: // JUMP_BACK
                         case 32: // SLIDE_BACK
+                        case 47: // ONWATER_BACK
                             startVel.Z = -startVel.Z;
                             endVel.Z = -endVel.Z;
+                            break;
+
+                        case 86: // CRAWL_BACK
+                        case 163: // MONKEY_BACK
+                            if (_editor.Wad.GameVersion == TRVersion.Game.TombEngine)
+                            {
+                                startVel.Z = -startVel.Z;
+                                endVel.Z = -endVel.Z;
+                            }
                             break;
 
                         case 21: // WALK_RIGHT
                         case 26: // JUMP_RIGHT
                         case 31: // SHIMMY_RIGHT
+                        case 49: // ONWATER_RIGHT
                         case 60: // LADDER_RIGHT
-                        case 78: // MONKEY_LEFT
+                        case 78: // MONKEY_RIGHT
                             startVel = new Vector3(startVel.Z, 0, startVel.X);
                             endVel = new Vector3(endVel.Z, 0, endVel.X);
                             break;
@@ -2461,6 +2472,7 @@ namespace WadTool
                         case 22: // WALK_LEFT
                         case 27: // JUMP_LEFT
                         case 30: // SHIMMY_LEFT
+                        case 48: // ONWATER_LEFT
                         case 58: // LADDER_LEFT
                         case 77: // MONKEY_LEFT
                             startVel = new Vector3(-startVel.Z, 0, -startVel.X);
@@ -2469,7 +2481,7 @@ namespace WadTool
                     }
                 }
 
-                var shiftX = Vector3.Lerp(startVel, endVel, (float)_frameCount / (float)realFrameNumber);
+                var shiftX = Vector3.Lerp(startVel, endVel, (float)_frameCount / (float)realRangeNumber);
                 panelRendering.GridPosition += shiftX;
 
                 if (_editor.Tool.Configuration.AnimationEditor_RecoverGridAfterPositionChange)

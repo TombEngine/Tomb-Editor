@@ -310,15 +310,8 @@ namespace TombLib.Utils
                         {
                             long elapsedTicks = timestamp - Interlocked.Read(ref objToReload.Value.ChangeTimestamp);
                             TimeSpan elapsedTime = new TimeSpan(unchecked((long)(elapsedTicks * _toDataTimeTicks)));
-                            if (elapsedTime.Milliseconds < _minWaitTimeInMilliseconds)
+                            if (elapsedTime.TotalMilliseconds < _minWaitTimeInMilliseconds)
                                 continue; // Let's skip the file for now, most likely the file will be locked anyway.
-                            int attemptIndex = Interlocked.Increment(ref objToReload.Value.ReloadAttemptCount);
-                            if (attemptIndex > _minAttempts || elapsedTime.Milliseconds >= _maxWaitTimeInMilliseconds)
-                            {
-                                // We have tried it enough times, let's give up.
-                                objsDone.Add(objToReload);
-                                continue;
-                            }
 
                             // Take the lock
                             lock (_reloadLock)
@@ -333,8 +326,24 @@ namespace TombLib.Utils
                                     objsDone.Clear();
                                     break;
                                 }
+
+                                // Don't waste reload attempts while the file is still being written to.
+                                // Keep checking until the file is released, but don't wait longer than the maximum wait time.
                                 if (IsFileLocked(objToReload.Value._lastChangedFile))
+                                {
+                                    if (elapsedTime.TotalMilliseconds < _maxWaitTimeInMilliseconds)
+                                        continue;
+                                    objsDone.Add(objToReload);
                                     continue;
+                                }
+
+                                int attemptIndex = Interlocked.Increment(ref objToReload.Value.ReloadAttemptCount);
+                                if (attemptIndex > _minAttempts || elapsedTime.TotalMilliseconds >= _maxWaitTimeInMilliseconds)
+                                {
+                                    // We have tried it enough times, let's give up.
+                                    objsDone.Add(objToReload);
+                                    continue;
+                                }
 
                                 // Attempt to actually reload (Likely to fail because files may still be locked!)
                                 if(objToReload.Key != null)

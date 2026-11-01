@@ -1,0 +1,109 @@
+name: Post build links to pull request
+
+# Runs separately from CI on purpose. A workflow triggered by "pull_request" gets
+# a read-only token when the pull request comes from a fork, so it cannot comment;
+# "workflow_run" executes in the context of this repository and can.
+#
+# Artifact download URLs require a logged in GitHub account, so the links point at
+# nightly.link, which proxies them for anonymous visitors.
+on:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: read
+  pull-requests: write
+
+jobs:
+  comment:
+    if: github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const headSha = context.payload.workflow_run.head_sha;
+            const { owner, repo } = context.repo;
+
+            // The workflow_run payload does not carry the pull request number, so
+            // it has to be recovered from the commit the run was built from.
+            let pr;
+            for await (const { data } of github.paginate.iterator(github.rest.pulls.list, { owner, repo, state: 'open' }))
+            {
+                pr = data.find(p => p.head.sha === headSha);
+                if (pr) break;
+            }
+            if (!pr)
+            {
+                core.warning(`No open pull request found for ${headSha}; nothing to comment on.`);
+                return;
+            }
+
+            const { data: { artifacts } } = await github.rest.actions.listWorkflowRunArtifacts({
+                owner, repo, run_id: context.payload.workflow_run.id,
+            });
+
+            // Test results are for maintainers reading the run, not for testers.
+            const builds = artifacts.filter(a => a.name !== 'test-results');
+            if (!builds.length)
+            {
+                core.warning('Run produced no build artifacts; nothing to comment on.');
+                return;
+            }
+
+            // Reported by the API rather than computed, so the comment cannot
+            // disagree with the retention actually applied to the artifact.
+            const expiry = a => new Date(a.expires_at).toISOString().slice(0, 10);
+            const size = a => `${Math.round(a.size_in_bytes / 1048576)} MB`;
+
+            // Two links per build, because neither is sufficient alone: GitHub
+            // refuses artifact downloads to anonymous visitors, and nightly.link,
+            // which proxies them, is a single third party that does go down.
+            const suite = context.payload.workflow_run.check_suite_id;
+            const direct = a => `https://github.com/${owner}/${repo}/suites/${suite}/artifacts/${a.id}`;
+            const mirror = a => `https://nightly.link/${owner}/${repo}/suites/${suite}/artifacts/${a.id}`;
+
+            const links = builds
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map(a => `* **${a.name}.zip** - ${size(a)}, expires ${expiry(a)}: [download](${direct(a)}) (needs a GitHub account) or [mirror](${mirror(a)}) (no account needed)`)
+                .join('\n');
+
+            // Paragraphs are single lines on purpose: GitHub renders a lone
+            // newline as a hard break, so wrapped prose comes out ragged.
+            const body = [
+                `Test build for ${headSha.slice(0, 7)}:`,
+                '',
+                links,
+                '',
+                'This is an overlay, not a full install: TombIDE project templates and native libraries for other platforms are left out to keep the download small. Install a [stable release](https://github.com/TombEngine/TombEditorReleases/releases) first, then unpack this over it, replacing existing files.',
+                '',
+                'The binaries are unsigned, so Windows SmartScreen will warn on first run.',
+            ].join('\n');
+
+            // A single comment is edited in place, so that a long lived pull
+            // request does not accumulate one per push.
+            // Every page is walked: missing the marker on a talkative pull
+            // request would post a fresh comment on each push instead.
+            const marker = '<!-- bot: build-links -->';
+            const comments = await github.paginate(github.rest.issues.listComments, {
+                owner, repo, issue_number: pr.number,
+            });
+            const existing = comments.filter(c => c.body.includes(marker)).pop();
+
+            if (existing)
+            {
+                core.info(`Updating comment ${existing.id} on #${pr.number}`);
+                await github.rest.issues.updateComment({
+                    owner, repo, comment_id: existing.id, body: `${marker}\n${body}`,
+                });
+            }
+            else
+            {
+                core.info(`Creating a comment on #${pr.number}`);
+                await github.rest.issues.createComment({
+                    owner, repo, issue_number: pr.number, body: `${marker}\n${body}`,
+                });
+            }

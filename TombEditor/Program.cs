@@ -104,6 +104,10 @@ namespace TombEditor
                         Environment.Exit(1);
                     }
 
+                    // Create the rendering device up front, as imported geometry cannot be loaded without it.
+                    // Editor does not create it on construction, and batch compile mode never creates the main form that would request it.
+                    _ = TombLib.Graphics.DeviceManager.DefaultDeviceManager;
+
                     // Run
                     Editor editor = new Editor(SynchronizationContext.Current, configuration);
 

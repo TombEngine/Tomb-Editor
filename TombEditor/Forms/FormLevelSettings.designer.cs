@@ -174,6 +174,7 @@
             this.comboTrxTextureDepth = new DarkUI.Controls.DarkComboBox();
             this.lblTrxTextureDepth = new DarkUI.Controls.DarkLabel();
             this.cbTrxConvertFlybysToCinematicFrames = new DarkUI.Controls.DarkCheckBox();
+            this.cbTrxUseAlternateGroups = new DarkUI.Controls.DarkCheckBox();
             this.panel6 = new System.Windows.Forms.Panel();
             this.levelFilePathBut = new DarkUI.Controls.DarkButton();
             this.darkLabel6 = new DarkUI.Controls.DarkLabel();
@@ -2023,6 +2024,7 @@
             this.tabTrx.Controls.Add(this.comboTrxTextureDepth);
             this.tabTrx.Controls.Add(this.lblTrxTextureDepth);
             this.tabTrx.Controls.Add(this.cbTrxConvertFlybysToCinematicFrames);
+            this.tabTrx.Controls.Add(this.cbTrxUseAlternateGroups);
             this.tabTrx.Location = new System.Drawing.Point(4, 22);
             this.tabTrx.Name = "tabTrx";
             this.tabTrx.Size = new System.Drawing.Size(778, 505);
@@ -2058,6 +2060,16 @@
             this.lblTrxTextureDepth.Size = new System.Drawing.Size(123, 17);
             this.lblTrxTextureDepth.TabIndex = 3;
             this.lblTrxTextureDepth.Text = "Texture depth:";
+            // 
+            // cbTrxUseAlternateGroups
+            // 
+            this.cbTrxUseAlternateGroups.AutoSize = true;
+            this.cbTrxUseAlternateGroups.Location = new System.Drawing.Point(3, 63);
+            this.cbTrxUseAlternateGroups.Name = "cbTrxUseAlternateGroups";
+            this.cbTrxUseAlternateGroups.Size = new System.Drawing.Size(120, 17);
+            this.cbTrxUseAlternateGroups.Tag = "";
+            this.cbTrxUseAlternateGroups.Text = "Enable multiple flipmaps (TR4+ style)";
+            this.cbTrxUseAlternateGroups.CheckedChanged += new System.EventHandler(this.cbTrxUseAlternateGroups_CheckedChanged);
             // 
             // panel6
             // 
@@ -2445,6 +2457,7 @@
         private DarkUI.Controls.DarkComboBox comboTrxTextureDepth;
         private DarkUI.Controls.DarkLabel lblTrxTextureDepth;
         private DarkUI.Controls.DarkCheckBox cbTrxConvertFlybysToCinematicFrames;
+        private DarkUI.Controls.DarkCheckBox cbTrxUseAlternateGroups;
         private TombLib.Controls.DarkDataGridViewControls textureFileDataGridViewControls;
         private System.Windows.Forms.DataGridViewTextBoxColumn objectFileDataGridViewPathColumn;
         private DarkUI.Controls.DarkDataGridViewButtonColumn objectFileDataGridViewSearchColumn;
