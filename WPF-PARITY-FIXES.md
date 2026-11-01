@@ -192,6 +192,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | State changes: grid rows now 24 px (they were about twice as tall as WinForms so only half the rows showed) and the first row is selected on open like WinForms. Anim commands compared on screen: same layout and rows; WinForms sound names differ only because the develop worktree has newer sound catalogs; the sound combo search is built into the WPF combo instead of a separate lens | Verified side by side | (this commit) |
 
+| Level settings > Imported Geometry: swap columns 60 px, UV/invert columns 54-62 px (headers X<->Y, UV Map, UV: -V, Inv. F. were cut to "X<" and "UV" at 34 px). Static Meshes tab compared: same columns and buttons as WinForms | Verified on screen (WPF) | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
