@@ -109,6 +109,8 @@ public partial class StateChangesEditorWindowViewModel : ObservableObject, IModa
             CreatedNew = true;
         }
 
+        SelectedRow = Rows.FirstOrDefault();
+
         _initializing = false;
     }
 

@@ -131,6 +131,7 @@
 					CanUserResizeRows="False"
 					CanUserSortColumns="False"
 					HeadersVisibility="Column"
+					RowHeight="24"
 					ItemsSource="{Binding Rows}"
 					SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
 					SelectionMode="Extended"
