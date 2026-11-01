@@ -243,7 +243,9 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 | WadTool | State changes | WPF | WinForms capture not obtained |
 | WadTool | Animation fixer, Replace anim commands, Lua properties, New wad, Options, Select slot, About | BOTH | compared on screen |
 | WadTool | Anim commands, State changes | BOTH | compared on screen |
-| WadTool | Blend curve, Skeleton editor, Sprite sequence | CODE | strings added, behaviour audited; not seen on screen |
+| WadTool | Skeleton editor | BOTH | all controls present; layout mirrored (mesh tree on the left in WPF, on the right in WinForms; skin buttons under the viewport) - left as is |
+| WadTool | Sprite sequence | WPF | complete; WinForms not compared |
+| WadTool | Blend curve | CODE | double click on the curve did not open it with the test coordinates in either build |
 | SoundTool | Main window, Options | BOTH | early pass, before the behaviour fixes |
 ## Open items
 | Event set editor: closing with the window X or Escape restores the backup (only OK keeps changes), Unassign clears the volume's event set, generic mode starts with no set selected and hides the volume options | The X button committed; Unassign did nothing; generic mode preselected a set | (this commit) |
