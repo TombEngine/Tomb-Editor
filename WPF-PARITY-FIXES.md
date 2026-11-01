@@ -235,7 +235,7 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 | Tomb Editor | Camera, Sink, Portal, Memo, Transform, Operation, Import PRJ, Imported geometry dialog, Sound source, Flyby camera, Toolbar layout, Quick item group, Choose room, Select room by tags, Sprite | CODE | layout by designer comparison or agents, behaviour by audit; not seen |
 | Tomb Editor | Texture preview, Wad preview, Material editor, Geometry IO settings, About, colour picker, input boxes | NONE | |
 | WadTool | Main window | BOTH | |
-| WadTool | Animation editor | BOTH | menus, list filter, timeline menu, keys, camera reset, close prompt |
+| WadTool | Animation editor (verified in WPF: field undo/redo, close prompt after edit; WinForms undo of Delete animation not captured) | BOTH | menus, list filter, timeline menu, keys, camera reset, close prompt |
 | WadTool | Mesh editor | BOTH | opened from the Static editor |
 | WadTool | Static editor | BOTH | |
 | WadTool | State changes | WPF | WinForms capture not obtained |
