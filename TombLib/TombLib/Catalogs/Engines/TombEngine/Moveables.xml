@@ -398,6 +398,7 @@
 	<moveable id="477" name="FALLING_SANDBAG" />
 	<moveable id="478" name="WRECKINGBALL_ANCHOR" />
 	<moveable id="479" name="WRECKINGBALL_CHAIN" />
+	<moveable id="480" name="OBELISK_CAGE" />
     <moveable id="500" name="PUZZLE_ITEM1" />
     <moveable id="501" name="PUZZLE_ITEM2" />
     <moveable id="502" name="PUZZLE_ITEM3" />
