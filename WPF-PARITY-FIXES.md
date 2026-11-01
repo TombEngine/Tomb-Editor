@@ -237,7 +237,9 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 | Tomb Editor | About (shared window, also used by WadTool and SoundTool) | BOTH | version and credits fixed |
 | Tomb Editor | Search and replace objects | BOTH | layout and enable rule identical |
 | Tomb Editor | Camera, Sink, Portal, Memo, Transform, Operation, Import PRJ, Imported geometry dialog, Sound source, Flyby camera, Toolbar layout, Quick item group, Choose room, Select room by tags, Sprite | CODE | layout by designer comparison or agents, behaviour by audit; not seen |
-| Tomb Editor | Texture preview, Wad preview, Material editor, Geometry IO settings, About, colour picker, input boxes | NONE | |
+| Tomb Editor | Level settings, Imported Geometry and Static Meshes tabs | WPF | columns compared with the WinForms designer values (grid empty in the test level) |
+| Tomb Editor | Colour picker (Select color, from Set room static meshes color) | WPF | WinForms did not open the same dialog through the menu in the test |
+| Tomb Editor | Texture preview, Wad preview, Material editor, Geometry IO settings, input boxes | NONE | |
 | WadTool | Main window | BOTH | |
 | WadTool | Animation editor (verified in WPF: field undo/redo, close prompt after edit; WinForms undo of Delete animation not captured) | BOTH | menus, list filter, timeline menu, keys, camera reset, close prompt |
 | WadTool | Mesh editor | BOTH | opened from the Static editor |
