@@ -3,9 +3,6 @@ Version 2.0.2
 
 Tomb Editor:
  * Fixed slide direction indication for TEN.
- 
-WadTool:
- * Added `OBELISK_CAGE` (#480) for TEN targets.
 
 Version 2.0.1
 =============
