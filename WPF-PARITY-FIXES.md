@@ -236,7 +236,9 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 | Tomb Editor | Static object dialog (colour) | WPF | the WinForms equivalent could not be opened reliably |
 | Tomb Editor | About (shared window, also used by WadTool and SoundTool) | BOTH | version and credits fixed |
 | Tomb Editor | Search and replace objects | BOTH | layout and enable rule identical |
-| Tomb Editor | Camera, Sink, Portal, Memo, Transform, Operation, Import PRJ, Imported geometry dialog, Sound source, Flyby camera, Toolbar layout, Quick item group, Choose room, Select room by tags, Sprite | CODE | layout by designer comparison or agents, behaviour by audit; not seen |
+| Tomb Editor | Camera, Sink, Memo, Operation, Import PRJ, Imported geometry dialog, Sound source, Flyby camera, Toolbar layout, Quick item group, Choose room, Select room by tags, Sprite | CODE | layout by designer comparison or agents, behaviour by audit; not seen |
+| Tomb Editor | Edit portal | BOTH | same fields, same disabled mirror options for effect None; opened through Search then Edit object properties |
+| Tomb Editor | Transform Edit (Ctrl+T) | WPF | seen on screen for Lara (only Y rotation enabled, scale disabled at 0.00); WinForms did not open with Ctrl+T in the test, FormTransform designer and enable rules match the WPF view model |
 | Tomb Editor | Level settings, Imported Geometry and Static Meshes tabs | WPF | columns compared with the WinForms designer values (grid empty in the test level) |
 | Tomb Editor | Colour picker (Select color, from Set room static meshes color) | WPF | WinForms did not open the same dialog through the menu in the test |
 | Tomb Editor | Texture preview, Wad preview, Material editor, Geometry IO settings, input boxes | NONE | |
