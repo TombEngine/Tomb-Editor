@@ -1119,7 +1119,7 @@
         "Dither16BitTexturesTooltip": "Apply dithering and premultiply alpha channel to brightness for 16-bit textures.",
         "CompressTextures": "Compress textures",
         "CompressTexturesTooltip": "Use DirectX texture compression for all level textures.\n Use with caution, as it may cause artifacts on legacy small texture fragments.",
-        "RemapAnimatedTextures": "Map animated textures to imported geometry,objects and static meshes",
+        "RemapAnimatedTextures": "Map animated textures to imported geometry, objects and static meshes",
         "RemapAnimatedTexturesTooltip": "Scan all objects for textures which are similar to any animated frame and apply animations to them.",
         "RearrangeVerticalRooms": "Rearrange vertically connected rooms if necessary",
         "RearrangeVerticalRoomsTooltip": "Prioritize vertically connected rooms during compilation.\nAllows to safely make more rooms until overall amount of vertically connected ones won't hit absolute limit.",

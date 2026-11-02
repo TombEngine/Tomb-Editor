@@ -218,6 +218,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Node editor arguments: numbers default to 2 decimals with step 1 (0 decimals and steps 1/5 only with a catalogue range), hours up to 1000000, tooltips with real line breaks, multi-line strings stored on one line, check box shows the description; changing the function resets the arguments; level-script filter keeps the selected function and Delete/Backspace unassigns it | Wrong defaults and a filter that silently emptied the function | e626db7e6, f8779aacc |
 | Verified on screen with the same steps in both builds: global event sets dialog opens (no XAML error), new set + Action + Condition + Action gives the same graph in both; saved level files are identical except the 16 bytes of the node positions (they depend on the size of the drawing area). WinForms still differs in compact argument rows with a search lens and locate buttons, and a function-tree popup on node right-click (WPF keeps its menu and combo) | | |
 
+| Level settings Misc tab: "Map animated textures to imported geometry, objects and static meshes" had no space after the comma | Typo in the text | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
