@@ -143,7 +143,15 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             RefreshFromEvent();
         }
 
-        partial void OnSearchTextChanged(string value) => FilteredFunctions.Refresh();
+        partial void OnSearchTextChanged(string value)
+        {
+            // Filtering the selected function out of the list must not unassign it from the event.
+            _lockEvent = true;
+            FilteredFunctions.Refresh();
+            _lockEvent = false;
+
+            RefreshFromEvent();
+        }
 
         partial void OnNotifyTextChanged(string value) => OnPropertyChanged(nameof(HasNotify));
 
@@ -171,7 +179,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         }
 
         [RelayCommand]
-        private void Unassign()
+        public void Unassign()
         {
             SelectedFunction = null;
             if (_event is not null)

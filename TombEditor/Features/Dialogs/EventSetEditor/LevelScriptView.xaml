@@ -12,6 +12,7 @@
     d:DataContext="{d:DesignInstance Type=local:LevelScriptViewModel}"
     d:DesignHeight="300"
     d:DesignWidth="500"
+    KeyDown="OnKeyDown"
     mc:Ignorable="d">
 
     <UserControl.Resources>
