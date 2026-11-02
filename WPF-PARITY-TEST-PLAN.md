@@ -31,9 +31,9 @@ Legend in the tables: `-` not run, `P` pass, `F` fixed, `D` difference open, `n/
 |----|---------|-----------------------------|----|----|----|----|----|----|----|----|
 | TE-M1 | Menus (File, Edit, View, Rooms, Items, Textures, Transform, Tools, Window, Help) | open each, compare items, order, enabled state with and without selection, shortcuts text | V | - | - | - | n/a | n/a | n/a | n/a |
 | TE-M2 | Toolbar | every button action, toggle state, tooltips, Customize | V | - | - | - | n/a | n/a | - | - |
-| TE-M3 | 3D view navigation | orbit, pan, zoom, fly mode, wheel, keys, camera reset, relocate camera | - | - | - | - | n/a | n/a | n/a | n/a |
-| TE-M4 | 3D view selection and editing | select sectors by click and drag, shift/ctrl combos, paint texture, select/move objects, copy/paste/stamp, delete | - | - | - | - | n/a | - | n/a | - |
-| TE-M5 | 2D map | selection, drag rooms, zoom, pan, room context menu | - | - | - | - | n/a | - | n/a | - |
+| TE-M3 | 3D view navigation | orbit, pan, zoom, fly mode, wheel, keys, camera reset, relocate camera | V | P | P(orbit, wheel, pan) | - | n/a | n/a | n/a | n/a |
+| TE-M4 | 3D view selection and editing | select sectors by click and drag, shift/ctrl combos, paint texture, select/move objects, copy/paste/stamp, delete | - | - | F(right click menu), P(click select) | - | n/a | - | n/a | - |
+| TE-M5 | 2D map | selection, drag rooms, zoom, pan, room context menu | - | - | P(empty area menu) | - | n/a | - | n/a | - |
 | TE-M6 | Sector options panel | every flag/toggle/button applied to a selected area, result in the level | V | - | - | - | n/a | n/a | n/a | - |
 | TE-M7 | Room options panel | room type, flipmap, reverb, flags, ambient colour, effect, add/duplicate/delete room, tags | V | - | - | - | - | - | n/a | - |
 | TE-M8 | Item browser / Imported geometry browser / Content browser | search, categories, drag to 3D view, double click, filter | V | - | - | - | - | n/a | - | - |
@@ -102,4 +102,5 @@ Counted in cells (a row has up to 8 cells): see the tables. Summary line to upda
 
 - Rows fully run (all applicable cells P or F): 0 / 45
 - Rows with the look already compared (V or P in D1): all rows except TE-M3, TE-M4, TE-M5, TE-M16, TE-M17, TE-M15, WT-7, ST-3
-- Differences found by this plan and fixed: 0
+- Differences found by this plan and fixed: 1 (3D view context menu never appeared)
+- Test setup note: both builds must use the same TombEditorConfiguration.xml (the WPF one differed: show all rooms, portals, FOV), baseline saved in the scratchpad as wf-config-baseline.xml; eset-config.ps1 applies it before each run; the user's WPF config is saved as wpf-config-backup.xml and must be put back at the end

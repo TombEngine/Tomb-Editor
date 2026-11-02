@@ -88,31 +88,40 @@ namespace TombEditor.Controls.Panel3D
         private void OnMouseButtonUpRight(Point location)
         {
             var distance = new Vector2(_startMousePosition.X, _startMousePosition.Y) - new Vector2(location.X, location.Y);
-            if (distance.Length() < 4.0f)
-            {
-                if (_currentWpfContextMenu != null)
-                {
-                    _currentWpfContextMenu.IsOpen = false;
-                    _currentWpfContextMenu = null;
-                }
+            if (distance.Length() >= 4.0f)
+                return;
 
-                PickingResult newPicking = DoPicking(GetRay(location.X, location.Y), true);
-                var screen = PointToScreen(location);
-                if (newPicking is PickingResultObject)
-                {
-                    ObjectInstance target = ((PickingResultObject)newPicking).ObjectInstance;
-                    if (target is ISpatial)
-                        _currentWpfContextMenu = MaterialObjectWpfContextMenu.Show(_editor, this, target, screen);
-                }
-                else if (newPicking is PickingResultSector pickedSector)
-                {
-                    if (_editor.SelectedSectors.Valid && _editor.SelectedSectors.Area.Contains(pickedSector.Pos))
-                        _currentWpfContextMenu = SelectedGeometryWpfContextMenu.Show(
-                            _editor, this, pickedSector.Room, _editor.SelectedSectors.Area, pickedSector.Pos, screen);
-                    else
-                        _currentWpfContextMenu = SectorWpfContextMenu.Show(
-                            _editor, this, pickedSector.Room, pickedSector.Pos, screen);
-                }
+            if (_currentWpfContextMenu != null)
+            {
+                _currentWpfContextMenu.IsOpen = false;
+                _currentWpfContextMenu = null;
+            }
+
+            PickingResult newPicking = DoPicking(GetRay(location.X, location.Y), true);
+            var screen = PointToScreen(location);
+
+            // A menu opened while the mouse-up message is still being processed is dismissed
+            // right away by the host window, so it is shown once the message has been handled.
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(
+                new System.Action(() => ShowContextMenu(newPicking, screen)),
+                System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+        }
+
+        private void ShowContextMenu(PickingResult picking, Point screen)
+        {
+            if (picking is PickingResultObject pickedObject)
+            {
+                if (pickedObject.ObjectInstance is ISpatial)
+                    _currentWpfContextMenu = MaterialObjectWpfContextMenu.Show(_editor, this, pickedObject.ObjectInstance, screen);
+            }
+            else if (picking is PickingResultSector pickedSector)
+            {
+                if (_editor.SelectedSectors.Valid && _editor.SelectedSectors.Area.Contains(pickedSector.Pos))
+                    _currentWpfContextMenu = SelectedGeometryWpfContextMenu.Show(
+                        _editor, this, pickedSector.Room, _editor.SelectedSectors.Area, pickedSector.Pos, screen);
+                else
+                    _currentWpfContextMenu = SectorWpfContextMenu.Show(
+                        _editor, this, pickedSector.Room, pickedSector.Pos, screen);
             }
         }
     }

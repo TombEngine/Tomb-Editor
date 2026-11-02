@@ -204,6 +204,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Import PRJ: the Browse button of the sound catalog now has the folder icon like WinForms | Icon missing | (this commit) |
 
+| 3D view right click: the context menu (sector, selected sectors, object) opened and was closed again about 180 ms later by the host window, so it never appeared; it is now shown after the mouse-up message has been handled (Dispatcher at ApplicationIdle). Verified with the same click on both builds: the item list is identical to WinForms and Up, Up, Enter on the menu opens Crop Room. 2D map right click menu checked: opens | Right click on the 3D view did nothing | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
