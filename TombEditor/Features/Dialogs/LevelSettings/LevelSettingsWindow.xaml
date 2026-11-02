@@ -42,6 +42,13 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="CustomResourceBox" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsPreviewValid}" Value="False">
+                    <Setter Property="Background" Value="{StaticResource InvalidBrush}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
         <Style x:Key="GameDirBox" BasedOn="{StaticResource {x:Type TextBox}}" TargetType="TextBox">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding GameDirectoryValid}" Value="False">
@@ -114,6 +121,7 @@
                         <TextBox
                             HorizontalAlignment="Stretch"
                             IsEnabled="{Binding IsCustom}"
+                            Style="{StaticResource CustomResourceBox}"
                             Text="{Binding Path, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             ToolTip="{Binding AbsolutePath}" />
                     </DockPanel>

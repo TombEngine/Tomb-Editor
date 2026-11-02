@@ -220,6 +220,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Level settings Misc tab: "Map animated textures to imported geometry, objects and static meshes" had no space after the comma | Typo in the text | (this commit) |
 
+| Level settings > Sky & Font: the path box of a missing sky, font or TR5 sprites file turns red like in WinForms (it stayed normal while the preview square was red). Editor options (9 pages) and the Level settings tabs Game, Sky & Font, Sound Infos, Sound Sample Paths, Path Placeholders compared side by side: same controls, texts, values and red validation; Sound Infos uses text buttons where WinForms has icons | Path box not marked invalid | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
