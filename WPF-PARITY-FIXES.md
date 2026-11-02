@@ -226,6 +226,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Items panel placeholder text is "Click here to load new WAD file." like WinForms (the WPF text had an extra "a"); New level and its unsaved-changes prompt compared: same text, same buttons, "No" default, same empty 18x18 room | Text differed | (this commit) |
 
+| Keyboard layout: the add (+) and delete (trash) icons in each row were cut off at the bottom (button taller than the 24 px row); buttons are now 20 px with 14 px icons. Verified on screen. Not changed: WinForms selects the first row on open, the WPF list starts with no selection | Icons clipped | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.

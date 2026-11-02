@@ -102,10 +102,14 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button
+                                    Height="20"
+                                    MinHeight="0"
+                                    Padding="0"
+                                    VerticalAlignment="Center"
                                     Command="{Binding DataContext.StartListeningCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                     CommandParameter="{Binding}"
                                     ToolTip="{tombLib:Localize AddCommand}">
-                                    <Image Width="16" Height="16" Source="{tomb:Icon General/plus_math}" />
+                                    <Image Width="14" Height="14" Source="{tomb:Icon General/plus_math}" />
                                 </Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -114,10 +118,14 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <Button
+                                    Height="20"
+                                    MinHeight="0"
+                                    Padding="0"
+                                    VerticalAlignment="Center"
                                     Command="{Binding DataContext.DeleteHotkeysCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                     CommandParameter="{Binding}"
                                     ToolTip="{tombLib:Localize DeleteCommand}">
-                                    <Image Width="16" Height="16" Source="{tomb:Icon General/trash}" />
+                                    <Image Width="14" Height="14" Source="{tomb:Icon General/trash}" />
                                 </Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
