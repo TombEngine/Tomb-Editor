@@ -1,58 +1,113 @@
 #nullable enable
 
+using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using TombLib.WPF;
 using TombLib.WPF.Input;
 
 namespace TombEditor.Features.Dialogs.EventSetEditor
 {
     /// <summary>
-    /// Pure-WPF visual-scripting node canvas: draggable action/condition nodes, Next/Else links rendered
-    /// as lines, create-from-function-list, delete, and port-drag to (re)connect nodes.
+    /// Pure-WPF visual-scripting node canvas: draggable action/condition nodes, Next/Else links drawn as ribbons or
+    /// ropes, create-from-function-list, delete, and grip-drag to (re)connect nodes.
     /// </summary>
     public partial class NodeEditorView : UserControl
     {
-        private NodeViewModel? _pendingFrom;
-        private bool _pendingElse;
-        private Line? _tempLine;
-        private Vector _dragTotal;
+        private const double WheelScrollFactor = 0.04;
+        private const double ContextMenuDragThreshold = 4.0;
+
         private readonly RubberBandSelection _rubberBand;
+        private Vector _dragTotal;
+
+        // Link drag started from a node grip.
+        private TombLib.LevelData.VisualScripting.TriggerNode? _linkNode;
+        private NodeConnection _linkMode;
+        private Point _linkStart;
+        private bool _linkMoved;
+        private Path? _linkVisual;
+
+        // Right-button panning.
+        private bool _panning;
+        private Point _panStart;
+        private Point _panLast;
+        private double _panStartHorizontal;
+        private double _panStartVertical;
+
+        private bool _viewPositionTracked;
 
         public NodeEditorView()
         {
             InitializeComponent();
             _rubberBand = new RubberBandSelection(rootCanvas, selectionRectangle);
             DataContextChanged += OnDataContextChanged;
+            canvasScroll.ScrollChanged += OnScrollChanged;
         }
 
         private NodeEditorViewModel? ViewModel => DataContext as NodeEditorViewModel;
 
         private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
+            _viewPositionTracked = false;
+
             // Scrolling a node into view is the only visual concern the view-model needs from us.
             if (e.OldValue is NodeEditorViewModel oldViewModel)
+            {
                 oldViewModel.BringNodeIntoViewRequested -= ScrollToNode;
+                oldViewModel.ViewportProvider = null;
+            }
+
             if (e.NewValue is NodeEditorViewModel newViewModel)
             {
                 newViewModel.BringNodeIntoViewRequested += ScrollToNode;
+                newViewModel.ViewportProvider = GetViewport;
+                UpdateGridBrush(newViewModel);
 
-                // Start the view over the event's existing nodes instead of the canvas's top-left
-                // corner. Deferred so the ScrollViewer has a measured viewport (a new editor is
-                // created for every event switch, before layout has run).
-                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, CenterOnNodes);
+                // Start the view where the event was left, or over the event's existing nodes. Deferred so
+                // the ScrollViewer has a measured viewport (a new editor is created for every event switch).
+                Dispatcher.BeginInvoke(DispatcherPriority.Loaded, RestoreView);
             }
         }
 
-        /// <summary>Scrolls so the bounding box of all nodes is centered in the viewport.</summary>
-        private void CenterOnNodes()
+        /// <summary>Draws the grid lines one cell apart, over the grid area only.</summary>
+        private void UpdateGridBrush(NodeEditorViewModel viewModel)
+        {
+            double step = viewModel.GridStep;
+            var drawing = new GeometryDrawing
+            {
+                Geometry = new RectangleGeometry(new Rect(0.0, 0.0, step, step)),
+                Pen = new Pen(new SolidColorBrush(Color.FromArgb(0x0F, 0xFF, 0xFF, 0xFF)), 1.0)
+            };
+
+            var brush = new DrawingBrush(drawing)
+            {
+                TileMode = TileMode.Tile,
+                Viewport = new Rect(0.0, 0.0, step, step),
+                ViewportUnits = BrushMappingMode.Absolute
+            };
+            brush.Freeze();
+
+            gridRectangle.Fill = brush;
+        }
+
+        private Rect GetViewport()
+        {
+            double scale = zoomTransform.ScaleX;
+            return new Rect(canvasScroll.HorizontalOffset / scale, canvasScroll.VerticalOffset / scale,
+                            canvasScroll.ViewportWidth / scale, canvasScroll.ViewportHeight / scale);
+        }
+
+        /// <summary>Restores the saved view position of the event, or centers on its nodes when it has none.</summary>
+        private void RestoreView()
         {
             var viewModel = ViewModel;
-            if (viewModel == null || viewModel.Nodes.Count == 0)
+            if (viewModel is null)
                 return;
 
             if (canvasScroll.ViewportWidth <= 0.0 || canvasScroll.ViewportHeight <= 0.0)
@@ -62,20 +117,55 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                     return;
             }
 
+            if (viewModel.SavedViewPosition is { } saved)
+                CenterOn(saved.X * viewModel.GridStep, (viewModel.GridSize - saved.Y) * viewModel.GridStep);
+            else
+                CenterOnNodes(viewModel);
+
+            // Only scrolling after the initial positioning is remembered, like the previous editor did.
+            Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(() => _viewPositionTracked = true));
+        }
+
+        /// <summary>Scrolls so the bounding box of all nodes is centered in the viewport.</summary>
+        private void CenterOnNodes(NodeEditorViewModel viewModel)
+        {
+            if (viewModel.Nodes.Count == 0)
+            {
+                CenterOn(viewModel.GridSize * viewModel.GridStep / 2.0, viewModel.GridSize * viewModel.GridStep / 2.0);
+                return;
+            }
+
             double minX = double.PositiveInfinity, minY = double.PositiveInfinity;
             double maxX = double.NegativeInfinity, maxY = double.NegativeInfinity;
 
             foreach (var node in viewModel.Nodes)
             {
-                minX = System.Math.Min(minX, node.CanvasLeft);
-                minY = System.Math.Min(minY, node.CanvasTop);
-                maxX = System.Math.Max(maxX, node.CanvasLeft + node.Width);
-                maxY = System.Math.Max(maxY, node.CanvasTop + node.Height);
+                minX = Math.Min(minX, node.CanvasLeft);
+                minY = Math.Min(minY, node.CanvasTop);
+                maxX = Math.Max(maxX, node.CanvasLeft + node.Width);
+                maxY = Math.Max(maxY, node.CanvasTop + node.Height);
             }
 
+            CenterOn((minX + maxX) / 2.0, (minY + maxY) / 2.0);
+        }
+
+        private void CenterOn(double canvasX, double canvasY)
+        {
             double scale = zoomTransform.ScaleX;
-            canvasScroll.ScrollToHorizontalOffset(((minX + maxX) / 2.0 * scale) - (canvasScroll.ViewportWidth / 2.0));
-            canvasScroll.ScrollToVerticalOffset(((minY + maxY) / 2.0 * scale) - (canvasScroll.ViewportHeight / 2.0));
+            canvasScroll.ScrollToHorizontalOffset(canvasX * scale - canvasScroll.ViewportWidth / 2.0);
+            canvasScroll.ScrollToVerticalOffset(canvasY * scale - canvasScroll.ViewportHeight / 2.0);
+        }
+
+        private void OnScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (!_viewPositionTracked || ViewModel is not { } viewModel)
+                return;
+
+            // The view position is the world point at the center of the view (Y grows upwards).
+            var viewport = GetViewport();
+            viewModel.SavedViewPosition = new System.Numerics.Vector2(
+                (float)((viewport.Left + viewport.Width / 2.0) / viewModel.GridStep),
+                (float)(viewModel.GridSize - (viewport.Top + viewport.Height / 2.0) / viewModel.GridStep));
         }
 
         private void OnArgDragOver(object sender, DragEventArgs e)
@@ -99,14 +189,33 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         private void OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
-            if (Keyboard.Modifiers != ModifierKeys.Control)
+            if (Keyboard.Modifiers == ModifierKeys.Control)
+            {
+                ZoomAtCursor(e);
+                return;
+            }
+
+            // The wheel scrolls vertically, or horizontally with Shift. Over a node it keeps its normal job.
+            if (ViewModel is not { } viewModel || FindNodeAt(e.GetPosition(rootCanvas)) is not null)
                 return;
 
+            double delta = e.Delta * WheelScrollFactor * viewModel.GridStep;
+
+            if (Keyboard.Modifiers == ModifierKeys.Shift)
+                canvasScroll.ScrollToHorizontalOffset(canvasScroll.HorizontalOffset + delta);
+            else
+                canvasScroll.ScrollToVerticalOffset(canvasScroll.VerticalOffset - delta);
+
+            e.Handled = true;
+        }
+
+        private void ZoomAtCursor(MouseWheelEventArgs e)
+        {
             e.Handled = true;
 
             double oldScale = zoomTransform.ScaleX;
             double factor = e.Delta > 0 ? 1.1 : 1.0 / 1.1;
-            double newScale = System.Math.Clamp(oldScale * factor, 0.3, 2.0);
+            double newScale = Math.Clamp(oldScale * factor, 0.3, 2.0);
             if (newScale == oldScale)
                 return;
 
@@ -145,16 +254,31 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             var position = e.GetPosition(rootCanvas);
 
             // Clicks on nodes are handled by the nodes themselves.
-            if (FindNodeAt(position) is not null || _pendingFrom is not null)
+            if (FindNodeAt(position) is not null || _linkNode is not null)
                 return;
 
             Focus();
-            _rubberBand.Begin(ViewModel, position, Keyboard.Modifiers is ModifierKeys.Control or ModifierKeys.Shift);
+
+            // Double-clicking an empty place opens the function list to create a node there.
+            if (e.ClickCount == 2)
+            {
+                OpenNodeMenu(position);
+                e.Handled = true;
+                return;
+            }
+
+            _rubberBand.Begin(ViewModel, position);
             e.Handled = true;
         }
 
         private void Canvas_MouseMove(object sender, MouseEventArgs e)
         {
+            if (_panning)
+            {
+                PanTo(e);
+                return;
+            }
+
             if (ViewModel is not null && _rubberBand.IsActive)
                 _rubberBand.Update(ViewModel, e.GetPosition(rootCanvas));
         }
@@ -165,38 +289,86 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                 _rubberBand.End();
         }
 
-        private void Canvas_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        private void Canvas_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (ViewModel == null)
+            // Right-click on a node falls through to that node's own context menu.
+            if (ViewModel is null || FindNodeAt(e.GetPosition(rootCanvas)) is not null)
                 return;
 
-            var position = e.GetPosition(rootCanvas);
+            Focus();
 
-            // Right-click on a node falls through to that node's own context menu.
-            if (FindNodeAt(position) != null)
+            _panning = true;
+            _panStart = _panLast = e.GetPosition(canvasScroll);
+            _panStartHorizontal = canvasScroll.HorizontalOffset;
+            _panStartVertical = canvasScroll.VerticalOffset;
+
+            rootCanvas.CaptureMouse();
+            e.Handled = true;
+        }
+
+        private void PanTo(MouseEventArgs e)
+        {
+            if (e.RightButton != MouseButtonState.Pressed)
+            {
+                EndPan();
+                return;
+            }
+
+            // The canvas follows the cursor, as if grabbed.
+            _panLast = e.GetPosition(canvasScroll);
+            canvasScroll.ScrollToHorizontalOffset(_panStartHorizontal - (_panLast.X - _panStart.X));
+            canvasScroll.ScrollToVerticalOffset(_panStartVertical - (_panLast.Y - _panStart.Y));
+        }
+
+        private void EndPan()
+        {
+            _panning = false;
+            rootCanvas.ReleaseMouseCapture();
+        }
+
+        private void Canvas_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (!_panning)
+                return;
+
+            // A right-click without dragging opens the function list; dragging only pans.
+            bool clicked = (_panLast - _panStart).Length < ContextMenuDragThreshold;
+            EndPan();
+
+            if (clicked)
+                OpenNodeMenu(e.GetPosition(rootCanvas));
+
+            e.Handled = true;
+        }
+
+        private void OpenNodeMenu(Point position)
+        {
+            if (ViewModel is not { } viewModel)
                 return;
 
             // The menu is composed here because it depends on the click position; every item
             // delegates the actual work to the view-model's AddNodeAtPositionCommand.
             var menu = new ContextMenu();
-            foreach (var group in System.Linq.Enumerable.GroupBy(ViewModel.Functions, f => f.Section))
+            foreach (var group in viewModel.Functions.GroupBy(f => f.Section))
             {
                 // "__" so underscores in script-defined names display literally (not access keys).
                 var section = new MenuItem { Header = string.IsNullOrEmpty(group.Key) ? Localizer.Instance["TombEditor.NodeEditor.Misc"] : group.Key.Replace("_", "__") };
-                foreach (var function in group)
+
+                // Conditions are listed before actions inside every section.
+                foreach (var function in group.OrderBy(f => !f.Conditional))
                 {
                     section.Items.Add(new MenuItem
                     {
                         Header = function.Name?.Replace("_", "__"),
-                        Command = ViewModel.AddNodeAtPositionCommand,
+                        Command = viewModel.AddNodeAtPositionCommand,
                         CommandParameter = new NodeEditorViewModel.AddNodeRequest(function, position.X, position.Y)
                     });
                 }
+
                 menu.Items.Add(section);
             }
 
             menu.IsOpen = true;
-            e.Handled = true;
         }
 
         private void Node_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -205,18 +377,40 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             if (sender is not FrameworkElement { DataContext: NodeViewModel node } || ViewModel is null)
                 return;
 
-            // Ctrl/Shift toggles the node in the selection; a plain click keeps an existing group so it can be dragged.
-            if (Keyboard.Modifiers is ModifierKeys.Control or ModifierKeys.Shift)
-                ViewModel.SelectNode(node, true);
-            else if (!node.IsSelected)
-                ViewModel.SelectSingle(node);
+            // Clicking an argument editor inside the node leaves the selection alone; only the node surface selects it.
+            if (IsInsideEditorControl(e.OriginalSource as DependencyObject, sender))
+                return;
+
+            var modifiers = Keyboard.Modifiers;
+            ViewModel.ClickNode(node, modifiers.HasFlag(ModifierKeys.Control), modifiers.HasFlag(ModifierKeys.Shift));
         }
 
+        private static bool IsInsideEditorControl(DependencyObject? source, object nodeElement)
+        {
+            for (var element = source; element is not null && element != nodeElement; element = VisualTreeHelper.GetParent(element))
+            {
+                if (element is Thumb)
+                    return false;
+
+                if (element is Control)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>Scrolls a node into view when it is not fully visible, putting the middle of its top edge at the view center.</summary>
         private void ScrollToNode(NodeViewModel node)
         {
-            double scale = zoomTransform.ScaleX;
-            canvasScroll.ScrollToHorizontalOffset(node.CanvasLeft * scale - canvasScroll.ViewportWidth / 2.0);
-            canvasScroll.ScrollToVerticalOffset(node.CanvasTop * scale - canvasScroll.ViewportHeight / 2.0);
+            // Deferred so the node has been measured and its real height is known.
+            Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+            {
+                var bounds = new Rect(node.CanvasLeft, node.CanvasTop, node.Width, node.Height);
+                if (GetViewport().Contains(bounds))
+                    return;
+
+                CenterOn(node.CanvasLeft + node.Width / 2.0, node.CanvasTop);
+            }));
         }
 
         private void Node_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -235,78 +429,82 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         private void NodeThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            // The total offset is applied to the starting positions, so slow drags are not lost to grid snapping.
+            // The total offset is applied to the starting positions, so slow drags are not lost to rounding.
             _dragTotal += new Vector(e.HorizontalChange, e.VerticalChange);
             ViewModel?.MoveBy(_dragTotal.X, _dragTotal.Y);
         }
 
-        private void OutputPort_MouseDown(object sender, MouseButtonEventArgs e)
+        private void Grip_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (sender is not Ellipse port || port.DataContext is not NodeViewModel from)
+            if (sender is not FrameworkElement { DataContext: NodeViewModel node, Tag: string tag } || !node.IsEditable)
                 return;
 
             e.Handled = true;
-            _pendingFrom = from;
-            _pendingElse = (string?)port.Tag == "Else";
+            _linkNode = node.Node;
+            _linkMode = Enum.Parse<NodeConnection>(tag);
+            _linkStart = e.GetPosition(rootCanvas);
+            _linkMoved = false;
 
-            double startX = _pendingElse ? from.ElseX : from.OutX;
-            double startY = _pendingElse ? from.ElseY : from.OutY;
-
-            _tempLine = new Line
-            {
-                X1 = startX,
-                Y1 = startY,
-                X2 = startX,
-                Y2 = startY,
-                Stroke = Brushes.Gray,
-                StrokeThickness = 2,
-                StrokeDashArray = new DoubleCollection { 3, 3 },
-                IsHitTestVisible = false
-            };
-            rootCanvas.Children.Add(_tempLine);
-
-            // Capture on the canvas (reliable) rather than the tiny port ellipse.
+            // Capture on the canvas (reliable) rather than the tiny grip bar.
             rootCanvas.CaptureMouse();
-            rootCanvas.MouseMove += Canvas_PendingMove;
-            rootCanvas.MouseLeftButtonUp += Canvas_PendingUp;
+            rootCanvas.MouseMove += Canvas_LinkMove;
+            rootCanvas.MouseLeftButtonUp += Canvas_LinkUp;
         }
 
-        private void Canvas_PendingMove(object sender, MouseEventArgs e)
+        private void Canvas_LinkMove(object sender, MouseEventArgs e)
         {
-            if (_tempLine == null)
+            if (_linkNode is null || ViewModel is not { } viewModel)
                 return;
 
-            Point position = e.GetPosition(rootCanvas);
-            _tempLine.X2 = position.X;
-            _tempLine.Y2 = position.Y;
-        }
+            var position = e.GetPosition(rootCanvas);
 
-        private void Canvas_PendingUp(object sender, MouseButtonEventArgs e)
-        {
-            Point position = e.GetPosition(rootCanvas);
-            NodeViewModel? target = FindNodeAt(position);
-
-            if (ViewModel != null && _pendingFrom != null)
+            // The link is only picked up once the mouse actually moves, so a plain click on a grip changes nothing.
+            if (!_linkMoved)
             {
-                if (target != null && target != _pendingFrom)
-                    ViewModel.Connect(_pendingFrom, target, _pendingElse);
-                else
-                    ViewModel.Disconnect(_pendingFrom, _pendingElse);
+                if (position == _linkStart)
+                    return;
+
+                _linkMoved = true;
+                viewModel.BeginLinkDrag(_linkNode, _linkMode);
+
+                // Inserted below the rubber band and the nodes, since links are drawn under the nodes.
+                _linkVisual = new Path { IsHitTestVisible = false, StrokeThickness = NodeLinkRenderer.GetThickness(viewModel.LinksAsRopes) };
+                rootCanvas.Children.Insert(rootCanvas.Children.IndexOf(selectionRectangle), _linkVisual);
             }
 
-            EndPendingConnection();
+            if (viewModel.Nodes.FirstOrDefault(n => n.Node == _linkNode) is not { } source)
+                return;
+
+            var end = new NodeLinkRenderer.Span(position.X, position.X, position.Y);
+            var brush = NodeLinkRenderer.CreateBrush(source.Node.Color == System.Numerics.Vector3.Zero ? NodeViewModel.GetDefaultColor(source.IsCondition) : source.Node.Color,
+                _linkMode == NodeConnection.Else, viewModel.LinksAsRopes, NodeLinkRenderer.PendingOpacity);
+
+            _linkVisual!.Data = NodeLinkRenderer.CreateGeometry(source.GetGripSpan(_linkMode), end, viewModel.LinksAsRopes);
+            _linkVisual.Stroke = viewModel.LinksAsRopes ? brush : null;
+            _linkVisual.Fill = viewModel.LinksAsRopes ? null : brush;
         }
 
-        private void EndPendingConnection()
+        private void Canvas_LinkUp(object sender, MouseButtonEventArgs e)
         {
-            if (_tempLine != null)
-                rootCanvas.Children.Remove(_tempLine);
-            _tempLine = null;
-            _pendingFrom = null;
+            var position = e.GetPosition(rootCanvas);
+
+            if (ViewModel is { } viewModel && _linkNode is not null && _linkMoved)
+                viewModel.CompleteLinkDrag(_linkNode, _linkMode, FindNodeAt(position), position.X);
+
+            EndLinkDrag();
+        }
+
+        private void EndLinkDrag()
+        {
+            if (_linkVisual is not null)
+                rootCanvas.Children.Remove(_linkVisual);
+
+            _linkVisual = null;
+            _linkNode = null;
 
             rootCanvas.ReleaseMouseCapture();
-            rootCanvas.MouseMove -= Canvas_PendingMove;
-            rootCanvas.MouseLeftButtonUp -= Canvas_PendingUp;
+            rootCanvas.MouseMove -= Canvas_LinkMove;
+            rootCanvas.MouseLeftButtonUp -= Canvas_LinkUp;
         }
 
         private NodeViewModel? FindNodeAt(Point position)

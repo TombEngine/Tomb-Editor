@@ -35,8 +35,8 @@
             HorizontalAlignment="Right"
             Orientation="Horizontal"
             Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-            <Button Width="80" Command="{Binding OkCommand}" Content="{tombLib:Localize ~Common.OK}" IsDefault="True" />
-            <Button Width="80" Command="{Binding CancelCommand}" Content="{tombLib:Localize ~Common.Cancel}" IsCancel="True" />
+            <Button Width="80" Command="{Binding OkCommand}" Content="{tombLib:Localize ~Common.OK}" />
+            <Button Width="80" Command="{Binding CancelCommand}" Content="{tombLib:Localize ~Common.Cancel}" />
         </controls:SpacedStack>
 
         <Grid>
@@ -149,7 +149,8 @@
                     <ComboBox
                         Grid.Column="3"
                         ItemsSource="{Binding EventTypes}"
-                        SelectedItem="{Binding SelectedEventType, Mode=TwoWay}">
+                        SelectedItem="{Binding SelectedEventType, Mode=TwoWay}"
+                        ToolTip="{Binding SelectedEventTooltip}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Converter={StaticResource EventTypeDisplay}}" />

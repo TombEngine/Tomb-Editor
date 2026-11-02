@@ -14,11 +14,22 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 {
     /// <summary>
     /// View-model for a single node on the WPF node canvas, wrapping a <see cref="TriggerNode"/>.
-    /// Position is stored on the model as a 0-256 grid coordinate; the canvas maps it to pixels via
-    /// <see cref="_gridStep"/>.
+    /// Position is stored on the model as a 0-256 grid coordinate where Y grows upwards (as in the previous
+    /// node editor, and as the script export orders orphaned chains by it); the canvas maps it to pixels via
+    /// <see cref="_gridStep"/> and flips Y.
     /// </summary>
     public partial class NodeViewModel : ObservableObject
     {
+        public const double GripWidth = 200.0;
+        public const double GripHeight = 6.0;
+        public const double ShownGripInset = 8.0;
+
+        private const double ConditionGripWidth = GripWidth / 2.0;
+
+        private static readonly Vector3 GreyBackground = new(60.0f / 255.0f, 63.0f / 255.0f, 65.0f / 255.0f);
+        private static readonly Vector3 ConditionTint = new(0.8f, 1.0f, 0.8f);
+        private static readonly Vector3 ActionTint = new(0.8f, 0.8f, 1.0f);
+
         private readonly NodeEditorOptions _options;
         private readonly double _gridStep;
         private readonly string _functionDisplay;
@@ -49,6 +60,9 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             }
         }
 
+        /// <summary>Gets the color a new node starts with: the grey background tinted green for conditions and blue for actions.</summary>
+        public static Vector3 GetDefaultColor(bool condition) => GreyBackground * (condition ? ConditionTint : ActionTint);
+
         public bool IsCondition => Node is TriggerNodeCondition;
 
         /// <summary>Functions that can be chosen for this node (same kind as the node), shown in the node's function combo.</summary>
@@ -73,6 +87,20 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         /// <summary>The node's function is not usable with the event type being edited (#1156).</summary>
         public bool IsUnsupported { get; }
 
+        /// <summary>Gets the text drawn above the node: its name, or a warning when its function is not supported by the event type.</summary>
+        public string LabelText => IsUnsupported ? Localizer.Instance["TombEditor.NodeEditor.NotSupported"] : Node.Name;
+
+        /// <summary>Gets the tooltip of the function combo: the function description with line breaks.</summary>
+        public string FunctionDescription => TombLib.Utils.TextExtensions.SingleLineToMultiLine(_function?.Description ?? string.Empty);
+
+        public bool ShowGrips => _options.ShowGrips;
+
+        /// <summary>Gets or sets whether any node function exists at all; without one the node shows a notice instead of the combo.</summary>
+        public bool HasNodeFunctions { get; set; } = true;
+
+        /// <summary>Gets the margin of the node content, leaving room for the side grip strip when shown.</summary>
+        public Thickness ContentMargin => new(8.0 + (_options.ShowGrips ? ShownGripInset : 0.0), 8.0, 8.0, 8.0);
+
         public bool IsLocked
         {
             get => Node.Locked;
@@ -87,28 +115,36 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         public bool IsEditable => !Node.Locked;
 
-        public Brush HeaderBrush
+        public Brush BodyBrush
         {
             get
             {
-                var c = Node.Color;
-                Color color = c == Vector3.Zero
-                    ? (IsCondition ? Color.FromRgb(110, 84, 56) : Color.FromRgb(60, 84, 110))
-                    : Color.FromRgb((byte)(c.X * 255), (byte)(c.Y * 255), (byte)(c.Z * 255));
-                return new SolidColorBrush(color);
+                var c = Node.Color == Vector3.Zero ? GetDefaultColor(IsCondition) : Node.Color;
+                var brush = new SolidColorBrush(Color.FromRgb(ToByte(c.X), ToByte(c.Y), ToByte(c.Z)));
+                brush.Freeze();
+                return brush;
             }
         }
 
         public void SetColor(Color color)
         {
             Node.Color = new Vector3(color.R / 255.0f, color.G / 255.0f, color.B / 255.0f);
-            OnPropertyChanged(nameof(HeaderBrush));
+            OnPropertyChanged(nameof(BodyBrush));
+            Moved?.Invoke();
         }
 
         public string Title
         {
             get => Node.Name;
-            set { if (Node.Name == value) return; Node.Name = value; OnPropertyChanged(); }
+            set
+            {
+                if (Node.Name == value)
+                    return;
+
+                Node.Name = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(LabelText));
+            }
         }
 
         public string FunctionName => string.IsNullOrEmpty(_functionDisplay) ? Localizer.Instance["TombEditor.NodeEditor.NoFunction"] : _functionDisplay;
@@ -122,44 +158,62 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         public double CanvasLeft
         {
             get => Node.ScreenPosition.X * _gridStep;
-            set => SetGridPosition(value / _gridStep, Node.ScreenPosition.Y);
+            set => SetGridPosition(Math.Round(value) / _gridStep, Node.ScreenPosition.Y);
         }
 
         public double CanvasTop
         {
-            get => Node.ScreenPosition.Y * _gridStep;
-            set => SetGridPosition(Node.ScreenPosition.X, value / _gridStep);
+            get => (_options.GridSize - Node.ScreenPosition.Y) * _gridStep;
+            set => SetGridPosition(Node.ScreenPosition.X, _options.GridSize - Math.Round(value) / _gridStep);
         }
 
         private void SetGridPosition(double gx, double gy)
         {
-            // Snap to the nearest grid unit.
-            gx = Math.Clamp(Math.Round(gx), 0, _options.GridSize);
-            gy = Math.Clamp(Math.Round(gy), 0, _options.GridSize);
+            gx = Math.Clamp(gx, 0, _options.GridSize);
+            gy = Math.Clamp(gy, 0, _options.GridSize);
             Node.ScreenPosition = new Vector2((float)gx, (float)gy);
             OnPropertyChanged(nameof(CanvasLeft));
             OnPropertyChanged(nameof(CanvasTop));
             RaisePorts();
         }
 
-        // Connection ports (in canvas pixels).
-        public double InX => CanvasLeft + Width / 2.0;
-        public double InY => CanvasTop;
-        public double OutX => CanvasLeft + Width / 2.0;
-        public double OutY => CanvasTop + Height;
-        public double ElseX => CanvasLeft + Width;
-        public double ElseY => CanvasTop + Height / 2.0;
+        /// <summary>Gets the grip bar of a connection, relative to the node's top-left corner.</summary>
+        public Rect GetGrip(NodeConnection connection)
+        {
+            double width = Width;
+            double bottom = Height - GripHeight;
+
+            return connection switch
+            {
+                NodeConnection.Previous => new Rect(width / 2.0 - GripWidth / 2.0, 0.0, GripWidth, GripHeight),
+                NodeConnection.Next when IsCondition => new Rect(Math.Floor(width / 3.0) - ConditionGripWidth / 2.0, bottom, ConditionGripWidth, GripHeight),
+                NodeConnection.Next => new Rect(width / 2.0 - GripWidth / 2.0, bottom, GripWidth, GripHeight),
+                _ => new Rect(width - Math.Floor(width / 3.0) - ConditionGripWidth / 2.0, bottom, ConditionGripWidth, GripHeight)
+            };
+        }
+
+        /// <summary>Gets the horizontal span through the middle of a grip bar, in canvas pixels.</summary>
+        public NodeLinkRenderer.Span GetGripSpan(NodeConnection connection)
+        {
+            var grip = GetGrip(connection);
+            return new NodeLinkRenderer.Span(CanvasLeft + grip.Left, CanvasLeft + grip.Right, CanvasTop + grip.Top + grip.Height / 2.0);
+        }
+
+        private static byte ToByte(float value) => (byte)Math.Clamp(Math.Round(value * 255.0), 0.0, 255.0);
 
         private void RaisePorts()
         {
-            OnPropertyChanged(nameof(InX));
-            OnPropertyChanged(nameof(InY));
-            OnPropertyChanged(nameof(OutX));
-            OnPropertyChanged(nameof(OutY));
-            OnPropertyChanged(nameof(ElseX));
-            OnPropertyChanged(nameof(ElseY));
+            OnPropertyChanged(nameof(PreviousGrip));
+            OnPropertyChanged(nameof(NextGrip));
+            OnPropertyChanged(nameof(ElseGrip));
             Moved?.Invoke();
         }
+
+        // Grip bars drawn over the node (relative to the node).
+
+        public Rect PreviousGrip => GetGrip(NodeConnection.Previous);
+        public Rect NextGrip => GetGrip(NodeConnection.Next);
+        public Rect ElseGrip => GetGrip(NodeConnection.Else);
     }
 
     /// <summary>A rendered connection (<c>Next</c> or <c>Else</c>) between two nodes.</summary>
@@ -186,33 +240,22 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             To.Moved -= RaiseEndpoints;
         }
 
-        public double X1 => IsElse ? From.ElseX : From.OutX;
-        public double Y1 => IsElse ? From.ElseY : From.OutY;
-        public double X2 => To.InX;
-        public double Y2 => To.InY;
+        public Geometry Geometry => NodeLinkRenderer.CreateGeometry(
+            From.GetGripSpan(IsElse ? NodeConnection.Else : NodeConnection.Next), To.GetGripSpan(NodeConnection.Previous), _asRope);
 
-        /// <summary>Cubic-bezier "rope" between the output and input ports.</summary>
-        public Geometry Geometry
-        {
-            get
-            {
-                double dy = _asRope ? Math.Max(40.0, Math.Abs(Y2 - Y1) / 2.0) : 0.0;
-                var figure = new PathFigure { StartPoint = new Point(X1, Y1) };
-                figure.Segments.Add(new BezierSegment(new Point(X1, Y1 + dy), new Point(X2, Y2 - dy), new Point(X2, Y2), true));
-                var geometry = new PathGeometry();
-                geometry.Figures.Add(figure);
-                geometry.Freeze();
-                return geometry;
-            }
-        }
+        private Brush LinkBrush => NodeLinkRenderer.CreateBrush(GetColor(), IsElse, _asRope, NodeLinkRenderer.ConnectedOpacity);
+
+        public Brush? Stroke => _asRope ? LinkBrush : null;
+        public Brush? Fill => _asRope ? null : LinkBrush;
+        public double StrokeThickness => NodeLinkRenderer.GetThickness(_asRope);
+
+        private Vector3 GetColor() => From.Node.Color == Vector3.Zero ? NodeViewModel.GetDefaultColor(From.IsCondition) : From.Node.Color;
 
         private void RaiseEndpoints()
         {
-            OnPropertyChanged(nameof(X1));
-            OnPropertyChanged(nameof(Y1));
-            OnPropertyChanged(nameof(X2));
-            OnPropertyChanged(nameof(Y2));
             OnPropertyChanged(nameof(Geometry));
+            OnPropertyChanged(nameof(Stroke));
+            OnPropertyChanged(nameof(Fill));
         }
     }
 }

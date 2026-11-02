@@ -1,6 +1,5 @@
 #nullable enable
 
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
@@ -12,7 +11,6 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
     {
         private readonly Canvas _canvas;
         private readonly Rectangle _visual;
-        private IReadOnlyCollection<NodeViewModel> _baseline = [];
         private Point _start;
 
         public RubberBandSelection(Canvas canvas, Rectangle visual)
@@ -23,15 +21,13 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         public bool IsActive { get; private set; }
 
-        /// <summary>Starts a band; with <paramref name="additive"/> the current selection is kept as the baseline.</summary>
-        public void Begin(NodeEditorViewModel editor, Point start, bool additive)
+        /// <summary>Starts a band: the selection is cleared and then always equals the nodes inside the band.</summary>
+        public void Begin(NodeEditorViewModel editor, Point start)
         {
             _start = start;
-            _baseline = additive ? [.. editor.SelectedNodes] : [];
             IsActive = true;
 
-            if (!additive)
-                editor.ClearSelection();
+            editor.ClearSelection();
 
             Update(editor, start);
             _visual.Visibility = Visibility.Visible;
@@ -47,13 +43,12 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             _visual.Width = area.Width;
             _visual.Height = area.Height;
 
-            editor.SelectInArea(area, _baseline);
+            editor.SelectInArea(area);
         }
 
         public void End()
         {
             IsActive = false;
-            _baseline = [];
             _visual.Visibility = Visibility.Collapsed;
             _canvas.ReleaseMouseCapture();
         }

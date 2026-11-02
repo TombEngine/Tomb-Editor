@@ -467,8 +467,13 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             RefreshCommandStates();
         }
 
+        /// <summary>Gets the tooltip describing when the selected event occurs.</summary>
+        public string SelectedEventTooltip => _localizationService["EventTooltip_" + SelectedEventType];
+
         partial void OnSelectedEventTypeChanged(EventType value)
         {
+            OnPropertyChanged(nameof(SelectedEventTooltip));
+
             if (_lockUi || SelectedSet == null)
                 return;
             SelectedSet.LastUsedEvent = value;
@@ -500,9 +505,16 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         partial void OnCurrentEventChanged(Event? value)
         {
+            if (NodeEditor is { } previous)
+                previous.MessageRequested -= OnNodeEditorMessage;
+
             NodeEditor = value != null
                 ? new NodeEditorViewModel(value, SelectedEventType, NodeFunctions, _argumentProvider, NodeEditorOptions.FromConfiguration(_editor.Configuration))
                 : null;
+
+            if (NodeEditor is { } current)
+                current.MessageRequested += OnNodeEditorMessage;
+
             LevelScript.SetEvent(value);
 
             OnPropertyChanged(nameof(HasCurrentEvent));
@@ -511,6 +523,11 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             OnPropertyChanged(nameof(IsLevelScriptMode));
             OnPropertyChanged(nameof(IsNodeEditorShown));
         }
+
+        /// <summary>Raised to show a transient information toast next to the editor (copied nodes, exported graph).</summary>
+        public event Action<string>? InfoRequested;
+
+        private void OnNodeEditorMessage(string message) => InfoRequested?.Invoke(message);
 
         public bool IsNodeEditorMode
         {

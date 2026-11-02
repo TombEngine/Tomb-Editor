@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using TombLib.LevelData;
 using TombLib.LevelData.VisualScripting;
+using TombLib.Utils;
 using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
@@ -27,6 +29,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
     /// </summary>
     public partial class NodeEditorViewModel : ObservableObject
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private readonly Event _event;
         private readonly EventType _eventType;
         private readonly NodeEditorOptions _options;
@@ -40,10 +44,14 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         public ObservableCollection<NodeViewModel> Nodes { get; } = new();
         public ObservableCollection<LinkViewModel> Links { get; } = new();
 
-        [ObservableProperty] private NodeFunction? _functionToAdd;
-
         /// <summary>Asks the view to scroll the given node into view (a purely visual concern).</summary>
         public event Action<NodeViewModel>? BringNodeIntoViewRequested;
+
+        /// <summary>Raised to show a transient information toast next to the editor.</summary>
+        public event Action<string>? MessageRequested;
+
+        /// <summary>Supplied by the view: the visible part of the canvas, in canvas pixels (used to place new nodes).</summary>
+        public Func<Rect>? ViewportProvider { get; set; }
 
         /// <summary>How many times the event may fire (0 = unlimited), edited via the call-count box.</summary>
         public int CallCounter
@@ -61,6 +69,16 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         public double CanvasWidth => _options.CanvasExtent;
         public double CanvasHeight => _options.CanvasExtent;
+        public double GridStep => _options.GridStep;
+        public int GridSize => _options.GridSize;
+        public bool LinksAsRopes => _options.LinksAsRopes;
+
+        /// <summary>Gets or sets the world point at the center of the view (Y grows upwards), or null when the event never had one saved.</summary>
+        public Vector2? SavedViewPosition
+        {
+            get => _event.NodePosition.X == float.MaxValue ? null : _event.NodePosition;
+            set => _event.NodePosition = value ?? new Vector2(float.MaxValue);
+        }
 
         public NodeEditorViewModel(Event evt, EventType eventType, IReadOnlyList<NodeFunction> functions, ArgumentDataProvider provider, NodeEditorOptions options,
             IDialogService? dialogService = null, IMessageService? messageService = null, IColorPickerService? colorPickerService = null,
@@ -103,7 +121,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                 var function = Functions.FirstOrDefault(f => f.Signature == node.Function);
                 var vm = new NodeViewModel(node, _options, function, _provider, _eventType)
                 {
-                    AvailableFunctions = Functions.Where(f => f.Conditional == (node is TriggerNodeCondition)).ToList()
+                    AvailableFunctions = Functions.Where(f => f.Conditional == (node is TriggerNodeCondition)).ToList(),
+                    HasNodeFunctions = Functions.Count > 0
                 };
                 vm.FunctionChangeRequested += OnNodeFunctionChangeRequested;
                 map[node] = vm;
@@ -122,10 +141,11 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             SetSelection(Nodes.Where(n => previouslySelected.Contains(n.Node)));
         }
 
-        /// <summary>Replaces the function of a node (chosen in the node's combo) and rebuilds its arguments.</summary>
+        /// <summary>Replaces the function of a node (chosen in the node's combo) and resets its arguments to the defaults.</summary>
         private void OnNodeFunctionChangeRequested(NodeViewModel nodeViewModel, NodeFunction function)
         {
             nodeViewModel.Node.Function = function.Signature;
+            nodeViewModel.Node.Arguments.Clear();
             nodeViewModel.Node.FixArguments(function);
 
             // Rebuilding inside the combo's own selection change would dispose the combo, so defer it.
@@ -141,17 +161,6 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         // Node creation.
 
-        /// <summary>Adds the function chosen in the toolbar; Ctrl skips linking to the selected node, Alt links through Else.</summary>
-        [RelayCommand]
-        private void AddNode()
-        {
-            if (FunctionToAdd is null)
-                return;
-
-            var modifiers = Keyboard.Modifiers;
-            CreateNode(FunctionToAdd, modifiers != ModifierKeys.Control, modifiers == ModifierKeys.Alt, null);
-        }
-
         [RelayCommand]
         private void AddActionNode() => AddNodeFromToolbar(false);
 
@@ -165,39 +174,37 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             AddNodeOfKind(condition, modifiers != ModifierKeys.Control, modifiers == ModifierKeys.Alt);
         }
 
-        /// <summary>Adds an action or condition node (keyboard shortcuts), reusing the toolbar function when its kind matches.</summary>
+        /// <summary>Adds an action or condition node with the first function of its kind (a blank node when there is none).</summary>
         public void AddNodeOfKind(bool condition, bool linkToPrevious, bool linkToElse)
-        {
-            var function = FunctionToAdd is { } chosen && chosen.Conditional == condition
-                ? chosen
-                : Functions.FirstOrDefault(f => f.Conditional == condition);
-
-            if (function is not null)
-                CreateNode(function, linkToPrevious, linkToElse, null);
-        }
+            => CreateNode(condition, Functions.FirstOrDefault(f => f.Conditional == condition), linkToPrevious, linkToElse, null);
 
         /// <summary>Parameter of <see cref="AddNodeAtPositionCommand"/>: a function plus the canvas position to drop it at.</summary>
         public sealed record AddNodeRequest(NodeFunction Function, double CanvasX, double CanvasY);
 
-        /// <summary>Creates a node for a function at a specific canvas position (right-click add).</summary>
+        /// <summary>Creates a node for a function at a specific canvas position (right-click or double-click add); Alt links through Else.</summary>
         [RelayCommand]
         private void AddNodeAtPosition(AddNodeRequest? request)
         {
             if (request is null)
                 return;
 
-            CreateNode(request.Function, false, false, new Point(request.CanvasX, request.CanvasY));
+            CreateNode(request.Function.Conditional, request.Function, true, Keyboard.Modifiers == ModifierKeys.Alt, new Point(request.CanvasX, request.CanvasY));
         }
 
-        private void CreateNode(NodeFunction function, bool linkToPrevious, bool linkToElse, Point? canvasPosition)
+        private void CreateNode(bool condition, NodeFunction? function, bool linkToPrevious, bool linkToElse, Point? canvasPosition)
         {
-            TriggerNode node = function.Conditional
+            TriggerNode node = condition
                 ? new TriggerNodeCondition { Name = _localizationService.Format("IfNodeName", Nodes.Count(n => n.IsCondition) + 1) }
                 : new TriggerNodeAction { Name = _localizationService.Format("ActionNodeName", Nodes.Count(n => !n.IsCondition) + 1) };
 
+            node.Color = NodeViewModel.GetDefaultColor(condition);
             node.Size = _options.DefaultNodeWidth;
-            node.Function = function.Signature;
-            node.FixArguments(function);
+
+            if (function is not null)
+            {
+                node.Function = function.Signature;
+                node.FixArguments(function);
+            }
 
             if (canvasPosition is { } position)
                 node.ScreenPosition = ToGridPosition(position.X, position.Y);
@@ -211,7 +218,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             SyncRootsAndRebuild();
             SelectSingle(Nodes.FirstOrDefault(n => n.Node == node));
 
-            if (SelectedNode is { } created)
+            if (canvasPosition is null && SelectedNode is { } created)
                 BringNodeIntoViewRequested?.Invoke(created);
         }
 
@@ -231,9 +238,10 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             node.Previous = selected;
         }
 
+        // Canvas Y grows downwards while the stored Y grows upwards.
         private Vector2 ToGridPosition(double canvasX, double canvasY) => new(
             (float)Math.Clamp(canvasX / _options.GridStep, 0.0, _options.GridSize),
-            (float)Math.Clamp(canvasY / _options.GridStep, 0.0, _options.GridSize));
+            (float)Math.Clamp(_options.GridSize - canvasY / _options.GridStep, 0.0, _options.GridSize));
 
         /// <summary>Picks a non-overlapping position below the selected node (mirrors NodeEditor.GetBestPosition).</summary>
         private void PlaceNode(TriggerNode node)
@@ -246,23 +254,35 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             if (SelectedNode is { } selected)
             {
                 x = selected.CanvasLeft + selected.Width / 2.0 - width / 2.0;
-                y = selected.CanvasTop + selected.Height + step * 4.0;
+                y = selected.CanvasTop + selected.Height;
             }
             else
             {
-                x = step * 40.0;
-                y = step * 5.0;
+                // The previous editor mixed view coordinates with pixels here, so a new node lands near the view's top-left corner.
+                var viewport = ViewportProvider?.Invoke() ?? new Rect(0.0, 0.0, 0.0, 0.0);
+                double viewX = (viewport.Left + viewport.Width / 2.0) / step;
+                double viewY = _options.GridSize - (viewport.Top + viewport.Height / 2.0) / step;
+                x = viewport.Left + viewX - width / (2.0 * step);
+                y = viewport.Top + viewY;
             }
 
             double limit = _options.CanvasExtent;
+            double marginX = Math.Floor(step / 2.0);
+            double marginY = Math.Floor(step) * 2.0;
             bool colliding = true;
             while (colliding)
             {
+                y += Math.Floor(step * 4.0);
                 colliding = false;
+
                 var rect = new Rect(x, y, width, estimatedHeight);
+                rect.Inflate(marginX, marginY);
+
                 foreach (var other in Nodes)
                 {
-                    var otherRect = new Rect(other.CanvasLeft - step, other.CanvasTop - step * 2.0, other.Width + step * 2.0, other.Height + step * 4.0);
+                    var otherRect = new Rect(other.CanvasLeft, other.CanvasTop, other.Width, other.Height);
+                    otherRect.Inflate(marginX, marginY);
+
                     if (rect.IntersectsWith(otherRect))
                     {
                         colliding = true;
@@ -270,8 +290,6 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                     }
                 }
 
-                if (colliding)
-                    y += step * 4.0;
                 if (y > limit)
                     break;
             }
@@ -285,12 +303,9 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         public void CopySelected(bool cut)
         {
-            if (!HasSelectedNode)
-                return;
-
             // Only chain roots are cloned: Clone() already copies everything linked below a node.
             var selectedModels = _selectedNodes.Select(n => n.Node).ToHashSet();
-            _clipboard = selectedModels
+            var copied = selectedModels
                 .Where(n => n.Previous is null || !selectedModels.Contains(n.Previous))
                 .Select(n =>
                 {
@@ -301,7 +316,15 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                 .ToList();
 
             if (cut)
+            {
+                _clipboard = copied;
                 DeleteSelectedNode();
+            }
+            else if (copied.Count > 0)
+            {
+                _clipboard = copied;
+                MessageRequested?.Invoke(_localizationService["NodesCopied"]);
+            }
         }
 
         public void Paste()
@@ -309,25 +332,23 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             if (_clipboard is null || _clipboard.Count == 0)
                 return;
 
-            var pasted = new List<TriggerNode>();
+            // A pasted copy that would land exactly on an existing chain is nudged right and down.
+            var offset = new Vector2(_options.GridSize / 64.0f, -_options.GridSize / 64.0f);
+
             foreach (var source in _clipboard)
             {
+                if (_event.Nodes.Any(n => n.ScreenPosition == source.ScreenPosition))
+                    source.ScreenPosition += offset;
+
                 var clone = source.Clone();
                 clone.Previous = null;
-
-                var position = clone.ScreenPosition;
-                clone.ScreenPosition = new Vector2(
-                    Math.Clamp(position.X + 4.0f, 0.0f, _options.GridSize),
-                    Math.Clamp(position.Y + 4.0f, 0.0f, _options.GridSize));
-
                 _event.Nodes.Add(clone);
-                pasted.Add(clone);
             }
 
             SyncRootsAndRebuild();
 
-            var pastedAll = TriggerNode.LinearizeNodes(pasted).ToHashSet();
-            SetSelection(Nodes.Where(n => pastedAll.Contains(n.Node)));
+            if (Nodes.FirstOrDefault(n => n.Node == _event.Nodes.FirstOrDefault()) is { } first)
+                BringNodeIntoViewRequested?.Invoke(first);
         }
 
         // Deleting.
@@ -416,7 +437,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         private void PickNodeColor(NodeViewModel node)
         {
-            var current = (node.HeaderBrush as SolidColorBrush)?.Color ?? Colors.Gray;
+            var current = (node.BodyBrush as SolidColorBrush)?.Color ?? Colors.Gray;
             var oldColor = new Vector3(current.R, current.G, current.B) / 255.0f;
 
             // Live-preview while picking; restore the old color on cancel.
@@ -437,19 +458,41 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                 node.IsLocked = !node.IsLocked;
         }
 
-        [RelayCommand(CanExecute = nameof(HasSelectedNode))]
-        private void ExportSelected() => CopySelected(false);
+        /// <summary>Gets whether the event has any node (enables Clear and Export).</summary>
+        public bool HasNodes => Nodes.Count > 0;
 
-        /// <summary>Removes every node in the event (the "Clear" toolbar action).</summary>
-        [RelayCommand]
-        public void ClearNodes()
+        /// <summary>Exports the whole node graph as a Lua function to the clipboard.</summary>
+        [RelayCommand(CanExecute = nameof(HasNodes))]
+        private void Export()
         {
-            if (Nodes.Count == 0)
+            var script = ScriptingUtils.ParseNodes(_event.Nodes, "ExportedNodeFunction");
+            if (string.IsNullOrEmpty(script))
                 return;
 
-            if (!_messageService.ShowConfirmation(_localizationService["ClearNodesMessage"], _localizationService["ClearNodesTitle"], isRisky: true))
+            try
+            {
+                Clipboard.SetText(script);
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex, "Node graph could not be copied to the clipboard.");
                 return;
+            }
 
+            MessageRequested?.Invoke(_localizationService["ExportDone"]);
+        }
+
+        /// <summary>Removes every node in the event after asking for confirmation (the "Clear" toolbar action).</summary>
+        [RelayCommand(CanExecute = nameof(HasNodes))]
+        private void ClearNodes()
+        {
+            if (_messageService.ShowConfirmation(_localizationService["ClearNodesMessage"], _localizationService["ClearNodesTitle"], isRisky: true))
+                ClearAllNodes();
+        }
+
+        /// <summary>Removes every node in the event without asking (the Shift+Delete shortcut).</summary>
+        public void ClearAllNodes()
+        {
             _event.Nodes = new List<TriggerNode>();
             ClearSelection();
             SyncRootsAndRebuild();
@@ -463,72 +506,133 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             if (_dialogService.ShowDialog(this, inputBox) != true)
                 return;
 
+            // Nothing happens when no node matches, like the previous editor.
             var node = Nodes.FirstOrDefault(n => n.Title.Contains(inputBox.Value, StringComparison.OrdinalIgnoreCase));
             if (node is null)
-            {
-                _messageService.ShowInformation(_localizationService.Format("FindNodeNotFound", inputBox.Value), _localizationService["FindNodeTitle"]);
                 return;
-            }
 
             SelectSingle(node);
             BringNodeIntoViewRequested?.Invoke(node);
         }
 
-        // Connections.
+        // Connections. A link is dragged from a grip: picking up a grip detaches its current link, and
+        // dropping on an invalid target leaves the node detached (as in the previous editor).
 
-        /// <summary>Connects <paramref name="from"/>'s Next (or Else) output to <paramref name="to"/>.</summary>
-        public void Connect(NodeViewModel from, NodeViewModel to, bool asElse)
+        /// <summary>Detaches whatever is linked at the given grip of a node when a link drag starts from it.</summary>
+        public void BeginLinkDrag(TriggerNode node, NodeConnection connection)
         {
-            if (from == to || to.Node.Previous is not null || WouldCycle(from.Node, to.Node))
-                return;
-
-            if (asElse && from.Node is TriggerNodeCondition condition)
+            switch (connection)
             {
-                if (condition.Else is not null)
-                    condition.Else.Previous = null;
-                condition.Else = to.Node;
-            }
-            else
-            {
-                if (from.Node.Next is not null)
-                    from.Node.Next.Previous = null;
-                from.Node.Next = to.Node;
-            }
+                case NodeConnection.Previous:
+                    DetachFromParent(node);
+                    break;
 
-            to.Node.Previous = from.Node;
-            SyncRootsAndRebuild();
-        }
+                case NodeConnection.Next when node.Next is not null:
+                    node.Next.Previous = null;
+                    node.Next = null;
+                    break;
 
-        /// <summary>Clears <paramref name="from"/>'s Next (or Else) connection.</summary>
-        public void Disconnect(NodeViewModel from, bool asElse)
-        {
-            if (asElse && from.Node is TriggerNodeCondition condition)
-            {
-                if (condition.Else is not null)
-                {
+                case NodeConnection.Else when node is TriggerNodeCondition { Else: not null } condition:
                     condition.Else.Previous = null;
                     condition.Else = null;
-                }
-            }
-            else if (from.Node.Next is not null)
-            {
-                from.Node.Next.Previous = null;
-                from.Node.Next = null;
+                    break;
             }
 
             SyncRootsAndRebuild();
         }
 
-        private static bool WouldCycle(TriggerNode from, TriggerNode candidate)
+        /// <summary>Gets whether a link dragged from <paramref name="dragMode"/> of a node may end on the given grip of the target.</summary>
+        private static bool CanConnect(TriggerNode dragged, NodeConnection dragMode, TriggerNode target, NodeConnection targetMode)
         {
-            // Walk down from candidate; if we reach 'from', linking would create a cycle.
-            foreach (var node in TriggerNode.LinearizeNodes(new List<TriggerNode> { candidate }))
+            if (dragged == target || targetMode == dragMode)
+                return false;
+
+            // Next and Else grips never connect to each other.
+            if (targetMode != NodeConnection.Previous && dragMode != NodeConnection.Previous)
+                return false;
+
+            if (WouldCycle(dragged, target, targetMode == NodeConnection.Next))
+                return false;
+
+            return targetMode switch
             {
-                if (node == from)
-                    return true;
+                NodeConnection.Next => target.Next is null,
+                NodeConnection.Previous => target.Previous is null,
+                _ => target is TriggerNodeCondition { Else: null }
+            };
+        }
+
+        /// <summary>Ends a link drag on another node: picks the grip nearest to the drop point that accepts the link and connects.</summary>
+        public void CompleteLinkDrag(TriggerNode dragged, NodeConnection dragMode, NodeViewModel? target, double dropX)
+        {
+            if (target is null || !target.IsEditable)
+                return;
+
+            IEnumerable<NodeConnection> candidates = dragMode == NodeConnection.Previous
+                ? new[] { NodeConnection.Next, NodeConnection.Else }.OrderBy(m => Math.Abs(dropX - target.GetGripSpan(m).Left - target.GetGrip(m).Width / 2.0))
+                : [NodeConnection.Previous];
+
+            foreach (var targetMode in candidates)
+            {
+                if (!CanConnect(dragged, dragMode, target.Node, targetMode))
+                    continue;
+
+                Connect(dragged, dragMode, target.Node, targetMode);
+                return;
+            }
+        }
+
+        private void Connect(TriggerNode dragged, NodeConnection dragMode, TriggerNode target, NodeConnection targetMode)
+        {
+            switch (targetMode)
+            {
+                case NodeConnection.Previous:
+                    if (dragged is TriggerNodeCondition condition && dragMode == NodeConnection.Else)
+                        condition.Else = target;
+                    else
+                        dragged.Next = target;
+
+                    target.Previous = dragged;
+                    break;
+
+                case NodeConnection.Next:
+                    dragged.Previous = target;
+                    target.Next = dragged;
+                    break;
+
+                case NodeConnection.Else when target is TriggerNodeCondition targetCondition:
+                    dragged.Previous = target;
+                    targetCondition.Else = dragged;
+                    break;
             }
 
-            return false;
+            SyncRootsAndRebuild();
+        }
+
+        private static void DetachFromParent(TriggerNode node)
+        {
+            if (node.Previous is not { } parent)
+                return;
+
+            if (parent.Next == node)
+                parent.Next = null;
+            if (parent is TriggerNodeCondition parentCondition && parentCondition.Else == node)
+                parentCondition.Else = null;
+
+            node.Previous = null;
+        }
+
+        /// <summary>Walks the chain from <paramref name="target"/> (backwards, or forwards through Next and Else) looking for <paramref name="incoming"/>.</summary>
+        private static bool WouldCycle(TriggerNode incoming, TriggerNode target, bool backwards)
+        {
+            if (incoming == target)
+                return true;
+
+            if (backwards)
+                return target.Previous is not null && WouldCycle(incoming, target.Previous, backwards);
+
+            return (target.Next is not null && WouldCycle(incoming, target.Next, backwards)) ||
+                   (target is TriggerNodeCondition { Else: not null } condition && WouldCycle(incoming, condition.Else, backwards));
         }
     }
 }

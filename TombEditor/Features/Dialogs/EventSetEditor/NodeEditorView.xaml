@@ -19,29 +19,55 @@
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
-        <local:LinkBrushConverter x:Key="LinkBrushConverter" />
 
-        <!--  Grid lines overlay  -->
+        <!--  Dotted texture of the side grip strip (shown with NodeEditor_ShowGrips)  -->
         <DrawingBrush
-            x:Key="GridBrush"
+            x:Key="GripStripBrush"
             TileMode="Tile"
-            Viewport="0,0,32,32"
+            Viewport="0,0,4,4"
+            ViewportUnits="Absolute">
+            <DrawingBrush.Drawing>
+                <GeometryDrawing Brush="#59FFFFFF">
+                    <GeometryDrawing.Geometry>
+                        <RectangleGeometry Rect="1,1,2,2" />
+                    </GeometryDrawing.Geometry>
+                </GeometryDrawing>
+            </DrawingBrush.Drawing>
+        </DrawingBrush>
+
+        <!--  Backward-diagonal hatch drawn over locked nodes  -->
+        <DrawingBrush
+            x:Key="LockedHatchBrush"
+            TileMode="Tile"
+            Viewport="0,0,8,8"
             ViewportUnits="Absolute">
             <DrawingBrush.Drawing>
                 <GeometryDrawing>
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="0,0,32,32" />
+                        <LineGeometry StartPoint="0,0" EndPoint="8,8" />
                     </GeometryDrawing.Geometry>
                     <GeometryDrawing.Pen>
-                        <Pen Brush="#1AFFFFFF" Thickness="1" />
+                        <Pen Brush="#4D7A8084" Thickness="1" />
                     </GeometryDrawing.Pen>
                 </GeometryDrawing>
             </DrawingBrush.Drawing>
         </DrawingBrush>
 
+        <!--  Link grip bar of a node  -->
+        <Style x:Key="GripBarStyle" TargetType="Rectangle">
+            <Setter Property="Fill" Value="#40FFFFFF" />
+            <Setter Property="Cursor" Value="Cross" />
+            <Setter Property="Height" Value="6" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Fill" Value="#80FFFFFF" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <!--  Argument editors  -->
         <DataTemplate x:Key="ArgBoolean">
-            <CheckBox Margin="0,2,0,0" Content="{Binding Caption}" IsChecked="{Binding BoolValue, Mode=TwoWay}" ToolTip="{Binding Description}" />
+            <CheckBox Margin="0,2,0,0" Content="{Binding BoolCaption}" IsChecked="{Binding BoolValue, Mode=TwoWay}" ToolTip="{Binding Description}" />
         </DataTemplate>
 
         <DataTemplate x:Key="ArgNumerical">
@@ -101,7 +127,7 @@
             <StackPanel Margin="0,2,0,0">
                 <TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
                 <UniformGrid Columns="4">
-                    <controls:NumericUpDown Margin="0,0,2,0" Maximum="999" Minimum="0" ToolTip="{tombLib:Localize Hours}" Value="{Binding Hours, Mode=TwoWay}" />
+                    <controls:NumericUpDown Margin="0,0,2,0" Maximum="1000000" Minimum="0" ToolTip="{tombLib:Localize Hours}" Value="{Binding Hours, Mode=TwoWay}" />
                     <controls:NumericUpDown Margin="2,0,2,0" Maximum="59" Minimum="0" ToolTip="{tombLib:Localize Minutes}" Value="{Binding Minutes, Mode=TwoWay}" />
                     <controls:NumericUpDown Margin="2,0,2,0" Maximum="59" Minimum="0" ToolTip="{tombLib:Localize Seconds}" Value="{Binding Seconds, Mode=TwoWay}" />
                     <controls:NumericUpDown Margin="2,0,0,0" Maximum="99" Minimum="0" ToolTip="{tombLib:Localize Centiseconds}" Value="{Binding Cents, Mode=TwoWay}" />
@@ -135,7 +161,7 @@
                         Command="{Binding RunActionCommand}"
                         Content="..."
                         Visibility="{Binding HasAction, Converter={StaticResource BoolToVis}}" />
-                    <ComboBox
+                    <controls:SearchableComboBox
                         DisplayMemberPath="Display"
                         ItemsSource="{Binding Items}"
                         SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
@@ -203,7 +229,7 @@
                 <Image Width="16" Height="16" Source="{tomb:Icon General/trash}" />
             </Button>
             <Button
-                Command="{Binding ExportSelectedCommand}"
+                Command="{Binding ExportCommand}"
                 ToolTip="{tombLib:Localize ExportTooltip}">
                 <Image Width="16" Height="16" Source="{tomb:Icon General/Export}" />
             </Button>
@@ -243,16 +269,17 @@
                     MouseLeftButtonDown="Canvas_MouseLeftButtonDown"
                     MouseLeftButtonUp="Canvas_MouseLeftButtonUp"
                     MouseMove="Canvas_MouseMove"
+                    MouseRightButtonDown="Canvas_MouseRightButtonDown"
                     MouseRightButtonUp="Canvas_MouseRightButtonUp">
                     <Canvas.LayoutTransform>
                         <ScaleTransform x:Name="zoomTransform" ScaleX="1" ScaleY="1" />
                     </Canvas.LayoutTransform>
 
-                    <!--  Grid lines  -->
+                    <!--  Grid lines (one cell apart, brush created in code from the configured grid step)  -->
                     <Rectangle
+                        x:Name="gridRectangle"
                         Width="{Binding CanvasWidth}"
                         Height="{Binding CanvasHeight}"
-                        Fill="{StaticResource GridBrush}"
                         IsHitTestVisible="False" />
 
                     <!--  Links  -->
@@ -266,11 +293,22 @@
                             <DataTemplate DataType="{x:Type local:LinkViewModel}">
                                 <Path
                                     Data="{Binding Geometry}"
-                                    Stroke="{Binding IsElse, Converter={StaticResource LinkBrushConverter}}"
-                                    StrokeThickness="2" />
+                                    Fill="{Binding Fill}"
+                                    IsHitTestVisible="False"
+                                    Stroke="{Binding Stroke}"
+                                    StrokeThickness="{Binding StrokeThickness}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
+
+                    <!--  Rubber-band selection rectangle (under the nodes)  -->
+                    <Rectangle
+                        x:Name="selectionRectangle"
+                        Fill="#804B6EAF"
+                        IsHitTestVisible="False"
+                        Stroke="{DynamicResource Brush_Selection}"
+                        StrokeThickness="2"
+                        Visibility="Collapsed" />
 
                     <!--  Nodes  -->
                     <ItemsControl ItemsSource="{Binding Nodes}">
@@ -311,74 +349,58 @@
                                         </ContextMenu>
                                     </Grid.ContextMenu>
 
-                                    <!--  Body  -->
+                                    <!--  Selection highlight: the node color rectangle grown by two pixels  -->
                                     <Border
-                                        Background="{DynamicResource Brush_Background}"
-                                        BorderThickness="2"
-                                        CornerRadius="3">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsSelected}" Value="True">
-                                                        <Setter Property="BorderBrush" Value="{DynamicResource Brush_Selection}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <DockPanel>
-                                            <!--  Header bar (drag handle)  -->
-                                            <Thumb
-                                                DockPanel.Dock="Top"
-                                                DragDelta="NodeThumb_DragDelta"
-                                                DragStarted="NodeThumb_DragStarted"
-                                                IsEnabled="{Binding IsEditable}">
+                                        Margin="-2"
+                                        Background="{DynamicResource Brush_Selection}"
+                                        IsHitTestVisible="False"
+                                        Visibility="{Binding IsSelected, Converter={StaticResource BoolToVis}}" />
+
+                                    <!--  Node body, painted in the node color  -->
+                                    <Border Background="{Binding BodyBrush}">
+                                        <Grid>
+                                            <!--  Any free spot of the node drags it  -->
+                                            <Thumb DragDelta="NodeThumb_DragDelta" DragStarted="NodeThumb_DragStarted" IsEnabled="{Binding IsEditable}">
                                                 <Thumb.Template>
                                                     <ControlTemplate TargetType="Thumb">
-                                                        <Border Background="{Binding HeaderBrush}" CornerRadius="2,2,0,0" Cursor="SizeAll">
-                                                            <StackPanel Margin="6,4" Orientation="Horizontal">
-                                                                <TextBlock
-                                                                    Margin="0,0,4,0"
-                                                                    FontWeight="Bold"
-                                                                    Foreground="White"
-                                                                    Text="&#x1f512;"
-                                                                    Visibility="{Binding IsLocked, Converter={StaticResource BoolToVis}}" />
-                                                                <TextBlock
-                                                                    FontWeight="Bold"
-                                                                    Foreground="White"
-                                                                    Text="{Binding Title}"
-                                                                    TextTrimming="CharacterEllipsis" />
-                                                            </StackPanel>
-                                                        </Border>
+                                                        <Border Background="Transparent" />
                                                     </ControlTemplate>
                                                 </Thumb.Template>
                                             </Thumb>
 
-                                            <!--  Body: the function the node runs (its primary content) + its arguments.
-                                                The node name is shown in the header bar / edited via the Rename button.  -->
-                                            <StackPanel Margin="6" IsEnabled="{Binding IsEditable}">
-                                                <StackPanel
-                                                    Margin="0,0,0,4"
-                                                    Orientation="Horizontal"
-                                                    ToolTip="{tombLib:Localize NotSupported}"
-                                                    Visibility="{Binding IsUnsupported, Converter={StaticResource BoolToVis}}">
-                                                    <TextBlock
-                                                        Margin="0,0,4,0"
-                                                        Foreground="Orange"
-                                                        Text="&#x26a0;" />
-                                                    <TextBlock
-                                                        FontStyle="Italic"
-                                                        Foreground="Orange"
-                                                        Opacity="0.8"
-                                                        Text="{tombLib:Localize NotSupported}"
-                                                        TextTrimming="CharacterEllipsis" />
-                                                </StackPanel>
-                                                <ComboBox
+                                            <!--  Side grip strip  -->
+                                            <Border
+                                                Height="8"
+                                                Margin="3,3,3,0"
+                                                VerticalAlignment="Top"
+                                                Background="{StaticResource GripStripBrush}"
+                                                IsHitTestVisible="False"
+                                                Visibility="{Binding ShowGrips, Converter={StaticResource BoolToVis}}" />
+
+                                            <!--  The function the node runs (its primary content) + its arguments  -->
+                                            <StackPanel Margin="{Binding ContentMargin}" IsEnabled="{Binding IsEditable}">
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    Text="{tombLib:Localize NoFunctions}"
+                                                    TextWrapping="Wrap">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding HasNodeFunctions}" Value="False">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                                <controls:SearchableComboBox
                                                     DisplayMemberPath="Name"
                                                     IsEnabled="{Binding IsEditable}"
                                                     ItemsSource="{Binding AvailableFunctions}"
                                                     SelectedItem="{Binding SelectedFunction, Mode=TwoWay}"
-                                                    ToolTip="{Binding FunctionName}" />
+                                                    ToolTip="{Binding FunctionDescription}"
+                                                    Visibility="{Binding HasNodeFunctions, Converter={StaticResource BoolToVis}}" />
                                                 <ItemsControl
                                                     Margin="0,4,0,0"
                                                     ItemTemplateSelector="{StaticResource ArgSelector}"
@@ -397,61 +419,82 @@
                                                     </ItemsControl.ItemContainerStyle>
                                                 </ItemsControl>
                                             </StackPanel>
-                                        </DockPanel>
+
+                                            <!--  Locked nodes are hatched  -->
+                                            <Rectangle
+                                                Fill="{StaticResource LockedHatchBrush}"
+                                                IsHitTestVisible="False"
+                                                Visibility="{Binding IsLocked, Converter={StaticResource BoolToVis}}" />
+                                        </Grid>
                                     </Border>
 
-                                    <!--  Input port (top center)  -->
-                                    <Ellipse
-                                        Width="12"
-                                        Height="12"
-                                        Margin="0,-6,0,0"
-                                        HorizontalAlignment="Center"
+                                    <!--  Node name above the node (a warning when its function is not supported by the event type)  -->
+                                    <StackPanel
+                                        Margin="0,-20,0,0"
                                         VerticalAlignment="Top"
-                                        Fill="{DynamicResource Brush_Border}"
-                                        Stroke="{DynamicResource Brush_Text}"
-                                        ToolTip="{tombLib:Localize PortInput}" />
+                                        IsHitTestVisible="False"
+                                        Opacity="0.5"
+                                        Orientation="Horizontal">
+                                        <TextBlock
+                                            Margin="0,0,4,0"
+                                            Foreground="Orange"
+                                            Text="&#x26a0;"
+                                            Visibility="{Binding IsUnsupported, Converter={StaticResource BoolToVis}}" />
+                                        <TextBlock Text="{Binding LabelText}" TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
 
-                                    <!--  Next output port (bottom center)  -->
-                                    <Ellipse
-                                        Width="12"
-                                        Height="12"
-                                        Margin="0,0,0,-6"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Bottom"
-                                        Cursor="Cross"
-                                        Fill="{DynamicResource Brush_Text}"
-                                        MouseLeftButtonDown="OutputPort_MouseDown"
-                                        Stroke="{DynamicResource Brush_Text}"
-                                        Tag="Next"
-                                        ToolTip="{tombLib:Localize PortNext}" />
+                                    <!--  Link grips: drag from one to pick up its link, drop on a grip of another node  -->
+                                    <Canvas>
+                                        <Rectangle
+                                            Canvas.Left="{Binding PreviousGrip.Left}"
+                                            Canvas.Top="{Binding PreviousGrip.Top}"
+                                            Width="{Binding PreviousGrip.Width}"
+                                            MouseLeftButtonDown="Grip_MouseDown"
+                                            Style="{StaticResource GripBarStyle}"
+                                            Tag="Previous"
+                                            ToolTip="{tombLib:Localize PortInput}" />
+                                        <Rectangle
+                                            Canvas.Left="{Binding NextGrip.Left}"
+                                            Canvas.Top="{Binding NextGrip.Top}"
+                                            Width="{Binding NextGrip.Width}"
+                                            MouseLeftButtonDown="Grip_MouseDown"
+                                            Style="{StaticResource GripBarStyle}"
+                                            Tag="Next"
+                                            ToolTip="{tombLib:Localize PortNext}" />
+                                        <Rectangle
+                                            Canvas.Left="{Binding ElseGrip.Left}"
+                                            Canvas.Top="{Binding ElseGrip.Top}"
+                                            Width="{Binding ElseGrip.Width}"
+                                            MouseLeftButtonDown="Grip_MouseDown"
+                                            Style="{StaticResource GripBarStyle}"
+                                            Tag="Else"
+                                            ToolTip="{tombLib:Localize PortElse}"
+                                            Visibility="{Binding IsCondition, Converter={StaticResource BoolToVis}}" />
 
-                                    <!--  Else output port (right center, conditions only)  -->
-                                    <Ellipse
-                                        Width="12"
-                                        Height="12"
-                                        Margin="0,0,-6,0"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Cursor="Cross"
-                                        Fill="#E0A030"
-                                        MouseLeftButtonDown="OutputPort_MouseDown"
-                                        Stroke="{DynamicResource Brush_Text}"
-                                        Tag="Else"
-                                        ToolTip="{tombLib:Localize PortElse}"
-                                        Visibility="{Binding IsCondition, Converter={StaticResource BoolToVis}}" />
+                                        <!--  "then" and "else" captions under the condition grips  -->
+                                        <TextBlock
+                                            Canvas.Left="{Binding NextGrip.Left}"
+                                            Canvas.Top="{Binding Height}"
+                                            Width="{Binding NextGrip.Width}"
+                                            IsHitTestVisible="False"
+                                            Opacity="0.3"
+                                            Text="then"
+                                            TextAlignment="Center"
+                                            Visibility="{Binding IsCondition, Converter={StaticResource BoolToVis}}" />
+                                        <TextBlock
+                                            Canvas.Left="{Binding ElseGrip.Left}"
+                                            Canvas.Top="{Binding Height}"
+                                            Width="{Binding ElseGrip.Width}"
+                                            IsHitTestVisible="False"
+                                            Opacity="0.3"
+                                            Text="else"
+                                            TextAlignment="Center"
+                                            Visibility="{Binding IsCondition, Converter={StaticResource BoolToVis}}" />
+                                    </Canvas>
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-
-                    <!--  Rubber-band selection rectangle  -->
-                    <Rectangle
-                        x:Name="selectionRectangle"
-                        Fill="#33FFFFFF"
-                        IsHitTestVisible="False"
-                        Stroke="{DynamicResource Brush_Selection}"
-                        StrokeThickness="1"
-                        Visibility="Collapsed" />
                 </Canvas>
             </ScrollViewer>
         </Border>

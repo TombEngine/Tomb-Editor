@@ -40,13 +40,19 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             listColumn.Width = new GridLength(Math.Max(configuration.Window_FormEventSetEditor_SplitterDistance, listColumn.MinWidth));
 
             if (Vm is { } vm)
+            {
                 vm.WarningRequested += ShowWarning;
+                vm.InfoRequested += ShowInfo;
+            }
         }
 
         private void OnClosed(object? sender, EventArgs e)
         {
             if (Vm is { } vm)
+            {
                 vm.WarningRequested -= ShowWarning;
+                vm.InfoRequested -= ShowInfo;
+            }
 
             _popup.Dispose();
             Vm?.OnWindowClosed();
@@ -54,6 +60,9 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         private void ShowWarning(string message)
             => _popup.Show(editorPanel, PopupAlignment.BottomRight, message, string.Empty, PopupType.Warning);
+
+        private void ShowInfo(string message)
+            => _popup.Show(editorPanel, PopupAlignment.BottomRight, message, string.Empty, PopupType.Info);
 
         private void Splitter_DragCompleted(object sender, DragCompletedEventArgs e)
             => Editor.Instance.Configuration.Window_FormEventSetEditor_SplitterDistance = (int)Math.Round(listColumn.ActualWidth);

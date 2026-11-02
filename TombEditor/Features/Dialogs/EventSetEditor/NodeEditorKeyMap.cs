@@ -7,7 +7,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
     /// <summary>
     /// Keyboard shortcuts of the node editor (same map as the previous editor): N/A add action,
     /// C add condition (Shift or Alt links through Else), L link selected, Ctrl+A select all,
-    /// Esc deselect, Delete/Backspace delete selected (Shift clears all), Ctrl+C/X/V clipboard.
+    /// Esc deselect, Delete/Backspace delete selected (Shift clears all without asking), Ctrl+C/X/V clipboard.
     /// </summary>
     public static class NodeEditorKeyMap
     {
@@ -23,7 +23,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                     return true;
 
                 case Key.Delete or Key.Back when modifiers == ModifierKeys.Shift:
-                    editor.ClearNodes();
+                    editor.ClearAllNodes();
                     return true;
 
                 case Key.N or Key.A when modifiers is ModifierKeys.None or ModifierKeys.Shift or ModifierKeys.Alt:
@@ -42,7 +42,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                     editor.SelectAll();
                     return true;
 
-                case Key.Escape when modifiers == ModifierKeys.None && editor.HasSelectedNode:
+                case Key.Escape when modifiers == ModifierKeys.None:
                     editor.ClearSelection();
                     return true;
 

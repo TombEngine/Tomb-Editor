@@ -42,13 +42,23 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         public void SelectSingle(NodeViewModel? node) => SetSelection(node is null ? [] : [node]);
 
-        /// <summary>Adds the node to the selection, or removes it when <paramref name="toggle"/> is set and it is already selected.</summary>
-        public void SelectNode(NodeViewModel node, bool toggle)
+        /// <summary>
+        /// Applies a click on a node: a plain click selects only that node, Ctrl adds it (or removes it when already
+        /// selected) and Shift only adds it, so a selected group stays intact for dragging. Locked nodes ignore clicks.
+        /// </summary>
+        public void ClickNode(NodeViewModel node, bool ctrl, bool shift)
         {
-            if (!_selectedNodes.Contains(node))
-                SetSelection([.. _selectedNodes, node]);
-            else if (toggle)
-                SetSelection(_selectedNodes.Where(n => n != node));
+            if (!node.IsEditable)
+                return;
+
+            var selection = ctrl || shift ? _selectedNodes.ToList() : [];
+
+            if (!selection.Contains(node))
+                selection.Add(node);
+            else if (!shift)
+                selection.Remove(node);
+
+            SetSelection(selection);
         }
 
         public void SelectAll() => SetSelection(Nodes);
@@ -60,18 +70,20 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                 SetSelection([]);
         }
 
-        /// <summary>Selects the baseline plus every node intersecting the rubber-band area (canvas coordinates).</summary>
-        public void SelectInArea(Rect area, IReadOnlyCollection<NodeViewModel> baseline)
+        /// <summary>Selects exactly the nodes intersecting the rubber-band area (canvas coordinates).</summary>
+        public void SelectInArea(Rect area)
         {
-            var inside = Nodes.Where(n => area.IntersectsWith(new Rect(n.CanvasLeft, n.CanvasTop, n.Width, n.Height)));
-            SetSelection(baseline.Concat(inside));
+            if (area.Width == 0.0 || area.Height == 0.0)
+                return;
+
+            SetSelection(Nodes.Where(n => area.IntersectsWith(new Rect(n.CanvasLeft, n.CanvasTop, n.Width, n.Height))));
         }
 
-        /// <summary>Starts moving the selection (or just the node, when it is not selected) from the current positions.</summary>
+        /// <summary>Starts moving the dragged node together with the rest of the selection (locked ones too) from the current positions.</summary>
         public void BeginMove(NodeViewModel anchor)
         {
             var group = _selectedNodes.Contains(anchor) ? _selectedNodes : [anchor];
-            _moveOrigins = group.Where(n => n.IsEditable).Select(n => (n, n.CanvasLeft, n.CanvasTop)).ToList();
+            _moveOrigins = group.Select(n => (n, n.CanvasLeft, n.CanvasTop)).ToList();
         }
 
         /// <summary>Moves the nodes registered by <see cref="BeginMove"/> by a total offset since the move began.</summary>
@@ -88,8 +100,9 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         [RelayCommand(CanExecute = nameof(HasMultipleSelectedNodes))]
         private void LinkSelected()
         {
+            // The stored Y grows upwards, so the topmost node has the highest Y.
             var ordered = _selectedNodes.Select(n => n.Node)
-                                        .OrderBy(n => n.ScreenPosition.Y)
+                                        .OrderByDescending(n => n.ScreenPosition.Y)
                                         .ThenBy(n => n.ScreenPosition.X)
                                         .ToList();
 
@@ -117,8 +130,9 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             ColorSelectedCommand.NotifyCanExecuteChanged();
             LockSelectedCommand.NotifyCanExecuteChanged();
             DeleteSelectedNodeCommand.NotifyCanExecuteChanged();
-            ExportSelectedCommand.NotifyCanExecuteChanged();
             LinkSelectedCommand.NotifyCanExecuteChanged();
+            ExportCommand.NotifyCanExecuteChanged();
+            ClearNodesCommand.NotifyCanExecuteChanged();
         }
     }
 }
