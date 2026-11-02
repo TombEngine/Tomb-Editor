@@ -62,7 +62,7 @@
                                             </Button>
                                             <TextBox Text="{Binding Path, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="{Binding IsReadOnly}" ToolTip="{Binding Error}">
                                                 <TextBox.Style>
-                                                    <Style TargetType="TextBox">
+                                                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                                                         <Style.Triggers>
                                                             <DataTrigger Binding="{Binding Error}" Value="">
                                                                 <Setter Property="BorderBrush" Value="{DynamicResource Brush_Background_Low}"/>
