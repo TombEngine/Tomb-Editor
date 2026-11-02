@@ -257,7 +257,7 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 | Tomb Editor | Input box (Rename animation set) | WPF | seen on screen, label, text box and buttons correct |
 | Tomb Editor | Texture preview, Wad preview (Show button in Level settings) | BOTH | opened with real clicks; texture preview fixed, WinForms scroll bars missing in WPF |
 | WadTool | Main window | BOTH | |
-| WadTool | Animation editor (verified in WPF: field undo/redo, close prompt after edit; WinForms undo of Delete animation not captured) | BOTH | menus, list filter, timeline menu, keys, camera reset, close prompt |
+| WadTool | Animation editor (verified in WPF: field undo/redo, close prompt after edit; WinForms Delete animation pushes no undo entry (code), so undo does not restore it in either editor) | BOTH | menus, list filter, timeline menu, keys, camera reset, close prompt |
 | WadTool | Mesh editor | BOTH | opened from the Static editor |
 | WadTool | Static editor | BOTH | |
 | WadTool | State changes | WPF | WinForms capture not obtained |
@@ -265,7 +265,7 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 | WadTool | Anim commands, State changes | BOTH | compared on screen |
 | WadTool | Skeleton editor | BOTH | all controls present; layout mirrored (mesh tree on the left in WPF, on the right in WinForms; skin buttons under the viewport) - left as is |
 | WadTool | Sprite sequence | WPF | complete; WinForms not compared |
-| WadTool | Blend curve | CODE | double click on the curve did not open it with the test coordinates in either build |
+| WadTool | Blend curve (State changes > click on the curve cell, TombEngine wads only) | WPF | opens with a single click like WinForms (earlier tests used a double click); WPF seen on screen, designer compared: curve 248x230, Preset combo with Linear/Ease In/Ease Out/Ease In and Out, OK, Cancel |
 | SoundTool | Main window, Options | BOTH | early pass, before the behaviour fixes |
 ## Open items
 | Event set editor: closing with the window X or Escape restores the backup (only OK keeps changes), Unassign clears the volume's event set, generic mode starts with no set selected and hides the volume options | The X button committed; Unassign did nothing; generic mode preselected a set | (this commit) |
