@@ -39,9 +39,15 @@ public partial class AnimationEditorWindow : Window
         _panel.PointerEntered += OnPanelPointerEntered;
         _panel.PointerDragged += OnPanelPointerDragged;
 
+        stateIdBox.AddHandler(KeyUpEvent, new KeyEventHandler(OnStateIdKeyUp), true);
+
         DataContextChanged += OnDataContextChanged;
         Loaded += (_, _) =>
         {
+            // The text was set before the box template existed.
+            if (stateIdBox.InputTextBox is not null)
+                stateIdBox.InputTextBox.Text = stateIdBox.Text;
+
             if (_vm is not null)
                 TombLib.WPF.WindowConfiguration.ConfigureWindow(this, _vm.Configuration, key: "FormAnimationEditor");
         };
@@ -61,6 +67,13 @@ public partial class AnimationEditorWindow : Window
 
         _vm.NameFocusRequested += OnNameFocusRequested;
         _vm.AttachControls(_panel, _timeline, _bezier);
+    }
+
+    /// <summary>Enter accepts a suggestion and commits the typed state in one go, like the previous State field.</summary>
+    private void OnStateIdKeyUp(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter && stateIdBox.InputTextBox is not null)
+            stateIdBox.Text = stateIdBox.InputTextBox.Text;
     }
 
     private void OnNameFocusRequested(object? sender, EventArgs e) => animationNameBox.Focus();
