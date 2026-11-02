@@ -17,6 +17,14 @@ public partial class TexturePreviewWindow : Window
         InitializeComponent();
         DataContextChanged += OnDataContextChanged;
         Deactivated += (_, _) => Close();
+        Loaded += OnLoaded;
+    }
+
+    // The view is first positioned while the control still has zero height; reset it once the layout is known.
+    private void OnLoaded(object sender, RoutedEventArgs e)
+    {
+        if (DataContext is TexturePreviewWindowViewModel vm)
+            MapView.ResetVisibleTexture(vm.VisibleTexture);
     }
 
     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

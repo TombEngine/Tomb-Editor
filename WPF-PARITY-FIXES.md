@@ -200,6 +200,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Operation dialog: long log lines now wrap like WinForms (the list had a horizontal scroll bar, so the wrapping text block never wrapped) | Long paths ran off the right edge | (this commit) |
 
+| Texture preview (Level settings > Texture Files > Show): the view started half a window too low, so a tall texture appeared with an empty top half; the view is now reset once the window has been laid out and starts at the top of the texture like WinForms. WinForms also shows scroll bars, the WPF preview does not (pan and wheel only). Wad preview compared: same layout (game version, search, tree, date, notes, 3D view), first item selected on open | Tall textures were shifted down | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
@@ -253,7 +255,7 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 | Tomb Editor | Geometry IO settings (Export settings from Rooms > Export rooms) | BOTH | identical after the localization fix |
 | Tomb Editor | Material editor | BOTH | maps and properties compared, white boxes fixed |
 | Tomb Editor | Input box (Rename animation set) | WPF | seen on screen, label, text box and buttons correct |
-| Tomb Editor | Texture preview, Wad preview | NONE | |
+| Tomb Editor | Texture preview, Wad preview (Show button in Level settings) | BOTH | opened with real clicks; texture preview fixed, WinForms scroll bars missing in WPF |
 | WadTool | Main window | BOTH | |
 | WadTool | Animation editor (verified in WPF: field undo/redo, close prompt after edit; WinForms undo of Delete animation not captured) | BOTH | menus, list filter, timeline menu, keys, camera reset, close prompt |
 | WadTool | Mesh editor | BOTH | opened from the Static editor |
