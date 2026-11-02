@@ -224,6 +224,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Search: results that match the keyword less closely are dimmed (full colour for an exact match, 80% for a small typo, 60% otherwise, same thresholds as the WinForms form); the WPF list showed every row in full colour. Verified on screen with the keyword FinishLevel | No dimming of weaker matches | (this commit) |
 
+| Items panel placeholder text is "Click here to load new WAD file." like WinForms (the WPF text had an extra "a"); New level and its unsaved-changes prompt compared: same text, same buttons, "No" default, same empty 18x18 room | Text differed | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
