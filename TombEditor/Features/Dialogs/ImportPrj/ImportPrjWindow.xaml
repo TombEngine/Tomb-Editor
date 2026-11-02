@@ -8,6 +8,7 @@
     xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.ImportPrj"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     Title="{Binding WindowTitle}"
     Width="520"
@@ -51,8 +52,12 @@
                         Margin="4,0,0,0"
                         VerticalAlignment="Center"
                         Command="{Binding BrowseSoundsCatalogCommand}"
-                        Content="{tombLib:Localize ~Generic.Browse}"
-                        DockPanel.Dock="Right" />
+                        DockPanel.Dock="Right">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="16" Height="16" Margin="0,0,4,0" Source="{tomb:Icon General/Open}" />
+                            <TextBlock Text="{tombLib:Localize ~Generic.Browse}" />
+                        </StackPanel>
+                    </Button>
                     <TextBox VerticalAlignment="Center" Text="{Binding SoundsPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </DockPanel>
                 <TextBlock
