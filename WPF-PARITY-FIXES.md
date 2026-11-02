@@ -194,6 +194,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Level settings > Imported Geometry: swap columns 60 px, UV/invert columns 54-62 px (headers X<->Y, UV Map, UV: -V, Inv. F. were cut to "X<" and "UV" at 34 px). Static Meshes tab compared: same columns and buttons as WinForms | Verified on screen (WPF) | (this commit) |
 
+| Geometry I/O Settings, Material editor and Input box showed raw localization keys (TitleExport, SwapXYAxes, ...): their JSON sections were named ...Window and the lookup trims that suffix, so they were never found. Sections renamed to GeometryIOSettings, MaterialEditor, InputBox. Export settings compared with WinForms after the fix: same groups, labels, presets and enabled states | Raw keys were shown to the user | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
@@ -243,7 +245,8 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 | Tomb Editor | Transform Edit (Ctrl+T) | WPF | seen on screen for Lara (only Y rotation enabled, scale disabled at 0.00); WinForms did not open with Ctrl+T in the test, FormTransform designer and enable rules match the WPF view model |
 | Tomb Editor | Level settings, Imported Geometry and Static Meshes tabs | WPF | columns compared with the WinForms designer values (grid empty in the test level) |
 | Tomb Editor | Colour picker (Select color, from Set room static meshes color) | WPF | WinForms did not open the same dialog through the menu in the test |
-| Tomb Editor | Texture preview, Wad preview, Material editor, Geometry IO settings, input boxes | NONE | |
+| Tomb Editor | Geometry IO settings (Export settings from Rooms > Export rooms) | BOTH | identical after the localization fix |
+| Tomb Editor | Texture preview, Wad preview, Material editor, input boxes | NONE | |
 | WadTool | Main window | BOTH | |
 | WadTool | Animation editor (verified in WPF: field undo/redo, close prompt after edit; WinForms undo of Delete animation not captured) | BOTH | menus, list filter, timeline menu, keys, camera reset, close prompt |
 | WadTool | Mesh editor | BOTH | opened from the Static editor |

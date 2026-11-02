@@ -1,6 +1,6 @@
 {
     "Rendering": { "FatalError": "Rendering stopped. Save your work and the log file, then report this error to the development team." },
-    "MaterialEditorWindow": {
+    "MaterialEditor": {
         "Title": "Material editor",
         "Name": "Name",
         "Type": "Material type",
@@ -28,7 +28,7 @@
         "CustomColors": "Custom colors",
         "SaveCustom": "Save color to selected slot"
     },
-    "GeometryIOSettingsWindow": {
+    "GeometryIOSettings": {
         "Title": "Geometry I/O Settings",
         "TitleImport": "Import Settings",
         "TitleExport": "Export Settings",
@@ -70,7 +70,7 @@
         "DeletePresetMessage": "Are you sure you want to delete the \"{0}\" preset?"
     },
 
-    "InputBoxWindow": {
+    "InputBox": {
         "EnterValue": "Please enter a value:",
         "InvalidNameMessage": "Invalid name, please choose another one."
     },
