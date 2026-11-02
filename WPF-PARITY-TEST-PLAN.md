@@ -109,5 +109,5 @@ Counted in cells (a row has up to 8 cells): see the tables. Summary line to upda
 - TE-D7 Object (moveable) dialog: opened for a FISH_EMITTER in both builds, same layout (Bit 1-5, Invisible, No reflection, OCB, Tint with reset). Setting Bit 2, Invisible and OCB 77 then OK and Save level: both saved levels grow by the same one byte and differ from each other only in which of the several FISH_EMITTER objects was edited (the harness picked different search rows) - semantics equal. Search results: WinForms also lists fuzzy matches dimmed below the exact ones; check the WPF Search for the same.
 - Rows fully run (all applicable cells P or F): 0 / 45
 - Rows with the look already compared (V or P in D1): all rows except TE-M3, TE-M4, TE-M5, TE-M16, TE-M17, TE-M15, WT-7, ST-3
-- Differences found by this plan and fixed: 1 (3D view context menu never appeared)
+- Differences found by this plan and fixed: 4 (3D view context menu never appeared; Sky & Font path boxes not red; Search weaker matches not dimmed; one text typo)
 - Test setup note: both builds must use the same TombEditorConfiguration.xml (the WPF one differed: show all rooms, portals, FOV), baseline saved in the scratchpad as wf-config-baseline.xml; eset-config.ps1 applies it before each run; the user's WPF config is saved as wpf-config-backup.xml and must be put back at the end

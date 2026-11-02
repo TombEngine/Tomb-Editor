@@ -35,6 +35,9 @@ public partial class SearchWindowViewModel : ObservableObject, IModalDialogViewM
         public string Room { get; init; } = string.Empty;
         public string Type { get; init; } = string.Empty;
         public int Rate { get; init; }
+
+        // Results that match the keyword less closely are dimmed like in the WinForms editor.
+        public double TextOpacity => Rate < 1 * 256 ? 1.0 : Rate < 3 * 256 ? 0.8 : 0.6;
     }
 
     private readonly Editor _editor;

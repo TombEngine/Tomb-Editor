@@ -93,15 +93,33 @@
 				<DataGridTextColumn
 					Width="100"
 					Binding="{Binding Type}"
-					Header="{tombLib:Localize ColumnType}" />
+					Header="{tombLib:Localize ColumnType}">
+					<DataGridTextColumn.ElementStyle>
+						<Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+							<Setter Property="Opacity" Value="{Binding TextOpacity}" />
+						</Style>
+					</DataGridTextColumn.ElementStyle>
+				</DataGridTextColumn>
 				<DataGridTextColumn
 					Width="160"
 					Binding="{Binding Room}"
-					Header="{tombLib:Localize ColumnRoom}" />
+					Header="{tombLib:Localize ColumnRoom}">
+					<DataGridTextColumn.ElementStyle>
+						<Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+							<Setter Property="Opacity" Value="{Binding TextOpacity}" />
+						</Style>
+					</DataGridTextColumn.ElementStyle>
+				</DataGridTextColumn>
 				<DataGridTextColumn
 					Width="*"
 					Binding="{Binding Name}"
-					Header="{tombLib:Localize ColumnName}" />
+					Header="{tombLib:Localize ColumnName}">
+					<DataGridTextColumn.ElementStyle>
+						<Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+							<Setter Property="Opacity" Value="{Binding TextOpacity}" />
+						</Style>
+					</DataGridTextColumn.ElementStyle>
+				</DataGridTextColumn>
 			</DataGrid.Columns>
 		</DataGrid>
 
