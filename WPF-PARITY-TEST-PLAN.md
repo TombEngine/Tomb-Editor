@@ -100,6 +100,6 @@ Legend in the tables: `-` not run, `P` pass, `F` fixed, `D` difference open, `n/
 
 Counted in cells (a row has up to 8 cells): see the tables. Summary line to update after each session:
 
-- Rows fully run (all applicable cells P or F): 0 / 53
-- Rows with look only: 38 (marked V or P in D1)
+- Rows fully run (all applicable cells P or F): 0 / 45
+- Rows with the look already compared (V or P in D1): all rows except TE-M3, TE-M4, TE-M5, TE-M16, TE-M17, TE-M15, WT-7, ST-3
 - Differences found by this plan and fixed: 0
