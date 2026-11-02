@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 
 using CommunityToolkit.Mvvm.Input;
 using LevelFileDialog = TombLib.WPF.Services.LevelFileDialog;
@@ -42,13 +42,14 @@ public partial class AnimationEditorWindowViewModel
         if (input is null)
             return;
 
+        // The previous form pushed the undo entry before validating the input.
+        _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
+
         if (!int.TryParse(input, out int framesCount) || framesCount <= 0)
         {
             ShowPopup("You must insert a number greater than 1", PopupType.Error);
             return;
         }
-
-        _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
 
         for (int i = 0; i < framesCount; i++)
             AddNewFrame(_timeline.Value + 1, false);
@@ -65,13 +66,14 @@ public partial class AnimationEditorWindowViewModel
         if (input is null)
             return;
 
+        // The previous form pushed the undo entry before validating the input.
+        _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
+
         if (!int.TryParse(input, out int step) || step <= 1)
         {
             ShowPopup("You must insert a number greater than 1", PopupType.Error);
             return;
         }
-
-        _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
 
         var keyFrames = _editor.CurrentAnim.DirectXAnimation.KeyFrames;
 
@@ -109,13 +111,15 @@ public partial class AnimationEditorWindowViewModel
         if (input is null)
             return;
 
+        // The previous form pushed the undo entry before validating the input.
+        _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
+
         if (!int.TryParse(input, out int multiplier) || multiplier <= 1)
         {
             ShowPopup("You must insert a number greater than 1", PopupType.Error);
             return;
         }
 
-        _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
         InterpolateAnimation(multiplier - 1, true);
         RefreshAfterResample();
     }
@@ -134,7 +138,6 @@ public partial class AnimationEditorWindowViewModel
             return;
         }
 
-        _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
         InterpolateAnimation(animation.FrameRate - 1, false);
         animation.FrameRate = 1;
         RefreshAfterResample();
@@ -147,6 +150,8 @@ public partial class AnimationEditorWindowViewModel
 
         if (stepCount <= 0 || numFrames <= 0)
             return;
+
+        _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
 
         for (int i = 0; i < stepCount; i++)
         {
