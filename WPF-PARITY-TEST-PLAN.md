@@ -113,6 +113,7 @@ Counted in cells (a row has up to 8 cells): see the tables. Summary line to upda
 - TE-D9 node drag with the real mouse from the left gutter of the second node: the node moves to the same relative place in both builds and overlaps the first node in both. Still untested: grip drag to re-link, Link button, colour and lock, script mode, set tree.
 - TE-D9 Ctrl+A, key L (link selected) and Delete on two moved nodes: same result in both builds (both nodes selected with the blue frame, then the graph is emptied). Still untested: grip drag, colour, lock, script mode, set tree.
 - TE-D9 Level script functions mode with a missing script file: same message in both ("Level script file 'Maya3a.lua' not found"); WPF offers a Browse button and shows the Argument and Call count fields below, WinForms asks to click the text. Real script loading not tested (no Lua file for the test level).
+- TE-D9 set list: two new sets, selection and toolbar look the same in both; the folder button created nothing in either build in this test (not conclusive); F2 rename and drag and drop not exercised. Still untested: grip drag, colour, lock.
 - Rows fully run (all applicable cells P or F): 0 / 45
 - Rows with the look already compared (V or P in D1): all rows except TE-M3, TE-M4, TE-M5, TE-M16, TE-M17, TE-M15, WT-7, ST-3
 - Differences found by this plan and fixed: 5 (Items panel placeholder text; 3D view context menu never appeared; Sky & Font path boxes not red; Search weaker matches not dimmed; one text typo)
