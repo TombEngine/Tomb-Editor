@@ -206,6 +206,12 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | 3D view right click: the context menu (sector, selected sectors, object) opened and was closed again about 180 ms later by the host window, so it never appeared; it is now shown after the mouse-up message has been handled (Dispatcher at ApplicationIdle). Verified with the same click on both builds: the item list is identical to WinForms and Up, Up, Enter on the menu opens Crop Room. 2D map right click menu checked: opens | Right click on the 3D view did nothing | (this commit) |
 
+| WadTool Animation editor (code audit of FormAnimationEditor.cs, 2934 lines): selecting an animation raises the current-animation event, resets the grid unless chain playback runs and refreshes the frame counter; State field shows the state name (tooltip "State ID = n") | Events and grid reset missing, State shown as a number | b505a6a2f |
+| Animation editor State field is an auto-complete box with a drop-down of known state names, commits through the WinForms lookup (number, name, underscore), error popup "State ID with given name wasn't found.", one undo push; Enter after accepting a suggestion commits at once; shows its text on load. Verified on screen: typing STOP + Enter sets the state and marks the window dirty | Plain text box without suggestions | b505a6a2f, dd1e75ddd |
+| Animation editor Delete animation selects the same index afterwards (the first one when the last was deleted), keeps the current one when another is deleted; status label says "Selected keyframe: n" or "keyframes: a to b"; Interpolate accepts 0 frames after the dialog like WinForms; transform fields push one undo entry (not two) and are blocked during blend preview; non-TEN wads reset an unsupported sound preview type; sound preview needs a reference level | Selection, undo count and labels differed | b505a6a2f |
+| Animation editor undo entries for Insert n frames, Delete every nth frame and Resample are pushed before the entered number is validated (Resample pushes two, Resample to framerate one) like WinForms | Pushed after validation, one entry only | 90c978855 |
+| Animation editor: name edits update the list label live and undo coalescing resets on Enter or focus loss; chain playback raises the playback event; sound and condition buttons disabled without a reference level with tooltip "Sound preview type: ..."; double click on a bone row toggles its bounding box checkbox; adding an animation focuses the Name field; dirty flag cleared after load | Missing behaviours | 9805999af, d57003640 |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
@@ -222,6 +228,8 @@ Implemented by subagents in separate worktrees and merged; each item compiles bu
 | Level settings | Browse uses shared reload logic; catalog Reload / Edit in SoundTool / Include all; adding a wad adds its catalog and switches game version; ConvertLevelExtension on version change; lists sync on change | 0ef87333c |
 | Level settings | Sky and Font radios with previews, path variables live, prompts above lists, samples tab hidden for MAIN.SFX, TRNG Area / Original ID columns, TR5 weather and Lara type on Misc | 0ef87333c |
 | Texture remap / Options | Instruction label and destination clamp; colour preset resets on manual colour edit, refresh on configuration change | 99712b794 |
+
+Animation editor differences kept: State changes and Anim commands open as modal dialogs (WinForms modeless, kept because of the modeless combo popup bug), extra OK/Cancel buttons, no transform-mode preview picture, rotation fields -360..360 without wrap-around and without alternate step (DarkUI NumericUpDown), filter quirks (name:5, s:<name> index), arrow keys consumed by the animation list.
 
 Known gaps reported by the agents: node grid overlay stays at a fixed 32 px tile, NodeEditor_ShowGrips unused, Export in the node editor still copies one node, blank nodes cannot be created, chain-playback reset on list click not ported, Imported geometry Browse does not use the reload logic, From catalog button handles a single row.
 ## Window inventory (what has really been looked at)
