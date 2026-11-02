@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using LevelFileDialog = TombLib.WPF.Services.LevelFileDialog;
 using PopUpInfo = TombLib.WPF.PopUpInfo;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -85,6 +86,8 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [ObservableProperty] private double _endHorVel;
     [ObservableProperty] private double _blendFrameCount;
     [ObservableProperty] private string _stateIdText = string.Empty;
+    [ObservableProperty] private string _stateIdToolTip = string.Empty;
+    [ObservableProperty] private string? _selectedStateName;
 
     // Per-bone transform + bounding box (slice 2).
     [ObservableProperty] private string _transformHeader = "Transform";
@@ -118,6 +121,9 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     public ObservableCollection<MeshBoneItem> Bones { get; } = new();
     public ObservableCollection<object> Rooms { get; } = new();
 
+    /// <summary>Gets the known state names of the edited moveable, used for the State field suggestions and drop-down list.</summary>
+    public List<string> StateNames { get; } = new();
+
     /// <summary>Gets the application configuration (used by the window to persist its placement).</summary>
     public WadTool.Configuration Configuration => _editor.Tool.Configuration;
 
@@ -127,6 +133,15 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         _moveableId = id;
         _editor = new AnimationEditor(tool, wad, id);
         _title = "Animation editor - " + _editor.Moveable.Id.ToString(_editor.Wad.GameVersion);
+
+        // Max state value in TR5 was 137 but just in case.
+        for (uint i = 0; i < MaxStateId; i++)
+        {
+            var name = TrCatalog.GetStateName(_editor.Wad.GameVersion, _editor.Moveable.Id.TypeId, i);
+
+            if (!name.Contains("Unknown"))
+                StateNames.Add(name);
+        }
     }
 
     /// <summary>Called by the window once the hosted controls exist; mirrors the legacy ctor.</summary>
@@ -149,9 +164,13 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         _editor.Tool.EditorEventRaised += OnEditorEventRaised;
 
         IsTombEngine = _editor.Wad.GameVersion == TRVersion.Game.TombEngine;
+
+        if (!IsTombEngine && _editor.Tool.Configuration.AnimationEditor_SoundPreviewType > SoundPreviewType.Water)
+            _editor.Tool.Configuration.AnimationEditor_SoundPreviewType = SoundPreviewType.Land;
+
         _allowUpdate = false;
         ChainPlayback = _editor.Tool.Configuration.AnimationEditor_ChainPlayback;
-        SoundPreview = _editor.Tool.Configuration.AnimationEditor_SoundPreview;
+        SoundPreview = _editor.Tool.Configuration.AnimationEditor_SoundPreview && _editor.Tool.ReferenceLevel is not null;
         SoundConditionLabel = _editor.Tool.Configuration.AnimationEditor_SoundPreviewType.ToString();
         ScrollGrid = _editor.Tool.Configuration.AnimationEditor_ScrollGrid;
         RestoreGridHeight = _editor.Tool.Configuration.AnimationEditor_RecoverGridAfterPositionChange;
@@ -272,6 +291,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         bool sameAnimSameSize = _editor.CurrentAnim is not null && node is not null && _editor.CurrentAnim.Index == node.Index &&
             _editor.CurrentAnim.DirectXAnimation.KeyFrames.Count == node.DirectXAnimation.KeyFrames.Count;
 
+        var previousAnim = _editor.CurrentAnim;
         _editor.CurrentAnim = node;
 
         _editor.MadeChanges = false;
@@ -288,7 +308,8 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
             StartHorVel = node.WadAnimation.StartLateralVelocity;
             EndHorVel = node.WadAnimation.EndLateralVelocity;
             BlendFrameCount = node.WadAnimation.BlendFrameCount;
-            StateIdText = node.WadAnimation.StateId.ToString();
+            StateIdText = GetStateDisplayText(node.WadAnimation.StateId);
+            StateIdToolTip = "State ID = " + node.WadAnimation.StateId;
             if (_bezier is not null) _bezier.Value = node.WadAnimation.BlendCurve;
             BlendPresetIndex = -1;
 
@@ -302,11 +323,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
         _timeline.Animation = node;
 
-        if (_editor.ValidAnimationAndFrames)
-        {
-            _timeline.Minimum = 0;
-            _timeline.Maximum = _editor.CurrentAnim.DirectXAnimation.KeyFrames.Count - 1;
-        }
+        OnKeyframesListChanged();
 
         if (!sameAnimSameSize)
         {
@@ -319,9 +336,22 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
         if (node?.DirectXAnimation.KeyFrames.Count > 0)
             _panel.Model.BuildAnimationPose(_editor.CurrentKeyFrame);
+
+        // Continue scrolling the grid if we're in chain playback mode.
+        if (!(_editor.Tool.Configuration.AnimationEditor_ChainPlayback && IsPlaying))
+            _panel.GridPosition = Vector3.Zero;
+
         _panel.Invalidate();
 
         UpdateStatusLabel();
+        _editor.Tool.AnimationEditorCurrentAnimationChanged(previousAnim, _editor.CurrentAnim);
+    }
+
+    /// <summary>Returns the state name shown in the State field, or the raw number if the state has no known name.</summary>
+    private string GetStateDisplayText(int stateId)
+    {
+        var name = TrCatalog.GetStateName(_editor.Wad.GameVersion, _editor.Moveable.Id.TypeId, (uint)stateId);
+        return StateNames.Contains(name) ? name : stateId.ToString();
     }
 
     /// <summary>Called by the window when the timeline cursor changes.</summary>
@@ -482,37 +512,75 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         AfterParameterChange();
     }
 
-    /// <summary>Commits the state-id text box (legacy UpdateStateChange). Called by the window on commit.</summary>
-    public void CommitStateId()
+    partial void OnStateIdTextChanged(string value)
     {
-        if (!_allowUpdate || _editor.CurrentAnim is null) return;
+        if (_allowUpdate)
+            UpdateStateChange(value);
+    }
 
-        ushort oldValue = _editor.CurrentAnim.WadAnimation.StateId;
-        if (!ushort.TryParse(StateIdText.Trim(), out ushort newValue))
+    partial void OnSelectedStateNameChanged(string? value)
+    {
+        if (value is null || !_allowUpdate)
+            return;
+
+        UpdateStateChange(value);
+        SelectedStateName = null;
+    }
+
+    /// <summary>Decodes a state ID or state name typed into the State field, applies it and puts the state name back into the field.</summary>
+    private void UpdateStateChange(string input)
+    {
+        if (_editor.CurrentAnim is null)
+            return;
+
+        var decodeFailed = false;
+        var oldValue = _editor.CurrentAnim.WadAnimation.StateId;
+
+        // Try to identify if there was a string input.
+        if (!ushort.TryParse(input, out var newValue))
         {
-            string searchString = StateIdText.Trim();
-            int possibleID = -1;
+            var searchString = input.Trim();
+            var possibleId = -1;
+
             for (int i = 0; i < 2; i++)
             {
-                possibleID = TrCatalog.TryToGetStateID(_editor.Wad.GameVersion, _editor.Moveable.Id.TypeId, searchString);
-                if (possibleID >= 0) break;
+                possibleId = TrCatalog.TryToGetStateID(_editor.Wad.GameVersion, _editor.Moveable.Id.TypeId, searchString);
+
+                if (possibleId >= 0)
+                    break;
+
+                // Try to do one more pass with spaces replaced by underlines.
                 searchString = searchString.Replace(' ', '_');
             }
-            if (possibleID >= 0)
-                newValue = (ushort)possibleID;
+
+            if (possibleId >= 0)
+            {
+                newValue = (ushort)possibleId;
+            }
             else
             {
                 ShowPopup("State ID with given name wasn't found.", PopupType.Error);
+                decodeFailed = true;
                 newValue = oldValue;
             }
         }
 
-        var possibleName = TrCatalog.GetStateName(_editor.Wad.GameVersion, _editor.Moveable.Id.TypeId, newValue);
-        _allowUpdate = false;
-        StateIdText = possibleName.Contains("Unknown") ? newValue.ToString() : possibleName;
-        _allowUpdate = true;
+        // Restore state name to the field, if possible.
+        if (newValue != ushort.MaxValue)
+        {
+            _allowUpdate = false;
+            StateIdText = GetStateDisplayText(newValue);
+            _allowUpdate = true;
+        }
 
-        if (oldValue == newValue) return;
+        // Add legacy numerical ID as a tooltip.
+        if (!decodeFailed)
+            StateIdToolTip = "State ID = " + newValue;
+
+        // Don't update if not changed or parse failed.
+        if (oldValue == newValue || newValue == ushort.MaxValue)
+            return;
+
         PushUndoOnce();
         _editor.CurrentAnim.WadAnimation.StateId = newValue;
     }
@@ -571,7 +639,11 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         if (_panel is null || !_allowUpdate || _editor.CurrentKeyFrame is null)
             return;
 
-        PushUndoOnce();
+        // Block modifications during blend preview.
+        if (_blendState.IsActive && _editor.Tool.Configuration.AnimationEditor_ChainPlayback)
+            return;
+
+        // The editor pushes the undo entry itself on the first change.
         int meshIndex = _panel.SelectedMesh is null ? 0 : _panel.Model.Meshes.IndexOf(_panel.SelectedMesh);
         _editor.UpdateTransform(meshIndex,
             new System.Numerics.Vector3(TombLib.MathC.DegToRad((float)RotationX), TombLib.MathC.DegToRad((float)RotationY), TombLib.MathC.DegToRad((float)RotationZ)),
@@ -683,7 +755,14 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
                      "   Keyframe: " + _timeline.Value + " / " + Math.Max(_editor.CurrentAnim.DirectXAnimation.KeyFrames.Count - 1, 0);
 
         if (!_timeline.SelectionIsEmpty)
-            StatusText += "   Selected keyframes: " + _timeline.Selection.X + " to " + _timeline.Selection.Y;
+        {
+            StatusText += "   Selected keyframe";
+
+            if (_timeline.SelectionSize == 1)
+                StatusText += ": " + _timeline.Selection.X;
+            else
+                StatusText += "s: " + _timeline.Selection.X + " to " + _timeline.Selection.Y;
+        }
     }
 
     [RelayCommand]
@@ -1339,14 +1418,8 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
             return;
 
         RebuildAnimationsList();
-        SetSaved(false);
-
-        if (Animations.Count > 0)
-            SelectedAnim = Animations[Math.Min(currentIndex, Animations.Count - 1)];
-        else
-            SelectAnimation(null);
-
         _panel?.Invalidate();
+        SetSaved(false);
         _timeline?.Invalidate();
     }
 
@@ -1520,7 +1593,6 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         string input = InputBox.Show(Owner, "Interpolation", "Enter number of interpolated frames:", selection);
         if (input is null) return;
         if (!int.TryParse(input, out numFrames)) numFrames = 3;
-        if (numFrames == 0) { ShowPopup("Interpolation requires at least 1 frame to insert", PopupType.Error); return; }
 
         _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
         int start = _timeline.Selection.X;

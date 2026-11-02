@@ -39,9 +39,6 @@ public partial class AnimationEditorWindow : Window
         _panel.PointerEntered += OnPanelPointerEntered;
         _panel.PointerDragged += OnPanelPointerDragged;
 
-        stateIdBox.LostKeyboardFocus += (_, _) => _vm?.CommitStateId();
-        stateIdBox.KeyDown += (_, e) => { if (e.Key == System.Windows.Input.Key.Enter) _vm?.CommitStateId(); };
-
         DataContextChanged += OnDataContextChanged;
         Loaded += (_, _) =>
         {
