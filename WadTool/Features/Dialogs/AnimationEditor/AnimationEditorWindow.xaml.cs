@@ -51,9 +51,19 @@ public partial class AnimationEditorWindow : Window
 
     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
     {
+        if (_vm is not null)
+            _vm.NameFocusRequested -= OnNameFocusRequested;
+
         _vm = e.NewValue as AnimationEditorWindowViewModel;
-        _vm?.AttachControls(_panel, _timeline, _bezier);
+
+        if (_vm is null)
+            return;
+
+        _vm.NameFocusRequested += OnNameFocusRequested;
+        _vm.AttachControls(_panel, _timeline, _bezier);
     }
+
+    private void OnNameFocusRequested(object? sender, EventArgs e) => animationNameBox.Focus();
 
     /// <summary>
     /// Keyboard shortcuts of the previous form, mapped to the existing commands. They are ignored while a text

@@ -125,6 +125,9 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     /// <summary>Gets the known state names of the edited moveable, used for the State field suggestions and drop-down list.</summary>
     public List<string> StateNames { get; } = new();
 
+    /// <summary>Raised when the animation name field should receive keyboard focus, e.g. after adding a new animation.</summary>
+    public event EventHandler? NameFocusRequested;
+
     /// <summary>Gets the application configuration (used by the window to persist its placement).</summary>
     public WadTool.Configuration Configuration => _editor.Tool.Configuration;
 
@@ -191,6 +194,9 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         RebuildAnimationsList();
         if (Animations.Count > 0)
             SelectedAnim = Animations[0];
+
+        // Nothing edited yet, whatever the initial selection raised.
+        SetSaved(true);
     }
 
     public void Detach()
@@ -345,7 +351,9 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         _panel.Invalidate();
 
         UpdateStatusLabel();
-        _editor.Tool.AnimationEditorCurrentAnimationChanged(previousAnim, _editor.CurrentAnim);
+
+        if (previousAnim is not null && _editor.CurrentAnim is not null)
+            _editor.Tool.AnimationEditorCurrentAnimationChanged(previousAnim, _editor.CurrentAnim);
     }
 
     /// <summary>Returns the state name shown in the State field, or the raw number if the state has no known name.</summary>
@@ -1240,6 +1248,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         Animations.Add(item);
         SelectedAnim = item;
         SetSaved(false);
+        NameFocusRequested?.Invoke(this, EventArgs.Empty);
     }
 
     [RelayCommand]
