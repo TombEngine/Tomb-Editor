@@ -1,4 +1,4 @@
-<Window
+﻿<Window
     x:Class="WadTool.Features.Dialogs.AnimEditor.AnimationEditorWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -247,7 +247,7 @@
 
                 <GroupBox Header="Animation">
                     <StackPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Name:" /><TextBox LostKeyboardFocus="OnParameterLostFocus" Text="{Binding AnimName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Name:" /><TextBox KeyDown="OnParameterKeyDown" LostKeyboardFocus="OnParameterLostFocus" Text="{Binding AnimName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" /></DockPanel>
                         <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="State:" /><ComboBox Width="24" DockPanel.Dock="Right" IsTextSearchEnabled="False" ItemsSource="{Binding StateNames}" SelectedItem="{Binding SelectedStateName, Mode=TwoWay}" ToolTip="Known state names" /><controls:AutoCompleteBox x:Name="stateIdBox" ItemsSource="{Binding StateNames}" Text="{Binding StateIdText, Mode=TwoWay}" ToolTip="{Binding StateIdToolTip}" /></DockPanel>
                         <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Framerate" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="1" Maximum="255" Value="{Binding FrameRate, Mode=TwoWay}" /></DockPanel>
                         <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="End frame" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding EndFrame, Mode=TwoWay}" /></DockPanel>
@@ -362,6 +362,7 @@
                         CanUserReorderColumns="False"
                         HeadersVisibility="Column"
                         ItemsSource="{Binding Bones}"
+                        MouseDoubleClick="OnBoneListDoubleClick"
                         SelectedItem="{Binding SelectedBoneItem, Mode=TwoWay}"
                         SelectionMode="Single">
                         <DataGrid.Columns>
@@ -531,6 +532,7 @@
                     <ToggleButton
                         Style="{StaticResource TransportToggle}"
                         Command="{Binding ToggleSoundCommand}"
+                        IsEnabled="{Binding RoomsEnabled}"
                         IsChecked="{Binding SoundPreview, Mode=OneWay}"
                         ToolTip="Toggle sound preview">
                         <Image>
@@ -549,7 +551,8 @@
                     <Button
                         Style="{StaticResource TransportBtn}"
                         Command="{Binding CycleSoundConditionCommand}"
-                        ToolTip="{Binding SoundConditionLabel, StringFormat='Sound preview condition: {0}'}">
+                        IsEnabled="{Binding RoomsEnabled}"
+                        ToolTip="{Binding SoundConditionToolTip}">
                         <Image>
                             <Image.Style>
                                 <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">

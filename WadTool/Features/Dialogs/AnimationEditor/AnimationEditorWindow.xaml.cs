@@ -156,6 +156,18 @@ public partial class AnimationEditorWindow : Window
 
     private void OnParameterLostFocus(object sender, KeyboardFocusChangedEventArgs e) => _vm?.ResetUndoCoalescing();
 
+    private void OnBoneListDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if ((e.OriginalSource as DependencyObject)?.FindAncestor<DataGridRow>()?.Item is MeshBoneItem bone)
+            bone.Checked = !bone.Checked;
+    }
+
+    private void OnParameterKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if (e.Key == Key.Enter)
+            _vm?.ResetUndoCoalescing();
+    }
+
     private void OnClosingHandler(object? sender, CancelEventArgs e)
     {
         if (_vm is not null && !_vm.HandleClosing())

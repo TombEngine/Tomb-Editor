@@ -103,6 +103,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [ObservableProperty] private bool _chainPlayback;
     [ObservableProperty] private bool _soundPreview;
     [ObservableProperty] private string _soundConditionLabel = "Land";
+    [ObservableProperty] private string _soundConditionToolTip = string.Empty;
 
     // View / config toggles (slice 3e).
     [ObservableProperty] private bool _scrollGrid;
@@ -171,7 +172,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         _allowUpdate = false;
         ChainPlayback = _editor.Tool.Configuration.AnimationEditor_ChainPlayback;
         SoundPreview = _editor.Tool.Configuration.AnimationEditor_SoundPreview && _editor.Tool.ReferenceLevel is not null;
-        SoundConditionLabel = _editor.Tool.Configuration.AnimationEditor_SoundPreviewType.ToString();
+        UpdateSoundCondition();
         ScrollGrid = _editor.Tool.Configuration.AnimationEditor_ScrollGrid;
         RestoreGridHeight = _editor.Tool.Configuration.AnimationEditor_RecoverGridAfterPositionChange;
         SmoothAnimation = _editor.Tool.Configuration.AnimationEditor_SmoothAnimation;
@@ -714,7 +715,14 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
     // ---- Transport toggles ----
 
-    partial void OnChainPlaybackChanged(bool value) => _editor.Tool.Configuration.AnimationEditor_ChainPlayback = value;
+    partial void OnChainPlaybackChanged(bool value)
+    {
+        _editor.Tool.Configuration.AnimationEditor_ChainPlayback = value;
+
+        // Translate global event.
+        if (_allowUpdate)
+            _editor.Tool.TogglePlayback(IsPlaying, value);
+    }
 
     [RelayCommand]
     private void ToggleSound()
@@ -738,7 +746,14 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
             SoundPreviewType.Quicksand when isTEN => SoundPreviewType.Underwater,
             _ => SoundPreviewType.Land
         };
-        SoundConditionLabel = _editor.Tool.Configuration.AnimationEditor_SoundPreviewType.ToString();
+        UpdateSoundCondition();
+    }
+
+    private void UpdateSoundCondition()
+    {
+        var previewType = _editor.Tool.Configuration.AnimationEditor_SoundPreviewType;
+        SoundConditionLabel = previewType.ToString();
+        SoundConditionToolTip = "Sound preview type: " + previewType.ToString().SplitCamelcase();
     }
 
     private static IWindowOwner Owner => WPFUtils.GetWindowOwner();
@@ -1062,6 +1077,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         if (_panel is null) return;
         _panel.Level = _editor.Tool.ReferenceLevel;
         _panel.Invalidate();
+        SoundPreview = _editor.Tool.Configuration.AnimationEditor_SoundPreview && _editor.Tool.ReferenceLevel is not null;
 
         _allowUpdate = false;
         Rooms.Clear();
