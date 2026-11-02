@@ -396,6 +396,9 @@
 	<moveable id="475" name="ROTATING_KNIFE_DISK" />
 	<moveable id="476" name="UNDERWATER_MINE" />
 	<moveable id="477" name="FALLING_SANDBAG" />
+	<!-- Reserved 478 -->
+	<!-- Reserved 479 -->
+	<moveable id="480" name="OBELISK_CAGE" />
     <moveable id="500" name="PUZZLE_ITEM1" />
     <moveable id="501" name="PUZZLE_ITEM2" />
     <moveable id="502" name="PUZZLE_ITEM3" />
