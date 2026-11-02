@@ -40,7 +40,6 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         private readonly int _index;
         private readonly ArgumentLayout _layout;
         private readonly ArgumentDataProvider _provider;
-        private readonly double _nodeWidth;
         private readonly IColorPickerService _colorPickerService;
         private bool _loading;
 
@@ -51,13 +50,9 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         /// <summary>Gets the text of a check box: the argument description, like the previous editor showed it.</summary>
         public string BoolCaption => string.IsNullOrEmpty(_layout.Description) ? _layout.Name : _layout.Description;
         public bool NewLine => _layout.NewLine;
-        public double FieldWidth => _layout.Width;
 
-        /// <summary>
-        /// Pixel width of the field, derived from the catalogue's percentage <see cref="ArgumentLayout.Width"/>
-        /// (0-100) relative to the node body, so fields respect the length declared in the XML catalogues.
-        /// </summary>
-        public double PixelWidth => Math.Max(24.0, (_nodeWidth - 16.0) * (_layout.Width / 100.0));
+        /// <summary>Gets the share of the row (0-100) the field takes, as declared in the XML catalogues.</summary>
+        public double FieldWidth => _layout.Width;
 
         // Numerical limits (shared by Numerical / Vector2 / Vector3).
         public double Minimum { get; private set; } = -1000000.0;
@@ -66,14 +61,13 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         public double LargeIncrement { get; private set; } = 1.0;
         public int DecimalPlaces { get; private set; } = 2;
 
-        public ArgumentViewModel(System.Collections.Generic.List<TriggerNodeArgument> arguments, int index, ArgumentLayout layout, ArgumentDataProvider provider, double nodeWidth,
+        public ArgumentViewModel(System.Collections.Generic.List<TriggerNodeArgument> arguments, int index, ArgumentLayout layout, ArgumentDataProvider provider,
             IColorPickerService? colorPickerService = null)
         {
             _arguments = arguments;
             _index = index;
             _layout = layout;
             _provider = provider;
-            _nodeWidth = nodeWidth;
             _colorPickerService = ServiceLocator.ResolveService(colorPickerService);
             Kind = MapKind(layout.Type);
 
@@ -156,6 +150,12 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         public bool IsMultiline => Kind == ArgumentEditorKind.String && !_layout.CustomEnumeration.Contains("NoMultiline");
 
+        /// <summary>Gets or sets whether the pop-up multi-line text editor of a string argument is open.</summary>
+        [ObservableProperty] private bool _isTextEditorOpen;
+
+        [RelayCommand]
+        private void OpenTextEditor() => IsTextEditorOpen = true;
+
         [ObservableProperty] private string _stringValue = string.Empty;
         partial void OnStringValueChanged(string value) => Box();
 
@@ -193,6 +193,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         public IReadOnlyList<ArgumentListItem> Items { get; }
         public ArgumentListAction ListAction { get; }
         public bool HasAction => ListAction != ArgumentListAction.None;
+        public bool IsLocateAction => ListAction == ArgumentListAction.Locate;
+        public bool IsPlayAction => ListAction == ArgumentListAction.Play;
 
         [ObservableProperty] private ArgumentListItem? _selectedItem;
         partial void OnSelectedItemChanged(ArgumentListItem? value) => Box();

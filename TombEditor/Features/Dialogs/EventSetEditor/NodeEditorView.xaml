@@ -65,114 +65,171 @@
             </Style.Triggers>
         </Style>
 
-        <!--  Argument editors  -->
+        <!--  Argument editors: no captions (the argument name is the tooltip), each fills a fixed-height row cell of NodeArgumentPanel  -->
+        <DataTemplate x:Key="ArgFunction">
+            <DockPanel Visibility="{Binding HasNodeFunctions, Converter={StaticResource BoolToVis}}">
+                <Button
+                    Width="24"
+                    Margin="2,0,0,0"
+                    Command="{x:Static tombLib:ComboSearch.OpenCommand}"
+                    CommandParameter="{Binding ElementName=functionCombo}"
+                    DockPanel.Dock="Right"
+                    Style="{DynamicResource ButtonWithIconOnly}"
+                    ToolTip="{tombLib:Localize ArgSearchTooltip}">
+                    <Image Width="16" Height="16" Source="{tomb:Icon General/search}" />
+                </Button>
+                <controls:SearchableComboBox
+                    x:Name="functionCombo"
+                    DisplayMemberPath="Name"
+                    IsEnabled="{Binding IsEditable}"
+                    ItemsSource="{Binding AvailableFunctions}"
+                    SelectedItem="{Binding SelectedFunction, Mode=TwoWay}"
+                    ToolTip="{Binding FunctionDescription}" />
+            </DockPanel>
+        </DataTemplate>
+
         <DataTemplate x:Key="ArgBoolean">
-            <CheckBox Margin="0,2,0,0" Content="{Binding BoolCaption}" IsChecked="{Binding BoolValue, Mode=TwoWay}" ToolTip="{Binding Description}" />
+            <CheckBox
+                VerticalAlignment="Center"
+                Content="{Binding BoolCaption}"
+                IsChecked="{Binding BoolValue, Mode=TwoWay}"
+                ToolTip="{Binding Description}" />
         </DataTemplate>
 
         <DataTemplate x:Key="ArgNumerical">
-            <StackPanel Margin="0,2,0,0">
-                <TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
-                <controls:NumericUpDown
-                    DecimalPlaces="{Binding DecimalPlaces}"
-                    Increment="{Binding Increment}"
-                    LargeIncrement="{Binding LargeIncrement}"
-                    Maximum="{Binding Maximum}"
-                    Minimum="{Binding Minimum}"
-                    Value="{Binding NumValue, Mode=TwoWay}" />
-            </StackPanel>
+            <controls:NumericUpDown
+                DecimalPlaces="{Binding DecimalPlaces}"
+                Increment="{Binding Increment}"
+                LargeIncrement="{Binding LargeIncrement}"
+                Maximum="{Binding Maximum}"
+                Minimum="{Binding Minimum}"
+                ToolTip="{Binding Description}"
+                Value="{Binding NumValue, Mode=TwoWay}" />
         </DataTemplate>
 
         <DataTemplate x:Key="ArgVector2">
-            <StackPanel Margin="0,2,0,0">
-                <TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
-                <UniformGrid Columns="2">
-                    <controls:NumericUpDown Margin="0,0,2,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding X, Mode=TwoWay}" />
-                    <controls:NumericUpDown Margin="2,0,0,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding Y, Mode=TwoWay}" />
-                </UniformGrid>
-            </StackPanel>
+            <UniformGrid Columns="2" ToolTip="{Binding Description}">
+                <controls:NumericUpDown Margin="0,0,2,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding X, Mode=TwoWay}" />
+                <controls:NumericUpDown Margin="2,0,0,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding Y, Mode=TwoWay}" />
+            </UniformGrid>
         </DataTemplate>
 
         <DataTemplate x:Key="ArgVector3">
-            <StackPanel
-                Margin="0,2,0,0"
+            <UniformGrid
                 AllowDrop="True"
+                Columns="3"
                 DragOver="OnArgDragOver"
-                Drop="OnArgDrop">
-                <TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
-                <UniformGrid Columns="3">
-                    <controls:NumericUpDown Margin="0,0,2,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding X, Mode=TwoWay}" />
-                    <controls:NumericUpDown Margin="2,0,2,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding Y, Mode=TwoWay}" />
-                    <controls:NumericUpDown Margin="2,0,0,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding Z, Mode=TwoWay}" />
-                </UniformGrid>
-            </StackPanel>
+                Drop="OnArgDrop"
+                ToolTip="{Binding Description}">
+                <controls:NumericUpDown Margin="0,0,2,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding X, Mode=TwoWay}" />
+                <controls:NumericUpDown Margin="2,0,2,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding Y, Mode=TwoWay}" />
+                <controls:NumericUpDown Margin="2,0,0,0" DecimalPlaces="{Binding DecimalPlaces}" Increment="{Binding Increment}" Maximum="{Binding Maximum}" Minimum="{Binding Minimum}" Value="{Binding Z, Mode=TwoWay}" />
+            </UniformGrid>
         </DataTemplate>
 
         <DataTemplate x:Key="ArgColor">
-            <StackPanel
-                Margin="0,2,0,0"
+            <Button
                 AllowDrop="True"
+                Background="{Binding ColorBrush}"
+                Command="{Binding PickColorCommand}"
+                Content=""
                 DragOver="OnArgDragOver"
-                Drop="OnArgDrop">
-                <TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
-                <Button
-                    Height="22"
-                    Background="{Binding ColorBrush}"
-                    Command="{Binding PickColorCommand}"
-                    Content="" />
-            </StackPanel>
+                Drop="OnArgDrop"
+                ToolTip="{Binding Description}" />
         </DataTemplate>
 
         <DataTemplate x:Key="ArgTime">
-            <StackPanel Margin="0,2,0,0">
-                <TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
-                <UniformGrid Columns="4">
-                    <controls:NumericUpDown Margin="0,0,2,0" Maximum="1000000" Minimum="0" ToolTip="{tombLib:Localize Hours}" Value="{Binding Hours, Mode=TwoWay}" />
-                    <controls:NumericUpDown Margin="2,0,2,0" Maximum="59" Minimum="0" ToolTip="{tombLib:Localize Minutes}" Value="{Binding Minutes, Mode=TwoWay}" />
-                    <controls:NumericUpDown Margin="2,0,2,0" Maximum="59" Minimum="0" ToolTip="{tombLib:Localize Seconds}" Value="{Binding Seconds, Mode=TwoWay}" />
-                    <controls:NumericUpDown Margin="2,0,0,0" Maximum="99" Minimum="0" ToolTip="{tombLib:Localize Centiseconds}" Value="{Binding Cents, Mode=TwoWay}" />
-                </UniformGrid>
-            </StackPanel>
+            <UniformGrid Columns="4" ToolTip="{Binding Description}">
+                <controls:NumericUpDown Margin="0,0,2,0" Maximum="1000000" Minimum="0" ToolTip="{tombLib:Localize Hours}" Value="{Binding Hours, Mode=TwoWay}" />
+                <controls:NumericUpDown Margin="2,0,2,0" Maximum="59" Minimum="0" ToolTip="{tombLib:Localize Minutes}" Value="{Binding Minutes, Mode=TwoWay}" />
+                <controls:NumericUpDown Margin="2,0,2,0" Maximum="59" Minimum="0" ToolTip="{tombLib:Localize Seconds}" Value="{Binding Seconds, Mode=TwoWay}" />
+                <controls:NumericUpDown Margin="2,0,0,0" Maximum="99" Minimum="0" ToolTip="{tombLib:Localize Centiseconds}" Value="{Binding Cents, Mode=TwoWay}" />
+            </UniformGrid>
         </DataTemplate>
 
         <DataTemplate x:Key="ArgString">
-            <StackPanel Margin="0,2,0,0">
-                <TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
-                <TextBox
-                    AcceptsReturn="{Binding IsMultiline}"
-                    MaxHeight="80"
-                    Text="{Binding StringValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    TextWrapping="Wrap"
-                    VerticalScrollBarVisibility="Auto" />
-            </StackPanel>
+            <DockPanel ToolTip="{Binding Description}">
+                <Button
+                    Width="24"
+                    Margin="2,0,0,0"
+                    Command="{Binding OpenTextEditorCommand}"
+                    DockPanel.Dock="Right"
+                    Style="{DynamicResource ButtonWithIconOnly}"
+                    ToolTip="{tombLib:Localize ArgMultilineTooltip}"
+                    Visibility="{Binding IsMultiline, Converter={StaticResource BoolToVis}}">
+                    <Image Width="16" Height="16" Source="{tomb:Icon General/Multiline-text}" />
+                </Button>
+                <Popup
+                    IsOpen="{Binding IsTextEditorOpen, Mode=TwoWay}"
+                    Placement="Bottom"
+                    PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=DockPanel}}"
+                    StaysOpen="False">
+                    <Border
+                        Width="320"
+                        Height="160"
+                        Background="{DynamicResource Brush_Background}"
+                        BorderBrush="{DynamicResource Brush_Border}"
+                        BorderThickness="1">
+                        <TextBox
+                            AcceptsReturn="True"
+                            Text="{Binding StringValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            TextWrapping="Wrap"
+                            VerticalScrollBarVisibility="Auto" />
+                    </Border>
+                </Popup>
+                <TextBox VerticalContentAlignment="Center" Text="{Binding StringValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </DockPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="ArgList">
-            <StackPanel
-                Margin="0,2,0,0"
+            <DockPanel
                 AllowDrop="True"
                 DragOver="OnArgDragOver"
-                Drop="OnArgDrop">
-                <TextBlock Text="{Binding Caption}" ToolTip="{Binding Description}" />
-                <DockPanel>
-                    <Button
-                        Width="24"
-                        DockPanel.Dock="Right"
-                        Command="{Binding RunActionCommand}"
-                        Content="..."
-                        Visibility="{Binding HasAction, Converter={StaticResource BoolToVis}}" />
-                    <controls:SearchableComboBox
-                        DisplayMemberPath="Display"
-                        ItemsSource="{Binding Items}"
-                        SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
-                </DockPanel>
-            </StackPanel>
+                Drop="OnArgDrop"
+                ToolTip="{Binding Description}">
+                <Button
+                    Width="24"
+                    Margin="2,0,0,0"
+                    Command="{Binding RunActionCommand}"
+                    DockPanel.Dock="Right"
+                    Style="{DynamicResource ButtonWithIconOnly}"
+                    ToolTip="{tombLib:Localize ArgLocateTooltip}"
+                    Visibility="{Binding IsLocateAction, Converter={StaticResource BoolToVis}}">
+                    <Image Width="16" Height="16" Source="{tomb:Icon General/target}" />
+                </Button>
+                <Button
+                    Width="24"
+                    Margin="2,0,0,0"
+                    Command="{Binding RunActionCommand}"
+                    DockPanel.Dock="Right"
+                    Style="{DynamicResource ButtonWithIconOnly}"
+                    ToolTip="{tombLib:Localize ArgPlayTooltip}"
+                    Visibility="{Binding IsPlayAction, Converter={StaticResource BoolToVis}}">
+                    <Image Width="16" Height="16" Source="{tomb:Icon Actions/play}" />
+                </Button>
+                <Button
+                    Width="24"
+                    Margin="2,0,0,0"
+                    Command="{x:Static tombLib:ComboSearch.OpenCommand}"
+                    CommandParameter="{Binding ElementName=listCombo}"
+                    DockPanel.Dock="Right"
+                    Style="{DynamicResource ButtonWithIconOnly}"
+                    ToolTip="{tombLib:Localize ArgSearchTooltip}">
+                    <Image Width="16" Height="16" Source="{tomb:Icon General/search}" />
+                </Button>
+                <controls:SearchableComboBox
+                    x:Name="listCombo"
+                    DisplayMemberPath="Display"
+                    ItemsSource="{Binding Items}"
+                    SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
+            </DockPanel>
         </DataTemplate>
 
         <local:ArgumentTemplateSelector
             x:Key="ArgSelector"
             BooleanTemplate="{StaticResource ArgBoolean}"
             ColorTemplate="{StaticResource ArgColor}"
+            FunctionTemplate="{StaticResource ArgFunction}"
             ListTemplate="{StaticResource ArgList}"
             NumericalTemplate="{StaticResource ArgNumerical}"
             StringTemplate="{StaticResource ArgString}"
@@ -394,29 +451,12 @@
                                                         </Style>
                                                     </TextBlock.Style>
                                                 </TextBlock>
-                                                <controls:SearchableComboBox
-                                                    DisplayMemberPath="Name"
-                                                    IsEnabled="{Binding IsEditable}"
-                                                    ItemsSource="{Binding AvailableFunctions}"
-                                                    SelectedItem="{Binding SelectedFunction, Mode=TwoWay}"
-                                                    ToolTip="{Binding FunctionDescription}"
-                                                    Visibility="{Binding HasNodeFunctions, Converter={StaticResource BoolToVis}}" />
-                                                <ItemsControl
-                                                    Margin="0,4,0,0"
-                                                    ItemTemplateSelector="{StaticResource ArgSelector}"
-                                                    ItemsSource="{Binding Arguments}"
-                                                    Visibility="{Binding HasArguments, Converter={StaticResource BoolToVis}}">
+                                                <ItemsControl ItemTemplateSelector="{StaticResource ArgSelector}" ItemsSource="{Binding LayoutItems}">
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
-                                                            <WrapPanel />
+                                                            <local:NodeArgumentPanel />
                                                         </ItemsPanelTemplate>
                                                     </ItemsControl.ItemsPanel>
-                                                    <!--  Each field's width comes from the catalogue Width (%) via PixelWidth.  -->
-                                                    <ItemsControl.ItemContainerStyle>
-                                                        <Style TargetType="ContentPresenter">
-                                                            <Setter Property="Width" Value="{Binding PixelWidth}" />
-                                                        </Style>
-                                                    </ItemsControl.ItemContainerStyle>
                                                 </ItemsControl>
                                             </StackPanel>
 

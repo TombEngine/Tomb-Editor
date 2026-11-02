@@ -1,6 +1,7 @@
 #nullable enable
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Numerics;
 using System.Windows;
@@ -37,6 +38,9 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         public TriggerNode Node { get; }
         public ObservableCollection<ArgumentViewModel> Arguments { get; } = new();
+
+        /// <summary>Gets what the node panel lays out: this node (standing for its function selector) followed by its arguments.</summary>
+        public IReadOnlyList<object> LayoutItems { get; }
         public event Action? Moved;
 
         public NodeViewModel(TriggerNode node, NodeEditorOptions options, NodeFunction? function, ArgumentDataProvider provider, EventType eventType)
@@ -55,9 +59,11 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                 {
                     int index = node.Arguments.FindIndex(a => a.Name == layout.Name);
                     if (index >= 0)
-                        Arguments.Add(new ArgumentViewModel(node.Arguments, index, layout, provider, node.Size));
+                        Arguments.Add(new ArgumentViewModel(node.Arguments, index, layout, provider));
                 }
             }
+
+            LayoutItems = [this, .. Arguments];
         }
 
         /// <summary>Gets the color a new node starts with: the grey background tinted green for conditions and blue for actions.</summary>

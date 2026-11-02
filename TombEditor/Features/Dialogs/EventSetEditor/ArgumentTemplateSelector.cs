@@ -8,6 +8,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
     /// <summary>Picks the editor <see cref="DataTemplate"/> for an <see cref="ArgumentViewModel"/> by its <see cref="ArgumentEditorKind"/>.</summary>
     public sealed class ArgumentTemplateSelector : DataTemplateSelector
     {
+        public DataTemplate? FunctionTemplate { get; set; }
         public DataTemplate? BooleanTemplate { get; set; }
         public DataTemplate? NumericalTemplate { get; set; }
         public DataTemplate? Vector2Template { get; set; }
@@ -19,6 +20,9 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         public override DataTemplate? SelectTemplate(object item, DependencyObject container)
         {
+            if (item is NodeViewModel)
+                return FunctionTemplate;
+
             if (item is not ArgumentViewModel argument)
                 return base.SelectTemplate(item, container);
 
