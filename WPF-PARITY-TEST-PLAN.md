@@ -43,7 +43,7 @@ Legend in the tables: `-` not run, `P` pass, `F` fixed, `D` difference open, `n/
 | TE-M12 | Statistics, status bar | counts after add/delete, selected room line, coordinates | V | - | n/a | n/a | n/a | n/a | n/a | n/a |
 | TE-M13 | Flyby timeline | add, move, delete flyby cameras, sequence combo, play (WPF keeps it dockable on purpose) | V | - | - | - | - | - | n/a | - |
 | TE-M14 | Docking and layouts | float, hide, pin, save/restore layout, Window menu entries | V | - | - | n/a | n/a | n/a | - | n/a |
-| TE-M15 | Undo/redo | every editing action undone and redone, object, room, texture, geometry | n/a | n/a | n/a | - | n/a | - | n/a | - |
+| TE-M15 | Undo/redo | every editing action undone and redone, object, room, texture, geometry | n/a | n/a | n/a | - | n/a | P(geometry: raise twice, undo once, lower = identical file; Edit > Undo after geometry hotkeys) | n/a | P(see data checks) |
 | TE-M16 | File operations | New, Open, Save, Save as, recent files, dirty prompt on New/Open/Quit, file drop onto window, window title with * | - | - | - | - | n/a | - | - | - |
 | TE-M17 | Build level / Build and play | log window, progress, errors, output file | - | - | - | - | n/a | - | n/a | - |
 
@@ -100,6 +100,7 @@ Legend in the tables: `-` not run, `P` pass, `F` fixed, `D` difference open, `n/
 
 Counted in cells (a row has up to 8 cells): see the tables. Summary line to update after each session:
 
+- Data checks done with identical saved files from both builds (same edits, Ctrl+S, same SHA-256): untouched save; raise/lower hotkeys Q W R Shift+E; Q Q Ctrl+Z A; Transform menu Flatten floor + Smooth ceiling on a dragged area; Shift+Q Shift+W E then Edit > Undo; Rooms > New room + Duplicate rooms. Texture paint scenario (F3, texture panel click) was interrupted because the foreground guard aborted (user active); to be re-run.
 - Rows fully run (all applicable cells P or F): 0 / 45
 - Rows with the look already compared (V or P in D1): all rows except TE-M3, TE-M4, TE-M5, TE-M16, TE-M17, TE-M15, WT-7, ST-3
 - Differences found by this plan and fixed: 1 (3D view context menu never appeared)
