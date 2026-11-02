@@ -43,7 +43,7 @@
             HorizontalContentAlignment="Stretch"
             ItemsSource="{Binding LogEntries}"
             KeyDown="LogList_KeyDown"
-            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             SelectionMode="Extended"
             ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.ItemTemplate>

@@ -198,6 +198,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 
 | Material editor: the path boxes of the texture maps were white (a local TextBox style lacked BasedOn the theme style); now dark like the rest. Compared with WinForms: same maps plus Alpha mask and Additional color map (present in the data model, absent in the older WinForms build), Properties tab lists only the real property (EmissiveIntensity) instead of three "(Not available)" rows, window is larger | White input boxes in a dark dialog | (this commit) |
 
+| Operation dialog: long log lines now wrap like WinForms (the list had a horizontal scroll bar, so the wrapping text block never wrapped) | Long paths ran off the right edge | (this commit) |
+
 ## Subagent batch (built only, NOT yet verified on screen)
 
 Implemented by subagents in separate worktrees and merged; each item compiles but still needs a real mouse and keyboard check against the WinForms tool.
@@ -243,7 +245,7 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 | Tomb Editor | Camera, Sink, Imported geometry dialog, Sound source, Flyby camera, Quick item group, Choose room, Select room by tags, Sprite | CODE | layout by designer comparison or agents, behaviour by audit; not seen |
 | Tomb Editor | Toolbar layout (right click on toolbar > Customize...) | WPF | seen on screen: Available buttons / Buttons in toolbar lists with icons, move arrows, up/down, Defaults, Apply, OK, Cancel; WinForms designer has the same pieces, its context menu could not be opened with the test clicks |
 | Tomb Editor | Memo, Choose room, Quick item group | CODE | WinForms code and designer read against the WPF window and view model: same controls, sizes, Ctrl+Enter on memo, preview on selection and double click in Choose room, enable rule on OK; not opened on screen because they need a placed object or a portal with several candidates |
-| Tomb Editor | Import PRJ settings and Operation (import log with progress), opened with File > Import TRLE level on a copy of test.PRJ | BOTH | same texts, option checkboxes, log lines, yellow warning and progress bar; WPF list is dark (WinForms white), WPF fixes the typo Specifiy, WinForms Browse button has a folder icon the WPF one lacks, WPF log scrolls horizontally instead of wrapping long lines |
+| Tomb Editor | Import PRJ settings and Operation (import log with progress), opened with File > Import TRLE level on a copy of test.PRJ | BOTH | same texts, option checkboxes, log lines, yellow warning and progress bar; WPF list is dark (WinForms white), WPF fixes the typo Specifiy, WinForms Browse button has a folder icon the WPF one lacks |
 | Tomb Editor | Edit portal | BOTH | same fields, same disabled mirror options for effect None; opened through Search then Edit object properties |
 | Tomb Editor | Transform Edit (Ctrl+T) | WPF | seen on screen for Lara (only Y rotation enabled, scale disabled at 0.00); WinForms did not open with Ctrl+T in the test, FormTransform designer and enable rules match the WPF view model |
 | Tomb Editor | Level settings, Imported Geometry and Static Meshes tabs | WPF | columns compared with the WinForms designer values (grid empty in the test level) |
