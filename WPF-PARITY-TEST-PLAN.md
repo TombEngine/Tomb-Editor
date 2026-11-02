@@ -59,7 +59,7 @@ Legend in the tables: `-` not run, `P` pass, `F` fixed, `D` difference open, `n/
 | TE-D6 | Level settings (10 tabs) | every tab: add/remove/reorder rows, browse, validation colours, OK vs Cancel vs Apply, saved prj2 compared | P | - | - | - | - | - | - | - |
 | TE-D7 | Moveable / Static / Light / Camera / Flyby / Sink / Sound source / Sprite / Memo object dialogs | every field, ranges, OCB rules, colour pick, flags, result written to the object | P/V | - | - | - | - | - | - | - |
 | TE-D8 | Trigger editor | every trigger type and target type, parameter lists, Locate, copy for script, raw mode, bits, undo | P | - | - | - | - | - | n/a | - |
-| TE-D9 | Event set editor | sets, events, node editor (rubber band, drag, groups), level script panel, filters, backup restore on cancel | P | - | - | - | - | - | - | - |
+| TE-D9 | Event set editor (partly run, see progress) | sets, events, node editor (rubber band, drag, groups), level script panel, filters, backup restore on cancel | P | - | - | - | - | - | - | - |
 | TE-D10 | Animated textures | sets, frames, area edit, procedural animator, preview, rename/clone/delete | P | - | - | - | - | - | n/a | - |
 | TE-D11 | Texture remap | pick source/destination, apply, undo | P | - | - | - | - | - | n/a | - |
 | TE-D12 | Texture sounds, Bumpmaps, Material editor | per texture assignments and previews | P | - | - | - | - | - | n/a | - |
@@ -73,7 +73,7 @@ Legend in the tables: `-` not run, `P` pass, `F` fixed, `D` difference open, `n/
 | ID | Window | Steps | D1 | D2 | D3 | D4 | D5 | D6 | D7 | D8 |
 |----|--------|-------|----|----|----|----|----|----|----|----|
 | WT-1 | Main window | open/save/new wad, source/destination trees, add object, change slot, delete, drag and drop, search, reference project, dirty prompt | V | - | - | - | n/a | - | - | - |
-| WT-2 | Animation editor | list ops (add, delete, cut/copy/paste, multi select, import/export), frames ops, timeline drag, play, keyframes, bounding box, root motion, bones list, undo/redo, menu bar items, hotkeys, rendering options | V | P(part) | - | - | - | P(part) | - | - |
+| WT-2 | Animation editor (partly run, see progress) | list ops (add, delete, cut/copy/paste, multi select, import/export), frames ops, timeline drag, play, keyframes, bounding box, root motion, bones list, undo/redo, menu bar items, hotkeys, rendering options | V | P(part) | - | - | - | P(part) | - | - |
 | WT-3 | State changes, Anim commands, Find/replace anim commands | edit every column, dispatches, blend curve, play from here, apply vs OK | V | P | - | - | - | - | n/a | - |
 | WT-4 | Mesh editor | tree and vertex modes, tools, attach, merge, normals, UV, textures, import/export | V | - | - | - | - | - | - | - |
 | WT-5 | Static editor | lights, shatter, visibility box, collision box, colour | V | - | - | - | - | - | - | - |
@@ -101,6 +101,8 @@ Legend in the tables: `-` not run, `P` pass, `F` fixed, `D` difference open, `n/
 Counted in cells (a row has up to 8 cells): see the tables. Summary line to update after each session:
 
 - Data checks done with identical saved files from both builds (same edits, Ctrl+S, same SHA-256): untouched save; raise/lower hotkeys Q W R Shift+E; Q Q Ctrl+Z A; Transform menu Flatten floor + Smooth ceiling on a dragged area; Shift+Q Shift+W E then Edit > Undo; Rooms > New room + Duplicate rooms. Texture paint (F3, click face, click a tile of the texture panel): the same texture shows in both builds but the saved files differ, because a click at the same window fraction hits a different texture area in the two layouts; not comparable by hash (needs a keyboard or fixed-coordinate way to pick the tile). Edit > Select all + Delete and Copy/Paste on an area: WPF changes nothing, WinForms Delete leaves an extra window open and the file was not saved: OPEN, to be investigated (screenshot of the extra window pending, the foreground guard aborted again).
+- WT-2 Animation editor run on screen: menu ops New animation, Insert frame, Reverse, Mirror, Calculate bounding box, field edits (Framerate, End frame, Next anim) give the same wad2 (1-2 bytes of date differ); timeline click and drag scrub, Left/Right/Down/I/O/Ctrl+C/Ctrl+V behave the same (no data change in either); State field with suggestions works. Not yet run: Split, Resample, Import/Export, anim list multi-select, cut/paste of animations, frame cut/paste with a real selection, interpolate, undo/redo stack depth, rendering toggles, bones list, transform fields while playing.
+- TE-D9 Event set editor run on screen: new set, Action/Condition/Action, Ctrl+A, click on empty area, rubber band, Delete behave the same; saved level identical except node positions. Not yet run: drag of nodes and grips, Link button, copy/paste of nodes, colour, lock, export, level script mode, set tree drag and drop, backup restore on Cancel.
 - Rows fully run (all applicable cells P or F): 0 / 45
 - Rows with the look already compared (V or P in D1): all rows except TE-M3, TE-M4, TE-M5, TE-M16, TE-M17, TE-M15, WT-7, ST-3
 - Differences found by this plan and fixed: 1 (3D view context menu never appeared)
