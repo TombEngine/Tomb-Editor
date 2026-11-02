@@ -46,7 +46,10 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         public ArgumentEditorKind Kind { get; }
         public string Caption => string.IsNullOrEmpty(_layout.Name) ? _layout.Description : _layout.Name;
-        public string Description => _layout.Description;
+        public string Description => TextExtensions.SingleLineToMultiLine(_layout.Description);
+
+        /// <summary>Gets the text of a check box: the argument description, like the previous editor showed it.</summary>
+        public string BoolCaption => string.IsNullOrEmpty(_layout.Description) ? _layout.Name : _layout.Description;
         public bool NewLine => _layout.NewLine;
         public double FieldWidth => _layout.Width;
 
@@ -60,8 +63,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         public double Minimum { get; private set; } = -1000000.0;
         public double Maximum { get; private set; } = 1000000.0;
         public double Increment { get; private set; } = 1.0;
-        public double LargeIncrement { get; private set; } = 5.0;
-        public int DecimalPlaces { get; private set; }
+        public double LargeIncrement { get; private set; } = 1.0;
+        public int DecimalPlaces { get; private set; } = 2;
 
         public ArgumentViewModel(System.Collections.Generic.List<TriggerNodeArgument> arguments, int index, ArgumentLayout layout, ArgumentDataProvider provider, double nodeWidth,
             IColorPickerService? colorPickerService = null)
@@ -107,7 +110,11 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             if (_layout.Type is not (ArgumentType.Numerical or ArgumentType.Vector2 or ArgumentType.Vector3) || custom.Count < 2)
                 return;
 
-            // Catalogue values are written with invariant decimal points, so parse them culture-independently.
+            // A catalogue range switches to its own limits, whole numbers and steps of 1 and 5 unless it says otherwise;
+            // without one the editor keeps two decimals. Values use invariant decimal points, so parse them culture-independently.
+            DecimalPlaces = 0;
+            LargeIncrement = 5.0;
+
             if (float.TryParse(custom[0], NumberStyles.Float, CultureInfo.InvariantCulture, out float min)) Minimum = min;
             if (float.TryParse(custom[1], NumberStyles.Float, CultureInfo.InvariantCulture, out float max)) Maximum = max;
             if (custom.Count >= 3 && int.TryParse(custom[2], out int dec)) DecimalPlaces = dec;
@@ -272,7 +279,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                 ArgumentEditorKind.Vector3 => LuaSyntax.Vec3TypePrefix + LuaSyntax.BracketOpen + F(X) + LuaSyntax.Separator + F(Y) + LuaSyntax.Separator + F(Z) + LuaSyntax.BracketClose,
                 ArgumentEditorKind.Color => LuaSyntax.ColorTypePrefix + LuaSyntax.BracketOpen + ColorValue.R + LuaSyntax.Separator + ColorValue.G + LuaSyntax.Separator + ColorValue.B + LuaSyntax.BracketClose,
                 ArgumentEditorKind.Time => LuaSyntax.TimeTypePrefix + LuaSyntax.BracketOpen + LuaSyntax.TableOpen + (int)Hours + LuaSyntax.Separator + (int)Minutes + LuaSyntax.Separator + (int)Seconds + LuaSyntax.Separator + (int)Cents + LuaSyntax.TableClose + LuaSyntax.BracketClose,
-                ArgumentEditorKind.String => TextExtensions.Quote(TextExtensions.EscapeQuotes(StringValue)),
+                ArgumentEditorKind.String => TextExtensions.Quote(TextExtensions.EscapeQuotes(IsMultiline ? TextExtensions.MultiLineToSingleLine(StringValue) : StringValue)),
                 ArgumentEditorKind.List => SelectedItem?.Value ?? string.Empty,
                 _ => argument.Value
             };
@@ -351,7 +358,10 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                         }
 
                     case ArgumentEditorKind.String:
-                        StringValue = TextExtensions.UnescapeQuotes(TextExtensions.Unquote(source));
+                        {
+                            string text = TextExtensions.UnescapeQuotes(TextExtensions.Unquote(source));
+                            StringValue = IsMultiline ? TextExtensions.SingleLineToMultiLine(text) : text;
+                        }
                         break;
 
                     case ArgumentEditorKind.List:
