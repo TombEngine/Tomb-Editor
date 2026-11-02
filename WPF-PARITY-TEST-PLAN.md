@@ -100,7 +100,7 @@ Legend in the tables: `-` not run, `P` pass, `F` fixed, `D` difference open, `n/
 
 Counted in cells (a row has up to 8 cells): see the tables. Summary line to update after each session:
 
-- Data checks done with identical saved files from both builds (same edits, Ctrl+S, same SHA-256): untouched save; raise/lower hotkeys Q W R Shift+E; Q Q Ctrl+Z A; Transform menu Flatten floor + Smooth ceiling on a dragged area; Shift+Q Shift+W E then Edit > Undo; Rooms > New room + Duplicate rooms. Texture paint scenario (F3, texture panel click) was interrupted because the foreground guard aborted (user active); to be re-run.
+- Data checks done with identical saved files from both builds (same edits, Ctrl+S, same SHA-256): untouched save; raise/lower hotkeys Q W R Shift+E; Q Q Ctrl+Z A; Transform menu Flatten floor + Smooth ceiling on a dragged area; Shift+Q Shift+W E then Edit > Undo; Rooms > New room + Duplicate rooms. Texture paint (F3, click face, click a tile of the texture panel): the same texture shows in both builds but the saved files differ, because a click at the same window fraction hits a different texture area in the two layouts; not comparable by hash (needs a keyboard or fixed-coordinate way to pick the tile). Edit > Select all + Delete and Copy/Paste on an area: WPF changes nothing, WinForms Delete leaves an extra window open and the file was not saved: OPEN, to be investigated (screenshot of the extra window pending, the foreground guard aborted again).
 - Rows fully run (all applicable cells P or F): 0 / 45
 - Rows with the look already compared (V or P in D1): all rows except TE-M3, TE-M4, TE-M5, TE-M16, TE-M17, TE-M15, WT-7, ST-3
 - Differences found by this plan and fixed: 1 (3D view context menu never appeared)
