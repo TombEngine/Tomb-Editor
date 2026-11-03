@@ -42,6 +42,7 @@
   <ItemGroup>
     <Resource Include="ST.ico" />
     <Resource Include="Resources\misc\misc_AboutScreen_800.png" />
+    <Resource Include="Resources\misc\misc_SoundToolOverlay.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NLog" Version="5.0.0" />

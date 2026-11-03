@@ -157,6 +157,18 @@
                                 <DataGrid.Columns><DataGridTextColumn Header="{tomb:Localize Filename}" Binding="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" Width="*" /><DataGridTextColumn Header="{tomb:Localize ResolvedPath}" Binding="{Binding ResolvedPath}" IsReadOnly="True" Width="2*" /></DataGrid.Columns>
                             </DataGrid>
             </Grid>
+            <Border Grid.Column="2" Margin="8,0,0,0" Background="{DynamicResource Brush_Background}">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasSelection}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <Image Source="Resources/misc/misc_SoundToolOverlay.png" Stretch="None" />
+            </Border>
         </Grid>
     </DockPanel>
 </Window>
