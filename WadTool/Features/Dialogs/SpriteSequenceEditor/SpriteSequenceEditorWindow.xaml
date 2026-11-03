@@ -310,7 +310,7 @@
 							Command="{Binding ReplaceSpriteCommand}"
 							Style="{DynamicResource ButtonWithIconOnly}"
 							ToolTip="{tombLib:Localize ReplaceTooltip}">
-							<Image Source="{tomb:Icon General/Find-and-replace}" />
+							<Image Source="{tomb:Icon Actions/refresh}" />
 						</Button>
 					</controls:SpacedStack>
 					<controls:SpacedStack

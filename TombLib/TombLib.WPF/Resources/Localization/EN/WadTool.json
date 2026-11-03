@@ -67,7 +67,7 @@
         "PresetEaseInOut": "Ease In and Out"
     },
     "SpriteSequenceEditor": {
-        "Title": "Sprite sequence",
+        "Title": "Sprite sequence '{0}'",
         "AlignmentGroup": "Alignment (TR1-3 only)",
         "LabelLeft": "L",
         "LabelTop": "T",
