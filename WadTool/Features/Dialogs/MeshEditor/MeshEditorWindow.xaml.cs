@@ -38,6 +38,9 @@ public partial class MeshEditorWindow : Window
         {
             if (_vm is not null)
                 TombLib.WPF.WindowConfiguration.ConfigureWindow(this, _vm.Configuration, key: "FormMeshEditor");
+
+            // The texture was first fitted while the map still had no size; fit it again once laid out.
+            Dispatcher.BeginInvoke(() => _panelTextureMap.ResetVisibleTexture(_vm?.SelectedTexture, true), System.Windows.Threading.DispatcherPriority.Loaded);
         };
         PreviewKeyDown += OnPreviewKeyDown;
         Closing += OnClosingHandler;

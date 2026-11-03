@@ -66,7 +66,7 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(CancelVisible))]
     private bool _treeMode;
-    [ObservableProperty] private bool _showTextureTools;
+    [ObservableProperty] private bool _showTextureTools = true;
     [ObservableProperty] private bool _showAllTexturesButton = true;
     [ObservableProperty] private string _statusText = string.Empty;
     [ObservableProperty] private string _title = "Mesh editor";
@@ -163,7 +163,6 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
 
         if (_focusObjectId is not null)
         {
-            ShowTextureTools = _wad.GameVersion == TombLib.LevelData.TRVersion.Game.TombEngine;
             SelectFocusObject(_focusObjectId);
         }
 
@@ -497,7 +496,7 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
         if (!ShowEditingTools)
             _panelMesh.EditingMode = MeshEditingMode.None;
 
-        ExtraLabel = _panelMesh.EditingMode switch
+        ExtraLabel = (MeshEditingMode)(EditingModeIndex + 1) switch
         {
             MeshEditingMode.FaceAttributes => "Show sheen",
             MeshEditingMode.VertexColorsAndNormals => "Show all normals",

@@ -168,7 +168,7 @@
                 <GroupBox Header="Texture">
                     <StackPanel>
                         <Border
-                            Height="300"
+                            Height="400"
                             BorderBrush="{DynamicResource Brush_Border}"
                             BorderThickness="1">
                             <wadControls:PanelTextureMap x:Name="textureMap" />
