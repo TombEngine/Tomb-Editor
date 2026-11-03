@@ -2,6 +2,5 @@
   <path d="M1.5 4L6.5 1.5L11.5 4V7.5M1.5 4V10.5L6.5 13M1.5 4L6.5 6.5L11.5 4M6.5 6.5V13"/>
   <path d="M3 6h1v1h-1zM2 7h1v1h-1zM4 7h1v1h-1zM3 8h1v1h-1zM5 8h1v1h-1zM2 9h1v1h-1zM4 9h1v1h-1zM5 10h1v1h-1z" fill="#FFFFFF" stroke="none"/>
   <circle cx="10.5" cy="11.5" r="3.4"/>
-  <path d="M9 9h1v1h-1zM11 9h1v1h-1zM8 10h1v1h-1zM10 10h1v1h-1zM12 10h1v1h-1zM9 11h1v1h-1zM11 11h1v1h-1zM8 12h1v1h-1zM10 12h1v1h-1zM12 12h1v1h-1z" fill="#FFFFFF" fill-opacity="0.4" stroke="none"/>
   <line x1="12.5" y1="9.5" x2="8.5" y2="13.5"/>
 </svg>
