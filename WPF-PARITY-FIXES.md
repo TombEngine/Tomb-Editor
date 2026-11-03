@@ -237,6 +237,7 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | WadTool Sprite sequence editor: the title now carries the sequence like WinForms (Sprite sequence '(1353) SKY_GRAPHICS'), and the Replace button uses the refresh icon like WinForms (it showed a magnifier). Layout compared, same | Plain title, different icon | (this commit) |
 | WadTool Skeleton editor title is "Skeleton editor" like WinForms (WPF appended the moveable id) | Title text | (this commit) |
 | WadTool Static editor: title is "Static editor" like WinForms, and Import / Export / OK / Cancel sit at the bottom right under the editing column (they were centred under the 3D view). Verified on screen. Not changed: numbers right-aligned in WPF boxes, WinForms left-aligned; WinForms Shatter combo has a search lens, WPF none | Title and button row | (this commit) |
+| Node editor list arguments: the search lens is no longer shown on the fixed event / operator lists (event type, compare operator), so "On Volume Enter" is no longer cut to "On Volume Ente"; the legacy combo only shows its lens for lists of more than 10 items, other lists keep it. Verified on screen against WinForms. Not changed: WinForms has the Enable check box in the bottom row next to Call count, WPF in the header row | Truncated event type | (this commit) |
 
 ## Subagent batch (built only, NOT yet verified on screen)
 

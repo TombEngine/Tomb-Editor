@@ -214,7 +214,8 @@
                     CommandParameter="{Binding ElementName=listCombo}"
                     DockPanel.Dock="Right"
                     Style="{DynamicResource ButtonWithIconOnly}"
-                    ToolTip="{tombLib:Localize ArgSearchTooltip}">
+                    ToolTip="{tombLib:Localize ArgSearchTooltip}"
+                    Visibility="{Binding ShowSearch, Converter={StaticResource BoolToVis}}">
                     <Image Width="16" Height="16" Source="{tomb:Icon General/search}" />
                 </Button>
                 <controls:SearchableComboBox
