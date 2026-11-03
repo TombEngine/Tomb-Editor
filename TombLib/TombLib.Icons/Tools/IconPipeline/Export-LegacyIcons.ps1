@@ -44,6 +44,7 @@ $resourcePaths = @(
     'TombLib/TombLib.Scripting.ClassicScript/Resources/Icons',
     'TombLib/TombLib.Scripting.Tomb1Main/Resources/Icons',
     'DarkUI/Example/Resources',
+    'DarkUI/DarkUI/Resources',
     'WadTool/Resources',
     'SoundTool/Resources'
 )
@@ -99,6 +100,15 @@ try {
         }
     }
 
+    # Every glyph and message box icon of the WinForms DarkUI controls (arrows, close buttons, tick, tree nodes, message icons).
+    Get-ChildItem -LiteralPath (Join-Path $staging 'DarkUI/DarkUI/Resources') -Filter '*.png' | ForEach-Object {
+        $target = Join-Path $destination "DarkUI/DarkUI/Resources/$($_.Name)"
+        if (-not (Test-Path -LiteralPath $target)) {
+            New-Item -ItemType Directory -Path (Split-Path -Parent $target) -Force | Out-Null
+            Copy-Item -LiteralPath $_.FullName -Destination $target -Force
+            $copied++
+        }
+    }
     # Bitmaps embedded in a form resource instead of the Resources folder.
     Add-Type -AssemblyName System.Drawing
     $embedded = @(
