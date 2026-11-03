@@ -153,8 +153,8 @@ public partial class FlybyTimelineViewModel : ObservableObject
     /// <summary>
     /// Gets the icon resource used for the play or stop button.
     /// </summary>
-    private static readonly System.Windows.Media.ImageSource StopIconSource = TombLib.Icons.IconSources.Load("Misc/action_stop");
-    private static readonly System.Windows.Media.ImageSource PlayIconSource = TombLib.Icons.IconSources.Load("Actions/play");
+    private static readonly System.Windows.Media.ImageSource StopIconSource = TombLib.Icons.IconSources.Load("Actions/Transport/Stop");
+    private static readonly System.Windows.Media.ImageSource PlayIconSource = TombLib.Icons.IconSources.Load("Actions/Transport/Play24");
 
     public System.Windows.Media.ImageSource PlayStopIcon => IsPlaying ? StopIconSource : PlayIconSource;
 

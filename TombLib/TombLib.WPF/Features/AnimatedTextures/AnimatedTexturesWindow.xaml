@@ -186,7 +186,7 @@
 									</controls:SpacedStack>
 									<controls:SpacedStack HorizontalAlignment="Right" Orientation="Horizontal" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
 										<Button Command="{Binding GenerateNewCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize GenerateTooltip}">
-											<Image Source="{tomb:Icon General/create_new}" />
+											<Image Source="{tomb:Icon General/create_new_Forms}" />
 										</Button>
 										<Button Command="{Binding GenerateCloneCommand}" IsEnabled="{Binding HasSelectedSet}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize CloneTooltip}">
 											<Image Source="{tomb:Icon General/copy}" />

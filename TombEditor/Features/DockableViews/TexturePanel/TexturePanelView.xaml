@@ -103,7 +103,7 @@
 					Command="{Binding RotateCommand}"
 					Style="{DynamicResource ButtonWithIconOnly}"
 					ToolTip="Rotate texture">
-					<Image Source="{tomb:Icon General/Rotate}" />
+					<Image Source="{tomb:Icon Texture/Rotate}" />
 				</Button>
 
 				<Button
@@ -111,7 +111,7 @@
 					Command="{Binding MirrorCommand}"
 					Style="{DynamicResource ButtonWithIconOnly}"
 					ToolTip="Mirror texture">
-					<Image Source="{tomb:Icon General/Mirror}" />
+					<Image Source="{tomb:Icon Texture/Mirror}" />
 				</Button>
 
 				<ComboBox

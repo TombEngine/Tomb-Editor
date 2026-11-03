@@ -85,7 +85,7 @@ internal static class MaterialObjectWpfContextMenu
         // ----- Imported geometry --------------------------------------
         if (targetObject is ImportedGeometryInstance geo)
         {
-            menu.Items.Add(Item("Hide in editor", "General/Invisible",
+            menu.Items.Add(Item("Hide in editor", "Toolbox/Invisible",
                 () =>
                 {
                     geo.Hidden = !geo.Hidden;

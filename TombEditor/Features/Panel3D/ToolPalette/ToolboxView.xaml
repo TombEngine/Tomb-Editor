@@ -280,7 +280,7 @@
 			Style="{StaticResource ToolToggleButton}"
 			ToolTip="{tombLib:Localize Invisibility}"
 			Visibility="{Binding IsFaceEditToolsVisible, Converter={StaticResource BoolToVisConverter}}">
-			<Image Source="{tomb:Icon General/Invisible}" />
+			<Image Source="{tomb:Icon Toolbox/Invisible}" />
 		</ToggleButton>
 
 		<Border

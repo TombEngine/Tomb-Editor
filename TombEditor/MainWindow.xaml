@@ -85,17 +85,17 @@
                 <MenuItem editor:EditorMenu.Command="Undo" editor:EditorMenu.Icon="General/undo" />
                 <MenuItem editor:EditorMenu.Command="Redo" editor:EditorMenu.Icon="General/redo" />
                 <Separator />
-                <MenuItem editor:EditorMenu.Command="Cut" editor:EditorMenu.Icon="Actions/cut" />
+                <MenuItem editor:EditorMenu.Command="Cut" />
                 <MenuItem editor:EditorMenu.Command="Copy" editor:EditorMenu.Icon="General/copy" />
-                <MenuItem editor:EditorMenu.Command="Paste" editor:EditorMenu.Icon="General/paste" />
+                <MenuItem editor:EditorMenu.Command="Paste" editor:EditorMenu.Icon="General/clipboard" />
                 <MenuItem editor:EditorMenu.Command="StampObject" editor:EditorMenu.Icon="Actions/rubber_stamp" />
-                <MenuItem editor:EditorMenu.Command="Delete" editor:EditorMenu.Icon="Actions/delete" />
+                <MenuItem editor:EditorMenu.Command="Delete" />
                 <MenuItem editor:EditorMenu.Command="SelectAll" />
                 <Separator />
-                <MenuItem editor:EditorMenu.Command="BookmarkObject" editor:EditorMenu.Icon="Actions/StarOutlined" />
-                <MenuItem editor:EditorMenu.Command="SelectBookmarkedObject" editor:EditorMenu.Icon="Actions/StarFilled" />
+                <MenuItem editor:EditorMenu.Command="BookmarkObject" />
+                <MenuItem editor:EditorMenu.Command="SelectBookmarkedObject" />
                 <Separator />
-                <MenuItem editor:EditorMenu.Command="EditObject" editor:EditorMenu.Icon="General/edit" />
+                <MenuItem editor:EditorMenu.Command="EditObject" />
                 <MenuItem editor:EditorMenu.Command="EditVolumeEventSets" />
                 <MenuItem editor:EditorMenu.Command="EditGlobalEventSets" />
                 <MenuItem editor:EditorMenu.Command="Search" editor:EditorMenu.Icon="General/search" />
@@ -104,7 +104,7 @@
 
             <MenuItem Header="View" SubmenuOpened="ViewMenu_SubmenuOpened">
                 <MenuItem editor:EditorMenu.Command="ResetCamera" editor:EditorMenu.Icon="Actions/center_direction" />
-                <MenuItem editor:EditorMenu.Command="RelocateCamera" editor:EditorMenu.Icon="General/target" />
+                <MenuItem editor:EditorMenu.Command="RelocateCamera" />
                 <MenuItem editor:EditorMenu.Command="ToggleFlyMode" editor:EditorMenu.Icon="General/airplane" />
                 <Separator />
                 <MenuItem editor:EditorMenu.Command="DrawWhiteTextureLightingOnly" editor:EditorMenu.Icon="Actions/DrawUntexturedLights" />
@@ -113,8 +113,8 @@
 
             <MenuItem Header="Rooms">
                 <MenuItem Header="New room">
-                    <MenuItem editor:EditorMenu.Command="NewRoomUp" editor:EditorMenu.Icon="Actions/NewRoomUp" />
-                    <MenuItem editor:EditorMenu.Command="NewRoomDown" editor:EditorMenu.Icon="Actions/NewRoomDown" />
+                    <MenuItem editor:EditorMenu.Command="NewRoomUp" />
+                    <MenuItem editor:EditorMenu.Command="NewRoomDown" />
                     <MenuItem editor:EditorMenu.Command="NewRoomLeft" />
                     <MenuItem editor:EditorMenu.Command="NewRoomRight" />
                     <MenuItem editor:EditorMenu.Command="NewRoomFront" />
@@ -124,12 +124,12 @@
                 <MenuItem editor:EditorMenu.Command="CropRoom" editor:EditorMenu.Icon="General/crop" />
                 <MenuItem editor:EditorMenu.Command="SplitRoom" editor:EditorMenu.Icon="Actions/Split" />
                 <MenuItem editor:EditorMenu.Command="MergeRoomsHorizontally" editor:EditorMenu.Icon="Actions/Merge" />
-                <MenuItem editor:EditorMenu.Command="DeleteRooms" editor:EditorMenu.Icon="Actions/delete" />
+                <MenuItem editor:EditorMenu.Command="DeleteRooms" editor:EditorMenu.Icon="General/trash" />
                 <Separator />
                 <MenuItem Header="Move rooms">
-                    <MenuItem editor:EditorMenu.Command="MoveRoomUp" editor:EditorMenu.Icon="General/ArrowUp" />
+                    <MenuItem editor:EditorMenu.Command="MoveRoomUp" />
                     <MenuItem editor:EditorMenu.Command="MoveRoomUp4Clicks" />
-                    <MenuItem editor:EditorMenu.Command="MoveRoomDown" editor:EditorMenu.Icon="General/ArrowDown" />
+                    <MenuItem editor:EditorMenu.Command="MoveRoomDown" />
                     <MenuItem editor:EditorMenu.Command="MoveRoomDown4Clicks" />
                     <MenuItem editor:EditorMenu.Command="MoveRoomLeft" />
                     <MenuItem editor:EditorMenu.Command="MoveRoomRight" />
@@ -137,10 +137,10 @@
                     <MenuItem editor:EditorMenu.Command="MoveRoomBack" />
                 </MenuItem>
                 <MenuItem Header="Transform rooms">
-                    <MenuItem editor:EditorMenu.Command="RotateRoomsClockwise" editor:EditorMenu.Icon="General/Rotate" />
-                    <MenuItem editor:EditorMenu.Command="RotateRoomsCounterClockwise" editor:EditorMenu.Icon="General/Rotate" />
-                    <MenuItem editor:EditorMenu.Command="MirrorRoomsX" editor:EditorMenu.Icon="General/Mirror" />
-                    <MenuItem editor:EditorMenu.Command="MirrorRoomsZ" editor:EditorMenu.Icon="General/Mirror" />
+                    <MenuItem editor:EditorMenu.Command="RotateRoomsClockwise" />
+                    <MenuItem editor:EditorMenu.Command="RotateRoomsCounterClockwise" />
+                    <MenuItem editor:EditorMenu.Command="MirrorRoomsX" />
+                    <MenuItem editor:EditorMenu.Command="MirrorRoomsZ" />
                 </MenuItem>
                 <MenuItem Header="Select rooms">
                     <MenuItem editor:EditorMenu.Command="SelectWaterRooms" />
@@ -158,10 +158,10 @@
             </MenuItem>
 
             <MenuItem Header="Items">
-                <MenuItem editor:EditorMenu.Command="AddWad" editor:EditorMenu.Icon="General/folder" />
-                <MenuItem editor:EditorMenu.Command="RemoveWads" />
-                <MenuItem editor:EditorMenu.Command="ReloadWads" editor:EditorMenu.Icon="Actions/refresh" />
-                <MenuItem editor:EditorMenu.Command="ReloadSounds" editor:EditorMenu.Icon="Actions/refresh" />
+                <MenuItem editor:EditorMenu.Command="AddWad" editor:EditorMenu.Icon="General/plus_math" />
+                <MenuItem editor:EditorMenu.Command="RemoveWads" editor:EditorMenu.Icon="General/trash" />
+                <MenuItem editor:EditorMenu.Command="ReloadWads" />
+                <MenuItem editor:EditorMenu.Command="ReloadSounds" />
                 <Separator />
                 <MenuItem Header="Add item">
                     <MenuItem editor:EditorMenu.Command="AddCamera" editor:EditorMenu.Icon="Objects/Camera" />
@@ -179,10 +179,10 @@
                 <MenuItem editor:EditorMenu.Command="AddSphereVolume" editor:EditorMenu.Icon="Objects/volume-sphere" />
                 <Separator />
                 <MenuItem Header="Delete...">
-                    <MenuItem editor:EditorMenu.Command="DeleteAllLights" editor:EditorMenu.Icon="Actions/delete" />
-                    <MenuItem editor:EditorMenu.Command="DeleteAllObjects" editor:EditorMenu.Icon="Actions/delete" />
-                    <MenuItem editor:EditorMenu.Command="DeleteAllTriggers" editor:EditorMenu.Icon="Actions/delete" />
-                    <MenuItem editor:EditorMenu.Command="DeleteMissingObjects" editor:EditorMenu.Icon="General/trash" />
+                    <MenuItem editor:EditorMenu.Command="DeleteAllLights" />
+                    <MenuItem editor:EditorMenu.Command="DeleteAllObjects" />
+                    <MenuItem editor:EditorMenu.Command="DeleteAllTriggers" />
+                    <MenuItem editor:EditorMenu.Command="DeleteMissingObjects" />
                 </MenuItem>
                 <Separator />
                 <MenuItem editor:EditorMenu.Command="LocateItem" editor:EditorMenu.Icon="General/target" />
@@ -200,21 +200,21 @@
             </MenuItem>
 
             <MenuItem Header="Textures">
-                <MenuItem editor:EditorMenu.Command="AddTexture" editor:EditorMenu.Icon="General/Import" />
-                <MenuItem editor:EditorMenu.Command="RemoveTextures" />
+                <MenuItem editor:EditorMenu.Command="AddTexture" editor:EditorMenu.Icon="General/plus_math" />
+                <MenuItem editor:EditorMenu.Command="RemoveTextures" editor:EditorMenu.Icon="General/trash" />
                 <MenuItem editor:EditorMenu.Command="UnloadTextures" />
-                <MenuItem editor:EditorMenu.Command="ReloadTextures" editor:EditorMenu.Icon="Actions/refresh" />
-                <MenuItem editor:EditorMenu.Command="ConvertTexturesToPNG" />
-                <MenuItem editor:EditorMenu.Command="RemapTexture" />
+                <MenuItem editor:EditorMenu.Command="ReloadTextures" />
+                <MenuItem editor:EditorMenu.Command="ConvertTexturesToPNG" editor:EditorMenu.Icon="General/Import" />
+                <MenuItem editor:EditorMenu.Command="RemapTexture" editor:EditorMenu.Icon="General/crop" />
                 <Separator />
                 <MenuItem editor:EditorMenu.Command="TextureFloor" editor:EditorMenu.Icon="Texture/Floor2" />
                 <MenuItem editor:EditorMenu.Command="TextureWalls" editor:EditorMenu.Icon="Texture/Walls2" />
                 <MenuItem editor:EditorMenu.Command="TextureCeiling" editor:EditorMenu.Icon="Texture/Ceiling2" />
                 <Separator />
-                <MenuItem editor:EditorMenu.Command="ClearAllTexturesInRoom" />
+                <MenuItem editor:EditorMenu.Command="ClearAllTexturesInRoom" editor:EditorMenu.Icon="Toolbox/Eraser" />
                 <MenuItem editor:EditorMenu.Command="ClearAllTexturesInLevel" />
                 <Separator />
-                <MenuItem editor:EditorMenu.Command="SearchTextures" editor:EditorMenu.Icon="General/search-texture" />
+                <MenuItem editor:EditorMenu.Command="SearchTextures" editor:EditorMenu.Icon="General/search" />
                 <MenuItem editor:EditorMenu.Command="EditAnimationRanges" editor:EditorMenu.Icon="Texture/anim_ranges" />
             </MenuItem>
 
@@ -278,7 +278,7 @@
                 <MenuItem editor:EditorMenu.Command="ShowItemProperties" />
                 <MenuItem editor:EditorMenu.Command="ShowStatistics" />
                 <MenuItem editor:EditorMenu.Command="ShowToolPalette" />
-                <MenuItem editor:EditorMenu.Command="ShowFlybyTimeline" editor:EditorMenu.Icon="Objects/movie_projector" />
+                <MenuItem editor:EditorMenu.Command="ShowFlybyTimeline" />
             </MenuItem>
 
             <MenuItem Header="Help">
@@ -452,7 +452,7 @@
                                 <avalonDock:LayoutAnchorable
                                     ContentId="contentBrowser"
                                     CanClose="False"
-                                    IconSource="{tomb:Icon General/folder}"
+                                    IconSource="{tomb:Icon General/Open}"
                                     Title="Content Browser">
                                     <contentBrowser:ContentBrowserView x:Name="contentBrowserView" />
                                 </avalonDock:LayoutAnchorable>

@@ -79,7 +79,7 @@
                 <Button Style="{StaticResource TbBtn}" Command="{Binding RotateTextureCommand}" ToolTip="Rotate current texture (~)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Rotate}" /></Button>
                 <Button Style="{StaticResource TbBtn}" Command="{Binding MirrorTextureCommand}" ToolTip="Mirror current texture (Shift+~)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Mirror}" /></Button>
                 <Border Style="{StaticResource TbSep}" />
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Hidden, Mode=TwoWay}" ToolTip="Hide mesh if skinned mesh is used for the parent object"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Invisible}" /></ToggleButton>
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Hidden, Mode=TwoWay}" ToolTip="Hide mesh if skinned mesh is used for the parent object"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/hide_mesh}" /></ToggleButton>
             </controls:SpacedStack>
         </Border>
 

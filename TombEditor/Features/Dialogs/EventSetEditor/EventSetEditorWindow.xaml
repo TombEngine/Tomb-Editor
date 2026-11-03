@@ -54,7 +54,7 @@
                         <Image Source="{tomb:Icon General/plus_math}" />
                     </Button>
                     <Button Command="{Binding NewFolderCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize NewFolderTooltip}">
-                        <Image Source="{tomb:Icon General/folder}" />
+                        <Image Source="{tomb:Icon General/Open}" />
                     </Button>
                     <Button Command="{Binding CloneSetCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize CloneSetTooltip}">
                         <Image Source="{tomb:Icon General/copy}" />
@@ -96,7 +96,7 @@
                                     Width="16"
                                     Height="16"
                                     Margin="0,0,4,0"
-                                    Source="{tomb:Icon General/folder}"
+                                    Source="{tomb:Icon General/Open}"
                                     Visibility="{Binding IsFolder, Converter={StaticResource BoolToVis}}" />
                                 <TextBlock Text="{Binding DisplayName}" />
                             </StackPanel>

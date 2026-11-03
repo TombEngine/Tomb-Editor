@@ -46,7 +46,7 @@
                     Header="Open destination"
                     InputGestureText="Ctrl+Shift+O">
                     <MenuItem.Icon>
-                        <Image Source="{tomb:Icon General/folder}" />
+                        <Image Source="{tomb:Icon General/Open}" />
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem x:Name="openRecentMenu" Header="Open recent..." />
@@ -140,19 +140,11 @@
                     Command="{Binding Commands[ConvertWadToTombEngineMenu_Click]}"
                     Header="Convert wad to TombEngine..." />
                 <Separator />
-                <MenuItem Command="{Binding Commands[OptionsMenu_Click]}" Header="Options...">
-                    <MenuItem.Icon>
-                        <Image Source="{tomb:Icon General/settings}" />
-                    </MenuItem.Icon>
-                </MenuItem>
+                <MenuItem Command="{Binding Commands[OptionsMenu_Click]}" Header="Options..." />
             </MenuItem>
 
             <MenuItem Header="_Help">
-                <MenuItem Command="{Binding Commands[AboutMenu_Click]}" Header="About Wad Tool...">
-                    <MenuItem.Icon>
-                        <Image Source="{tomb:Icon General/AboutIcon}" />
-                    </MenuItem.Icon>
-                </MenuItem>
+                <MenuItem Command="{Binding Commands[AboutMenu_Click]}" Header="About Wad Tool..." />
             </MenuItem>
 
             <!--  Only shown when a debugger is attached, mirroring FormMain.  -->
@@ -182,7 +174,7 @@
                     Command="{Binding Commands[OpenDestinationWadMenu_Click]}"
                     Style="{DynamicResource ButtonWithIconOnly}"
                     ToolTip="Open destination file">
-                    <Image Source="{tomb:Icon General/folder}" />
+                    <Image Source="{tomb:Icon General/Open}" />
                 </Button>
                 <Button
                     x:Name="butSave"
@@ -278,7 +270,7 @@
                         Style="{DynamicResource ButtonWithIconAndText}"
                         ToolTip="Change slot of selected item">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="{tomb:Icon General/Find-and-replace}" />
+                            <Image Source="{tomb:Icon General/copy}" />
                             <TextBlock Text="Change slot" />
                         </StackPanel>
                     </Button>

@@ -290,7 +290,7 @@
 					IsChecked="{Binding Hidden, Mode=OneWay}"
 					Style="{DynamicResource ToggleButtonWithIconOnly}"
 					ToolTip="{editor:CommandToolTip HideRoom, Key=HideRoomTooltip}">
-					<Image Source="{tomb:Icon General/Invisible}" />
+					<Image Source="{tomb:Icon Toolbox/Invisible}" />
 				</ToggleButton>
 			</controls:SpacedGrid>
 		</controls:SpacedGrid>

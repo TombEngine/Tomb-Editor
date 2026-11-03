@@ -294,7 +294,7 @@
             <Button
                 Command="{Binding ClearNodesCommand}"
                 ToolTip="{tombLib:Localize ClearTooltip}">
-                <Image Width="16" Height="16" Source="{tomb:Icon Misc/Close_16xLG}" />
+                <Image Width="16" Height="16" Source="{tomb:Icon Actions/delete}" />
             </Button>
             <Button
                 Command="{Binding FindNodeCommand}"

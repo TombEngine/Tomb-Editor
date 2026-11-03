@@ -89,9 +89,9 @@
                 <DockPanel Grid.Row="1" Margin="0,8,0,8">
                     <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="8,0,0,0">
                         <Button Command="{Binding CopyCommand}" ToolTip="{tomb:Localize Copy}" Width="30"><Image Source="{icons:Icon General/copy}" Width="16" /></Button>
-                        <Button Command="{Binding PasteCommand}" ToolTip="{tomb:Localize Paste}" Width="30" Margin="4,0,0,0"><Image Source="{icons:Icon General/paste}" Width="16" /></Button>
+                        <Button Command="{Binding PasteCommand}" ToolTip="{tomb:Localize Paste}" Width="30" Margin="4,0,0,0"><Image Source="{icons:Icon General/clipboard_Forms}" Width="16" /></Button>
                         <Button Command="{Binding ResetCommand}" ToolTip="{tomb:Localize Reset}" Width="30" Margin="4,0,0,0"><Image Source="{icons:Icon General/undo}" Width="16" /></Button>
-                        <Button Command="{Binding PlayCommand}" Visibility="{Binding HasReferenceLevel, Converter={StaticResource BoolToVis}}" ToolTip="{tomb:Localize Preview}" Width="30" Margin="12,0,0,0"><Image Source="{icons:Icon Actions/Transport/Play}" Width="16" /></Button>
+                        <Button Command="{Binding PlayCommand}" Visibility="{Binding HasReferenceLevel, Converter={StaticResource BoolToVis}}" ToolTip="{tomb:Localize Preview}" Width="30" Margin="12,0,0,0"><Image Source="{icons:Icon Actions/play}" Width="16" /></Button>
                         <Button Command="{Binding StopCommand}" Visibility="{Binding HasReferenceLevel, Converter={StaticResource BoolToVis}}" ToolTip="{tomb:Localize Stop}" Width="30" Margin="4,0,0,0"><Image Source="{icons:Icon Actions/Transport/Stop}" Width="16" /></Button>
                     </StackPanel>
                     <Label DockPanel.Dock="Left" Content="{tomb:Localize NameLabel}" />

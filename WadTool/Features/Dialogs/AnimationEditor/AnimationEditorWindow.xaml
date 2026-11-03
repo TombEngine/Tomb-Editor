@@ -108,7 +108,7 @@
             <MenuItem Header="Animations">
                 <MenuItem Command="{Binding AddAnimationCommand}" Header="New animation"><MenuItem.Icon><Image Source="{tomb:Icon General/plus_math}" /></MenuItem.Icon></MenuItem>
                 <MenuItem Command="{Binding DeleteAnimationCommand}" Header="Delete animation"><MenuItem.Icon><Image Source="{tomb:Icon General/trash}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding SplitAnimationCommand}" Header="Split animation"><MenuItem.Icon><Image Source="{tomb:Icon Actions/Split}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding SplitAnimationCommand}" Header="Split animation"><MenuItem.Icon><Image Source="{tomb:Icon Actions/Split_WadTool}" /></MenuItem.Icon></MenuItem>
                 <Separator />
                 <MenuItem Command="{Binding CutAnimationCommand}" Header="Cut"><MenuItem.Icon><Image Source="{tomb:Icon Actions/cut}" /></MenuItem.Icon></MenuItem>
                 <MenuItem Command="{Binding CopyAnimationCommand}" Header="Copy"><MenuItem.Icon><Image Source="{tomb:Icon General/copy}" /></MenuItem.Icon></MenuItem>
@@ -457,7 +457,7 @@
                         <Button Style="{StaticResource TbBtn}" Command="{Binding CopyAnimationCommand}" ToolTip="Copy animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/copy}" /></Button>
                         <Button Style="{StaticResource TbBtn}" Command="{Binding PasteAnimationCommand}" ToolTip="Paste animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste}" /></Button>
                         <Button Style="{StaticResource TbBtn}" Command="{Binding ReplaceAnimationCommand}" ToolTip="Replace animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste-new}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding SplitAnimationCommand}" ToolTip="Split animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/Split}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding SplitAnimationCommand}" ToolTip="Split animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/Split_WadTool}" /></Button>
                         <Border Style="{StaticResource TbSep}" />
                         <TextBlock Style="{StaticResource TbLbl}" Text="Frames:" />
                         <Button Style="{StaticResource TbBtn}" Command="{Binding AddFrameCommand}" ToolTip="Add frame"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
@@ -502,7 +502,7 @@
                         <Image>
                             <Image.Style>
                                 <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
-                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Play}" />
+                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Play24}" />
                                     <Style.Triggers>
                                         <DataTrigger Binding="{Binding IsPlaying}" Value="True">
                                             <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Stop}" />
