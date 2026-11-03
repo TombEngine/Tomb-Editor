@@ -1,24 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
-  <path fill="#ffffff" fill-opacity="0.0039" d="M6 10h1v1h-1zM9 10h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.0157" d="M7 7h2v1h-2z"/>
-  <path fill="#ffffff" fill-opacity="0.0549" d="M6 4h1v1h-1zM9 4h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.0863" d="M5 7h1v1h-1zM10 7h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.1255" d="M4 10h1v1h-1zM11 10h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.1765" d="M5 12h1v1h-1zM10 12h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.2784" d="M7 6h2v1h-2z"/>
-  <path fill="#ffffff" fill-opacity="0.3725" d="M9 5h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.3765" d="M6 5h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.4235" d="M5 8h1v1h-1zM10 8h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.4745" d="M4 11h1v1h-1zM11 11h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.5294" d="M5 11h1v1h-1zM10 11h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.5804" d="M6 8h1v1h-1zM9 8h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.6275" d="M7 5h2v1h-2z"/>
-  <path fill="#ffffff" fill-opacity="0.6745" d="M7 3h2v1h-2z"/>
-  <path fill="#ffffff" fill-opacity="0.7255" d="M6 6h1v1h-1zM9 6h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.7765" d="M5 9h1v1h-1zM10 9h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.8275" d="M4 12h1v1h-1zM11 12h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.8784" d="M5 10h1v1h-1zM10 10h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.902" d="M6 7h1v1h-1zM9 7h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.9137" d="M7 4h2v1h-2z"/>
-  <path fill="#ffffff" d="M6 9h4v1h-4z"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <path fill="#ffffff" fill-rule="evenodd" d="M7.312 3.272C6.844 3.847 7.088 4.649 6.863 5.312C6.743 5.664 6.351 5.804 6.188 6.145C5.881 6.786 6.025 7.527 5.839 8.188C5.75 8.5 5.392 8.639 5.26 8.938C5.003 9.517 4.959 10.194 4.857 10.812C4.721 11.644 3.631 11.796 4.141 12.812C4.364 12.971 4.454 12.969 4.727 12.938C5.233 12.619 5.034 12.297 5.312 11.878C5.463 11.65 5.7 11.544 5.812 11.276C5.97 10.902 5.97 10.523 6.209 10.188C6.338 10.119 6.415 10.059 6.562 10.043C7.009 9.994 7.488 10.076 7.938 10.077C8.427 10.078 8.952 9.989 9.438 10.043C9.585 10.059 9.662 10.119 9.791 10.188C10.03 10.523 10.03 10.902 10.188 11.276C10.3 11.544 10.537 11.65 10.688 11.878C10.966 12.297 10.767 12.619 11.273 12.938C11.546 12.969 11.636 12.971 11.859 12.812C12.369 11.796 11.279 11.644 11.143 10.812C11.041 10.194 10.997 9.517 10.74 8.938C10.608 8.639 10.25 8.5 10.161 8.188C9.977 7.535 10.071 6.839 9.829 6.188C9.686 5.804 9.254 5.691 9.131 5.312C8.916 4.647 9.155 3.846 8.688 3.272C8.231 3.057 7.769 3.057 7.312 3.272ZM7.311 6.062C7.053 6.533 7.108 7.043 7.025 7.562C6.962 7.959 6.817 8.137 6.794 8.562C7.347 9.132 8.653 9.132 9.206 8.562C9.183 8.137 9.038 7.959 8.975 7.562C8.892 7.043 8.947 6.533 8.691 6.062C8.255 5.908 7.746 5.907 7.311 6.062Z"/>
 </svg>

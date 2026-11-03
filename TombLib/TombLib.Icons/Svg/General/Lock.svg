@@ -1,24 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
-  <path fill="#ffffff" fill-opacity="0.1137" d="M4 9h1v3h-1zM11 9h1v3h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.2275" d="M4 3h1v1h-1zM11 3h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.251" d="M6 3h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.2549" d="M9 3h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.4784" d="M6 1h1v1h-1zM9 1h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.4824" d="M5 2h1v1h-1zM10 2h1v1h-1zM3 6h1v1h-1zM12 6h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.5569" d="M5 7h1v1h-1zM10 7h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.5961" d="M5 5h1v1h-1zM10 5h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.6118" d="M4 7h1v1h-1zM11 7h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.6392" d="M4 5h1v1h-1zM11 5h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.6471" d="M4 4h1v1h-1zM11 4h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.6706" d="M6 6h4v2h-4zM5 13h6v1h-6z"/>
-  <path fill="#ffffff" fill-opacity="0.6941" d="M7 2h2v1h-2z"/>
-  <path fill="#ffffff" fill-opacity="0.702" d="M3 14h1v1h-1zM12 14h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.7176" d="M5 4h1v1h-1zM10 4h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.7294" d="M4 13h1v1h-1zM11 13h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.8118" d="M4 14h1v1h-1zM11 14h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.8196" d="M7 1h2v1h-2zM5 14h6v1h-6z"/>
-  <path fill="#ffffff" fill-opacity="0.8941" d="M3 8h1v1h-1zM12 8h1v1h-1zM3 12h1v1h-1zM12 12h1v1h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.902" d="M3 9h1v3h-1zM12 9h1v3h-1z"/>
-  <path fill="#ffffff" fill-opacity="0.9882" d="M4 6h1v1h-1zM11 6h1v1h-1z"/>
-  <path fill="#ffffff" d="M6 2h1v1h-1zM9 2h1v1h-1zM5 3h1v1h-1zM10 3h1v1h-1zM5 6h1v1h-1zM10 6h1v1h-1zM3 7h1v1h-1zM12 7h1v1h-1zM3 13h1v1h-1zM12 13h1v1h-1z"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <path fill="#ffffff" fill-rule="evenodd" d="M4.312 4.45C4.273 4.795 4.403 5.233 4.273 5.562C4.018 6.206 3.321 6.558 3.083 7.188C2.873 7.744 3.033 8.479 3.033 9.062C3.033 10.229 3.051 11.397 3.03 12.562C3.017 13.3 2.929 14.077 3.398 14.688C4.1 14.973 4.937 14.88 5.688 14.881C7.104 14.884 8.521 14.879 9.938 14.881C10.794 14.883 11.8 15.014 12.602 14.688C13.071 14.077 12.983 13.3 12.97 12.562C12.949 11.397 12.967 10.229 12.967 9.062C12.967 8.479 13.127 7.744 12.917 7.188C12.679 6.558 11.982 6.206 11.727 5.562C11.597 5.233 11.727 4.795 11.688 4.45C11.575 4.271 11.391 4.124 11.297 3.938C11.155 3.658 11.123 3.317 10.938 3.06C10.792 2.858 10.595 2.733 10.438 2.548C9.728 1.715 9.114 1.071 7.938 1.089C7.583 1.095 7.257 1.146 6.938 1.301C6.263 1.629 5.775 2.292 5.265 2.812C4.947 3.138 4.9 3.547 4.703 3.938C4.609 4.124 4.425 4.271 4.312 4.45ZM6.312 3.24C6.046 3.61 5.668 4.72 5.608 5.188C5.589 5.336 5.638 5.424 5.655 5.562C6.438 6.578 7.163 6.261 8.312 6.261C8.71 6.261 9.182 6.388 9.562 6.239C9.891 6.111 10.137 5.832 10.345 5.562C10.362 5.424 10.411 5.336 10.392 5.188C10.332 4.721 9.953 3.614 9.688 3.244C8.323 2.565 7.679 2.568 6.312 3.24ZM4.438 7.66C4.213 7.877 4.037 8.122 3.978 8.438C3.917 8.77 4.004 9.106 4.025 9.438C4.069 10.129 4.071 10.871 4.025 11.562C3.984 12.168 3.866 12.63 4.312 13.107C4.869 13.378 5.576 13.284 6.188 13.277C7.354 13.264 8.521 13.265 9.688 13.275C10.333 13.281 11.1 13.393 11.688 13.107C12.134 12.63 12.016 12.168 11.975 11.562C11.929 10.871 11.931 10.129 11.975 9.438C11.996 9.106 12.083 8.77 12.022 8.438C11.963 8.122 11.787 7.877 11.562 7.66C10.697 7.35 10.147 7.724 9.312 7.75C8.773 7.767 8.228 7.739 7.688 7.739C7.274 7.739 6.85 7.782 6.438 7.733C5.684 7.643 5.217 7.381 4.438 7.66Z"/>
 </svg>

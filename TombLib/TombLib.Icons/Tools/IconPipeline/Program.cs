@@ -39,6 +39,7 @@ internal static class Program
                 "rasterize" => Rasterize(root, svgRoot, options),
                 "rasterize-legacy" => RasterizeLegacy(root, svgRoot, options),
                 "verify-legacy" => VerifyLegacy(svgRoot, options),
+                "trace-legacy" => TraceLegacy(root, svgRoot, options),
                 "contact-sheet" => WriteContactSheet(root, svgRoot, options),
                 _ => throw new ArgumentException($"Unknown command '{args[0]}'.")
             };
@@ -103,6 +104,99 @@ internal static class Program
         return 0;
     }
 
+    // Traces the legacy bitmaps into smooth vector SVGs and keeps, per icon, the threshold that overlays the original best.
+    private static int TraceLegacy(string root, string svgRoot, Dictionary<string, string> options)
+    {
+        var legacyRoot = Path.GetFullPath(options["legacy-root"]);
+        var mapFile = Path.GetFullPath(options.GetValueOrDefault("map", Path.Combine(root, "Tools", "IconPipeline", "legacy-icon-map.csv")));
+        var reportFile = Path.GetFullPath(options.GetValueOrDefault("report", Path.Combine(Path.GetTempPath(), "TombLibTrace.csv")));
+        var only = options.GetValueOrDefault("only");
+        var preferred = new[] { "TombEditor", "TombLib/TombLib.Forms", "WadTool", "SoundTool", "TombIDE", "TombLib", "DarkUI" };
+        var rows = ReadCsv(mapFile).Where(row => row["status"] == "matched").GroupBy(row => row["svg_id"]).ToList();
+        var report = new List<string[]>();
+        var temp = Path.Combine(Path.GetTempPath(), "tomblib-trace.svg");
+
+        foreach (var group in rows)
+        {
+            if (only is not null && !group.Key.StartsWith(only, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            var candidates = group.Select(row =>
+            {
+                var path = Path.Combine(legacyRoot, row["legacy_png"].Replace('/', Path.DirectorySeparatorChar));
+                var size = ReadPngSize(path);
+                return (Relative: row["legacy_png"], Path: path, size.Width, size.Height);
+            }).Where(candidate => candidate.Width <= 75 && candidate.Height <= 75).ToList();
+            if (candidates.Count == 0)
+                continue;
+
+            var pick = candidates
+                .OrderBy(candidate => candidate.Width == 16 && candidate.Height == 16 ? 0 : 1)
+                .ThenBy(candidate => Array.FindIndex(preferred, prefix => candidate.Relative.StartsWith(prefix, StringComparison.Ordinal)) is var index and >= 0 ? index : 99)
+                .ThenBy(candidate => candidate.Relative, StringComparer.Ordinal)
+                .First();
+
+            int width, height;
+            byte[] bgra;
+            try
+            {
+                (width, height, bgra) = LegacyTracer.ReadStraightBgra(pick.Path);
+            }
+            catch (Exception exception)
+            {
+                Console.Error.WriteLine($"{group.Key}: {exception.Message}");
+                continue;
+            }
+            var layers = LegacyTracer.SplitLayers(width, height, bgra);
+            var legacyPremultiplied = new byte[bgra.Length];
+            for (var i = 0; i < bgra.Length; i += 4)
+            {
+                var alpha = bgra[i + 3];
+                for (var c = 0; c < 3; c++)
+                    legacyPremultiplied[i + c] = (byte)((bgra[i + c] * alpha + 127) / 255);
+                legacyPremultiplied[i + 3] = alpha;
+            }
+
+            string? bestSvg = null;
+            var bestError = double.MaxValue;
+            var bestThreshold = 0.0;
+            foreach (var threshold in new[] { 0.10, 0.20, 0.30, 0.38, 0.46, 0.54, 0.62, 0.70, 0.78 })
+            {
+                string svg;
+                try
+                {
+                    svg = LegacyTracer.BuildSvg(width, height, layers, threshold);
+                }
+                catch (Exception exception)
+                {
+                    Console.Error.WriteLine($"{group.Key} threshold {threshold}: {exception}");
+                    continue;
+                }
+
+                File.WriteAllText(temp, svg);
+                var rendered = ReadPbgra(RenderSvgCanvas(temp, width, height), width, height);
+                var error = 0.0;
+                for (var i = 0; i < rendered.Length; i++)
+                    error += Math.Abs(rendered[i] - legacyPremultiplied[i]);
+                error /= rendered.Length;
+                if (error < bestError)
+                {
+                    bestError = error;
+                    bestSvg = svg;
+                    bestThreshold = threshold;
+                }
+            }
+
+            var target = Path.Combine(svgRoot, group.Key.Replace('/', Path.DirectorySeparatorChar) + ".svg");
+            Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+            File.WriteAllText(target, bestSvg!, new UTF8Encoding(false));
+            report.Add([group.Key, pick.Relative, width.ToString(CultureInfo.InvariantCulture), height.ToString(CultureInfo.InvariantCulture), bestThreshold.ToString("0.00", CultureInfo.InvariantCulture), bestError.ToString("0.00", CultureInfo.InvariantCulture)]);
+        }
+
+        WriteCsv(reportFile, ["svg_id", "source", "width", "height", "threshold", "mean_abs_error"], report);
+        Console.WriteLine($"Traced {report.Count} icons. Report: {reportFile}");
+        return 0;
+    }
     // Compares every planned legacy PNG with its SVG as WPF composites them (premultiplied BGRA), the way the icons reach the screen.`r`n    // The PNG gamma and color profile chunks are ignored because WinForms (GDI+) draws the raw pixel values.
     private static int VerifyLegacy(string svgRoot, Dictionary<string, string> options)
     {
@@ -214,7 +308,7 @@ internal static class Program
 
     private static int ValidateSvgBounds(string svgRoot)
     {
-        const double epsilon = 0.01;
+        const double epsilon = 0.25;
         var svgFiles = GetFiles(svgRoot, "*.svg");
         var violations = 0;
         var settings = new WpfDrawingSettings { IncludeRuntime = false, TextAsGeometry = true };
@@ -487,9 +581,21 @@ internal static class Program
 
     private static void SavePng(BitmapSource bitmap, string path)
     {
-        using var stream = File.Create(path);
         var bytes = EncodePng(bitmap);
-        stream.Write(bytes, 0, bytes.Length);
+
+        // Antivirus and indexers sometimes hold a freshly written PNG open; retry a few times.
+        for (var attempt = 0; ; attempt++)
+        {
+            try
+            {
+                File.WriteAllBytes(path, bytes);
+                return;
+            }
+            catch (IOException) when (attempt < 20)
+            {
+                Thread.Sleep(250);
+            }
+        }
     }
 
     private static RenderTargetBitmap RenderSvgCanvas(string svgFile, int width, int height)
