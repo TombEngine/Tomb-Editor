@@ -40,21 +40,21 @@ At the reviewed baseline, the exported source contains 363 PNGs across TombEdito
 
 Do not run `linewise.py` as an automatic step in this pipeline. It rewrites SVG source styles globally; filled subjects and color accents can carry their original meaning. Update source SVGs by reviewing paired legacy/current sheets, then regenerate the raster buckets from those sources.
 
-## Traced line icons
+## Hand-drawn line icons
 
-The SVG catalog is traced from the legacy WinForms PNGs, so every icon overlays its original while staying a clean vector. `trace-legacy` splits each bitmap into color layers, upsamples every layer with a bicubic filter, extracts the iso-contour with marching squares and fits cubic Beziers (Schneider), keeping real corners sharp. For each icon it tries several iso levels and keeps the one whose 16 pixel rendering is closest to the original; the mean absolute error per icon is written to the report (about 8 of 255 on average, edge anti-aliasing only). Colors come from the bitmap; the SVG view box is the size of the bitmap (16 by 16 for almost all icons, 24 by 24 for the transport icons, 75 by 21 for the transform charts, 48 by 48 for two TombIDE icons). `TombLib.Icons` and the pipeline clip the drawing to the view box declared by the SVG.
+Every icon that exists as a bitmap in the WinForms tools has an SVG drawn as a simplified vector line icon: stroke based (1 unit, round caps and joins), a handful of nodes made of lines, arcs, circles and rounded rectangles, original colors, solid parts only where the bitmap is solid. A letter "A" is three lines, not a traced outline. Each SVG is aligned with its original so that the two overlay; the SVG view box is the size of the bitmap (16 by 16 for almost all icons, 24 by 24 for the transport icons, 75 by 21 for the transform charts, 7 by 7 and similar for the DarkUI glyphs, 48 by 48 for two TombIDE icons). `TombLib.Icons` and the pipeline clip the drawing to the view box declared by the SVG.
 
 When the same icon is drawn differently in different applications, the 16 pixel bitmap of TombEditor keeps the plain id and the other drawings get a suffix: `General/create_new_Forms` (TombLib.Forms), `General/clipboard_Forms`, `Actions/Split_WadTool`, `Actions/Transport/Play24` (24 pixel), `General/search_TombIDE`, `Actions/cut_TombIDE`, `General/Open_TombIDE48`, `Misc/import_TombIDE48`. `legacy-icon-overrides.csv` holds these hand-reviewed mappings, the legacy files whose name has no SVG (`opened_folder-16`, `replace-16`, `volume_up-16`, `Camera-161`, `general_clipboard-161`, `general_Save As-16`), the glyph and message box bitmaps of the WinForms DarkUI controls (`Misc/DarkUI/*`) and the bitmap embedded in `FormMeshEditor.resx` (`Misc/hide_mesh`); `inventory` applies it. XAML must use the id of the drawing the WinForms tool shows (for example WadTool uses `Actions/Split_WadTool`, the animation editor transport uses `Actions/Transport/Play24`). WPF shows the four message box icons through `CMessageBox.*IconOverride` in `WPFInitializer`.
 
-Regenerate and review the result:
+Review a drawing against its original with the headless helpers (`npm install` once in the `node` folder; they use resvg, so no desktop session is needed):
 
 ```powershell
 $legacyRoot = Join-Path $env:TEMP ("TombLibLegacyExport-" + [Guid]::NewGuid().ToString('N'))
 & TombLib/TombLib.Icons/Tools/IconPipeline/Export-LegacyIcons.ps1 -OutputDirectory $legacyRoot
 dotnet run --project TombLib/TombLib.Icons/Tools/IconPipeline/IconPipeline.csproj -- inventory --legacy-root $legacyRoot --output TombLib/TombLib.Icons/Tools/IconPipeline/legacy-icon-map.csv
-dotnet run --project TombLib/TombLib.Icons/Tools/IconPipeline/IconPipeline.csproj -- trace-legacy --legacy-root $legacyRoot --report (Join-Path $env:TEMP 'trace.csv')
-dotnet run --project TombLib/TombLib.Icons/Tools/IconPipeline/IconPipeline.csproj -- rasterize --bucket all
-dotnet run --project TombLib/TombLib.Icons/Tools/IconPipeline/IconPipeline.csproj -- contact-sheet --legacy-root $legacyRoot --output (Join-Path $env:TEMP 'icons.png')
+dotnet run --project TombLib/TombLib.Icons/Tools/IconPipeline/IconPipeline.csproj -- legacy-sources --legacy-root $legacyRoot --output (Join-Path $env:TEMP 'sources.csv')
+node TombLib/TombLib.Icons/Tools/IconPipeline/node/compare.js --legacy-root $legacyRoot --sources (Join-Path $env:TEMP 'sources.csv') --ids "General/trash,Actions/cut" --out (Join-Path $env:TEMP 'compare.png')
+node TombLib/TombLib.Icons/Tools/IconPipeline/node/buckets.js
 ```
 
-`--only <id prefix>` limits `trace-legacy` to some icons. `verify-legacy` (with a plan from `rasterize-legacy`) reports per icon how many pixels differ from the original once rendered at its original size; for traced icons the differences are anti-aliasing at the edges. Icons that exist only in SVG (no legacy bitmap) are listed in `WPF-PARITY-FIXES.md`.
+`compare.js` draws, for up to eight ids, the original (8x), the SVG at the original size (8x), their overlay (red = original only, cyan = SVG only, white = both) and the SVG at a large size, and prints a mean error per icon (about 10 of 255 means the shapes overlay; the rest is anti-aliasing). `buckets.js` writes the `Png/@1x` to `@4x` rasters of every SVG. `compare-sheet`, `rasterize`, `contact-sheet` and `verify-legacy` do the same with the WPF renderer and need an interactive desktop session (off-screen WPF renders blank otherwise). Icons that exist only in SVG (no legacy bitmap) are listed in `WPF-PARITY-FIXES.md`.
