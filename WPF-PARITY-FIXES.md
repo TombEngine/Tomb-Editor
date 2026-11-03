@@ -235,6 +235,7 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | WadTool Mesh editor opened from the Skeleton editor: texture map is fitted again after layout (it stayed small) and is taller; the "Show sheen" label shows from the start (was "Show all"); the "Animated textures" button is always visible as in WinForms (it was hidden unless a focus object was set). Verified on screen. Not changed: WinForms has a "Texturing" header with one-row picker (combo, search, + and refresh drop-downs), "Editing tools" group header; WPF keeps its own grouping with emb/ext buttons | Small texture map, wrong label, missing button | (this commit) |
 | WadTool main tree (WadTreeView): double click on a category node (Moveables, Sprite sequences) now expands/collapses it like the WinForms tree (its ExpandOnDoubleClick flag is never read, the double click always toggles). Verified on screen | Double click did nothing on category nodes | (this commit) |
 | WadTool Sprite sequence editor: the title now carries the sequence like WinForms (Sprite sequence '(1353) SKY_GRAPHICS'), and the Replace button uses the refresh icon like WinForms (it showed a magnifier). Layout compared, same | Plain title, different icon | (this commit) |
+| WadTool Skeleton editor title is "Skeleton editor" like WinForms (WPF appended the moveable id) | Title text | (this commit) |
 
 ## Subagent batch (built only, NOT yet verified on screen)
 

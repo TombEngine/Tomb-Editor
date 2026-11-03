@@ -72,7 +72,7 @@ public partial class SkeletonEditorWindowViewModel : ObservableObject, IModalDia
         _wad = wad;
         _moveable = _wad.Moveables[moveableId].Clone();
 
-        Title = "Skeleton editor - " + _moveable.Id.ToString(_wad.GameVersion);
+        Title = "Skeleton editor";
     }
 
     /// <summary>Called by the window once the rendering panel is hosted; mirrors the legacy ctor body.</summary>
