@@ -116,6 +116,7 @@ Counted in cells (a row has up to 8 cells): see the tables. Summary line to upda
 - TE-D9 set list: two new sets, selection and toolbar look the same in both; the folder button created nothing in either build in this test (not conclusive); F2 rename and drag and drop not exercised. Still untested: grip drag, colour, lock.
 - Animation editor toolbar: add/delete (with Confirm dialog), cut/paste frame, undo: same size and content in both builds (only date bytes differ). Harness: ForceFg (Alt key) fixes foreground refused by Visual Studio.
 - SoundTool: main window (overlay fixed), Add new sound info dialog and new sound editor, menu captions, Options, About compared; sample table captions fixed. Not run: save/open/compile/unpack data, Browse samples, reference level, copy/paste of sounds.
+- WadTool Skeleton editor and Mesh editor (opened from the Skeleton editor) compared on screen: layout fixed; Skeleton editor actions (add/replace/rename/delete bone, import/export) not run on data. WinForms driving tip: double click the Moveables node, then click LARA twice.
 - Rows fully run (all applicable cells P or F): 0 / 45
 - Rows with the look already compared (V or P in D1): all rows except TE-M3, TE-M4, TE-M5, TE-M16, TE-M17, TE-M15, WT-7, ST-3
 - Differences found by this plan and fixed: 5 (Items panel placeholder text; 3D view context menu never appeared; Sky & Font path boxes not red; Search weaker matches not dimmed; one text typo)
