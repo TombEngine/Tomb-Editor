@@ -290,10 +290,13 @@ public partial class WadTreeView : UserControl
 
         if (e.ChangedButton == MouseButton.Left && e.ClickCount == 2)
         {
-            // Like the legacy control (ExpandOnDoubleClick = false): double click never toggles
-            // expansion, it just notifies the consumer. Handling the event here keeps the native
-            // TreeViewItem from expanding.
+            // Like the legacy control (its ExpandOnDoubleClick flag is never read): double click toggles
+            // expansion and notifies the consumer. Handling the event here keeps the native
+            // TreeViewItem from toggling a second time.
             SetSelection(new[] { node }, node);
+            if (node.Children.Count > 0)
+                node.IsExpanded = !node.IsExpanded;
+
             DoubleClick?.Invoke(this, EventArgs.Empty);
             e.Handled = true;
             return;
