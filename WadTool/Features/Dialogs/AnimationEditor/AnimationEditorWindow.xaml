@@ -289,15 +289,49 @@
 
                 <GroupBox Header="{Binding TransformHeader}">
                     <StackPanel>
-                        <ComboBox SelectedIndex="{Binding TransformModeIndex, Mode=TwoWay}">
-                            <ComboBoxItem Content="None" />
-                            <ComboBoxItem Content="Smooth" />
-                            <ComboBoxItem Content="Smooth reverse" />
-                            <ComboBoxItem Content="Linear" />
-                            <ComboBoxItem Content="Linear reverse" />
-                            <ComboBoxItem Content="Symmetric smooth" />
-                            <ComboBoxItem Content="Symmetric linear" />
-                        </ComboBox>
+                        <DockPanel>
+                            <Image
+                                Width="75"
+                                Height="21"
+                                Margin="6,0,0,0"
+                                DockPanel.Dock="Right"
+                                RenderOptions.BitmapScalingMode="NearestNeighbor">
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Setter Property="Source" Value="{tomb:Icon Actions/Transform/Simple}" />
+                                        <Style.Triggers>
+                                        <DataTrigger Binding="{Binding TransformModeIndex}" Value="1">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transform/Smooth}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding TransformModeIndex}" Value="2">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transform/SmoothReverse}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding TransformModeIndex}" Value="3">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transform/Linear}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding TransformModeIndex}" Value="4">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transform/LinearReverse}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding TransformModeIndex}" Value="5">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transform/Symmetric}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding TransformModeIndex}" Value="6">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transform/SymmetricLinear}" />
+                                        </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                            <ComboBox SelectedIndex="{Binding TransformModeIndex, Mode=TwoWay}">
+                                <ComboBoxItem Content="None" />
+                                <ComboBoxItem Content="Smooth" />
+                                <ComboBoxItem Content="Smooth reverse" />
+                                <ComboBoxItem Content="Linear" />
+                                <ComboBoxItem Content="Linear reverse" />
+                                <ComboBoxItem Content="Symmetric smooth" />
+                                <ComboBoxItem Content="Symmetric linear" />
+                            </ComboBox>
+                        </DockPanel>
                         <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="4">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="28" />

@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows;
 using System.Windows.Media;
+using TombLib.Icons;
 using TombLib.WPF.Dialogs;
 using TombLib.WPF.Services;
 using TombLib.WPF.Services.Abstract;
@@ -37,7 +38,12 @@ public static class WPFInitializer
         ThemeManager.Apply(theme);
 
         CMessageBox.WindowStyleOverride = (Style)wpfApp.Resources["CustomWindowStyle"];
-        CMessageBox.UsePathIconsByDefault = true;
+        // The legacy DarkUI message box bitmaps, drawn exactly as WinForms shows them.
+        CMessageBox.UsePathIconsByDefault = false;
+        CMessageBox.ErrorIconOverride = IconSources.Load("Misc/DarkUI/error");
+        CMessageBox.InformationIconOverride = IconSources.Load("Misc/DarkUI/info");
+        CMessageBox.QuestionIconOverride = IconSources.Load("Misc/DarkUI/question");
+        CMessageBox.WarningIconOverride = IconSources.Load("Misc/DarkUI/warning");
 
         if (wpfApp.TryFindResource("Brush_Background_Alternative") is SolidColorBrush brush)
             CMessageBox.DefaultButtonsPanelBackground = brush;
