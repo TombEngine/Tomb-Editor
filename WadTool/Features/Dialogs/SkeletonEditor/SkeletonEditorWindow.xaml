@@ -8,9 +8,9 @@
     xmlns:local="clr-namespace:WadTool.Features.Dialogs.SkeletonEditor"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="{Binding Title}"
-    Width="940"
-    Height="640"
-    MinWidth="800"
+    Width="820"
+    Height="700"
+    MinWidth="700"
     MinHeight="500"
     d:DataContext="{d:DesignInstance Type=local:SkeletonEditorWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
@@ -34,54 +34,110 @@
         <KeyBinding Key="P" Modifiers="Control" Command="{Binding TogglePushCommand}" />
     </Window.InputBindings>
 
+
     <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
 
-        <!--  Left column: mesh tree + bone tools  -->
-        <DockPanel Width="350" DockPanel.Dock="Left" LastChildFill="True">
+        <!--  Bottom row: draw options and OK / Cancel  -->
+        <DockPanel DockPanel.Dock="Bottom">
             <DockPanel.Margin>
-                <Thickness Right="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+                <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+            </DockPanel.Margin>
+            <controls:SpacedStack
+                HorizontalAlignment="Right"
+                DockPanel.Dock="Right"
+                Orientation="Horizontal"
+                Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+                <Button
+                    Width="80"
+                    Command="{Binding SaveCommand}"
+                    Content="OK" />
+                <Button
+                    Width="80"
+                    Command="{Binding CancelCommand}"
+                    Content="Cancel" />
+            </controls:SpacedStack>
+            <controls:SpacedStack
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+                <CheckBox Content="Draw grid" IsChecked="{Binding DrawGrid, Mode=TwoWay}" />
+                <CheckBox Content="Draw gizmo" IsChecked="{Binding DrawGizmo, Mode=TwoWay}" />
+            </controls:SpacedStack>
+        </DockPanel>
+
+        <!--  Right column: mesh tree + bone tools  -->
+        <DockPanel Width="320" DockPanel.Dock="Right" LastChildFill="True">
+            <DockPanel.Margin>
+                <Thickness Left="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
             </DockPanel.Margin>
 
             <controls:SpacedStack
                 DockPanel.Dock="Bottom"
                 Orientation="Vertical"
-                Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+                Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
                 <controls:SpacedStack.Margin>
-                    <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+                    <Thickness Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
                 </controls:SpacedStack.Margin>
 
-                <!--  Pivot  -->
-                <GroupBox Header="Pivot">
-                    <controls:SpacedStack Orientation="Horizontal" Spacing="6">
-                        <TextBlock Style="{StaticResource AxisLabel}" Text="X" />
-                        <controls:NumericUpDown
-                            Width="88"
-                            DecimalPlaces="4"
-                            Maximum="32767"
-                            Minimum="-32768"
-                            Value="{Binding TranslationX, Mode=TwoWay}" />
-                        <TextBlock Style="{StaticResource AxisLabel}" Text="Y" />
-                        <controls:NumericUpDown
-                            Width="88"
-                            DecimalPlaces="4"
-                            Maximum="32767"
-                            Minimum="-32768"
-                            Value="{Binding TranslationY, Mode=TwoWay}" />
-                        <TextBlock Style="{StaticResource AxisLabel}" Text="Z" />
-                        <controls:NumericUpDown
-                            Width="88"
-                            DecimalPlaces="4"
-                            Maximum="32767"
-                            Minimum="-32768"
-                            Value="{Binding TranslationZ, Mode=TwoWay}" />
-                    </controls:SpacedStack>
-                </GroupBox>
+                <!--  Bone actions  -->
+                <UniformGrid Columns="3" Rows="3">
+                    <Button Margin="0,0,3,3" Command="{Binding RenameBoneCommand}" Content="Rename" />
+                    <Button Margin="1,0,1,3" Command="{Binding EditMeshCommand}" Content="Edit mesh" />
+                    <Button Margin="3,0,0,3" Command="{Binding DeleteBoneCommand}" Content="Delete" />
+                    <Button Margin="0,0,3,3" Command="{Binding AddChildBoneFromFileCommand}" Content="Add new" />
+                    <Button Margin="1,0,1,3" Command="{Binding AddChildBoneFromWad2Command}" Content="Add existing" />
+                    <Button Margin="3,0,0,3" Command="{Binding ReplaceBoneFromWad2Command}" Content="Replace existing" />
+                    <Button Margin="0,0,3,0" Command="{Binding ReplaceBoneFromFileCommand}" Content="Import mesh" />
+                    <Button Margin="1,0,1,0" Command="{Binding ExportMeshCommand}" Content="Export mesh" />
+                    <Button Margin="3,0,0,0" Command="{Binding ReplaceAllBonesFromFileCommand}" Content="Replace model" />
+                </UniformGrid>
 
-                <!--  Lighting + draw  -->
-                <GroupBox Header="Lighting">
-                    <StackPanel>
-                        <controls:SpacedStack Orientation="Horizontal" Spacing="6">
-                            <TextBlock Style="{StaticResource AxisLabel}" Text="Light mode:" />
+                <!--  Skin (TEN only)  -->
+                <DockPanel Visibility="{Binding SkinVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button
+                        Width="60"
+                        Margin="3,0,0,0"
+                        DockPanel.Dock="Right"
+                        Command="{Binding ClearSkinCommand}"
+                        Content="Clear" />
+                    <Button
+                        Width="60"
+                        Margin="3,0,0,0"
+                        DockPanel.Dock="Right"
+                        Command="{Binding SetSkinCommand}"
+                        Content="Add" />
+                    <TextBox IsReadOnly="True" Text="{Binding SkinText, Mode=OneWay}" />
+                </DockPanel>
+
+                <!--  Current mesh  -->
+                <GroupBox Header="Current mesh">
+                    <controls:SpacedStack Orientation="Vertical" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+                        <controls:SpacedStack Orientation="Horizontal" Spacing="4">
+                            <TextBlock Width="64" Style="{StaticResource AxisLabel}" Text="Pivot:" />
+                            <TextBlock Style="{StaticResource AxisLabel}" Text="X" />
+                            <controls:NumericUpDown
+                                Width="58"
+                                DecimalPlaces="4"
+                                Maximum="32767"
+                                Minimum="-32768"
+                                Value="{Binding TranslationX, Mode=TwoWay}" />
+                            <TextBlock Style="{StaticResource AxisLabel}" Text="Y" />
+                            <controls:NumericUpDown
+                                Width="58"
+                                DecimalPlaces="4"
+                                Maximum="32767"
+                                Minimum="-32768"
+                                Value="{Binding TranslationY, Mode=TwoWay}" />
+                            <TextBlock Style="{StaticResource AxisLabel}" Text="Z" />
+                            <controls:NumericUpDown
+                                Width="58"
+                                DecimalPlaces="4"
+                                Maximum="32767"
+                                Minimum="-32768"
+                                Value="{Binding TranslationZ, Mode=TwoWay}" />
+                        </controls:SpacedStack>
+                        <controls:SpacedStack Orientation="Horizontal" Spacing="4">
+                            <TextBlock Width="64" Style="{StaticResource AxisLabel}" Text="Light mode:" />
                             <ComboBox Width="140" SelectedIndex="{Binding LightTypeIndex, Mode=TwoWay}">
                                 <ComboBoxItem Content="Dynamic Lighting" />
                                 <ComboBoxItem Content="Static Lighting" />
@@ -91,62 +147,26 @@
                                 Command="{Binding SetToAllCommand}"
                                 Content="Set to all" />
                         </controls:SpacedStack>
-                        <controls:SpacedStack
-                            Margin="0,6,0,0"
-                            Orientation="Horizontal"
-                            Spacing="12">
-                            <CheckBox Content="Draw gizmo" IsChecked="{Binding DrawGizmo, Mode=TwoWay}" />
-                            <CheckBox Content="Draw grid" IsChecked="{Binding DrawGrid, Mode=TwoWay}" />
-                        </controls:SpacedStack>
-                    </StackPanel>
+                    </controls:SpacedStack>
                 </GroupBox>
-
-                <!--  Bone actions  -->
-                <GroupBox Header="Bone / mesh">
-                    <UniformGrid Columns="2" Rows="4">
-                        <Button Margin="2" Command="{Binding AddChildBoneFromFileCommand}" Content="Add new" />
-                        <Button Margin="2" Command="{Binding AddChildBoneFromWad2Command}" Content="Add existing" />
-                        <Button Margin="2" Command="{Binding ReplaceBoneFromFileCommand}" Content="Import mesh" />
-                        <Button Margin="2" Command="{Binding ReplaceBoneFromWad2Command}" Content="Replace existing" />
-                        <Button Margin="2" Command="{Binding EditMeshCommand}" Content="Edit mesh" />
-                        <Button Margin="2" Command="{Binding ExportMeshCommand}" Content="Export mesh" />
-                        <Button Margin="2" Command="{Binding RenameBoneCommand}" Content="Rename" />
-                        <Button Margin="2" Command="{Binding DeleteBoneCommand}" Content="Delete" />
-                    </UniformGrid>
-                </GroupBox>
-
-                <controls:SpacedStack Orientation="Horizontal" Spacing="6">
-                    <Button
-                        Width="120"
-                        Command="{Binding ReplaceAllBonesFromFileCommand}"
-                        Content="Replace model" />
-                    <Button
-                        Width="80"
-                        Command="{Binding SaveCommand}"
-                        Content="OK" />
-                    <Button
-                        Width="80"
-                        Command="{Binding CancelCommand}"
-                        Content="Cancel" />
-                </controls:SpacedStack>
             </controls:SpacedStack>
 
             <GroupBox Header="Mesh tree">
-                <TreeView
+                <controls:AlternatingTreeView
                     x:Name="treeSkeleton"
                     ItemsSource="{Binding RootNodes}">
-                    <TreeView.ItemContainerStyle>
-                        <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                    <controls:AlternatingTreeView.ItemContainerStyle>
+                        <Style TargetType="controls:AlternatingTreeViewItem" BasedOn="{StaticResource {x:Type controls:AlternatingTreeViewItem}}">
                             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                             <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                         </Style>
-                    </TreeView.ItemContainerStyle>
-                    <TreeView.ItemTemplate>
+                    </controls:AlternatingTreeView.ItemContainerStyle>
+                    <controls:AlternatingTreeView.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                             <TextBlock Text="{Binding Text}" />
                         </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
-                    <TreeView.ContextMenu>
+                    </controls:AlternatingTreeView.ItemTemplate>
+                    <controls:AlternatingTreeView.ContextMenu>
                         <ContextMenu>
                             <MenuItem
                                 Command="{Binding PlacementTarget.DataContext.TogglePopCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
@@ -169,41 +189,14 @@
                             <MenuItem Command="{Binding PlacementTarget.DataContext.DeleteBoneCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Delete" />
                             <MenuItem Command="{Binding PlacementTarget.DataContext.RenameBoneCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="Rename" />
                         </ContextMenu>
-                    </TreeView.ContextMenu>
-                </TreeView>
+                    </controls:AlternatingTreeView.ContextMenu>
+                </controls:AlternatingTreeView>
             </GroupBox>
         </DockPanel>
 
-        <!--  3D view + (TEN-only) skin bar  -->
-        <DockPanel LastChildFill="True">
-            <Border
-                Height="30"
-                DockPanel.Dock="Bottom"
-                BorderBrush="{DynamicResource Brush_Border}"
-                BorderThickness="1"
-                Visibility="{Binding SkinVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <controls:SpacedStack
-                    Margin="4,0"
-                    Orientation="Horizontal"
-                    Spacing="6">
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        Style="{StaticResource AxisLabel}"
-                        Text="{Binding SkinText}" />
-                    <Button
-                        Width="60"
-                        Command="{Binding SetSkinCommand}"
-                        Content="Add" />
-                    <Button
-                        Width="60"
-                        Command="{Binding ClearSkinCommand}"
-                        Content="Clear" />
-                </controls:SpacedStack>
-            </Border>
-
-            <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
-                <Border x:Name="renderingHost" />
-            </Border>
-        </DockPanel>
+        <!--  3D view  -->
+        <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
+            <Border x:Name="renderingHost" />
+        </Border>
     </DockPanel>
 </Window>
