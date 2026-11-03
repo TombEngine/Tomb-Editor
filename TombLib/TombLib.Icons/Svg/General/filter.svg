@@ -1,3 +1,55 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" stroke-linejoin="round" stroke-linecap="round">
-  <path d="M1.5 2 L14.5 2 L9.5 8 L9.5 14 L6.5 12.5 L6.5 8 Z" fill="none" stroke="#FFFFFF" stroke-width="1"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <path fill="#ffffff" fill-opacity="0.0118" d="M9 13h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.0314" d="M11 3h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.0471" d="M4 3h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1098" d="M9 5h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1176" d="M6 5h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1451" d="M10 4h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1569" d="M5 4h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1647" d="M4 2h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1686" d="M11 2h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.2392" d="M5 2h6v1h-6z"/>
+  <path fill="#ffffff" fill-opacity="0.302" d="M7 8h2v1h-2z"/>
+  <path fill="#ffffff" fill-opacity="0.3176" d="M7 14h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.3373" d="M12 2h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.3451" d="M7 11h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.3529" d="M3 2h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.3725" d="M8 11h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.3765" d="M8 10h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.3843" d="M7 10h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.3922" d="M7 9h2v1h-2z"/>
+  <path fill="#ffffff" fill-opacity="0.5647" d="M8 13h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.5725" d="M6 14h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.6588" d="M2 3h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.6745" d="M13 3h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.6824" d="M5 6h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.702" d="M10 6h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.7098" d="M9 12h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.7137" d="M1 2h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.7294" d="M14 2h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.7333" d="M4 5h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.7412" d="M3 4h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.749" d="M11 5h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.7529" d="M7 12h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.7608" d="M12 4h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.7686" d="M7 7h2v1h-2z"/>
+  <path fill="#ffffff" fill-opacity="0.8157" d="M6 12h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.8471" d="M7 6h2v1h-2z"/>
+  <path fill="#ffffff" fill-opacity="0.8549" d="M6 13h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.902" d="M9 8h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9059" d="M6 8h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9098" d="M12 3h1v1h-1zM6 9h1v2h-1zM9 9h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9137" d="M3 3h1v1h-1zM9 10h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9176" d="M3 1h1v1h-1zM12 1h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9216" d="M6 11h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9255" d="M8 12h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9294" d="M6 6h1v1h-1zM9 6h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9373" d="M2 1h1v1h-1zM13 1h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.949" d="M11 4h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9569" d="M1 1h1v1h-1zM14 1h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9608" d="M4 4h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9725" d="M9 11h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9804" d="M4 1h8v1h-8zM6 7h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9882" d="M9 7h1v1h-1z"/>
+  <path fill="#ffffff" d="M2 2h1v1h-1zM13 2h1v1h-1zM5 5h1v1h-1zM10 5h1v1h-1zM7 13h1v1h-1z"/>
 </svg>

@@ -1,3 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M2 5V2h3m6 0h3v3m0 6v3h-3m-6 0H2v-3m6-6v6M5 8h6"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" shape-rendering="crispEdges">
+  <path fill="#ffffff" fill-opacity="0.5451" d="M8 3h1v1h-1zM15 3h1v1h-1zM11 6h2v1h-2zM3 8h1v1h-1zM20 8h1v1h-1zM6 11h1v2h-1zM17 11h1v2h-1zM3 15h1v1h-1zM20 15h1v1h-1zM11 17h2v1h-2zM8 20h1v1h-1zM15 20h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.7333" d="M3 3h5v1h-5zM16 3h5v1h-5zM3 4h1v4h-1zM20 4h1v4h-1zM11 7h2v4h-2zM7 11h4v2h-4zM13 11h4v2h-4zM11 13h2v4h-2zM3 16h1v5h-1zM20 16h1v5h-1zM4 20h4v1h-4zM16 20h4v1h-4z"/>
+  <path fill="#ffffff" fill-opacity="0.9255" d="M11 11h2v2h-2z"/>
 </svg>

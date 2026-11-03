@@ -1,4 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M2 1.5 L10.5 1.5 L13.5 4.5 L13.5 14.5 L2 14.5 Z" fill="none" stroke="#FFFFFF" />
-    <path d="M10.5 1.5 L10.5 4.5 L13.5 4.5" fill="none" stroke="#1e1e1e" />
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <path fill="#424242" d="M3 2h7v1h-7zM3 3h1v11h-1zM9 3h2v3h-2zM11 4h1v2h-1zM12 5h1v9h-1zM4 13h8v1h-8z"/>
+  <path fill="#868686" d="M10 2h1v1h-1zM11 3h1v1h-1zM12 4h1v1h-1z"/>
+  <path fill="#f0eff1" d="M4 3h5v10h-5zM9 6h3v7h-3z"/>
+  <path fill="#f6f6f6" fill-opacity="0.1882" d="M11 1h1v1h-1zM12 2h1v1h-1zM13 3h1v1h-1z"/>
+  <path fill="#f6f6f6" fill-opacity="0.9373" d="M10 1h1v1h-1zM11 2h1v1h-1zM12 3h1v1h-1zM13 4h1v1h-1z"/>
+  <path fill="#f6f6f6" d="M2 1h8v1h-8zM2 2h1v13h-1zM13 5h1v10h-1zM3 14h10v1h-10z"/>
 </svg>

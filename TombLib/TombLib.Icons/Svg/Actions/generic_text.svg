@@ -1,3 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" stroke-linejoin="round" stroke-linecap="round">
-  <text x="8" y="13.5" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="400" text-anchor="middle" fill="#FFFFFF">A</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <path fill="#ffffff" fill-opacity="0.0039" d="M6 10h1v1h-1zM9 10h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.0157" d="M7 7h2v1h-2z"/>
+  <path fill="#ffffff" fill-opacity="0.0549" d="M6 4h1v1h-1zM9 4h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.0863" d="M5 7h1v1h-1zM10 7h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1255" d="M4 10h1v1h-1zM11 10h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1765" d="M5 12h1v1h-1zM10 12h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.2784" d="M7 6h2v1h-2z"/>
+  <path fill="#ffffff" fill-opacity="0.3725" d="M9 5h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.3765" d="M6 5h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.4235" d="M5 8h1v1h-1zM10 8h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.4745" d="M4 11h1v1h-1zM11 11h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.5294" d="M5 11h1v1h-1zM10 11h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.5804" d="M6 8h1v1h-1zM9 8h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.6275" d="M7 5h2v1h-2z"/>
+  <path fill="#ffffff" fill-opacity="0.6745" d="M7 3h2v1h-2z"/>
+  <path fill="#ffffff" fill-opacity="0.7255" d="M6 6h1v1h-1zM9 6h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.7765" d="M5 9h1v1h-1zM10 9h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.8275" d="M4 12h1v1h-1zM11 12h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.8784" d="M5 10h1v1h-1zM10 10h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.902" d="M6 7h1v1h-1zM9 7h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9137" d="M7 4h2v1h-2z"/>
+  <path fill="#ffffff" d="M6 9h4v1h-4z"/>
 </svg>

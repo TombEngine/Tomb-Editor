@@ -1,6 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-    <g fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="8" cy="8" r="6"/>
-        <path d="M4 4H6V6H4ZM8 4H10V6H8ZM6 6H8V8H6ZM10 6H12V8H10ZM4 8H6V10H4ZM8 8H10V10H8ZM6 10H8V12H6ZM10 10H11V11H10Z" fill="#A6A6A6" stroke="none"/>
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <path fill="#ffffff" fill-opacity="0.251" d="M4 1h1v1h-1zM11 1h1v1h-1zM7 2h2v1h-2zM1 4h1v1h-1zM14 4h1v1h-1zM2 7h1v2h-1zM13 7h1v2h-1zM1 11h1v1h-1zM14 11h1v1h-1zM7 13h2v1h-2zM4 14h1v1h-1zM11 14h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.5647" d="M3 2h1v1h-1zM12 2h1v1h-1zM2 3h1v1h-1zM13 3h1v1h-1zM2 12h1v1h-1zM13 12h1v1h-1zM3 13h1v1h-1zM12 13h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.6275" d="M7 3h2v2h-2zM4 4h1v1h-1zM11 4h1v1h-1zM5 5h2v2h-2zM9 5h2v2h-2zM3 7h2v2h-2zM7 7h2v2h-2zM11 7h2v2h-2zM5 9h2v2h-2zM9 9h2v2h-2zM4 11h1v1h-1zM7 11h2v2h-2zM11 11h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.7686" d="M4 3h1v1h-1zM11 3h1v1h-1zM3 4h1v1h-1zM12 4h1v1h-1zM3 11h1v1h-1zM12 11h1v1h-1zM4 12h1v1h-1zM11 12h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.8863" d="M9 2h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.898" d="M13 6h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9059" d="M5 1h1v1h-1zM10 1h1v1h-1zM1 5h1v1h-1zM14 5h1v1h-1zM1 10h1v1h-1zM14 10h1v1h-1zM5 14h1v1h-1zM10 14h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9647" d="M6 2h1v1h-1zM2 9h1v1h-1zM13 9h1v1h-1zM6 13h1v1h-1zM9 13h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9686" d="M2 6h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9843" d="M5 2h1v1h-1zM10 2h1v1h-1zM2 5h1v1h-1zM2 10h1v1h-1zM13 10h1v1h-1zM5 13h1v1h-1zM10 13h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9882" d="M13 5h1v1h-1z"/>
+  <path fill="#ffffff" d="M6 1h4v1h-4zM4 2h1v1h-1zM11 2h1v1h-1zM3 3h1v1h-1zM12 3h1v1h-1zM2 4h1v1h-1zM13 4h1v1h-1zM1 6h1v4h-1zM14 6h1v4h-1zM2 11h1v1h-1zM13 11h1v1h-1zM3 12h1v1h-1zM12 12h1v1h-1zM4 13h1v1h-1zM11 13h1v1h-1zM6 14h4v1h-4z"/>
 </svg>

@@ -1,4 +1,6 @@
 using System.Drawing.Imaging;
+using System.Globalization;
+using System.Xml.Linq;
 using TombLib.Icons;
 
 namespace TombLib.Test;
@@ -29,8 +31,13 @@ public class IconLoadingTests
             var image = IconSources.Load(id);
 
             Assert.IsTrue(image.IsFrozen, id.Path);
-            Assert.AreEqual(16.0, image.Width, 0.001, id.Path);
-            Assert.AreEqual(16.0, image.Height, 0.001, id.Path);
+
+            // Icons are 16 by 16 unless the SVG declares the size of the legacy bitmap it reproduces (24 pixel transport icons, 75 by 21 charts, 48 pixel TombIDE icons).
+            var viewBox = XDocument.Load(typeof(IconSources).Assembly.GetManifestResourceStream(resource)!).Root?.Attribute("viewBox")?.Value?.Split(' ');
+            var expectedWidth = viewBox is { Length: 4 } ? double.Parse(viewBox[2], CultureInfo.InvariantCulture) : 16.0;
+            var expectedHeight = viewBox is { Length: 4 } ? double.Parse(viewBox[3], CultureInfo.InvariantCulture) : 16.0;
+            Assert.AreEqual(expectedWidth, image.Width, 0.001, id.Path);
+            Assert.AreEqual(expectedHeight, image.Height, 0.001, id.Path);
 
             for (int bucket = 1; bucket <= 4; bucket++)
             {

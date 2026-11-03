@@ -1,7 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-    <g fill="none" stroke="#FFFFFF">
-        <path d="M3 13V2H11V5M3 2L6 3V12L3 13" stroke="#A6A6A6" />
-        <circle cx="10" cy="5" r="1" />
-        <path d="M9.5 7L8 9L6 9M9.5 7L12 8L14 6.5M8 9L11 11L11.5 14M8 9L7 12L5 14" />
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <path fill="#ffffff" fill-opacity="0.0039" d="M10 12h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.0627" d="M10 8h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.0745" d="M8 8h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1059" d="M11 7h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1255" d="M5 6h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1529" d="M9 9h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.2039" d="M6 7h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.2353" d="M10 5h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.2431" d="M10 6h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.4157" d="M6 8h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.4392" d="M9 13h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.4706" d="M8 11h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.5098" d="M7 10h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.6118" d="M7 9h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.7725" d="M7 8h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.7882" d="M10 4h1v1h-1zM9 5h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.8118" d="M9 11h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.8314" d="M10 13h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9176" d="M8 9h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9412" d="M5 7h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9725" d="M9 8h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9922" d="M9 7h1v1h-1z"/>
+  <path fill="#ffffff" d="M3 2h10v1h-10zM3 3h1v7h-1zM12 3h1v11h-1zM9 4h1v1h-1zM6 6h4v1h-4zM7 7h1v1h-1zM10 7h1v1h-1zM5 8h1v1h-1zM11 8h1v1h-1zM6 9h1v3h-1zM8 10h1v1h-1zM3 11h3v1h-3zM3 12h1v2h-1zM9 12h1v1h-1z"/>
 </svg>

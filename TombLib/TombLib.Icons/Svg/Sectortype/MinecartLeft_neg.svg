@@ -1,5 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-  <g fill="none" stroke="#000000" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M8 1.5L14.5 8L8 14.5L1.5 8ZM6 5L3.5 7.5L6 10M3.5 7.5H8C10 7.5 11 8.5 11 11"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <path fill="#000000" fill-opacity="0.0039" d="M4 6h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.0078" d="M6 1h1v1h-1zM2 5h1v1h-1zM5 11h1v1h-1zM8 11h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.0157" d="M4 8h1v1h-1zM6 12h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.0196" d="M1 6h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.0235" d="M3 9h1v1h-1zM9 11h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.0353" d="M8 9h1v1h-1zM4 10h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.0392" d="M14 6h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.0549" d="M10 8h1v2h-1z"/>
+  <path fill="#000000" fill-opacity="0.0706" d="M8 12h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.0902" d="M8 10h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.1216" d="M8 8h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.1569" d="M8 6h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.1922" d="M9 14h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.2" d="M10 13h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.2275" d="M7 6h1v1h-1zM11 12h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.2784" d="M12 11h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.3059" d="M14 9h1v1h-1zM7 13h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.3294" d="M2 8h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.3412" d="M13 10h1v1h-1zM8 13h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.3647" d="M4 12h1v1h-1zM5 13h1v1h-1zM6 14h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.3686" d="M8 1h1v1h-1zM9 2h1v1h-1zM2 10h1v1h-1zM3 11h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.3725" d="M6 2h1v1h-1zM10 3h1v1h-1zM4 4h1v1h-1zM11 4h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.3765" d="M5 3h1v1h-1zM13 8h1v1h-1zM1 9h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.3804" d="M12 5h1v1h-1zM14 7h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.3843" d="M3 5h1v1h-1zM2 6h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.3922" d="M1 7h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.4118" d="M13 6h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.4392" d="M9 7h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.5686" d="M7 1h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.6235" d="M6 9h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.6667" d="M6 5h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.6784" d="M4 7h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.698" d="M5 6h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.7294" d="M5 8h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.7765" d="M8 14h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.8275" d="M9 10h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.8314" d="M6 8h1v1h-1zM9 13h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.8431" d="M14 8h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.851" d="M6 6h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.8549" d="M7 14h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.8824" d="M7 2h1v1h-1zM10 12h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.8941" d="M13 7h1v1h-1zM12 10h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.898" d="M10 4h1v1h-1zM11 5h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.902" d="M8 2h1v1h-1zM9 3h1v1h-1zM12 6h1v1h-1zM3 10h1v1h-1zM4 11h1v1h-1zM5 12h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.9098" d="M6 13h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.9216" d="M13 9h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.9255" d="M11 11h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.9412" d="M9 9h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.9451" d="M1 8h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.9569" d="M9 8h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.9608" d="M6 3h1v1h-1zM5 4h1v1h-1zM4 5h1v1h-1zM3 6h1v1h-1zM2 7h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.9686" d="M6 7h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.9725" d="M2 9h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.9765" d="M7 7h1v1h-1z"/>
+  <path fill="#000000" fill-opacity="0.9843" d="M8 7h1v1h-1z"/>
+  <path fill="#000000" d="M5 7h1v1h-1z"/>
 </svg>

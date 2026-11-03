@@ -38,6 +38,7 @@ internal static class Program
                 "validate-png" => ValidatePng(root, svgRoot, options),
                 "rasterize" => Rasterize(root, svgRoot, options),
                 "rasterize-legacy" => RasterizeLegacy(root, svgRoot, options),
+                "verify-legacy" => VerifyLegacy(svgRoot, options),
                 "contact-sheet" => WriteContactSheet(root, svgRoot, options),
                 _ => throw new ArgumentException($"Unknown command '{args[0]}'.")
             };
@@ -68,6 +69,21 @@ internal static class Program
             rows.Add([Path.GetRelativePath(fullLegacyRoot ?? throw new InvalidOperationException(), legacyFile).Replace('\\', '/'), id, svgFile is null ? "legacy-only" : "matched"]);
         }
 
+        // Hand-reviewed mappings: legacy files with a different name than their SVG, and variants of the same icon drawn differently per application.
+        var overridesFile = Path.Combine(root, "Tools", "IconPipeline", "legacy-icon-overrides.csv");
+        if (File.Exists(overridesFile))
+        {
+            foreach (var overrideRow in ReadCsv(overridesFile))
+            {
+                var row = rows.FirstOrDefault(candidate => candidate[0] == overrideRow["legacy_png"]);
+                if (row is null)
+                    continue;
+
+                row[1] = overrideRow["svg_id"];
+                row[2] = "matched";
+                matchedIds.Add(row[1]);
+            }
+        }
         foreach (var svgFile in svgFiles)
         {
             var id = GetSvgKey(svgFile, svgRoot);
@@ -85,6 +101,69 @@ internal static class Program
         Console.WriteLine($"SVGs without a legacy match: {rows.Count(row => row[2].StartsWith("svg-only", StringComparison.Ordinal))}");
         Console.WriteLine($"Manifest: {output}");
         return 0;
+    }
+
+    // Compares every planned legacy PNG with its SVG as WPF composites them (premultiplied BGRA), the way the icons reach the screen.`r`n    // The PNG gamma and color profile chunks are ignored because WinForms (GDI+) draws the raw pixel values.
+    private static int VerifyLegacy(string svgRoot, Dictionary<string, string> options)
+    {
+        var legacyRoot = Path.GetFullPath(options["legacy-root"]);
+        var planFile = Path.GetFullPath(options["plan"]);
+        var output = Path.GetFullPath(options.GetValueOrDefault("output", Path.Combine(Path.GetTempPath(), "TombLibLegacyVerify.csv")));
+        var pixelOutput = options.GetValueOrDefault("pixels");
+        var rows = new List<string[]>();
+        var pixelRows = new List<string[]>();
+        var exact = 0;
+        var total = 0;
+
+        foreach (var line in File.ReadAllLines(planFile).Skip(1))
+        {
+            var cells = ParseCsvLine(line);
+            var relative = cells[0];
+            var svgId = cells[1];
+            var width = int.Parse(cells[2], CultureInfo.InvariantCulture);
+            var height = int.Parse(cells[3], CultureInfo.InvariantCulture);
+            var svgFile = Path.Combine(svgRoot, svgId.Replace('/', Path.DirectorySeparatorChar) + ".svg");
+            var rendered = ReadPbgra(RenderSvgCanvas(svgFile, width, height), width, height);
+
+            var decoder = BitmapDecoder.Create(new Uri(Path.Combine(legacyRoot, relative.Replace('/', Path.DirectorySeparatorChar))), BitmapCreateOptions.PreservePixelFormat | BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.OnLoad);
+            var legacy = ReadPbgra(new FormatConvertedBitmap(decoder.Frames[0], PixelFormats.Pbgra32, null, 0), width, height);
+
+            var differing = 0;
+            var maxDelta = 0;
+            for (var i = 0; i < legacy.Length; i += 4)
+            {
+                var delta = 0;
+                for (var c = 0; c < 4; c++)
+                    delta = Math.Max(delta, Math.Abs(legacy[i + c] - rendered[i + c]));
+                if (delta == 0)
+                    continue;
+
+                differing++;
+                maxDelta = Math.Max(maxDelta, delta);
+                var pixel = i / 4;
+                pixelRows.Add([svgId, relative, (pixel % width).ToString(CultureInfo.InvariantCulture), (pixel / width).ToString(CultureInfo.InvariantCulture),
+                    legacy[i + 2].ToString(CultureInfo.InvariantCulture), legacy[i + 1].ToString(CultureInfo.InvariantCulture), legacy[i].ToString(CultureInfo.InvariantCulture), legacy[i + 3].ToString(CultureInfo.InvariantCulture),
+                    rendered[i + 2].ToString(CultureInfo.InvariantCulture), rendered[i + 1].ToString(CultureInfo.InvariantCulture), rendered[i].ToString(CultureInfo.InvariantCulture), rendered[i + 3].ToString(CultureInfo.InvariantCulture)]);
+            }
+
+            total++;
+            if (differing == 0)
+                exact++;
+            rows.Add([relative, svgId, width.ToString(CultureInfo.InvariantCulture), height.ToString(CultureInfo.InvariantCulture), differing.ToString(CultureInfo.InvariantCulture), maxDelta.ToString(CultureInfo.InvariantCulture)]);
+        }
+
+        WriteCsv(output, ["legacy_png", "svg_id", "width", "height", "different_pixels", "max_delta"], rows);
+        if (pixelOutput is not null)
+            WriteCsv(Path.GetFullPath(pixelOutput), ["svg_id", "legacy_png", "x", "y", "legacy_r", "legacy_g", "legacy_b", "legacy_a", "svg_r", "svg_g", "svg_b", "svg_a"], pixelRows);
+        Console.WriteLine($"Compared {total} legacy PNGs: {exact} identical, {total - exact} different. Report: {output}");
+        return 0;
+    }
+
+    private static byte[] ReadPbgra(BitmapSource bitmap, int width, int height)
+    {
+        var bytes = new byte[width * height * 4];
+        bitmap.CopyPixels(bytes, width * 4, 0);
+        return bytes;
     }
 
     private static int ValidatePng(string root, string svgRoot, Dictionary<string, string> options)
@@ -144,7 +223,10 @@ internal static class Program
             using var reader = new FileSvgReader(settings);
             var drawing = reader.Read(svgFile) ?? throw new InvalidDataException($"Could not render SVG: {svgFile}");
             var bounds = drawing.Bounds;
-            if (bounds.IsEmpty || bounds.Left < -epsilon || bounds.Top < -epsilon || bounds.Right > 16 + epsilon || bounds.Bottom > 16 + epsilon)
+            var viewBox = System.Xml.Linq.XDocument.Load(svgFile).Root?.Attribute("viewBox")?.Value?.Split([' ', ','], StringSplitOptions.RemoveEmptyEntries);
+            var limitWidth = viewBox is { Length: 4 } ? double.Parse(viewBox[2], CultureInfo.InvariantCulture) : 16;
+            var limitHeight = viewBox is { Length: 4 } ? double.Parse(viewBox[3], CultureInfo.InvariantCulture) : 16;
+            if (bounds.IsEmpty || bounds.Left < -epsilon || bounds.Top < -epsilon || bounds.Right > limitWidth + epsilon || bounds.Bottom > limitHeight + epsilon)
             {
                 Console.WriteLine($"outside: {GetSvgKey(svgFile, svgRoot)} bounds=({bounds.X:F3}, {bounds.Y:F3}, {bounds.Width:F3}, {bounds.Height:F3})");
                 violations++;
@@ -366,9 +448,13 @@ internal static class Program
         var settings = new WpfDrawingSettings { IncludeRuntime = false, TextAsGeometry = true };
         using var reader = new FileSvgReader(settings);
         var drawing = reader.Read(svgFile) ?? throw new InvalidDataException($"Could not render SVG: {svgFile}");
+        var viewBox = System.Xml.Linq.XDocument.Load(svgFile).Root?.Attribute("viewBox")?.Value?.Split([' ', ','], StringSplitOptions.RemoveEmptyEntries);
+        var bounds = viewBox is { Length: 4 }
+            ? new Rect(0, 0, double.Parse(viewBox[2], CultureInfo.InvariantCulture), double.Parse(viewBox[3], CultureInfo.InvariantCulture))
+            : new Rect(0, 0, 16, 16);
         var viewport = new DrawingGroup();
-        viewport.ClipGeometry = new RectangleGeometry(new Rect(0, 0, 16, 16));
-        viewport.Children.Add(new GeometryDrawing(Brushes.Transparent, null, new RectangleGeometry(new Rect(0, 0, 16, 16))));
+        viewport.ClipGeometry = new RectangleGeometry(bounds);
+        viewport.Children.Add(new GeometryDrawing(Brushes.Transparent, null, new RectangleGeometry(bounds)));
         viewport.Children.Add(drawing);
         var image = new DrawingImage(viewport);
         image.Freeze();

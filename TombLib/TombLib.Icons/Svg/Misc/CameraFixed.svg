@@ -1,6 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M5 3 L7 1.5 L9 1.5 L11 3 L14 3 L14 13 L2 13 L2 3 Z" fill="none" stroke="#FFFFFF" />
-    <circle cx="8" cy="8" r="3" fill="none" stroke="#FFFFFF" />
-    <circle cx="8" cy="8" r="1.2" fill="#FFFFFF" />
-    <rect x="11.5" y="14" width="3" height="1.5" fill="none" stroke="#FFFFFF" />
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <path fill="#ffffff" fill-opacity="0.0627" d="M14 3h1v1h-1zM2 5h1v1h-1zM2 11h1v1h-1zM13 11h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1255" d="M6 5h1v1h-1zM9 5h1v1h-1zM6 11h1v1h-1zM9 11h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1882" d="M4 2h1v1h-1zM11 2h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.251" d="M5 4h1v1h-1zM10 4h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.3137" d="M2 3h1v1h-1zM5 6h1v1h-1zM10 6h1v1h-1zM5 10h1v1h-1zM10 10h1v1h-1zM2 13h1v1h-1zM13 13h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.3765" d="M1 4h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM6 9h1v1h-1zM9 9h1v1h-1zM1 12h1v1h-1zM14 12h1v1h-1zM2 14h1v1h-1zM13 14h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.4392" d="M13 3h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.502" d="M3 3h1v2h-1zM5 3h1v1h-1zM10 3h1v1h-1zM12 3h1v2h-1zM4 4h1v1h-1zM11 4h1v1h-1zM7 5h2v1h-2zM7 11h2v3h-2zM3 12h4v2h-4zM9 12h4v2h-4z"/>
+  <path fill="#ffffff" fill-opacity="0.6275" d="M7 6h2v1h-2zM7 10h2v1h-2z"/>
+  <path fill="#ffffff" fill-opacity="0.6902" d="M13 4h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.7529" d="M4 3h1v1h-1zM11 3h1v1h-1zM14 4h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.8157" d="M2 4h1v1h-1zM2 12h1v1h-1zM13 12h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.8784" d="M5 7h1v1h-1zM10 7h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9412" d="M5 2h1v1h-1zM10 2h1v1h-1z"/>
+  <path fill="#ffffff" d="M6 2h4v1h-4zM1 5h1v7h-1zM14 5h1v7h-1zM6 6h1v1h-1zM9 6h1v1h-1zM5 8h1v1h-1zM10 8h1v1h-1zM6 10h1v1h-1zM9 10h1v1h-1zM3 14h10v1h-10z"/>
 </svg>

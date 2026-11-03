@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" stroke-linecap="round" stroke-linejoin="round">
-  <g transform="rotate(-45 8 8)" stroke="#FFFFFF" stroke-width="1" fill="none" stroke-linejoin="round" stroke-linecap="round">
-    <rect x="2.5" y="6.5" width="8.5" height="3"/>
-    <path d="M 0.5 8 L 2.5 6.5 L 2.5 9.5 Z"/>
-    <rect x="11" y="6.5" width="2.5" height="3" opacity="0.55"/>
-    <line x1="11" y1="6.5" x2="11" y2="9.5"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <path fill="#ffffff" fill-opacity="0.0627" d="M1 11h1v1h-1zM0 14h1v2h-1zM4 14h1v1h-1zM1 15h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.3765" d="M11 1h1v1h-1zM14 1h1v1h-1zM10 2h1v1h-1zM12 2h2v2h-2zM9 3h1v1h-1zM8 4h1v1h-1zM10 4h2v1h-2zM14 4h1v1h-1zM7 5h1v1h-1zM9 5h1v1h-1zM11 5h1v1h-1zM13 5h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM5 7h1v1h-1zM7 7h1v1h-1zM9 7h1v1h-1zM11 7h1v1h-1zM4 8h1v1h-1zM6 8h1v1h-1zM8 8h1v1h-1zM10 8h1v1h-1zM3 9h1v1h-1zM5 9h1v1h-1zM7 9h1v1h-1zM9 9h1v1h-1zM4 10h1v2h-1zM6 10h1v1h-1zM8 10h1v1h-1zM5 11h1v1h-1zM7 11h1v1h-1zM1 12h1v1h-1zM3 12h1v1h-1zM6 12h1v1h-1zM3 14h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.5333" d="M2 10h1v1h-1zM5 13h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.6902" d="M2 12h1v3h-1zM1 13h1v1h-1zM3 13h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.8784" d="M12 1h2v1h-2zM14 2h1v2h-1z"/>
+  <path fill="#ffffff" d="M11 2h1v2h-1zM10 3h1v1h-1zM9 4h1v1h-1zM12 4h2v1h-2zM8 5h1v1h-1zM12 5h1v1h-1zM7 6h1v1h-1zM11 6h1v1h-1zM6 7h1v1h-1zM10 7h1v1h-1zM5 8h1v1h-1zM9 8h1v1h-1zM4 9h1v1h-1zM8 9h1v1h-1zM3 10h1v2h-1zM7 10h1v1h-1zM2 11h1v1h-1zM6 11h1v1h-1zM4 12h2v1h-2zM4 13h1v1h-1zM1 14h1v1h-1z"/>
 </svg>

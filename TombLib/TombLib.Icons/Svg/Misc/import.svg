@@ -1,5 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="5.5" y="1.5" width="9" height="13" fill="none" stroke="#FFFFFF" />
-    <line x1="1.5" y1="8" x2="11" y2="8" stroke="#FFFFFF" />
-    <path d="M5 5 L1 8 L5 11 Z" fill="none" stroke="#FFFFFF" />
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <path fill="#ffffff" fill-opacity="0.0314" d="M9 5h1v1h-1zM9 10h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1608" d="M9 6h1v1h-1zM9 9h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.2196" d="M8 5h1v1h-1zM8 10h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.2941" d="M7 6h1v1h-1zM7 9h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.298" d="M6 7h1v2h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.502" d="M12 6h1v4h-1zM9 7h3v2h-3zM13 7h1v2h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.702" d="M8 7h1v2h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9059" d="M8 6h1v1h-1zM8 9h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9765" d="M7 7h1v2h-1z"/>
+  <path fill="#ffffff" d="M3 2h10v1h-10zM3 3h1v11h-1zM12 3h1v3h-1zM12 10h1v4h-1zM4 13h8v1h-8z"/>
 </svg>

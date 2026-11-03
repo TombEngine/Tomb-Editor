@@ -39,3 +39,24 @@ The initial catalog had 235 SVGs and 940 PNGs: Actions 34, General 47, Misc 69, 
 At the reviewed baseline, the exported source contains 363 PNGs across TombEditor, TombIDE, WadTool, TombLib, and DarkUI example resources. The manifest reports 363 matched legacy files, no legacy-only files, and 14 SVGs without a legacy match. It includes duplicate resources shipped in multiple applications. The map normalizes old transport and transform folder names to the current `Actions/Transport` and `Actions/Transform` IDs. The former TombEditor-only set had 156 files; its Mirror, Rotate, and Invisible gaps now have current SVGs. The approved UI raster plan contains 359 existing files: 331 at 16x16, 18 at 24x24, 3 at 48x48, and 7 transform charts at 75x21. Four larger non-UI textures are excluded. Regenerate the map after changing artwork or updating the curated legacy source set.
 
 Do not run `linewise.py` as an automatic step in this pipeline. It rewrites SVG source styles globally; filled subjects and color accents can carry their original meaning. Update source SVGs by reviewing paired legacy/current sheets, then regenerate the raster buckets from those sources.
+
+## Pixel-exact icons
+
+The SVG catalog reproduces the legacy WinForms PNGs pixel for pixel. `Convert-LegacyPixelsToSvg.ps1` turns every matched legacy PNG into an SVG made of one filled path per color (`shape-rendering="crispEdges"`) whose view box is the size of the bitmap (16 by 16 for almost all icons, 24 by 24 for the transport icons, 75 by 21 for the transform charts, 48 by 48 for two TombIDE icons). `TombLib.Icons` and the pipeline clip the drawing to the view box declared by the SVG.
+
+When the same icon is drawn differently in different applications, the 16 pixel bitmap of TombEditor keeps the plain id and the other drawings get a suffix: `General/create_new_Forms` (TombLib.Forms), `General/clipboard_Forms`, `Actions/Split_WadTool`, `Actions/Transport/Play24` (24 pixel), `General/search_TombIDE`, `Actions/cut_TombIDE`, `General/Open_TombIDE48`, `Misc/import_TombIDE48`. `legacy-icon-overrides.csv` holds these hand-reviewed mappings, the legacy files whose name has no SVG (`opened_folder-16`, `replace-16`, `volume_up-16`, `Camera-161`, `general_clipboard-161`, `general_Save As-16`) and the bitmap embedded in `FormMeshEditor.resx` (`Misc/hide_mesh`); `inventory` applies it. XAML must use the id of the drawing the WinForms tool shows (for example WadTool uses `Actions/Split_WadTool`, the animation editor transport uses `Actions/Transport/Play24`).
+
+Regenerate and prove the result:
+
+```powershell
+$legacyRoot = Join-Path $env:TEMP ("TombLibLegacyExport-" + [Guid]::NewGuid().ToString('N'))
+& TombLib/TombLib.Icons/Tools/IconPipeline/Export-LegacyIcons.ps1 -OutputDirectory $legacyRoot
+dotnet run --project TombLib/TombLib.Icons/Tools/IconPipeline/IconPipeline.csproj -- inventory --legacy-root $legacyRoot --output TombLib/TombLib.Icons/Tools/IconPipeline/legacy-icon-map.csv
+& TombLib/TombLib.Icons/Tools/IconPipeline/Convert-LegacyPixelsToSvg.ps1 -LegacyRoot $legacyRoot -MapCsv TombLib/TombLib.Icons/Tools/IconPipeline/legacy-icon-map.csv -SvgRoot TombLib/TombLib.Icons/Svg -MapOut (Join-Path $env:TEMP 'map.csv') -ReportPath (Join-Path $env:TEMP 'svg-report.csv')
+dotnet run --project TombLib/TombLib.Icons/Tools/IconPipeline/IconPipeline.csproj -- rasterize --bucket all
+$scratch = Join-Path $env:TEMP 'TombLibLegacyScratch'; Copy-Item $legacyRoot $scratch -Recurse
+dotnet run --project TombLib/TombLib.Icons/Tools/IconPipeline/IconPipeline.csproj -- rasterize-legacy --legacy-root $legacyRoot --destination $scratch --plan-output (Join-Path $env:TEMP 'plan.csv')
+dotnet run --project TombLib/TombLib.Icons/Tools/IconPipeline/IconPipeline.csproj -- verify-legacy --legacy-root $legacyRoot --plan (Join-Path $env:TEMP 'plan.csv') --output (Join-Path $env:TEMP 'verify.csv') --pixels (Join-Path $env:TEMP 'pixels.csv')
+```
+
+`verify-legacy` renders each planned SVG with the WPF renderer at the size of its legacy PNG and compares the premultiplied BGRA bytes with the PNG decoded without gamma or color profile (the raw values WinForms draws). The reviewed baseline compares 374 legacy PNGs and finds 374 identical. The four ServiceObjectTextures and Shadow textures (89 and 100 pixels) are 3D textures, not icons, and stay excluded. `WPF-PARITY-FIXES.md` lists the SVGs that have no legacy bitmap.

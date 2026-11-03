@@ -1,4 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="1.5" y="3" width="13" height="10" fill="none" stroke="#FFFFFF" />
-    <text x="3" y="11" font-family="Consolas, monospace" font-size="7" font-weight="700" fill="#FFFFFF">&gt;_</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <path fill="#424242" d="M1 2h14v3h-14zM1 5h3v1h-3zM7 5h3v1h-3zM12 5h3v2h-3zM1 6h2v7h-2zM4 6h4v3h-4zM9 6h1v7h-1zM8 7h1v1h-1zM13 7h2v6h-2zM10 8h1v5h-1zM3 9h1v4h-1zM7 9h2v4h-2zM4 10h3v3h-3zM11 10h2v3h-2z"/>
+  <path fill="#585858" d="M12 7h1v1h-1z"/>
+  <path fill="#636263" d="M10 7h1v1h-1z"/>
+  <path fill="#838384" d="M11 5h1v1h-1zM11 9h1v1h-1z"/>
+  <path fill="#a4a3a4" d="M12 8h1v1h-1z"/>
+  <path fill="#afaeaf" d="M10 6h1v1h-1z"/>
+  <path fill="#c5c4c5" d="M11 6h1v1h-1z"/>
+  <path fill="#cfcfd0" d="M11 8h1v1h-1z"/>
+  <path fill="#f0eff1" d="M4 5h3v1h-3zM10 5h1v1h-1zM3 6h1v3h-1zM8 6h1v1h-1zM11 7h1v1h-1zM8 8h1v1h-1zM4 9h3v1h-3zM12 9h1v1h-1z"/>
+  <path fill="#f6f6f6" d="M0 1h16v1h-16zM0 2h1v12h-1zM15 2h1v12h-1zM1 13h14v1h-14z"/>
 </svg>

@@ -1,3 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M5.5 10.5C2 7.5 3.5 2 8 2s6 5.5 2.5 8.5V12h-5Zm.5 3h4M8 4v5M5.5 6.5h5M6.2 4.7l3.6 3.6m0-3.6L6.2 8.3"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" shape-rendering="crispEdges">
+  <path fill="#ffffff" fill-opacity="0.0627" d="M7 4h2v1h-2zM7 8h2v1h-2zM8 9h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1216" d="M6 6h1v1h-1zM9 6h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1255" d="M6 14h1v1h-1zM9 14h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.1882" d="M3 4h1v1h-1zM12 4h1v1h-1zM3 8h1v1h-1zM12 8h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.251" d="M7 3h2v1h-2zM8 10h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.3765" d="M5 4h1v1h-1zM10 4h1v1h-1zM5 8h1v1h-1zM10 8h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.4392" d="M5 2h1v1h-1zM10 2h1v1h-1zM5 10h1v1h-1zM10 10h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.502" d="M6 3h1v2h-1zM9 3h1v2h-1zM3 5h1v1h-1zM12 5h1v3h-1zM3 7h1v1h-1zM6 8h1v2h-1zM9 8h1v2h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.5647" d="M4 3h1v1h-1zM11 3h1v1h-1zM4 9h1v1h-1zM11 9h1v1h-1zM7 12h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.6275" d="M3 6h1v1h-1zM8 12h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.6902" d="M4 6h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.7529" d="M11 6h1v1h-1zM7 11h1v1h-1zM6 13h1v1h-1zM9 13h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.8157" d="M4 5h1v1h-1zM6 5h1v1h-1zM9 5h1v1h-1zM11 5h1v1h-1zM4 7h1v1h-1zM6 7h1v1h-1zM9 7h1v1h-1zM11 7h1v1h-1zM8 11h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.8275" d="M7 5h2v1h-2zM7 7h2v1h-2z"/>
+  <path fill="#ffffff" fill-opacity="0.8784" d="M6 2h1v1h-1zM9 2h1v1h-1z"/>
+  <path fill="#ffffff" fill-opacity="0.9412" d="M7 13h2v2h-2z"/>
+  <path fill="#ffffff" fill-opacity="0.9647" d="M7 6h2v1h-2z"/>
+  <path fill="#ffffff" d="M7 2h2v1h-2zM5 3h1v1h-1zM10 3h1v1h-1zM4 4h1v1h-1zM11 4h1v1h-1zM4 8h1v1h-1zM11 8h1v1h-1zM5 9h1v1h-1zM10 9h1v1h-1zM6 10h1v3h-1zM9 10h1v3h-1z"/>
 </svg>

@@ -44,7 +44,8 @@ $resourcePaths = @(
     'TombLib/TombLib.Scripting.ClassicScript/Resources/Icons',
     'TombLib/TombLib.Scripting.Tomb1Main/Resources/Icons',
     'DarkUI/Example/Resources',
-    'WadTool/Resources'
+    'WadTool/Resources',
+    'SoundTool/Resources'
 )
 
 try {
@@ -79,6 +80,43 @@ try {
         }
     }
 
+    # Icons that have no SVG of their own name but are used by the tools; the overrides file maps them to an SVG.
+    $extraFiles = @(
+        'WadTool/Resources/opened_folder-16.png',
+        'WadTool/Resources/replace-16.png',
+        'WadTool/Resources/volume_up-16.png',
+        'WadTool/Resources/Camera-161.png',
+        'TombLib/TombLib.Forms/Resources/general_clipboard-161.png',
+        'TombLib/TombLib.Forms/Resources/general_Save As-16.png'
+    )
+    foreach ($extra in $extraFiles) {
+        $source = Join-Path $staging ($extra -replace '/', [IO.Path]::DirectorySeparatorChar)
+        $target = Join-Path $destination ($extra -replace '/', [IO.Path]::DirectorySeparatorChar)
+        if ((Test-Path -LiteralPath $source) -and -not (Test-Path -LiteralPath $target)) {
+            New-Item -ItemType Directory -Path (Split-Path -Parent $target) -Force | Out-Null
+            Copy-Item -LiteralPath $source -Destination $target -Force
+            $copied++
+        }
+    }
+
+    # Bitmaps embedded in a form resource instead of the Resources folder.
+    Add-Type -AssemblyName System.Drawing
+    $embedded = @(
+        @{ Resx = 'WadTool/Forms/FormMeshEditor.resx'; Name = 'butHide.Image'; Target = 'WadTool/Resources/embedded/FormMeshEditor-butHide.png' }
+    )
+    foreach ($item in $embedded) {
+        $xmlText = (& git -C $repositoryRoot show "${Commit}:$($item.Resx)") -join "`n"
+        [xml]$resx = $xmlText
+        $entry = $resx.root.data | Where-Object { $_.name -eq $item.Name }
+        $bytes = [Convert]::FromBase64String(($entry.value -replace '\s', ''))
+        $target = Join-Path $destination ($item.Target -replace '/', [IO.Path]::DirectorySeparatorChar)
+        New-Item -ItemType Directory -Path (Split-Path -Parent $target) -Force | Out-Null
+        $stream = New-Object IO.MemoryStream (, $bytes)
+        $bitmap = New-Object System.Drawing.Bitmap $stream
+        $bitmap.Save($target, [System.Drawing.Imaging.ImageFormat]::Png)
+        $bitmap.Dispose(); $stream.Dispose()
+        $copied++
+    }
     [IO.File]::WriteAllText((Join-Path $destination 'source-commit.txt'), "$Commit`r`n", [Text.Encoding]::ASCII)
     Write-Output "Exported $copied legacy PNGs from $Commit to $destination"
 }
