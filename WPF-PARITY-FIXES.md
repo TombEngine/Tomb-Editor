@@ -229,7 +229,8 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Keyboard layout: the add (+) and delete (trash) icons in each row were cut off at the bottom (button taller than the 24 px row); buttons are now 20 px with 14 px icons. Verified on screen. Not changed: WinForms selects the first row on open, the WPF list starts with no selection | Icons clipped | (this commit) |
 
 | Node editor arguments laid out like WinForms: rows of 24 px, the function combo shares the first row with the arguments up to the first new-line marker, argument widths from the catalogue percentages, no caption labels (description as tooltip), search lens on combos, locate and play buttons by argument type, multi-line text editor pop-up button on strings. Verified on screen: an Action node shows the function row, the object and text on one row, set name and event type on the next | Captions above fields, one argument per row, tall nodes | e0b4a3ebe (cherry-picked) |
-| SoundTool main window | With no sound selected WinForms hides the editor behind a dark overlay with the logo; WPF showed disabled controls. Added the overlay (misc_SoundToolOverlay.png) shown while nothing is selected. Verified on screen | Disabled controls instead of overlay | (this commit) |
+| SoundTool main window | With no sound selected WinForms hides the editor behind a dark overlay with the logo; WPF showed disabled controls. Added the overlay (misc_SoundToolOverlay.png) shown while nothing is selected. Verified on screen | Disabled controls instead of overlay | 7c6ca266e |
+| SoundTool sample table headers read "Filename" / "Reference sample path"; WinForms says "Sample name" / "Found in directory". Texts aligned. Not changed: WinForms puts the Randomize / Disable 3D check boxes after their label, WPF before | Different column captions | (this commit) |
 
 ## Subagent batch (built only, NOT yet verified on screen)
 
