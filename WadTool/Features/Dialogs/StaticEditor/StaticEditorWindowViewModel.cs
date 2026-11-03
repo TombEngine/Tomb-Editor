@@ -92,7 +92,7 @@ public partial class StaticEditorWindowViewModel : ObservableObject, IModalDialo
         _wad = wad;
         _static = staticMesh.Clone();
 
-        Title = "Static editor - " + _static.Id.ToString(_wad.GameVersion);
+        Title = "Static editor";
 
         SoundIds.Add("Default");
         foreach (var entry in WadSounds.GetFormattedList(_tool.ReferenceLevel, _wad.GameVersion))

@@ -236,6 +236,7 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | WadTool main tree (WadTreeView): double click on a category node (Moveables, Sprite sequences) now expands/collapses it like the WinForms tree (its ExpandOnDoubleClick flag is never read, the double click always toggles). Verified on screen | Double click did nothing on category nodes | (this commit) |
 | WadTool Sprite sequence editor: the title now carries the sequence like WinForms (Sprite sequence '(1353) SKY_GRAPHICS'), and the Replace button uses the refresh icon like WinForms (it showed a magnifier). Layout compared, same | Plain title, different icon | (this commit) |
 | WadTool Skeleton editor title is "Skeleton editor" like WinForms (WPF appended the moveable id) | Title text | (this commit) |
+| WadTool Static editor: title is "Static editor" like WinForms, and Import / Export / OK / Cancel sit at the bottom right under the editing column (they were centred under the 3D view). Verified on screen. Not changed: numbers right-aligned in WPF boxes, WinForms left-aligned; WinForms Shatter combo has a search lens, WPF none | Title and button row | (this commit) |
 
 ## Subagent batch (built only, NOT yet verified on screen)
 

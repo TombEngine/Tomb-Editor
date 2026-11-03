@@ -36,6 +36,33 @@
     <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
 
 
+        <!--  Footer: mesh import/export + OK / Cancel  -->
+        <controls:SpacedStack
+            DockPanel.Dock="Bottom"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <controls:SpacedStack.Margin>
+                <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+            </controls:SpacedStack.Margin>
+            <Button
+                Width="60"
+                Command="{Binding ImportMeshCommand}"
+                Content="Import" />
+            <Button
+                Width="60"
+                Command="{Binding ExportMeshCommand}"
+                Content="Export" />
+            <Button
+                Width="60"
+                Command="{Binding SaveCommand}"
+                Content="OK" />
+            <Button
+                Width="60"
+                Command="{Binding CancelCommand}"
+                Content="Cancel" />
+        </controls:SpacedStack>
+
         <!--  Right column: editing controls  -->
         <controls:SpacedStack
             Width="252"
@@ -308,33 +335,6 @@
                         </controls:SpacedStack>
                     </StackPanel>
                 </GroupBox>
-        </controls:SpacedStack>
-
-        <!--  Footer: mesh import/export + OK / Cancel  -->
-        <controls:SpacedStack
-            DockPanel.Dock="Bottom"
-            HorizontalAlignment="Right"
-            Orientation="Horizontal"
-            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-            <controls:SpacedStack.Margin>
-                <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
-            </controls:SpacedStack.Margin>
-            <Button
-                Width="80"
-                Command="{Binding ImportMeshCommand}"
-                Content="Import" />
-            <Button
-                Width="80"
-                Command="{Binding ExportMeshCommand}"
-                Content="Export" />
-            <Button
-                Width="80"
-                Command="{Binding SaveCommand}"
-                Content="OK" />
-            <Button
-                Width="80"
-                Command="{Binding CancelCommand}"
-                Content="Cancel" />
         </controls:SpacedStack>
 
         <!--  The 3D view is the legacy previous PanelRenderingStaticEditor, hosted as-is.  -->
