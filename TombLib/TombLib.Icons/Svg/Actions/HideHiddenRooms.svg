@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M1.5 4L6.5 1.5L11.5 4V7.5M1.5 4V10.5L6.5 13M1.5 4L6.5 6.5L11.5 4M6.5 6.5V13"/>
-  <path d="M3 6h1v1h-1zM2 7h1v1h-1zM4 7h1v1h-1zM3 8h1v1h-1zM5 8h1v1h-1zM2 9h1v1h-1zM4 9h1v1h-1zM5 10h1v1h-1z" fill="#FFFFFF" stroke="none"/>
+  <path d="M1.5 3.5L7.5 1.5L11.5 3.5V7.5M1.5 3.5V11L7.5 13.5M7.5 1.5V13.5"/>
+  <path d="M4 3h1v1h-1zM6 3h1v1h-1zM3 4h1v1h-1zM5 4h1v1h-1zM2 5h1v1h-1zM4 5h1v1h-1zM6 5h1v1h-1zM3 6h1v1h-1zM5 6h1v1h-1zM2 7h1v1h-1zM4 7h1v1h-1zM6 7h1v1h-1zM3 8h1v1h-1zM5 8h1v1h-1zM2 9h1v1h-1zM4 9h1v1h-1zM6 9h1v1h-1zM3 10h1v1h-1zM5 10h1v1h-1zM6 11h1v1h-1z" fill="#FFFFFF" stroke="none"/>
   <circle cx="10.5" cy="11.5" r="3.4"/>
   <line x1="12.5" y1="9.5" x2="8.5" y2="13.5"/>
 </svg>
