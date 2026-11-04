@@ -1,10 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#ffffff" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-  <g transform="translate(6.6 8.8) rotate(45) scale(0.92)">
-    <path d="M-0.8 -3.5V7.5L0 8.5L0.8 7.5V-3.5"/>
-    <path d="M-0.8 4.5H0.8M-0.8 6H0.8" stroke-opacity="0.6"/>
-    <path d="M-1.6 -6.8H1.6V-3.4H-1.6Z"/>
-    <path d="M1.6 -6.8Q5.4 -8.4 5.8 -5.1Q5.8 -2.2 1.6 -3.4"/>
-    <path d="M4.4 -6.4Q4.8 -4.7 3.2 -4.1" stroke-opacity="0.6"/>
-    <path d="M-1.6 -6L-3.2 -5.2L-1.6 -4.4"/>
-  </g>
+  <path d="M8.36 6L1.2 13.16L1.07 14.33L2.24 14.2L9.4 7.04"/>
+  <path d="M3.15 11.21L4.19 12.25M2.18 12.18L3.22 13.22" stroke-opacity="0.6"/>
+  <path d="M9.98 3.34L12.06 5.42L9.85 7.63L7.77 5.55Z"/>
+  <path d="M12.06 5.42Q15.58 6.85 13.69 9.26Q11.8 11.14 9.85 7.63"/>
+  <path d="M13.63 7.5Q12.78 8.87 11.35 8.21" stroke-opacity="0.6"/>
+  <path d="M9.46 3.86L7.9 3.34L8.42 4.9"/>
 </svg>
