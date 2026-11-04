@@ -117,6 +117,7 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Animation editor Animations menu: removed the extra Replace item (WinForms has Replace only on the toolbar); menu names of Edit, Animations, Frames and Rendering otherwise identical to WinForms (compared by UI Automation) | Same menus | (this commit) |
 | Animation editor timeline context menu: same six items in WPF and WinForms (right click with the real mouse, read via UI Automation); animation list filter: "walk" and "15" give the same lists | Verified side by side | n/a |
 | Animation editor right double click on the 3D view: the panel already delivers the double click message, so the manual timing detection was replaced by OnMouseDoubleClick. Compared with the WinForms editor using the real mouse (orbit, then right double click): the image after the reset is identical to the start in both | The reset did not work in WPF | (this commit) |
+| Animation editor opens with the root mesh selected (bone list row highlighted, rotation gizmo drawn on the model), as the WinForms grid selects its first row on load. Compared with the real windows on the same wad: WinForms drew the gizmo, WPF did not | The WPF editor opened with no mesh selected | (this commit) |
 
 ## Side by side checks, Tomb Editor
 

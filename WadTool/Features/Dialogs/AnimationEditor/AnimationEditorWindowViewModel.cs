@@ -195,6 +195,10 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         if (Animations.Count > 0)
             SelectedAnim = Animations[0];
 
+        // The WinForms grid selects its first row on load, which selects the root mesh and draws its gizmo.
+        if (Bones.Count > 0)
+            SelectedBoneItem = Bones[0];
+
         // Nothing edited yet, whatever the initial selection raised.
         SetSaved(true);
     }
