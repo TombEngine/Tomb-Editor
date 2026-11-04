@@ -118,6 +118,7 @@ Rule for this file: every fix is added here in the same commit that makes it (ha
 | Animation editor timeline context menu: same six items in WPF and WinForms (right click with the real mouse, read via UI Automation); animation list filter: "walk" and "15" give the same lists | Verified side by side | n/a |
 | Animation editor right double click on the 3D view: the panel already delivers the double click message, so the manual timing detection was replaced by OnMouseDoubleClick. Compared with the WinForms editor using the real mouse (orbit, then right double click): the image after the reset is identical to the start in both | The reset did not work in WPF | (this commit) |
 | Animation editor opens with the root mesh selected (bone list row highlighted, rotation gizmo drawn on the model), as the WinForms grid selects its first row on load. Compared with the real windows on the same wad: WinForms drew the gizmo, WPF did not | The WPF editor opened with no mesh selected | (this commit) |
+| Animation editor data compared WPF vs WinForms on the same wad (Andrea1 copy): Reverse animation, Mirror animation, Insert frame after current + Calculate bounding box each produce the same Lara animation data (name, state, frame counts, velocities, per-keyframe offsets, bounding boxes and rotations hashed); the saved files differ only outside that data | Earlier "identical" results used wrong click coordinates | verified |
 
 ## Side by side checks, Tomb Editor
 
