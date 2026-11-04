@@ -28,6 +28,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Column="0" Margin="0,0,6,0" VerticalAlignment="Center" Text="{tombLib:Localize Argument}" />
             <TextBox
@@ -43,6 +44,14 @@
                 Minimum="0"
                 ToolTip="{tombLib:Localize CallCountTooltip}"
                 Value="{Binding CallCounter, Mode=TwoWay}" />
+            <CheckBox
+                Grid.Column="4"
+                Margin="10,0,0,0"
+                VerticalAlignment="Center"
+                Content="{tombLib:Localize ~TombEditor.EventSetEditor.EnableEvent}"
+                IsChecked="{Binding DataContext.CurrentEventEnabled, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
+                IsEnabled="{Binding DataContext.HasCurrentEvent, RelativeSource={RelativeSource AncestorType=Window}}"
+                ToolTip="{tombLib:Localize ~TombEditor.EventSetEditor.EnableEventTooltip}" />
         </Grid>
 
         <!--  Filter and unassign  -->

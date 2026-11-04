@@ -260,7 +260,12 @@
                 </StackPanel>
             </Button>
 
-            <!--  Node actions (operate on the last selected node).  -->
+            <!--  Node actions (operate on the last selected node), in the WinForms order.  -->
+            <Button
+                Command="{Binding LinkSelectedCommand}"
+                ToolTip="{tombLib:Localize LinkTooltip}">
+                <Image Width="16" Height="16" Source="{tomb:Icon Actions/Merge}" />
+            </Button>
             <Button
                 Command="{Binding RenameSelectedCommand}"
                 ToolTip="{tombLib:Localize RenameTooltip}">
@@ -269,7 +274,7 @@
             <Button
                 Command="{Binding ColorSelectedCommand}"
                 ToolTip="{tombLib:Localize ColourTooltip}">
-                <Image Width="16" Height="16" Source="{tomb:Icon Actions/StaticTint}" />
+                <Image Width="16" Height="16" Source="{tomb:Icon Actions/TextureMode}" />
             </Button>
             <Button
                 Command="{Binding LockSelectedCommand}"
@@ -277,19 +282,9 @@
                 <Image Width="16" Height="16" Source="{tomb:Icon General/Lock}" />
             </Button>
             <Button
-                Command="{Binding LinkSelectedCommand}"
-                ToolTip="{tombLib:Localize LinkTooltip}">
-                <Image Width="16" Height="16" Source="{tomb:Icon General/copy_link}" />
-            </Button>
-            <Button
                 Command="{Binding DeleteSelectedNodeCommand}"
                 ToolTip="{tombLib:Localize DeleteTooltip}">
                 <Image Width="16" Height="16" Source="{tomb:Icon General/trash}" />
-            </Button>
-            <Button
-                Command="{Binding ExportCommand}"
-                ToolTip="{tombLib:Localize ExportTooltip}">
-                <Image Width="16" Height="16" Source="{tomb:Icon General/Export}" />
             </Button>
             <Button
                 Command="{Binding ClearNodesCommand}"
@@ -297,9 +292,9 @@
                 <Image Width="16" Height="16" Source="{tomb:Icon Actions/delete}" />
             </Button>
             <Button
-                Command="{Binding FindNodeCommand}"
-                ToolTip="{tombLib:Localize FindTooltip}">
-                <Image Width="16" Height="16" Source="{tomb:Icon General/search}" />
+                Command="{Binding ExportCommand}"
+                ToolTip="{tombLib:Localize ExportTooltip}">
+                <Image Width="16" Height="16" Source="{tomb:Icon General/copy}" />
             </Button>
 
             <TextBlock VerticalAlignment="Center" Text="{tombLib:Localize CallCount}" />
@@ -310,6 +305,12 @@
                 Minimum="0"
                 ToolTip="{tombLib:Localize CallCountTooltip}"
                 Value="{Binding CallCounter, Mode=TwoWay}" />
+            <CheckBox
+                VerticalAlignment="Center"
+                Content="{tombLib:Localize ~TombEditor.EventSetEditor.EnableEvent}"
+                IsChecked="{Binding DataContext.CurrentEventEnabled, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
+                IsEnabled="{Binding DataContext.HasCurrentEvent, RelativeSource={RelativeSource AncestorType=Window}}"
+                ToolTip="{tombLib:Localize ~TombEditor.EventSetEditor.EnableEventTooltip}" />
         </controls:SpacedStack>
 
         <!--  Node canvas  -->

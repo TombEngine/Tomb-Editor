@@ -141,7 +141,6 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="180" />
-                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,6,0" Text="{tombLib:Localize Name}" />
                     <TextBox Grid.Column="1" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
@@ -157,14 +156,6 @@
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
-                    <CheckBox
-                        Grid.Column="4"
-                        Margin="10,0,0,0"
-                        VerticalAlignment="Center"
-                        Content="{tombLib:Localize EnableEvent}"
-                        IsChecked="{Binding CurrentEventEnabled, Mode=TwoWay}"
-                        IsEnabled="{Binding HasCurrentEvent}"
-                        ToolTip="{tombLib:Localize EnableEventTooltip}" />
                 </Grid>
 
                 <!--  Volume options  -->
@@ -192,21 +183,25 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <controls:SpacedStack
-                        Grid.Row="0"
-                        Margin="0,0,0,6"
-                        Orientation="Horizontal"
-                        Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-                        <TextBlock VerticalAlignment="Center" Text="{tombLib:Localize Mode}" />
-                        <RadioButton
-                            Content="{tombLib:Localize NodeEditorMode}"
-                            GroupName="EventMode"
-                            IsChecked="{Binding IsNodeEditorMode, Mode=TwoWay}" />
-                        <RadioButton
-                            Content="{tombLib:Localize LevelScriptMode}"
-                            GroupName="EventMode"
-                            IsChecked="{Binding IsLevelScriptMode, Mode=TwoWay}" />
-                    </controls:SpacedStack>
+                    <DockPanel Grid.Row="0" Margin="0,0,0,6">
+                        <Button
+                            Command="{Binding NodeEditor.FindNodeCommand}"
+                            DockPanel.Dock="Right"
+                            ToolTip="{tombLib:Localize ~TombEditor.NodeEditor.FindTooltip}"
+                            Visibility="{Binding IsNodeEditorShown, Converter={StaticResource BoolToVis}}">
+                            <Image Width="16" Height="16" Source="{tomb:Icon General/search}" />
+                        </Button>
+                        <controls:SpacedStack Orientation="Horizontal" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+                            <RadioButton
+                                Content="{tombLib:Localize NodeEditorMode}"
+                                GroupName="EventMode"
+                                IsChecked="{Binding IsNodeEditorMode, Mode=TwoWay}" />
+                            <RadioButton
+                                Content="{tombLib:Localize LevelScriptMode}"
+                                GroupName="EventMode"
+                                IsChecked="{Binding IsLevelScriptMode, Mode=TwoWay}" />
+                        </controls:SpacedStack>
+                    </DockPanel>
 
                     <!--  Node editor mode  -->
                     <local:NodeEditorView
