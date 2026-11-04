@@ -1,12 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-  <path d="M8 0.5L1 5.3L8 7.6Z" fill="#38c7c7"/>
-  <path d="M8 0.5L15 5L8 7.6Z" fill="#76ffff"/>
-  <path d="M1 5.3L8 7.6L7.6 16L1 12.2Z" fill="#007a61"/>
-  <path d="M8 7.6L15 5L7.6 16Z" fill="#54e94a"/>
-  <g fill="none" stroke-linecap="round">
-    <path d="M7.8 0.8V4.5" stroke="#46e4e4"/>
-    <path d="M3.5 5.6L6.5 7.5L7.6 12.5" stroke="#0f9180" stroke-width="1.2"/>
-    <path d="M8.5 8.5V12.5" stroke="#4ed04f"/>
-    <path d="M1.5 6V12L4 14.2" stroke="#005f4a"/>
-  </g>
+  <path d="M7.5 0.5L1 6L8 8.5Z" fill="#38c7c7"/>
+  <path d="M7.5 0.5L14 6L8 8.5Z" fill="#76ffff"/>
+  <path d="M1 6L8 8.5L7.5 15.5L2 12.5Z" fill="#007a61"/>
+  <path d="M14 6L8 8.5L7.5 15.5L13 10Z" fill="#54e94a"/>
 </svg>
