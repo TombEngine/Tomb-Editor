@@ -1,4 +1,4 @@
-﻿<Window
+<Window
     x:Class="WadTool.Features.Dialogs.AnimEditor.AnimationEditorWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -332,29 +332,41 @@
                                 <ComboBoxItem Content="Symmetric linear" />
                             </ComboBox>
                         </DockPanel>
-                        <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="4">
+                                                <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="4">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="28" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Rot" />
-                            <controls:NumericUpDown Grid.Column="1" Style="{StaticResource Axis}" Minimum="-360" Maximum="360" Value="{Binding RotationX, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Y" />
                             <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" Minimum="-360" Maximum="360" Value="{Binding RotationY, Mode=TwoWay}" />
-                            <controls:NumericUpDown Grid.Column="3" Style="{StaticResource Axis}" Minimum="-360" Maximum="360" Value="{Binding RotationZ, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource Val}" Text="P" />
+                            <controls:NumericUpDown Grid.Column="4" Style="{StaticResource Axis}" Minimum="-360" Maximum="360" Value="{Binding RotationX, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="5" VerticalAlignment="Center" Style="{StaticResource Val}" Text="R" />
+                            <controls:NumericUpDown Grid.Column="6" Style="{StaticResource Axis}" Minimum="-360" Maximum="360" Value="{Binding RotationZ, Mode=TwoWay}" />
                         </controls:SpacedGrid>
                         <controls:SpacedGrid Margin="0,4,0,0" ColumnSpacing="4">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="28" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Pos" />
-                            <controls:NumericUpDown Grid.Column="1" Style="{StaticResource Axis}" Value="{Binding TranslationX, Mode=TwoWay}" />
-                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" Value="{Binding TranslationY, Mode=TwoWay}" />
-                            <controls:NumericUpDown Grid.Column="3" Style="{StaticResource Axis}" Value="{Binding TranslationZ, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Val}" Text="X" />
+                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" Value="{Binding TranslationX, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Y" />
+                            <controls:NumericUpDown Grid.Column="4" Style="{StaticResource Axis}" Value="{Binding TranslationY, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="5" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Z" />
+                            <controls:NumericUpDown Grid.Column="6" Style="{StaticResource Axis}" Value="{Binding TranslationZ, Mode=TwoWay}" />
                         </controls:SpacedGrid>
                     </StackPanel>
                 </GroupBox>
