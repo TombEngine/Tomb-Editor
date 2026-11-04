@@ -50,7 +50,7 @@
             <DockPanel Grid.Column="0">
                 <!--  Management buttons at the top of the list (icon buttons, mirroring the legacy editor).  -->
                 <controls:SpacedStack DockPanel.Dock="Top" Margin="0,0,0,6" Orientation="Horizontal" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
-                    <Button Command="{Binding NewSetCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize NewSetTooltip}">
+                    <Button Click="NewSetButton_Click" Command="{Binding NewSetCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize NewSetTooltip}">
                         <Image Source="{tomb:Icon General/plus_math}" />
                     </Button>
                     <Button Command="{Binding NewFolderCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize NewFolderTooltip}">
@@ -143,7 +143,7 @@
                         <ColumnDefinition Width="180" />
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" VerticalAlignment="Center" Margin="0,0,6,0" Text="{tombLib:Localize Name}" />
-                    <TextBox Grid.Column="1" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                    <TextBox x:Name="nameBox" Grid.Column="1" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
                     <TextBlock Grid.Column="2" VerticalAlignment="Center" Margin="10,0,6,0" Text="{tombLib:Localize Event}" />
                     <ComboBox
                         Grid.Column="3"

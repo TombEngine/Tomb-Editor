@@ -78,6 +78,14 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             e.Handled = true;
         }
 
+        // WinForms puts the focus in the name box (text selected) right after a set is created.
+        private void NewSetButton_Click(object sender, RoutedEventArgs e)
+            => Dispatcher.BeginInvoke(new Action(() =>
+            {
+                nameBox.Focus();
+                nameBox.SelectAll();
+            }), System.Windows.Threading.DispatcherPriority.Background);
+
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             searchPopup.IsOpen = true;

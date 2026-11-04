@@ -79,10 +79,17 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         private void UpdateGridBrush(NodeEditorViewModel viewModel)
         {
             double step = viewModel.GridStep;
+
+            // WinForms draws the canvas in DarkBackground with grid lines 15% brighter.
+            var background = TryFindResource("DarkBackgroundColor") is Color themeColor ? themeColor : Color.FromRgb(0x2B, 0x2B, 0x2B);
+            var lineColor = Color.FromRgb((byte)(background.R * 1.15), (byte)(background.G * 1.15), (byte)(background.B * 1.15));
+            rootCanvas.Background = new SolidColorBrush(background);
+            gridRectangle.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+
             var drawing = new GeometryDrawing
             {
                 Geometry = new RectangleGeometry(new Rect(0.0, 0.0, step, step)),
-                Pen = new Pen(new SolidColorBrush(Color.FromArgb(0x0F, 0xFF, 0xFF, 0xFF)), 1.0)
+                Pen = new Pen(new SolidColorBrush(lineColor), 1.0)
             };
 
             var brush = new DrawingBrush(drawing)

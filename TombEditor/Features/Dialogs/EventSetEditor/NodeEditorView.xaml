@@ -317,9 +317,9 @@
         <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
             <ScrollViewer
                 x:Name="canvasScroll"
-                HorizontalScrollBarVisibility="Auto"
+                HorizontalScrollBarVisibility="Hidden"
                 PreviewMouseWheel="OnPreviewMouseWheel"
-                VerticalScrollBarVisibility="Auto">
+                VerticalScrollBarVisibility="Hidden">
                 <Canvas
                     x:Name="rootCanvas"
                     Width="{Binding CanvasWidth}"
