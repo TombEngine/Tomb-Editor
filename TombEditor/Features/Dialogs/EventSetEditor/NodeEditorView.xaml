@@ -27,9 +27,12 @@
             Viewport="0,0,4,4"
             ViewportUnits="Absolute">
             <DrawingBrush.Drawing>
-                <GeometryDrawing Brush="#59FFFFFF">
+                <GeometryDrawing Brush="#20FFFFFF">
                     <GeometryDrawing.Geometry>
-                        <RectangleGeometry Rect="1,1,2,2" />
+                        <GeometryGroup>
+                            <RectangleGeometry Rect="3,0,1,1" />
+                            <RectangleGeometry Rect="1,2,1,1" />
+                        </GeometryGroup>
                     </GeometryDrawing.Geometry>
                 </GeometryDrawing>
             </DrawingBrush.Drawing>
@@ -55,12 +58,12 @@
 
         <!--  Link grip bar of a node  -->
         <Style x:Key="GripBarStyle" TargetType="Rectangle">
-            <Setter Property="Fill" Value="#40FFFFFF" />
+            <Setter Property="Fill" Value="{StaticResource GripStripBrush}" />
             <Setter Property="Cursor" Value="Cross" />
             <Setter Property="Height" Value="6" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Fill" Value="#80FFFFFF" />
+                    <Setter Property="Fill" Value="#33FFFFFF" />
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -429,9 +432,9 @@
 
                                             <!--  Side grip strip  -->
                                             <Border
-                                                Height="8"
-                                                Margin="3,3,3,0"
-                                                VerticalAlignment="Top"
+                                                Width="8"
+                                                Margin="3,3,0,3"
+                                                HorizontalAlignment="Left"
                                                 Background="{StaticResource GripStripBrush}"
                                                 IsHitTestVisible="False"
                                                 Visibility="{Binding ShowGrips, Converter={StaticResource BoolToVis}}" />
