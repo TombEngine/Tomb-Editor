@@ -909,6 +909,7 @@ namespace TombEditor
                 var textureMap = new Controls.WpfAnimatedTextureMapView();
                 var viewModel = new TombLib.WPF.Features.AnimatedTextures.AnimatedTexturesWindowViewModel(context, textureMap);
                 var window = new TombLib.WPF.Features.AnimatedTextures.AnimatedTexturesWindow { DataContext = viewModel };
+                WindowConfiguration.ConfigureWindow(window, _editor.Configuration, "FormAnimatedTextures");
                 window.SetOwner(_editorWindow);
                 window.ShowDialog();
             });

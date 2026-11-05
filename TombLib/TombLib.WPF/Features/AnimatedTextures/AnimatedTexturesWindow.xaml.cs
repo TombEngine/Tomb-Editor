@@ -57,6 +57,26 @@ namespace TombLib.WPF.Features.AnimatedTextures
                 e.Accept(viewModel.Value);
         }
 
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            base.OnPreviewKeyDown(e);
+
+            // N adds the selected texture area as a frame (WinForms ProcessCmdKey), unless text is being typed.
+            if (e.Key != Key.N || Keyboard.Modifiers != ModifierKeys.None || Keyboard.FocusedElement is System.Windows.Controls.Primitives.TextBoxBase or System.Windows.Controls.ComboBox)
+                return;
+
+            if (_viewModel?.AddFrameCommand.CanExecute(null) == true)
+                _viewModel.AddFrameCommand.Execute(null);
+
+            e.Handled = true;
+        }
+
+        private void FramesGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (e.OriginalSource is DependencyObject source && System.Windows.Media.VisualTreeHelper.GetParent(source) is not null)
+                _viewModel?.ShowSelectedFrameCommand.Execute(null);
+        }
+
         private void OnTextureMapMouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left && e.ClickCount == 2 &&

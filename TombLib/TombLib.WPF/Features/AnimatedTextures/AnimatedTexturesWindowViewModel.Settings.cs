@@ -94,6 +94,7 @@ namespace TombLib.WPF.Features.AnimatedTextures
                 if (!SetProperty(ref _tenUvRotateSpeed, value) || _lockUi || SelectedSet == null)
                     return;
                 SelectedSet.TenUvRotateSpeed = (float)value;
+                _context.OnAnimatedTexturesChanged?.Invoke();
             }
         }
 
@@ -106,6 +107,7 @@ namespace TombLib.WPF.Features.AnimatedTextures
                 if (!SetProperty(ref _tenUvRotateDirection, value) || _lockUi || SelectedSet == null)
                     return;
                 SelectedSet.TenUvRotateDirection = (float)value;
+                _context.OnAnimatedTexturesChanged?.Invoke();
             }
         }
 

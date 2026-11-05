@@ -44,7 +44,10 @@ namespace TombLib.WPF.Features.AnimatedTextures
         public IReadOnlyList<AnimatedTextureAnimationType> AnimationTypes { get; }
 
         [ObservableProperty] private AnimatedTextureSet? _selectedSet;
-        [ObservableProperty] private AnimatedTextureFrameViewModel? _selectedFrame;
+        [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasSelectedFrame))]
+    [NotifyCanExecuteChangedFor(nameof(UpdateFrameCommand), nameof(ShowSelectedFrameCommand))]
+    private AnimatedTextureFrameViewModel? _selectedFrame;
 
         // Closes the window via HookModalAutoClose once set (true = keep edits, false = cancel).
         [ObservableProperty] private bool? _dialogResult;
@@ -262,6 +265,7 @@ namespace TombLib.WPF.Features.AnimatedTextures
                     return;
                 SelectedSet.Fps = (float)value;
                 UpdatePreviewState();
+                _context.OnAnimatedTexturesChanged?.Invoke();
             }
         }
 
@@ -331,7 +335,7 @@ namespace TombLib.WPF.Features.AnimatedTextures
             SelectedFrame = row;
         }
 
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(HasSelectedFrame))]
         private void UpdateFrame()
         {
             var source = GetSelectedFrame();
@@ -372,6 +376,31 @@ namespace TombLib.WPF.Features.AnimatedTextures
             int index = SelectedFrame == null ? -1 : Frames.IndexOf(SelectedFrame);
             if (index >= 0 && index < Frames.Count - 1)
                 Frames.Move(index, index + 1);
+        }
+
+        public bool HasSelectedFrame => SelectedFrame is not null;
+
+        /// <summary>Shows the selected frame's texture area in the texture map (WinForms row double-click).</summary>
+        [RelayCommand(CanExecute = nameof(HasSelectedFrame))]
+        private void ShowSelectedFrame()
+        {
+            if (SelectedFrame is not { } row)
+                return;
+
+            var area = new TextureArea
+            {
+                Texture = row.Texture,
+                TexCoord0 = row.TexCoord0,
+                TexCoord1 = row.TexCoord1,
+                TexCoord2 = row.TexCoord2,
+                TexCoord3 = row.TexCoord3
+            };
+
+            if (_textureMap.SelectedTexture == area)
+                return;
+
+            _textureMap.ShowTexture(area);
+            _context.SelectedTexture = area;
         }
 
         private AnimatedTextureFrame? GetSelectedFrame()

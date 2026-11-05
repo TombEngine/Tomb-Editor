@@ -1361,6 +1361,7 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
         var textureMap = new WpfAnimatedTextureMapView(_tool);
         var viewModel = new TombLib.WPF.Features.AnimatedTextures.AnimatedTexturesWindowViewModel(context, textureMap);
         var window = new TombLib.WPF.Features.AnimatedTextures.AnimatedTexturesWindow { DataContext = viewModel };
+        TombLib.WPF.WindowConfiguration.ConfigureWindow(window, _tool.Configuration, "FormAnimatedTextures");
         window.SetOwner(Owner);
         window.ShowDialog();
     }

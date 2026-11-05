@@ -557,6 +557,7 @@ public partial class MainWindow : Window
         var textureMap = new WpfAnimatedTextureMapView(_tool);
         var viewModel = new TombLib.WPF.Features.AnimatedTextures.AnimatedTexturesWindowViewModel(context, textureMap);
         var window = new TombLib.WPF.Features.AnimatedTextures.AnimatedTexturesWindow { DataContext = viewModel, Owner = this };
+        WindowConfiguration.ConfigureWindow(window, _tool.Configuration, "FormAnimatedTextures");
         window.ShowDialog();
     }
 

@@ -258,6 +258,7 @@
 						CanUserAddRows="False"
 						CanUserDeleteRows="True"
 						ItemsSource="{Binding Frames}"
+						MouseDoubleClick="FramesGrid_MouseDoubleClick"
 						SelectedItem="{Binding SelectedFrame, Mode=TwoWay}">
 						<DataGrid.Columns>
 							<DataGridTemplateColumn Width="44" Header="{tombLib:Localize ColumnImage}">
