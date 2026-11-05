@@ -108,14 +108,15 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         private void Rebuild()
         {
             // The view-models are recreated, so the selection is carried over by model node.
-            var previouslySelected = _selectedNodes.Select(n => n.Node).ToHashSet();
+            // TriggerNode.GetHashCode depends on its mutable content (arguments, next node), so nodes are compared by reference.
+            var previouslySelected = _selectedNodes.Select(n => n.Node).ToHashSet<TriggerNode>(ReferenceEqualityComparer.Instance);
 
             foreach (var link in Links)
                 link.Detach();
             Links.Clear();
             Nodes.Clear();
 
-            var map = new Dictionary<TriggerNode, NodeViewModel>();
+            var map = new Dictionary<TriggerNode, NodeViewModel>(ReferenceEqualityComparer.Instance);
             foreach (var node in TriggerNode.LinearizeNodes(_event.Nodes))
             {
                 var function = Functions.FirstOrDefault(f => f.Signature == node.Function);
@@ -346,7 +347,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         public void CopySelected(bool cut)
         {
             // Only chain roots are cloned: Clone() already copies everything linked below a node.
-            var selectedModels = _selectedNodes.Select(n => n.Node).ToHashSet();
+            var selectedModels = _selectedNodes.Select(n => n.Node).ToHashSet<TriggerNode>(ReferenceEqualityComparer.Instance);
             var copied = selectedModels
                 .Where(n => n.Previous is null || !selectedModels.Contains(n.Previous))
                 .Select(n =>
