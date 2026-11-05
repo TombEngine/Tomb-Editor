@@ -350,3 +350,14 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 - WadTool: tree search is an inline row, not the WinForms pop-up; the destination panel header is not highlighted when active and tree rows are about 3 px denser (S3).
 - SoundTool: details pane always visible but disabled without a selection; extra Stop button; "Select/Deselect all" marks the catalog as modified; build/unpack iterate sounds ordered by ID; Ctrl+C/V bound to the sound list only.
 - WadTool: inline tree search row with an extra "Next" button.
+
+## Review pass (all windows, code audit)
+
+- Shared: NumericUpDown no longer swallows Enter/Escape (default and cancel buttons work), Ctrl+Home/End jump to limits, single tab stop; title-bar buttons not focusable; AutoCompleteBox commits text on focus loss.
+- GeometryIO Invert faces enabled only with Process geometry; Lighting keeps last light type; ObjectList Delete follows selection.
+- SoundTool: *.sfx in catalog filter, sample name column read-only, no row delete key, integer fields and increments.
+- Static: invalid OCB text is re-encoded from the checkboxes; Sprite: unknown SpriteID selects nothing; KeyboardLayout: double-click only on data rows.
+- TexturePanel: animation ranges button gated by selection, vanished texture clears selection; ContentBrowser in-place search focus.
+- WadTool: Create menu items always enabled, Log_ArchiveN 0..100, Anim commands has no Delete key binding, Mesh editor Materials/Animated textures only for TombEngine when opened for an object.
+- Tomb Editor: Open recent disabled when empty; 2D map movement keys marked handled.
+- Still open from the audit: Flyby compact layout for TR1-TR3, Level settings static mesh merge rebuild, Static editor box components written individually, Event set volume toast, AnimatedTextures items.
