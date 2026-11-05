@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using System;
 using System.ComponentModel;
@@ -40,6 +40,7 @@ public partial class AnimationEditorWindow : Window
         _panel.PointerDragged += OnPanelPointerDragged;
 
         stateIdBox.AddHandler(KeyUpEvent, new KeyEventHandler(OnStateIdKeyUp), true);
+        stateIdBox.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnStateIdLostFocus), true);
 
         DataContextChanged += OnDataContextChanged;
         Loaded += (_, _) =>
@@ -73,6 +74,13 @@ public partial class AnimationEditorWindow : Window
     private void OnStateIdKeyUp(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter && stateIdBox.InputTextBox is not null)
+            stateIdBox.Text = stateIdBox.InputTextBox.Text;
+    }
+
+    /// <summary>WinForms commits the typed state when the field is left (Validated), not only on Enter.</summary>
+    private void OnStateIdLostFocus(object sender, KeyboardFocusChangedEventArgs e)
+    {
+        if (!stateIdBox.IsKeyboardFocusWithin && stateIdBox.InputTextBox is not null && stateIdBox.Text != stateIdBox.InputTextBox.Text)
             stateIdBox.Text = stateIdBox.InputTextBox.Text;
     }
 
