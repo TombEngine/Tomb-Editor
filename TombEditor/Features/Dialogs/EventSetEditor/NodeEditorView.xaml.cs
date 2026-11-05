@@ -456,7 +456,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             if (sender is not DependencyObject root || FindDescendant<DarkUI.WPF.CustomControls.SearchableComboBox>(root, "functionCombo") is not { } combo || !combo.IsEnabled)
                 return;
 
-            TombLib.WPF.ComboSearch.OpenCommand.Execute(combo);
+            // Opened after the right button is released, otherwise the popup is dismissed by that same click.
+            Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => TombLib.WPF.ComboSearch.OpenCommand.Execute(combo)));
             e.Handled = true;
         }
 
