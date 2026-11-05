@@ -161,8 +161,62 @@
             </MenuItem>
         </Menu>
 
+            <Border
+                Margin="0,0,0,4"
+                Padding="2"
+                Background="{DynamicResource Brush_BackgroundSlightlyDark}"
+                DockPanel.Dock="Top">
+                <DockPanel LastChildFill="True">
+                    <controls:SpacedStack
+                        DockPanel.Dock="Left"
+                        Orientation="Horizontal"
+                        Spacing="2">
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding SaveCommand}" ToolTip="Save all changes"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Save}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding UndoCommand}" ToolTip="Undo"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/undo}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding RedoCommand}" ToolTip="Redo"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/redo}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding ResetCameraCommand}" ToolTip="Reset camera"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/target}" /></Button>
+                        <Border Style="{StaticResource TbSep}" />
+                        <TextBlock Style="{StaticResource TbLbl}" Text="Anims:" />
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding AddAnimationCommand}" ToolTip="Add animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding ImportAnimationCommand}" ToolTip="Import..."><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Import}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding ExportAnimationCommand}" ToolTip="Export..."><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Export}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteAnimationCommand}" ToolTip="Delete animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding CutAnimationCommand}" ToolTip="Cut animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/cut}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding CopyAnimationCommand}" ToolTip="Copy animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/copy}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding PasteAnimationCommand}" ToolTip="Paste animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding ReplaceAnimationCommand}" ToolTip="Replace animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste-new}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding SplitAnimationCommand}" ToolTip="Split animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/Split_WadTool}" /></Button>
+                        <Border Style="{StaticResource TbSep}" />
+                        <TextBlock Style="{StaticResource TbLbl}" Text="Frames:" />
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding AddFrameCommand}" ToolTip="Add frame"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteFrameCommand}" ToolTip="Delete frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding CutFrameCommand}" ToolTip="Cut frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/cut}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding CopyFrameCommand}" ToolTip="Copy frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/copy}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding PasteFrameCommand}" ToolTip="Paste frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste}" /></Button>
+                        <Border Style="{StaticResource TbSep}" />
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding EditAnimCommandsCommand}" ToolTip="Edit anim commands"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/anim-commands}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding EditStateChangesCommand}" ToolTip="Edit state changes"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/state-changes}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding FixAnimationCommand}" ToolTip="Fix animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/tick}" /></Button>
+                        <Border Style="{StaticResource TbSep}" />
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding InterpolateCommand}" ToolTip="Interpolate frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/interpolate}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding ReverseCommand}" ToolTip="Reverse animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/back}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding MirrorCommand}" ToolTip="Mirror animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Mirror}" /></Button>
+                        <Border Style="{StaticResource TbSep}" />
+                        <TextBlock Style="{StaticResource TbLbl}" Text="Room:" />
+                    </controls:SpacedStack>
+                    <ComboBox
+                        MinWidth="120"
+                        VerticalAlignment="Center"
+                        IsEnabled="{Binding RoomsEnabled}"
+                        ItemsSource="{Binding Rooms}"
+                        SelectedItem="{Binding SelectedRoomItem, Mode=TwoWay}"
+                        ToolTip="Reference room" />
+                </DockPanel>
+            </Border>
+
         <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
 
+        <!--  Footer: OK / Cancel  -->
         <!--  Footer: OK / Cancel  -->
         <controls:SpacedStack
             DockPanel.Dock="Bottom"
@@ -176,14 +230,18 @@
             <Button Width="80" Command="{Binding CancelCommand}" Content="Cancel" />
         </controls:SpacedStack>
 
-        <!--  Left: animation list  -->
+        <!--  Left: animation list, current animation, blending (WinForms order)  -->
+        <Grid Width="270" DockPanel.Dock="Left" Margin="0,0,6,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" MinHeight="120" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
         <GroupBox
-            Width="240"
-            DockPanel.Dock="Left"
-            Header="Animations">
-            <GroupBox.Margin>
-                <Thickness Right="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
-            </GroupBox.Margin>
+            
+            Grid.Row="0"
+            Header="Animation List">
+            
             <DockPanel>
                 <!--  Filter  -->
                 <DockPanel DockPanel.Dock="Top" Margin="0,0,0,4">
@@ -233,8 +291,47 @@
                     SelectionMode="Extended" />
             </DockPanel>
         </GroupBox>
+                <GroupBox Grid.Row="1" Margin="0,6,0,0" Header="Current Animation">
+                    <StackPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Name:" /><TextBox x:Name="animationNameBox" KeyDown="OnParameterKeyDown" LostKeyboardFocus="OnParameterLostFocus" Text="{Binding AnimName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="State:" /><ComboBox Width="24" DockPanel.Dock="Right" IsTextSearchEnabled="False" ItemsSource="{Binding StateNames}" SelectedItem="{Binding SelectedStateName, Mode=TwoWay}" ToolTip="Known state names" /><controls:AutoCompleteBox x:Name="stateIdBox" ItemsSource="{Binding StateNames}" Text="{Binding StateIdText, Mode=TwoWay}" ToolTip="{Binding StateIdToolTip}" /></DockPanel>
+                        <Grid Margin="0,4,0,0">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="Framerate" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="1" Maximum="255" Value="{Binding FrameRate, Mode=TwoWay}" /></StackPanel>
+                            <StackPanel Grid.Column="1" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="End frame" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding EndFrame, Mode=TwoWay}" /></StackPanel>
+                            <StackPanel Grid.Column="2" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="Next anim" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding NextAnimation, Mode=TwoWay}" /></StackPanel>
+                            <StackPanel Grid.Column="3" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="Next frame" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding NextFrame, Mode=TwoWay}" /></StackPanel>
+                        </Grid>
+                        <Grid Margin="0,4,0,0">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="Start X vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding StartVertVel, Mode=TwoWay}" /></StackPanel>
+                            <StackPanel Grid.Column="1" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="End X vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding EndVertVel, Mode=TwoWay}" /></StackPanel>
+                            <StackPanel Grid.Column="2" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="Start Z vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding StartHorVel, Mode=TwoWay}" /></StackPanel>
+                            <StackPanel Grid.Column="3" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="End Z vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding EndHorVel, Mode=TwoWay}" /></StackPanel>
+                        </Grid>
+                        <UniformGrid Margin="0,8,0,0" Columns="2">
+                            <Button Margin="0,0,3,0" Command="{Binding EditStateChangesCommand}" Content="State changes..." />
+                            <Button Margin="3,0,0,0" Command="{Binding EditAnimCommandsCommand}" Content="Anim commands..." />
+                        </UniformGrid>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Grid.Row="2" Margin="0,6,0,0" Header="Animation Blending" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Margin="0,0,6,0" VerticalAlignment="Center" Foreground="{DynamicResource Brush_Text_Low}" Text="Next anim blend frame count:" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="255" Value="{Binding BlendFrameCount, Mode=TwoWay}" /></DockPanel>
+                        <Border Height="110" Margin="0,6,0,0" BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
+                            <wadControls:BezierCurveEditor x:Name="bezierEditor" />
+                        </Border>
+                        <ComboBox Margin="0,4,0,0" SelectedIndex="{Binding BlendPresetIndex, Mode=TwoWay}">
+                            <ComboBoxItem Content="Linear" />
+                            <ComboBoxItem Content="Ease In" />
+                            <ComboBoxItem Content="Ease Out" />
+                            <ComboBoxItem Content="Ease In and Out" />
+                        </ComboBox>
+                    </StackPanel>
+                </GroupBox>
+        </Grid>
 
-        <!--  Right: properties + transform + bounding box + bones  -->
+        <!--  Right: skeleton, transform, root motion, bounding box (WinForms order)  -->
         <ScrollViewer
             Width="300"
             DockPanel.Dock="Right"
@@ -244,47 +341,28 @@
                 <Thickness Left="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
             </ScrollViewer.Margin>
             <controls:SpacedStack Orientation="Vertical" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-
-                <GroupBox Header="Animation">
-                    <StackPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Name:" /><TextBox x:Name="animationNameBox" KeyDown="OnParameterKeyDown" LostKeyboardFocus="OnParameterLostFocus" Text="{Binding AnimName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="State:" /><ComboBox Width="24" DockPanel.Dock="Right" IsTextSearchEnabled="False" ItemsSource="{Binding StateNames}" SelectedItem="{Binding SelectedStateName, Mode=TwoWay}" ToolTip="Known state names" /><controls:AutoCompleteBox x:Name="stateIdBox" ItemsSource="{Binding StateNames}" Text="{Binding StateIdText, Mode=TwoWay}" ToolTip="{Binding StateIdToolTip}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Framerate" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="1" Maximum="255" Value="{Binding FrameRate, Mode=TwoWay}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="End frame" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding EndFrame, Mode=TwoWay}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Next anim" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding NextAnimation, Mode=TwoWay}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Next frame" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding NextFrame, Mode=TwoWay}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Start X vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding StartVertVel, Mode=TwoWay}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="End X vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding EndVertVel, Mode=TwoWay}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Start Z vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding StartHorVel, Mode=TwoWay}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="End Z vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding EndHorVel, Mode=TwoWay}" /></DockPanel>
-                        <DockPanel Margin="0,2" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Blend frames" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="255" Value="{Binding BlendFrameCount, Mode=TwoWay}" /></DockPanel>
-                        <Border Height="110" Margin="0,6,0,0" BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}">
-                            <wadControls:BezierCurveEditor x:Name="bezierEditor" />
-                        </Border>
-                        <ComboBox Margin="0,4,0,0" SelectedIndex="{Binding BlendPresetIndex, Mode=TwoWay}" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}">
-                            <ComboBoxItem Content="Linear" />
-                            <ComboBoxItem Content="Ease In" />
-                            <ComboBoxItem Content="Ease Out" />
-                            <ComboBoxItem Content="Ease In and Out" />
-                        </ComboBox>
-                    </StackPanel>
-                </GroupBox>
-
-                <GroupBox Header="Root motion" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}">
-                    <StackPanel>
-                        <TextBlock Style="{StaticResource Val}" Text="Translation" />
-                        <controls:SpacedStack Margin="0,2,0,0" Orientation="Horizontal" Spacing="10">
-                            <CheckBox Content="X" IsChecked="{Binding RootPosX, Mode=TwoWay}" />
-                            <CheckBox Content="Y" IsChecked="{Binding RootPosY, Mode=TwoWay}" />
-                            <CheckBox Content="Z" IsChecked="{Binding RootPosZ, Mode=TwoWay}" />
-                        </controls:SpacedStack>
-                        <TextBlock Margin="0,6,0,0" Style="{StaticResource Val}" Text="Rotation" />
-                        <controls:SpacedStack Margin="0,2,0,0" Orientation="Horizontal" Spacing="10">
-                            <CheckBox Content="X" IsChecked="{Binding RootRotX, Mode=TwoWay}" />
-                            <CheckBox Content="Y" IsChecked="{Binding RootRotY, Mode=TwoWay}" />
-                            <CheckBox Content="Z" IsChecked="{Binding RootRotZ, Mode=TwoWay}" />
-                        </controls:SpacedStack>
-                    </StackPanel>
+                <GroupBox Header="Skeleton">
+                    <DataGrid
+                        Height="160"
+                        AutoGenerateColumns="False"
+                        CanUserAddRows="False"
+                        CanUserReorderColumns="False"
+                        HeadersVisibility="Column"
+                        ItemsSource="{Binding Bones}"
+                        MouseDoubleClick="OnBoneListDoubleClick"
+                        SelectedItem="{Binding SelectedBoneItem, Mode=TwoWay}"
+                        SelectionMode="Single">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Width="30">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Checked, UpdateSourceTrigger=PropertyChanged}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="Bone" IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </GroupBox>
 
                 <GroupBox Header="{Binding TransformHeader}">
@@ -371,6 +449,23 @@
                     </StackPanel>
                 </GroupBox>
 
+                <GroupBox Header="Root motion" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Val}" Text="Translation" />
+                        <controls:SpacedStack Margin="0,2,0,0" Orientation="Horizontal" Spacing="10">
+                            <CheckBox Content="X" IsChecked="{Binding RootPosX, Mode=TwoWay}" />
+                            <CheckBox Content="Y" IsChecked="{Binding RootPosY, Mode=TwoWay}" />
+                            <CheckBox Content="Z" IsChecked="{Binding RootPosZ, Mode=TwoWay}" />
+                        </controls:SpacedStack>
+                        <TextBlock Margin="0,6,0,0" Style="{StaticResource Val}" Text="Rotation" />
+                        <controls:SpacedStack Margin="0,2,0,0" Orientation="Horizontal" Spacing="10">
+                            <CheckBox Content="X" IsChecked="{Binding RootRotX, Mode=TwoWay}" />
+                            <CheckBox Content="Y" IsChecked="{Binding RootRotY, Mode=TwoWay}" />
+                            <CheckBox Content="Z" IsChecked="{Binding RootRotZ, Mode=TwoWay}" />
+                        </controls:SpacedStack>
+                    </StackPanel>
+                </GroupBox>
+
                 <GroupBox Header="Bounding box (keyframe)">
                     <StackPanel>
                         <controls:SpacedGrid ColumnSpacing="4">
@@ -398,30 +493,6 @@
                             <controls:NumericUpDown Grid.Column="3" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMaxZ, Mode=TwoWay}" />
                         </controls:SpacedGrid>
                     </StackPanel>
-                </GroupBox>
-
-                <GroupBox Header="Bones">
-                    <DataGrid
-                        Height="160"
-                        AutoGenerateColumns="False"
-                        CanUserAddRows="False"
-                        CanUserReorderColumns="False"
-                        HeadersVisibility="Column"
-                        ItemsSource="{Binding Bones}"
-                        MouseDoubleClick="OnBoneListDoubleClick"
-                        SelectedItem="{Binding SelectedBoneItem, Mode=TwoWay}"
-                        SelectionMode="Single">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Width="30">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Checked, UpdateSourceTrigger=PropertyChanged}" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="Bone" IsReadOnly="True" />
-                        </DataGrid.Columns>
-                    </DataGrid>
                 </GroupBox>
 
                 <GroupBox Header="Animation bounding box">
@@ -460,77 +531,11 @@
                         </controls:SpacedGrid>
                     </StackPanel>
                 </GroupBox>
-
-                <GroupBox Header="View">
-                    <StackPanel>
-                        <CheckBox Content="Smooth animation" IsChecked="{Binding SmoothAnimation, Mode=TwoWay}" />
-                        <CheckBox Margin="0,3,0,0" Content="Scroll grid" IsChecked="{Binding ScrollGrid, Mode=TwoWay}" />
-                        <CheckBox Margin="0,3,0,0" Content="Restore grid height" IsChecked="{Binding RestoreGridHeight, Mode=TwoWay}" />
-                        <CheckBox Margin="0,3,0,0" Content="Draw gizmo" IsChecked="{Binding ShowGizmo, Mode=TwoWay}" />
-                        <CheckBox Margin="0,3,0,0" Content="Draw grid" IsChecked="{Binding ShowGrid, Mode=TwoWay}" />
-                        <CheckBox Margin="0,3,0,0" Content="Draw collision box" IsChecked="{Binding ShowCollisionBox, Mode=TwoWay}" />
-                        <CheckBox Margin="0,3,0,0" Content="Draw skin" IsChecked="{Binding ShowSkin, Mode=TwoWay}" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}" />
-                    </StackPanel>
-                </GroupBox>
             </controls:SpacedStack>
         </ScrollViewer>
 
-        <!--  Center: toolbar + 3D view + timeline + transport  -->
+        <!--  Center: 3D view + timeline + transport  -->
         <DockPanel LastChildFill="True">
-
-            <!--  Operations toolbar (mirrors the legacy topBar: icons + tooltips)  -->
-            <Border
-                Margin="0,0,0,4"
-                Padding="2"
-                Background="{DynamicResource Brush_BackgroundSlightlyDark}"
-                DockPanel.Dock="Top">
-                <DockPanel LastChildFill="True">
-                    <controls:SpacedStack
-                        DockPanel.Dock="Left"
-                        Orientation="Horizontal"
-                        Spacing="2">
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding SaveCommand}" ToolTip="Save all changes"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Save}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding UndoCommand}" ToolTip="Undo"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/undo}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding RedoCommand}" ToolTip="Redo"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/redo}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding ResetCameraCommand}" ToolTip="Reset camera"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/target}" /></Button>
-                        <Border Style="{StaticResource TbSep}" />
-                        <TextBlock Style="{StaticResource TbLbl}" Text="Anims:" />
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding AddAnimationCommand}" ToolTip="Add animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding ImportAnimationCommand}" ToolTip="Import..."><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Import}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding ExportAnimationCommand}" ToolTip="Export..."><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Export}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteAnimationCommand}" ToolTip="Delete animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding CutAnimationCommand}" ToolTip="Cut animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/cut}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding CopyAnimationCommand}" ToolTip="Copy animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/copy}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding PasteAnimationCommand}" ToolTip="Paste animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding ReplaceAnimationCommand}" ToolTip="Replace animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste-new}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding SplitAnimationCommand}" ToolTip="Split animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/Split_WadTool}" /></Button>
-                        <Border Style="{StaticResource TbSep}" />
-                        <TextBlock Style="{StaticResource TbLbl}" Text="Frames:" />
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding AddFrameCommand}" ToolTip="Add frame"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteFrameCommand}" ToolTip="Delete frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding CutFrameCommand}" ToolTip="Cut frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/cut}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding CopyFrameCommand}" ToolTip="Copy frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/copy}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding PasteFrameCommand}" ToolTip="Paste frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste}" /></Button>
-                        <Border Style="{StaticResource TbSep}" />
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding EditAnimCommandsCommand}" ToolTip="Edit anim commands"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/anim-commands}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding EditStateChangesCommand}" ToolTip="Edit state changes"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/state-changes}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding FixAnimationCommand}" ToolTip="Fix animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/tick}" /></Button>
-                        <Border Style="{StaticResource TbSep}" />
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding InterpolateCommand}" ToolTip="Interpolate frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/interpolate}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding ReverseCommand}" ToolTip="Reverse animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/back}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding MirrorCommand}" ToolTip="Mirror animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Mirror}" /></Button>
-                        <Border Style="{StaticResource TbSep}" />
-                        <TextBlock Style="{StaticResource TbLbl}" Text="Room:" />
-                    </controls:SpacedStack>
-                    <ComboBox
-                        MinWidth="120"
-                        VerticalAlignment="Center"
-                        IsEnabled="{Binding RoomsEnabled}"
-                        ItemsSource="{Binding Rooms}"
-                        SelectedItem="{Binding SelectedRoomItem, Mode=TwoWay}"
-                        ToolTip="Reference room" />
-                </DockPanel>
-            </Border>
 
             <!--  Transport + status (icons mirror the legacy transport strip)  -->
             <Grid DockPanel.Dock="Bottom">
