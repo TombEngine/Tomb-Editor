@@ -22,7 +22,7 @@ public class OptionsLocalizationTests
 
         Assert.AreEqual("Options", localization["Title"]);
         Assert.AreEqual("Search:", localization["Search"]);
-        Assert.AreEqual("Reset page to defaults", localization["ResetPageToDefaults"]);
+        Assert.AreEqual("Set page to default", localization["ResetPageToDefaults"]);
         string[] expectedTabs = ["General", "Gizmo"];
         string[] actualTabs = [.. viewModel.Tabs.Select(tab => tab.Header)];
         CollectionAssert.AreEqual(expectedTabs, actualTabs);

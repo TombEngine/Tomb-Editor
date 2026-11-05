@@ -361,3 +361,8 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 - WadTool: Create menu items always enabled, Log_ArchiveN 0..100, Anim commands has no Delete key binding, Mesh editor Materials/Animated textures only for TombEngine when opened for an object.
 - Tomb Editor: Open recent disabled when empty; 2D map movement keys marked handled.
 - Still open from the audit: Flyby compact layout for TR1-TR3, Level settings static mesh merge rebuild, Static editor box components written individually, Event set volume toast, AnimatedTextures items.
+
+- Closed after the audit: static mesh merge rows kept across wad changes, Static editor box components written one at a time, Flyby compact layout (flags hidden for TR1-TR3 and TRX cinematic frames), Event set volume info toast, AnimatedTextures (N key, row double-click shows the area, Update needs a frame, Fps/UV rotate notify the context, window placement saved).
+- Tests aligned with WinForms behaviour: Transform relight follows the editor mode, WadTool Create menu always enabled, Options titles taken from localization.
+- Intentional divergence: Anim commands and State changes editors are modal in WPF (WinForms modeless) because of the modeless combo popup bug.
+- Still unverified on screen: node right-click function search popup, Mesh editor edits (viewport empty in the automated test).
