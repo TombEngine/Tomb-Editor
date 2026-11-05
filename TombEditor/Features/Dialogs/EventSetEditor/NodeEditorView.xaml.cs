@@ -241,6 +241,16 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             canvasScroll.ScrollToVerticalOffset((anchorY * newScale) - viewportPos.Y);
         }
 
+        /// <summary>Lets the host window route its keys here, as WinForms processes them form-wide (N, A, C, L, Ctrl+A, Esc ...).</summary>
+        public bool TryHandleWindowKey(KeyEventArgs e)
+        {
+            if (ViewModel is null || KeyboardInput.IsEditingText(e.OriginalSource as DependencyObject))
+                return false;
+
+            var key = e.Key == Key.System ? e.SystemKey : e.Key;
+            return NodeEditorKeyMap.TryHandle(ViewModel, key, Keyboard.Modifiers);
+        }
+
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
             // Shortcuts must not fire while a node argument or the call counter is being edited.

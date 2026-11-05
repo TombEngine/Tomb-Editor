@@ -554,7 +554,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             if (targetMode != NodeConnection.Previous && dragMode != NodeConnection.Previous)
                 return false;
 
-            if (WouldCycle(dragged, target, targetMode == NodeConnection.Next))
+            if (WouldCycle(dragged, target, targetMode != NodeConnection.Previous))
                 return false;
 
             return targetMode switch

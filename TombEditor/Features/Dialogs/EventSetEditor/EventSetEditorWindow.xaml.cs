@@ -22,6 +22,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         public EventSetEditorWindow()
         {
             InitializeComponent();
+            PreviewKeyDown += Window_PreviewKeyDown;
             // This window is shown modeless, so the hook falls back to Close() when the
             // view-model sets DialogResult (OK/Cancel buttons, level switch).
             this.HookModalAutoClose();
@@ -76,6 +77,16 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                 vm.DeleteSetCommand.Execute(null);
 
             e.Handled = true;
+        }
+
+        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            // The sets tree and the search box keep their own keys (Delete / Back on a set, typing).
+            if (Vm is not { IsNodeEditorShown: true } || e.OriginalSource is System.Windows.Media.Visual source && (setsTree.IsAncestorOf(source) || searchBox.IsAncestorOf(source)))
+                return;
+
+            if (nodeEditorView.TryHandleWindowKey(e))
+                e.Handled = true;
         }
 
         // WinForms puts the focus in the name box (text selected) right after a set is created.

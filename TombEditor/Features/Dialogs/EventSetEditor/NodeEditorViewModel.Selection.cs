@@ -112,7 +112,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                 var node = ordered[i];
                 var nextNode = ordered[i + 1];
 
-                if (node.Next is not null || nextNode.Previous is not null)
+                if (node.Next is not null || nextNode.Previous is not null || WouldCycle(node, nextNode, false))
                     continue;
 
                 node.Next = nextNode;
