@@ -533,11 +533,11 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Rot" />
                             <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Y" />
-                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" Minimum="-360" Maximum="360" Value="{Binding RotationY, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" Minimum="0" Maximum="360" LoopValues="True" Value="{Binding RotationY, Mode=TwoWay}" />
                             <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource Val}" Text="P" />
-                            <controls:NumericUpDown Grid.Column="4" Style="{StaticResource Axis}" Minimum="-360" Maximum="360" Value="{Binding RotationX, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="4" Style="{StaticResource Axis}" Minimum="0" Maximum="360" LoopValues="True" Value="{Binding RotationX, Mode=TwoWay}" />
                             <TextBlock Grid.Column="5" VerticalAlignment="Center" Style="{StaticResource Val}" Text="R" />
-                            <controls:NumericUpDown Grid.Column="6" Style="{StaticResource Axis}" Minimum="-360" Maximum="360" Value="{Binding RotationZ, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="6" Style="{StaticResource Axis}" Minimum="0" Maximum="360" LoopValues="True" Value="{Binding RotationZ, Mode=TwoWay}" />
                         </controls:SpacedGrid>
                         <controls:SpacedGrid Margin="0,4,0,0" ColumnSpacing="4">
                             <Grid.ColumnDefinitions>
