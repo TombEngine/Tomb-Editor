@@ -230,6 +230,117 @@
             <Button Width="80" Command="{Binding CancelCommand}" Content="Cancel" />
         </controls:SpacedStack>
 
+        <!--  Status line, then timeline with the transport buttons on its right (WinForms arrangement)  -->
+        <TextBlock DockPanel.Dock="Bottom" Margin="2,4,0,0" Foreground="{DynamicResource Brush_Text_Low}" Text="{Binding StatusText}" TextTrimming="CharacterEllipsis" />
+        <Grid DockPanel.Dock="Bottom" Margin="0,4,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Border
+                Height="84"
+                Grid.Column="0"
+                BorderBrush="{DynamicResource Brush_Border}"
+                BorderThickness="1">
+                <Border.Margin>
+                    <Thickness Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+                </Border.Margin>
+                <tombLibControls:AnimationTrackBar x:Name="timeline">
+                    <tombLibControls:AnimationTrackBar.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem Command="{Binding MarkInCommand}" Header="Mark in" InputGestureText="I" />
+                            <MenuItem Command="{Binding MarkOutCommand}" Header="Mark out" InputGestureText="O" />
+                            <MenuItem Command="{Binding SelectAllCommand}" Header="Select all" InputGestureText="Ctrl+A" />
+                            <MenuItem Command="{Binding ClearSelectionCommand}" Header="Clear selection" />
+                            <Separator />
+                            <MenuItem Command="{Binding CreateAnimCommandCommand}" Header="Create anim command..." />
+                            <MenuItem Command="{Binding CreateStateChangeCommand}" Header="Create state change..." />
+                        </ContextMenu>
+                    </tombLibControls:AnimationTrackBar.ContextMenu>
+                </tombLibControls:AnimationTrackBar>
+            </Border>
+            <controls:SpacedStack Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="3">
+                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoStartCommand}" ToolTip="Go to start"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/Start}" /></Button>
+                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoPrevCommand}" ToolTip="Back 1 frame"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/FrameBack}" /></Button>
+                    <Button Style="{StaticResource TransportBtn}" Command="{Binding PlayCommand}" ToolTip="Playback">
+                        <Image>
+                            <Image.Style>
+                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
+                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Play24}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Stop}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </Button>
+                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoNextCommand}" ToolTip="Forward 1 frame"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/FrameForward}" /></Button>
+                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoEndCommand}" ToolTip="Go to end"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/End}" /></Button>
+                    <Border Style="{StaticResource TbSep}" />
+                    <ToggleButton Style="{StaticResource TransportToggle}" IsChecked="{Binding ChainPlayback, Mode=TwoWay}" ToolTip="Chain playback">
+                        <Image>
+                            <Image.Style>
+                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
+                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/ChainDisabled}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ChainPlayback}" Value="True">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/ChainEnabled}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </ToggleButton>
+                    <ToggleButton
+                        Style="{StaticResource TransportToggle}"
+                        Command="{Binding ToggleSoundCommand}"
+                        IsEnabled="{Binding RoomsEnabled}"
+                        IsChecked="{Binding SoundPreview, Mode=OneWay}"
+                        ToolTip="Toggle sound preview">
+                        <Image>
+                            <Image.Style>
+                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
+                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Mute}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SoundPreview}" Value="True">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Audio}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </ToggleButton>
+                    <Button
+                        Style="{StaticResource TransportBtn}"
+                        Command="{Binding CycleSoundConditionCommand}"
+                        IsEnabled="{Binding RoomsEnabled}"
+                        ToolTip="{Binding SoundConditionToolTip}">
+                        <Image>
+                            <Image.Style>
+                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
+                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/OnNothing}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="LandWithMaterial">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/OnLand}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="Water">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/InShallowWater}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="Quicksand">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Sand}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="Underwater">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Underwater}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </Button>
+                </controls:SpacedStack>
+        </Grid>
         <!--  Left: animation list, current animation, blending (WinForms order)  -->
         <Grid Width="270" DockPanel.Dock="Left" Margin="0,0,6,0">
             <Grid.RowDefinitions>
@@ -353,14 +464,14 @@
                         SelectedItem="{Binding SelectedBoneItem, Mode=TwoWay}"
                         SelectionMode="Single">
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Width="30">
+                            <DataGridTemplateColumn Width="40" Header="Use">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Checked, UpdateSourceTrigger=PropertyChanged}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="Bone" IsReadOnly="True" />
+                            <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="Mesh" IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </GroupBox>
@@ -449,24 +560,20 @@
                     </StackPanel>
                 </GroupBox>
 
-                <GroupBox Header="Root motion" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}">
-                    <StackPanel>
-                        <TextBlock Style="{StaticResource Val}" Text="Translation" />
-                        <controls:SpacedStack Margin="0,2,0,0" Orientation="Horizontal" Spacing="10">
-                            <CheckBox Content="X" IsChecked="{Binding RootPosX, Mode=TwoWay}" />
-                            <CheckBox Content="Y" IsChecked="{Binding RootPosY, Mode=TwoWay}" />
-                            <CheckBox Content="Z" IsChecked="{Binding RootPosZ, Mode=TwoWay}" />
-                        </controls:SpacedStack>
-                        <TextBlock Margin="0,6,0,0" Style="{StaticResource Val}" Text="Rotation" />
-                        <controls:SpacedStack Margin="0,2,0,0" Orientation="Horizontal" Spacing="10">
-                            <CheckBox Content="X" IsChecked="{Binding RootRotX, Mode=TwoWay}" />
-                            <CheckBox Content="Y" IsChecked="{Binding RootRotY, Mode=TwoWay}" />
-                            <CheckBox Content="Z" IsChecked="{Binding RootRotZ, Mode=TwoWay}" />
-                        </controls:SpacedStack>
-                    </StackPanel>
+                <GroupBox Header="Root Motion" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}">
+                    <controls:SpacedStack Orientation="Horizontal" Spacing="6">
+                        <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Pos:" />
+                        <CheckBox Content="X" IsChecked="{Binding RootPosX, Mode=TwoWay}" />
+                        <CheckBox Content="Y" IsChecked="{Binding RootPosY, Mode=TwoWay}" />
+                        <CheckBox Content="Z" IsChecked="{Binding RootPosZ, Mode=TwoWay}" />
+                        <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Rot:" />
+                        <CheckBox Content="X" IsChecked="{Binding RootRotX, Mode=TwoWay}" />
+                        <CheckBox Content="Y" IsChecked="{Binding RootRotY, Mode=TwoWay}" />
+                        <CheckBox Content="Z" IsChecked="{Binding RootRotZ, Mode=TwoWay}" />
+                    </controls:SpacedStack>
                 </GroupBox>
 
-                <GroupBox Header="Bounding box (keyframe)">
+                <GroupBox Header="Bounding Box">
                     <StackPanel>
                         <controls:SpacedGrid ColumnSpacing="4">
                             <Grid.ColumnDefinitions>
@@ -495,7 +602,7 @@
                     </StackPanel>
                 </GroupBox>
 
-                <GroupBox Header="Animation bounding box">
+                <GroupBox Header="Animation Bounding Box">
                     <StackPanel>
                         <controls:SpacedGrid ColumnSpacing="6" RowSpacing="6">
                             <Grid.RowDefinitions>
@@ -509,7 +616,7 @@
                             <Button Command="{Binding SelectAllMeshesCommand}" Content="All meshes" />
                             <Button Grid.Column="1" Command="{Binding SelectNoMeshesCommand}" Content="No meshes" />
                             <Button Grid.Row="1" Command="{Binding CalcBoundingBoxCommand}" Content="Calculate" />
-                            <Button Grid.Row="1" Grid.Column="1" Command="{Binding ClearBoundingBoxCommand}" Content="Clear" />
+                            <Button Grid.Row="1" Grid.Column="1" Command="{Binding ClearBoundingBoxCommand}" Content="Delete" />
                         </controls:SpacedGrid>
                         <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="4">
                             <Grid.ColumnDefinitions>
@@ -537,128 +644,9 @@
         <!--  Center: 3D view + timeline + transport  -->
         <DockPanel LastChildFill="True">
 
-            <!--  Transport + status (icons mirror the legacy transport strip)  -->
-            <Grid DockPanel.Dock="Bottom">
-                <Grid.Margin>
-                    <Thickness Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
-                </Grid.Margin>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <controls:SpacedStack Grid.Column="0" Orientation="Horizontal" Spacing="3">
-                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoStartCommand}" ToolTip="Go to start"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/Start}" /></Button>
-                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoPrevCommand}" ToolTip="Back 1 frame"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/FrameBack}" /></Button>
-                    <Button Style="{StaticResource TransportBtn}" Command="{Binding PlayCommand}" ToolTip="Playback">
-                        <Image>
-                            <Image.Style>
-                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
-                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Play24}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsPlaying}" Value="True">
-                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Stop}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Image.Style>
-                        </Image>
-                    </Button>
-                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoNextCommand}" ToolTip="Forward 1 frame"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/FrameForward}" /></Button>
-                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoEndCommand}" ToolTip="Go to end"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/End}" /></Button>
-                    <Border Style="{StaticResource TbSep}" />
-                    <ToggleButton Style="{StaticResource TransportToggle}" IsChecked="{Binding ChainPlayback, Mode=TwoWay}" ToolTip="Chain playback">
-                        <Image>
-                            <Image.Style>
-                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
-                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/ChainDisabled}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding ChainPlayback}" Value="True">
-                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/ChainEnabled}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Image.Style>
-                        </Image>
-                    </ToggleButton>
-                    <ToggleButton
-                        Style="{StaticResource TransportToggle}"
-                        Command="{Binding ToggleSoundCommand}"
-                        IsEnabled="{Binding RoomsEnabled}"
-                        IsChecked="{Binding SoundPreview, Mode=OneWay}"
-                        ToolTip="Toggle sound preview">
-                        <Image>
-                            <Image.Style>
-                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
-                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Mute}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SoundPreview}" Value="True">
-                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Audio}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Image.Style>
-                        </Image>
-                    </ToggleButton>
-                    <Button
-                        Style="{StaticResource TransportBtn}"
-                        Command="{Binding CycleSoundConditionCommand}"
-                        IsEnabled="{Binding RoomsEnabled}"
-                        ToolTip="{Binding SoundConditionToolTip}">
-                        <Image>
-                            <Image.Style>
-                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
-                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/OnNothing}" />
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="LandWithMaterial">
-                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/OnLand}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="Water">
-                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/InShallowWater}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="Quicksand">
-                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Sand}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="Underwater">
-                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Underwater}" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Image.Style>
-                        </Image>
-                    </Button>
-                </controls:SpacedStack>
-                <TextBlock
-                    Grid.Column="1"
-                    Margin="10,0,0,0"
-                    VerticalAlignment="Center"
-                    Foreground="{DynamicResource Brush_Text_Low}"
-                    Text="{Binding StatusText}"
-                    TextTrimming="CharacterEllipsis" />
-            </Grid>
+            
 
-            <!--  Timeline  -->
-            <Border
-                Height="84"
-                DockPanel.Dock="Bottom"
-                BorderBrush="{DynamicResource Brush_Border}"
-                BorderThickness="1">
-                <Border.Margin>
-                    <Thickness Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
-                </Border.Margin>
-                <tombLibControls:AnimationTrackBar x:Name="timeline">
-                    <tombLibControls:AnimationTrackBar.ContextMenu>
-                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
-                            <MenuItem Command="{Binding MarkInCommand}" Header="Mark in" InputGestureText="I" />
-                            <MenuItem Command="{Binding MarkOutCommand}" Header="Mark out" InputGestureText="O" />
-                            <MenuItem Command="{Binding SelectAllCommand}" Header="Select all" InputGestureText="Ctrl+A" />
-                            <MenuItem Command="{Binding ClearSelectionCommand}" Header="Clear selection" />
-                            <Separator />
-                            <MenuItem Command="{Binding CreateAnimCommandCommand}" Header="Create anim command..." />
-                            <MenuItem Command="{Binding CreateStateChangeCommand}" Header="Create state change..." />
-                        </ContextMenu>
-                    </tombLibControls:AnimationTrackBar.ContextMenu>
-                </tombLibControls:AnimationTrackBar>
-            </Border>
+            
 
             <!--  3D view (hosted)  -->
             <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
