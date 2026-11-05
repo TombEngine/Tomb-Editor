@@ -45,6 +45,7 @@ public partial class ObjectListViewModel : ObservableObject
                 return;
 
             ((RelayCommand)EditObjectCommand).NotifyCanExecuteChanged();
+            DeleteObjectsCommand.NotifyCanExecuteChanged();
 
             if (_suppressEditorSync)
                 return;

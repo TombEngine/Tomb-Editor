@@ -213,6 +213,11 @@ public partial class LightingViewModel : ObservableObject
         var light = _editor.SelectedObject as LightInstance;
 
         HasLight = light is not null;
+
+        // The type combo of WinForms always shows the selected light's type, and placing a light uses it.
+        if (light is not null)
+            _lastSelectedLightType = (int)light.Type;
+
         CanEditInRange = light is not null && HasInRange(light);
         CanEditOutRange = light is not null && HasOutRange(light);
         CanEditInOutAngle = light is not null && HasInOutAngle(light);

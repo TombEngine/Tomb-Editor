@@ -263,12 +263,16 @@ public class NumericUpDown : Control
 
 		switch (e.Key)
 		{
+			// Enter commits the text but stays unhandled, so the dialog's default button still fires (WinForms AcceptButton).
 			case Key.Enter:
 				CommitText();
-				e.Handled = true;
 				break;
 
+			// Escape reverts an edit; with nothing to revert it reaches the dialog's cancel button.
 			case Key.Escape:
+				if (TextBox is not null && TryParseText(TextBox.Text, out var typed) && NormalizeValue(typed) == Value && TextBox.Text == FormatValue(Value))
+					break;
+
 				UpdateTextBoxText();
 				e.Handled = true;
 				break;
@@ -297,20 +301,20 @@ public class NumericUpDown : Control
 				e.Handled = true;
 				break;
 
-			case Key.Home:
+			// Ctrl+Home / Ctrl+End jump to the limits; plain Home / End keep moving the caret like in a text box.
+			case Key.Home when Keyboard.Modifiers == ModifierKeys.Control:
 				CommitText();
 				Value = Minimum;
 				e.Handled = true;
 				break;
 
-			case Key.End:
+			case Key.End when Keyboard.Modifiers == ModifierKeys.Control:
 				CommitText();
 				Value = Maximum;
 				e.Handled = true;
 				break;
 		}
 	}
-
 	protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
 	{
 		base.OnPreviewMouseWheel(e);
@@ -372,7 +376,6 @@ public class NumericUpDown : Control
 			return;
 
 		CommitText();
-		e.Handled = true;
 	}
 
 	private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)

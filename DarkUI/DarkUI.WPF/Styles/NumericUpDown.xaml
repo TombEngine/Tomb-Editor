@@ -82,6 +82,7 @@
 		<!--  Control properties  -->
 		<Setter Property="FontSize" Value="{x:Static local:Defaults.DefaultFontSize}" />
 		<Setter Property="RenderOptions.ClearTypeHint" Value="Enabled" />
+		<Setter Property="Focusable" Value="False" />
 
 		<!--  Layout  -->
 		<Setter Property="Height" Value="{x:Static local:Defaults.InputControl_Height}" />
