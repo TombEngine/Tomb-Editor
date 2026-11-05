@@ -142,4 +142,16 @@ public partial class MeshEditorWindow : Window
         command.Execute(null);
         e.Handled = true;
     }
+
+    /// <summary>Opens the button's drop-down menu below it (WinForms toolbar drop-down buttons).</summary>
+    private void OpenButtonMenu(object sender, System.Windows.RoutedEventArgs e)
+    {
+        if (sender is not System.Windows.Controls.Button { ContextMenu: { } menu } button)
+            return;
+
+        menu.DataContext = button.DataContext;
+        menu.PlacementTarget = button;
+        menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Bottom;
+        menu.IsOpen = true;
+    }
 }

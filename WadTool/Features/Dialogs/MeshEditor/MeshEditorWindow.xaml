@@ -175,17 +175,23 @@
                         </Border>
                         <ComboBox Margin="0,6,0,0" ItemsSource="{Binding Textures}" SelectedItem="{Binding SelectedTexture, Mode=TwoWay}" />
                         <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="3">
-                            <Button Width="46" Height="26" Padding="0" Command="{Binding AddEmbeddedTextureCommand}" ToolTip="Add embedded texture">
-                                <StackPanel Orientation="Horizontal"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /><TextBlock Margin="2,0,0,0" Style="{StaticResource Lbl}" Text="emb" /></StackPanel>
+                            <Button Style="{StaticResource TbBtn}" Width="38" Click="OpenButtonMenu" ToolTip="Add texture">
+                                <Button.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Command="{Binding AddEmbeddedTextureCommand}" Header="Add embedded texture" />
+                                        <MenuItem Command="{Binding AddExternalTextureCommand}" Header="Add external texture" />
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                                <StackPanel Orientation="Horizontal"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /><Path Margin="3,0,0,0" VerticalAlignment="Center" Data="M0,0 L4,4 L8,0 Z" Fill="{DynamicResource Brush_Text}" /></StackPanel>
                             </Button>
-                            <Button Width="46" Height="26" Padding="0" Command="{Binding AddExternalTextureCommand}" ToolTip="Add external texture">
-                                <StackPanel Orientation="Horizontal"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /><TextBlock Margin="2,0,0,0" Style="{StaticResource Lbl}" Text="ext" /></StackPanel>
-                            </Button>
-                            <Button Width="46" Height="26" Padding="0" Command="{Binding ReplaceEmbeddedTextureCommand}" ToolTip="Replace with embedded texture">
-                                <StackPanel Orientation="Horizontal"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/refresh}" /><TextBlock Margin="2,0,0,0" Style="{StaticResource Lbl}" Text="emb" /></StackPanel>
-                            </Button>
-                            <Button Width="46" Height="26" Padding="0" Command="{Binding ReplaceExternalTextureCommand}" ToolTip="Replace with external texture">
-                                <StackPanel Orientation="Horizontal"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/refresh}" /><TextBlock Margin="2,0,0,0" Style="{StaticResource Lbl}" Text="ext" /></StackPanel>
+                            <Button Style="{StaticResource TbBtn}" Width="38" Click="OpenButtonMenu" ToolTip="Replace texture">
+                                <Button.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Command="{Binding ReplaceEmbeddedTextureCommand}" Header="Replace with embedded texture" />
+                                        <MenuItem Command="{Binding ReplaceExternalTextureCommand}" Header="Replace with external texture" />
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                                <StackPanel Orientation="Horizontal"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/refresh}" /><Path Margin="3,0,0,0" VerticalAlignment="Center" Data="M0,0 L4,4 L8,0 Z" Fill="{DynamicResource Brush_Text}" /></StackPanel>
                             </Button>
                             <Button Style="{StaticResource TbBtn}" Command="{Binding ExportTextureCommand}" ToolTip="Export current texture to file"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Export}" /></Button>
                             <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteTextureCommand}" ToolTip="Delete texture"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
