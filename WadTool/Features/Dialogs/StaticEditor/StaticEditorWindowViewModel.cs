@@ -180,21 +180,20 @@ public partial class StaticEditorWindowViewModel : ObservableObject, IModalDialo
 
     // ---- Visibility box ----
 
-    partial void OnVisBoxMinXChanged(double value) => ApplyVisibilityBox();
-    partial void OnVisBoxMinYChanged(double value) => ApplyVisibilityBox();
-    partial void OnVisBoxMinZChanged(double value) => ApplyVisibilityBox();
-    partial void OnVisBoxMaxXChanged(double value) => ApplyVisibilityBox();
-    partial void OnVisBoxMaxYChanged(double value) => ApplyVisibilityBox();
-    partial void OnVisBoxMaxZChanged(double value) => ApplyVisibilityBox();
+    partial void OnVisBoxMinXChanged(double value) => ApplyVisibilityBox(false, 'X', value);
+    partial void OnVisBoxMinYChanged(double value) => ApplyVisibilityBox(false, 'Y', value);
+    partial void OnVisBoxMinZChanged(double value) => ApplyVisibilityBox(false, 'Z', value);
+    partial void OnVisBoxMaxXChanged(double value) => ApplyVisibilityBox(true, 'X', value);
+    partial void OnVisBoxMaxYChanged(double value) => ApplyVisibilityBox(true, 'Y', value);
+    partial void OnVisBoxMaxZChanged(double value) => ApplyVisibilityBox(true, 'Z', value);
 
-    private void ApplyVisibilityBox()
+    private void ApplyVisibilityBox(bool isMax, char axis, double value)
     {
         if (_initializing || _panel is null)
             return;
 
-        _static.VisibilityBox = new BoundingBox(
-            new Vector3((float)VisBoxMinX, (float)VisBoxMinY, (float)VisBoxMinZ),
-            new Vector3((float)VisBoxMaxX, (float)VisBoxMaxY, (float)VisBoxMaxZ));
+        // Only the edited component is written, so a box beyond the UI range is not clamped by editing another field.
+        _static.VisibilityBox = WithBoxComponent(_static.VisibilityBox, isMax, axis, value);
         _panel.Invalidate();
     }
 
@@ -213,22 +212,43 @@ public partial class StaticEditorWindowViewModel : ObservableObject, IModalDialo
 
     // ---- Collision box ----
 
-    partial void OnColBoxMinXChanged(double value) => ApplyCollisionBox();
-    partial void OnColBoxMinYChanged(double value) => ApplyCollisionBox();
-    partial void OnColBoxMinZChanged(double value) => ApplyCollisionBox();
-    partial void OnColBoxMaxXChanged(double value) => ApplyCollisionBox();
-    partial void OnColBoxMaxYChanged(double value) => ApplyCollisionBox();
-    partial void OnColBoxMaxZChanged(double value) => ApplyCollisionBox();
+    partial void OnColBoxMinXChanged(double value) => ApplyCollisionBox(false, 'X', value);
+    partial void OnColBoxMinYChanged(double value) => ApplyCollisionBox(false, 'Y', value);
+    partial void OnColBoxMinZChanged(double value) => ApplyCollisionBox(false, 'Z', value);
+    partial void OnColBoxMaxXChanged(double value) => ApplyCollisionBox(true, 'X', value);
+    partial void OnColBoxMaxYChanged(double value) => ApplyCollisionBox(true, 'Y', value);
+    partial void OnColBoxMaxZChanged(double value) => ApplyCollisionBox(true, 'Z', value);
 
-    private void ApplyCollisionBox()
+    private void ApplyCollisionBox(bool isMax, char axis, double value)
     {
         if (_initializing || _panel is null)
             return;
 
-        _static.CollisionBox = new BoundingBox(
-            new Vector3((float)ColBoxMinX, (float)ColBoxMinY, (float)ColBoxMinZ),
-            new Vector3((float)ColBoxMaxX, (float)ColBoxMaxY, (float)ColBoxMaxZ));
+        // Only the edited component is written, so a box beyond the UI range is not clamped by editing another field.
+        _static.CollisionBox = WithBoxComponent(_static.CollisionBox, isMax, axis, value);
         _panel.Invalidate();
+    }
+
+    private static BoundingBox WithBoxComponent(BoundingBox box, bool isMax, char axis, double value)
+    {
+        var corner = isMax ? box.Maximum : box.Minimum;
+
+        switch (axis)
+        {
+            case 'X':
+                corner.X = (float)value;
+                break;
+
+            case 'Y':
+                corner.Y = (float)value;
+                break;
+
+            default:
+                corner.Z = (float)value;
+                break;
+        }
+
+        return isMax ? new BoundingBox(box.Minimum, corner) : new BoundingBox(corner, box.Maximum);
     }
 
     private void SyncCollisionBoxFromModel()

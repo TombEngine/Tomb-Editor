@@ -67,6 +67,16 @@ public partial class FlybyCameraWindowViewModel : ObservableObject, IModalDialog
     /// <summary>Upper bound for the FOV editor; a full 180 degrees would make the projection degenerate.</summary>
     public decimal MaxFov => (decimal)FlybyConstants.MaxFlybyFieldOfViewDegrees;
 
+    /// <summary>False for classic engines that ignore the flag bits (WinForms compact layout).</summary>
+    public bool ShowFlags { get; }
+
+    public double WindowWidth => ShowFlags ? 600.0 : 250.0;
+
+    private static bool UsesCompactLayout(Level level)
+        => level.IsTRX
+            ? level.Settings.TrxConvertFlybysToCinematicFrames
+            : level.Settings.GameVersion.Native() <= TRVersion.Game.TR3;
+
     public FlybyCameraWindowViewModel(
         FlybyCameraInstance flyByCamera,
         Editor? editor = null,
@@ -77,6 +87,7 @@ public partial class FlybyCameraWindowViewModel : ObservableObject, IModalDialog
         _localizationService = ServiceLocator.ResolveService(localizationService).WithKeysFor(this);
 
         IsTombEngine = _editor.Level.IsTombEngine;
+        ShowFlags = !UsesCompactLayout(_editor.Level);
 
         _originalFlags = flyByCamera.Flags;
         _originalSequence = flyByCamera.Sequence;

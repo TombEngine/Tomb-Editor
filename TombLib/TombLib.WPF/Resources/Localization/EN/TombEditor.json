@@ -686,6 +686,7 @@
         "TitleGlobal": "Edit global event sets",
         "TitleVolume": "Edit volume event sets",
         "TitleVolumeSpecific": "Edit volume: {0}",
+        "VolumeRealtimeEditInfo": "To edit volumes in realtime, please close this window",
         "LaraTooltip": "Can be activated by Lara",
         "NpcsTooltip": "Can be activated by creatures",
         "OtherMoveablesTooltip": "Can be activated by other moveables, such as rolling balls",

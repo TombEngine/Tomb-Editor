@@ -550,10 +550,20 @@ namespace TombEditor.Features.Dialogs.LevelSettings
 
         private void BuildStaticMeshMerges()
         {
+            // Rows edited earlier in this session survive a rebuild (WinForms builds the list once).
+            var previousRows = StaticMeshMerges.ToDictionary(row => row.Entry.meshId);
+
             StaticMeshMerges.Clear();
             foreach (var staticMesh in _settings.WadGetAllStatics())
             {
                 uint typeId = staticMesh.Value.Id.TypeId;
+
+                if (previousRows.TryGetValue(typeId, out var previousRow))
+                {
+                    StaticMeshMerges.Add(previousRow);
+                    continue;
+                }
+
                 var existing = _settings.AutoStaticMeshMerges.FirstOrDefault(e => e.meshId.Equals(typeId));
                 StaticMeshMerges.Add(new StaticMeshMergeRow(existing ?? new AutoStaticMeshMergeEntry(typeId, false, false, false, false, _settings)));
             }

@@ -153,7 +153,12 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         private void FollowVolume(VolumeInstance? instance)
         {
             if (GlobalMode)
+            {
+                if (instance is not null)
+                    InfoRequested?.Invoke(_localizationService["VolumeRealtimeEditInfo"]);
+
                 return;
+            }
 
             _instance = instance;
             OnPropertyChanged(nameof(GenericMode));

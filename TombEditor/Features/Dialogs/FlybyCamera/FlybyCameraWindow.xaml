@@ -10,7 +10,7 @@
 
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     Title="{tombLib:Localize Title}"
-    Width="600"
+    Width="{Binding WindowWidth}"
     d:DataContext="{d:DesignInstance Type=vm:FlybyCameraWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
     ResizeMode="CanMinimize"
@@ -42,6 +42,7 @@
             Grid.Row="0"
             Grid.Column="1"
             ItemsSource="{Binding Flags}"
+            Visibility="{Binding ShowFlags, Converter={StaticResource BoolToVis}}"
             KeyboardNavigation.TabIndex="1">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
