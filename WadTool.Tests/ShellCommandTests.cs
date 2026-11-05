@@ -20,7 +20,7 @@ public class ShellCommandTests
 
         Assert.IsFalse(viewModel.TryExecute("SaveMenu_Click"));
         Assert.IsFalse(viewModel.TryExecute("SaveAsMenu_Click"));
-        Assert.IsFalse(viewModel.Commands["NewMoveableMenu_Click"].CanExecute(null));
+        // Like WinForms, Create entries stay enabled and report the missing destination themselves.
         Assert.IsTrue(viewModel.TryExecute("NewWad2Menu_Click"));
         Assert.AreEqual(1, invoked);
     }

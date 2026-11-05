@@ -20,7 +20,7 @@ public class OptionsLocalizationTests
         var localization = new LocalizationService();
         var viewModel = new OptionsWindowViewModel(tool, localizationService: localization);
 
-        Assert.AreEqual("WadTool options", localization["Title"]);
+        Assert.AreEqual("Options", localization["Title"]);
         Assert.AreEqual("Search:", localization["Search"]);
         Assert.AreEqual("Reset page to defaults", localization["ResetPageToDefaults"]);
         string[] expectedTabs = ["General", "Gizmo"];

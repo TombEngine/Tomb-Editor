@@ -147,7 +147,7 @@ public class WpfLightingRegressionTests
     }
 
     [TestMethod]
-    public void ClosingAfterLeavingLightingModeInvalidatesRestoredPreview()
+    public void ClosingAfterLeavingLightingModeRestoresWithoutRelight()
     {
         using var editor = CreateEditor();
         var light = AddLight(editor);
@@ -159,12 +159,13 @@ public class WpfLightingRegressionTests
         editor.Mode = EditorMode.Geometry;
         viewModel.OnClosing();
 
+        // Like WinForms FormTransform, relighting follows the editor mode: nothing is relit outside Lighting mode.
         Assert.AreEqual(Vector3.Zero, light.Position);
-        Assert.IsTrue(light.Room.PendingRelight);
+        Assert.IsFalse(light.Room.PendingRelight);
     }
 
     [TestMethod]
-    public void ReturningToOriginalTransformAfterImmediatePreviewStillInvalidatesOnConfirm()
+    public void ReturningToOriginalTransformAfterImmediatePreviewDoesNotRelightOnConfirm()
     {
         using var editor = CreateEditor();
         var light = AddLight(editor);
@@ -177,8 +178,9 @@ public class WpfLightingRegressionTests
         viewModel.TranslationX = originalX;
         viewModel.ConfirmCommand.Execute(null);
 
+        // Like WinForms FormTransform, relighting follows the editor mode: nothing is relit outside Lighting mode.
         Assert.AreEqual(Vector3.Zero, light.Position);
-        Assert.IsTrue(light.Room.PendingRelight);
+        Assert.IsFalse(light.Room.PendingRelight);
     }
 
     [DataTestMethod]
@@ -204,7 +206,7 @@ public class WpfLightingRegressionTests
     [DataTestMethod]
     [DataRow(false)]
     [DataRow(true)]
-    public void ReturningToOriginalTransformAfterImmediatePreviewStillInvalidatesOnClose(bool useCancel)
+    public void ReturningToOriginalTransformAfterImmediatePreviewDoesNotRelightOnClose(bool useCancel)
     {
         using var editor = CreateEditor();
         var light = AddLight(editor);
@@ -221,8 +223,9 @@ public class WpfLightingRegressionTests
 
         viewModel.OnClosing();
 
+        // Like WinForms FormTransform, relighting follows the editor mode: nothing is relit outside Lighting mode.
         Assert.AreEqual(Vector3.Zero, light.Position);
-        Assert.IsTrue(light.Room.PendingRelight);
+        Assert.IsFalse(light.Room.PendingRelight);
     }
 
     private static Editor CreateEditor() =>
