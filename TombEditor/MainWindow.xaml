@@ -63,7 +63,7 @@
             </Button>
         </StackPanel>
         <Menu x:Name="mainMenu">
-            <MenuItem Header="File">
+            <MenuItem Header="File" SubmenuOpened="FileMenu_SubmenuOpened">
                 <MenuItem editor:EditorMenu.Command="NewLevel" editor:EditorMenu.Icon="General/create_new" />
                 <MenuItem editor:EditorMenu.Command="OpenLevel" editor:EditorMenu.Icon="General/Open" />
                 <MenuItem x:Name="openRecentMenu" Header="Open recent" SubmenuOpened="OpenRecentMenu_SubmenuOpened">

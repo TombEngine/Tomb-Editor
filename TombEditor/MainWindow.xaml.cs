@@ -599,6 +599,16 @@ public partial class MainWindow : Window
         return ContentIdForPanelName(name);
     }
 
+    // WinForms disables Open recent when no existing recent file is left.
+    private void FileMenu_SubmenuOpened(object sender, RoutedEventArgs e)
+    {
+        if (!ReferenceEquals(e.OriginalSource, sender))
+            return;
+
+        var currentPath = _editor.Level?.Settings.LevelFilePath;
+        openRecentMenu.IsEnabled = Properties.Settings.Default.RecentProjects?.Cast<string>().Any(fileName => fileName != currentPath && File.Exists(fileName)) == true;
+    }
+
     private void OpenRecentMenu_SubmenuOpened(object sender, RoutedEventArgs e)
     {
         if (sender is not MenuItem menu)

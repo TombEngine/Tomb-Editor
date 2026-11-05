@@ -312,7 +312,13 @@ namespace TombEditor.Features.Map2D
             base.OnPreviewKeyDown(e);
 
             if ((Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Shift)) == ModifierKeys.None)
+            {
                 EngageMovement(e.Key);
+
+                // The movement keys must not also drive WPF directional focus navigation.
+                if (e.Key is Key.Left or Key.Right or Key.Up or Key.Down or Key.PageUp or Key.PageDown)
+                    e.Handled = true;
+            }
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
