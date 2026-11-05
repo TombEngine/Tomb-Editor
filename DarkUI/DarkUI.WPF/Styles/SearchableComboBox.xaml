@@ -40,21 +40,16 @@
 
 						<Popup
 							MaxHeight="{x:Static local:Defaults.ComboBox_Popup_MaxHeight}"
-							AllowsTransparency="True"
+							AllowsTransparency="False"
 							IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
 							Placement="Bottom"
 							PopupAnimation="Slide">
 							<Border
 								MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
-								Margin="{x:Static local:Defaults.Thickness_ShadowMargin}"
 								Padding="{x:Static local:Defaults.SmallThickness}"
 								Background="{DynamicResource Brush_Background_Low}"
 								BorderBrush="{TemplateBinding BorderBrush}"
 								BorderThickness="{TemplateBinding BorderThickness}">
-								<Border.Effect>
-									<DropShadowEffect Opacity="{x:Static local:Defaults.DropShadow_Opacity}" ShadowDepth="{x:Static local:Defaults.DropShadow_Depth}" />
-								</Border.Effect>
-
 								<Grid>
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition />

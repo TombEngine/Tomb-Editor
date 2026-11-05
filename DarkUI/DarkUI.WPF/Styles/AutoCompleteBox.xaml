@@ -19,19 +19,14 @@
 							x:Name="PART_Popup"
 							Width="{Binding ElementName=PART_InputTextBox, Path=ActualWidth}"
 							MaxHeight="100"
-							AllowsTransparency="True"
+							AllowsTransparency="False"
 							IsOpen="{Binding IsSuggestionVisible, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
 							Placement="Bottom"
 							StaysOpen="False">
 							<Border
-								Margin="{x:Static local:Defaults.Thickness_ShadowMargin}"
 								Background="{DynamicResource Brush_Background}"
 								BorderBrush="{TemplateBinding BorderBrush}"
 								BorderThickness="{TemplateBinding BorderThickness}">
-								<Border.Effect>
-									<DropShadowEffect Opacity="{x:Static local:Defaults.DropShadow_Opacity}" ShadowDepth="{x:Static local:Defaults.DropShadow_Depth}" />
-								</Border.Effect>
-
 								<ListBox x:Name="PART_SuggestionBox" ItemsSource="{TemplateBinding ItemsSource}">
 									<ListBox.Resources>
 										<Style BasedOn="{StaticResource {x:Type ListBox}}" TargetType="{x:Type ListBox}">
