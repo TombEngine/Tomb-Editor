@@ -34,7 +34,7 @@ public partial class ItemBrowserView : UserControl
     {
         if (editorEvent is Editor.ConfigurationChangedEvent)
             _panelItem.AnimatePreview = Editor.Instance.Configuration.RenderingItem_Animate;
-        else if (editorEvent is Editor.ChosenItemsChangedEvent)
+        else if (editorEvent is Editor.ChosenItemsChangedEvent && Editor.Instance.GetFirstWadObject() is not null)
             ActivationRequested?.Invoke(this, System.EventArgs.Empty);
     }
 

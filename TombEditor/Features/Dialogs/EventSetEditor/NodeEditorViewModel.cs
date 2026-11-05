@@ -152,9 +152,9 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             System.Windows.Application.Current.Dispatcher.BeginInvoke(new Action(Rebuild));
         }
 
-        private void SyncRootsAndRebuild()
+        private void SyncRootsAndRebuild(IEnumerable<TriggerNode>? knownNodes = null)
         {
-            var all = TriggerNode.LinearizeNodes(_event.Nodes);
+            var all = knownNodes ?? TriggerNode.LinearizeNodes(_event.Nodes);
             _event.Nodes = all.Where(n => n.Previous is null).ToList();
             Rebuild();
         }
@@ -521,6 +521,9 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         /// <summary>Detaches whatever is linked at the given grip of a node when a link drag starts from it.</summary>
         public void BeginLinkDrag(TriggerNode node, NodeConnection connection)
         {
+            // Collected before detaching: the node that loses its link is no longer reachable from the roots and must stay in the event.
+            var allNodes = TriggerNode.LinearizeNodes(_event.Nodes).ToList();
+
             switch (connection)
             {
                 case NodeConnection.Previous:
@@ -538,7 +541,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                     break;
             }
 
-            SyncRootsAndRebuild();
+            SyncRootsAndRebuild(allNodes);
         }
 
         /// <summary>Gets whether a link dragged from <paramref name="dragMode"/> of a node may end on the given grip of the target.</summary>

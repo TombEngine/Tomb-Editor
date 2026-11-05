@@ -1,5 +1,6 @@
 #nullable enable
 
+using System.Linq;
 using System.Windows.Controls;
 using TombEditor.Controls;
 using TombLib.Rendering;
@@ -37,7 +38,7 @@ public partial class ImportedGeometryBrowserView : UserControl
     {
         if (editorEvent is Editor.ConfigurationChangedEvent)
             _panelItem.AnimatePreview = Editor.Instance.Configuration.RenderingItem_Animate;
-        else if (editorEvent is Editor.ChosenItemsChangedEvent)
+        else if (editorEvent is Editor.ChosenItemsChangedEvent { Current: { } chosen } && chosen.OfType<TombLib.LevelData.ImportedGeometry>().Any())
             ActivationRequested?.Invoke(this, System.EventArgs.Empty);
     }
 
