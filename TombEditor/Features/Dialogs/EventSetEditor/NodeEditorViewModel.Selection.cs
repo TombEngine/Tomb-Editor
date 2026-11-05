@@ -51,6 +51,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             if (!node.IsEditable)
                 return;
 
+            node.BringToFront();
+
             var selection = ctrl || shift ? _selectedNodes.ToList() : [];
 
             if (!selection.Contains(node))
@@ -82,6 +84,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         /// <summary>Starts moving the dragged node together with the rest of the selection (locked ones too) from the current positions.</summary>
         public void BeginMove(NodeViewModel anchor)
         {
+            anchor.BringToFront();
             var group = _selectedNodes.Contains(anchor) ? _selectedNodes : [anchor];
             _moveOrigins = group.Select(n => (n, n.CanvasLeft, n.CanvasTop)).ToList();
         }

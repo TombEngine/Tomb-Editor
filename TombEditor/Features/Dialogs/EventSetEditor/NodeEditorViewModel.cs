@@ -246,7 +246,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         /// <summary>Picks a non-overlapping position below the selected node (mirrors NodeEditor.GetBestPosition).</summary>
         private void PlaceNode(TriggerNode node)
         {
-            const double estimatedHeight = 120.0;
+            // The real control height is used by WinForms; typical heights of a fresh condition and action node (96 DPI) stand in for it.
+            double estimatedHeight = node is TriggerNodeCondition ? 72.0 : 108.0;
             double width = node.Size;
             double step = _options.GridStep;
 
@@ -283,7 +284,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                     var otherRect = new Rect(other.CanvasLeft, other.CanvasTop, other.Width, other.Height);
                     otherRect.Inflate(marginX, marginY);
 
-                    if (rect.IntersectsWith(otherRect))
+                    // Touching edges do not collide (System.Drawing.Rectangle semantics used by WinForms), unlike Rect.IntersectsWith.
+                    if (rect.Left < otherRect.Right && rect.Right > otherRect.Left && rect.Top < otherRect.Bottom && rect.Bottom > otherRect.Top)
                     {
                         colliding = true;
                         break;

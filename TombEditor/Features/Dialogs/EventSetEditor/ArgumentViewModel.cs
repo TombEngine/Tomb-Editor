@@ -192,8 +192,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         public IReadOnlyList<ArgumentListItem> Items { get; }
 
-        /// <summary>The search lens is only shown for long lists, like the legacy combo (threshold 10), except for the fixed event and operator lists.</summary>
-        public bool ShowSearch => Items.Count > 10 || _layout.Type is not (ArgumentType.VolumeEvents or ArgumentType.GlobalEvents or ArgumentType.CompareOperator or ArgumentType.Enumeration);
+        /// <summary>The search lens is only shown for lists longer than ten entries (SearchThreshold of the legacy combo).</summary>
+        public bool ShowSearch => Items.Count > 10;
         public ArgumentListAction ListAction { get; }
         public bool HasAction => ListAction != ArgumentListAction.None;
         public bool IsLocateAction => ListAction == ArgumentListAction.Locate;

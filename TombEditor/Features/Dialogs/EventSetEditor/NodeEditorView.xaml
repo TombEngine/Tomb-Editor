@@ -383,6 +383,7 @@
                             <Style TargetType="ContentPresenter">
                                 <Setter Property="Canvas.Left" Value="{Binding CanvasLeft}" />
                                 <Setter Property="Canvas.Top" Value="{Binding CanvasTop}" />
+                                <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}" />
                             </Style>
                         </ItemsControl.ItemContainerStyle>
                         <ItemsControl.ItemTemplate>

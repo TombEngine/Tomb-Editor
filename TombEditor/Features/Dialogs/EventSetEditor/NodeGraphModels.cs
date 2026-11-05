@@ -36,6 +36,14 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         private readonly string _functionDisplay;
         private readonly NodeFunction? _function;
 
+        private static int _topZIndex;
+
+        /// <summary>Stacking order on the canvas; the last clicked or moved node is raised above the others, as WinForms does.</summary>
+        [ObservableProperty]
+        private int _zIndex;
+
+        public void BringToFront() => ZIndex = ++_topZIndex;
+
         public TriggerNode Node { get; }
         public ObservableCollection<ArgumentViewModel> Arguments { get; } = new();
 

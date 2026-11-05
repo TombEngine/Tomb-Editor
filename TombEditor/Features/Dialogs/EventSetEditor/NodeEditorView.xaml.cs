@@ -110,7 +110,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                             canvasScroll.ViewportWidth / scale, canvasScroll.ViewportHeight / scale);
         }
 
-        /// <summary>Restores the saved view position of the event, or centers on its nodes when it has none.</summary>
+        /// <summary>Restores the saved view position of the event, or centers on the grid when it has none (as WinForms does).</summary>
         private void RestoreView()
         {
             var viewModel = ViewModel;
@@ -127,7 +127,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             if (viewModel.SavedViewPosition is { } saved)
                 CenterOn(saved.X * viewModel.GridStep, (viewModel.GridSize - saved.Y) * viewModel.GridStep);
             else
-                CenterOnNodes(viewModel);
+                CenterOn(viewModel.GridSize * viewModel.GridStep / 2.0, viewModel.GridSize * viewModel.GridStep / 2.0);
 
             // Only scrolling after the initial positioning is remembered, like the previous editor did.
             Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(() => _viewPositionTracked = true));
