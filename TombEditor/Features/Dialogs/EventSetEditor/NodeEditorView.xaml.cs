@@ -526,7 +526,7 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             var position = e.GetPosition(rootCanvas);
 
             if (ViewModel is { } viewModel && _linkNode is not null && _linkMoved)
-                viewModel.CompleteLinkDrag(_linkNode, _linkMode, FindNodeAt(position), position.X);
+                viewModel.CompleteLinkDrag(_linkNode, _linkMode, FindNodeAt(position), position);
 
             EndLinkDrag();
         }
