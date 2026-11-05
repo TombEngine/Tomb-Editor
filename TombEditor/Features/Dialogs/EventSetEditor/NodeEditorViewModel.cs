@@ -191,7 +191,45 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             CreateNode(request.Function.Conditional, request.Function, true, Keyboard.Modifiers == ModifierKeys.Alt, new Point(request.CanvasX, request.CanvasY));
         }
 
-        private void CreateNode(bool condition, NodeFunction? function, bool linkToPrevious, bool linkToElse, Point? canvasPosition)
+        /// <summary>
+        /// Creates an action node at the drop point for a scene object with a Lua name: the first action function taking
+        /// that kind of object gets its name as the argument (WinForms NodeEditor_DragDrop).
+        /// </summary>
+        public void CreateNodeForObject(PositionAndScriptBasedObjectInstance item, Point canvasPosition)
+        {
+            if (string.IsNullOrEmpty(item.LuaName))
+                return;
+
+            ArgumentType? needed = item switch
+            {
+                MoveableInstance => ArgumentType.Moveables,
+                StaticInstance => ArgumentType.Statics,
+                CameraInstance => ArgumentType.Cameras,
+                FlybyCameraInstance => ArgumentType.FlybyCameras,
+                SinkInstance => ArgumentType.Sinks,
+                VolumeInstance => ArgumentType.Volumes,
+                _ => null
+            };
+
+            if (needed is not { } neededType)
+                return;
+
+            var function = Functions.FirstOrDefault(f => !f.Conditional && f.Arguments.Any(a => a.Type == neededType));
+            if (function is null)
+                return;
+
+            int argumentIndex = function.Arguments.FindIndex(a => a.Type == neededType);
+            CreateNode(false, function, false, false, canvasPosition, node =>
+            {
+                if (argumentIndex < node.Arguments.Count)
+                {
+                    var argument = node.Arguments[argumentIndex];
+                    argument.Value = TextExtensions.Quote(item.LuaName);
+                    node.Arguments[argumentIndex] = argument;
+                }
+            });
+        }
+        private void CreateNode(bool condition, NodeFunction? function, bool linkToPrevious, bool linkToElse, Point? canvasPosition, Action<TriggerNode>? configure = null)
         {
             TriggerNode node = condition
                 ? new TriggerNodeCondition { Name = _localizationService.Format("IfNodeName", Nodes.Count(n => n.IsCondition) + 1) }
@@ -205,6 +243,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                 node.Function = function.Signature;
                 node.FixArguments(function);
             }
+
+            configure?.Invoke(node);
 
             if (canvasPosition is { } position)
                 node.ScreenPosition = ToGridPosition(position.X, position.Y);

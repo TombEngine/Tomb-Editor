@@ -325,6 +325,9 @@
                 VerticalScrollBarVisibility="Hidden">
                 <Canvas
                     x:Name="rootCanvas"
+                    AllowDrop="True"
+                    DragOver="Canvas_DragOver"
+                    Drop="Canvas_Drop"
                     Width="{Binding CanvasWidth}"
                     Height="{Binding CanvasHeight}"
                     Background="{DynamicResource Brush_Background_Low}"

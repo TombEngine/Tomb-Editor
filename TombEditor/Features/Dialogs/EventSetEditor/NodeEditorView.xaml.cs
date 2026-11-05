@@ -175,6 +175,26 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                 (float)(viewModel.GridSize - (viewport.Top + viewport.Height / 2.0) / viewModel.GridStep));
         }
 
+        private void Canvas_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effects = GetDroppedLuaObject(e) is not null ? DragDropEffects.Copy : DragDropEffects.None;
+            e.Handled = true;
+        }
+
+        private void Canvas_Drop(object sender, DragEventArgs e)
+        {
+            if (ViewModel is not { } viewModel || GetDroppedLuaObject(e) is not { } item)
+                return;
+
+            viewModel.CreateNodeForObject(item, e.GetPosition(rootCanvas));
+            e.Handled = true;
+        }
+
+        private static TombLib.LevelData.PositionAndScriptBasedObjectInstance? GetDroppedLuaObject(DragEventArgs e)
+        {
+            var formats = e.Data.GetFormats();
+            return formats.Length > 0 ? e.Data.GetData(formats[0]) as TombLib.LevelData.PositionAndScriptBasedObjectInstance : null;
+        }
         private void OnArgDragOver(object sender, DragEventArgs e)
         {
             bool accepts = sender is FrameworkElement fe && fe.DataContext is ArgumentViewModel arg && arg.AcceptsDrop;
