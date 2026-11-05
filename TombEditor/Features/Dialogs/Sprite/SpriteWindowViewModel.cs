@@ -65,7 +65,7 @@ public partial class SpriteWindowViewModel : ObservableObject, IModalDialogViewM
                 Sprites.Add($"{name}, Frame {frame}");
         }
 
-        SelectedSpriteIndex = _instance.SpriteID >= 0 && _instance.SpriteID < Sprites.Count ? _instance.SpriteID : (Sprites.Count > 0 ? 0 : -1);
+        SelectedSpriteIndex = _instance.SpriteID >= 0 && _instance.SpriteID < Sprites.Count ? _instance.SpriteID : -1;
         UpdatePreview();
     }
 

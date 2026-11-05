@@ -116,16 +116,16 @@
                         </Grid.RowDefinitions>
 
                         <Label Grid.Row="0" Content="{tomb:Localize Volume}" HorizontalAlignment="Right" />
-                        <controls:NumericUpDown Grid.Row="0" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding Volume}" Margin="4" />
+                        <controls:NumericUpDown Grid.Row="0" Grid.Column="1" DecimalPlaces="0" LargeIncrement="5" Minimum="0" Maximum="100" Value="{Binding Volume}" Margin="4" />
                         <Label Grid.Row="0" Grid.Column="2" Content="%" />
                         <Label Grid.Row="1" Content="{tomb:Localize Pitch}" HorizontalAlignment="Right" />
-                        <controls:NumericUpDown Grid.Row="1" Grid.Column="1" Minimum="-100" Maximum="100" Value="{Binding PitchFactor}" Margin="4" />
+                        <controls:NumericUpDown Grid.Row="1" Grid.Column="1" DecimalPlaces="0" LargeIncrement="1" Minimum="-100" Maximum="100" Value="{Binding PitchFactor}" Margin="4" />
                         <Label Grid.Row="1" Grid.Column="2" Content="%" />
                         <Label Grid.Row="2" Content="{tomb:Localize Range}" HorizontalAlignment="Right" />
-                        <controls:NumericUpDown Grid.Row="2" Grid.Column="1" Minimum="0" Maximum="255" Value="{Binding RangeInSectors}" Margin="4" />
+                        <controls:NumericUpDown Grid.Row="2" Grid.Column="1" DecimalPlaces="0" LargeIncrement="1" Minimum="0" Maximum="255" Value="{Binding RangeInSectors}" Margin="4" />
                         <Label Grid.Row="2" Grid.Column="2" Content="{tomb:Localize Sectors}" />
                         <Label Grid.Row="3" Content="{tomb:Localize Chance}" HorizontalAlignment="Right" />
-                        <controls:NumericUpDown Grid.Row="3" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding Chance}" Margin="4" />
+                        <controls:NumericUpDown Grid.Row="3" Grid.Column="1" DecimalPlaces="0" LargeIncrement="1" Minimum="0" Maximum="100" Value="{Binding Chance}" Margin="4" />
                         <Label Grid.Row="3" Grid.Column="2" Content="%" />
 
                         <StackPanel Grid.Row="0" Grid.Column="4" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
@@ -148,13 +148,13 @@
                     <Button Command="{Binding BrowseSamplesCommand}" Style="{DynamicResource ButtonWithIconAndText}" Margin="4,0,0,0"><StackPanel Orientation="Horizontal"><Image Source="{icons:Icon General/Open}" /><TextBlock Text="{tomb:Localize Browse}" /></StackPanel></Button>
                     <Button Command="{Binding DeleteSampleCommand}" Style="{DynamicResource ButtonWithIconAndText}" Margin="4,0,0,0"><StackPanel Orientation="Horizontal"><Image Source="{icons:Icon General/trash}" /><TextBlock Text="{tomb:Localize Delete}" /></StackPanel></Button>
                 </StackPanel>
-                            <DataGrid Grid.Row="4" ItemsSource="{Binding SelectedSound.Samples}" SelectedItem="{Binding SelectedSample}" AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Extended" SelectionChanged="SamplesSelectionChanged">
+                            <DataGrid Grid.Row="4" ItemsSource="{Binding SelectedSound.Samples}" SelectedItem="{Binding SelectedSample}" AutoGenerateColumns="False" CanUserDeleteRows="False" CanUserAddRows="False" SelectionMode="Extended" SelectionChanged="SamplesSelectionChanged">
                                 <DataGrid.RowStyle>
                                     <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
                                         <Style.Triggers><DataTrigger Binding="{Binding ResolvedPath}" Value="[not found]"><Setter Property="Background" Value="#70402020" /></DataTrigger></Style.Triggers>
                                     </Style>
                                 </DataGrid.RowStyle>
-                                <DataGrid.Columns><DataGridTextColumn Header="{tomb:Localize Filename}" Binding="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" Width="*" /><DataGridTextColumn Header="{tomb:Localize ResolvedPath}" Binding="{Binding ResolvedPath}" IsReadOnly="True" Width="2*" /></DataGrid.Columns>
+                                <DataGrid.Columns><DataGridTextColumn Header="{tomb:Localize Filename}" Binding="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" Width="*" /><DataGridTextColumn Header="{tomb:Localize ResolvedPath}" Binding="{Binding ResolvedPath}" IsReadOnly="True" Width="2*" /></DataGrid.Columns>
                             </DataGrid>
             </Grid>
             <Border Grid.Column="2" Margin="8,0,0,0" Background="{DynamicResource Brush_Background}">

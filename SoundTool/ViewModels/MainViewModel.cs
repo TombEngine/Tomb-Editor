@@ -23,7 +23,7 @@ namespace SoundTool.ViewModels;
 public partial class MainViewModel : ObservableObject
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-    private const string CatalogFilter = "Sound catalogs|*.xml;*.txt|XML sound catalogs|*.xml|Legacy sound catalogs|*.txt";
+    private const string CatalogFilter = "Sound catalogs|*.xml;*.txt;*.sfx|XML sound catalogs|*.xml|Legacy sound catalogs|*.txt|Compiled TRLE sound files|*.sfx";
     private readonly Configuration _configuration;
     private readonly ISoundToolDialogs _dialogs;
     private readonly IMessageService _messages;

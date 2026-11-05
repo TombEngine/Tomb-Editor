@@ -522,6 +522,7 @@ public partial class MainWindow : Window
             "ItemBrowser" => ("itemBrowser", itemBrowserView.FocusSearch),
             "ImportedGeometryBrowser" => ("importedGeometryBrowser", importedGeometryBrowserView.FocusSearch),
             "TexturePanel" => ("texturePanel", texturePanelView.FocusSearch),
+            "ContentBrowser" => ("contentBrowser", contentBrowserView.FocusSearch),
             _ => (null, null)
         };
 

@@ -77,16 +77,10 @@
                 IsEnabled="{Binding IsListening, Converter={StaticResource InverseBool}}"
                 ItemsSource="{Binding Rows}"
                 SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
+                MouseDoubleClick="HotkeysGrid_MouseDoubleClick"
                 SelectionChanged="HotkeysGrid_SelectionChanged"
                 SelectionMode="Single">
-                <DataGrid.InputBindings>
-                    <!--  Legacy double-click behaviour: listen for a hotkey that replaces the row's existing ones.
-                        The grid is disabled while listening, so this cannot re-trigger mid-capture.  -->
-                    <MouseBinding
-                        Command="{Binding StartListeningReplaceCommand}"
-                        CommandParameter="{Binding SelectedRow}"
-                        MouseAction="LeftDoubleClick" />
-                </DataGrid.InputBindings>
+                
                 <DataGrid.Columns>
                     <DataGridTextColumn
                         Width="80"

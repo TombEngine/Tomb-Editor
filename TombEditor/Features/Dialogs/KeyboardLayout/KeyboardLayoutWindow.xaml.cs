@@ -18,6 +18,21 @@ public partial class KeyboardLayoutWindow : Window
     private KeyboardLayoutWindowViewModel? Vm => DataContext as KeyboardLayoutWindowViewModel;
 
     // A found or newly selected row is scrolled into view, like the previous grid did.
+    /// <summary>Double-click on a data row (not on headers, scroll bars or buttons) starts listening for a replacing hotkey, as WinForms CellDoubleClick does.</summary>
+    private void HotkeysGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        for (var source = e.OriginalSource as System.Windows.DependencyObject; source is not null; source = source is System.Windows.Media.Visual or System.Windows.Media.Media3D.Visual3D ? System.Windows.Media.VisualTreeHelper.GetParent(source) : System.Windows.LogicalTreeHelper.GetParent(source))
+        {
+            if (source is not System.Windows.Controls.DataGridRow)
+                continue;
+
+            if (Vm?.SelectedRow is { } row)
+                Vm.StartListeningReplaceCommand.Execute(row);
+
+            return;
+        }
+    }
+
     private void HotkeysGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
         if (sender is System.Windows.Controls.DataGrid { SelectedItem: { } selected } grid)

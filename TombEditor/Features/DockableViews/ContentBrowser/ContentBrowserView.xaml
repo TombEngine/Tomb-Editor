@@ -212,6 +212,7 @@
                 <!--  Search box  -->
                 <Grid Grid.Column="0" Margin="0,0,4,0">
                     <TextBox
+                        x:Name="searchTextBox"
                         Padding="2,1,18,1"
                         VerticalContentAlignment="Center"
                         FontSize="11"

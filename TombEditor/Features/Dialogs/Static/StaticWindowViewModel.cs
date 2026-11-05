@@ -85,6 +85,11 @@ public partial class StaticWindowViewModel : ObservableObject, IModalDialogViewM
             _newOcb = parsed;
             DecodeOcb();
         }
+        else
+        {
+            // WinForms resets the text from the check boxes when it is not a valid number.
+            EncodeOcb();
+        }
     }
 
     partial void OnBurnLaraOnCollisionChanged(bool value) => EncodeOcbIfNotApplying();

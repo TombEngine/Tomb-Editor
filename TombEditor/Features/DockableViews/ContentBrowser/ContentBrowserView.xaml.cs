@@ -37,6 +37,13 @@ public partial class ContentBrowserView : UserControl
 
     private AssetItemViewModel? _clickedItem;
 
+    /// <summary>Puts the keyboard focus in the search box (the in-place search command).</summary>
+    public void FocusSearch()
+    {
+        searchTextBox.Focus();
+        searchTextBox.SelectAll();
+    }
+
     public ContentBrowserView()
     {
         InitializeComponent();

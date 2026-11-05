@@ -94,6 +94,7 @@ public partial class TexturePanelViewModel : ObservableObject
                 ((RelayCommand)DeleteTextureCommand).NotifyCanExecuteChanged();
                 ((RelayCommand)BrowseTextureCommand).NotifyCanExecuteChanged();
                 ((RelayCommand)MaterialEditorCommand).NotifyCanExecuteChanged();
+                ((RelayCommand)EditAnimationRangesCommand).NotifyCanExecuteChanged();
             }
         }
     }
@@ -165,8 +166,9 @@ public partial class TexturePanelViewModel : ObservableObject
         SetDoubleSidedCommand = CommandHandler.GetCommand("SetTextureDoubleSided",
             () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWindowOwner() });
 
-        EditAnimationRangesCommand = CommandHandler.GetCommand("EditAnimationRanges",
+        var editAnimationRanges = CommandHandler.GetCommand("EditAnimationRanges",
             () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWindowOwner() });
+        EditAnimationRangesCommand = new RelayCommand(() => editAnimationRanges.Execute(null), () => AreMainButtonsEnabled);
 
         DeleteTextureCommand = new RelayCommand(DeleteSelected, () => AreMainButtonsEnabled);
         BrowseTextureCommand = new RelayCommand(BrowseSelected, () => AreMainButtonsEnabled);
@@ -272,9 +274,10 @@ public partial class TexturePanelViewModel : ObservableObject
             foreach (var tex in settings.Textures)
                 Textures.Add(tex);
 
-            SelectedTexture = previous is not null && Textures.Contains(previous)
-                ? previous
-                : Textures.FirstOrDefault();
+            // A texture that disappeared on a reload leaves nothing selected (WinForms); only a fresh list picks the first.
+            SelectedTexture = previous is null
+                ? Textures.FirstOrDefault()
+                : (Textures.Contains(previous) ? previous : null);
         }
         finally
         {
