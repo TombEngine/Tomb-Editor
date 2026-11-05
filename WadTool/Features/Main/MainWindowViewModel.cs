@@ -64,8 +64,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
             "ConvertToTiledMenu_Click" or "ConvertToUVMappedMenu_Click" => HasDestination && HasDestinationSelection,
         "EditSkeletonButton_Click" => _tool.MainSelection?.Id is WadMoveableId,
         "AnimatedTexturesMenu_Click" or "ConvertWadToTombEngineMenu_Click" or "DebugMeshEditorMenu_Click" or
-            "ItemPropertiesMenu_Click" or "MeshEditorMenu_Click" or "NewMoveableMenu_Click" or
-            "NewSpriteSequenceMenu_Click" or "NewStaticMenu_Click" => HasDestination,
+            "ItemPropertiesMenu_Click" or "MeshEditorMenu_Click" => HasDestination,
         _ => true
     };
 

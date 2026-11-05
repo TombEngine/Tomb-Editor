@@ -198,7 +198,7 @@
                             <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding AllTextures, Mode=TwoWay}" ToolTip="List all textures from wad" Visibility="{Binding ShowAllTexturesButton, Converter={StaticResource BoolToVis}}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/DrawAllRooms}" /></ToggleButton>
                         </controls:SpacedStack>
                         <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
-                            <Button Width="150" Command="{Binding MaterialEditorCommand}" Content="Materials" IsEnabled="{Binding MaterialEditorEnabled}" ToolTip="Edit materials" />
+                            <Button Width="150" Command="{Binding MaterialEditorCommand}" Content="Materials" IsEnabled="{Binding MaterialEditorEnabled}" ToolTip="Edit materials" Visibility="{Binding ShowTextureTools, Converter={StaticResource BoolToVis}}" />
                             <Button Width="150" Command="{Binding AnimationRangesCommand}" Content="Animated textures" ToolTip="Edit animated texture sets" Visibility="{Binding ShowTextureTools, Converter={StaticResource BoolToVis}}" />
                         </controls:SpacedStack>
                     </StackPanel>

@@ -144,6 +144,10 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
         _singleMesh = mesh;
         _focusObjectId = focusObjectId;
 
+        // Opened for a wad object (main menu), WinForms shows the Materials and Animated textures tools for TombEngine only.
+        if (_focusObjectId is not null)
+            ShowTextureTools = _wad.GameVersion == TombLib.LevelData.TRVersion.Game.TombEngine;
+
         foreach (var name in TextureExtensions.BlendModeUserNames(_tool.DestinationWad.GameVersion))
             BlendModes.Add(name);
     }

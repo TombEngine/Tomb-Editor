@@ -217,7 +217,7 @@ namespace WadTool.Features.Dialogs.Options
                 Group(_localizationService["Group_System"],
                     Bool(_localizationService["Opt_Tool_MakeEmptyWadAtStartup"], "Tool_MakeEmptyWadAtStartup"),
                     Bool(_localizationService["Opt_Log_WriteToFile"], "Log_WriteToFile"),
-                    Num(_localizationService["Opt_Log_ArchiveN"], "Log_ArchiveN"))));
+                    Num(_localizationService["Opt_Log_ArchiveN"], "Log_ArchiveN", 0, 100))));
 
             // Gizmo
             Tabs.Add(Tab(_localizationService["Tab_Gizmo"],

@@ -147,7 +147,8 @@ public class AutoCompleteBox : Control
 
 	private void OnLostFocus(object sender, RoutedEventArgs e)
 	{
-		if (!IsSuggestionVisible && InputTextBox is not null)
+		// Commit the typed text when focus leaves the control, also while suggestions are showing (WinForms keeps Text live).
+		if (InputTextBox is not null && !IsKeyboardFocusWithin && Popup?.IsKeyboardFocusWithin != true)
 			Text = InputTextBox.Text;
 	}
 
