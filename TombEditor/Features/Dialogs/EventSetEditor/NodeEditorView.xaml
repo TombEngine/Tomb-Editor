@@ -245,9 +245,26 @@
     <DockPanel LastChildFill="True">
 
         <!--  Toolbar  -->
-        <controls:SpacedStack
-            DockPanel.Dock="Bottom"
-            Margin="0,6,0,0"
+        <DockPanel DockPanel.Dock="Bottom" Margin="0,6,0,0" LastChildFill="True">
+            <controls:SpacedStack DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <TextBlock VerticalAlignment="Center" Text="{tombLib:Localize CallCount}" />
+            <controls:NumericUpDown
+                Width="72"
+                DecimalPlaces="0"
+                Maximum="99999"
+                Minimum="0"
+                ToolTip="{tombLib:Localize CallCountTooltip}"
+                Value="{Binding CallCounter, Mode=TwoWay}" />
+            <CheckBox
+                VerticalAlignment="Center"
+                Content="{tombLib:Localize ~TombEditor.EventSetEditor.EnableEvent}"
+                IsChecked="{Binding DataContext.CurrentEventEnabled, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
+                IsEnabled="{Binding DataContext.HasCurrentEvent, RelativeSource={RelativeSource AncestorType=Window}}"
+                ToolTip="{tombLib:Localize ~TombEditor.EventSetEditor.EnableEventTooltip}" />
+        </controls:SpacedStack>
+            <controls:SpacedStack
+            HorizontalAlignment="Left"
+            
             Orientation="Horizontal"
             Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
             <Button Width="88" Command="{Binding AddActionNodeCommand}" ToolTip="{tombLib:Localize AddActionTooltip}">
@@ -300,21 +317,8 @@
                 <Image Width="16" Height="16" Source="{tomb:Icon General/copy}" />
             </Button>
 
-            <TextBlock VerticalAlignment="Center" Text="{tombLib:Localize CallCount}" />
-            <controls:NumericUpDown
-                Width="72"
-                DecimalPlaces="0"
-                Maximum="99999"
-                Minimum="0"
-                ToolTip="{tombLib:Localize CallCountTooltip}"
-                Value="{Binding CallCounter, Mode=TwoWay}" />
-            <CheckBox
-                VerticalAlignment="Center"
-                Content="{tombLib:Localize ~TombEditor.EventSetEditor.EnableEvent}"
-                IsChecked="{Binding DataContext.CurrentEventEnabled, Mode=TwoWay, RelativeSource={RelativeSource AncestorType=Window}}"
-                IsEnabled="{Binding DataContext.HasCurrentEvent, RelativeSource={RelativeSource AncestorType=Window}}"
-                ToolTip="{tombLib:Localize ~TombEditor.EventSetEditor.EnableEventTooltip}" />
-        </controls:SpacedStack>
+            </controls:SpacedStack>
+        </DockPanel>
 
         <!--  Node canvas  -->
         <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
