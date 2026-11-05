@@ -88,7 +88,18 @@ public class AnimationTrackBar : FrameworkElement
         // GDI clipping to the control bounds.
         ClipToBounds = true;
 
+        // WinForms takes the keyboard focus when the pointer enters the slider, so the frame keys work right after editing a field.
+        Focusable = true;
+
         _highlightTimer.Tick += HighlightTimer_Tick;
+    }
+
+    protected override void OnMouseEnter(System.Windows.Input.MouseEventArgs e)
+    {
+        base.OnMouseEnter(e);
+
+        if (System.Windows.Window.GetWindow(this) is { IsActive: true })
+            Focus();
     }
 
     /// <summary>Mirrors the previous Invalidate() the view model calls after external changes.</summary>

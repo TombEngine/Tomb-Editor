@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -356,7 +356,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
         UpdateStatusLabel();
 
-        if (previousAnim is not null && _editor.CurrentAnim is not null)
+        if (_editor.CurrentAnim is not null)
             _editor.Tool.AnimationEditorCurrentAnimationChanged(previousAnim, _editor.CurrentAnim);
     }
 
@@ -442,6 +442,9 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
     private void PushUndoOnce()
     {
+        // WinForms marks the animation dirty on every parameter edit, also when the undo entry is coalesced.
+        SetSaved(false);
+
         if (!_editor.MadeChanges)
         {
             _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
@@ -473,7 +476,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         PushUndoOnce();
         byte rate = (byte)TombLib.MathC.Clamp((float)value, 1, 255);
         _allowUpdate = false;
-        EndFrame = Math.Round(_editor.CurrentAnim.WadAnimation.EndFrame / (_editor.CurrentAnim.WadAnimation.FrameRate / (float)rate));
+        EndFrame = Math.Clamp(Math.Round(_editor.CurrentAnim.WadAnimation.EndFrame / (_editor.CurrentAnim.WadAnimation.FrameRate / (float)rate)), 0.0, 32767.0);
         _allowUpdate = true;
         _editor.CurrentAnim.WadAnimation.FrameRate = rate;
         _editor.CurrentAnim.WadAnimation.EndFrame = (ushort)EndFrame;
@@ -1818,9 +1821,18 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     }
 
     [RelayCommand]
-    private void Ok() => DialogResult = true;
+    private void Ok()
+    {
+        DialogResult = null;
+        DialogResult = true;
+    }
+
     [RelayCommand]
-    private void Cancel() => DialogResult = false;
+    private void Cancel()
+    {
+        DialogResult = null;
+        DialogResult = false;
+    }
 
     /// <summary>
     /// Asks what to do with unsaved changes (like the previous form) and saves on OK. Returns false to keep the window open.
@@ -1843,6 +1855,8 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
                     break;
 
                 default:
+                    // Reset, otherwise the next Cancel sets the same value again and the window never closes.
+                    DialogResult = null;
                     return false;
             }
         }

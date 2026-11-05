@@ -119,8 +119,12 @@ public partial class StateChangesEditorWindowViewModel : ObservableObject, IModa
         if (obj is WadToolClass.AnimationEditorCurrentAnimationChangedEvent currentChangedEvent &&
             currentChangedEvent.Current != _animation)
         {
-            currentChangedEvent.Previous.WadAnimation.StateChanges.Clear();
-            currentChangedEvent.Previous.WadAnimation.StateChanges.AddRange(_backupStates);
+            if (currentChangedEvent.Previous is not null)
+            {
+                currentChangedEvent.Previous.WadAnimation.StateChanges.Clear();
+                currentChangedEvent.Previous.WadAnimation.StateChanges.AddRange(_backupStates);
+            }
+
             Initialize(currentChangedEvent.Current, null);
         }
 
