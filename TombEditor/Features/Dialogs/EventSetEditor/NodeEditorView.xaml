@@ -398,26 +398,10 @@
                                 <Grid
                                     Width="{Binding Width}"
                                     PreviewMouseLeftButtonDown="Node_PreviewMouseDown"
+                                    PreviewMouseRightButtonUp="Node_PreviewMouseRightUp"
                                     SizeChanged="Node_SizeChanged"
                                     Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=local:NodeEditorView}}">
-                                    <!--  The menu's DataContext is the node; the editor view-model is reached via the placement target's Tag.  -->
-                                    <Grid.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem
-                                                Command="{Binding PlacementTarget.Tag.SetColorCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                                CommandParameter="{Binding}"
-                                                Header="{tombLib:Localize SetColor}" />
-                                            <MenuItem
-                                                Header="{tombLib:Localize Locked}"
-                                                IsCheckable="True"
-                                                IsChecked="{Binding IsLocked, Mode=TwoWay}" />
-                                            <Separator />
-                                            <MenuItem
-                                                Command="{Binding PlacementTarget.Tag.DeleteNodeCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                                CommandParameter="{Binding}"
-                                                Header="{tombLib:Localize Delete}" />
-                                        </ContextMenu>
-                                    </Grid.ContextMenu>
+                                    <!--  Right-click opens the function search of the node, as the WinForms function list does  -->
 
                                     <!--  Selection highlight: the node color rectangle grown by two pixels  -->
                                     <Border

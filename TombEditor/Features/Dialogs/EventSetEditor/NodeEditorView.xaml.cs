@@ -450,6 +450,30 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             }));
         }
 
+        /// <summary>Right-click on a node opens the searchable function list of that node.</summary>
+        private void Node_PreviewMouseRightUp(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is not DependencyObject root || FindDescendant<DarkUI.WPF.CustomControls.SearchableComboBox>(root, "functionCombo") is not { } combo || !combo.IsEnabled)
+                return;
+
+            TombLib.WPF.ComboSearch.OpenCommand.Execute(combo);
+            e.Handled = true;
+        }
+
+        private static T? FindDescendant<T>(DependencyObject root, string name) where T : FrameworkElement
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+            {
+                var child = VisualTreeHelper.GetChild(root, i);
+                if (child is T match && match.Name == name)
+                    return match;
+
+                if (FindDescendant<T>(child, name) is { } found)
+                    return found;
+            }
+
+            return null;
+        }
         private void Node_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (sender is FrameworkElement element && element.DataContext is NodeViewModel node)
