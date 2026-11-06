@@ -196,7 +196,7 @@
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate>
 									<Button
-										Margin="0"
+										Margin="2,2,3,2"
 										Padding="0"
 										HorizontalContentAlignment="Stretch"
 										VerticalContentAlignment="Stretch"
