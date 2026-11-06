@@ -313,10 +313,10 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
-                            <DataGridTemplateColumn Width="72">
+                            <DataGridTemplateColumn Width="40">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Margin="1" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
+                                        <Button Margin="1" Command="{Binding BrowseCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize ~Generic.Browse}"><Image Source="{tomb:Icon General/Open}" /></Button>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -370,7 +370,7 @@
                         </DataGrid.InputBindings>
                         <DataGrid.Columns>
                             <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
-                            <DataGridTemplateColumn Width="72">
+                            <DataGridTemplateColumn Width="40">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button Margin="1" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
@@ -535,7 +535,7 @@
                             </DataGrid.InputBindings>
                             <DataGrid.Columns>
                                 <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
-                                <DataGridTemplateColumn Width="72">
+                                <DataGridTemplateColumn Width="40">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Button Margin="1" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
