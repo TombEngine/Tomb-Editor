@@ -91,7 +91,7 @@ public class NumericUpDown : Control
 			nameof(TextAlignment),
 			typeof(TextAlignment),
 			typeof(NumericUpDown),
-			new FrameworkPropertyMetadata(TextAlignment.Left));
+			new FrameworkPropertyMetadata(TextAlignment.Right));
 
 		LoopValuesProperty = DependencyProperty.Register(
 			nameof(LoopValues),
