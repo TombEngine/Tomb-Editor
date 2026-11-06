@@ -396,8 +396,8 @@
 	<moveable id="475" name="ROTATING_KNIFE_DISK" />
 	<moveable id="476" name="UNDERWATER_MINE" />
 	<moveable id="477" name="FALLING_SANDBAG" />
-	<moveable id="478" name="WRECKINGBALL_ANCHOR" />
-	<moveable id="479" name="WRECKINGBALL_CHAIN" />
+	<moveable id="478" name="WRECKING_BALL_ANCHOR" />
+	<moveable id="479" name="WRECKING_BALL_CHAIN" />
 	<moveable id="480" name="OBELISK_CAGE" />
     <moveable id="500" name="PUZZLE_ITEM1" />
     <moveable id="501" name="PUZZLE_ITEM2" />
