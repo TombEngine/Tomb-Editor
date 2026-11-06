@@ -52,16 +52,17 @@ public sealed class FloatingToolbox : Popup, IDisposable
         StaysOpen = true;
         Focusable = false;
 
-        var grip = new Thumb { Cursor = Cursors.SizeAll, Focusable = false, Margin = new Thickness(3) };
-        grip.SetResourceReference(Control.BackgroundProperty, "Brush_Border");
+        // The same dotted gripper the docked tool bars use.
+        var grip = new Thumb { Cursor = Cursors.SizeAll, Focusable = false };
+        grip.SetResourceReference(FrameworkElement.StyleProperty, "ToolBarThumbStyle");
         grip.DragDelta += OnDragDelta;
         grip.DragCompleted += (_, _) => SnapToEdges();
         DockPanel.SetDock(grip, horizontalGrip ? Dock.Top : Dock.Left);
 
         if (horizontalGrip)
-            grip.Height = 9;
+            grip.Height = Defaults.ToolBar_GripperSize;
         else
-            grip.Width = 9;
+            grip.Width = Defaults.ToolBar_GripperSize;
 
         var panel = new DockPanel();
         panel.Children.Add(grip);
