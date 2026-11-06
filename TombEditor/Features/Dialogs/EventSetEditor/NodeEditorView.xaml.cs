@@ -32,6 +32,11 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         private Point _linkStart;
         private bool _linkMoved;
         private Path? _linkVisual;
+        private Point _linkPosition;
+        private NodeViewModel? _snapTarget;
+        private NodeConnection _snapMode;
+        private double _snapProgress = -1.0;
+        private readonly System.Windows.Threading.DispatcherTimer _snapTimer;
 
         // Right-button panning.
         private bool _panning;
@@ -45,6 +50,8 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         public NodeEditorView()
         {
             InitializeComponent();
+            _snapTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(15) };
+            _snapTimer.Tick += SnapTimer_Tick;
             _rubberBand = new RubberBandSelection(rootCanvas, selectionRectangle);
             DataContextChanged += OnDataContextChanged;
             canvasScroll.ScrollChanged += OnScrollChanged;
@@ -538,18 +545,67 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
                 rootCanvas.Children.Insert(rootCanvas.Children.IndexOf(selectionRectangle), _linkVisual);
             }
 
+            _linkPosition = position;
+
+            // Over a grip that accepts the link, the free end glides onto the grip (WinForms AnimateSnap).
+            var snapped = viewModel.TryFindSnapGrip(_linkNode, _linkMode, FindNodeAt(position), position, out var snapMode);
+            var snapTarget = snapped ? FindNodeAt(position) : null;
+
+            if (snapTarget != _snapTarget || (snapped && snapMode != _snapMode))
+            {
+                _snapTarget = snapTarget;
+                _snapMode = snapMode;
+                _snapProgress = snapped ? 0.0 : -1.0;
+
+                if (snapped)
+                    _snapTimer.Start();
+                else
+                    _snapTimer.Stop();
+            }
+
+            UpdateLinkVisual();
+        }
+
+        private void SnapTimer_Tick(object? sender, EventArgs e)
+        {
+            _snapProgress = Math.Min(_snapProgress + 0.1, 1.0);
+
+            if (_snapProgress >= 1.0)
+                _snapTimer.Stop();
+
+            UpdateLinkVisual();
+        }
+
+        private void UpdateLinkVisual()
+        {
+            if (_linkNode is null || _linkVisual is null || ViewModel is not { } viewModel)
+                return;
+
             if (viewModel.Nodes.FirstOrDefault(n => n.Node == _linkNode) is not { } source)
                 return;
 
-            var end = new NodeLinkRenderer.Span(position.X, position.X, position.Y);
-            var brush = NodeLinkRenderer.CreateBrush(source.Node.Color == System.Numerics.Vector3.Zero ? NodeViewModel.GetDefaultColor(source.IsCondition) : source.Node.Color,
-                _linkMode == NodeConnection.Else, viewModel.LinksAsRopes, NodeLinkRenderer.PendingOpacity);
+            var end = new NodeLinkRenderer.Span(_linkPosition.X, _linkPosition.X, _linkPosition.Y);
+            var opacity = NodeLinkRenderer.PendingOpacity;
 
-            _linkVisual!.Data = NodeLinkRenderer.CreateGeometry(source.GetGripSpan(_linkMode), end, viewModel.LinksAsRopes);
+            if (_snapTarget is not null && _snapProgress >= 0.0)
+            {
+                var grip = _snapTarget.GetGripSpan(_snapMode);
+                var t = _snapProgress * _snapProgress * (3.0 - 2.0 * _snapProgress);
+
+                end = new NodeLinkRenderer.Span(
+                    end.Left + (grip.Left - end.Left) * t,
+                    end.Right + (grip.Right - end.Right) * t,
+                    end.Y + (grip.Y - end.Y) * t);
+                opacity += (NodeLinkRenderer.ConnectedOpacity - NodeLinkRenderer.PendingOpacity) * _snapProgress;
+            }
+
+            var brush = NodeLinkRenderer.CreateBrush(source.Node.Color == System.Numerics.Vector3.Zero ? NodeViewModel.GetDefaultColor(source.IsCondition) : source.Node.Color,
+                _linkMode == NodeConnection.Else, viewModel.LinksAsRopes, opacity);
+
+            _linkVisual.Data = NodeLinkRenderer.CreateGeometry(source.GetGripSpan(_linkMode), end, viewModel.LinksAsRopes);
             _linkVisual.Stroke = viewModel.LinksAsRopes ? brush : null;
             _linkVisual.Fill = viewModel.LinksAsRopes ? null : brush;
         }
-
         private void Canvas_LinkUp(object sender, MouseButtonEventArgs e)
         {
             var position = e.GetPosition(rootCanvas);
@@ -567,6 +623,9 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
             _linkVisual = null;
             _linkNode = null;
+            _snapTarget = null;
+            _snapProgress = -1.0;
+            _snapTimer.Stop();
 
             rootCanvas.ReleaseMouseCapture();
             rootCanvas.MouseMove -= Canvas_LinkMove;

@@ -608,31 +608,41 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             };
         }
 
-        /// <summary>Ends a link drag on another node: picks the grip nearest to the drop point that accepts the link and connects.</summary>
-        public void CompleteLinkDrag(TriggerNode dragged, NodeConnection dragMode, NodeViewModel? target, Point dropPosition)
+        /// <summary>Finds the grip of the target node under the given point that accepts a link dragged from <paramref name="dragMode"/>.</summary>
+        public bool TryFindSnapGrip(TriggerNode dragged, NodeConnection dragMode, NodeViewModel? target, Point position, out NodeConnection targetMode)
         {
+            targetMode = default;
+
             if (target is null || !target.IsEditable)
-                return;
+                return false;
 
             IEnumerable<NodeConnection> candidates = dragMode == NodeConnection.Previous
-                ? new[] { NodeConnection.Next, NodeConnection.Else }.OrderBy(m => Math.Abs(dropPosition.X - target.GetGripSpan(m).Left - target.GetGrip(m).Width / 2.0))
+                ? new[] { NodeConnection.Next, NodeConnection.Else }.OrderBy(m => Math.Abs(position.X - target.GetGripSpan(m).Left - target.GetGrip(m).Width / 2.0))
                 : [NodeConnection.Previous];
 
-            foreach (var targetMode in candidates)
+            foreach (var mode in candidates)
             {
                 // WinForms connects only when the cursor is over the target grip (forgiving near misses by 4 px).
-                var grip = target.GetGrip(targetMode);
+                var grip = target.GetGrip(mode);
                 var gripArea = new Rect(target.CanvasLeft + grip.Left, target.CanvasTop + grip.Top, grip.Width, grip.Height);
                 gripArea.Inflate(4.0, 4.0);
 
-                if (!gripArea.Contains(dropPosition) || !CanConnect(dragged, dragMode, target.Node, targetMode))
+                if (!gripArea.Contains(position) || !CanConnect(dragged, dragMode, target.Node, mode))
                     continue;
 
-                Connect(dragged, dragMode, target.Node, targetMode);
-                return;
+                targetMode = mode;
+                return true;
             }
+
+            return false;
         }
 
+        /// <summary>Ends a link drag on another node: connects to the grip under the drop point when it accepts the link.</summary>
+        public void CompleteLinkDrag(TriggerNode dragged, NodeConnection dragMode, NodeViewModel? target, Point dropPosition)
+        {
+            if (target is not null && TryFindSnapGrip(dragged, dragMode, target, dropPosition, out var targetMode))
+                Connect(dragged, dragMode, target.Node, targetMode);
+        }
         private void Connect(TriggerNode dragged, NodeConnection dragMode, TriggerNode target, NodeConnection targetMode)
         {
             switch (targetMode)
