@@ -125,6 +125,9 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     /// <summary>Gets the known state names of the edited moveable, used for the State field suggestions and drop-down list.</summary>
     public List<string> StateNames { get; } = new();
 
+    // A separate list for the State drop-down: the suggestion box filters the shared default view of StateNames.
+    public List<string> StateNameChoices { get; } = new();
+
     /// <summary>Raised when the animation name field should receive keyboard focus, e.g. after adding a new animation.</summary>
     public event EventHandler? NameFocusRequested;
 
@@ -144,7 +147,10 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
             var name = TrCatalog.GetStateName(_editor.Wad.GameVersion, _editor.Moveable.Id.TypeId, i);
 
             if (!name.Contains("Unknown"))
+            {
                 StateNames.Add(name);
+                StateNameChoices.Add(name);
+            }
         }
     }
 
