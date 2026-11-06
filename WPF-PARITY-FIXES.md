@@ -373,3 +373,5 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 - Node editor: the wheel over a drop-down list is no longer taken by the canvas scroll, so lists scroll.
 - Animation editor: the wheel over the closed State list steps through the known states (WinForms combo behaviour). Click-to-open could not be reproduced without a display; unverified.
 - State changes: blend curve cells have no button padding or margin and a larger minimum size, so the curve is not trimmed.
+
+- Animation editor: the Room selector (reference project) was the last child of the toolbar and stretched into a full-width bar; it is now 121 px wide, left aligned, and the label and list only show when a reference project is loaded.

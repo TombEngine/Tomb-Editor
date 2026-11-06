@@ -202,11 +202,13 @@
                         <Button Style="{StaticResource TbBtn}" Command="{Binding ReverseCommand}" ToolTip="Reverse animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/back}" /></Button>
                         <Button Style="{StaticResource TbBtn}" Command="{Binding MirrorCommand}" ToolTip="Mirror animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Mirror}" /></Button>
                         <Border Style="{StaticResource TbSep}" />
-                        <TextBlock Style="{StaticResource TbLbl}" Text="Room:" />
+                        <TextBlock Style="{StaticResource TbLbl}" Text="Room:" Visibility="{Binding RoomsEnabled, Converter={StaticResource BoolToVis}}" />
                     </controls:SpacedStack>
                     <ComboBox
-                        MinWidth="120"
+                        Width="121"
+                        HorizontalAlignment="Left"
                         VerticalAlignment="Center"
+                        Visibility="{Binding RoomsEnabled, Converter={StaticResource BoolToVis}}"
                         IsEnabled="{Binding RoomsEnabled}"
                         ItemsSource="{Binding Rooms}"
                         SelectedItem="{Binding SelectedRoomItem, Mode=TwoWay}"
