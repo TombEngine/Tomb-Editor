@@ -26,6 +26,11 @@ public partial class MainWindow : Window
         _viewModel = viewModel;
         InitializeComponent();
         DataContext = viewModel;
+
+        // Like the WinForms list, sounds are shown sorted by name.
+        SoundList.Items.SortDescriptions.Add(new SortDescription(nameof(SoundInfoViewModel.Name), ListSortDirection.Ascending));
+        SoundList.Columns[1].SortDirection = ListSortDirection.Ascending;
+
         RestorePlacement();
         Closing += WindowClosing;
         SourceInitialized += (_, _) => HwndSource.FromHwnd(new WindowInteropHelper(this).Handle)?.AddHook(WindowMessage);

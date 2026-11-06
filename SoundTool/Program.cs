@@ -1,6 +1,7 @@
 #nullable enable
 
 using DarkUI.WPF.Config;
+using DarkUI.WPF.CustomControls;
 using Microsoft.Extensions.DependencyInjection;
 using SoundTool.Services;
 using SoundTool.ViewModels;
@@ -59,6 +60,14 @@ internal static class Program
         }
     }
 
+    // The WinForms SoundTool shows the values of its numeric fields left aligned.
+    private static void UseLeftAlignedNumericFields(Application application)
+    {
+        var style = new Style(typeof(NumericUpDown), application.TryFindResource(typeof(NumericUpDown)) as Style);
+        style.Setters.Add(new Setter(NumericUpDown.TextAlignmentProperty, System.Windows.TextAlignment.Left));
+        application.Resources[typeof(NumericUpDown)] = style;
+    }
+
     private static void Run(Configuration configuration, string? archive, string? referenceLevel)
     {
         Colors.Brightness = configuration.UI_FormColor_Brightness / 100.0f;
@@ -71,6 +80,7 @@ internal static class Program
         using var provider = services.BuildServiceProvider();
         ServiceLocator.Configure(provider);
         var application = Application.Current;
+        UseLeftAlignedNumericFields(application);
         application.DispatcherUnhandledException += (_, e) => {
             logging.HandleException(e.Exception);
             provider.GetRequiredService<IMessageService>().ShowError(e.Exception.Message, "SoundTool");
