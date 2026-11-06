@@ -490,6 +490,7 @@ public class AnimationTrackBar : FrameworkElement
                 {
                     dc.DrawRectangle(_selectionBrush, null, rect);
                     // A 1 px pen is centred on its coordinate, so offset by half a pixel to stay crisp like GDI+.
+                    dc.DrawRectangle(null, _selectionPen, new Rect(rect.X + 0.5, rect.Y + 0.5, rect.Width, rect.Height));
                 }
                 else
                 {
@@ -562,6 +563,7 @@ public class AnimationTrackBar : FrameworkElement
                         // Draw frame lines
                         double lineHeight = height / (isKeyFrame ? 2 : 3);
                         double lineX = isKeyFrame ? currX : currX + 0.5;
+                        dc.DrawLine(isKeyFrame ? _keyFrameBorderPen : _frameBorderPen, new Point(lineX, _paddingTop), new Point(lineX, lineHeight));
                     }
                 }
 
