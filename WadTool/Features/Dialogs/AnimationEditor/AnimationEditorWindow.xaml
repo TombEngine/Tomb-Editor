@@ -93,7 +93,23 @@
             <Setter Property="Width" Value="24" />
             <Setter Property="Height" Value="24" />
         </Style>
-    </Window.Resources>
+        <!--  Section panel like the WinForms DarkSectionPanel: a header band over the content, no frame  -->
+        <Style TargetType="GroupBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GroupBox">
+                        <DockPanel>
+                            <Border Padding="4,3" Background="{DynamicResource Brush_BackgroundSlightlyDark}" DockPanel.Dock="Top">
+                                <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" TextElement.Foreground="{DynamicResource Brush_Text}" />
+                            </Border>
+                            <Border Padding="4">
+                                <ContentPresenter />
+                            </Border>
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>    </Window.Resources>
 
     <DockPanel LastChildFill="True">
 
@@ -180,7 +196,6 @@
                         <TextBlock Style="{StaticResource TbLbl}" Text="Anims:" />
                         <Button Style="{StaticResource TbBtn}" Command="{Binding AddAnimationCommand}" ToolTip="Add animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
                         <Button Style="{StaticResource TbBtn}" Command="{Binding ImportAnimationCommand}" ToolTip="Import..."><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Import}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding ExportAnimationCommand}" ToolTip="Export..."><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Export}" /></Button>
                         <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteAnimationCommand}" ToolTip="Delete animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
                         <Button Style="{StaticResource TbBtn}" Command="{Binding CutAnimationCommand}" ToolTip="Cut animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/cut}" /></Button>
                         <Button Style="{StaticResource TbBtn}" Command="{Binding CopyAnimationCommand}" ToolTip="Copy animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/copy}" /></Button>
@@ -194,16 +209,7 @@
                         <Button Style="{StaticResource TbBtn}" Command="{Binding CutFrameCommand}" ToolTip="Cut frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/cut}" /></Button>
                         <Button Style="{StaticResource TbBtn}" Command="{Binding CopyFrameCommand}" ToolTip="Copy frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/copy}" /></Button>
                         <Button Style="{StaticResource TbBtn}" Command="{Binding PasteFrameCommand}" ToolTip="Paste frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste}" /></Button>
-                        <Border Style="{StaticResource TbSep}" />
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding EditAnimCommandsCommand}" ToolTip="Edit anim commands"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/anim-commands}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding EditStateChangesCommand}" ToolTip="Edit state changes"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/state-changes}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding FixAnimationCommand}" ToolTip="Fix animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/tick}" /></Button>
-                        <Border Style="{StaticResource TbSep}" />
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding InterpolateCommand}" ToolTip="Interpolate frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/interpolate}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding ReverseCommand}" ToolTip="Reverse animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/back}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding MirrorCommand}" ToolTip="Mirror animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Mirror}" /></Button>
-                        <Border Style="{StaticResource TbSep}" />
-                    </controls:SpacedStack>
+                        </controls:SpacedStack>
                     
                 </DockPanel>
             </Border>
@@ -213,20 +219,6 @@
         <Border Height="25" Padding="4,5,0,3" Background="{DynamicResource Brush_Background}" DockPanel.Dock="Bottom">
             <TextBlock FontSize="11" Foreground="{DynamicResource Brush_Text}" Text="{Binding StatusText}" TextTrimming="CharacterEllipsis" VerticalAlignment="Top" />
         </Border>
-
-        <!--  Footer: OK / Cancel  -->
-        <!--  Footer: OK / Cancel  -->
-        <controls:SpacedStack
-            DockPanel.Dock="Bottom"
-            HorizontalAlignment="Right"
-            Orientation="Horizontal"
-            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-            <controls:SpacedStack.Margin>
-                <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
-            </controls:SpacedStack.Margin>
-            <Button Width="80" Command="{Binding OkCommand}" Content="OK" />
-            <Button Width="80" Command="{Binding CancelCommand}" Content="Cancel" />
-        </controls:SpacedStack>
 
         <!--  Status line, then timeline with the transport buttons on its right (WinForms arrangement)  -->
         
@@ -426,12 +418,12 @@
                         <Border Height="110" Margin="0,6,0,0" BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
                             <wadControls:BezierCurveEditor x:Name="bezierEditor" />
                         </Border>
-                        <ComboBox Margin="0,4,0,0" SelectedIndex="{Binding BlendPresetIndex, Mode=TwoWay}">
+                        <DockPanel Margin="0,4,0,0"><TextBlock DockPanel.Dock="Left" Margin="0,0,6,0" VerticalAlignment="Center" Text="Preset:" /><ComboBox SelectedIndex="{Binding BlendPresetIndex, Mode=TwoWay}">
                             <ComboBoxItem Content="Linear" />
                             <ComboBoxItem Content="Ease In" />
                             <ComboBoxItem Content="Ease Out" />
                             <ComboBoxItem Content="Ease In and Out" />
-                        </ComboBox>
+                        </ComboBox></DockPanel>
                     </StackPanel>
                 </GroupBox>
         </Grid>
@@ -472,7 +464,44 @@
 
                 <GroupBox Header="{Binding TransformHeader}">
                     <StackPanel>
-                        <DockPanel>
+                        
+                                                <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="28" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Rot" />
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Y" />
+                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" Minimum="0" Maximum="360" LoopValues="True" Value="{Binding RotationY, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource Val}" Text="P" />
+                            <controls:NumericUpDown Grid.Column="4" Style="{StaticResource Axis}" Minimum="0" Maximum="360" LoopValues="True" Value="{Binding RotationX, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="5" VerticalAlignment="Center" Style="{StaticResource Val}" Text="R" />
+                            <controls:NumericUpDown Grid.Column="6" Style="{StaticResource Axis}" Minimum="0" Maximum="360" LoopValues="True" Value="{Binding RotationZ, Mode=TwoWay}" />
+                        </controls:SpacedGrid>
+                        <controls:SpacedGrid Margin="0,4,0,0" ColumnSpacing="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="28" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Pos" />
+                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Val}" Text="X" />
+                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" Value="{Binding TranslationX, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Y" />
+                            <controls:NumericUpDown Grid.Column="4" Style="{StaticResource Axis}" Value="{Binding TranslationY, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="5" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Z" />
+                            <controls:NumericUpDown Grid.Column="6" Style="{StaticResource Axis}" Value="{Binding TranslationZ, Mode=TwoWay}" />
+                        </controls:SpacedGrid>
+                    <DockPanel Margin="0,6,0,0">
                             <Image
                                 Width="75"
                                 Height="21"
@@ -515,42 +544,6 @@
                                 <ComboBoxItem Content="Symmetric linear" />
                             </ComboBox>
                         </DockPanel>
-                                                <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="28" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Rot" />
-                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Y" />
-                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" Minimum="0" Maximum="360" LoopValues="True" Value="{Binding RotationY, Mode=TwoWay}" />
-                            <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource Val}" Text="P" />
-                            <controls:NumericUpDown Grid.Column="4" Style="{StaticResource Axis}" Minimum="0" Maximum="360" LoopValues="True" Value="{Binding RotationX, Mode=TwoWay}" />
-                            <TextBlock Grid.Column="5" VerticalAlignment="Center" Style="{StaticResource Val}" Text="R" />
-                            <controls:NumericUpDown Grid.Column="6" Style="{StaticResource Axis}" Minimum="0" Maximum="360" LoopValues="True" Value="{Binding RotationZ, Mode=TwoWay}" />
-                        </controls:SpacedGrid>
-                        <controls:SpacedGrid Margin="0,4,0,0" ColumnSpacing="4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="28" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Pos" />
-                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Val}" Text="X" />
-                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" Value="{Binding TranslationX, Mode=TwoWay}" />
-                            <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Y" />
-                            <controls:NumericUpDown Grid.Column="4" Style="{StaticResource Axis}" Value="{Binding TranslationY, Mode=TwoWay}" />
-                            <TextBlock Grid.Column="5" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Z" />
-                            <controls:NumericUpDown Grid.Column="6" Style="{StaticResource Axis}" Value="{Binding TranslationZ, Mode=TwoWay}" />
-                        </controls:SpacedGrid>
                     </StackPanel>
                 </GroupBox>
 
@@ -593,25 +586,11 @@
                             <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMaxY, Mode=TwoWay}" />
                             <controls:NumericUpDown Grid.Column="3" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMaxZ, Mode=TwoWay}" />
                         </controls:SpacedGrid>
-                    </StackPanel>
-                </GroupBox>
-
-                <GroupBox Header="Animation Bounding Box">
-                    <StackPanel>
-                        <controls:SpacedGrid ColumnSpacing="6" RowSpacing="6">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Button Command="{Binding SelectAllMeshesCommand}" Content="All meshes" />
-                            <Button Grid.Column="1" Command="{Binding SelectNoMeshesCommand}" Content="No meshes" />
-                            <Button Grid.Row="1" Command="{Binding CalcBoundingBoxCommand}" Content="Calculate" />
-                            <Button Grid.Row="1" Grid.Column="1" Command="{Binding ClearBoundingBoxCommand}" Content="Delete" />
+                    
+                        <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="6"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Button Command="{Binding CalcBoundingBoxCommand}" Content="Calculate" />
+                            <Button Grid.Column="1" Command="{Binding ClearBoundingBoxCommand}" Content="Delete" />
                         </controls:SpacedGrid>
+                        
                         <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="4">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -630,8 +609,11 @@
                             <Button Command="{Binding GrowBoundingBoxCommand}" Content="Grow" />
                             <Button Grid.Column="1" Command="{Binding ShrinkBoundingBoxCommand}" Content="Shrink" />
                         </controls:SpacedGrid>
+                    
                     </StackPanel>
                 </GroupBox>
+
+                
             </controls:SpacedStack>
         </ScrollViewer>
 
