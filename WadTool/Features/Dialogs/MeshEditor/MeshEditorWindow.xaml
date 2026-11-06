@@ -88,11 +88,7 @@
             <DockPanel.Margin>
                 <Thickness Right="{x:Static darkUI:Defaults.MediumThicknessWidth}" Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
             </DockPanel.Margin>
-            <TextBlock
-                Margin="0,0,0,4"
-                DockPanel.Dock="Top"
-                Style="{StaticResource Lbl}"
-                Text="Mesh list" />
+            <Border Margin="0,0,0,4" Padding="4,2" Background="{DynamicResource Brush_BackgroundSlightlyDark}" DockPanel.Dock="Top"><TextBlock Style="{StaticResource Lbl}" Text="Mesh list" /></Border>
             <controls:SpacedGrid
                 DockPanel.Dock="Top"
                 ColumnSpacing="4">
@@ -174,7 +170,7 @@
                 
 
                 <!--  Vertex remap  -->
-                <GroupBox Header="Vertex remap" Visibility="{Binding IsRemapMode, Converter={StaticResource BoolToVis}}">
+                <Border Visibility="{Binding IsRemapMode, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
                         <controls:SpacedStack Orientation="Horizontal" Spacing="6">
                             <TextBlock Style="{StaticResource Lbl}" Text="Vertex number:" />
@@ -186,10 +182,10 @@
                             <Button Width="110" Command="{Binding AutoFitCommand}" Content="Automatic fit" ToolTip="Try to automatically remap all vertices sitting on mesh holes.&#13;&#10;For legacy engines, you still have to manually remap hair hole." />
                         </controls:SpacedStack>
                     </StackPanel>
-                </GroupBox>
+                </Border>
 
                 <!--  Normals and shades  -->
-                <GroupBox Header="Normals &amp; shades" Visibility="{Binding IsColorsMode, Converter={StaticResource BoolToVis}}">
+                <Border Visibility="{Binding IsColorsMode, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
                         <controls:SpacedStack Orientation="Horizontal" Spacing="6">
                             <TextBlock Style="{StaticResource Lbl}" Text="Vertex shade (color):" />
@@ -207,10 +203,10 @@
                             <Button Width="70" Command="{Binding RecalcNormalsAvgCommand}" Content="Averaged" ToolTip="Averaged normals recalculation is more rough and straighforward way,&#13;&#10;but still may be useful in some cases." />
                         </controls:SpacedStack>
                     </StackPanel>
-                </GroupBox>
+                </Border>
 
                 <!--  Vertex effects  -->
-                <GroupBox Header="Vertex effects" Visibility="{Binding IsEffectsMode, Converter={StaticResource BoolToVis}}">
+                <Border Visibility="{Binding IsEffectsMode, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
                         <controls:SpacedStack Orientation="Horizontal" Spacing="6">
                             <TextBlock Style="{StaticResource Lbl}" Text="Glow:" />
@@ -226,10 +222,10 @@
                         </controls:SpacedStack>
                         <Button Margin="0,6,0,0" Command="{Binding ConvertFromShadesCommand}" Content="Convert from shades" ToolTip="Convert vertex effects from legacy workflow involving vertex shades." />
                     </StackPanel>
-                </GroupBox>
+                </Border>
 
                 <!--  Vertex weights  -->
-                <GroupBox Header="Vertex weights" Visibility="{Binding IsWeightsMode, Converter={StaticResource BoolToVis}}">
+                <Border Visibility="{Binding IsWeightsMode, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
                         <UniformGrid Columns="2" Rows="1">
                             <TextBlock Margin="2,0,0,0" Style="{StaticResource Lbl}" Text="Bone:" />
@@ -247,10 +243,10 @@
                         </UniformGrid>
                         <Button Margin="0,6,0,0" Command="{Binding ApplyWeightsToAllCommand}" Content="Fill" ToolTip="Apply current weights to all vertices" />
                     </StackPanel>
-                </GroupBox>
+                </Border>
 
                 <!--  Sphere  -->
-                <GroupBox Header="Sphere" Visibility="{Binding IsSphereMode, Converter={StaticResource BoolToVis}}">
+                <Border Visibility="{Binding IsSphereMode, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
                         <controls:SpacedStack Orientation="Horizontal" Spacing="6">
                             <TextBlock Style="{StaticResource Lbl}" Text="X:" />
@@ -266,7 +262,7 @@
                         </controls:SpacedStack>
                         <Button Margin="0,6,0,0" Command="{Binding ResetSphereCommand}" Content="Recalculate" ToolTip="Calculates average sphere which encloses the mesh" />
                     </StackPanel>
-                </GroupBox>
+                </Border>
             </StackPanel>
 
             <Border Padding="4,2" Background="{DynamicResource Brush_BackgroundSlightlyDark}" DockPanel.Dock="Top"><TextBlock Style="{StaticResource Lbl}" Text="Texturing" /></Border>
