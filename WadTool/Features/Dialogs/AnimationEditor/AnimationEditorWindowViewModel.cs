@@ -543,6 +543,19 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         SelectedStateName = null;
     }
 
+    /// <summary>Moves the animation state to the previous or next known state name (wheel over the State list).</summary>
+    public void StepState(int direction)
+    {
+        if (StateNames.Count == 0)
+            return;
+
+        var index = StateNames.IndexOf(StateIdText.Trim());
+        var next = index < 0 ? (direction > 0 ? 0 : StateNames.Count - 1) : Math.Clamp(index + direction, 0, StateNames.Count - 1);
+
+        if (next != index)
+            UpdateStateChange(StateNames[next]);
+    }
+
     /// <summary>Decodes a state ID or state name typed into the State field, applies it and puts the state name back into the field.</summary>
     private void UpdateStateChange(string input)
     {

@@ -84,6 +84,16 @@ public partial class AnimationEditorWindow : Window
             stateIdBox.Text = stateIdBox.InputTextBox.Text;
     }
 
+    // Like the WinForms combo box, the wheel over a closed State list steps through the known states.
+    private void StateCombo_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+    {
+        if (_vm is null || sender is not System.Windows.Controls.ComboBox { IsDropDownOpen: false })
+            return;
+
+        _vm.StepState(e.Delta > 0 ? -1 : 1);
+        e.Handled = true;
+    }
+
     private void OnNameFocusRequested(object? sender, EventArgs e) => animationNameBox.Focus();
 
     /// <summary>

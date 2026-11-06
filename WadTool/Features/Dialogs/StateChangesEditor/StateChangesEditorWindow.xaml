@@ -196,13 +196,15 @@
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate>
 									<Button
-										Margin="1"
+										Margin="0"
+										Padding="0"
 										HorizontalContentAlignment="Stretch"
 										VerticalContentAlignment="Stretch"
 										Command="{Binding DataContext.EditBlendCurveCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
 										CommandParameter="{Binding}">
 										<local:BlendCurvePreview
-											MinHeight="14"
+											MinHeight="20"
+											MinWidth="40"
 											Curve="{Binding BlendCurve}"
 											Stroke="{DynamicResource Brush_Text}" />
 									</Button>

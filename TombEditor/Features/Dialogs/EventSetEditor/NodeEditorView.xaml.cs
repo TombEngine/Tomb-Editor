@@ -216,6 +216,10 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
 
         private void OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
+            // Wheel events from a drop-down list (a popup has its own source) belong to that list.
+            if (e.OriginalSource is DependencyObject origin && PresentationSource.FromDependencyObject(origin) != PresentationSource.FromVisual(this))
+                return;
+
             if (Keyboard.Modifiers == ModifierKeys.Control)
             {
                 ZoomAtCursor(e);

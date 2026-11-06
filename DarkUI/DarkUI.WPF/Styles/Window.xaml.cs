@@ -1,4 +1,8 @@
-﻿using System.Windows;
+﻿using System;
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace DarkUI.WPF.Styles
 {
@@ -37,10 +41,39 @@ namespace DarkUI.WPF.Styles
 
 		public static void MinimizeWindow(Window window) => window.WindowState = WindowState.Minimized;
 
+		private const uint DwmwaBorderColor = 34;
+
+		[DllImport("dwmapi.dll")]
+		private static extern int DwmSetWindowAttribute(IntPtr hwnd, uint attribute, ref int value, uint size);
+
+		// Windows 11 paints a system accent (blue) frame around the active window; use the title bar colour instead.
+		private static void ApplyThemedFrameColor(Window window)
+		{
+			if (window.BorderBrush is not SolidColorBrush brush)
+				return;
+
+			var handle = new WindowInteropHelper(window).Handle;
+			if (handle == IntPtr.Zero)
+				return;
+
+			var color = brush.Color;
+			int colorRef = color.R | (color.G << 8) | (color.B << 16);
+
+			try
+			{
+				DwmSetWindowAttribute(handle, DwmwaBorderColor, ref colorRef, sizeof(int));
+			}
+			catch (EntryPointNotFoundException)
+			{
+			}
+		}
+
 		private void WindowTemplate_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (sender is not FrameworkElement root || Window.GetWindow(root) is not Window window)
 				return;
+
+			ApplyThemedFrameColor(window);
 
 			// Workaround for the WPF WindowChrome + SizeToContent bug (dotnet/wpf#8419): the HWND
 			// gets the default non-client frame metrics added even though the chrome draws no

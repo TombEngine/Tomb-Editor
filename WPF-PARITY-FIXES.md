@@ -366,3 +366,10 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 - Tests aligned with WinForms behaviour: Transform relight follows the editor mode, WadTool Create menu always enabled, Options titles taken from localization.
 - Intentional divergence: Anim commands and State changes editors are modal in WPF (WinForms modeless) because of the modeless combo popup bug.
 - Still unverified on screen: node right-click function search popup, Mesh editor edits (viewport empty in the automated test).
+
+## Tester feedback, round 3
+
+- Window frame: the Windows 11 accent (blue) border of the active window is replaced by the title bar colour (DWM border colour).
+- Node editor: the wheel over a drop-down list is no longer taken by the canvas scroll, so lists scroll.
+- Animation editor: the wheel over the closed State list steps through the known states (WinForms combo behaviour). Click-to-open could not be reproduced without a display; unverified.
+- State changes: blend curve cells have no button padding or margin and a larger minimum size, so the curve is not trimmed.
