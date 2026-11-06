@@ -1,4 +1,4 @@
-<Window
+﻿<Window
     x:Class="WadTool.Features.Dialogs.MeshEditor.MeshEditorWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -54,35 +54,6 @@
 
     <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
 
-        <!--  Toolbar  -->
-        <Border
-            DockPanel.Dock="Top"
-            Padding="2"
-            Background="{DynamicResource Brush_BackgroundSlightlyDark}"
-            Visibility="{Binding ShowEditingTools, Converter={StaticResource BoolToVis}}">
-            <controls:SpacedStack Orientation="Horizontal" Spacing="3">
-                <Button Style="{StaticResource TbBtn}" Command="{Binding UndoCommand}" IsEnabled="{Binding UndoEnabled}" ToolTip="Undo (Ctrl+Z)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/undo}" /></Button>
-                <Button Style="{StaticResource TbBtn}" Command="{Binding RedoCommand}" IsEnabled="{Binding RedoEnabled}" ToolTip="Redo (Ctrl+Y)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/redo}" /></Button>
-                <Border Style="{StaticResource TbSep}" />
-                <Button Style="{StaticResource TbBtn}" Command="{Binding ImportMeshCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Import mesh"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Import}" /></Button>
-                <Button Style="{StaticResource TbBtn}" Command="{Binding ExportMeshCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Export mesh"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Export}" /></Button>
-                <Button Style="{StaticResource TbBtn}" Command="{Binding RenameCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Rename mesh"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/edit}" /></Button>
-                <Border Style="{StaticResource TbSep}" />
-                <Button Style="{StaticResource TbBtn}" Command="{Binding ResetCameraCommand}" ToolTip="Reset camera"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/target}" /></Button>
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding DrawAxis, Mode=TwoWay}" ToolTip="Draw grid and axis"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/axis}" /></ToggleButton>
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Wireframe, Mode=TwoWay}" ToolTip="Draw in wireframe mode"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/wireframe}" /></ToggleButton>
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding AlphaTest, Mode=TwoWay}" ToolTip="Toggle transparency"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/AlphaTest}" /></ToggleButton>
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Bilinear, Mode=TwoWay}" ToolTip="Toggle bilinear filter"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/blur}" /></ToggleButton>
-                <Border Style="{StaticResource TbSep}" />
-                <Button Style="{StaticResource TbBtn}" Command="{Binding FindTextureCommand}" Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}" ToolTip="Search for mesh by selected texture area (Ctrl+F)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/search-texture}" /></Button>
-                <Border Style="{StaticResource TbSep}" Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}" />
-                <Button Style="{StaticResource TbBtn}" Command="{Binding RotateTextureCommand}" ToolTip="Rotate current texture (~)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Rotate}" /></Button>
-                <Button Style="{StaticResource TbBtn}" Command="{Binding MirrorTextureCommand}" ToolTip="Mirror current texture (Shift+~)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Mirror}" /></Button>
-                <Border Style="{StaticResource TbSep}" />
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Hidden, Mode=TwoWay}" ToolTip="Hide mesh if skinned mesh is used for the parent object"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/hide_mesh}" /></ToggleButton>
-            </controls:SpacedStack>
-        </Border>
-
         <!--  Footer: status + OK/Cancel  -->
         <Grid DockPanel.Dock="Bottom">
             <Grid.Margin>
@@ -107,6 +78,7 @@
             </controls:SpacedStack>
         </Grid>
 
+        
         <!--  Mesh tree (multi-mesh mode)  -->
         <DockPanel
             Width="240"
@@ -149,64 +121,23 @@
             </TreeView>
         </DockPanel>
 
-        <!--  Editing tools + texture map (right)  -->
-        <ScrollViewer
-            Width="320"
+        
+        <!--  Texturing + editing tools (right)  -->
+        <DockPanel
+            Width="331"
             DockPanel.Dock="Right"
-            HorizontalScrollBarVisibility="Disabled"
-            VerticalScrollBarVisibility="Auto"
+            LastChildFill="True"
             Visibility="{Binding ShowEditingTools, Converter={StaticResource BoolToVis}}">
-            <ScrollViewer.Margin>
-                <Thickness Left="{x:Static darkUI:Defaults.MediumThicknessWidth}" Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
-            </ScrollViewer.Margin>
-            <controls:SpacedStack
-                IsEnabled="{Binding EditingEnabled}"
-                Orientation="Vertical"
-                Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <DockPanel.Margin>
+                <Thickness Left="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+            </DockPanel.Margin>
 
-                <!--  Texture map + texture list  -->
-                <GroupBox Header="Texture">
-                    <StackPanel>
-                        <Border
-                            Height="400"
-                            BorderBrush="{DynamicResource Brush_Border}"
-                            BorderThickness="1">
-                            <wadControls:PanelTextureMap x:Name="textureMap" />
-                        </Border>
-                        <ComboBox Margin="0,6,0,0" ItemsSource="{Binding Textures}" SelectedItem="{Binding SelectedTexture, Mode=TwoWay}" />
-                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="3">
-                            <Button Style="{StaticResource TbBtn}" Width="38" Click="OpenButtonMenu" ToolTip="Add texture">
-                                <Button.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Command="{Binding AddEmbeddedTextureCommand}" Header="Add embedded texture" />
-                                        <MenuItem Command="{Binding AddExternalTextureCommand}" Header="Add external texture" />
-                                    </ContextMenu>
-                                </Button.ContextMenu>
-                                <StackPanel Orientation="Horizontal"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /><Path Margin="3,0,0,0" VerticalAlignment="Center" Data="M0,0 L4,4 L8,0 Z" Fill="{DynamicResource Brush_Text}" /></StackPanel>
-                            </Button>
-                            <Button Style="{StaticResource TbBtn}" Width="38" Click="OpenButtonMenu" ToolTip="Replace texture">
-                                <Button.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Command="{Binding ReplaceEmbeddedTextureCommand}" Header="Replace with embedded texture" />
-                                        <MenuItem Command="{Binding ReplaceExternalTextureCommand}" Header="Replace with external texture" />
-                                    </ContextMenu>
-                                </Button.ContextMenu>
-                                <StackPanel Orientation="Horizontal"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/refresh}" /><Path Margin="3,0,0,0" VerticalAlignment="Center" Data="M0,0 L4,4 L8,0 Z" Fill="{DynamicResource Brush_Text}" /></StackPanel>
-                            </Button>
-                            <Button Style="{StaticResource TbBtn}" Command="{Binding ExportTextureCommand}" ToolTip="Export current texture to file"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Export}" /></Button>
-                            <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteTextureCommand}" ToolTip="Delete texture"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
-                            <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding AllTextures, Mode=TwoWay}" ToolTip="List all textures from wad" Visibility="{Binding ShowAllTexturesButton, Converter={StaticResource BoolToVis}}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/DrawAllRooms}" /></ToggleButton>
-                        </controls:SpacedStack>
-                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
-                            <Button Width="150" Command="{Binding MaterialEditorCommand}" Content="Materials" IsEnabled="{Binding MaterialEditorEnabled}" ToolTip="Edit materials" Visibility="{Binding ShowTextureTools, Converter={StaticResource BoolToVis}}" />
-                            <Button Width="150" Command="{Binding AnimationRangesCommand}" Content="Animated textures" ToolTip="Edit animated texture sets" Visibility="{Binding ShowTextureTools, Converter={StaticResource BoolToVis}}" />
-                        </controls:SpacedStack>
-                    </StackPanel>
-                </GroupBox>
-
-                <controls:SpacedStack Orientation="Horizontal" Spacing="6">
+            <!--  Editing tools  -->
+            <StackPanel DockPanel.Dock="Bottom" IsEnabled="{Binding EditingEnabled}">
+                <Border Padding="4,2" Background="{DynamicResource Brush_BackgroundSlightlyDark}" DockPanel.Dock="Top"><TextBlock Style="{StaticResource Lbl}" Text="Editing tools" /></Border>
+                <controls:SpacedStack Margin="0,4,0,4" Orientation="Horizontal" Spacing="6">
                     <TextBlock Style="{StaticResource Lbl}" Text="Mode:" />
-                    <ComboBox Width="250" SelectedIndex="{Binding EditingModeIndex, Mode=TwoWay}" ToolTip="Mesh editor operation mode">
+                    <ComboBox Width="156" SelectedIndex="{Binding EditingModeIndex, Mode=TwoWay}" ToolTip="Mesh editor operation mode">
                         <ComboBoxItem Content="Face attributes" />
                         <ComboBoxItem Content="Vertex remap" />
                         <ComboBoxItem Content="Normals &amp; shades" />
@@ -214,26 +145,33 @@
                         <ComboBoxItem Content="Vertex weights" />
                         <ComboBoxItem Content="Sphere" />
                     </ComboBox>
+                    <CheckBox VerticalAlignment="Center" Content="{Binding ExtraLabel}" IsChecked="{Binding ShowExtra, Mode=TwoWay}" ToolTip="Show additional screen information" />
                 </controls:SpacedStack>
 
-                <CheckBox Content="{Binding ExtraLabel}" IsChecked="{Binding ShowExtra, Mode=TwoWay}" ToolTip="Show additional screen information" />
-
                 <!--  Face attributes  -->
-                <GroupBox Header="Face attributes" Visibility="{Binding IsFaceMode, Converter={StaticResource BoolToVis}}">
-                    <StackPanel>
-                        <CheckBox Content="Texture" IsChecked="{Binding ApplyTexture, Mode=TwoWay}" ToolTip="Apply textures to faces" />
-                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="6">
-                            <CheckBox Width="80" VerticalAlignment="Center" Content="Sheen:" IsChecked="{Binding ApplySheen, Mode=TwoWay}" ToolTip="Apply sheen attribute to faces" />
-                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="63" Minimum="0" ToolTip="Shininess value on the range from 0 to 63" Value="{Binding ShineStrength, Mode=TwoWay}" />
-                        </controls:SpacedStack>
-                        <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="6">
-                            <CheckBox Width="80" VerticalAlignment="Center" Content="Blending:" IsChecked="{Binding ApplyBlend, Mode=TwoWay}" ToolTip="Apply blend mode and double-sided attribute to faces" />
-                            <ComboBox Width="140" ItemsSource="{Binding BlendModes}" SelectedIndex="{Binding BlendModeIndex, Mode=TwoWay}" />
-                            <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding DoubleSided, Mode=TwoWay}" ToolTip="Toggle double-sided attribute"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Texture/DoubleSided_1}" /></ToggleButton>
-                        </controls:SpacedStack>
-                        <Button Margin="0,6,0,0" Command="{Binding ApplyToAllFacesCommand}" Content="Apply to all" ToolTip="Apply specified face attributes to all faces" />
-                    </StackPanel>
-                </GroupBox>
+                <Grid Visibility="{Binding IsFaceMode, Converter={StaticResource BoolToVis}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" Grid.Column="0" Margin="0,0,6,0" VerticalAlignment="Center" Content="Blending:" IsChecked="{Binding ApplyBlend, Mode=TwoWay}" ToolTip="Apply blend mode and double-sided attribute to faces" />
+                    <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,0,4,0" ItemsSource="{Binding BlendModes}" SelectedIndex="{Binding BlendModeIndex, Mode=TwoWay}" />
+                    <ToggleButton Grid.Row="0" Grid.Column="3" Style="{StaticResource TbToggle}" IsChecked="{Binding DoubleSided, Mode=TwoWay}" ToolTip="Toggle double-sided attribute"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Texture/DoubleSided_1}" /></ToggleButton>
+                    <CheckBox Grid.Row="1" Grid.Column="0" Margin="0,4,6,0" VerticalAlignment="Center" Content="Texture" IsChecked="{Binding ApplyTexture, Mode=TwoWay}" ToolTip="Apply textures to faces" />
+                    <controls:SpacedStack Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
+                        <CheckBox VerticalAlignment="Center" Content="Sheen:" IsChecked="{Binding ApplySheen, Mode=TwoWay}" ToolTip="Apply sheen attribute to faces" />
+                        <controls:NumericUpDown Style="{StaticResource Nud}" Width="65" Maximum="63" Minimum="0" ToolTip="Shininess value on the range from 0 to 63" Value="{Binding ShineStrength, Mode=TwoWay}" />
+                    </controls:SpacedStack>
+                    <Button Grid.Row="1" Grid.Column="3" Width="99" Margin="4,4,0,0" Command="{Binding ApplyToAllFacesCommand}" Content="Apply to all" ToolTip="Apply specified face attributes to all faces" />
+                </Grid>
+
+                
 
                 <!--  Vertex remap  -->
                 <GroupBox Header="Vertex remap" Visibility="{Binding IsRemapMode, Converter={StaticResource BoolToVis}}">
@@ -329,16 +267,82 @@
                         <Button Margin="0,6,0,0" Command="{Binding ResetSphereCommand}" Content="Recalculate" ToolTip="Calculates average sphere which encloses the mesh" />
                     </StackPanel>
                 </GroupBox>
+            </StackPanel>
 
+            <Border Padding="4,2" Background="{DynamicResource Brush_BackgroundSlightlyDark}" DockPanel.Dock="Top"><TextBlock Style="{StaticResource Lbl}" Text="Texturing" /></Border>
+            <DockPanel Margin="0,4,0,0" DockPanel.Dock="Top" IsEnabled="{Binding EditingEnabled}">
+                <controls:SpacedStack DockPanel.Dock="Right" Orientation="Horizontal" Spacing="3">
+                            <Button Style="{StaticResource TbBtn}" Width="38" Click="OpenButtonMenu" ToolTip="Add texture">
+                                <Button.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Command="{Binding AddEmbeddedTextureCommand}" Header="Add embedded texture" />
+                                        <MenuItem Command="{Binding AddExternalTextureCommand}" Header="Add external texture" />
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                                <StackPanel Orientation="Horizontal"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /><Path Margin="3,0,0,0" VerticalAlignment="Center" Data="M0,0 L4,4 L8,0 Z" Fill="{DynamicResource Brush_Text}" /></StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource TbBtn}" Width="38" Click="OpenButtonMenu" ToolTip="Replace texture">
+                                <Button.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Command="{Binding ReplaceEmbeddedTextureCommand}" Header="Replace with embedded texture" />
+                                        <MenuItem Command="{Binding ReplaceExternalTextureCommand}" Header="Replace with external texture" />
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                                <StackPanel Orientation="Horizontal"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/refresh}" /><Path Margin="3,0,0,0" VerticalAlignment="Center" Data="M0,0 L4,4 L8,0 Z" Fill="{DynamicResource Brush_Text}" /></StackPanel>
+                            </Button>
+                            <Button Style="{StaticResource TbBtn}" Command="{Binding ExportTextureCommand}" ToolTip="Export current texture to file"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Export}" /></Button>
+                            <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteTextureCommand}" ToolTip="Delete texture"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
+                            
+                            <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding AllTextures, Mode=TwoWay}" ToolTip="List all textures from wad" Visibility="{Binding ShowAllTexturesButton, Converter={StaticResource BoolToVis}}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/DrawAllRooms}" /></ToggleButton>
+                </controls:SpacedStack>
+                <controls:SearchableComboBox Margin="0,0,4,0" ItemsSource="{Binding Textures}" SelectedItem="{Binding SelectedTexture, Mode=TwoWay}" />
+            </DockPanel>
+            <controls:SpacedStack Margin="0,4,0,4" DockPanel.Dock="Bottom" IsEnabled="{Binding EditingEnabled}" Orientation="Horizontal" Spacing="4">
+                <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
+                            <Button Width="152" Command="{Binding MaterialEditorCommand}" Content="Materials" IsEnabled="{Binding MaterialEditorEnabled}" ToolTip="Edit materials" Visibility="{Binding ShowTextureTools, Converter={StaticResource BoolToVis}}" />
+                            <Button Width="152" Command="{Binding AnimationRangesCommand}" Content="Animated textures" ToolTip="Edit animated texture sets" Visibility="{Binding ShowTextureTools, Converter={StaticResource BoolToVis}}" />
+                        </controls:SpacedStack>
             </controls:SpacedStack>
-        </ScrollViewer>
+            <Border Margin="0,4,0,0" BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
+                <wadControls:PanelTextureMap x:Name="textureMap" />
+            </Border>
+        </DockPanel>
 
-        <!--  3D mesh view  -->
-        <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
-            <Border.Margin>
-                <Thickness Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
-            </Border.Margin>
-            <Border x:Name="meshHost" />
+        <!--  Toolbar + 3D mesh view  -->
+        <DockPanel LastChildFill="True">
+            <!--  Toolbar  -->
+        <Border
+            DockPanel.Dock="Top"
+            Padding="2"
+            Background="{DynamicResource Brush_BackgroundSlightlyDark}"
+            Visibility="{Binding ShowEditingTools, Converter={StaticResource BoolToVis}}">
+            <controls:SpacedStack DockPanel.Dock="Right" Orientation="Horizontal" Spacing="3">
+                <Button Style="{StaticResource TbBtn}" Command="{Binding UndoCommand}" IsEnabled="{Binding UndoEnabled}" ToolTip="Undo (Ctrl+Z)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/undo}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding RedoCommand}" IsEnabled="{Binding RedoEnabled}" ToolTip="Redo (Ctrl+Y)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/redo}" /></Button>
+                <Border Style="{StaticResource TbSep}" />
+                <Button Style="{StaticResource TbBtn}" Command="{Binding ImportMeshCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Import mesh"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Import}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding ExportMeshCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Export mesh"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Export}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding RenameCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Rename mesh"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/edit}" /></Button>
+                <Border Style="{StaticResource TbSep}" />
+                <Button Style="{StaticResource TbBtn}" Command="{Binding ResetCameraCommand}" ToolTip="Reset camera"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/target}" /></Button>
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding DrawAxis, Mode=TwoWay}" ToolTip="Draw grid and axis"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/axis}" /></ToggleButton>
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Wireframe, Mode=TwoWay}" ToolTip="Draw in wireframe mode"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/wireframe}" /></ToggleButton>
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding AlphaTest, Mode=TwoWay}" ToolTip="Toggle transparency"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/AlphaTest}" /></ToggleButton>
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Bilinear, Mode=TwoWay}" ToolTip="Toggle bilinear filter"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/blur}" /></ToggleButton>
+                <Border Style="{StaticResource TbSep}" />
+                <Button Style="{StaticResource TbBtn}" Command="{Binding FindTextureCommand}" Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}" ToolTip="Search for mesh by selected texture area (Ctrl+F)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/search-texture}" /></Button>
+                <Border Style="{StaticResource TbSep}" Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}" />
+                <Button Style="{StaticResource TbBtn}" Command="{Binding RotateTextureCommand}" ToolTip="Rotate current texture (~)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Rotate}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding MirrorTextureCommand}" ToolTip="Mirror current texture (Shift+~)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Mirror}" /></Button>
+                <Border Style="{StaticResource TbSep}" />
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Hidden, Mode=TwoWay}" ToolTip="Hide mesh if skinned mesh is used for the parent object"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/hide_mesh}" /></ToggleButton>
+            </controls:SpacedStack>
         </Border>
+
+        
+            <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
+                <Border x:Name="meshHost" />
+            </Border>
+        </DockPanel>
     </DockPanel>
 </Window>
