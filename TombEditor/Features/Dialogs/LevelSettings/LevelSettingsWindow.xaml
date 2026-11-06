@@ -26,7 +26,7 @@
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
         <SolidColorBrush x:Key="ValidBrush" Color="#FF356B35" />
-        <SolidColorBrush x:Key="InvalidBrush" Color="#FF8B3A3A" />
+        <SolidColorBrush x:Key="InvalidBrush" Color="#FF6C2121" />
 
         <!--  A labeled "path text + browse button" row  -->
         <Style x:Key="PathLabel" TargetType="TextBlock">
@@ -172,9 +172,9 @@
                         <!-- Game version -->
                         <StackPanel 
                             Margin="10,3">
-                            <Label Content="{tombLib:Localize GameVersionLabel}" HorizontalAlignment="Left" Width="500" />
-                            <ComboBox ItemsSource="{Binding GameVersions}" Margin="10,10"
-                          SelectedItem="{Binding GameVersion, Mode=TwoWay}" HorizontalAlignment="Left" Width="372" />
+                            <Label Padding="0,2" Content="{tombLib:Localize GameVersionLabel}" HorizontalAlignment="Left" Width="500" />
+                            <ComboBox ItemsSource="{Binding GameVersions}" Margin="15,0,107,2"
+                          SelectedItem="{Binding GameVersion, Mode=TwoWay}" />
                         </StackPanel>        
 
                         <!-- Game directory -->
@@ -187,7 +187,7 @@
                             Command="{Binding BrowseGameDirectoryCommand}"
                             Content="{tombLib:Localize ~Generic.Browse}" />
                                 <TextBox Style="{StaticResource GameDirBox}"
-                             Text="{Binding GameDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" />
+                             Text="{Binding GameDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="15,0,0,2" />
                             </DockPanel>
                         </StackPanel>
                         <!-- Compiled level file -->
@@ -201,7 +201,7 @@
                             Command="{Binding BrowseGameLevelFileCommand}"
                             Content="{tombLib:Localize ~Generic.Browse}" />
                                 <TextBox Style="{StaticResource GameLevelBox}"
-                             Text="{Binding GameLevelFilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" />
+                             Text="{Binding GameLevelFilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="15,0,0,2" />
                             </DockPanel>
                         </StackPanel>
 
@@ -217,7 +217,7 @@
                             Command="{Binding BrowseScriptCommand}"
                             Content="{tombLib:Localize ~Generic.Browse}" />
                                 <TextBox Style="{StaticResource ScriptBox}"
-                             Text="{Binding ScriptDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" />
+                             Text="{Binding ScriptDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="15,0,0,2" />
                             </DockPanel>
                         </StackPanel>
 
@@ -232,7 +232,7 @@
                             Command="{Binding BrowseLuaCommand}"
                             Content="{tombLib:Localize ~Generic.Browse}" />
                                 <TextBox Style="{StaticResource LuaBox}"
-                             Text="{Binding TenLuaScriptFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" />
+                             Text="{Binding TenLuaScriptFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="15,0,0,2" />
                             </DockPanel>
                         </StackPanel>
 
@@ -246,7 +246,7 @@
                             Command="{Binding BrowseGameExecutableCommand}"
                             Content="{tombLib:Localize ~Generic.Browse}" />
                                 <TextBox Style="{StaticResource GameExeBox}"
-                             Text="{Binding GameExecutableFilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="10,10,10,10" />
+                             Text="{Binding GameExecutableFilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="15,0,0,2" />
                             </DockPanel>
                         </StackPanel>
 
