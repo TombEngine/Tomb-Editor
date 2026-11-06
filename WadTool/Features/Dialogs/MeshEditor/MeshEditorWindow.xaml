@@ -28,11 +28,13 @@
             <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
         </Style>
         <Style x:Key="TbBtn" BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" /><Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="Width" Value="26" />
             <Setter Property="Height" Value="26" />
             <Setter Property="Padding" Value="0" />
         </Style>
         <Style x:Key="TbToggle" BasedOn="{StaticResource {x:Type ToggleButton}}" TargetType="ToggleButton">
+            <Setter Property="Background" Value="Transparent" /><Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="Width" Value="26" />
             <Setter Property="Height" Value="26" />
             <Setter Property="Padding" Value="0" />
@@ -79,10 +81,17 @@
         </Grid>
 
         
-        <!--  Mesh tree (multi-mesh mode)  -->
+                <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="colTree" Width="259" MinWidth="120" />
+                <ColumnDefinition x:Name="colTreeSplit" Width="Auto" />
+                <ColumnDefinition Width="*" MinWidth="200" />
+                <ColumnDefinition x:Name="colEditSplit" Width="Auto" />
+                <ColumnDefinition x:Name="colEdit" Width="331" MinWidth="250" />
+            </Grid.ColumnDefinitions>
+<!--  Mesh tree (multi-mesh mode)  -->
         <DockPanel
-            Width="240"
-            DockPanel.Dock="Left"
+            Grid.Column="0"
             LastChildFill="True"
             Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}">
             <DockPanel.Margin>
@@ -118,10 +127,47 @@
         </DockPanel>
 
         
-        <!--  Texturing + editing tools (right)  -->
+                    <GridSplitter Grid.Column="1" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" />
+<!--  Toolbar + 3D mesh view  -->
+        <DockPanel Grid.Column="2" LastChildFill="True">
+            <!--  Toolbar  -->
+        <Border
+            DockPanel.Dock="Top"
+            Padding="2"
+            Background="{DynamicResource Brush_BackgroundSlightlyDark}"
+            Visibility="{Binding ShowEditingTools, Converter={StaticResource BoolToVis}}">
+            <controls:SpacedStack DockPanel.Dock="Right" Orientation="Horizontal" Spacing="3">
+                <Button Style="{StaticResource TbBtn}" Command="{Binding UndoCommand}" IsEnabled="{Binding UndoEnabled}" ToolTip="Undo (Ctrl+Z)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/undo}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding RedoCommand}" IsEnabled="{Binding RedoEnabled}" ToolTip="Redo (Ctrl+Y)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/redo}" /></Button>
+                <Border Style="{StaticResource TbSep}" />
+                <Button Style="{StaticResource TbBtn}" Command="{Binding ImportMeshCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Import mesh"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Import}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding ExportMeshCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Export mesh"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Export}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding RenameCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Rename mesh"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/edit}" /></Button>
+                <Border Style="{StaticResource TbSep}" />
+                <Button Style="{StaticResource TbBtn}" Command="{Binding ResetCameraCommand}" ToolTip="Reset camera"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/target}" /></Button>
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding DrawAxis, Mode=TwoWay}" ToolTip="Draw grid and axis"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/axis}" /></ToggleButton>
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Wireframe, Mode=TwoWay}" ToolTip="Draw in wireframe mode"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/wireframe}" /></ToggleButton>
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding AlphaTest, Mode=TwoWay}" ToolTip="Toggle transparency"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/AlphaTest}" /></ToggleButton>
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Bilinear, Mode=TwoWay}" ToolTip="Toggle bilinear filter"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/blur}" /></ToggleButton>
+                <Border Style="{StaticResource TbSep}" />
+                <Button Style="{StaticResource TbBtn}" Command="{Binding FindTextureCommand}" Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}" ToolTip="Search for mesh by selected texture area (Ctrl+F)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/search-texture}" /></Button>
+                <Border Style="{StaticResource TbSep}" Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}" />
+                <Button Style="{StaticResource TbBtn}" Command="{Binding RotateTextureCommand}" ToolTip="Rotate current texture (~)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Rotate}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding MirrorTextureCommand}" ToolTip="Mirror current texture (Shift+~)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Mirror}" /></Button>
+                <Border Style="{StaticResource TbSep}" />
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Hidden, Mode=TwoWay}" ToolTip="Hide mesh if skinned mesh is used for the parent object"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/hide_mesh}" /></ToggleButton>
+            </controls:SpacedStack>
+        </Border>
+
+        
+            <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
+                <Border x:Name="meshHost" />
+            </Border>
+        </DockPanel>
+            <GridSplitter Grid.Column="3" Width="4" HorizontalAlignment="Center" VerticalAlignment="Stretch" ResizeBehavior="PreviousAndNext" />
+<!--  Texturing + editing tools (right)  -->
         <DockPanel
-            Width="331"
-            DockPanel.Dock="Right"
+            Grid.Column="4"
             LastChildFill="True"
             Visibility="{Binding ShowEditingTools, Converter={StaticResource BoolToVis}}">
             <DockPanel.Margin>
@@ -304,41 +350,6 @@
             </Border>
         </DockPanel>
 
-        <!--  Toolbar + 3D mesh view  -->
-        <DockPanel LastChildFill="True">
-            <!--  Toolbar  -->
-        <Border
-            DockPanel.Dock="Top"
-            Padding="2"
-            Background="{DynamicResource Brush_BackgroundSlightlyDark}"
-            Visibility="{Binding ShowEditingTools, Converter={StaticResource BoolToVis}}">
-            <controls:SpacedStack DockPanel.Dock="Right" Orientation="Horizontal" Spacing="3">
-                <Button Style="{StaticResource TbBtn}" Command="{Binding UndoCommand}" IsEnabled="{Binding UndoEnabled}" ToolTip="Undo (Ctrl+Z)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/undo}" /></Button>
-                <Button Style="{StaticResource TbBtn}" Command="{Binding RedoCommand}" IsEnabled="{Binding RedoEnabled}" ToolTip="Redo (Ctrl+Y)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/redo}" /></Button>
-                <Border Style="{StaticResource TbSep}" />
-                <Button Style="{StaticResource TbBtn}" Command="{Binding ImportMeshCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Import mesh"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Import}" /></Button>
-                <Button Style="{StaticResource TbBtn}" Command="{Binding ExportMeshCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Export mesh"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Export}" /></Button>
-                <Button Style="{StaticResource TbBtn}" Command="{Binding RenameCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Rename mesh"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/edit}" /></Button>
-                <Border Style="{StaticResource TbSep}" />
-                <Button Style="{StaticResource TbBtn}" Command="{Binding ResetCameraCommand}" ToolTip="Reset camera"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/target}" /></Button>
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding DrawAxis, Mode=TwoWay}" ToolTip="Draw grid and axis"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/axis}" /></ToggleButton>
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Wireframe, Mode=TwoWay}" ToolTip="Draw in wireframe mode"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/wireframe}" /></ToggleButton>
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding AlphaTest, Mode=TwoWay}" ToolTip="Toggle transparency"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/AlphaTest}" /></ToggleButton>
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Bilinear, Mode=TwoWay}" ToolTip="Toggle bilinear filter"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/blur}" /></ToggleButton>
-                <Border Style="{StaticResource TbSep}" />
-                <Button Style="{StaticResource TbBtn}" Command="{Binding FindTextureCommand}" Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}" ToolTip="Search for mesh by selected texture area (Ctrl+F)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/search-texture}" /></Button>
-                <Border Style="{StaticResource TbSep}" Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}" />
-                <Button Style="{StaticResource TbBtn}" Command="{Binding RotateTextureCommand}" ToolTip="Rotate current texture (~)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Rotate}" /></Button>
-                <Button Style="{StaticResource TbBtn}" Command="{Binding MirrorTextureCommand}" ToolTip="Mirror current texture (Shift+~)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Mirror}" /></Button>
-                <Border Style="{StaticResource TbSep}" />
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Hidden, Mode=TwoWay}" ToolTip="Hide mesh if skinned mesh is used for the parent object"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/hide_mesh}" /></ToggleButton>
-            </controls:SpacedStack>
-        </Border>
-
-        
-            <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
-                <Border x:Name="meshHost" />
-            </Border>
-        </DockPanel>
+                </Grid>
     </DockPanel>
 </Window>

@@ -28,6 +28,7 @@
                     Width="23"
                     Height="23"
                     Margin="5,0,0,0"
+                    Padding="0"
                     Click="butSearch_Click"
                     DockPanel.Dock="Right"
                     ToolTip="Search">

@@ -25,6 +25,7 @@
 
 		<!--  Brushes  -->
 		<Setter Property="Background" Value="{DynamicResource Brush_Background}" />
+		<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
 		<Setter Property="BorderBrush" Value="{DynamicResource Brush_Background_Low}" />
 		<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
 

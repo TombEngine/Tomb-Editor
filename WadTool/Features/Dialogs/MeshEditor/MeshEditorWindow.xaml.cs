@@ -62,6 +62,21 @@ public partial class MeshEditorWindow : Window
         _vm.MessageRaised += OnMessageRaised;
         _vm.EnsureSelectionVisible += OnEnsureSelectionVisible;
         _vm.AttachPanels(_panelMesh, _panelTextureMap);
+
+        // Columns of hidden panels collapse so the 3D view takes the room.
+        if (!_vm.TreeMode)
+        {
+            colTree.MinWidth = 0.0;
+            colTree.Width = new GridLength(0.0);
+            colTreeSplit.Width = new GridLength(0.0);
+        }
+
+        if (!_vm.ShowEditingTools)
+        {
+            colEdit.MinWidth = 0.0;
+            colEdit.Width = new GridLength(0.0);
+            colEditSplit.Width = new GridLength(0.0);
+        }
     }
 
     private void OnClosingHandler(object? sender, CancelEventArgs e)

@@ -24,7 +24,7 @@
 
     <Window.Resources>
         <Style x:Key="Lbl" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource Brush_Text_Low}" />
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
             <Setter Property="Margin" Value="0,4,0,0" />
         </Style>
         <Style x:Key="Val" TargetType="TextBlock">
@@ -34,7 +34,7 @@
         <Style x:Key="FieldLbl" TargetType="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Width" Value="64" />
-            <Setter Property="Foreground" Value="{DynamicResource Brush_Text_Low}" />
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
         </Style>
         <Style x:Key="Nud" BasedOn="{StaticResource {x:Type controls:NumericUpDown}}" TargetType="controls:NumericUpDown">
             <EventSetter Event="LostKeyboardFocus" Handler="OnParameterLostFocus" />
@@ -53,6 +53,7 @@
             x:Key="TbBtn"
             BasedOn="{StaticResource {x:Type Button}}"
             TargetType="Button">
+            <Setter Property="Background" Value="Transparent" /><Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="Width" Value="26" />
             <Setter Property="Height" Value="26" />
             <Setter Property="Padding" Value="0" />
@@ -64,7 +65,7 @@
         <Style x:Key="TbLbl" TargetType="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Margin" Value="4,0,2,0" />
-            <Setter Property="Foreground" Value="{DynamicResource Brush_Text_Low}" />
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
         </Style>
         <Style x:Key="TbSep" TargetType="Border">
             <Setter Property="Width" Value="1" />
@@ -202,17 +203,8 @@
                         <Button Style="{StaticResource TbBtn}" Command="{Binding ReverseCommand}" ToolTip="Reverse animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/back}" /></Button>
                         <Button Style="{StaticResource TbBtn}" Command="{Binding MirrorCommand}" ToolTip="Mirror animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Mirror}" /></Button>
                         <Border Style="{StaticResource TbSep}" />
-                        <TextBlock Style="{StaticResource TbLbl}" Text="Room:" Visibility="{Binding RoomsEnabled, Converter={StaticResource BoolToVis}}" />
                     </controls:SpacedStack>
-                    <ComboBox
-                        Width="121"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Visibility="{Binding RoomsEnabled, Converter={StaticResource BoolToVis}}"
-                        IsEnabled="{Binding RoomsEnabled}"
-                        ItemsSource="{Binding Rooms}"
-                        SelectedItem="{Binding SelectedRoomItem, Mode=TwoWay}"
-                        ToolTip="Reference room" />
+                    
                 </DockPanel>
             </Border>
 
