@@ -46,7 +46,7 @@
 			RowHeaderWidth="0"
 			SelectionMode="Single">
 			<DataGrid.Columns>
-				<DataGridCheckBoxColumn Width="32" Binding="{Binding Replace, UpdateSourceTrigger=PropertyChanged}" />
+				<DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="32" Binding="{Binding Replace, UpdateSourceTrigger=PropertyChanged}" />
 				<DataGridTextColumn
 					Width="*"
 					Binding="{Binding DisplayName}"

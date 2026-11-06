@@ -329,8 +329,8 @@
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Width="160" Binding="{Binding Message}" CellStyle="{StaticResource StatusCell}" Header="{tombLib:Localize ColumnMessage}" IsReadOnly="True" />
                             <DataGridTextColumn Width="90" Binding="{Binding Size}" Header="{tombLib:Localize ColumnSize}" IsReadOnly="True" />
-                            <DataGridCheckBoxColumn Width="120" Binding="{Binding ReplaceMagentaWithTransparency, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnMagentaToAlpha}" />
-                            <DataGridCheckBoxColumn Width="150" Binding="{Binding Convert512PixelsToDoubleRows, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSet512To256}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="120" Binding="{Binding ReplaceMagentaWithTransparency, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnMagentaToAlpha}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="150" Binding="{Binding Convert512PixelsToDoubleRows, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSet512To256}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </DockPanel>
@@ -424,15 +424,15 @@
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Width="50" Binding="{Binding Scale, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnScale}" />
                             <DataGridTextColumn Width="100" Binding="{Binding ErrorMessage}" CellStyle="{StaticResource StatusCell}" Header="{tombLib:Localize ColumnMessage}" IsReadOnly="True" />
-                            <DataGridCheckBoxColumn Width="60" Binding="{Binding SwapXY, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSwapXY}" />
-                            <DataGridCheckBoxColumn Width="60" Binding="{Binding SwapXZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSwapXZ}" />
-                            <DataGridCheckBoxColumn Width="60" Binding="{Binding SwapYZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSwapYZ}" />
-                            <DataGridCheckBoxColumn Width="34" Binding="{Binding FlipX, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipX}" />
-                            <DataGridCheckBoxColumn Width="34" Binding="{Binding FlipY, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipY}" />
-                            <DataGridCheckBoxColumn Width="34" Binding="{Binding FlipZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipZ}" />
-                            <DataGridCheckBoxColumn Width="62" Binding="{Binding MappedUV, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnMappedUV}" />
-                            <DataGridCheckBoxColumn Width="58" Binding="{Binding FlipUV_V, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipUV}" />
-                            <DataGridCheckBoxColumn Width="54" Binding="{Binding InvertFaces, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnInvertFaces}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="60" Binding="{Binding SwapXY, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSwapXY}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="60" Binding="{Binding SwapXZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSwapXZ}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="60" Binding="{Binding SwapYZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSwapYZ}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="34" Binding="{Binding FlipX, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipX}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="34" Binding="{Binding FlipY, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipY}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="34" Binding="{Binding FlipZ, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipZ}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="62" Binding="{Binding MappedUV, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnMappedUV}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="58" Binding="{Binding FlipUV_V, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnFlipUV}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="54" Binding="{Binding InvertFaces, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnInvertFaces}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </DockPanel>
@@ -462,10 +462,10 @@
                         ItemsSource="{Binding StaticMeshMerges}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Width="*" Binding="{Binding StaticMesh}" Header="{tombLib:Localize ColumnStaticMesh}" IsReadOnly="True" />
-                            <DataGridCheckBoxColumn Width="70" Binding="{Binding Merge, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnMerge}" />
-                            <DataGridCheckBoxColumn Width="170" Binding="{Binding InterpretShadesAsEffect, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnShadesAsEffect}" />
-                            <DataGridCheckBoxColumn Width="170" Binding="{Binding TintAsAmbient, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnTintAsAmbient}" />
-                            <DataGridCheckBoxColumn Width="150" Binding="{Binding ClearShades, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnClearShades}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="70" Binding="{Binding Merge, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnMerge}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="170" Binding="{Binding InterpretShadesAsEffect, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnShadesAsEffect}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="170" Binding="{Binding TintAsAmbient, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnTintAsAmbient}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="150" Binding="{Binding ClearShades, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnClearShades}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </DockPanel>
@@ -618,7 +618,7 @@
                             HeadersVisibility="Column"
                             ItemsSource="{Binding SoundInfos}">
                             <DataGrid.Columns>
-                                <DataGridCheckBoxColumn Width="32" Binding="{Binding Selected, UpdateSourceTrigger=PropertyChanged}" Header="" />
+                                <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="32" Binding="{Binding Selected, UpdateSourceTrigger=PropertyChanged}" Header="" />
                                 <DataGridTextColumn Width="50" Binding="{Binding Id}" Header="{tombLib:Localize ColumnId}" IsReadOnly="True" />
                                 <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="{tombLib:Localize ColumnName}" IsReadOnly="True" />
                                 <DataGridTextColumn Width="120" Binding="{Binding Catalog}" Header="{tombLib:Localize ColumnFromCatalog}" IsReadOnly="True" />
