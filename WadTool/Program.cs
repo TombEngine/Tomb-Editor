@@ -1,7 +1,6 @@
 #nullable enable
 
 using DarkUI.WPF.Config;
-using DarkUI.WPF.CustomControls;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using System;
@@ -45,20 +44,11 @@ internal static class Program
         TrCatalog.LoadCatalog(DefaultPaths.EngineCatalogsDirectory);
         var application = Application.Current ?? throw new InvalidOperationException("WPF initialization did not create an application.");
         SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(application.Dispatcher));
-        UseLeftAlignedNumericFields(application);
         Run(application, configuration, args, log, provider.GetRequiredService<IMessageService>());
         application.Shutdown();
 
         // The shared rendering device owns a foreground thread after the application shuts down.
         Environment.Exit(0);
-    }
-
-    // The WinForms WadTool shows the values of its numeric fields left aligned (Tomb Editor right aligned them).
-    private static void UseLeftAlignedNumericFields(Application application)
-    {
-        var style = new Style(typeof(NumericUpDown), application.TryFindResource(typeof(NumericUpDown)) as Style);
-        style.Setters.Add(new Setter(NumericUpDown.TextAlignmentProperty, TextAlignment.Left));
-        application.Resources[typeof(NumericUpDown)] = style;
     }
 
     private static void Run(Application application, Configuration configuration, string[] args, Logging log, IMessageService messages)

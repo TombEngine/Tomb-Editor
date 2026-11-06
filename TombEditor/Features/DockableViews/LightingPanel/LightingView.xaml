@@ -192,7 +192,7 @@
 				HorizontalAlignment="Right"
 				Content="{tombLib:Localize Intensity}"
 				Style="{DynamicResource ExtraHorizontalMarginLabel}" />
-			<controls:NumericUpDown
+			<controls:NumericUpDown TextAlignment="Right"
 				Grid.Row="1"
 				Grid.Column="1"
 				DecimalPlaces="2"
@@ -209,7 +209,7 @@
 				HorizontalAlignment="Right"
 				Content="{tombLib:Localize InnerDistance}"
 				Style="{DynamicResource ExtraHorizontalMarginLabel}" />
-			<controls:NumericUpDown
+			<controls:NumericUpDown TextAlignment="Right"
 				Grid.Row="2"
 				Grid.Column="1"
 				DecimalPlaces="2"
@@ -226,7 +226,7 @@
 				HorizontalAlignment="Right"
 				Content="{tombLib:Localize OuterDistance}"
 				Style="{DynamicResource ExtraHorizontalMarginLabel}" />
-			<controls:NumericUpDown
+			<controls:NumericUpDown TextAlignment="Right"
 				Grid.Row="3"
 				Grid.Column="1"
 				DecimalPlaces="2"
@@ -248,7 +248,7 @@
 					<Thickness Left="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
 				</Label.Margin>
 			</Label>
-			<controls:NumericUpDown
+			<controls:NumericUpDown TextAlignment="Right"
 				Grid.Column="3"
 				DecimalPlaces="2"
 				FormatString="F2"
@@ -269,7 +269,7 @@
 					<Thickness Left="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
 				</Label.Margin>
 			</Label>
-			<controls:NumericUpDown
+			<controls:NumericUpDown TextAlignment="Right"
 				Grid.Row="1"
 				Grid.Column="3"
 				DecimalPlaces="2"
@@ -291,7 +291,7 @@
 					<Thickness Left="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
 				</Label.Margin>
 			</Label>
-			<controls:NumericUpDown
+			<controls:NumericUpDown TextAlignment="Right"
 				Grid.Row="2"
 				Grid.Column="3"
 				DecimalPlaces="2"
@@ -313,7 +313,7 @@
 					<Thickness Left="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
 				</Label.Margin>
 			</Label>
-			<controls:NumericUpDown
+			<controls:NumericUpDown TextAlignment="Right"
 				Grid.Row="3"
 				Grid.Column="3"
 				DecimalPlaces="2"

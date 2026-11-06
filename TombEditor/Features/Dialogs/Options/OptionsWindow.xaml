@@ -10,8 +10,8 @@
 
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     Title="{tombLib:Localize Title}"
-    Width="660"
-    Height="600"
+    Width="740"
+    Height="700"
     MinWidth="520"
     MinHeight="420"
     d:DataContext="{d:DesignInstance Type=local:OptionsWindowViewModel}"
@@ -45,7 +45,7 @@
                     </TextBlock.Margin>
                 </TextBlock>
                 <controls:NumericUpDown
-                    Width="120"
+                    Width="64"
                     HorizontalAlignment="Left"
                     DecimalPlaces="{Binding DecimalPlaces}"
                     Increment="{Binding Increment}"
@@ -118,7 +118,7 @@
                     DockPanel.Dock="Left"
                     IsChecked="{Binding Value, Mode=TwoWay}" />
                 <controls:NumericUpDown
-                    Width="120"
+                    Width="64"
                     HorizontalAlignment="Left"
                     DataContext="{Binding Children[0]}"
                     DecimalPlaces="{Binding DecimalPlaces}"
@@ -237,19 +237,17 @@
         </DockPanel>
 
         <!--  Buttons  -->
-        <controls:SpacedStack
-            DockPanel.Dock="Bottom"
-            HorizontalAlignment="Right"
-            Orientation="Horizontal"
-            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-            <StackPanel.Margin>
-                <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
-            </StackPanel.Margin>
-            <Button Width="120" Command="{Binding PageDefaultsCommand}" Content="{tombLib:Localize ResetPageToDefaults}" />
-            <Button Width="80" Command="{Binding ApplyCommand}" Content="{tombLib:Localize ~Common.Apply}" />
-            <Button Width="80" Command="{Binding OkCommand}" Content="{tombLib:Localize ~Common.OK}" IsDefault="True" />
-            <Button Width="80" Command="{Binding CancelCommand}" Content="{tombLib:Localize ~Common.Cancel}" IsCancel="True" />
-        </controls:SpacedStack>
+        <Grid DockPanel.Dock="Bottom" Margin="0,6,0,0">
+            <Button Width="120" HorizontalAlignment="Left" Command="{Binding PageDefaultsCommand}" Content="{tombLib:Localize ResetPageToDefaults}" />
+            <controls:SpacedStack
+                HorizontalAlignment="Right"
+                Orientation="Horizontal"
+                Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+                <Button Width="80" Command="{Binding ApplyCommand}" Content="{tombLib:Localize ~Common.Apply}" />
+                <Button Width="80" Command="{Binding OkCommand}" Content="{tombLib:Localize ~Common.OK}" IsDefault="True" />
+                <Button Width="80" Command="{Binding CancelCommand}" Content="{tombLib:Localize ~Common.Cancel}" IsCancel="True" />
+            </controls:SpacedStack>
+        </Grid>
 
         <!--  Tabs  -->
         <TabControl
