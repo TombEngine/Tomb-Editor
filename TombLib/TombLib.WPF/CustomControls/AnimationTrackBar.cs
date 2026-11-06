@@ -56,7 +56,7 @@ public class AnimationTrackBar : FrameworkElement
     private static readonly Brush _disabledTextBrush = FrozenBrush(_disabledText);
 
     private static readonly Typeface _typeface = new(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
-    private const double _fontSize = 9.0; // Legacy control font was 6.75pt = 9px.
+    private const double _fontSize = 11.0; // The animation editor sets the legacy control font to 8.25pt = 11px.
 
     private const int _paddingLeft = 4, _paddingTop = 4, _paddingBottom = 4;
     private const int _paddingHorizontal = 8;
@@ -489,7 +489,7 @@ public class AnimationTrackBar : FrameworkElement
                 if (passes == 0)
                 {
                     dc.DrawRectangle(_selectionBrush, null, rect);
-                    dc.DrawRectangle(null, _selectionPen, rect);
+                    // A 1 px pen is centred on its coordinate, so offset by half a pixel to stay crisp like GDI+.
                 }
                 else
                 {
@@ -561,7 +561,7 @@ public class AnimationTrackBar : FrameworkElement
                     {
                         // Draw frame lines
                         double lineHeight = height / (isKeyFrame ? 2 : 3);
-                        dc.DrawLine(isKeyFrame ? _keyFrameBorderPen : _frameBorderPen, new Point(currX, _paddingTop), new Point(currX, lineHeight));
+                        double lineX = isKeyFrame ? currX : currX + 0.5;
                     }
                 }
 

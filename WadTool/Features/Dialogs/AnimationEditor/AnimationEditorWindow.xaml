@@ -76,16 +76,16 @@
             x:Key="TransportBtn"
             BasedOn="{StaticResource {x:Type Button}}"
             TargetType="Button">
-            <Setter Property="Width" Value="32" />
-            <Setter Property="Height" Value="32" />
+            <Setter Property="Width" Value="28" />
+            <Setter Property="Height" Value="33" />
             <Setter Property="Padding" Value="0" />
         </Style>
         <Style
             x:Key="TransportToggle"
             BasedOn="{StaticResource {x:Type ToggleButton}}"
             TargetType="ToggleButton">
-            <Setter Property="Width" Value="32" />
-            <Setter Property="Height" Value="32" />
+            <Setter Property="Width" Value="28" />
+            <Setter Property="Height" Value="33" />
             <Setter Property="Padding" Value="0" />
         </Style>
         <Style x:Key="TransportImg" TargetType="Image">
@@ -218,6 +218,10 @@
 
         <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
 
+        <Border Height="25" Padding="4,5,0,3" Background="{DynamicResource Brush_Background}" DockPanel.Dock="Bottom">
+            <TextBlock FontSize="11" Foreground="{DynamicResource Brush_Text}" Text="{Binding StatusText}" TextTrimming="CharacterEllipsis" VerticalAlignment="Top" />
+        </Border>
+
         <!--  Footer: OK / Cancel  -->
         <!--  Footer: OK / Cancel  -->
         <controls:SpacedStack
@@ -233,20 +237,16 @@
         </controls:SpacedStack>
 
         <!--  Status line, then timeline with the transport buttons on its right (WinForms arrangement)  -->
-        <TextBlock DockPanel.Dock="Bottom" Margin="2,4,0,0" Foreground="{DynamicResource Brush_Text_Low}" Text="{Binding StatusText}" TextTrimming="CharacterEllipsis" />
+        
         <Grid DockPanel.Dock="Bottom" Margin="0,4,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Border
-                Height="84"
-                Grid.Column="0"
-                BorderBrush="{DynamicResource Brush_Border}"
-                BorderThickness="1">
-                <Border.Margin>
-                    <Thickness Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
-                </Border.Margin>
+                Height="36"
+                Grid.Column="0"
+                Margin="0,2,0,0">
                 <tombLibControls:AnimationTrackBar x:Name="timeline">
                     <tombLibControls:AnimationTrackBar.ContextMenu>
                         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
@@ -261,7 +261,7 @@
                     </tombLibControls:AnimationTrackBar.ContextMenu>
                 </tombLibControls:AnimationTrackBar>
             </Border>
-            <controls:SpacedStack Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal" Spacing="3">
+            <controls:SpacedStack Grid.Column="1" Width="247" Margin="0,2,0,0" HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal" Spacing="0">
                     <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoStartCommand}" ToolTip="Go to start"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/Start}" /></Button>
                     <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoPrevCommand}" ToolTip="Back 1 frame"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/FrameBack}" /></Button>
                     <Button Style="{StaticResource TransportBtn}" Command="{Binding PlayCommand}" ToolTip="Playback">

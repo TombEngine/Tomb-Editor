@@ -375,3 +375,5 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 - State changes: blend curve cells have no button padding or margin and a larger minimum size, so the curve is not trimmed.
 
 - Animation editor: the Room selector (reference project) was the last child of the toolbar and stretched into a full-width bar; it is now 121 px wide, left aligned, and the label and list only show when a reference project is loaded.
+
+- Animation editor timeline bar (code comparison with FormAnimationEditor.Designer and AnimationTrackBar; drawing logic, colors, markers, labels and input were already identical): control is 36 px high without border (was 84 px with a border), label font 11 px (8.25 pt set by the form; was 9 px), transport strip 247 px wide with 28x33 buttons and no gaps (was 32x32 with 3 px gaps), 1 px lines half-pixel aligned to stay crisp like GDI+, the "Frame / Keyframe / Selected" text is a 25 px status bar at the bottom edge in normal text color (was dim text above the timeline). Not compared on screen (display locked).
