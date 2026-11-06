@@ -101,10 +101,7 @@
                 </GroupBox>
 
                 <!--  Visibility Box  -->
-                <GroupBox>
-                    <GroupBox.Header>
-                        <CheckBox Content="Visibility Box" IsChecked="{Binding DrawVisibilityBox, Mode=TwoWay}" />
-                    </GroupBox.Header>
+                <Border>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -118,6 +115,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
+                        <CheckBox VerticalAlignment="Center" Content="Visibility Box" IsChecked="{Binding DrawVisibilityBox, Mode=TwoWay}" />
                         <StackPanel
                             Grid.ColumnSpan="3"
                             HorizontalAlignment="Right"
@@ -145,13 +143,10 @@
                         <controls:NumericUpDown Grid.Row="4" Grid.Column="1" Value="{Binding VisBoxMaxY, Mode=TwoWay}" />
                         <controls:NumericUpDown Grid.Row="4" Grid.Column="2" Value="{Binding VisBoxMaxZ, Mode=TwoWay}" />
                     </Grid>
-                </GroupBox>
+                </Border>
 
                 <!--  Collision Box  -->
-                <GroupBox>
-                    <GroupBox.Header>
-                        <CheckBox Content="Collision Box" IsChecked="{Binding DrawCollisionBox, Mode=TwoWay}" />
-                    </GroupBox.Header>
+                <Border>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -165,6 +160,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
+                        <CheckBox VerticalAlignment="Center" Content="Collision Box" IsChecked="{Binding DrawCollisionBox, Mode=TwoWay}" />
                         <StackPanel
                             Grid.ColumnSpan="3"
                             HorizontalAlignment="Right"
@@ -192,7 +188,7 @@
                         <controls:NumericUpDown Grid.Row="4" Grid.Column="1" Value="{Binding ColBoxMaxY, Mode=TwoWay}" />
                         <controls:NumericUpDown Grid.Row="4" Grid.Column="2" Value="{Binding ColBoxMaxZ, Mode=TwoWay}" />
                     </Grid>
-                </GroupBox>
+                </Border>
 
                 <!--  Shatter  -->
                 <GroupBox>
