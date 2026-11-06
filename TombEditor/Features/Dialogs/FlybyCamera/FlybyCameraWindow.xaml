@@ -13,7 +13,7 @@
     Width="{Binding WindowWidth}"
     d:DataContext="{d:DesignInstance Type=vm:FlybyCameraWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
-    ResizeMode="CanMinimize"
+    ResizeMode="NoResize"
     ShowInTaskbar="False"
     SizeToContent="Height"
     Style="{DynamicResource CustomWindowStyle}"

@@ -157,6 +157,11 @@
 							<Setter TargetName="btnRestore" Property="Visibility" Value="Collapsed" />
 						</Trigger>
 
+						<Trigger Property="local:WindowOptions.ShowMinMaxButtons" Value="False">
+							<Setter TargetName="btnMinimize" Property="Visibility" Value="Collapsed" />
+							<Setter TargetName="btnRestore" Property="Visibility" Value="Collapsed" />
+						</Trigger>
+
 						<Trigger Property="ResizeMode" Value="NoResize">
 							<Setter TargetName="btnMinimize" Property="Visibility" Value="Collapsed" />
 							<Setter TargetName="btnRestore" Property="Visibility" Value="Collapsed" />
