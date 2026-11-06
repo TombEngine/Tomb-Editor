@@ -57,7 +57,7 @@
 			</wadTool:AnimCommandEditor.Margin>
 		</wadTool:AnimCommandEditor>
 
-		<GroupBox Header="{tombLib:Localize GroupTitle}">
+		<Border>
 			<DockPanel LastChildFill="True">
 
 				<!--  Side controls in the order of the legacy form: add / copy / copy to all / delete on top, up / down at the bottom  -->
@@ -134,6 +134,6 @@
 					</DataGrid.Columns>
 				</DataGrid>
 			</DockPanel>
-		</GroupBox>
+		</Border>
 	</DockPanel>
 </Window>
