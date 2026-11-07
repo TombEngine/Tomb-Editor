@@ -95,6 +95,9 @@ public partial class MainWindow : Window
         RefreshRecentWadsList();
 
         PreviewKeyDown += OnPreviewKeyDown;
+
+        // Like WinForms, the destination tree starts with the focus (its header shows the active colour).
+        ContentRendered += (_, _) => Dispatcher.InvokeAsync(() => treeDestWad.FocusTree(), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
     }
 
     private Dictionary<string, Action> CreateActions() => new()

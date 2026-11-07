@@ -99,7 +99,7 @@
             </Grid>
 
             <!--  The tree itself  -->
-            <controls:AlternatingTreeView x:Name="tree" HorizontalContentAlignment="Stretch" SelectedItemChanged="tree_SelectedItemChanged">
+            <controls:AlternatingTreeView x:Name="tree" Style="{DynamicResource {x:Type TreeView}}" HorizontalContentAlignment="Stretch" SelectedItemChanged="tree_SelectedItemChanged">
                 <controls:AlternatingTreeView.ItemContainerStyle>
                     <Style BasedOn="{StaticResource {x:Type controls:AlternatingTreeViewItem}}" TargetType="controls:AlternatingTreeViewItem">
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
@@ -138,6 +138,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Foreground="{DynamicResource Brush_Text}"
+                Opacity="0.7"
                 Text="Click here to load new wad file." />
         </Border>
     </Grid>

@@ -166,27 +166,27 @@
                 <Label Content="Destination:" Foreground="{DynamicResource Brush_Text}" VerticalAlignment="Center" />
                 <Button
                     Command="{Binding Commands[NewWad2Menu_Click]}"
-                    Style="{DynamicResource ButtonWithIconOnly}"
+                    Style="{DynamicResource ButtonFlatIconOnly}"
                     ToolTip="New empty Wad2">
                     <Image Source="{tomb:Icon General/create_new}" />
                 </Button>
                 <Button
                     Command="{Binding Commands[OpenDestinationWadMenu_Click]}"
-                    Style="{DynamicResource ButtonWithIconOnly}"
+                    Style="{DynamicResource ButtonFlatIconOnly}"
                     ToolTip="Open destination file">
                     <Image Source="{tomb:Icon General/Open}" />
                 </Button>
                 <Button
                     x:Name="butSave"
                     Command="{Binding Commands[SaveMenu_Click]}"
-                    Style="{DynamicResource ButtonWithIconOnly}"
+                    Style="{DynamicResource ButtonFlatIconOnly}"
                     ToolTip="Save Wad2">
                     <Image Source="{tomb:Icon General/Save}" />
                 </Button>
                 <Button
                     x:Name="butSaveAs"
                     Command="{Binding Commands[SaveAsMenu_Click]}"
-                    Style="{DynamicResource ButtonWithIconOnly}"
+                    Style="{DynamicResource ButtonFlatIconOnly}"
                     ToolTip="Save Wad2 as...">
                     <Image Source="{tomb:Icon General/Save_As}" />
                 </Button>
@@ -196,7 +196,7 @@
                 <Label Content="Source:" Foreground="{DynamicResource Brush_Text}" VerticalAlignment="Center" />
                 <Button
                     Command="{Binding Commands[OpenSourceWadMenu_Click]}"
-                    Style="{DynamicResource ButtonWithIconOnly}"
+                    Style="{DynamicResource ButtonFlatIconOnly}"
                     ToolTip="Open source file">
                     <Image Source="{tomb:Icon General/Open}" />
                 </Button>
@@ -213,14 +213,14 @@
                     VerticalAlignment="Center" />
                 <Button
                     Command="{Binding Commands[OpenReferenceLevelMenu_Click]}"
-                    Style="{DynamicResource ButtonWithIconOnly}"
+                    Style="{DynamicResource ButtonFlatIconOnly}"
                     ToolTip="Open reference project">
                     <Image Source="{tomb:Icon General/Open}" />
                 </Button>
                 <Button
                     x:Name="butCloseRefLevel"
                     Command="{Binding Commands[CloseReferenceLevelMenu_Click]}"
-                    Style="{DynamicResource ButtonWithIconOnly}"
+                    Style="{DynamicResource ButtonFlatIconOnly}"
                     ToolTip="Close reference project">
                     <Image Source="{tomb:Icon Actions/delete}" />
                 </Button>
@@ -258,7 +258,7 @@
                     Orientation="Horizontal">
                     <Button
                         Command="{Binding Commands[EditItemButton_Click]}"
-                        Style="{DynamicResource ButtonWithIconAndText}"
+                        Style="{DynamicResource ButtonFlatIconAndText}"
                         ToolTip="Edit selected item">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon General/edit}" />
@@ -267,7 +267,7 @@
                     </Button>
                     <Button
                         Command="{Binding Commands[ChangeSlotButton_Click]}"
-                        Style="{DynamicResource ButtonWithIconAndText}"
+                        Style="{DynamicResource ButtonFlatIconAndText}"
                         ToolTip="Change slot of selected item">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon General/copy}" />
@@ -276,7 +276,7 @@
                     </Button>
                     <Button
                         Command="{Binding Commands[DeleteObjectButton_Click]}"
-                        Style="{DynamicResource ButtonWithIconAndText}"
+                        Style="{DynamicResource ButtonFlatIconAndText}"
                         ToolTip="Delete selected objects">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon General/trash}" />
@@ -285,13 +285,19 @@
                     </Button>
                 </StackPanel>
 
-                <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="{x:Static darkUI:Defaults.BorderThickness}">
+                <Border>
                     <DockPanel LastChildFill="True">
-                        <Border
-                            Background="{DynamicResource Brush_Background_Alternative}"
-                            BorderBrush="{DynamicResource Brush_Border}"
-                            BorderThickness="0,0,0,1"
-                            DockPanel.Dock="Top">
+                        <Border DockPanel.Dock="Top">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="{DynamicResource Brush_Background_Alternative}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsKeyboardFocusWithin, RelativeSource={RelativeSource AncestorType=DockPanel}}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource Brush_WindowBorder}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
                             <TextBlock
                                 Margin="{x:Static darkUI:Defaults.SmallThickness}"
                                 Foreground="{DynamicResource Brush_Text}"
@@ -321,7 +327,7 @@
                     <Button
                         x:Name="butEditAnimations"
                         Command="{Binding Commands[EditItemButton_Click]}"
-                        Style="{DynamicResource ButtonWithIconAndText}"
+                        Style="{DynamicResource ButtonFlatIconAndText}"
                         Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon Misc/animations}" />
@@ -331,7 +337,7 @@
                     <Button
                         x:Name="butEditSkeleton"
                         Command="{Binding Commands[EditSkeletonButton_Click]}"
-                        Style="{DynamicResource ButtonWithIconAndText}"
+                        Style="{DynamicResource ButtonFlatIconAndText}"
                         Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon Misc/skeleton}" />
@@ -341,7 +347,7 @@
                     <Button
                         x:Name="butEditStaticModel"
                         Command="{Binding Commands[EditItemButton_Click]}"
-                        Style="{DynamicResource ButtonWithIconAndText}"
+                        Style="{DynamicResource ButtonFlatIconAndText}"
                         Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon General/edit}" />
@@ -351,7 +357,7 @@
                     <Button
                         x:Name="butEditSpriteSequence"
                         Command="{Binding Commands[EditItemButton_Click]}"
-                        Style="{DynamicResource ButtonWithIconAndText}"
+                        Style="{DynamicResource ButtonFlatIconAndText}"
                         Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon Objects/movie_projector}" />
@@ -380,7 +386,7 @@
                     Orientation="Horizontal">
                     <Button
                         Command="{Binding Commands[AddObjectButton_Click]}"
-                        Style="{DynamicResource ButtonWithIconAndText}"
+                        Style="{DynamicResource ButtonFlatIconAndText}"
                         ToolTip="Copy selected objects to destination wad">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon General/angle_left}" />
@@ -389,7 +395,7 @@
                     </Button>
                     <Button
                         Command="{Binding Commands[AddObjectToDifferentSlotButton_Click]}"
-                        Style="{DynamicResource ButtonWithIconAndText}"
+                        Style="{DynamicResource ButtonFlatIconAndText}"
                         ToolTip="Copy selected objects to destination wad, choosing the slot">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon General/angle_left}" />
@@ -398,13 +404,19 @@
                     </Button>
                 </StackPanel>
 
-                <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="{x:Static darkUI:Defaults.BorderThickness}">
+                <Border>
                     <DockPanel LastChildFill="True">
-                        <Border
-                            Background="{DynamicResource Brush_Background_Alternative}"
-                            BorderBrush="{DynamicResource Brush_Border}"
-                            BorderThickness="0,0,0,1"
-                            DockPanel.Dock="Top">
+                        <Border DockPanel.Dock="Top">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Setter Property="Background" Value="{DynamicResource Brush_Background_Alternative}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsKeyboardFocusWithin, RelativeSource={RelativeSource AncestorType=DockPanel}}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource Brush_WindowBorder}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
                             <TextBlock
                                 x:Name="sourceHeaderLabel"
                                 Margin="{x:Static darkUI:Defaults.SmallThickness}"

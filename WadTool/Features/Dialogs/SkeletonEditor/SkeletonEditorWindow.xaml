@@ -153,7 +153,7 @@
 
             <GroupBox Header="Mesh tree">
                 <controls:AlternatingTreeView
-                    x:Name="treeSkeleton"
+                    x:Name="treeSkeleton" Style="{DynamicResource {x:Type TreeView}}"
                     ItemsSource="{Binding RootNodes}">
                     <controls:AlternatingTreeView.ItemContainerStyle>
                         <Style TargetType="controls:AlternatingTreeViewItem" BasedOn="{StaticResource {x:Type controls:AlternatingTreeViewItem}}">

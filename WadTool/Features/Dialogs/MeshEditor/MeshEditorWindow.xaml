@@ -27,7 +27,7 @@
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
         </Style>
-        <Style x:Key="TbBtn" BasedOn="{StaticResource {x:Type Button}}" TargetType="Button">
+        <Style x:Key="TbBtn" BasedOn="{StaticResource ButtonFlatIconOnly}" TargetType="Button">
             <Setter Property="Background" Value="Transparent" /><Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="Width" Value="26" />
             <Setter Property="Height" Value="26" />
@@ -108,7 +108,7 @@
                 <TextBox Grid.Column="0" Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"><TextBox.InputBindings><KeyBinding Key="Return" Command="{Binding SearchCommand}" /></TextBox.InputBindings></TextBox>
                 <Button Grid.Column="1" Style="{StaticResource TbBtn}" Command="{Binding SearchCommand}" ToolTip="Search for meshes by name"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/search}" /></Button>
             </controls:SpacedGrid>
-            <controls:AlternatingTreeView x:Name="meshTree" HorizontalContentAlignment="Stretch" Margin="0,4,0,0" ItemsSource="{Binding RootNodes}">
+            <controls:AlternatingTreeView x:Name="meshTree" Style="{DynamicResource {x:Type TreeView}}" HorizontalContentAlignment="Stretch" Margin="0,4,0,0" ItemsSource="{Binding RootNodes}">
                 <controls:AlternatingTreeView.ItemContainerStyle>
                     <Style BasedOn="{StaticResource {x:Type controls:AlternatingTreeViewItem}}" TargetType="controls:AlternatingTreeViewItem">
                         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />

@@ -261,6 +261,9 @@ public partial class WadTreeView : UserControl
         Dispatcher.BeginInvoke(new Action(() => GetContainer(node)?.BringIntoView()), DispatcherPriority.Background);
     }
 
+    /// <summary>Puts the keyboard focus in the tree.</summary>
+    public void FocusTree() => tree.Focus();
+
     private TreeViewItem? GetContainer(WadTreeNode node)
     {
         var path = new Stack<WadTreeNode>();
