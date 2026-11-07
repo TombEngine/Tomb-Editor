@@ -394,31 +394,25 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             if (ViewModel is not { } viewModel)
                 return;
 
-            // The menu is composed here because it depends on the click position; every item
-            // delegates the actual work to the view-model's AddNodeAtPositionCommand.
-            var menu = new ContextMenu();
-            foreach (var group in viewModel.Functions.GroupBy(f => f.Section))
+            // The searchable function list opens at the cursor; the chosen function becomes a node there.
+            var deviceCursor = rootCanvas.PointToScreen(position);
+            var screenPosition = PresentationSource.FromVisual(rootCanvas)?.CompositionTarget?.TransformFromDevice.Transform(deviceCursor) ?? deviceCursor;
+            var list = new FunctionListWindow(viewModel.Functions, screenPosition);
+
+            list.Closed += (_, _) =>
             {
-                // "__" so underscores in script-defined names display literally (not access keys).
-                var section = new MenuItem { Header = string.IsNullOrEmpty(group.Key) ? Localizer.Instance["TombEditor.NodeEditor.Misc"] : group.Key.Replace("_", "__") };
+                if (list.ChosenFunction is { } function)
+                    viewModel.AddNodeAtPositionCommand.Execute(new NodeEditorViewModel.AddNodeRequest(function, position.X, position.Y));
+            };
 
-                // Conditions are listed before actions inside every section.
-                foreach (var function in group.OrderBy(f => !f.Conditional))
-                {
-                    section.Items.Add(new MenuItem
-                    {
-                        Header = function.Name?.Replace("_", "__"),
-                        Command = viewModel.AddNodeAtPositionCommand,
-                        CommandParameter = new NodeEditorViewModel.AddNodeRequest(function, position.X, position.Y)
-                    });
-                }
-
-                menu.Items.Add(section);
-            }
-
-            menu.IsOpen = true;
+            // Opened after the right button is released, otherwise that same click deactivates the list at once.
+            Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            {
+                list.Owner = Window.GetWindow(this);
+                list.Show();
+                list.Activate();
+            }));
         }
-
         private void Node_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
             Focus();
