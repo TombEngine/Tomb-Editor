@@ -25,6 +25,9 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
+        <!--  The WinForms page list highlights its selection in grey  -->
+        <SolidColorBrush x:Key="Brush_Selection" Color="#5C5C5C" />
+
         <SolidColorBrush x:Key="ValidBrush" Color="#FF356B35" />
         <SolidColorBrush x:Key="InvalidBrush" Color="#FF6C2121" />
 
