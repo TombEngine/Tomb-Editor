@@ -25,6 +25,23 @@
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
         </Style>
+            <!--  Section panel like the WinForms DarkSectionPanel: a header band over the content, no frame  -->
+        <Style TargetType="GroupBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GroupBox">
+                        <DockPanel>
+                            <Border Padding="4,2" Background="{DynamicResource Brush_BackgroundSlightlyDark}" DockPanel.Dock="Top">
+                                <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" TextElement.Foreground="{DynamicResource Brush_Text}" />
+                            </Border>
+                            <Border Padding="2">
+                                <ContentPresenter />
+                            </Border>
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Window.InputBindings>
