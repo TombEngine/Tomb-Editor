@@ -47,7 +47,7 @@
                             <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush_Background_Alternative}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush_Selection_LostFocus}" />
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource Brush_Selection}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="{DynamicResource Opacity_DisabledContent}" />
