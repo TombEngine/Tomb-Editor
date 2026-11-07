@@ -263,10 +263,38 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
             if ((isStatic && ((WadStaticId)obj).TypeId == ((WadStaticId)leaf.ObjectId).TypeId) ||
                 (!isStatic && ((WadMoveableId)obj).TypeId == ((WadMoveableId)leaf.ObjectId).TypeId))
             {
+                ExpandPathTo(leaf);
                 leaf.IsSelected = true;
                 EnsureSelectionVisible?.Invoke();
                 return;
             }
+        }
+    }
+
+    // The tree starts collapsed (like WinForms); opening for an object expands the way to it.
+    private void ExpandPathTo(MeshEditorTreeNode target)
+    {
+        bool Visit(MeshEditorTreeNode node)
+        {
+            if (ReferenceEquals(node, target))
+                return true;
+
+            foreach (var child in node.Children)
+            {
+                if (!Visit(child))
+                    continue;
+
+                node.IsExpanded = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        foreach (var root in RootNodes)
+        {
+            if (Visit(root))
+                break;
         }
     }
 
