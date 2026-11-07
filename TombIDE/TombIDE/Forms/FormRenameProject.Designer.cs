@@ -20,6 +20,7 @@
             this.button_Apply = new DarkUI.Controls.DarkButton();
             this.button_Cancel = new DarkUI.Controls.DarkButton();
             this.checkBox_RenameDirectory = new DarkUI.Controls.DarkCheckBox();
+            this.checkBox_RenameTrproj = new DarkUI.Controls.DarkCheckBox();
             this.panel_02 = new System.Windows.Forms.Panel();
             this.label = new DarkUI.Controls.DarkLabel();
             this.textBox_NewName = new DarkUI.Controls.DarkTextBox();
@@ -36,7 +37,7 @@
             this.button_Apply.Margin = new System.Windows.Forms.Padding(3, 9, 0, 0);
             this.button_Apply.Name = "button_Apply";
             this.button_Apply.Size = new System.Drawing.Size(75, 23);
-            this.button_Apply.TabIndex = 1;
+            this.button_Apply.TabIndex = 2;
             this.button_Apply.Text = "Apply";
             this.button_Apply.Click += new System.EventHandler(this.button_Apply_Click);
             // 
@@ -48,7 +49,7 @@
             this.button_Cancel.Margin = new System.Windows.Forms.Padding(3, 9, 0, 0);
             this.button_Cancel.Name = "button_Cancel";
             this.button_Cancel.Size = new System.Drawing.Size(75, 23);
-            this.button_Cancel.TabIndex = 2;
+            this.button_Cancel.TabIndex = 3;
             this.button_Cancel.Text = "Cancel";
             // 
             // checkBox_RenameDirectory
@@ -60,15 +61,27 @@
             this.checkBox_RenameDirectory.TabIndex = 0;
             this.checkBox_RenameDirectory.Text = "Rename project directory as well";
             // 
+            // checkBox_RenameTrproj
+            // 
+            this.checkBox_RenameTrproj.Checked = true;
+            this.checkBox_RenameTrproj.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_RenameTrproj.Location = new System.Drawing.Point(6, 34);
+            this.checkBox_RenameTrproj.Margin = new System.Windows.Forms.Padding(3, 0, 3, 0);
+            this.checkBox_RenameTrproj.Name = "checkBox_RenameTrproj";
+            this.checkBox_RenameTrproj.Size = new System.Drawing.Size(185, 23);
+            this.checkBox_RenameTrproj.TabIndex = 1;
+            this.checkBox_RenameTrproj.Text = "Rename .trproj file as well";
+            // 
             // panel_02
             // 
             this.panel_02.Controls.Add(this.checkBox_RenameDirectory);
+            this.panel_02.Controls.Add(this.checkBox_RenameTrproj);
             this.panel_02.Controls.Add(this.button_Cancel);
             this.panel_02.Controls.Add(this.button_Apply);
             this.panel_02.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel_02.Location = new System.Drawing.Point(0, 55);
             this.panel_02.Name = "panel_02";
-            this.panel_02.Size = new System.Drawing.Size(464, 42);
+            this.panel_02.Size = new System.Drawing.Size(464, 62);
             this.panel_02.TabIndex = 2;
             // 
             // label
@@ -108,7 +121,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button_Cancel;
-            this.ClientSize = new System.Drawing.Size(464, 97);
+            this.ClientSize = new System.Drawing.Size(464, 117);
             this.Controls.Add(this.panel_01);
             this.Controls.Add(this.panel_02);
             this.FlatBorder = true;
@@ -132,6 +145,7 @@
 		private DarkUI.Controls.DarkButton button_Apply;
 		private DarkUI.Controls.DarkButton button_Cancel;
 		private DarkUI.Controls.DarkCheckBox checkBox_RenameDirectory;
+		private DarkUI.Controls.DarkCheckBox checkBox_RenameTrproj;
 		private System.Windows.Forms.Panel panel_02;
         private DarkUI.Controls.DarkLabel label;
         private DarkUI.Controls.DarkTextBox textBox_NewName;
