@@ -43,7 +43,8 @@ public partial class FunctionListWindow : Window
         Top = Math.Min(screenPosition.Y, SystemParameters.VirtualScreenTop + SystemParameters.VirtualScreenHeight - Height);
 
         Loaded += (_, _) => searchBox.Focus();
-        Deactivated += (_, _) => CloseWith(null);
+        // Closed after the activation change has finished: closing during it hands the focus to another application.
+        Deactivated += (_, _) => Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, new Action(() => CloseWith(null)));
     }
 
     private IEnumerable<FunctionTreeNode> Leaves => _sections.SelectMany(section => section.Children);
@@ -55,7 +56,12 @@ public partial class FunctionListWindow : Window
 
         _closing = true;
         ChosenFunction = function;
+        var owner = Owner;
         Close();
+
+        // After a choice or Escape the editor takes the focus back; after a click elsewhere it keeps what the user picked.
+        if (function is not null || Keyboard.IsKeyDown(Key.Escape))
+            owner?.Activate();
     }
 
     private void SearchNodes(string text)
