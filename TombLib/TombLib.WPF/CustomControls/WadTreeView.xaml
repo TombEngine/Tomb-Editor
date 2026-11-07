@@ -2,6 +2,7 @@
     x:Class="TombLib.WPF.CustomControls.WadTreeView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:icons="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -98,13 +99,14 @@
             </Grid>
 
             <!--  The tree itself  -->
-            <TreeView x:Name="tree" SelectedItemChanged="tree_SelectedItemChanged">
-                <TreeView.ItemContainerStyle>
-                    <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">
+            <controls:AlternatingTreeView x:Name="tree" HorizontalContentAlignment="Stretch" SelectedItemChanged="tree_SelectedItemChanged">
+                <controls:AlternatingTreeView.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource {x:Type controls:AlternatingTreeViewItem}}" TargetType="controls:AlternatingTreeViewItem">
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     </Style>
-                </TreeView.ItemContainerStyle>
-                <TreeView.ItemTemplate>
+                </controls:AlternatingTreeView.ItemContainerStyle>
+                <controls:AlternatingTreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                         <!--  Selection is multi-select and fully managed in code-behind, so the
                               highlight is drawn here from the node's IsSelected instead of the
@@ -122,8 +124,8 @@
                             </DataTrigger>
                         </HierarchicalDataTemplate.Triggers>
                     </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
-            </TreeView>
+                </controls:AlternatingTreeView.ItemTemplate>
+            </controls:AlternatingTreeView>
         </DockPanel>
 
         <!--  Empty state: shown when no wad is loaded  -->
