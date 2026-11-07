@@ -291,7 +291,7 @@ namespace TombLib.Forms
 			}
 
 			// NG settings
-			if (_version == TRVersion.Game.TRNG)
+			if (_version.IsNG())
 			{
 				// For now, add only P-Frames mode, as Half-Rotate and River-Rotate modes are faulty.
 				comboEffect.Items.Add(AnimatedTextureAnimationType.PFrames);
@@ -386,15 +386,15 @@ namespace TombLib.Forms
 				foreach (AnimatedTextureFrame frame in currentSet.Frames)
 					frameCount += frame.Repeat;
 
-			if (tooManyFramesWarning.Visible = _version == TRVersion.Game.TRNG && frameCount > _maxLegacyFrames)
-				toolTip.SetToolTip(tooManyFramesWarning, "This animation uses " + frameCount + " frames which is more than " + _maxLegacyFrames + "!\nThis will cause crash in TRNG!");
+			if (tooManyFramesWarning.Visible = _version.IsNG() && frameCount > _maxLegacyFrames)
+				toolTip.SetToolTip(tooManyFramesWarning, "This animation uses " + frameCount + " frames which is more than " + _maxLegacyFrames + "!\nThis will cause crash in TRNG / TRNGCE!");
 
 			if (comboEffect.Items.Contains(selectedSet.AnimationType))
 				comboEffect.SelectedItem = selectedSet.AnimationType;
 			else
 				comboEffect.SelectedItem = null;
 
-			if (_version == TRVersion.Game.TRNG)
+			if (_version.IsNG())
 			{
 				OnEffectChanged();
 				switch (selectedSet.AnimationType)
@@ -509,7 +509,7 @@ namespace TombLib.Forms
 
 			if (selectedSet.IsUvRotate && comboEffect.SelectedItem != null)
 			{
-				if (_version == TRVersion.Game.TRNG)
+				if (_version.IsNG())
 				{
 					g.DrawImage(image, new Point(0, (int)_lastY * 2 - 128));
 					g.DrawImage(image, new Point(0, (int)_lastY * 2));
@@ -1064,7 +1064,7 @@ namespace TombLib.Forms
 
 		private void comboEffect_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (_version is TRVersion.Game.TRNG or TRVersion.Game.TombEngine)
+			if (_version.IsNG() || _version is TRVersion.Game.TombEngine)
 				OnEffectChanged();
 		}
 
@@ -1114,7 +1114,7 @@ namespace TombLib.Forms
 				case AnimatedTextureAnimationType.UVRotate:
 				case AnimatedTextureAnimationType.HalfRotate:
 				case AnimatedTextureAnimationType.RiverRotate:
-					if (_version == TRVersion.Game.TRNG)
+					if (_version.IsNG())
 					{
 						comboFps.Visible = true;
 						numericUpDownFPS.Visible = false;
@@ -1167,7 +1167,7 @@ namespace TombLib.Forms
 			var selectedSet = comboAnimatedTextureSets.SelectedItem as AnimatedTextureSet;
 			if (selectedSet == null)
 				return;
-			if (_version == TRVersion.Game.TRNG)
+			if (_version.IsNG())
 				selectedSet.Fps = ((NgAnimatedTextureSettingPair)comboFps.SelectedItem).Key;
 			else
 				selectedSet.Fps = comboFps.SelectedIndex + 1;
@@ -1191,7 +1191,7 @@ namespace TombLib.Forms
 			var selectedSet = comboAnimatedTextureSets.SelectedItem as AnimatedTextureSet;
 			if (selectedSet == null)
 				return;
-			if (_version == TRVersion.Game.TRNG)
+			if (_version.IsNG())
 				selectedSet.UvRotate = (sbyte)((NgAnimatedTextureSettingPair)comboUvRotate.SelectedItem).Key;
 			else
 				selectedSet.UvRotate = (int)comboUvRotate.SelectedItem;

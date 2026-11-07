@@ -294,6 +294,7 @@ namespace TombIDE.Shared.NewStructure
 				TRVersion.Game.TR3 => new TR3GameProject(trproj, targetTrprojVersion),
 				TRVersion.Game.TR4 => new TR4GameProject(trproj, targetTrprojVersion),
 				TRVersion.Game.TRNG => new TRNGGameProject(trproj, targetTrprojVersion),
+				TRVersion.Game.TRNGCE => new TRNGCEGameProject(trproj, targetTrprojVersion),
 				TRVersion.Game.TombEngine => new TENGameProject(trproj, targetTrprojVersion),
 				_ => throw new NotSupportedException("The specified .trproj file is for an unsupported game version.")
 			};
