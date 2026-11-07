@@ -357,6 +357,9 @@
     <None Update="Catalogs\Engines\TR1\States.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Catalogs\Engines\TR1X\Limits.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Catalogs\Engines\TR2\Animations.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -375,6 +378,9 @@
     <None Update="Catalogs\Engines\TR2\States.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Catalogs\Engines\TR2X\Limits.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Catalogs\Engines\TR3\Animations.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -388,6 +394,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Catalogs\Engines\TR3\States.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Catalogs\Engines\TR3X\Limits.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Catalogs\Engines\TR4\Animations.xml">
