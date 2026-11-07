@@ -159,6 +159,12 @@ namespace TombEditor
             }
         }
 
+        private static void PopOutEditorDocument(string contentId)
+        {
+            if (System.Windows.Application.Current.MainWindow is MainWindow mainWindow)
+                mainWindow.PopOutEditorDocument(contentId);
+        }
+
         private static void AddCommand(string commandName, string friendlyName, CommandType type, Action<CommandArgs> command)
         {
             if (_commands.Any(cmd => cmd.Name.Equals(commandName, StringComparison.InvariantCultureIgnoreCase)))
@@ -969,15 +975,9 @@ namespace TombEditor
                 args.Editor.ConfigurationChange();
             });
 
-            AddCommand("PopOut2DMap", "Pop out 2D map", CommandType.Windows, delegate (CommandArgs args)
-            {
-                (args.Window as MainWindow)?.PopOutEditorDocument("view2D");
-            });
+            AddCommand("PopOut2DMap", "Pop out 2D map", CommandType.Windows, delegate (CommandArgs args) { PopOutEditorDocument("view2D"); });
 
-            AddCommand("PopOut3DView", "Pop out 3D view", CommandType.Windows, delegate (CommandArgs args)
-            {
-                (args.Window as MainWindow)?.PopOutEditorDocument("view3D");
-            });
+            AddCommand("PopOut3DView", "Pop out 3D view", CommandType.Windows, delegate (CommandArgs args) { PopOutEditorDocument("view3D"); });
 
             AddCommand("AddNewRoom", "Add new room", CommandType.Rooms, delegate (CommandArgs args)
             {

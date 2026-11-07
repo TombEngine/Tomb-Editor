@@ -635,17 +635,21 @@ public partial class MainWindow : Window
             if (cmd is null || cmd.Type != CommandType.Windows)
                 continue;
 
-            item.IsCheckable = true;
-
             if (commandName == "ShowToolPalette")
-                item.IsChecked = _toolPalette.IsShown;
+                SetCheckState(item, _toolPalette.IsShown);
             else if (commandName == "ShowFlybyTimeline")
-                item.IsChecked = _editor.Configuration.Window_Layout.ShowFlybyTimeline;
+                SetCheckState(item, _editor.Configuration.Window_Layout.ShowFlybyTimeline);
             else if (commandName == "ShowStatistics")
-                item.IsChecked = _editor.Configuration.Window_Layout.ShowStats;
+                SetCheckState(item, _editor.Configuration.Window_Layout.ShowStats);
             else if (cmd.Execute is { } && FindAnchorable(NormalizedContentIdFor(commandName)) is { } anchorable)
-                item.IsChecked = !anchorable.IsHidden;
+                SetCheckState(item, !anchorable.IsHidden);
         }
+    }
+
+    private static void SetCheckState(MenuItem item, bool isChecked)
+    {
+        item.IsCheckable = true;
+        item.IsChecked = isChecked;
     }
 
     private static string NormalizedContentIdFor(string showCommandName)
