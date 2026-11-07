@@ -1,4 +1,5 @@
 <UserControl
+	xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
 	x:Class="WadTool.AnimCommandEditor"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -176,6 +177,7 @@
 						Minimum="0"
 						DockPanel.Dock="Right"
 						ValueChanged="nudSoundId_ValueChanged" />
+					<Button Width="23" Height="23" Margin="0,0,6,0" Padding="0" Click="butSoundSearch_Click" DockPanel.Dock="Right" ToolTip="Search"><Image Width="16" Height="16" Source="{tomb:Icon General/search}" /></Button>
 					<controls:SearchableComboBox
 						x:Name="comboSound"
 						Margin="0,0,6,0"

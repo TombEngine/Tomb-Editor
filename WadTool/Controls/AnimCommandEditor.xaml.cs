@@ -183,6 +183,12 @@ namespace WadTool
             comboSound.SelectedItem = _soundItems[Math.Min(soundId, _soundItems.Count - 1)];
         }
 
+        private void butSoundSearch_Click(object sender, RoutedEventArgs e)
+        {
+            comboSound.Focus();
+            comboSound.IsDropDownOpen = true;
+        }
+
         private void comboCommandType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_command is null || _currentlyDoingCommandSelection)
