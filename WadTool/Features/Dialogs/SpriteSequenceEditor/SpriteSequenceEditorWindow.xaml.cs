@@ -21,6 +21,9 @@ public partial class SpriteSequenceEditorWindow : Window
     // end of the list); mirror that by scrolling the selection into view on each selection change.
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+        // The sprite list starts with the keyboard focus, so its selected row shows in the active colour (WinForms).
+        Dispatcher.InvokeAsync(() => spritesGrid.Focus(), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+
         ScrollToSelection();
         if (DataContext is INotifyPropertyChanged vm)
         {
