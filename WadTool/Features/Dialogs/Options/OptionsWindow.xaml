@@ -10,8 +10,8 @@
 
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     Title="{tombLib:Localize Title}"
-    Width="640"
-    Height="580"
+    Width="580"
+    Height="620"
     MinWidth="520"
     MinHeight="420"
     d:DataContext="{d:DesignInstance Type=local:OptionsWindowViewModel}"
@@ -81,8 +81,8 @@
                     DockPanel.Dock="Left"
                     Text="{Binding Label}" />
                 <Button
-                    Width="120"
-                    Height="20"
+                    Width="78"
+                    Height="22"
                     HorizontalAlignment="Left"
                     Command="{Binding DataContext.PickColorCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                     CommandParameter="{Binding}">
@@ -122,11 +122,7 @@
 
     <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
 
-        <!--  Search box  -->
-        <DockPanel DockPanel.Dock="Top" Margin="0,0,0,6">
-            <TextBlock VerticalAlignment="Center" Margin="0,0,6,0" Text="{tombLib:Localize Search}" />
-            <TextBox Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        </DockPanel>
+        
 
         <!--  Buttons  -->
         <Grid DockPanel.Dock="Bottom" Margin="0,6,0,0">
