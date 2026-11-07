@@ -3,6 +3,9 @@ Version 2.0.2
 
 Tomb Editor:
  * Fixed slide direction indication for TEN.
+ 
+TombIDE:
+ * Updated TRX presets to TRX 1.12.
 
 TEN nodes:
  * Fixed KEYPAD nodes breaking post process settings.
