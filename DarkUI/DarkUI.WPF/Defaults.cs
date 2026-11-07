@@ -1,27 +1,10 @@
-﻿using System.ComponentModel;
-using System.Windows;
+﻿using System.Windows;
 
 namespace DarkUI.WPF;
 
 public static class Defaults
 {
 	public static Theme CurrentTheme = Theme.Dark;
-
-	public static event PropertyChangedEventHandler ShouldIconsInvertPropertyChanged;
-
-	private static void OnShouldIconsInvertPropertyChanged(string propertyName)
-		=> ShouldIconsInvertPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
-
-	private static bool _shouldIconsInvert = false;
-	public static bool ShouldIconsInvert
-	{
-		get => _shouldIconsInvert;
-		set
-		{
-			_shouldIconsInvert = value;
-			OnShouldIconsInvertPropertyChanged(nameof(ShouldIconsInvert));
-		}
-	}
 
 	#region Constants
 
@@ -174,8 +157,9 @@ public static class Defaults
 	public static readonly double TitleBar_ChromeHeight = TitleBar_Height - 5; // 5 is a system constant (I think)
 	public static readonly double TitleBar_PathIconStrokeWidth = 1;
 	public static readonly double TitleBar_ButtonWidth = 45;
+	public static readonly double TitleBar_ButtonsWidth = TitleBar_ButtonWidth * 3;
 	public static readonly double TitleBar_FontSize = 12;
-	public static readonly double TitleBar_IconWidth = 64;
+	public static readonly double TitleBar_IconWidth = 18;
 	public static readonly double TitleBar_IconVerticalOffset = -12;
 
 	public static readonly double TabControl_SelectedTabMarginOffset = -2;

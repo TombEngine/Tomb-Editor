@@ -1,15 +1,18 @@
-﻿using DarkUI.Config;
-using DarkUI.Win32;
+#nullable enable
+
+using DarkUI.WPF.Config;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
-using TombEditor.Forms;
+using System.Windows;
+using System.Windows.Threading;
+using TombLib.Graphics;
 using TombLib.LevelData;
 using TombLib.NG;
 using TombLib.Services;
@@ -18,132 +21,148 @@ using TombLib.Utils;
 using TombLib.Wad.Catalog;
 using TombLib.WPF;
 using TombLib.WPF.Services;
+using TombLib.WPF.Services.Abstract;
 
-namespace TombEditor
+namespace TombEditor;
+
+public static class Program
 {
-    public static class Program
+    private static readonly Mutex InstanceMutex = new(true, "{84867F76-232B-442B-9B10-DC72C8288839}");
+
+    [DllImport("user32.dll")]
+    private static extern bool SetProcessDpiAwarenessContext(IntPtr dpiContext);
+
+    [STAThread]
+    public static void Main(string[] args)
     {
-        static Mutex mutex = new Mutex(true, "{84867F76-232B-442B-9B10-DC72C8288839}");
+        SetProcessDpiAwarenessContext(new IntPtr(-4));
+        Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-        [STAThread]
-        public static void Main(string[] args)
+        string? startFile = GetStartFile(args);
+        string? batchFile = args.Length > 0 && args[0].EndsWith(".xml", StringComparison.InvariantCultureIgnoreCase) ? args[0] : null;
+        var batchList = batchFile is not null ? BatchCompileList.ReadFromXml(batchFile) : null;
+        bool doBatchCompile = batchList?.Files.Count > 0;
+        var initialEvents = new List<LogEventInfo>();
+        var configuration = new Configuration().LoadOrUseDefault<Configuration>(initialEvents);
+        configuration.EnsureDefaults();
+        Colors.Brightness = configuration.UI_FormColor_Brightness / 100.0f;
+
+        var services = WPFInitializer.InitializeWPF(configuration.UI_WpfTheme);
+        services.AddSingleton<ICustomGeometrySettingsPresetIOService, CustomGeometrySettingsPresetIOService>();
+        services.AddSingleton<IColorPickerService>(_ => new ColorPickerService(() => configuration.UI_ColorScheme));
+        ServiceLocator.Configure(services.BuildServiceProvider());
+
+        if (configuration.Editor_AllowMultipleInstances || doBatchCompile || InstanceMutex.WaitOne(TimeSpan.Zero, true))
         {
-            var services = WPFInitializer.InitializeWPF();
-            services.AddSingleton<ICustomGeometrySettingsPresetIOService, CustomGeometrySettingsPresetIOService>();
-            ServiceLocator.Configure(services.BuildServiceProvider());
+            using var log = new Logging(configuration.Log_MinLevel, configuration.Log_WriteToFile, configuration.Log_ArchiveN, initialEvents);
+            configuration.SaveTry();
+            var application = Application.Current ?? throw new InvalidOperationException("WPF initialization did not create an application.");
+            var messages = ServiceLocator.ResolveService<IMessageService>();
+            ConfigureExceptionHandling(application, log, messages);
+            var synchronizationContext = new DispatcherSynchronizationContext(application.Dispatcher);
+            SynchronizationContext.SetSynchronizationContext(synchronizationContext);
+            LoadCatalogs(log, messages);
 
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            // Imported geometry needs the device even when batch mode has no viewport.
+            _ = DeviceManager.DefaultDeviceManager;
+            using var editor = new Editor(synchronizationContext, configuration);
 
-            string startFile = null;
-            string batchFile = null;
-            bool doBatchCompile = false;
-            BatchCompileList batchList = null;
-
-            if (args.Length >= 1)
-            {
-                // Open files on start
-                if (args[0].EndsWith(".prj",  StringComparison.InvariantCultureIgnoreCase) ||
-                    args[0].EndsWith(".prj2", StringComparison.InvariantCultureIgnoreCase))
-                    startFile = args[0];
-
-                // Batch-compile levels
-                if (args[0].EndsWith(".xml", StringComparison.InvariantCultureIgnoreCase))
-                {
-                    batchFile = args[0];
-                    batchList = BatchCompileList.ReadFromXml(batchFile);
-                    doBatchCompile = batchList?.Files.Count > 0;
-                }
-            }
-
-            // Load configuration
-            var initialEvents = new List<LogEventInfo>();
-            var configuration = new Configuration().LoadOrUseDefault<Configuration>(initialEvents);
-            configuration.EnsureDefaults();
-
-            // Update DarkUI configuration
-            Colors.Brightness = configuration.UI_FormColor_Brightness / 100.0f;
-
-            if (configuration.Editor_AllowMultipleInstances || doBatchCompile ||
-                mutex.WaitOne(TimeSpan.Zero, true))
-            {
-                // Setup logging
-                using (var log = new Logging(configuration.Log_MinLevel, configuration.Log_WriteToFile, configuration.Log_ArchiveN, initialEvents))
-                {
-                    // Create configuration file
-                    configuration.SaveTry();
-
-                    // Setup application
-                    Application.EnableVisualStyles();
-                    Application.SetDefaultFont(new System.Drawing.Font("Segoe UI", 8.25f));
-                    Application.SetHighDpiMode(HighDpiMode.DpiUnaware);
-                    Application.SetCompatibleTextRenderingDefault(false);
-                    Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-                    Application.ThreadException += (sender, e) =>
-                    {
-                        log.HandleException(e.Exception);
-                        using (var dialog = new ThreadExceptionDialog(e.Exception))
-                            if (dialog.ShowDialog() == DialogResult.Abort)
-                                Environment.Exit(1);
-                    };
-                    Application.AddMessageFilter(new ControlScrollFilter());
-                    SynchronizationContext.SetSynchronizationContext(new WindowsFormsSynchronizationContext());
-
-                    if (!DefaultPaths.CheckCatalog(DefaultPaths.EngineCatalogsDirectory))
-                        Environment.Exit(1);
-
-                    // Load catalogs
-                    try
-                    {
-                        TrCatalog.LoadCatalog(DefaultPaths.EngineCatalogsDirectory);
-                        NgCatalog.LoadCatalog(Path.Combine(DefaultPaths.CatalogsDirectory, "NgCatalog.xml"));
-                    }
-                    catch (Exception ex)
-                    {
-                        log.HandleException(ex);
-                        MessageBox.Show("An error occured while loading one of the catalog files.\nFiles may be missing or corrupted. Check the log file for details.");
-                        Environment.Exit(1);
-                    }
-
-                    // Create the rendering device up front, as imported geometry cannot be loaded without it.
-                    // Editor does not create it on construction, and batch compile mode never creates the main form that would request it.
-                    _ = TombLib.Graphics.DeviceManager.DefaultDeviceManager;
-
-                    // Run
-                    Editor editor = new Editor(SynchronizationContext.Current, configuration);
-
-                    // Run editor normally if no batch compile is pending.
-                    // Otherwise, don't load main form and jump straight to batch-compiling levels.
-
-                    if (!doBatchCompile)
-                    {
-                        using (FormMain form = new FormMain(editor))
-                        {
-                            form.Show();
-
-                            if (!string.IsNullOrEmpty(startFile)) // Open files on start
-                            {
-                                if (startFile.EndsWith(".prj", StringComparison.InvariantCultureIgnoreCase))
-                                    EditorActions.OpenLevelPrj(form, startFile);
-                                else
-                                    EditorActions.OpenLevel(form, startFile);
-                            }
-                            else if (editor.Configuration.Editor_OpenLastProjectOnStartup)
-                            {
-                                if (Properties.Settings.Default.RecentProjects != null && Properties.Settings.Default.RecentProjects.Count > 0 &&
-                                    File.Exists(Properties.Settings.Default.RecentProjects[0]))
-                                    EditorActions.OpenLevel(form, Properties.Settings.Default.RecentProjects[0]);
-                            }
-                            Application.Run(form);
-                        }
-                    }
-                    else
-                        EditorActions.BuildInBatch(editor, batchList, batchFile);
-                }
-            }
-            else if (startFile != null) // Send opening file to existing editor instance
-                SingleInstanceManagement.Send(Process.GetCurrentProcess(), new List<string>() { ".prj2" }, startFile);
-            else // Just bring editor to top, if user tries to launch another copy
-                SingleInstanceManagement.Bump(Process.GetCurrentProcess());
+            if (doBatchCompile && batchList is not null && batchFile is not null)
+                EditorActions.BuildInBatch(editor, batchList, batchFile);
+            else
+                RunEditor(application, editor, startFile, log, messages);
         }
+        else if (startFile is not null)
+        {
+            SingleInstanceManagement.Send(Process.GetCurrentProcess(), [".prj2"], startFile);
+        }
+        else
+        {
+            SingleInstanceManagement.Bump(Process.GetCurrentProcess());
+        }
+
+        // The device manager's native foreground thread outlives the application dispatcher.
+        Environment.Exit(0);
+    }
+
+    private static string? GetStartFile(string[] args)
+    {
+        if (args.Length == 0)
+            return null;
+
+        return args[0].EndsWith(".prj", StringComparison.InvariantCultureIgnoreCase)
+            || args[0].EndsWith(".prj2", StringComparison.InvariantCultureIgnoreCase) ? args[0] : null;
+    }
+
+    private static void ConfigureExceptionHandling(Application application, Logging log, IMessageService messages)
+    {
+        application.DispatcherUnhandledException += (_, e) => {
+            log.HandleException(e.Exception);
+            e.Handled = true;
+
+            if (!messages.ShowConfirmation(e.Exception + Environment.NewLine + Environment.NewLine + "Continue running Tomb Editor?",
+                "Tomb Editor - unhandled exception", defaultValue: false))
+            {
+                Environment.Exit(1);
+            }
+        };
+    }
+
+    private static void LoadCatalogs(Logging log, IMessageService messages)
+    {
+        if (!Directory.Exists(DefaultPaths.EngineCatalogsDirectory))
+        {
+            messages.ShowError("Directory " + DefaultPaths.EngineCatalogsDirectory + " is missing. Make sure that Tomb Editor is installed correctly.");
+            Environment.Exit(1);
+        }
+
+        try
+        {
+            TrCatalog.LoadCatalog(DefaultPaths.EngineCatalogsDirectory);
+            NgCatalog.LoadCatalog(Path.Combine(DefaultPaths.CatalogsDirectory, "NgCatalog.xml"));
+        }
+        catch (Exception exception)
+        {
+            log.HandleException(exception);
+            messages.ShowError("An error occurred while loading a catalog file. Files may be missing or corrupted. Check the log file for details.");
+            Environment.Exit(1);
+        }
+    }
+
+    private static void RunEditor(Application application, Editor editor, string? startFile, Logging log, IMessageService messages)
+    {
+
+
+        try
+        {
+            var mainWindow = new MainWindow(editor);
+            mainWindow.ContentRendered += (_, _) => OpenStartupLevel(mainWindow, editor, startFile);
+            application.Run(mainWindow);
+        }
+        catch (Exception exception)
+        {
+            log.HandleException(exception);
+            messages.ShowError(exception.ToString(), "Tomb Editor - startup failure");
+        }
+
+        application.Shutdown();
+    }
+
+    private static void OpenStartupLevel(MainWindow mainWindow, Editor editor, string? startFile)
+    {
+        if (startFile is not null)
+        {
+            if (startFile.EndsWith(".prj", StringComparison.InvariantCultureIgnoreCase))
+                EditorActions.OpenLevelPrj(mainWindow.GetWin32Window(), startFile);
+            else
+                EditorActions.OpenLevel(mainWindow.GetWin32Window(), startFile);
+
+            return;
+        }
+
+        var recentProjects = Properties.Settings.Default.RecentProjects;
+
+        if (editor.Configuration.Editor_OpenLastProjectOnStartup && recentProjects is { Count: > 0 } && File.Exists(recentProjects[0]))
+            EditorActions.OpenLevel(mainWindow.GetWin32Window(), recentProjects[0]);
     }
 }

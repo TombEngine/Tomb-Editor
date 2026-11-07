@@ -1,3 +1,5 @@
+#nullable enable
+
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -6,9 +8,9 @@ using System.Linq;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
-using TombEditor.Controls.FlybyTimeline.Preview;
+using System.Windows.Threading;
+using TombEditor.Features.FlybyTimeline.Preview;
 using TombLib;
-using TombLib.Forms;
 using TombLib.Graphics;
 using TombLib.LevelData;
 using TombLib.LevelData.IO;
@@ -17,9 +19,11 @@ using TombLib.Utils;
 using TombLib.Wad;
 using TombLib.Wad.Catalog;
 
+#nullable restore
+
 namespace TombEditor
 {
-	public interface IEditorEvent { }
+    public interface IEditorEvent { }
 
     public interface IEditorPropertyChangedEvent : IEditorEvent { }
 
@@ -754,6 +758,9 @@ namespace TombEditor
         // This is invoked when level statistics change.
         public class StatisticsChangedEvent : IEditorEvent { }
         private Task _statsTask;
+        private readonly object _statsPendingLock = new object();
+        private bool _statsPending;
+        private bool _statsPendingOnlyRoom = true;
 
         // Move the camera to the center of a specific sector.
         public class MoveCameraToSectorEvent : IEditorCameraEvent
@@ -894,14 +901,15 @@ namespace TombEditor
             RaiseEvent(new EditorFocusedEvent());
         }
 
-        // Dock content change event
+        // Dock content change event. The name is the panel's logical name (e.g. "TexturePanel"),
+        // which the WPF shell maps to its AvalonDock ContentId by lowercasing the first letter.
         public class ToolWindowToggleEvent : IEditorEvent
         {
-            public Type ContentType { get; internal set; }
+            public string Name { get; internal set; }
         }
-        public void ToggleToolWindow(Type contentType)
+        public void ToggleToolWindow(string name)
         {
-            RaiseEvent(new ToolWindowToggleEvent() { ContentType = contentType });
+            RaiseEvent(new ToolWindowToggleEvent() { Name = name });
         }
 
         // Layout switch events
@@ -1146,11 +1154,15 @@ namespace TombEditor
             // Update configuration watcher
             if (obj is ConfigurationChangedEvent)
             {
+                if (((ConfigurationChangedEvent)obj).UpdateKeyboardShortcuts)
+                    KeyBindingsWrapper.Instance.Invalidate();
+
                 if (((ConfigurationChangedEvent)obj).Save && !_configurationIsLoadedFromFile)
                     Configuration.SaveTry();
 
-                _autoSavingTimer.Interval = Configuration.AutoSave_TimeInSeconds > 0 ? (Configuration.AutoSave_TimeInSeconds * 1000) : int.MaxValue;
-                _autoSavingTimer.Enabled = Configuration.AutoSave_Enable && HasUnsavedChanges;
+                _autoSavingTimer.Interval = Configuration.AutoSave_TimeInSeconds > 0
+                    ? TimeSpan.FromSeconds(Configuration.AutoSave_TimeInSeconds) : TimeSpan.FromMilliseconds(int.MaxValue);
+                _autoSavingTimer.IsEnabled = Configuration.AutoSave_Enable && HasUnsavedChanges;
 
                 if (Configuration.Editor_ReloadFilesAutomaticallyWhenChanged != (_levelSettingsWatcher != null))
                     if (Configuration.Editor_ReloadFilesAutomaticallyWhenChanged)
@@ -1214,7 +1226,7 @@ namespace TombEditor
                 UpdateLevelStatistics(false, false, true);
             }
 
-            if (obj is LevelChangedEvent) 
+            if (obj is LevelChangedEvent)
             {
                 var evnt = obj as LevelChangedEvent;
                 var settings = evnt.Current.Settings;
@@ -1259,7 +1271,7 @@ namespace TombEditor
                 {
                     _lastGeometryTool = @event.Current;
                     Configuration.UI_LastGeometryTool = _lastGeometryTool;
-                }    
+                }
                 else if (Mode == EditorMode.ObjectPlacement)
                 {
                     _lastObjectPlacementTool = @event.Current;
@@ -1299,7 +1311,7 @@ namespace TombEditor
             if (obj is IEditorEventCausesUnsavedChanges)
             {
                 HasUnsavedChanges = true;
-                _autoSavingTimer.Enabled = _configuration.AutoSave_Enable;
+                _autoSavingTimer.IsEnabled = _configuration.AutoSave_Enable;
             }
 
             // Make sure an object that was removed isn't selected
@@ -1353,12 +1365,28 @@ namespace TombEditor
                 _statsTask.Status == TaskStatus.Running ||
                 _statsTask.Status == TaskStatus.WaitingToRun ||
                 _statsTask.Status == TaskStatus.WaitingForActivation))
+            {
+                // Remember the request: the running pass may have started before the last change (for example before
+                // the selected room was set while a level is loading) and would leave stale numbers.
+                lock (_statsPendingLock)
+                {
+                    _statsPending = true;
+                    _statsPendingOnlyRoom &= onlyRoom;
+                }
+
                 return;
+            }
 
             // Parallelize stats collection to speed up things
 
             _statsTask = Task.Factory.StartNew(() =>
             {
+                bool again;
+
+                do
+                {
+                again = false;
+
                 // Wrap updating into try-catch block to ignore stats updating
                 // in case there's race condition which is unlikely from tests
 
@@ -1466,6 +1494,19 @@ namespace TombEditor
                 {
                     logger.Warn("Statistics update collision, data was updated faster than stats collection.");
                 }
+
+                lock (_statsPendingLock)
+                {
+                    if (_statsPending)
+                    {
+                        onlyRoom = _statsPendingOnlyRoom;
+                        _statsPending = false;
+                        _statsPendingOnlyRoom = true;
+                        again = true;
+                    }
+                }
+                }
+                while (again);
             });
         }
 
@@ -1481,8 +1522,12 @@ namespace TombEditor
         public class ResumeRenderingEvent : IEditorEvent { }
 
         // Auto saving
-        private readonly System.Windows.Forms.Timer _autoSavingTimer = new System.Windows.Forms.Timer();
+#nullable enable
+        private readonly DispatcherTimer _autoSavingTimer = new(DispatcherPriority.Background);
         private volatile bool _currentlyAutoSaving;
+        private void OnAutoSaveTick(object? sender, EventArgs e) => AutoSave();
+#nullable restore
+
         private void AutoSave()
         {
             Level level = Level; // Copy the member variables to local variables so that the we will have slightly higher chance to succeed in the parallel thread.
@@ -1565,7 +1610,7 @@ namespace TombEditor
 
         public Editor(SynchronizationContext synchronizationContext, Configuration configuration, Level level)
         {
-            
+
             if (synchronizationContext == null)
                 throw new ArgumentNullException(nameof(synchronizationContext));
             Editor.Instance = this;
@@ -1577,7 +1622,7 @@ namespace TombEditor
 
             _configurationWatcher = new FileSystemWatcherManager();
             _configurationWatcher.UpdateAllFiles(new[] { new ConfigurationWatchedObj { Parent = this } });
-            _autoSavingTimer.Tick += (sender, e) => AutoSave();
+            _autoSavingTimer.Tick += OnAutoSaveTick;
 
             _configurationIsLoadedFromFile = true;
             Editor_EditorEventRaised(new ConfigurationChangedEvent { UpdateKeyboardShortcuts = true });
@@ -1592,7 +1637,8 @@ namespace TombEditor
         public void Dispose()
         {
             SectorColoringManager?.Dispose();
-            _autoSavingTimer?.Dispose();
+            _autoSavingTimer.Stop();
+            _autoSavingTimer.Tick -= OnAutoSaveTick;
             _levelSettingsWatcher?.Dispose();
             _configurationWatcher?.Dispose();
         }

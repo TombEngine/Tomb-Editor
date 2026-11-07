@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TombEditor 
+namespace TombEditor
 {
     public class StatisticSummary : IEquatable<StatisticSummary>
     {

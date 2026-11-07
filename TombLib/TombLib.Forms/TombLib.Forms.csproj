@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <Page Update="Properties\DesignTimeResources.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -57,12 +57,6 @@
       <Link>GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="..\..\GlobalPaths.cs" Link="GlobalPaths.cs" />
-    <Compile Update="Controls\AnimationTrackBar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Controls\BezierCurveEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Update="Controls\DarkAutocompleteTextBox.cs" />
     <Compile Update="Controls\DarkDataGridViewControls.cs">
       <SubType>UserControl</SubType>
@@ -99,19 +93,10 @@
     <Compile Update="Controls\VisualScripting\VisibleNodeAction.cs" />
     <Compile Update="Controls\VisualScripting\VisibleNodeBase.cs" />
     <Compile Update="Controls\VisualScripting\VisibleNodeCondition.cs" />
-    <Compile Update="Controls\WadTreeControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Forms\FormAnimatedTextures.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Views\InputBoxWindow.xaml.cs">
-      <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>

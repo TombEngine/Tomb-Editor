@@ -1,0 +1,155 @@
+<Window
+    x:Class="TombEditor.Features.Dialogs.Transform.TransformWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.Transform"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    Title="{tombLib:Localize Title}"
+    Width="380"
+    d:DataContext="{d:DesignInstance Type=vm:TransformWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    SizeToContent="Height"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <controls:SpacedGrid
+        Margin="{x:Static darkUI:Defaults.MediumThickness}"
+        ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}"
+        RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" Content="{tombLib:Localize Translation}" />
+        <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Content="{tombLib:Localize Rotation}" />
+        <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Content="{tombLib:Localize Scale}" />
+        <DockPanel Grid.Row="0" Grid.Column="1">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="X" />
+            <controls:NumericUpDown
+            Increment="1"
+            LargeIncrement="16"
+            Maximum="2147483647"
+            Minimum="-2147483647"
+            Value="{Binding TranslationX, Mode=TwoWay}" />
+        </DockPanel>
+        <DockPanel Grid.Row="0" Grid.Column="2">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="Y" />
+            <controls:NumericUpDown
+            Increment="1"
+            LargeIncrement="16"
+            Maximum="2147483647"
+            Minimum="-2147483647"
+            Value="{Binding TranslationY, Mode=TwoWay}" />
+        </DockPanel>
+        <DockPanel Grid.Row="0" Grid.Column="3">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="Z" />
+            <controls:NumericUpDown
+            Increment="1"
+            LargeIncrement="16"
+            Maximum="2147483647"
+            Minimum="-2147483647"
+            Value="{Binding TranslationZ, Mode=TwoWay}" />
+        </DockPanel>
+        <DockPanel Grid.Row="1" Grid.Column="1">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="P" />
+            <controls:NumericUpDown
+            DecimalPlaces="2"
+            FormatString="F2"
+            IsEnabled="{Binding IsRotationXEnabled}"
+            LargeIncrement="5"
+            LoopValues="True"
+            Maximum="360"
+            Minimum="-360"
+            Value="{Binding RotationX, Mode=TwoWay}" />
+        </DockPanel>
+        <DockPanel Grid.Row="1" Grid.Column="2">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="Y" />
+            <controls:NumericUpDown
+            DecimalPlaces="2"
+            FormatString="F2"
+            IsEnabled="{Binding IsRotationYEnabled}"
+            LargeIncrement="5"
+            LoopValues="True"
+            Maximum="360"
+            Minimum="-360"
+            Value="{Binding RotationY, Mode=TwoWay}" />
+        </DockPanel>
+        <DockPanel Grid.Row="1" Grid.Column="3">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="R" />
+            <controls:NumericUpDown
+            DecimalPlaces="2"
+            FormatString="F2"
+            IsEnabled="{Binding IsRotationZEnabled}"
+            LargeIncrement="5"
+            LoopValues="True"
+            Maximum="360"
+            Minimum="-360"
+            Value="{Binding RotationZ, Mode=TwoWay}" />
+        </DockPanel>
+        <DockPanel Grid.Row="2" Grid.Column="1">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="X" />
+            <controls:NumericUpDown
+            DecimalPlaces="2"
+            FormatString="F2"
+            Increment="0.1"
+            IsEnabled="{Binding IsScaleEnabled}"
+            LargeIncrement="1"
+            Maximum="2147483647"
+            Minimum="0"
+            Value="{Binding ScaleX, Mode=TwoWay}" />
+        </DockPanel>
+        <DockPanel Grid.Row="2" Grid.Column="2">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="Y" />
+            <controls:NumericUpDown
+            DecimalPlaces="2"
+            FormatString="F2"
+            IsEnabled="False"
+            Value="{Binding ScaleY, Mode=OneWay}" />
+        </DockPanel>
+        <DockPanel Grid.Row="2" Grid.Column="3">
+            <TextBlock Margin="0,0,4,0" VerticalAlignment="Center" DockPanel.Dock="Left" FontWeight="Bold" Text="Z" />
+            <controls:NumericUpDown
+            DecimalPlaces="2"
+            FormatString="F2"
+            IsEnabled="False"
+            Value="{Binding ScaleZ, Mode=OneWay}" />
+        </DockPanel>
+
+        <controls:SpacedStack
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="4"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <Button
+                Width="80"
+                Command="{Binding ConfirmCommand}"
+                Content="{tombLib:Localize ~Common.OK}"
+                IsDefault="True" />
+            <Button
+                Width="80"
+                Command="{Binding CancelCommand}"
+                Content="{tombLib:Localize ~Common.Cancel}"
+                IsCancel="True" />
+        </controls:SpacedStack>
+    </controls:SpacedGrid>
+</Window>

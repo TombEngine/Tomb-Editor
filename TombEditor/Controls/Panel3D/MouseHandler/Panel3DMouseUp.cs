@@ -1,11 +1,13 @@
-﻿using System.Drawing;
+#nullable enable
+
+using Keys = TombLib.Input.EditorKey;
+using System.Drawing;
 using System.Numerics;
-using System.Windows.Forms;
+using TombEditor.Features.ContextMenus;
+using TombLib;
+using TombLib.Graphics;
 using TombLib.LevelData;
 using TombLib.Rendering;
-using TombLib;
-using TombEditor.Controls.ContextMenus;
-using TombLib.Graphics;
 
 namespace TombEditor.Controls.Panel3D
 {
@@ -37,7 +39,7 @@ namespace TombEditor.Controls.Panel3D
                         EditorActions.RotateSectors(_editor.SelectedRoom, zone, belongsToFloor);
                         return;
                     }
-                    else if (_editor.Tool.Tool == EditorToolType.Selection || 
+                    else if (_editor.Tool.Tool == EditorToolType.Selection ||
                             (_editor.Tool.Tool >= EditorToolType.Drag && _editor.Tool.Tool < EditorToolType.PortalDigger))
                     {
                         if (!_doSectorSelection && _editor.SelectedSectors.Valid && _editor.SelectedSectors.Area.Contains(pos))
@@ -80,33 +82,46 @@ namespace TombEditor.Controls.Panel3D
 
             // Handle multiple object selection
             if (_editor.Tool.Tool == EditorToolType.Selection && _toolHandler.Engaged && ModifierKeys.HasFlag(Keys.Control))
-                EditorActions.SelectObjectsInArea(FindForm(), _editor.HighlightedSectors, false);
+                EditorActions.SelectObjectsInArea(this, _editor.HighlightedSectors, false);
         }
 
         private void OnMouseButtonUpRight(Point location)
         {
             var distance = new Vector2(_startMousePosition.X, _startMousePosition.Y) - new Vector2(location.X, location.Y);
-            if (distance.Length() < 4.0f)
-            {
-                _currentContextMenu?.Dispose();
-                _currentContextMenu = null;
+            if (distance.Length() >= 4.0f)
+                return;
 
-                PickingResult newPicking = DoPicking(GetRay(location.X, location.Y), true);
-                if (newPicking is PickingResultObject)
-                {
-                    ObjectInstance target = ((PickingResultObject)newPicking).ObjectInstance;
-                    if (target is ISpatial)
-                        _currentContextMenu = new MaterialObjectContextMenu(_editor, this, target);
-                }
-                else if (newPicking is PickingResultSector)
-                {
-                    var pickedSector = newPicking as PickingResultSector;
-                    if (_editor.SelectedSectors.Valid && _editor.SelectedSectors.Area.Contains(pickedSector.Pos))
-                        _currentContextMenu = new SelectedGeometryContextMenu(_editor, this, pickedSector.Room, _editor.SelectedSectors.Area, pickedSector.Pos);
-                    else
-                        _currentContextMenu = new SectorContextMenu(_editor, this, pickedSector.Room, pickedSector.Pos);
-                }
-                _currentContextMenu?.Show(PointToScreen(location));
+            if (_currentWpfContextMenu != null)
+            {
+                _currentWpfContextMenu.IsOpen = false;
+                _currentWpfContextMenu = null;
+            }
+
+            PickingResult newPicking = DoPicking(GetRay(location.X, location.Y), true);
+            var screen = PointToScreen(location);
+
+            // A menu opened while the mouse-up message is still being processed is dismissed
+            // right away by the host window, so it is shown once the message has been handled.
+            System.Windows.Application.Current.Dispatcher.BeginInvoke(
+                new System.Action(() => ShowContextMenu(newPicking, screen)),
+                System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+        }
+
+        private void ShowContextMenu(PickingResult picking, Point screen)
+        {
+            if (picking is PickingResultObject pickedObject)
+            {
+                if (pickedObject.ObjectInstance is ISpatial)
+                    _currentWpfContextMenu = MaterialObjectWpfContextMenu.Show(_editor, this, pickedObject.ObjectInstance, screen);
+            }
+            else if (picking is PickingResultSector pickedSector)
+            {
+                if (_editor.SelectedSectors.Valid && _editor.SelectedSectors.Area.Contains(pickedSector.Pos))
+                    _currentWpfContextMenu = SelectedGeometryWpfContextMenu.Show(
+                        _editor, this, pickedSector.Room, _editor.SelectedSectors.Area, pickedSector.Pos, screen);
+                else
+                    _currentWpfContextMenu = SectorWpfContextMenu.Show(
+                        _editor, this, pickedSector.Room, pickedSector.Pos, screen);
             }
         }
     }

@@ -2,8 +2,10 @@
 	x:Class="DarkUI.WPF.Demo.MainWindow"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:avalonDock="https://github.com/Dirkster99/AvalonDock"
 	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkDock="clr-namespace:DarkUI.WPF.AvalonDock;assembly=DarkUI.WPF"
 	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
 	xmlns:local="clr-namespace:DarkUI.WPF.Demo"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -943,6 +945,55 @@
 								<Button Width="Auto">Button</Button>
 							</StackPanel>
 						</GroupBox>
+					</StackPanel>
+
+					<StackPanel>
+						<StackPanel.Margin>
+							<Thickness Bottom="{x:Static darkUI:Defaults.LargeThicknessWidth}" />
+						</StackPanel.Margin>
+
+						<TextBlock FontSize="{x:Static local:LocalDefaults.LargeFontSize}" Text="AvalonDock (DarkUI theme)">
+							<TextBlock.Margin>
+								<Thickness Bottom="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+							</TextBlock.Margin>
+						</TextBlock>
+
+						<Border
+							Width="560"
+							Height="320"
+							HorizontalAlignment="Left"
+							BorderBrush="{DynamicResource Brush_Border}"
+							BorderThickness="1">
+							<avalonDock:DockingManager>
+								<avalonDock:DockingManager.Theme>
+									<darkDock:DarkUIDockTheme />
+								</avalonDock:DockingManager.Theme>
+
+								<avalonDock:LayoutRoot>
+									<avalonDock:LayoutPanel Orientation="Horizontal">
+										<avalonDock:LayoutAnchorablePane DockWidth="160">
+											<avalonDock:LayoutAnchorable ContentId="properties" Title="Properties">
+												<TextBlock Margin="8" Text="Properties pane content" />
+											</avalonDock:LayoutAnchorable>
+											<avalonDock:LayoutAnchorable ContentId="explorer" Title="Explorer">
+												<TextBlock Margin="8" Text="Explorer pane content" />
+											</avalonDock:LayoutAnchorable>
+										</avalonDock:LayoutAnchorablePane>
+
+										<avalonDock:LayoutDocumentPaneGroup>
+											<avalonDock:LayoutDocumentPane>
+												<avalonDock:LayoutDocument ContentId="doc1" Title="Document 1">
+													<TextBlock Margin="8" Text="Document 1 content" />
+												</avalonDock:LayoutDocument>
+												<avalonDock:LayoutDocument ContentId="doc2" Title="Document 2">
+													<TextBlock Margin="8" Text="Document 2 content" />
+												</avalonDock:LayoutDocument>
+											</avalonDock:LayoutDocumentPane>
+										</avalonDock:LayoutDocumentPaneGroup>
+									</avalonDock:LayoutPanel>
+								</avalonDock:LayoutRoot>
+							</avalonDock:DockingManager>
+						</Border>
 					</StackPanel>
 				</StackPanel>
 

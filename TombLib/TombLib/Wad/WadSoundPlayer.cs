@@ -1,4 +1,4 @@
-﻿using NAudio.Vorbis;
+using NAudio.Vorbis;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using NLog;
@@ -135,7 +135,7 @@ namespace TombLib.Wad
                                 break;
 
                             case WadSounds.SoundtrackFormat.Mp3:
-                                reader = disposables.AddAndReturn(new Mp3FileReader(potentialPath));
+                                reader = disposables.AddAndReturn(new Mp3FileReaderBase(potentialPath, format => new AcmMp3FrameDecompressor(format)));
                                 break;
 
                             case WadSounds.SoundtrackFormat.Ogg:

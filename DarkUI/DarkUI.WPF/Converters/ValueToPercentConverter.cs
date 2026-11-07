@@ -11,6 +11,9 @@ public class ValueToPercentConverter : IMultiValueConverter
 		double value = System.Convert.ToDouble(values[0]);
 		double maximum = System.Convert.ToDouble(values[1]);
 
+		if (maximum <= 0 || double.IsNaN(value) || double.IsNaN(maximum))
+			return 0;
+
 		return (int)Math.Ceiling(value / maximum * 100);
 	}
 

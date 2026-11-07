@@ -48,6 +48,8 @@ namespace DarkUI.Config
         public const float MaxBrightness = 1.0f;
         public const float MinBrightness = 0.5f;
 
+        public static bool HasBrightnessChanged { get; private set; }
+
         // AlphaBrightness is a helper value which is used in filling overlay rectangles
         // over image controls (e.g. buttons with pictures, arrows in comboboxes etc.).
         public static float AlphaBrightness => MaxBrightness - Brightness;
@@ -63,6 +65,7 @@ namespace DarkUI.Config
             set
             {
                 _brightness = Math.Min(Math.Max(value, MinBrightness), MaxBrightness);
+                HasBrightnessChanged = _brightness != 1.0f;
 
                 GreyBackground  	= DarkBase.Multiply(_brightness * 1.000f, _brightness * 1.000f, _brightness * 1.000f);
 				HeaderBackground  	= DarkBase.Multiply(_brightness * 0.950f, _brightness * 0.952f, _brightness * 0.954f);

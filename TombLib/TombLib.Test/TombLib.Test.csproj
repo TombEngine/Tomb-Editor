@@ -8,7 +8,7 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-	<Platforms>x64;x86</Platforms>
+    <Platforms>x64;x86</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -39,6 +39,7 @@
     <ProjectReference Include="..\TombLib.Scripting.Lua\TombLib.Scripting.Lua.csproj" />
     <ProjectReference Include="..\TombLib\TombLib.csproj" />
     <ProjectReference Include="..\TombLib.Forms\TombLib.Forms.csproj" />
+    <ProjectReference Include="..\TombLib.WPF\TombLib.WPF.csproj" />
   </ItemGroup>
 
   <ItemGroup>

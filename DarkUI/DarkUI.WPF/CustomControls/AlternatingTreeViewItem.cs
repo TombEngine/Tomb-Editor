@@ -18,4 +18,8 @@ public class AlternatingTreeViewItem : TreeViewItem
 		TreeView? treeViewAncestor = this.FindVisualAncestor<TreeView>();
 		treeViewAncestor?.SetAlternationIndexRecursively(0);
 	}
+
+	// Keep data-bound child levels styled too (see AlternatingTreeView).
+	protected override DependencyObject GetContainerForItemOverride() => new AlternatingTreeViewItem();
+	protected override bool IsItemItsOwnContainerOverride(object item) => item is AlternatingTreeViewItem;
 }
