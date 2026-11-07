@@ -7,6 +7,9 @@ Tomb Editor:
 TEN nodes:
  * Fixed KEYPAD nodes breaking post process settings.
 
+TombIDE:
+ * Updated TRX presets to TRX 1.12.
+
 Version 2.0.1
 =============
 
