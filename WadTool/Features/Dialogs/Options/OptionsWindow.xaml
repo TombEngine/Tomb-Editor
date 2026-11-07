@@ -24,6 +24,9 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
+        <!--  The WinForms options page list highlights its selection in grey  -->
+        <SolidColorBrush x:Key="Brush_Selection" Color="#5C5C5C" />
+
         <!--  Editor templates, one per OptionKind  -->
         <DataTemplate x:Key="BoolTemplate">
             <CheckBox Margin="0,3" Content="{Binding Label}" IsChecked="{Binding Value, Mode=TwoWay}" />
