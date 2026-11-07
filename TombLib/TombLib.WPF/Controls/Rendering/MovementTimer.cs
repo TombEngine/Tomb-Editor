@@ -27,6 +27,9 @@ public class MovementTimer : IDisposable
     private bool _disposed;
 
     private float _autoMoveStep = 0.0f;
+    private float _autoMoveDuration = 1.0f;
+    private bool _autoMoveFinished;
+    private readonly System.Diagnostics.Stopwatch _autoMoveClock = new();
     private float _autoMoveCurrent = 0.0f;
 
     /// <summary>Gets the current eased progress or directional acceleration.</summary>
@@ -102,6 +105,9 @@ public class MovementTimer : IDisposable
         Mode = mode;
         _autoMoveCurrent = 0.0f;
         _autoMoveStep = (float)_moveTimer.Interval.TotalSeconds / timeInSeconds;
+        _autoMoveDuration = timeInSeconds;
+        _autoMoveFinished = false;
+        _autoMoveClock.Restart();
         _moveTimer.IsEnabled = true;
     }
 
@@ -125,16 +131,21 @@ public class MovementTimer : IDisposable
         }
         else if (Mode != AnimationMode.Idle)
         {
-            _autoMoveCurrent += _autoMoveStep;
-
-            // Allow timer to overflow for 2 subsequent frames, so we
-            // get the final 1.0 value at all times.
-
-            if (_autoMoveCurrent >= 1.0f + (_autoMoveStep * 2))
+            // Progress follows the wall clock, so a slower frame rate (rendering load) does not stretch the transition.
+            if (_autoMoveFinished)
+            {
+                _autoMoveFinished = false;
                 Stop(true);
+            }
             else
             {
-                var newMultiplier = MathC.SmoothStep(0.0, 1.0, _autoMoveCurrent);
+                _autoMoveCurrent = (float)(_autoMoveClock.Elapsed.TotalSeconds / _autoMoveDuration);
+
+                // The final 1.0 value is delivered for one more frame before stopping.
+                if (_autoMoveCurrent >= 1.0f)
+                    _autoMoveFinished = true;
+
+                var newMultiplier = MathC.SmoothStep(0.0, 1.0, Math.Min(_autoMoveCurrent, 1.0f));
                 MoveMultiplier = (float)MathC.Clamp(newMultiplier, 0.0, 1.0);
             }
         }
