@@ -221,7 +221,8 @@
                                 IsEnabled="{Binding PlayEnabled}">
                                 <Image Width="16" Height="16" Source="{tomb:Icon Actions/Transport/Play}" />
                             </Button>
-                            <controls:SearchableComboBox
+                            <Button Width="23" Height="23" Margin="4,0,4,0" Padding="0" Click="ShatterSearch_Click" DockPanel.Dock="Right" IsEnabled="{Binding SoundEnabled}" ToolTip="Search"><Image Width="16" Height="16" Source="{tomb:Icon General/search}" /></Button>
+                            <controls:SearchableComboBox x:Name="shatterSoundCombo"
                                 IsEnabled="{Binding SoundEnabled}"
                                 ItemsSource="{Binding SoundIds}"
                                 SelectedIndex="{Binding SoundIdIndex, Mode=TwoWay}" />

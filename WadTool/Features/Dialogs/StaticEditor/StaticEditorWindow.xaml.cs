@@ -65,6 +65,12 @@ public partial class StaticEditorWindow : Window
             _vm.EditMeshCommand.Execute(null);
     }
 
+    private void ShatterSearch_Click(object sender, RoutedEventArgs e)
+    {
+        shatterSoundCombo.Focus();
+        shatterSoundCombo.IsDropDownOpen = true;
+    }
+
     private void OnPanelPositionChanged() => _vm?.RefreshPositionFromPanel();
 
     private void OnMessageRaised(string message, PopupType type)
