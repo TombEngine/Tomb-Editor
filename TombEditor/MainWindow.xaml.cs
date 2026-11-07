@@ -3,6 +3,7 @@
 using AvalonDock.Layout;
 using AvalonDock.Layout.Serialization;
 using DarkUI.WPF.CustomControls;
+using DarkUI.WPF.Extensions;
 using PopUpInfo = TombLib.WPF.PopUpInfo;
 using System;
 using System.ComponentModel;
@@ -59,6 +60,19 @@ public partial class MainWindow : Window
         _messageService = ServiceLocator.ResolveService<IMessageService>();
         _localizationService = ServiceLocator.ResolveService<ILocalizationService>();
         InitializeComponent();
+
+        // After a docking splitter drag, stale pixels can remain around the hosted 3D view; repaint once the layout settles.
+        var redrawTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(150) };
+        redrawTimer.Tick += (_, _) =>
+        {
+            redrawTimer.Stop();
+            this.RedrawSurface();
+        };
+        editorAreaHost.SizeChanged += (_, _) =>
+        {
+            redrawTimer.Stop();
+            redrawTimer.Start();
+        };
         _menuState = new MainMenuStateUpdater(_editor, mainMenu, stepHeightSeparator);
         InitializeShell();
         triggerListView.TitleChanged += (_, _) => UpdateTriggerListTitle();

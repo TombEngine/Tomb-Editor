@@ -38,4 +38,22 @@ public static class WindowFrameExtensions
 
     [DllImport("dwmapi.dll")]
     private static extern int DwmSetWindowAttribute(IntPtr hwnd, uint attribute, ref int value, uint size);
+
+    private const uint RdwInvalidate = 0x0001;
+    private const uint RdwAllChildren = 0x0080;
+    private const uint RdwUpdateNow = 0x0100;
+
+    /// <summary>Repaints the whole window including child windows; clears stale pixels that remain after a docking splitter drag with hosted native windows.</summary>
+    public static void RedrawSurface(this Window window)
+    {
+        if (!OperatingSystem.IsWindows())
+            return;
+
+        var handle = new WindowInteropHelper(window).Handle;
+        if (handle != IntPtr.Zero)
+            RedrawWindow(handle, IntPtr.Zero, IntPtr.Zero, RdwInvalidate | RdwAllChildren | RdwUpdateNow);
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool RedrawWindow(IntPtr hwnd, IntPtr updateRect, IntPtr updateRegion, uint flags);
 }
