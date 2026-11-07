@@ -94,6 +94,12 @@ public partial class AnimationEditorWindow : Window
         e.Handled = true;
     }
 
+    private void StateSearchButton_Click(object sender, RoutedEventArgs e)
+    {
+        stateCombo.Focus();
+        stateCombo.IsDropDownOpen = true;
+    }
+
     private void OnNameFocusRequested(object? sender, EventArgs e) => animationNameBox.Focus();
 
     /// <summary>
