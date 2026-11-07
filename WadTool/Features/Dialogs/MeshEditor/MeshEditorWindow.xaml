@@ -108,22 +108,22 @@
                 <TextBox Grid.Column="0" Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"><TextBox.InputBindings><KeyBinding Key="Return" Command="{Binding SearchCommand}" /></TextBox.InputBindings></TextBox>
                 <Button Grid.Column="1" Style="{StaticResource TbBtn}" Command="{Binding SearchCommand}" ToolTip="Search for meshes by name"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/search}" /></Button>
             </controls:SpacedGrid>
-            <TreeView x:Name="meshTree" Margin="0,4,0,0" ItemsSource="{Binding RootNodes}">
-                <TreeView.ItemContainerStyle>
-                    <Style BasedOn="{StaticResource {x:Type TreeViewItem}}" TargetType="TreeViewItem">
+            <controls:AlternatingTreeView x:Name="meshTree" HorizontalContentAlignment="Stretch" Margin="0,4,0,0" ItemsSource="{Binding RootNodes}">
+                <controls:AlternatingTreeView.ItemContainerStyle>
+                    <Style BasedOn="{StaticResource {x:Type controls:AlternatingTreeViewItem}}" TargetType="controls:AlternatingTreeViewItem">
                         <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
                         <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
                     </Style>
-                </TreeView.ItemContainerStyle>
-                <TreeView.ItemTemplate>
+                </controls:AlternatingTreeView.ItemContainerStyle>
+                <controls:AlternatingTreeView.ItemTemplate>
                     <HierarchicalDataTemplate ItemsSource="{Binding Children}">
                         <StackPanel Orientation="Horizontal">
                             <Image Margin="0,0,4,0" Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/skinned}" Visibility="{Binding IsSkin, Converter={StaticResource BoolToVis}}" />
                             <TextBlock Text="{Binding Text}" />
                         </StackPanel>
                     </HierarchicalDataTemplate>
-                </TreeView.ItemTemplate>
-            </TreeView>
+                </controls:AlternatingTreeView.ItemTemplate>
+            </controls:AlternatingTreeView>
         </DockPanel>
 
         
