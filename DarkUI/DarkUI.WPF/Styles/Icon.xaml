@@ -3,17 +3,9 @@
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:local="clr-namespace:DarkUI.WPF">
 
-	<local:InvertEffect x:Key="InvertEffect" />
-
 	<Style x:Key="ImageIcon" TargetType="{x:Type Image}">
 		<Setter Property="FlowDirection" Value="LeftToRight" />
 		<Setter Property="Opacity" Value="{DynamicResource Opacity_Icon}" />
-
-		<Style.Triggers>
-			<DataTrigger Binding="{Binding Path=(local:Defaults.ShouldIconsInvert)}" Value="True">
-				<Setter Property="Effect" Value="{StaticResource InvertEffect}" />
-			</DataTrigger>
-		</Style.Triggers>
 	</Style>
 
 	<Style x:Key="SmallImageIcon" TargetType="{x:Type Image}">
@@ -22,12 +14,6 @@
 
 		<Setter Property="FlowDirection" Value="LeftToRight" />
 		<Setter Property="Opacity" Value="{DynamicResource Opacity_Icon}" />
-
-		<Style.Triggers>
-			<DataTrigger Binding="{Binding Path=(local:Defaults.ShouldIconsInvert)}" Value="True">
-				<Setter Property="Effect" Value="{StaticResource InvertEffect}" />
-			</DataTrigger>
-		</Style.Triggers>
 	</Style>
 
 	<Style x:Key="SmallPathIcon" TargetType="{x:Type Path}">

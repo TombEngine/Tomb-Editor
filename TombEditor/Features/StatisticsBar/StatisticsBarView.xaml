@@ -11,8 +11,10 @@
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
 
+        <SolidColorBrush x:Key="StatTextBrush" Color="{DynamicResource Color_Text}" Opacity="0.6" />
+
         <Style x:Key="StatRunStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+            <Setter Property="Foreground" Value="{StaticResource StatTextBrush}" />
             <Setter Property="FontSize" Value="11" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding Highlight}" Value="True">
@@ -31,10 +33,9 @@
     </UserControl.Resources>
 
     <Border
-        Background="{DynamicResource Brush_Background_Low}"
-        BorderBrush="{DynamicResource Brush_Border}"
-        BorderThickness="0,1,0,0"
-        Padding="6,2"
+        Background="{DynamicResource Brush_Background}"
+        BorderThickness="0"
+        Padding="6,3"
         Visibility="{Binding IsVisible, Converter={StaticResource BoolToVis}}">
         <DockPanel LastChildFill="True">
             <!--  Step height selector (TEN levels only), mirroring the previous panelStepHeightOptions.  -->

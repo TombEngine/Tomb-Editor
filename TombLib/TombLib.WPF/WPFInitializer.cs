@@ -35,6 +35,8 @@ public static class WPFInitializer
             Source = new Uri("pack://application:,,,/DarkUI.WPF;component/Generic.xaml")
         });
 
+        // White glyphs turn dark on light palettes, so icons follow the palette.
+        ThemeManager.ThemeChanged += ApplyIconInversion;
         ThemeManager.Apply(theme);
 
         CMessageBox.WindowStyleOverride = (Style)wpfApp.Resources["CustomWindowStyle"];
@@ -57,5 +59,10 @@ public static class WPFInitializer
         services.AddTransient<ILocalizationService, LocalizationService>();
 
         return services;
+    }
+
+    private static void ApplyIconInversion(Theme theme)
+    {
+        IconSources.InvertColors = theme is Theme.Light or Theme.WinRoomEdit;
     }
 }

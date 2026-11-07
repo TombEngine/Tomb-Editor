@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <None Remove="Resources\down-right-16.png" />
-    <None Remove="Resources\Invert.ps" />
     <None Remove="Resources\search-16.png" />
   </ItemGroup>
 
@@ -41,7 +40,6 @@
 
   <ItemGroup>
     <Resource Include="Resources\down-right-16.png" />
-    <Resource Include="Resources\Invert.ps" />
     <Resource Include="Resources\search-16.png" />
   </ItemGroup>
 
@@ -62,9 +60,6 @@
       <Generator>MSBuild:Compile</Generator>
     </None>
     <None Update="Styles\AvalonDock\Theme.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </None>
-    <None Update="Styles\AvalonDock\Theme_WinRoomEdit.xaml">
       <Generator>MSBuild:Compile</Generator>
     </None>
     <None Update="ClassicRoomEdit\Button.xaml">

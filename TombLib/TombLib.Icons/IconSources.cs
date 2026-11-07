@@ -7,6 +7,8 @@ using System.Collections.Concurrent;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
 using System.Xml.Linq;
@@ -20,7 +22,14 @@ public static class IconSources
 {
     private const string AssemblyPrefix = "TombLib.Icons.Svg.";
     private static readonly Assembly Assembly = typeof(IconSources).Assembly;
-    private static readonly ConcurrentDictionary<IconId, DrawingImage> Cache = new();
+    private static readonly ConcurrentDictionary<(IconId Id, bool Inverted), DrawingImage> Cache = new();
+    private static readonly Regex HexColor = new(@"((?:fill|stroke|stop-color|flood-color|color)\s*[:=]\s*""?\s*)#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b", RegexOptions.Compiled);
+
+    /// <summary>
+    /// Gets or sets whether icon colors are inverted, so white glyphs stay visible on light palettes.
+    /// Set this before icons are loaded.
+    /// </summary>
+    public static bool InvertColors { get; set; }
 
     /// <summary>
     /// Loads a cached vector image for the specified icon.
@@ -28,12 +37,16 @@ public static class IconSources
     public static DrawingImage Load(IconId id)
     {
         var normalizedId = IconId.Parse(id.Path);
-        return Cache.GetOrAdd(normalizedId, key => {
-            var resourceName = $"{AssemblyPrefix}{key.ResourcePath}.svg";
+        var inverted = InvertColors;
+        return Cache.GetOrAdd((normalizedId, inverted), key => {
+            var resourceName = $"{AssemblyPrefix}{key.Id.ResourcePath}.svg";
             using var stream = Assembly.GetManifestResourceStream(resourceName)
                                ?? throw new FileNotFoundException($"Embedded SVG not found: {resourceName}");
             using var buffer = new MemoryStream();
-            stream.CopyTo(buffer);
+            if (key.Inverted)
+                WriteInvertedSvg(stream, buffer);
+            else
+                stream.CopyTo(buffer);
             buffer.Position = 0;
             var size = ReadViewportSize(buffer);
             buffer.Position = 0;
@@ -64,6 +77,27 @@ public static class IconSources
             return new Size(16, 16);
 
         return new Size(width, height);
+    }
+
+    /// <summary>
+    /// Copies an SVG while inverting its hex colors. This is the vector equivalent of the former pixel shader.
+    /// </summary>
+    private static void WriteInvertedSvg(Stream source, Stream destination)
+    {
+        using var reader = new StreamReader(source);
+        var svg = HexColor.Replace(reader.ReadToEnd(), InvertColor);
+        var bytes = Encoding.UTF8.GetBytes(svg);
+        destination.Write(bytes, 0, bytes.Length);
+    }
+
+    private static string InvertColor(Match match)
+    {
+        var hex = match.Groups[2].Value;
+        if (hex.Length == 3)
+            hex = new string(new[] { hex[0], hex[0], hex[1], hex[1], hex[2], hex[2] });
+
+        var inverted = Convert.ToInt32(hex, 16) ^ 0xFFFFFF;
+        return $"{match.Groups[1].Value}#{inverted:X6}";
     }
 
     /// <summary>

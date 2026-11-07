@@ -279,6 +279,8 @@
                 <MenuItem editor:EditorMenu.Command="ShowStatistics" />
                 <MenuItem editor:EditorMenu.Command="ShowToolPalette" />
                 <MenuItem editor:EditorMenu.Command="ShowFlybyTimeline" />
+                <MenuItem editor:EditorMenu.Command="PopOut2DMap" />
+                <MenuItem editor:EditorMenu.Command="PopOut3DView" />
             </MenuItem>
 
             <MenuItem Header="Help">
@@ -297,7 +299,12 @@
         <statusBar:StatusBarView x:Name="statusBarView" DockPanel.Dock="Bottom" />
 
         <!--  Center: AvalonDock  -->
-        <avalonDock:DockingManager x:Name="dockManager">
+        <avalonDock:DockingManager
+            x:Name="dockManager"
+            GridSplitterWidth="4"
+            GridSplitterHeight="4"
+            GridSplitterVerticalStyle="{DynamicResource Dock_SplitterVertical}"
+            GridSplitterHorizontalStyle="{DynamicResource Dock_SplitterHorizontal}">
             <avalonDock:DockingManager.Theme>
                 <darkDock:DarkUIDockTheme />
             </avalonDock:DockingManager.Theme>
@@ -312,7 +319,7 @@
 
                     <!--  Left column  -->
                     <avalonDock:LayoutAnchorablePaneGroup DockWidth="286" Orientation="Vertical">
-                        <avalonDock:LayoutAnchorablePane DockHeight="300" DockMinHeight="285">
+                        <avalonDock:LayoutAnchorablePane DockHeight="280*" DockMinHeight="200">
                             <avalonDock:LayoutAnchorable
                                 ContentId="sectorOptions"
                                 CanClose="False"
@@ -321,7 +328,7 @@
                                 <sectorOptionsPanel:SectorOptionsView x:Name="sectorOptionsView" />
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>
-                        <avalonDock:LayoutAnchorablePane DockHeight="278" DockMinHeight="272">
+                        <avalonDock:LayoutAnchorablePane DockHeight="268*" DockMinHeight="200">
                             <avalonDock:LayoutAnchorable
                                 ContentId="rooms"
                                 CanClose="False"
@@ -338,7 +345,7 @@
                                 <roomOptionsPanel:RoomOptionsView x:Name="roomOptionsView" />
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>
-                        <avalonDock:LayoutAnchorablePane DockHeight="192">
+                        <avalonDock:LayoutAnchorablePane DockHeight="259*">
                             <avalonDock:LayoutAnchorable
                                 ContentId="itemBrowser"
                                 CanClose="False"
@@ -354,7 +361,7 @@
                                 <importedGeometryBrowser:ImportedGeometryBrowserView x:Name="importedGeometryBrowserView" />
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>
-                        <avalonDock:LayoutAnchorablePane DockHeight="170">
+                        <avalonDock:LayoutAnchorablePane DockHeight="502*">
                             <avalonDock:LayoutAnchorable
                                 ContentId="triggerList"
                                 CanClose="False"
@@ -395,14 +402,19 @@
                                     <DockPanel x:Name="editorAreaHost" LastChildFill="True">
                                         <toolbar:EditorToolbarView DockPanel.Dock="Top" />
                                         <statisticsBar:StatisticsBarView x:Name="statisticsBarView" DockPanel.Dock="Bottom" />
-                                        <avalonDock:DockingManager x:Name="editorDockManager">
+                                        <avalonDock:DockingManager
+                                            x:Name="editorDockManager"
+                                            GridSplitterWidth="4"
+                                            GridSplitterHeight="4"
+                                            GridSplitterVerticalStyle="{DynamicResource Dock_SplitterVertical}"
+                                            GridSplitterHorizontalStyle="{DynamicResource Dock_SplitterHorizontal}">
                                             <avalonDock:DockingManager.Theme>
                                                 <darkDock:DarkUIDockTheme />
                                             </avalonDock:DockingManager.Theme>
                                             <avalonDock:LayoutRoot>
                                                 <avalonDock:LayoutPanel>
                                                     <avalonDock:LayoutDocumentPaneGroup>
-                                                        <avalonDock:LayoutDocumentPane>
+                                                        <avalonDock:LayoutDocumentPane ShowHeader="False">
                                                             <avalonDock:LayoutDocument
                                                                 x:Name="view3DDocument"
                                                                 ContentId="view3D"
@@ -426,7 +438,7 @@
                                 </avalonDock:LayoutDocument>
                             </avalonDock:LayoutDocumentPane>
                         </avalonDock:LayoutDocumentPaneGroup>
-                        <avalonDock:LayoutAnchorablePaneGroup DockHeight="160">
+                        <avalonDock:LayoutAnchorablePaneGroup DockHeight="88">
                             <avalonDock:LayoutAnchorablePane>
                                 <avalonDock:LayoutAnchorable
                                     x:Name="flybyTimelineAnchorable"
@@ -438,8 +450,8 @@
                                 </avalonDock:LayoutAnchorable>
                             </avalonDock:LayoutAnchorablePane>
                         </avalonDock:LayoutAnchorablePaneGroup>
-                        <avalonDock:LayoutAnchorablePaneGroup DockHeight="150" Orientation="Horizontal">
-                            <avalonDock:LayoutAnchorablePane DockWidth="371">
+                        <avalonDock:LayoutAnchorablePaneGroup DockHeight="226" Orientation="Horizontal">
+                            <avalonDock:LayoutAnchorablePane DockWidth="371*">
                                 <avalonDock:LayoutAnchorable
                                     ContentId="lighting"
                                     CanClose="False"
@@ -448,7 +460,7 @@
                                     <lightingPanel:LightingView x:Name="lightingView" />
                                 </avalonDock:LayoutAnchorable>
                             </avalonDock:LayoutAnchorablePane>
-                            <avalonDock:LayoutAnchorablePane DockWidth="645">
+                            <avalonDock:LayoutAnchorablePane DockWidth="1600*">
                                 <avalonDock:LayoutAnchorable
                                     ContentId="contentBrowser"
                                     CanClose="False"

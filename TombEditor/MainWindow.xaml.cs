@@ -13,6 +13,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 using TombEditor.Controls.Panel3D;
 using TombEditor.Features.MenuSearch;
 using TombEditor.Features.MenuState;
@@ -154,6 +155,7 @@ public partial class MainWindow : Window
     private void OnContentRendered(object sender, System.EventArgs e)
     {
         ContentRendered -= OnContentRendered;
+        ScheduleDockMinimums();
 
         ApplyToolboxPositionsFrom(ActiveLayout());
     }
@@ -443,8 +445,48 @@ public partial class MainWindow : Window
         }
     }
 
+    /// <summary>
+    /// Floats the 3D or 2D editor document into its own window. Docked, the document has no tab, so this
+    /// command is how it is pulled out. Drag the tab in the floating window to dock it again.
+    /// </summary>
+    public void PopOutEditorDocument(string contentId)
+    {
+        var document = editorDockManager.Layout.Descendents().OfType<LayoutDocument>().FirstOrDefault(d => d.ContentId == contentId);
+        if (document is null || document.IsFloating || !document.CanFloat)
+            return;
+
+        editorDockManager.CreateFloatingWindow(document, false)?.Show();
+    }
+
     private LayoutAnchorable FindAnchorable(string contentId)
         => dockManager.Layout.Descendents().OfType<LayoutAnchorable>().FirstOrDefault(a => a.ContentId == contentId);
+
+    /// <summary>
+    /// Sets each pane's minimum size from the size its content asks for, so splitters cannot shrink a dock
+    /// below its content. AvalonDock does not write minimum sizes into saved layouts, so this runs after every load.
+    /// </summary>
+    private void ScheduleDockMinimums() => Dispatcher.BeginInvoke(new Action(ApplyDockMinimums), DispatcherPriority.ContextIdle);
+
+    private void ApplyDockMinimums()
+    {
+        const double CaptionHeight = 25;
+        const double TabStripHeight = 22;
+
+        foreach (var pane in dockManager.Layout.Descendents().OfType<LayoutAnchorablePane>())
+        {
+            var views = pane.Children.OfType<LayoutAnchorable>()
+                .Select(anchorable => anchorable.Content)
+                .OfType<FrameworkElement>()
+                .Where(view => view.DesiredSize.Width > 0 || view.DesiredSize.Height > 0)
+                .ToList();
+            if (views.Count == 0)
+                continue;
+
+            var tabStrip = pane.ChildrenCount > 1 ? TabStripHeight : 0;
+            pane.DockMinWidth = Math.Ceiling(views.Max(view => view.DesiredSize.Width));
+            pane.DockMinHeight = Math.Ceiling(views.Max(view => view.DesiredSize.Height) + CaptionHeight + tabStrip);
+        }
+    }
 
     private void ApplyFlybyTimelineVisibility()
     {
@@ -698,6 +740,7 @@ public partial class MainWindow : Window
         // Layouts saved by builds that did not (de)serialize the timeline anchorable lack it
         // entirely; re-apply the configured visibility so it is recreated/re-shown right away.
         ApplyFlybyTimelineVisibility();
+        ScheduleDockMinimums();
     }
 
     private void OnLayoutSerializationCallback(object sender, LayoutSerializationCallbackEventArgs e)

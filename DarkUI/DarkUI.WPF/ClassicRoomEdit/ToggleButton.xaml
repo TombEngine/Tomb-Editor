@@ -53,7 +53,7 @@
 						<Rectangle
 							x:Name="checkedRect"
 							Margin="{TemplateBinding BorderThickness}"
-							Fill="{DynamicResource Brush_CheckedHighlight}"
+							Fill="{DynamicResource Brush_Background_Low}"
 							Opacity="{DynamicResource Opacity_CheckedHighlight}"
 							Visibility="Hidden" />
 
@@ -87,23 +87,11 @@
 						<Trigger Property="IsChecked" Value="True">
 							<Setter Property="BorderBrush" Value="{DynamicResource Brush_CheckedHighlight}" />
 							<Setter TargetName="checkedRect" Property="Visibility" Value="Visible" />
-
-							<Setter TargetName="contentPresenter" Property="Effect">
-								<Setter.Value>
-									<local:InvertEffect />
-								</Setter.Value>
-							</Setter>
 						</Trigger>
 
 						<Trigger Property="IsPressed" Value="True">
 							<Setter Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
 							<Setter TargetName="checkedRect" Property="Visibility" Value="Visible" />
-
-							<Setter TargetName="contentPresenter" Property="Effect">
-								<Setter.Value>
-									<local:InvertEffect />
-								</Setter.Value>
-							</Setter>
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>

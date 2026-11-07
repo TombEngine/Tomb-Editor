@@ -33,9 +33,6 @@ public static class ThemeManager
         }
 
         Defaults.CurrentTheme = theme;
-        // Light and WinRoomEdit both use light-background palettes; the SVG
-        // icon set is white-on-transparent, so invert to render them black.
-        Defaults.ShouldIconsInvert = theme is Theme.Light or Theme.WinRoomEdit;
         ThemeChanged?.Invoke(theme);
     }
 

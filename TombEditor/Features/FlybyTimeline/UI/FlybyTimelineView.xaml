@@ -17,7 +17,7 @@
     UseLayoutRounding="{x:Static darkUI:Defaults.UseLayoutRounding}"
     mc:Ignorable="d">
 
-    <controls:SpacedGrid Margin="0,2,0,4" ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+    <controls:SpacedGrid Margin="6,2,6,2" ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />

@@ -53,7 +53,7 @@
 						<Rectangle
 							x:Name="pressRect"
 							Margin="{TemplateBinding BorderThickness}"
-							Fill="{DynamicResource Brush_PressHighlight}"
+							Fill="{DynamicResource Brush_Background_Low}"
 							Opacity="{DynamicResource Opacity_PressedHighlight}"
 							Visibility="Hidden" />
 
@@ -93,12 +93,6 @@
 
 						<Trigger Property="IsPressed" Value="True">
 							<Setter TargetName="pressRect" Property="Visibility" Value="Visible" />
-
-							<Setter TargetName="contentPresenter" Property="Effect">
-								<Setter.Value>
-									<local:InvertEffect />
-								</Setter.Value>
-							</Setter>
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>

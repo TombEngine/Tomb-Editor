@@ -9,9 +9,8 @@
         drives the layout, mirroring the legacy previous MainView.UpdateToolStripLayout.
     -->
     <Border
-        Background="{DynamicResource Brush_Background_Low}"
-        BorderBrush="{DynamicResource Brush_Border}"
-        BorderThickness="0,0,0,1">
+        Background="{DynamicResource Brush_Background}"
+        BorderThickness="0">
         <ToolBarTray x:Name="ToolBarTray" Orientation="Horizontal">
             <ToolBarTray.ContextMenu>
                 <ContextMenu>
