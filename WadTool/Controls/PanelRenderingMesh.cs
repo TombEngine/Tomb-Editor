@@ -318,7 +318,7 @@ public class PanelRenderingMesh : RenderingPanel
             _fontDefault = deviceManager.Device.CreateFont(new RenderingFont.Description
             {
                 FontName = _tool.Configuration.Rendering3D_FontName,
-                FontSize = _tool.Configuration.Rendering3D_FontSize,
+                FontSize = (int)System.Math.Round(_tool.Configuration.Rendering3D_FontSize * TombLib.WPF.Controls.Rendering.RenderingDpi.FontScale),
                 FontIsBold = _tool.Configuration.Rendering3D_FontIsBold,
                 TextureAllocator = _fontTexture
             });

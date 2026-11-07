@@ -51,7 +51,7 @@ namespace TombEditor.Controls.Panel3D
             _fontDefault = device.CreateFont(new RenderingFont.Description
             {
                 FontName = _editor.Configuration.Rendering3D_FontName,
-                FontSize = _editor.Configuration.Rendering3D_FontSize,
+                FontSize = (int)System.Math.Round(_editor.Configuration.Rendering3D_FontSize * TombLib.WPF.Controls.Rendering.RenderingDpi.FontScale),
                 FontIsBold = _editor.Configuration.Rendering3D_FontIsBold,
                 TextureAllocator = _fontTexture
             });

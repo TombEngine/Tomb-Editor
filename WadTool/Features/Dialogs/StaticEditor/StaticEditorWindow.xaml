@@ -10,7 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="{Binding Title}"
     Width="900"
-    Height="800"
+    Height="765"
     MinWidth="900"
     MinHeight="765"
     d:DataContext="{d:DesignInstance Type=local:StaticEditorWindowViewModel}"
@@ -29,6 +29,7 @@
         </Style>
         <Style x:Key="AxisLabel" TargetType="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,2,0,2" />
             <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
         </Style>
     </Window.Resources>
@@ -65,10 +66,10 @@
 
         <!--  Right column: editing controls  -->
         <controls:SpacedStack
-            Width="252"
+            Width="240"
             DockPanel.Dock="Right"
             Orientation="Vertical"
-            Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            Spacing="10">
             <controls:SpacedStack.Margin>
                 <Thickness Left="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
             </controls:SpacedStack.Margin>

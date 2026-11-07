@@ -104,7 +104,7 @@ public class PanelRenderingAnimationEditor : RenderingPanel
         _fontDefault = deviceManager.Device.CreateFont(new RenderingFont.Description
         {
             FontName = _editor.Tool.Configuration.Rendering3D_FontName,
-            FontSize = _editor.Tool.Configuration.Rendering3D_FontSize,
+            FontSize = (int)System.Math.Round(_editor.Tool.Configuration.Rendering3D_FontSize * TombLib.WPF.Controls.Rendering.RenderingDpi.FontScale),
             FontIsBold = _editor.Tool.Configuration.Rendering3D_FontIsBold,
             TextureAllocator = _fontTexture
         });
