@@ -224,6 +224,7 @@
 							</Border>
 							<ProgressBar
 								Height="16"
+								darkUI:ProgressBarOptions.ShowValueOfMaximum="True"
 								Margin="0,4,0,0"
 								Maximum="{Binding PreviewMaximum}"
 								Minimum="0"
