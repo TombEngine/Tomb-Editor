@@ -33,7 +33,7 @@
 			description="Maximum distance in sectors the ball will travel to seek Lara. Set to 0 for an unlimited search range."
 		/>
 
-		<!-- Shatterable statics -->
+		<!-- Drop and impact behavior -->
 		<property
 			internalName="DropDelay"
 			displayName="Drop Delay"
