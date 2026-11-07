@@ -224,7 +224,7 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
     {
         RootNodes.Clear();
 
-        var moveablesNode = new MeshEditorTreeNode("Moveables") { IsExpanded = true };
+        var moveablesNode = new MeshEditorTreeNode("Moveables");
         foreach (var moveable in _wad.Moveables)
         {
             var moveableNode = new MeshEditorTreeNode(moveable.Key.ToString(_wad.GameVersion));
@@ -242,7 +242,7 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
         }
         RootNodes.Add(moveablesNode);
 
-        var staticsNode = new MeshEditorTreeNode("Statics") { IsExpanded = true };
+        var staticsNode = new MeshEditorTreeNode("Statics");
         foreach (var @static in _wad.Statics)
         {
             var staticNode = new MeshEditorTreeNode(@static.Key.ToString(_wad.GameVersion));

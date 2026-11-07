@@ -617,6 +617,9 @@ public abstract class TextureMapBase : Control
         drawingContext.DrawRectangle(CheckerBackground, null, drawArea);
 
         BitmapSource bitmap = GetOrCreateBitmap(texture);
+
+        // Like the WinForms control: crisp pixels when zoomed in, smooth filtering only when zoomed out.
+        RenderOptions.SetBitmapScalingMode(this, ViewScale >= 1.0f ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality);
         drawingContext.DrawImage(bitmap, drawArea);
     }
 
