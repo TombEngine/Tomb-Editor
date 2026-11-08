@@ -3,7 +3,8 @@ Version 2.0.2
 
 Tomb Editor:
  * Fixed slide direction indication for TEN.
- * Added support for more than 16384 pathfinding overlaps in TRX. 
+ * Added support for more than 16384 pathfinding overlaps in TRX.
+ 
 TombIDE:
  * Updated TRX presets to TRX 1.12.
 
