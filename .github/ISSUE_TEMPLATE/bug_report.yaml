@@ -18,9 +18,9 @@ body:
       description: |
         Please select the Tomb Editor version you are using.
       options:
-        - v2.0.1 (latest public release)
-        - v1.11 
-        - v1.10.1 or earlier 
+        - v2.0.2 (latest public release)
+        - v2.0.1 
+        - v1.11 or earlier 
     validations:
       required: true
 
