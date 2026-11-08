@@ -161,8 +161,13 @@ namespace TombEditor
 
         private static void PopOutEditorDocument(string contentId)
         {
-            if (System.Windows.Application.Current.MainWindow is MainWindow mainWindow)
-                mainWindow.PopOutEditorDocument(contentId);
+            if (System.Windows.Application.Current.MainWindow is not MainWindow mainWindow)
+            {
+                logger.Warn("Cannot pop out '{0}': the main window is not available.", contentId);
+                return;
+            }
+
+            mainWindow.PopOutEditorDocument(contentId);
         }
 
         private static void AddCommand(string commandName, string friendlyName, CommandType type, Action<CommandArgs> command)

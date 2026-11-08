@@ -15,6 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using TombEditor.Controls.Panel3D;
+using TombEditor.Features.DockableViews;
 using TombEditor.Features.MenuSearch;
 using TombEditor.Features.MenuState;
 using TombEditor.Features.Panel3D.ObjectBrush;
@@ -63,7 +64,7 @@ public partial class MainWindow : Window
         InitializeComponent();
 
         // After a docking splitter drag, stale pixels can remain around the hosted 3D view; repaint once the layout settles.
-        var redrawTimer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(150) };
+        var redrawTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(150) };
         redrawTimer.Tick += (_, _) =>
         {
             redrawTimer.Stop();
@@ -428,6 +429,8 @@ public partial class MainWindow : Window
                 anchorable.Show();
             else
                 anchorable.Hide();
+
+            ScheduleDockMinimums();
         }
         else if (contentId == "itemProperties")
         {
@@ -442,6 +445,7 @@ public partial class MainWindow : Window
                 IconSource = TombLib.Icons.IconSources.Load("General/edit"),
                 Content = itemPropertiesView,
             }.AddToLayout(dockManager, AnchorableShowStrategy.Left | AnchorableShowStrategy.Most);
+            ScheduleDockMinimums();
         }
     }
 
@@ -465,28 +469,7 @@ public partial class MainWindow : Window
     /// Sets each pane's minimum size from the size its content asks for, so splitters cannot shrink a dock
     /// below its content. AvalonDock does not write minimum sizes into saved layouts, so this runs after every load.
     /// </summary>
-    private void ScheduleDockMinimums() => Dispatcher.BeginInvoke(new Action(ApplyDockMinimums), DispatcherPriority.ContextIdle);
-
-    private void ApplyDockMinimums()
-    {
-        const double CaptionHeight = 25;
-        const double TabStripHeight = 22;
-
-        foreach (var pane in dockManager.Layout.Descendents().OfType<LayoutAnchorablePane>())
-        {
-            var views = pane.Children.OfType<LayoutAnchorable>()
-                .Select(anchorable => anchorable.Content)
-                .OfType<FrameworkElement>()
-                .Where(view => view.DesiredSize.Width > 0 || view.DesiredSize.Height > 0)
-                .ToList();
-            if (views.Count == 0)
-                continue;
-
-            var tabStrip = pane.ChildrenCount > 1 ? TabStripHeight : 0;
-            pane.DockMinWidth = Math.Ceiling(views.Max(view => view.DesiredSize.Width));
-            pane.DockMinHeight = Math.Ceiling(views.Max(view => view.DesiredSize.Height) + CaptionHeight + tabStrip);
-        }
-    }
+    private void ScheduleDockMinimums() => Dispatcher.BeginInvoke(new Action(() => DockMinimums.Apply(dockManager)), DispatcherPriority.ContextIdle);
 
     private void ApplyFlybyTimelineVisibility()
     {
@@ -515,6 +498,7 @@ public partial class MainWindow : Window
             };
             anchorable.AddToLayout(dockManager, AnchorableShowStrategy.Bottom | AnchorableShowStrategy.Most);
             HookFlybyTimelineAnchorable(anchorable);
+            ScheduleDockMinimums();
             return;
         }
 
@@ -531,6 +515,8 @@ public partial class MainWindow : Window
                 dockManager.Layout.Hidden.Remove(anchorable);
                 anchorable.AddToLayout(dockManager, AnchorableShowStrategy.Bottom | AnchorableShowStrategy.Most);
             }
+
+            ScheduleDockMinimums();
         }
         else if (!shouldBeVisible && !anchorable.IsHidden)
         {
@@ -586,7 +572,10 @@ public partial class MainWindow : Window
             return;
 
         if (anchorable.IsHidden)
+        {
             anchorable.Show();
+            ScheduleDockMinimums();
+        }
 
         anchorable.IsActive = true;
         focusSearch();
@@ -598,7 +587,10 @@ public partial class MainWindow : Window
             return;
 
         if (anchorable.IsHidden)
+        {
             anchorable.Show();
+            ScheduleDockMinimums();
+        }
 
         anchorable.IsActive = true;
     }

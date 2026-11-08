@@ -80,7 +80,7 @@ public static class IconSources
     }
 
     /// <summary>
-    /// Copies an SVG while inverting its hex colors. This is the vector equivalent of the former pixel shader.
+    /// Copies an SVG while inverting its hex colors.
     /// </summary>
     private static void WriteInvertedSvg(Stream source, Stream destination)
     {
@@ -94,7 +94,7 @@ public static class IconSources
     {
         var hex = match.Groups[2].Value;
         if (hex.Length == 3)
-            hex = new string(new[] { hex[0], hex[0], hex[1], hex[1], hex[2], hex[2] });
+            hex = string.Concat(hex[0], hex[0], hex[1], hex[1], hex[2], hex[2]);
 
         var inverted = Convert.ToInt32(hex, 16) ^ 0xFFFFFF;
         return $"{match.Groups[1].Value}#{inverted:X6}";

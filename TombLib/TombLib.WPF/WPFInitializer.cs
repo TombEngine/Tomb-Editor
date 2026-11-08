@@ -61,8 +61,5 @@ public static class WPFInitializer
         return services;
     }
 
-    private static void ApplyIconInversion(Theme theme)
-    {
-        IconSources.InvertColors = theme is Theme.Light or Theme.WinRoomEdit;
-    }
+    private static void ApplyIconInversion(Theme theme) => IconSources.InvertColors = theme is Theme.Light or Theme.WinRoomEdit;
 }
