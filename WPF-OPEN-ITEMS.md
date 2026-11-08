@@ -18,6 +18,6 @@ None known. Dock minimums are re-applied after every show or dock of a pane (Sch
 ## Not verified yet
 
 - Launching with a saved layout can show a 160x28 window. The default layout was the only layout tested.
-- Dock minimums while dragging a splitter.
+- Dock minimums while dragging a splitter. Checked for the Flyby timeline after hiding and showing it from the Window menu: dragging its splitter fully down stops at its content height. Other panes were not dragged.
 - Visuals of popped-out floating windows. The capture tool only captures the main window.
 - Switching modes while a document is floating, and re-docking a floating view by dragging its tab.
