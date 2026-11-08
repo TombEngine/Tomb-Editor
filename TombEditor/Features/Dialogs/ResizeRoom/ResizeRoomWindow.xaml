@@ -92,8 +92,8 @@
                     <Viewbox
                         Grid.Row="1"
                         Grid.Column="1"
-                        Width="76"
-                        Height="76">
+                        Width="100"
+                        Height="100">
                         <Canvas Width="76" Height="76">
                             <Ellipse
                                 Canvas.Left="10"
