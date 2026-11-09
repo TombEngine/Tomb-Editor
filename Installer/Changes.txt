@@ -3,12 +3,16 @@ Version 2.0.2
 
 Tomb Editor:
  * Fixed slide direction indication for TEN.
+ * Added support for more than 16384 pathfinding overlaps in TRX.
+ 
+TombIDE:
+ * Updated TRX presets to TRX 1.12.
 
 TEN nodes:
  * Fixed KEYPAD nodes breaking post process settings.
 
-TombIDE:
- * Updated TRX presets to TRX 1.12.
+TEN property system updates:
+ * Added WRECKING_BALL properties.
 
 Version 2.0.1
 =============
@@ -95,7 +99,7 @@ TEN property system updates:
  * Exhaust smoke colors for QUAD.
  * Headlight parameters (color, intensity, radius, falloff, distance and shadow casting) for UPV, MOTORBIKE and JEEP.
  
- TEN base WAD:
+TEN base WAD:
  * Fixed turn switch flickering in the default TEN wad. You must update your LARA object from the base WAD2 for this to take effect. 
  * Fixed GRENADE_ANIM sound effect order to match classic games. You must update your GRENADE_ANIM object from the base WAD2 for this to take effect.
  * Fixed HARPOON_ANIM sound effects not playing correctly underwater. You must update your HARPOON_ANIM object from the base WAD2 for this to take effect.
