@@ -406,15 +406,12 @@ namespace WadTool
                 var textureFileName = "Texture_" + i + ".png";
                 var path = Path.Combine(Path.GetDirectoryName(filePath), textureFileName);
 
-                var matOpaque = new IOMaterial(Material.Material_Opaque + "_" + i, pages[i], path, false, false, 0, i);
-                var matOpaqueDoubleSided = new IOMaterial(Material.Material_OpaqueDoubleSided + "_" + i, pages[i], path, false, true, 0, i);
-                var matAdditiveBlending = new IOMaterial(Material.Material_AdditiveBlending + "_" + i, pages[i], path, true, false, 0, i);
-                var matAdditiveBlendingDoubleSided = new IOMaterial(Material.Material_AdditiveBlendingDoubleSided + "_" + i, pages[i], path, true, true, 0, i);
-
-                model.Materials.Add(matOpaque);
-                model.Materials.Add(matOpaqueDoubleSided);
-                model.Materials.Add(matAdditiveBlending);
-                model.Materials.Add(matAdditiveBlendingDoubleSided);
+                foreach (BlendMode mode in Enum.GetValues(typeof(BlendMode)))
+                {
+                    var prefix = Material.GetPrefixForBlendMode(mode);
+                    model.Materials.Add(new IOMaterial(prefix + "_" + i, pages[i], path, mode, false, 0, i));
+                    model.Materials.Add(new IOMaterial(prefix + Material.DoubleSidedSuffix + "_" + i, pages[i], path, mode, true, 0, i));
+                }
             }
 
             UpdateBoneAbsolutePositions(m.Bones);
@@ -499,7 +496,7 @@ namespace WadTool
                     var mat = model.Materials[0];
                     foreach (var mt in model.Materials)
                         if (mt.Page == texture.Atlas)
-                            if (mt.AdditiveBlending == (p.Texture.BlendMode >= BlendMode.Additive))
+                            if (mt.BlendMode == p.Texture.BlendMode)
                                 if (mt.DoubleSided == p.Texture.DoubleSided)
                                     if (mt.Shininess == 0)
                                         mat = mt;
