@@ -10,8 +10,8 @@
 
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     Title="{tombLib:Localize Title}"
-    Width="740"
-    Height="700"
+    Width="642"
+    Height="605"
     MinWidth="520"
     MinHeight="420"
     d:DataContext="{d:DesignInstance Type=local:OptionsWindowViewModel}"
