@@ -1647,35 +1647,13 @@ namespace TombLib.LevelData.Compilers.TombEngine
                     (room.OriginalRoom.Properties.LightInterpolationMode == RoomLightInterpolationMode.Interpolate ||
                      otherRoom.OriginalRoom.Properties.LightInterpolationMode == RoomLightInterpolationMode.Interpolate)))
                 {
-                    int x1 = p.Vertices[0].X;
-                    int y1 = p.Vertices[0].Y;
-                    int z1 = p.Vertices[0].Z;
-
-                    int x2 = x1 + 1;
-                    int y2 = y1 + 1;
-                    int z2 = z1 + 1;
-
-                    for (int i = 1; i < 4; i++)
-                    {
-                        if (p.Vertices[i].X < x1)
-                            x1 = p.Vertices[i].X;
-                        else if (p.Vertices[i].X > x2)
-                            x2 = p.Vertices[i].X + 1;
-
-                        if (p.Vertices[i].Y < y1)
-                            y1 = p.Vertices[i].Y;
-                        else if (p.Vertices[i].Y > y2)
-                            y2 = p.Vertices[i].Y + 1;
-
-                        if (p.Vertices[i].Z < z1)
-                            z1 = p.Vertices[i].Z;
-                        else if (p.Vertices[i].Z > z2)
-                            z2 = p.Vertices[i].Z + 1;
-                    }
-
                     for (int i = 0; i < room.Vertices.Count; i++)
                     {
                         var v1 = room.Vertices[i];
+                        // Only match shades for vertices that actually lie on the portal edge.
+                        if (!PortalShadeMatchHelper.IsCandidate(p.Vertices, v1.Position))
+                            continue;
+
                         var sig = new ShadeMatchSignature()
                         {
                             // NOTE: We keep alternate group and water flag in dictionary as well, this way we only apply vertex colour to
@@ -1685,51 +1663,44 @@ namespace TombLib.LevelData.Compilers.TombEngine
                             Position = new VectorInt3((int)v1.Position.X + room.Info.X, (int)v1.Position.Y, (int)v1.Position.Z + room.Info.Z)
                         };
 
-                        if (v1.Position.X >= x1 && v1.Position.X <= x2)
-                            if (v1.Position.Y >= y1 && v1.Position.Y <= y2)
-                                if (v1.Position.Z >= z1 && v1.Position.Z <= z2)
+                        v1.IsOnPortal = true;
+                        room.Vertices[i] = v1;
+
+                        for (int j = 0; j < otherRoom.Vertices.Count; j++)
+                        {
+                            var v2 = otherRoom.Vertices[j];
+                            Vector3 refColor;
+                            var isPresentInLookup = _vertexColors.TryGetValue(sig, out refColor);
+                            if (!isPresentInLookup)
+                                refColor = v1.Color;
+
+                            if (room.Info.X + v1.Position.X == otherRoom.Info.X + v2.Position.X &&
+                                v1.Position.Y == v2.Position.Y &&
+                                room.Info.Z + v1.Position.Z == otherRoom.Info.Z + v2.Position.Z)
+                            {
+                                Vector3 newColor;
+
+                                // NOTE: We DON'T INTERPOLATE colours of both rooms in case we're dealing with alternate room and matched room
+                                // isn't alternate room itself. Instead, we simply copy vertex colour from matched base room.
+                                // This way we don't get sharp-cut half-transitioned vertex colour.
+
+                                if (flipped && otherRoom.AlternateKind != AlternateKind.AlternateRoom)
                                 {
-                                    v1.IsOnPortal = true;
-                                    room.Vertices[i] = v1;
-
-                                    int otherX = (int)v1.Position.X + room.Info.X - otherRoom.Info.X;
-                                    int otherY = (int)v1.Position.Y;
-                                    int otherZ = (int)v1.Position.Z + room.Info.Z - otherRoom.Info.Z;
-
-                                    for (int j = 0; j < otherRoom.Vertices.Count; j++)
-                                    {
-                                        var v2 = otherRoom.Vertices[j];
-                                        Vector3 refColor;
-                                        var isPresentInLookup = _vertexColors.TryGetValue(sig, out refColor);
-                                        if (!isPresentInLookup) refColor = v1.Color;
-
-                                        if (room.Info.X + v1.Position.X == otherRoom.Info.X + v2.Position.X &&
-                                            v1.Position.Y == v2.Position.Y &&
-                                            room.Info.Z + v1.Position.Z == otherRoom.Info.Z + v2.Position.Z)
-                                        {
-                                            Vector3 newColor;
-
-                                            // NOTE: We DON'T INTERPOLATE colours of both rooms in case we're dealing with alternate room and matched room
-                                            // isn't alternate room itself. Instead, we simply copy vertex colour from matched base room.
-                                            // This way we don't get sharp-cut half-transitioned vertex colour.
-
-                                            if (flipped && otherRoom.AlternateKind != AlternateKind.AlternateRoom)
-                                            {
-                                                var baseSig = new ShadeMatchSignature() { IsWater = sig.IsWater, AlternateGroup = -1, Position = sig.Position };
-                                                if (!_vertexColors.TryGetValue(baseSig, out newColor)) newColor = v2.Color;
-                                            }
-                                            else
-                                            {
-                                                newColor = (v2.Color + refColor) / 2.0f;
-                                            }
-
-                                            if (!isPresentInLookup)
-                                                _vertexColors.TryAdd(sig, newColor);
-                                            else
-                                                _vertexColors[sig] = newColor;
-                                        }
-                                    }
+                                    var baseSig = new ShadeMatchSignature() { IsWater = sig.IsWater, AlternateGroup = -1, Position = sig.Position };
+                                    if (!_vertexColors.TryGetValue(baseSig, out newColor))
+                                        newColor = v2.Color;
                                 }
+                                else
+                                {
+                                    newColor = (v2.Color + refColor) / 2.0f;
+                                }
+
+                                if (!isPresentInLookup)
+                                    _vertexColors.TryAdd(sig, newColor);
+                                else
+                                    _vertexColors[sig] = newColor;
+                            }
+                        }
                     }
                 }
             }
