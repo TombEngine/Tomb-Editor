@@ -312,6 +312,8 @@
             <avalonDock:LayoutRoot>
                 <!--  Mirrors the legacy previous default (Configuration.Window_LayoutDefault):  -->
                 <!--  Left column: Sector options / Room options / Items+Imported geometry / Triggers+Objects.  -->
+                <!--  Heights are proportions of the content each panel needs (Sector options 281, Room options 258, Items 255, Triggers 186),  -->
+                <!--  so no panel of the left column is clipped in a maximized window.  -->
                 <!--  Right column: Textures. Center bottom: Lighting | Content browser+Palette.  -->
                 <!--  Rooms (a WPF-only panel) is tabbed with Room options; the flyby timeline strip  -->
                 <!--  (also WPF-only) sits directly under the viewport.  -->
@@ -319,7 +321,7 @@
 
                     <!--  Left column  -->
                     <avalonDock:LayoutAnchorablePaneGroup DockWidth="286" Orientation="Vertical">
-                        <avalonDock:LayoutAnchorablePane DockHeight="280*" DockMinHeight="200">
+                        <avalonDock:LayoutAnchorablePane DockHeight="281*" DockMinHeight="200">
                             <avalonDock:LayoutAnchorable
                                 ContentId="sectorOptions"
                                 CanClose="False"
@@ -328,7 +330,7 @@
                                 <sectorOptionsPanel:SectorOptionsView x:Name="sectorOptionsView" />
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>
-                        <avalonDock:LayoutAnchorablePane DockHeight="268*" DockMinHeight="200">
+                        <avalonDock:LayoutAnchorablePane DockHeight="258*" DockMinHeight="200">
                             <avalonDock:LayoutAnchorable
                                 ContentId="rooms"
                                 CanClose="False"
@@ -345,7 +347,7 @@
                                 <roomOptionsPanel:RoomOptionsView x:Name="roomOptionsView" />
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>
-                        <avalonDock:LayoutAnchorablePane DockHeight="259*">
+                        <avalonDock:LayoutAnchorablePane DockHeight="255*">
                             <avalonDock:LayoutAnchorable
                                 ContentId="itemBrowser"
                                 CanClose="False"
@@ -361,7 +363,7 @@
                                 <importedGeometryBrowser:ImportedGeometryBrowserView x:Name="importedGeometryBrowserView" />
                             </avalonDock:LayoutAnchorable>
                         </avalonDock:LayoutAnchorablePane>
-                        <avalonDock:LayoutAnchorablePane DockHeight="502*">
+                        <avalonDock:LayoutAnchorablePane DockHeight="186*">
                             <avalonDock:LayoutAnchorable
                                 ContentId="triggerList"
                                 CanClose="False"
@@ -451,7 +453,7 @@
                             </avalonDock:LayoutAnchorablePane>
                         </avalonDock:LayoutAnchorablePaneGroup>
                         <avalonDock:LayoutAnchorablePaneGroup DockHeight="226" Orientation="Horizontal">
-                            <avalonDock:LayoutAnchorablePane DockWidth="371*">
+                            <avalonDock:LayoutAnchorablePane DockWidth="680*">
                                 <avalonDock:LayoutAnchorable
                                     ContentId="lighting"
                                     CanClose="False"
@@ -460,7 +462,7 @@
                                     <lightingPanel:LightingView x:Name="lightingView" />
                                 </avalonDock:LayoutAnchorable>
                             </avalonDock:LayoutAnchorablePane>
-                            <avalonDock:LayoutAnchorablePane DockWidth="1600*">
+                            <avalonDock:LayoutAnchorablePane DockWidth="1291*">
                                 <avalonDock:LayoutAnchorable
                                     ContentId="contentBrowser"
                                     CanClose="False"
