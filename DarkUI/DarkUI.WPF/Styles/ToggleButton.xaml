@@ -127,5 +127,11 @@
 		TargetType="{x:Type ToggleButton}">
 		<Setter Property="Background" Value="Transparent" />
 		<Setter Property="BorderBrush" Value="Transparent" />
+
+		<Style.Triggers>
+			<Trigger Property="IsEnabled" Value="False">
+				<Setter Property="Background" Value="Transparent" />
+			</Trigger>
+		</Style.Triggers>
 	</Style>
 </ResourceDictionary>

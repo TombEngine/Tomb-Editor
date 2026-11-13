@@ -11,7 +11,7 @@
     <Border
         Background="{DynamicResource Brush_Background}"
         BorderThickness="0">
-        <ToolBarTray x:Name="ToolBarTray" Orientation="Horizontal">
+        <ToolBarTray x:Name="ToolBarTray" IsLocked="True" Orientation="Horizontal">
             <ToolBarTray.ContextMenu>
                 <ContextMenu>
                     <MenuItem Click="CustomizeToolbar_Click" Header="Customize..." />

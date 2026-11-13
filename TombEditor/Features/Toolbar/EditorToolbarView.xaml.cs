@@ -57,13 +57,15 @@ public partial class EditorToolbarView : UserControl
     {
         ToolBarTray.ToolBars.Clear();
 
-        ToolBar? current = null;
+        // A single tool bar with real separators, like the legacy tool strip (one tool bar per group would give every group its own gripper).
+        var toolBar = new ToolBar();
+        ToolBarTray.ToolBars.Add(toolBar);
 
         foreach (var token in Editor.Instance.Configuration.UI_ToolbarButtons)
         {
             if (token == ToolbarButtonRegistry.SeparatorToken)
             {
-                current = null; // the next button opens a fresh ToolBar group (a visual separator)
+                toolBar.Items.Add(new Separator());
                 continue;
             }
 
@@ -74,21 +76,10 @@ public partial class EditorToolbarView : UserControl
                 ? CreateDrawObjectsMenu()
                 : ToolbarButtonRegistry.CreateButton(spec);
 
-            if (element is null)
-                continue;
-
-            current ??= AddToolBar();
-            current.Items.Add(element);
+            if (element is not null)
+                toolBar.Items.Add(element);
         }
     }
-
-    private ToolBar AddToolBar()
-    {
-        var toolBar = new ToolBar();
-        ToolBarTray.ToolBars.Add(toolBar);
-        return toolBar;
-    }
-
     private FrameworkElement CreateDrawObjectsMenu()
     {
         // A Menu hosted in a ToolBar gets restyled with the system ToolBar.MenuStyleKey style
