@@ -124,7 +124,8 @@
             <controls:NumericUpDown
                 Grid.Row="4"
                 Grid.Column="1"
-                FormatString="F4"
+                FormatString="F2"
+                DecimalPlaces="2"
                 Increment="1"
                 Maximum="{Binding MaxFov}"
                 Minimum="0"

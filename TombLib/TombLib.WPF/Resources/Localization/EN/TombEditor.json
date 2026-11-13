@@ -869,7 +869,7 @@
         "Bit6": "Snap back to Lara at the end of sequence",
         "Bit7": "Jump to another camera in sequence (Timer field)",
         "Bit8": "Freeze camera (Timer field)",
-        "Bit9": "Disable exit from sequence with 'Look At' key",
+        "Bit9": "Disable exit from sequence with \"Look At\" key",
         "Bit10": "Cinematic mode",
         "Bit11": "Let Lara move in cinematic mode",
         "Bit12": "Unused",

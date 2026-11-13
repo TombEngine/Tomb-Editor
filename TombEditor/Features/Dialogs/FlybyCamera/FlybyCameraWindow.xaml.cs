@@ -11,6 +11,13 @@ public partial class FlybyCameraWindow : Window
     public FlybyCameraWindow()
     {
         InitializeComponent();
+
+        // The Width binding in XAML is not applied to a window whose DataContext is assigned after construction.
+        DataContextChanged += (_, _) =>
+        {
+            if (DataContext is FlybyCameraWindowViewModel vm)
+                Width = vm.WindowWidth;
+        };
         this.HookModalAutoClose();
 
         Loaded += OnLoaded;

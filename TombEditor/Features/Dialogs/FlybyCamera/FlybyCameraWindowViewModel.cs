@@ -70,7 +70,7 @@ public partial class FlybyCameraWindowViewModel : ObservableObject, IModalDialog
     /// <summary>False for classic engines that ignore the flag bits (WinForms compact layout).</summary>
     public bool ShowFlags { get; }
 
-    public double WindowWidth => ShowFlags ? 600.0 : 250.0;
+    public double WindowWidth => ShowFlags ? 561.0 : 250.0;
 
     private static bool UsesCompactLayout(Level level)
         => level.IsTRX
