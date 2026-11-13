@@ -234,6 +234,8 @@
                 <Separator />
                 <MenuItem editor:EditorMenu.Command="RealignFloorToStepHeight" />
                 <MenuItem editor:EditorMenu.Command="RealignCeilingToStepHeight" />
+                <MenuItem editor:EditorMenu.Command="ConvertFloorToQuads" />
+                <MenuItem editor:EditorMenu.Command="ConvertCeilingToQuads" />
                 <MenuItem editor:EditorMenu.Command="SmoothFloor" />
                 <MenuItem editor:EditorMenu.Command="SmoothCeiling" />
                 <MenuItem editor:EditorMenu.Command="AverageFloor" />
@@ -246,8 +248,6 @@
                 <MenuItem editor:EditorMenu.Command="GridWallsIn5" />
                 <MenuItem editor:EditorMenu.Command="GridWallsIn3Squares" />
                 <MenuItem editor:EditorMenu.Command="GridWallsIn5Squares" />
-                <MenuItem editor:EditorMenu.Command="ConvertFloorToQuads" />
-                <MenuItem editor:EditorMenu.Command="ConvertCeilingToQuads" />
             </MenuItem>
 
             <MenuItem Header="Tools">
