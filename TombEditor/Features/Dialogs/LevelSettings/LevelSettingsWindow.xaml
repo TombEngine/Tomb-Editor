@@ -308,7 +308,7 @@
                             <KeyBinding Key="Delete" Command="{Binding DeleteTextureCommand}" />
                         </DataGrid.InputBindings>
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Width="56" Header="{tombLib:Localize ColumnPreview}">
+                            <DataGridTemplateColumn Width="60" Header="{tombLib:Localize ColumnPreview}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Image Width="32" Height="32" HorizontalAlignment="Center" RenderOptions.BitmapScalingMode="NearestNeighbor" Source="{Binding Preview}" Stretch="Uniform" />
@@ -316,10 +316,10 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                             <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
-                            <DataGridTemplateColumn Width="40">
+                            <DataGridTemplateColumn Width="60">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Margin="1" Command="{Binding BrowseCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize ~Generic.Browse}"><Image Source="{tomb:Icon General/Open}" /></Button>
+                                        <Button Margin="1" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -330,10 +330,10 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Width="160" Binding="{Binding Message}" CellStyle="{StaticResource StatusCell}" Header="{tombLib:Localize ColumnMessage}" IsReadOnly="True" />
-                            <DataGridTextColumn Width="90" Binding="{Binding Size}" Header="{tombLib:Localize ColumnSize}" IsReadOnly="True" />
-                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="120" Binding="{Binding ReplaceMagentaWithTransparency, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnMagentaToAlpha}" />
-                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="150" Binding="{Binding Convert512PixelsToDoubleRows, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSet512To256}" />
+                            <DataGridTextColumn Width="150" Binding="{Binding Message}" CellStyle="{StaticResource StatusCell}" Header="{tombLib:Localize ColumnMessage}" IsReadOnly="True" />
+                            <DataGridTextColumn Width="67" Binding="{Binding Size}" Header="{tombLib:Localize ColumnSize}" IsReadOnly="True" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="112" Binding="{Binding ReplaceMagentaWithTransparency, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnMagentaToAlpha}" />
+                            <DataGridCheckBoxColumn ElementStyle="{DynamicResource DataGridCheckBoxStyle}" EditingElementStyle="{DynamicResource DataGridCheckBoxStyle}" Width="142" Binding="{Binding Convert512PixelsToDoubleRows, UpdateSourceTrigger=PropertyChanged}" Header="{tombLib:Localize ColumnSet512To256}" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </DockPanel>
@@ -538,10 +538,10 @@
                             </DataGrid.InputBindings>
                             <DataGrid.Columns>
                                 <DataGridTextColumn Width="*" Binding="{Binding Path, UpdateSourceTrigger=LostFocus}" Header="{tombLib:Localize ColumnPath}" />
-                                <DataGridTemplateColumn Width="40">
+                                <DataGridTemplateColumn Width="28">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Margin="1" Command="{Binding BrowseCommand}" Content="{tombLib:Localize ~Generic.Browse}" />
+                                            <Button Margin="1" Command="{Binding BrowseCommand}" Style="{DynamicResource ButtonWithIconOnly}" ToolTip="{tombLib:Localize ~Generic.Browse}"><Image Source="{tomb:Icon General/Open}" /></Button>
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
