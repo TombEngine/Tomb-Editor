@@ -4,6 +4,7 @@ using Keys = TombLib.Input.EditorKey;
 using System;
 using System.Linq;
 using System.Windows.Interop;
+using TombEditor.Features.FlybyTimeline.UI;
 using TombLib.WPF;
 using TombLib.WPF.Input;
 
@@ -60,6 +61,10 @@ namespace TombEditor
             if (FocusedControlSupportsTextInput(keyData))
                 return false;
 
+            // The flyby timeline has its own Delete, Space and Select all shortcuts (renumbering, single undo, playback).
+            if (FocusedTimelineHandlesKey(keyData))
+                return false;
+
             CommandHandler.ExecuteHotkey(new CommandArgs
             {
                 Editor = _editor,
@@ -73,6 +78,10 @@ namespace TombEditor
 
             return false;
         }
+
+        private static bool FocusedTimelineHandlesKey(Keys keyData)
+            => System.Windows.Input.Keyboard.FocusedElement is FlybyTimelineControl
+                && keyData is Keys.Delete or Keys.Back or Keys.Space or (Keys.Control | Keys.A);
 
         /// <summary>
         /// WPF-aware equivalent of <c>KeyboardInput.IsEditingText</c>: returns
