@@ -426,7 +426,11 @@ namespace TombLib.LevelData
 
         public ImportedGeometry Clone() => (ImportedGeometry)MemberwiseClone();
         object ICloneable.Clone() => Clone();
-        public bool Equals(ImportedGeometry other) => base.Equals(other);
+
+        public bool Equals(ImportedGeometry other) => other is not null && UniqueID == other.UniqueID && Info.Equals(other.Info);
+        public override bool Equals(object other) => other is ImportedGeometry importedGeometry && Equals(importedGeometry);
+
+        public override int GetHashCode() => UniqueID.GetHashCode();
     }
 
     public class ImportedGeometryComparer : IEqualityComparer<ImportedGeometry>
