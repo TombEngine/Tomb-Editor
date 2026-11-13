@@ -154,6 +154,10 @@ public partial class TexturePanelViewModel : ObservableObject
         _editor = editor;
         _editor.EditorEventRaised += OnEditorEventRaised;
 
+        // Like the legacy panel, start from the configured tile size instead of the field default.
+        if (_tileSizes.Contains(_editor.Configuration.TextureMap_TileSelectionSize))
+            _selectedTileSize = _editor.Configuration.TextureMap_TileSelectionSize;
+
         AddTextureCommand = CommandHandler.GetCommand("AddTexture",
             () => new CommandArgs { Editor = _editor, Window = WPFUtils.GetWindowOwner() });
 
