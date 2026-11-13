@@ -213,7 +213,20 @@ public partial class MainWindow : Window
         // Floating info/warning/error popup over the 3D viewport, mirroring MainView. Unless forced,
         // the toast is suppressed while another window is active; messages are dismissed when the level changes.
         if (obj is Editor.MessageEvent message)
-            PopUpInfo.Show(_popup, message.ForceInMainWindow ? null : this.GetWin32Window(), _panel3D, message.Message, message.Type);
+        {
+            // The 3D view is hidden while the 2D map is shown; both occupy the same area, so anchor the toast to the visible one.
+            void ShowToast()
+            {
+                FrameworkElement toastAnchor = _editor.Mode == EditorMode.Map2D ? panel2DMap : _panel3D;
+                PopUpInfo.Show(_popup, message.ForceInMainWindow ? null : this.GetWin32Window(), toastAnchor, message.Message, message.Type);
+            }
+
+            // Right after switching to the 2D map it is not laid out yet and the toast is sized from its anchor, so wait for the layout.
+            if (_editor.Mode == EditorMode.Map2D && panel2DMap.ActualWidth <= 0.0)
+                Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(ShowToast));
+            else
+                ShowToast();
+        }
 
         if (obj is Editor.AutosaveEvent { Exception: not null } autosave)
         {
