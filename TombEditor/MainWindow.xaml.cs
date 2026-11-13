@@ -439,9 +439,14 @@ public partial class MainWindow : Window
         if (FindAnchorable(contentId) is { } anchorable)
         {
             if (anchorable.IsHidden)
+            {
+                DockMinimums.Clear(dockManager);
                 anchorable.Show();
+            }
             else
+            {
                 anchorable.Hide();
+            }
 
             ScheduleDockMinimums();
         }

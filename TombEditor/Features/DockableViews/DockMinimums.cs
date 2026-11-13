@@ -41,4 +41,18 @@ public static class DockMinimums
             pane.DockMinHeight = Math.Ceiling(views.Max(view => view.DesiredSize.Height) + CaptionHeight + tabStrip);
         }
     }
+
+    /// <summary>
+    /// Drops every pane minimum. A pane's minimum comes from its view's desired size, and a view that stretches reports the whole space it was given.
+    /// A pane that grew to fill a row after its neighbour was hidden would keep that large minimum and squeeze the neighbour when it is shown again,
+    /// so the minimums are cleared before a pane is shown and applied again once it has been laid out.
+    /// </summary>
+    public static void Clear(DockingManager dockManager)
+    {
+        foreach (var pane in dockManager.Layout.Descendents().OfType<LayoutAnchorablePane>())
+        {
+            pane.DockMinWidth = 0.0;
+            pane.DockMinHeight = 0.0;
+        }
+    }
 }
