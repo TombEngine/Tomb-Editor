@@ -42,6 +42,7 @@ public static class WPFInitializer
         CMessageBox.WindowStyleOverride = (Style)wpfApp.Resources["CustomWindowStyle"];
         // The legacy DarkUI message box bitmaps, drawn exactly as WinForms shows them.
         CMessageBox.UsePathIconsByDefault = false;
+        MessageBoxEscapeHandler.Install();
         CMessageBox.ErrorIconOverride = IconSources.Load("Misc/DarkUI/error");
         CMessageBox.InformationIconOverride = IconSources.Load("Misc/DarkUI/info");
         CMessageBox.QuestionIconOverride = IconSources.Load("Misc/DarkUI/question");

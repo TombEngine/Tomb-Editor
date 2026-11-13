@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Media;
 
 namespace TombLib.WPF;
@@ -24,5 +25,22 @@ public static class VisualTreeExtensions
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Returns every visual descendant of the given type, in tree order.
+    /// </summary>
+    public static IEnumerable<T> FindDescendants<T>(this DependencyObject element) where T : DependencyObject
+    {
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+        {
+            var child = VisualTreeHelper.GetChild(element, i);
+
+            if (child is T match)
+                yield return match;
+
+            foreach (var descendant in child.FindDescendants<T>())
+                yield return descendant;
+        }
     }
 }
