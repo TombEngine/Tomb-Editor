@@ -308,6 +308,7 @@ namespace TombIDE
 					case TRVersion.Game.TR3X: InstallTR3XEngine(createdProject); break;
 					case TRVersion.Game.TR4: InstallTR4Engine(createdProject); break;
 					case TRVersion.Game.TRNG: InstallTRNGEngine(createdProject, checkBox_IncludeFLEP.Checked); break;
+					case TRVersion.Game.TRNGCE: InstallTRNGCEngine(createdProject); break;
 					case TRVersion.Game.TombEngine: InstallTENEngine(createdProject); break;
 				}
 
@@ -346,7 +347,8 @@ namespace TombIDE
 			5 => TRVersion.Game.TR3,
 			6 => TRVersion.Game.TR4,
 			7 => TRVersion.Game.TRNG,
-			8 => TRVersion.Game.TombEngine,
+			8 => TRVersion.Game.TRNGCE,
+			9 => TRVersion.Game.TombEngine,
 			_ => 0,
 		};
 
@@ -361,6 +363,7 @@ namespace TombIDE
 				TRVersion.Game.TR3 => new TR3GameProject(projectName, projectPath, levelsPath, scriptPath),
 				TRVersion.Game.TR4 => new TR4GameProject(projectName, projectPath, levelsPath, scriptPath),
 				TRVersion.Game.TRNG => new TRNGGameProject(projectName, projectPath, levelsPath, scriptPath, Path.Combine(projectPath, "Plugins")),
+				TRVersion.Game.TRNGCE => new TRNGCEGameProject(projectName, projectPath, levelsPath, scriptPath, Path.Combine(projectPath, "Plugins")),
 				TRVersion.Game.TombEngine => new TENGameProject(projectName, projectPath, levelsPath),
 				_ => throw new NotImplementedException()
 			};
@@ -566,6 +569,33 @@ namespace TombIDE
 
 				if (includeFLEP)
 					allFiles.AddRange(flepArchive.Entries);
+
+				ExtractEntries(allFiles, targetProject);
+			}
+
+			targetProject.Save();
+			progressBar.Increment(1);
+		}
+
+		private void InstallTRNGCEngine(IGameProject targetProject)
+		{
+			progressBar.Maximum = 1;
+
+			string enginePresetPath = Path.Combine(DefaultPaths.PresetsDirectory, "TRNGCE.zip");
+			string sharedFilesArchivePath = Path.Combine(DefaultPaths.TemplatesDirectory, "Shared", "TR4-TRNG Shared Files.zip");
+			string sharedAudioArchivePath = Path.Combine(DefaultPaths.TemplatesDirectory, "Shared", "TR4-TEN Shared Audio.zip");
+			string soundsArchivePath = Path.Combine(DefaultPaths.TemplatesDirectory, "Sounds", "TR4-TRNG.zip");
+
+			using (var engineArchive = new ZipArchive(File.OpenRead(enginePresetPath)))
+			using (var sharedFilesArchive = new ZipArchive(File.OpenRead(sharedFilesArchivePath)))
+			using (var sharedAudioArchive = new ZipArchive(File.OpenRead(sharedAudioArchivePath)))
+			using (var soundsArchive = new ZipArchive(File.OpenRead(soundsArchivePath)))
+			{
+				var allFiles = new List<ZipArchiveEntry>();
+				allFiles.AddRange(engineArchive.Entries);
+				allFiles.AddRange(sharedFilesArchive.Entries);
+				allFiles.AddRange(sharedAudioArchive.Entries);
+				allFiles.AddRange(soundsArchive.Entries);
 
 				ExtractEntries(allFiles, targetProject);
 			}

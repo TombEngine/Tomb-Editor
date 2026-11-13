@@ -436,7 +436,7 @@ namespace TombIDE.ScriptingStudio
 
 			if (IDE.Instance.Project.GameVersion == TombLib.LevelData.TRVersion.Game.TR4)
 				CompileTR4Script();
-			else if (IDE.Instance.Project.GameVersion == TombLib.LevelData.TRVersion.Game.TRNG)
+			else if (IDE.Instance.Project.GameVersion is TombLib.LevelData.TRVersion.Game.TRNG or TombLib.LevelData.TRVersion.Game.TRNGCE)
 				CompileTRNGScript();
 		}
 

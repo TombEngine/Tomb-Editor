@@ -48,7 +48,7 @@ namespace TombEditor.ToolWindows
                 obj is Editor.LevelChangedEvent)
             {
                 bool isTR4orNG = _editor.Level.Settings.GameVersion.Native() == TRVersion.Game.TR4;
-                bool isNGorTEN = _editor.Level.Settings.GameVersion is TRVersion.Game.TRNG or TRVersion.Game.TombEngine;
+                bool isNGorTEN = _editor.Level.Settings.GameVersion.IsNG() || _editor.Level.Settings.GameVersion == TRVersion.Game.TombEngine;
                 bool supportsLensflare = _editor.Level.Settings.GameVersion.SupportsLensflare();
                 bool supportsReverb = _editor.Level.Settings.GameVersion.SupportsReverberation();
                 bool isTR1 = _editor.Level.Settings.GameVersion.Native() == TRVersion.Game.TR1;
@@ -269,12 +269,12 @@ namespace TombEditor.ToolWindows
             int roomType = -1;
             if (room.Properties.Type == RoomType.Quicksand &&
                 (_editor.Level.Settings.GameVersion != TRVersion.Game.TR3 &&
-                 _editor.Level.Settings.GameVersion != TRVersion.Game.TRNG &&
+                 !_editor.Level.Settings.GameVersion.IsNG() &&
                  _editor.Level.Settings.GameVersion != TRVersion.Game.TombEngine &&
                  !_editor.Level.IsTRX))
                 roomType = -1;
             else if ((room.Properties.Type == RoomType.Rain || room.Properties.Type == RoomType.Snow) &&
-                     _editor.Level.Settings.GameVersion != TRVersion.Game.TRNG)
+                     !_editor.Level.Settings.GameVersion.IsNG())
                 roomType = -1;
             else
             {

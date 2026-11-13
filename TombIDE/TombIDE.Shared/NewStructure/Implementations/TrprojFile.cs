@@ -145,7 +145,7 @@ namespace TombIDE.Shared.NewStructure.Implementations
 				DefaultLanguage = "English"
 			};
 
-			if (trproj.TargetGameVersion is TRVersion.Game.TRNG)
+			if (trproj.TargetGameVersion is TRVersion.Game.TRNG or TRVersion.Game.TRNGCE)
 				trproj.PluginSourcingDirectory = Path.Combine(trprojDirectory, "Plugins");
 
 			foreach (LegacyProjectLevel level in legacyTrproj.Levels)
