@@ -91,18 +91,11 @@ namespace TombEditor
             if (!textRelevantKey)
                 return false;
 
-            // WPF-focused text controls
-            var wpfFocused = System.Windows.Input.Keyboard.FocusedElement;
-            if (wpfFocused is System.Windows.Controls.Primitives.TextBoxBase ||
-                wpfFocused is System.Windows.Controls.PasswordBox ||
-                wpfFocused is System.Windows.Controls.ComboBox ||
-                wpfFocused is System.Windows.Controls.ListBox ||
-                wpfFocused is System.Windows.Controls.ListBoxItem ||
-                wpfFocused is System.Windows.Controls.DataGrid ||
-                wpfFocused is System.Windows.Controls.DataGridCell)
-                return true;
-
-            return false;
+            // Lists and grids do not block hotkeys: the legacy DarkListView panels (Objects in room, Trigger list) did not either.
+            return System.Windows.Input.Keyboard.FocusedElement is
+                System.Windows.Controls.Primitives.TextBoxBase or
+                System.Windows.Controls.PasswordBox or
+                System.Windows.Controls.ComboBox;
         }
 
     }
