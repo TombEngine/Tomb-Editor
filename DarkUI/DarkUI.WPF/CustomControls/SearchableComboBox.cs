@@ -60,6 +60,29 @@ public class SearchableComboBox : ComboBox
 			new FrameworkPropertyMetadata(string.Empty));
 	}
 
+	/// <summary>
+	/// Opens the drop-down and moves keyboard focus to the search box with its text selected.
+	/// </summary>
+	public void OpenAndFocusSearch()
+	{
+		Dispatcher.BeginInvoke(() =>
+		{
+			IsDropDownOpen = true;
+			ApplyTemplate();
+			UpdateLayout();
+
+			Dispatcher.BeginInvoke(() =>
+			{
+				if (SearchTextBox is not { } searchTextBox)
+					return;
+
+				Keyboard.Focus(searchTextBox);
+				searchTextBox.Focus();
+				searchTextBox.SelectAll();
+			}, System.Windows.Threading.DispatcherPriority.Input);
+		}, System.Windows.Threading.DispatcherPriority.Input);
+	}
+
 	public override void OnApplyTemplate()
 	{
 		base.OnApplyTemplate();
@@ -115,6 +138,8 @@ public class SearchableComboBox : ComboBox
 		{
 			FindNext();
 			PerformedSpecialAction = true;
+			// Prevent Enter from bubbling up to the parent Window's IsDefault button.
+			e.Handled = true;
 		}
 	}
 

@@ -7,6 +7,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using TombLib.Graphics;
 using TombLib.LevelData;
+using TombLib.Rendering;
 using TombLib.Rendering.DirectX11;
 using TombLib.Utils;
 using TombLib.Wad;

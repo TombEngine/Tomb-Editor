@@ -1,3 +1,12 @@
+#nullable enable
+
+using Cursors = System.Windows.Input.Cursors;
+using DragEventArgs = TombLib.Input.PointerDragEventArgs;
+using KeyEventArgs = TombLib.Input.EditorKeyEventArgs;
+using Keys = TombLib.Input.EditorKey;
+using MouseEventArgs = TombLib.Input.PointerEventArgs;
+using PreviewKeyDownEventArgs = TombLib.Input.PreviewEditorKeyEventArgs;
+using RenderingPanel = TombLib.WPF.Controls.Rendering.RenderingPanel;
 using SharpDX.Toolkit.Graphics;
 using System;
 using System.Collections.Generic;
@@ -7,22 +16,20 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using TombEditor.Controls.ContextMenus;
-using TombEditor.Controls.FlybyTimeline.Preview;
+using System.Windows.Threading;
+using TombEditor.Features.FlybyTimeline.Preview;
 using TombLib;
-using TombLib.Controls;
 using TombLib.Graphics;
 using TombLib.Graphics.Primitives;
 using TombLib.LevelData;
 using TombLib.Rendering;
 using TombLib.Utils;
+using TombLib.WPF.Controls.Rendering;
 
 namespace TombEditor.Controls.Panel3D
 {
     public partial class Panel3D : RenderingPanel
     {
-        private static readonly KeyMessageFilter _filter = new KeyMessageFilter();
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Camera Camera { get; set; }
@@ -103,7 +110,7 @@ namespace TombEditor.Controls.Panel3D
         private Vector2 _nextCameraRot;
         private float _lastCameraDist;
         private float _nextCameraDist;
-        private readonly Timer _flyModeTimer;
+        private readonly DispatcherTimer _flyModeTimer;
         private Camera _oldCamera;
         private Frustum _frustum;
         private Matrix4x4 _viewProjection;
@@ -119,7 +126,11 @@ namespace TombEditor.Controls.Panel3D
         private bool _noSelectionConfirm;
         private Gizmo _gizmo;
         private bool _gizmoEnabled = false;
-        private BaseContextMenu _currentContextMenu;
+        // Hold a strong reference to the currently open WPF ContextMenu so
+        // the popup isn't GC'd before the user picks an item. All three
+        // right-click branches (object / sector / selected geometry) now
+        // use the WPF menus under TombEditor.Features.ContextMenus.
+        private System.Windows.Controls.ContextMenu _currentWpfContextMenu;
         private ToolHandler _toolHandler;
         private readonly MovementTimer _movementTimer;
         private bool _dragObjectPicked = false;
@@ -186,11 +197,15 @@ namespace TombEditor.Controls.Panel3D
 
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetAncestor(IntPtr hwnd, uint flags);
+        private const uint GA_ROOT = 2; // Root window obtained by walking the chain of parent windows.
         private IntPtr _lastWindow { get; set; }
 
         public Panel3D()
         {
-            SetStyle(ControlStyles.Selectable | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+            // The viewport is a drop target for objects dragged from the browsers and for files.
+            AllowDrop = true;
 
             if (Editor.Instance is not null)
             {
@@ -206,11 +221,10 @@ namespace TombEditor.Controls.Panel3D
                 _toolHandler = new ToolHandler(this);
                 _movementTimer = new MovementTimer(MoveTimer_Tick);
 
-                _flyModeTimer = new Timer { Interval = 1 };
+                _flyModeTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1) };
                 _flyModeTimer.Tick += FlyModeTimer_Tick;
 
                 _renderingCachedRooms = new Cache<Room, RenderingDrawingRoom>(1024, CacheRoom);
-                Application.AddMessageFilter(_filter);
             }
         }
 
@@ -242,10 +256,14 @@ namespace TombEditor.Controls.Panel3D
                 _littleCube?.Dispose();
                 _littleSphere?.Dispose();
                 _movementTimer?.Dispose();
-                _flyModeTimer?.Dispose();
+                _flyModeTimer?.Stop();
+
+                if (_flyModeTimer is not null)
+                    _flyModeTimer.Tick -= FlyModeTimer_Tick;
                 _flybyPreview?.Dispose();
                 _rasterizerStateDepthBias?.Dispose();
-                _currentContextMenu?.Dispose();
+                if (_currentWpfContextMenu != null)
+                    _currentWpfContextMenu.IsOpen = false;
                 _wadRenderer?.Dispose();
                 _fontDefault?.Dispose();
             }

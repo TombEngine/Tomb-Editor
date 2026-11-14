@@ -1,0 +1,47 @@
+<UserControl
+    x:Class="TombEditor.Features.DockableViews.PalettePanel.PaletteView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:editor="clr-namespace:TombEditor"
+    xmlns:local="clr-namespace:TombEditor.Features.DockableViews.PalettePanel"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+    d:DesignHeight="120"
+    d:DesignWidth="645"
+    Background="{DynamicResource Brush_Background}"
+    mc:Ignorable="d">
+
+    <DockPanel Margin="{x:Static darkUI:Defaults.SmallThickness}" LastChildFill="True">
+        <controls:SpacedStack
+            x:Name="PaletteToolbar"
+            DockPanel.Dock="Left"
+            Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <Button
+                Command="{Binding ResetPaletteCommand}"
+                IsEnabled="{Binding CanResetPalette}"
+                Style="{DynamicResource ButtonWithIconOnly}"
+                ToolTip="{editor:CommandToolTip ResetPalette, Key=ResetPaletteTooltip}">
+                <Image Source="{tomb:Icon Actions/refresh}" />
+            </Button>
+            <ToggleButton
+                Command="{Binding SampleFromTexturesCommand}"
+                IsChecked="{Binding IsTextureSamplingMode, Mode=OneWay}"
+                Style="{DynamicResource ToggleButtonWithIconOnly}"
+                ToolTip="{editor:CommandToolTip SamplePaletteFromTextures, Key=SamplePaletteFromTexturesTooltip}">
+                <Image Source="{tomb:Icon Actions/TextureMode}" />
+            </ToggleButton>
+            <Button
+                Command="{Binding EditObjectColorCommand}"
+                IsEnabled="{Binding CanEditColor}"
+                Style="{DynamicResource ButtonWithIconOnly}"
+                ToolTip="{editor:CommandToolTip EditObjectColor, Key=EditObjectColorTooltip}">
+                <Image Source="{tomb:Icon General/edit}" />
+            </Button>
+        </controls:SpacedStack>
+
+        <local:PaletteGrid x:Name="PaletteGridControl" />
+    </DockPanel>
+</UserControl>

@@ -1,4 +1,4 @@
-﻿using NAudio.Wave;
+using NAudio.Wave;
 using NAudio.Flac;
 using NAudio.Vorbis;
 using NLog;
@@ -228,7 +228,7 @@ namespace TombLib.Wad
 
             // Mp3 files are hard to identify,
             // so let's just give that a shot if it's obviously not one of the others.
-            return new Mp3FileReader(dataStream);
+            return new Mp3FileReaderBase(dataStream, format => new AcmMp3FrameDecompressor(format));
         }
 
         public byte[] CompressToMsAdpcm(uint overwriteSampleRate, out int uncompressedSize) =>

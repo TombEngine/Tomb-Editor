@@ -1,0 +1,77 @@
+<Window
+    x:Class="TombEditor.Features.Dialogs.SelectRoomByTags.SelectRoomByTagsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.SelectRoomByTags"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    Title="{tombLib:Localize Title}"
+    Width="420"
+    d:DataContext="{d:DesignInstance Type=vm:SelectRoomByTagsWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    SizeToContent="Height"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <controls:SpacedGrid
+        Margin="{x:Static darkUI:Defaults.MediumThickness}"
+        ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}"
+        RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Label
+            Grid.Row="0"
+            Grid.Column="0"
+            VerticalAlignment="Center"
+            Content="{tombLib:Localize Tags}" />
+        <controls:AutoCompleteBox
+            Grid.Row="0"
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            CharacterCasing="Lower"
+            ItemsSource="{Binding AutocompleteTags}"
+            Text="{Binding TagSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <CheckBox
+            Grid.Row="1"
+            Grid.Column="1"
+            Content="{tombLib:Localize AllTags}"
+            IsChecked="{Binding FindAllTags, Mode=TwoWay}"
+            ToolTip="{tombLib:Localize AllTagsTooltip}" />
+
+        <controls:SpacedStack
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <Button
+                Width="80"
+                Command="{Binding ConfirmCommand}"
+                Content="{tombLib:Localize ~Common.OK}"
+                IsDefault="True" />
+            <Button
+                Width="80"
+                Command="{Binding CancelCommand}"
+                Content="{tombLib:Localize ~Common.Cancel}"
+                IsCancel="True" />
+        </controls:SpacedStack>
+    </controls:SpacedGrid>
+</Window>

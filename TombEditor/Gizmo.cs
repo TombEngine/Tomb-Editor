@@ -1,11 +1,12 @@
-﻿using SharpDX.Toolkit.Graphics;
+using Keys = TombLib.Input.EditorKey;
+using SharpDX.Toolkit.Graphics;
 using System;
 using System.Linq;
 using System.Numerics;
-using System.Windows.Forms;
 using TombLib.Graphics;
 using TombLib.LevelData;
 using TombLib.Wad.Catalog;
+using TombLib.WPF.Input;
 
 namespace TombEditor
 {
@@ -23,14 +24,14 @@ namespace TombEditor
         {
             if (_editor.SelectedObject is PositionBasedObjectInstance)
                 EditorActions.MoveObject(_editor.SelectedObject as PositionBasedObjectInstance,
-                                     newPos - _editor.SelectedObject.Room.WorldPos, Control.ModifierKeys);
+                                     newPos - _editor.SelectedObject.Room.WorldPos, KeyboardState.ModifierKeys);
         }
 
         private float RotationQuanization(bool smoothByDefault = true)
         {
-            if (Control.ModifierKeys.HasFlag(Keys.Shift))
+            if (KeyboardState.ModifierKeys.HasFlag(Keys.Shift))
                 return 5.0f;
-            else if (Control.ModifierKeys.HasFlag(Keys.Control))
+            else if (KeyboardState.ModifierKeys.HasFlag(Keys.Control))
                 return smoothByDefault ? 45.0f : 0.0f;
             else
                 return smoothByDefault ? 0.0f : 45.0f;
@@ -38,9 +39,9 @@ namespace TombEditor
 
         private float SizeQuantization()
         {
-            if (Control.ModifierKeys.HasFlag(Keys.Shift))
+            if (KeyboardState.ModifierKeys.HasFlag(Keys.Shift))
                 return 128.0f;
-            else if (Control.ModifierKeys.HasFlag(Keys.Control))
+            else if (KeyboardState.ModifierKeys.HasFlag(Keys.Control))
                 return 1.0f;
             else
                 return 512.0f;
@@ -48,9 +49,9 @@ namespace TombEditor
 
         private float ScaleQuantization()
         {
-            if (Control.ModifierKeys.HasFlag(Keys.Shift))
+            if (KeyboardState.ModifierKeys.HasFlag(Keys.Shift))
                 return 1.5f;
-            else if (Control.ModifierKeys.HasFlag(Keys.Control))
+            else if (KeyboardState.ModifierKeys.HasFlag(Keys.Control))
                 return 2.0f;
             else
                 return 0.0f;
@@ -70,9 +71,9 @@ namespace TombEditor
         private bool DisableCustomScale => (_editor.SelectedObject is StaticInstance || (_editor.SelectedObject is ObjectGroup grp && grp.Any(o => o is StaticInstance))) &&
                                            !_editor.Level.IsTombEngine;
 
-        private bool SmoothRotationPreference => !(_editor.SelectedObject is ObjectGroup || 
-                                                   _editor.SelectedObject is MoveableInstance || 
-                                                   _editor.SelectedObject is StaticInstance || 
+        private bool SmoothRotationPreference => !(_editor.SelectedObject is ObjectGroup ||
+                                                   _editor.SelectedObject is MoveableInstance ||
+                                                   _editor.SelectedObject is StaticInstance ||
                                                    _editor.SelectedObject is VolumeInstance);
 
         protected override void GizmoRotateY(float newAngle)
@@ -197,13 +198,13 @@ namespace TombEditor
         protected override float ScaleCubeSize => _editor.Configuration.Gizmo_ScaleCubeSize;
         protected override float LineThickness => _editor.Configuration.Gizmo_LineThickness;
 
-        protected override GizmoOrientation Orientation => (_editor.SelectedObject is GhostBlockInstance && 
+        protected override GizmoOrientation Orientation => (_editor.SelectedObject is GhostBlockInstance &&
                                                            !((GhostBlockInstance)_editor.SelectedObject).SelectedFloor) ? GizmoOrientation.UpsideDown : GizmoOrientation.Normal;
 
         protected override bool SupportTranslateX => _editor.SelectedObject is PositionBasedObjectInstance;
         protected override bool SupportTranslateZ => _editor.SelectedObject is PositionBasedObjectInstance;
 
-        protected override bool SupportTranslateY => _editor.SelectedObject is PositionBasedObjectInstance || 
+        protected override bool SupportTranslateY => _editor.SelectedObject is PositionBasedObjectInstance ||
                                                     (_editor.SelectedObject is GhostBlockInstance && ((GhostBlockInstance)_editor.SelectedObject).SelectedCorner.HasValue);
 
         protected override bool SupportScale => (_editor.SelectedObject is IScaleable || _editor.SelectedObject is ISizeable ||

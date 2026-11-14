@@ -1,13 +1,15 @@
-﻿using DarkUI.Forms;
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Windows.Forms;
 using TombLib;
 using TombLib.Graphics;
+using TombLib.Services;
 using TombLib.Utils;
 using TombLib.Wad;
+using TombLib.WPF;
 
 namespace WadTool
 {
@@ -54,13 +56,13 @@ namespace WadTool
 
         // Helpers
         public bool SelectionIsEmpty => Selection.X == -1 || Selection.Y == -1;
-        public bool ValidAnimationAndFrames => CurrentAnim != null && CurrentAnim.DirectXAnimation.KeyFrames.Count > 0;
+        public bool ValidAnimationAndFrames => CurrentAnim is not null && CurrentAnim.DirectXAnimation.KeyFrames.Count > 0;
 
         public int GetRealNumberOfFrames(int animNumber = -1)
         {
             if (animNumber < 0)
             {
-                if (CurrentAnim == null) return 0;
+                if (CurrentAnim is null) return 0;
                 animNumber = CurrentAnim.Index;
             }
 
@@ -72,7 +74,7 @@ namespace WadTool
 
         public int GetRealFrameNumber(int keyFrameNumber = -1, int animNumber = -1)
         {
-            if (CurrentAnim == null) return 0;
+            if (CurrentAnim is null) return 0;
 
             if (animNumber < 0) animNumber = CurrentAnim.Index;
             if (keyFrameNumber < 0) keyFrameNumber = CurrentFrameIndex;
@@ -87,7 +89,7 @@ namespace WadTool
         {
             get
             {
-                if (CurrentAnim == null || CurrentAnim.DirectXAnimation.KeyFrames.Count <= 0)
+                if (CurrentAnim is null || CurrentAnim.DirectXAnimation.KeyFrames.Count <= 0)
                     return null;
 
                 if (CurrentFrameIndex >= CurrentAnim.DirectXAnimation.KeyFrames.Count)
@@ -164,32 +166,32 @@ namespace WadTool
 
         public bool CheckAnimationIntegrity(WadAnimation anim)
         {
-            if (anim == null)
+            if (anim is null)
                 return true;
 
             if (anim.StateChanges.Any(sc => sc.Dispatches.Any(d => d.NextAnimation >= Animations.Count)))
             {
-                Tool.SendMessage("Some state changes refer to non-existent animations.", TombLib.Forms.PopupType.Warning);
+                Tool.SendMessage("Some state changes refer to non-existent animations.", PopupType.Warning);
                 return false;
             }
             else if (anim.NextAnimation >= Animations.Count)
             {
-                Tool.SendMessage("Next animation field refers to non-existent animation.", TombLib.Forms.PopupType.Warning);
+                Tool.SendMessage("Next animation field refers to non-existent animation.", PopupType.Warning);
                 return false;
             }
             else if (anim.NextFrame > Animations[anim.NextAnimation].WadAnimation.GetRealNumberOfFrames())
             {
-                Tool.SendMessage("Next frame field refers to non-existent frame.", TombLib.Forms.PopupType.Warning);
+                Tool.SendMessage("Next frame field refers to non-existent frame.", PopupType.Warning);
                 return false;
             }
 
             return true;
         }
 
-        public bool SaveChanges(IWin32Window owner = null)  // No owner - no confirmation!
+        public bool SaveChanges(IWindowOwner? owner = null)  // No owner - no confirmation!
         {
-            if (owner != null && DarkMessageBox.Show(owner, "Do you really want to save changes to animations?", "Save changes",
-                                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+            if (owner is not null && UserDialogs.Show(owner, "Do you really want to save changes to animations?", "Save changes",
+                                    DialogButtons.YesNo, DialogIcon.Question) != DialogChoice.Yes)
                 return false;
 
             // Clear the old animations
@@ -208,7 +210,7 @@ namespace WadTool
 
         private void UpdateTransform(int meshIndex, Vector3 newPos, RotationStrategy rotStrategy)
         {
-            if (CurrentAnim == null || CurrentKeyFrame == null)
+            if (CurrentAnim is null || CurrentKeyFrame is null)
                 return;
 
             // Backup everything and push undo on first occurrence of editing

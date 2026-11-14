@@ -25,6 +25,7 @@
 
 		<!--  Brushes  -->
 		<Setter Property="Background" Value="{DynamicResource Brush_Background}" />
+		<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
 		<Setter Property="BorderBrush" Value="{DynamicResource Brush_Background_Low}" />
 		<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
 
@@ -35,7 +36,10 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type Window}">
-					<Grid SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
+					<Grid
+						Loaded="WindowTemplate_Loaded"
+						SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+						UseLayoutRounding="{TemplateBinding UseLayoutRounding}">
 						<Border
 							Background="{TemplateBinding Background}"
 							BorderBrush="{TemplateBinding BorderBrush}"
@@ -60,11 +64,13 @@
 										</Grid.ColumnDefinitions>
 
 										<Image
+											Width="{x:Static local:Defaults.TitleBar_IconWidth}"
 											Height="{x:Static local:Defaults.TitleBar_IconWidth}"
+											VerticalAlignment="Center"
 											Opacity="{DynamicResource Opacity_DisabledContent}"
 											Source="{Binding Icon, RelativeSource={RelativeSource TemplatedParent}}">
 											<Image.Margin>
-												<Thickness Top="{x:Static local:Defaults.TitleBar_IconVerticalOffset}" />
+												<Thickness Left="{x:Static local:Defaults.MediumThicknessWidth}" />
 											</Image.Margin>
 										</Image>
 										<TextBlock
@@ -73,9 +79,9 @@
 											VerticalAlignment="Center"
 											FontSize="{x:Static local:Defaults.TitleBar_FontSize}"
 											Foreground="{TemplateBinding Foreground}"
-											Text="{Binding Title, RelativeSource={RelativeSource TemplatedParent}}">
+											Text="{Binding Title, RelativeSource={RelativeSource TemplatedParent}}" TextTrimming="CharacterEllipsis">
 											<TextBlock.Margin>
-												<Thickness Left="{x:Static local:Defaults.MediumThicknessWidth}" />
+												<Thickness Left="{x:Static local:Defaults.MediumThicknessWidth}" Right="{x:Static local:Defaults.TitleBar_ButtonsWidth}" />
 											</TextBlock.Margin>
 										</TextBlock>
 									</Grid>
@@ -90,6 +96,7 @@
 											Background="Transparent"
 											BorderBrush="Transparent"
 											Click="Minimize_Event"
+												Focusable="False"
 											WindowChrome.IsHitTestVisibleInChrome="True">
 											<Rectangle
 												Width="{x:Static local:Defaults.Path_MaxIconWidth}"
@@ -103,6 +110,7 @@
 											Background="Transparent"
 											BorderBrush="Transparent"
 											Click="AutoMinimize_Event"
+												Focusable="False"
 											WindowChrome.IsHitTestVisibleInChrome="True">
 											<Grid MaxWidth="{x:Static local:Defaults.Path_MaxIconWidth}" MaxHeight="{x:Static local:Defaults.Path_MaxIconHeight}">
 												<Rectangle Stroke="{DynamicResource Brush_Text}" StrokeThickness="{x:Static local:Defaults.TitleBar_PathIconStrokeWidth}" />
@@ -115,6 +123,7 @@
 											Background="Transparent"
 											BorderBrush="Transparent"
 											Click="CloseWindow_Event"
+												Focusable="False"
 											Template="{DynamicResource CloseWindowButton}"
 											WindowChrome.IsHitTestVisibleInChrome="True">
 											<Grid>
@@ -146,6 +155,11 @@
 
 					<ControlTemplate.Triggers>
 						<Trigger Property="ResizeMode" Value="CanMinimize">
+							<Setter TargetName="btnRestore" Property="Visibility" Value="Collapsed" />
+						</Trigger>
+
+						<Trigger Property="local:WindowOptions.ShowMinMaxButtons" Value="False">
+							<Setter TargetName="btnMinimize" Property="Visibility" Value="Collapsed" />
 							<Setter TargetName="btnRestore" Property="Visibility" Value="Collapsed" />
 						</Trigger>
 

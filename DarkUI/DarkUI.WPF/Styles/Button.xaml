@@ -122,6 +122,85 @@
 		</Style.Resources>
 	</Style>
 
+	<!--  Icon button without frame until hovered, like a WinForms tool strip button  -->
+	<Style
+		x:Key="ButtonFlatIconOnly"
+		BasedOn="{StaticResource ButtonWithIconOnly}"
+		TargetType="{x:Type Button}">
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="BorderBrush" Value="Transparent" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Button}">
+					<Border
+						x:Name="frame"
+						Padding="{TemplateBinding Padding}"
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						SnapsToDevicePixels="True">
+						<ContentPresenter
+							x:Name="content"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center" />
+					</Border>
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="frame" Property="Background" Value="{DynamicResource Brush_Background_High}" />
+							<Setter TargetName="frame" Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+						</Trigger>
+						<Trigger Property="IsPressed" Value="True">
+							<Setter TargetName="frame" Property="Background" Value="{DynamicResource Brush_Background_Low}" />
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter TargetName="content" Property="Opacity" Value="{DynamicResource Opacity_DisabledContent}" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style
+		x:Key="ButtonFlatIconAndText"
+		BasedOn="{StaticResource ButtonWithIconAndText}"
+		TargetType="{x:Type Button}">
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="BorderBrush" Value="Transparent" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Button}">
+					<Border
+						x:Name="frame"
+						Padding="{TemplateBinding Padding}"
+						Background="{TemplateBinding Background}"
+						BorderBrush="{TemplateBinding BorderBrush}"
+						BorderThickness="{TemplateBinding BorderThickness}"
+						SnapsToDevicePixels="True">
+						<ContentPresenter
+							x:Name="content"
+							HorizontalAlignment="Center"
+							VerticalAlignment="Center" />
+					</Border>
+
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="frame" Property="Background" Value="{DynamicResource Brush_Background_High}" />
+							<Setter TargetName="frame" Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+						</Trigger>
+						<Trigger Property="IsPressed" Value="True">
+							<Setter TargetName="frame" Property="Background" Value="{DynamicResource Brush_Background_Low}" />
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter TargetName="content" Property="Opacity" Value="{DynamicResource Opacity_DisabledContent}" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 	<Style
 		x:Key="ButtonFlatLargeIconOnly"
 		BasedOn="{StaticResource ButtonWithIconOnly}"
