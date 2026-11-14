@@ -12,8 +12,8 @@
     xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     Title="{tombLib:Localize Title}"
-    Width="520"
-    Height="600"
+    Width="500"
+    Height="609"
     MinWidth="500"
     MinHeight="520"
     d:DataContext="{d:DesignInstance Type=vm:SoundSourceWindowViewModel}"
@@ -110,8 +110,12 @@
                         Grid.Column="2"
                         Width="100"
                         VerticalAlignment="Center"
-                        Command="{Binding PlayCommand}"
-                        Content="{tombLib:Localize PlaySound}" />
+                        Command="{Binding PlayCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="16" Height="16" Source="{tomb:Icon Actions/play}" />
+                            <TextBlock Margin="6,0,0,0" Text="{tombLib:Localize PlaySound}" />
+                        </StackPanel>
+                    </Button>
                 </Grid>
             </controls:SpacedGrid>
         </GroupBox>

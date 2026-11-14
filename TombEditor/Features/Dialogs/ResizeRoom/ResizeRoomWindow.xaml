@@ -11,8 +11,8 @@
     xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     Title="{tombLib:Localize Title}"
-    Width="600"
-    Height="400"
+    Width="540"
+    Height="356"
     MinWidth="540"
     MinHeight="355"
     d:DataContext="{d:DesignInstance Type=vm:ResizeRoomWindowViewModel}"
@@ -50,9 +50,9 @@
             </Border>
         </GroupBox>
 
-        <StackPanel Grid.Row="0" Grid.Column="1" Width="270">
+        <StackPanel Grid.Row="0" Grid.Column="1" Width="255">
             <GroupBox Header="{tombLib:Localize NewDimensionsGroup}">
-                <Grid Margin="{x:Static darkUI:Defaults.SmallThickness}">
+                <Grid Margin="0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -67,7 +67,7 @@
                     <controls:NumericUpDown
                         Grid.Row="0"
                         Grid.Column="1"
-                        Width="76"
+                        Width="62"
                         Margin="0,0,0,4"
                         LargeIncrement="2"
                         Maximum="{Binding MaxZPositive}"
@@ -78,10 +78,10 @@
                     <controls:NumericUpDown
                         Grid.Row="1"
                         Grid.Column="0"
-                        Width="76"
+                        Width="62"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
-                        Margin="0,0,4,0"
+                        Margin="0"
                         LargeIncrement="2"
                         Maximum="{Binding MaxXNegative}"
                         Minimum="{Binding MinXNegative}"
@@ -113,10 +113,10 @@
                     <controls:NumericUpDown
                         Grid.Row="1"
                         Grid.Column="2"
-                        Width="76"
+                        Width="62"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
-                        Margin="4,0,0,0"
+                        Margin="0"
                         LargeIncrement="2"
                         Maximum="{Binding MaxXPositive}"
                         Minimum="{Binding MinXPositive}"
@@ -126,7 +126,7 @@
                     <controls:NumericUpDown
                         Grid.Row="2"
                         Grid.Column="1"
-                        Width="76"
+                        Width="62"
                         Margin="0,4,0,0"
                         LargeIncrement="2"
                         Maximum="{Binding MaxZNegative}"

@@ -10,7 +10,7 @@
 
     xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     Title="{tombLib:Localize Title}"
-    Width="420"
+    Width="409"
     d:DataContext="{d:DesignInstance Type=vm:SelectRoomByTagsWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
     ResizeMode="NoResize"
@@ -26,7 +26,6 @@
         RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -48,30 +47,29 @@
             ItemsSource="{Binding AutocompleteTags}"
             Text="{Binding TagSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-        <CheckBox
-            Grid.Row="1"
-            Grid.Column="1"
-            Content="{tombLib:Localize AllTags}"
-            IsChecked="{Binding FindAllTags, Mode=TwoWay}"
-            ToolTip="{tombLib:Localize AllTagsTooltip}" />
-
-        <controls:SpacedStack
-            Grid.Row="2"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            HorizontalAlignment="Right"
-            Orientation="Horizontal"
-            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-            <Button
-                Width="80"
-                Command="{Binding ConfirmCommand}"
-                Content="{tombLib:Localize ~Common.OK}"
-                IsDefault="True" />
-            <Button
-                Width="80"
-                Command="{Binding CancelCommand}"
-                Content="{tombLib:Localize ~Common.Cancel}"
-                IsCancel="True" />
-        </controls:SpacedStack>
+        <!--  The legacy form keeps the check box and the buttons on one row.  -->
+        <DockPanel Grid.Row="1" Grid.Column="1">
+            <controls:SpacedStack
+                HorizontalAlignment="Right"
+                DockPanel.Dock="Right"
+                Orientation="Horizontal"
+                Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+                <Button
+                    Width="80"
+                    Command="{Binding ConfirmCommand}"
+                    Content="{tombLib:Localize ~Common.OK}"
+                    IsDefault="True" />
+                <Button
+                    Width="80"
+                    Command="{Binding CancelCommand}"
+                    Content="{tombLib:Localize ~Common.Cancel}"
+                    IsCancel="True" />
+            </controls:SpacedStack>
+            <CheckBox
+                VerticalAlignment="Center"
+                Content="{tombLib:Localize AllTags}"
+                IsChecked="{Binding FindAllTags, Mode=TwoWay}"
+                ToolTip="{tombLib:Localize AllTagsTooltip}" />
+        </DockPanel>
     </controls:SpacedGrid>
 </Window>

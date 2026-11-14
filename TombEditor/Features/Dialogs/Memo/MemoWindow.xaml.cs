@@ -32,5 +32,11 @@ public partial class MemoWindow : Window
 
     // "FormMemo" key preserves existing user-config Window_FormMemo_Position/Size/Maximized.
     private void OnLoaded(object sender, RoutedEventArgs e)
-        => WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormMemo");
+    {
+        WindowConfiguration.ConfigureWindow(this, Editor.Instance.Configuration, "FormMemo");
+
+        // The legacy form opens with the whole text selected.
+        memoTextBox.Focus();
+        memoTextBox.SelectAll();
+    }
 }

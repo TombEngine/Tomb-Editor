@@ -23,8 +23,8 @@ public partial class MaterialEditorWindowViewModel : ObservableObject, IModalDia
 {
     private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
     private static readonly string[] MapKeys = [nameof(MaterialData.ColorMap), nameof(MaterialData.NormalMap),
-        nameof(MaterialData.HeightMap), nameof(MaterialData.SpecularMap), nameof(MaterialData.RoughnessMap),
-        nameof(MaterialData.AmbientOcclusionMap), nameof(MaterialData.EmissiveMap), nameof(MaterialData.AlphaMaskMap), nameof(MaterialData.AdditionalColorMap)];
+        nameof(MaterialData.HeightMap), nameof(MaterialData.AmbientOcclusionMap), nameof(MaterialData.EmissiveMap),
+        nameof(MaterialData.SpecularMap), nameof(MaterialData.RoughnessMap)];
 
     private readonly IMaterialEditorStorage _storage;
     private readonly IMessageService _messages;

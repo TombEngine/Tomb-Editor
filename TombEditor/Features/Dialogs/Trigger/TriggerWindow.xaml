@@ -12,7 +12,7 @@
     xmlns:tombLibControls="clr-namespace:TombLib.WPF.CustomControls;assembly=TombLib.WPF"
     xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.Trigger"
     Title="{Binding Title}"
-    Width="720"
+    Width="716"
     MinWidth="600"
     d:DataContext="{d:DesignInstance Type=vm:TriggerWindowViewModel}"
     Background="{DynamicResource Brush_Background}"
