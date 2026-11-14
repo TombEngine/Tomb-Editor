@@ -39,9 +39,9 @@
         <Grid Background="#FF202020" DockPanel.Dock="Top">
             <Image
                 x:Name="headerImage"
-                Height="64"
+                Width="630"
                 HorizontalAlignment="Center"
-                Stretch="None" />
+                Stretch="Uniform" />
             <TextBlock
                 x:Name="versionText"
                 Margin="0,0,8,4"
