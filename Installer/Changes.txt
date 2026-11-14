@@ -3,6 +3,9 @@ Version 2.0.3
 
 Tomb Editor:
  * Fixed slowdowns when copypasting lights.
+ 
+TEN property system updates:
+ * Added poison attack toggle for BIG_SCORPION, COBRA, HARPY and SMALL_SCORPION
 
 Version 2.0.2
 =============

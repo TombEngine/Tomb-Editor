@@ -438,6 +438,9 @@
     <None Update="Catalogs\Engines\TR5\States.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Catalogs\TEN Property Catalogs\Global\PoisonAttack.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Catalogs\TEN Property Catalogs\Global\Vehicles.xml">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

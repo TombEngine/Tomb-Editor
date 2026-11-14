@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<propertyCatalog>
+    <moveable id="BIG_SCORPION, COBRA, HARPY, SMALL_SCORPION">
+        <property
+			internalName="Poisonous"
+			displayName="Poison attack"
+			type="Bool"
+			defaultValue="true"
+			category="Enemy Attack"
+			description="If checked, enemy will poison player with certain attacks"
+		/>
+    </moveable>
+</propertyCatalog>
