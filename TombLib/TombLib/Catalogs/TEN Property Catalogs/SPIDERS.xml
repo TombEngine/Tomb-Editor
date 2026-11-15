@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<propertyCatalog>
+    <moveable id="SMALL_SPIDER">
+        <property
+			internalName="SSpiderExplodeDeath"
+			displayName="Explode death"
+			type="Bool"
+			defaultValue="true"
+			category="Spider parameters"
+			description="Spider will explode when killed."
+		/>
+		<property
+			internalName="SSpiderAttackDamage"
+			displayName="Attack Damage"
+			type="Int"
+			defaultValue="25"
+			category="Spider parameters"
+			description="Attack Damage"
+		/>
+		<property
+			internalName="SSpiderBiteSound"
+			displayName="Bite Sound"
+			type="Int"
+			defaultValue="512"
+			minValue="0"
+			category="Spider parameters"
+			description="Sound that plays when spider bites player."
+		/>
+		<property
+			internalName="SSpiderExplodeSound"
+			displayName="Explode Sound"
+			type="Int"
+			defaultValue="513"
+			minValue="0"
+			category="Spider parameters"
+			description="Sound that plays when spider explodes (if true)"
+		/>
+    </moveable>
+</propertyCatalog>
