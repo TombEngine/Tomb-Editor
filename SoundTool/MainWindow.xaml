@@ -4,7 +4,7 @@
         xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
         xmlns:icons="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
         xmlns:tomb="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
-        Title="{Binding Title}" Icon="ST.ico" Width="1050" Height="700" MinWidth="850" MinHeight="560"
+        Title="{Binding Title}" Icon="ST.ico" Width="1050" Height="700" MinWidth="802" MinHeight="513"
         Background="{DynamicResource Brush_Background}" Style="{DynamicResource CustomWindowStyle}" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />

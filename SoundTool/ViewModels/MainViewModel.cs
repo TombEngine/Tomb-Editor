@@ -166,7 +166,7 @@ public partial class MainViewModel : ObservableObject
     private void DeleteSounds()
     {
         SoundInfoViewModel[] selected = SelectedSounds.Count > 0 ? [.. SelectedSounds] : SelectedSound is null ? [] : [SelectedSound];
-        if (selected.Length == 0 || !_messages.ShowConfirmation("Delete the selected sound infos?", "Delete sounds", isRisky: true))
+        if (selected.Length == 0 || !_messages.ShowConfirmation("Do you really want to delete selected sound infos?", "Delete", defaultValue: true))
             return;
 
         foreach (var sound in selected)
