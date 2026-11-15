@@ -2,7 +2,11 @@ Version 2.0.3
 =============
 
 Tomb Editor:
+ * Added right-click menu to the property editor to copy a property's internal name.
  * Fixed slowdowns when copypasting lights.
+ 
+ WadTool
+  * Added right-click menu to the property editor to copy a property's internal name.
 
 Version 2.0.2
 =============

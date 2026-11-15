@@ -92,6 +92,16 @@ namespace TombLib.Forms.Views
                 e.Handled = true;
             }
         }
+
+        private void CopyLuaToClipboard_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuItem menuItem && menuItem.DataContext is LuaPropertyRowViewModel row && row.Definition != null)
+            {
+                var internalName = row.Definition.InternalName ?? string.Empty;
+                if (!string.IsNullOrWhiteSpace(internalName))
+                    Clipboard.SetText(internalName);
+            }
+        }
     }
 
     internal class StringEmptyToCollapsedConverter : IValueConverter
