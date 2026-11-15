@@ -283,6 +283,12 @@
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate DataType="{x:Type vm:LuaPropertyRowViewModel}">
                                             <Grid Margin="2" Opacity="{Binding IsEnabled, Converter={StaticResource BoolToOpacityConverter}}">
+                                                <Grid.ContextMenu>
+                                                    <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                                        <MenuItem Header="Copy Lua to Clipboard"
+                                                                  Click="CopyLuaToClipboard_Click" />
+                                                    </ContextMenu>
+                                                </Grid.ContextMenu>
                                                 <Grid.ToolTip>
                                                     <ToolTip Content="{Binding ToolTip}" />
                                                 </Grid.ToolTip>
