@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <propertyCatalog>
+    <moveable id="BIG_SPIDER, SMALL_SPIDER">
+		<property internalName="Poisonous"
+			displayName="Poison attack"
+			type="Bool"
+			defaultValue="false"
+			category="Spider Parameters"
+			description="If checked, enemy will poison player with certain attacks"
+		/>
+	</moveable>
     <moveable id="SMALL_SPIDER">
         <property
 			internalName="SSpiderExplodeDeath"
 			displayName="Explode death"
 			type="Bool"
 			defaultValue="true"
-			category="Spider parameters"
+			category="Spider Parameters"
 			description="Spider will explode when killed."
 		/>
 		<property
@@ -14,7 +23,7 @@
 			displayName="Attack Damage"
 			type="Int"
 			defaultValue="25"
-			category="Spider parameters"
+			category="Spider Parameters"
 			description="Attack Damage"
 		/>
 		<property
@@ -23,7 +32,7 @@
 			type="Int"
 			defaultValue="512"
 			minValue="0"
-			category="Spider parameters"
+			category="Spider Parameters"
 			description="Sound that plays when spider bites player."
 		/>
 		<property
@@ -32,8 +41,18 @@
 			type="Int"
 			defaultValue="513"
 			minValue="0"
-			category="Spider parameters"
+			category="Spider Parameters"
 			description="Sound that plays when spider explodes (if true)"
+		/>
+    </moveable>
+	<moveable id="BIG_SPIDER">
+		<property
+			internalName="BSpiderAttackDamage"
+			displayName="Attack Damage"
+			type="Int"
+			defaultValue="100"
+			category="Spider Parameters"
+			description="Attack Damage"
 		/>
     </moveable>
 </propertyCatalog>
