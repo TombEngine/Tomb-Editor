@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<propertyCatalog>
+	<moveable id="TRIBESMAN_WITH_DARTS">
+        <property
+            internalName="Poisonous"
+            displayName="Dart Poison"
+            type="Bool"
+            defaultValue="true"
+            category="Dart Parameters"
+            description="If checked, dart will poison player"
+        />
+        <property
+            internalName="DartDamage"
+            displayName="Dart Damage"
+            type="Int"
+            defaultValue="25"
+            minValue="0"
+            maxValue="1000"
+            category="Dart Parameters"
+            description="Dart damage"
+        />
+        <property
+            internalName="DartVelocity"
+            displayName="Dart Velocity"
+            type="Float"
+            defaultValue="256"
+            minValue="0"
+            maxValue="1024"
+            category="Dart Parameters"
+            description="Dart speed in units per frame"
+        />
+    </moveable>
+</propertyCatalog>

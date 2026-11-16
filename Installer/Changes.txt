@@ -3,6 +3,10 @@ Version 2.0.3
 
 Tomb Editor:
  * Fixed slowdowns when copypasting lights.
+ 
+TEN property system updates:
+ * Added poison attack toggle all enemies that deal poisonous attacks.
+ * Added properties for DART_EMITTER and HOMING_DART_EMITTER.
 
 Version 2.0.2
 =============

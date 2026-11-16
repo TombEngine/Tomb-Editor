@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<propertyCatalog>
+	<moveable id="DART_EMITTER, HOMING_DART_EMITTER">
+		<property
+			internalName="Poisonous"
+			displayName="Dart Poison"
+			type="Bool"
+			defaultValue="false"
+			replacesOCB="true"
+			category="Dart Parameters"
+			description="If checked, dart will poison player"
+		/>
+		<property
+			internalName="DartDamage"
+			displayName="Dart Damage"
+			type="Int"
+			defaultValue="25"
+			replacesOCB="true"
+			minValue="0"
+			maxValue="100"
+			category="Dart Parameters"
+			description="Dart damage"
+		/>
+		<property
+			internalName="DartVelocity"
+			displayName="Dart Velocity"
+			type="Float"
+			defaultValue="256"
+			replacesOCB="true"
+			minValue="0"
+			maxValue="1024"
+			category="Dart Parameters"
+			description="Dart speed in units per frame"
+		/>
+	</moveable>
+	<moveable id="DART_EMITTER">
+		<property
+			internalName="DartDelay"
+			displayName="Dart Delay"
+			type="Int"
+			defaultValue="32"
+			replacesOCB="true"
+			minValue="0"
+			maxValue="100"
+			category="Dart Parameters"
+			description="Delay between darts in frames"
+		/>
+	</moveable>
+	<moveable id="HOMING_DART_EMITTER">
+		<property
+			internalName="HomingDartDelay"
+			displayName="Dart Delay"
+			type="Int"
+			defaultValue="24"
+			replacesOCB="true"
+			minValue="0"
+			maxValue="100"
+			category="Dart Parameters"
+			description="Delay between homing darts in frames"
+		/>
+	</moveable>
+</propertyCatalog>
