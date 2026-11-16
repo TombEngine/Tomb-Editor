@@ -100,7 +100,7 @@
 
                 <!--  Sound parameters  -->
                 <GroupBox Grid.Row="2" DataContext="{Binding SelectedSound}">
-                    <Grid Margin="8">
+                    <Grid Margin="4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="80" />
@@ -116,16 +116,16 @@
                         </Grid.RowDefinitions>
 
                         <Label Grid.Row="0" Content="{tomb:Localize Volume}" HorizontalAlignment="Right" />
-                        <controls:NumericUpDown Grid.Row="0" Grid.Column="1" DecimalPlaces="0" LargeIncrement="5" Minimum="0" Maximum="100" Value="{Binding Volume}" Margin="4" />
+                        <controls:NumericUpDown Grid.Row="0" Grid.Column="1" DecimalPlaces="0" LargeIncrement="5" Minimum="0" Maximum="100" Value="{Binding Volume}" Margin="4,1" />
                         <Label Grid.Row="0" Grid.Column="2" Content="%" />
                         <Label Grid.Row="1" Content="{tomb:Localize Pitch}" HorizontalAlignment="Right" />
-                        <controls:NumericUpDown Grid.Row="1" Grid.Column="1" DecimalPlaces="0" LargeIncrement="1" Minimum="-100" Maximum="100" Value="{Binding PitchFactor}" Margin="4" />
+                        <controls:NumericUpDown Grid.Row="1" Grid.Column="1" DecimalPlaces="0" LargeIncrement="1" Minimum="-100" Maximum="100" Value="{Binding PitchFactor}" Margin="4,1" />
                         <Label Grid.Row="1" Grid.Column="2" Content="%" />
                         <Label Grid.Row="2" Content="{tomb:Localize Range}" HorizontalAlignment="Right" />
-                        <controls:NumericUpDown Grid.Row="2" Grid.Column="1" DecimalPlaces="0" LargeIncrement="1" Minimum="0" Maximum="255" Value="{Binding RangeInSectors}" Margin="4" />
+                        <controls:NumericUpDown Grid.Row="2" Grid.Column="1" DecimalPlaces="0" LargeIncrement="1" Minimum="0" Maximum="255" Value="{Binding RangeInSectors}" Margin="4,1" />
                         <Label Grid.Row="2" Grid.Column="2" Content="{tomb:Localize Sectors}" />
                         <Label Grid.Row="3" Content="{tomb:Localize Chance}" HorizontalAlignment="Right" />
-                        <controls:NumericUpDown Grid.Row="3" Grid.Column="1" DecimalPlaces="0" LargeIncrement="1" Minimum="0" Maximum="100" Value="{Binding Chance}" Margin="4" />
+                        <controls:NumericUpDown Grid.Row="3" Grid.Column="1" DecimalPlaces="0" LargeIncrement="1" Minimum="0" Maximum="100" Value="{Binding Chance}" Margin="4,1" />
                         <Label Grid.Row="3" Grid.Column="2" Content="%" />
 
                         <StackPanel Grid.Row="0" Grid.Column="4" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
