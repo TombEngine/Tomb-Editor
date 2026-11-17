@@ -42,8 +42,8 @@ public sealed class FloatingToolbox : Popup, IDisposable
         }
     }
 
-    /// <summary>Creates a toolbox whose drag grip appears above or beside its content.</summary>
-    public FloatingToolbox(FrameworkElement viewport, UIElement content, bool horizontalGrip = true)
+    /// <summary>Creates a toolbox whose drag grip appears above or beside its content. Without scrolling, wrapping content reflows to fit the viewport.</summary>
+    public FloatingToolbox(FrameworkElement viewport, UIElement content, bool horizontalGrip = true, bool allowScrolling = true)
     {
         _viewport = viewport;
         PlacementTarget = viewport;
@@ -69,8 +69,8 @@ public sealed class FloatingToolbox : Popup, IDisposable
         panel.Children.Add(new ScrollViewer
         {
             Content = content,
-            HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+            HorizontalScrollBarVisibility = allowScrolling ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled,
+            VerticalScrollBarVisibility = allowScrolling ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled
         });
         _border = new Border { BorderThickness = new Thickness(1), Child = panel };
         _border.SetResourceReference(Border.BackgroundProperty, "Brush_Background");
@@ -95,7 +95,7 @@ public sealed class FloatingToolbox : Popup, IDisposable
             _owner.Activated += OnOwnerActivationChanged;
             _owner.Deactivated += OnOwnerActivationChanged;
             _owner.LocationChanged += OnOwnerLocationChanged;
-            _owner.StateChanged += OnOwnerLocationChanged;
+            _owner.StateChanged += OnOwnerStateChanged;
         }
 
         _previousViewportSize = _viewport.RenderSize;
@@ -116,13 +116,16 @@ public sealed class FloatingToolbox : Popup, IDisposable
         _owner.Activated -= OnOwnerActivationChanged;
         _owner.Deactivated -= OnOwnerActivationChanged;
         _owner.LocationChanged -= OnOwnerLocationChanged;
-        _owner.StateChanged -= OnOwnerLocationChanged;
+        _owner.StateChanged -= OnOwnerStateChanged;
         _owner = null;
     }
 
     private void OnOwnerActivationChanged(object? sender, EventArgs e) => UpdateVisibility();
 
     private void OnOwnerLocationChanged(object? sender, EventArgs e) => UpdatePosition();
+
+    // Restoring from minimized fires Activated while the state is still Minimized, so the state change must re-evaluate visibility.
+    private void OnOwnerStateChanged(object? sender, EventArgs e) => UpdateVisibility();
 
     private void OnViewportVisibilityChanged(object sender, DependencyPropertyChangedEventArgs e) => UpdateVisibility();
 

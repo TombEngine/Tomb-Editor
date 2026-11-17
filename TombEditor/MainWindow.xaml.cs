@@ -99,7 +99,7 @@ public partial class MainWindow : Window
 
         _toolPaletteView = new ToolboxView();
         _objectBrushView = new ObjectBrushToolboxView();
-        _toolPalette = new FloatingToolbox(panel3DHost, _toolPaletteView) { IsShown = true };
+        _toolPalette = new FloatingToolbox(panel3DHost, _toolPaletteView, allowScrolling: false) { IsShown = true };
         _objectBrushToolbox = new FloatingToolbox(panel3DHost, _objectBrushView, horizontalGrip: false);
 
         _editor.EditorEventRaised += OnEditorEventRaised;
