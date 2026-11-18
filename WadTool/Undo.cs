@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+#nullable enable
+
+using System.Collections.Generic;
 using System.Linq;
 using TombLib.Graphics;
 using TombLib.Utils;
@@ -24,8 +26,8 @@ namespace WadTool
             Animation = anim.Clone();
 
             Valid = () => Parent.Animations.Count == AnimCount &&
-                          Animation.DirectXAnimation != null &&
-                          Animation.WadAnimation != null && 
+                          Animation.DirectXAnimation is not null &&
+                          Animation.WadAnimation is not null &&
                           Animation.Index >= 0 &&
                           Animation.Index < Parent.Animations.Count;
 
@@ -49,7 +51,7 @@ namespace WadTool
             Mesh = mesh.Clone();
             Parent = parent;
 
-            Valid = () => Parent.Mesh != null;
+            Valid = () => Parent.Mesh is not null;
             UndoAction = () =>
             {
                 Parent.ResetCameraOnMeshChange = false;
@@ -69,7 +71,7 @@ namespace WadTool
             Tool = tool;
 
             UndoStackChanged += (s, e) => Tool.UndoStackChanged();
-            MessageSent += (s, e) => Tool.SendMessage(e.Message, TombLib.Forms.PopupType.Warning);
+            MessageSent += (s, e) => Tool.SendMessage(e.Message, PopupType.Warning);
         }
 
         public void PushAnimationChanged(AnimationEditor editor, AnimationNode anim) => Push(new AnimationUndoInstance(editor, anim));

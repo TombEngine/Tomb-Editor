@@ -17,6 +17,7 @@ public interface ILocalizationService
 	/// <summary>
 	/// Gets the current component name used as a prefix for localization keys.
 	/// <para>This value is added between the namespace and the actual key when resolving translations.</para>
+	/// <para>Known component suffixes (View, Window, Page, Dialog) are automatically trimmed by <see cref="Localizer"/> during key resolution.</para>
 	/// </summary>
 	/// <value>The component name, or <see langword="null" /> if no component is set.</value>
 	string? ComponentName { get; }
@@ -34,7 +35,7 @@ public interface ILocalizationService
 	/// <para>This method extracts localization context as follows:</para>
 	/// <list type="bullet">
 	/// <item><description><c>NamespaceName</c>: Set to the first segment of <paramref name="viewModel"/>'s namespace (e.g., "TombEditor" from "TombEditor.ViewModels")</description></item>
-	/// <item><description><c>ComponentName</c>: Set to the view model's type name with "ViewModel" suffix removed (e.g., "MainWindow" from "MainWindowViewModel")</description></item>
+	/// <item><description><c>ComponentName</c>: Set to the view model's type name with "ViewModel" suffix removed (e.g., "MainWindow" from "MainWindowViewModel", or "SettingsView" from "SettingsViewViewModel"). Known component suffixes (View, Window, Page, Dialog) are then further trimmed by <see cref="Localizer"/> during key resolution.</description></item>
 	/// </list>
 	/// <para>These values are then used to automatically prefix localization keys when using the indexer.</para>
 	/// </remarks>

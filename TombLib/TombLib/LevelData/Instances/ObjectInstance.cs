@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Numerics;
-using System.Windows.Forms;
 using TombLib.Utils;
 using TombLib.Wad.Catalog;
 

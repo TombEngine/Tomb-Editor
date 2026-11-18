@@ -133,4 +133,11 @@
 		x:Key="{x:Static ToolBar.CheckBoxStyleKey}"
 		BasedOn="{StaticResource {x:Type CheckBox}}"
 		TargetType="{x:Type CheckBox}" />
+	<!--  Themed check box for the cells of DataGridCheckBoxColumn (the default element style is not themed)  -->
+	<Style x:Key="DataGridCheckBoxStyle" BasedOn="{StaticResource {x:Type CheckBox}}" TargetType="{x:Type CheckBox}">
+		<Setter Property="HorizontalAlignment" Value="Center" />
+		<Setter Property="VerticalAlignment" Value="Center" />
+		<Setter Property="Padding" Value="0" />
+	</Style>
+
 </ResourceDictionary>

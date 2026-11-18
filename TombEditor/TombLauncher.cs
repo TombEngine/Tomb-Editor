@@ -1,4 +1,4 @@
-﻿using NLog;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,9 +7,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
-using TombLib.Forms;
 using TombLib.LevelData;
+using TombLib.Services;
 using TombLib.Utils;
 
 namespace TombEditor
@@ -18,7 +17,7 @@ namespace TombEditor
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
-        public static void Launch(LevelSettings settings, IWin32Window owner)
+        public static void Launch(LevelSettings settings, IWindowOwner owner)
         {
             string executablePath = settings.MakeAbsolute(settings.GameExecutableFilePath);
             string levelPath = settings.MakeAbsolute(settings.GameLevelFilePath);
@@ -154,7 +153,7 @@ namespace TombEditor
                 {
                     // Avoid the 'Press CTRL window for settings' window of the TRNG
                     // engine, to get into the game quicker.
-                    
+
                     Stopwatch timer = new Stopwatch(); // Wait up to 2 seconds to find a suitable window.
                     timer.Start();
                     int currentWaitMilliseconds = 0;

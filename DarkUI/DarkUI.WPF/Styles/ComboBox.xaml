@@ -1,14 +1,11 @@
 ﻿<ResourceDictionary
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-	xmlns:converters="clr-namespace:DarkUI.WPF.Converters"
 	xmlns:local="clr-namespace:DarkUI.WPF">
 
 	<ResourceDictionary.MergedDictionaries>
 		<ResourceDictionary Source="/DarkUI.WPF;component/Styles/Icon.xaml" />
 	</ResourceDictionary.MergedDictionaries>
-
-	<converters:AddValueConverter x:Key="AddValueConverter" />
 
 	<Style x:Key="ComboBoxToggleButton" TargetType="{x:Type ToggleButton}">
 		<!--  Layout  -->
@@ -93,21 +90,17 @@
 						</Grid.ColumnDefinitions>
 
 						<Popup
-							Width="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType={x:Type ComboBox}}, Converter={StaticResource AddValueConverter}, ConverterParameter={x:Static local:Defaults.ShadowMarginThicknessWidth}}"
 							MaxHeight="{x:Static local:Defaults.ComboBox_Popup_MaxHeight}"
-							AllowsTransparency="True"
+							AllowsTransparency="False"
 							IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
 							Placement="Bottom"
 							PopupAnimation="Slide">
 							<Border
 								x:Name="dropDownBorder"
-								Margin="{x:Static local:Defaults.Thickness_ShadowMargin}"
+								MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
 								Background="{DynamicResource Brush_Background}"
 								BorderBrush="{TemplateBinding BorderBrush}"
 								BorderThickness="{TemplateBinding BorderThickness}">
-								<Border.Effect>
-									<DropShadowEffect Opacity="{x:Static local:Defaults.DropShadow_Opacity}" ShadowDepth="{x:Static local:Defaults.DropShadow_Depth}" />
-								</Border.Effect>
 
 								<ScrollViewer>
 									<ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />

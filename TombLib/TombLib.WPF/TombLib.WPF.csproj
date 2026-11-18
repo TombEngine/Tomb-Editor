@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
+    <LangVersion>12</LangVersion>
     <UseWPF>true</UseWPF>
     <Platforms>x64;x86</Platforms>
   </PropertyGroup>
@@ -20,10 +20,41 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="SharpDX">
+      <HintPath>..\..\Libs\SharpDX.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11">
+      <HintPath>..\..\Libs\SharpDX.Direct3D11.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Direct3D11.Effects">
+      <HintPath>..\..\Libs\SharpDX.Direct3D11.Effects.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.DXGI">
+      <HintPath>..\..\Libs\SharpDX.DXGI.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Toolkit">
+      <HintPath>..\..\Libs\SharpDX.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpDX.Toolkit.Graphics">
+      <HintPath>..\..\Libs\SharpDX.Toolkit.Graphics.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\GlobalPaths.cs" Link="GlobalPaths.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="CustomMessageBox.WPF" Version="1.2.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
-    <PackageReference Include="MvvmDialogs" Version="9.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DarkUI\DarkUI.WPF\DarkUI.WPF.csproj" />
+    <ProjectReference Include="..\TombLib.Icons\TombLib.Icons.csproj" />
+    <ProjectReference Include="..\TombLib.Rendering\TombLib.Rendering.csproj" />
+    <ProjectReference Include="..\TombLib\TombLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>

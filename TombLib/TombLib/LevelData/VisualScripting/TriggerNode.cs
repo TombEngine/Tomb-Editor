@@ -152,7 +152,9 @@ namespace TombLib.LevelData.VisualScripting
                 Color = Color,
                 Function = Function,
                 Name = Name,
-                ScreenPosition = ScreenPosition
+                ScreenPosition = ScreenPosition,
+                Size = Size,
+                Locked = Locked
             };
 
             node.Arguments.AddRange(Arguments);
