@@ -1,5 +1,8 @@
 ﻿using DarkUI.WPF.Extensions;
+using System;
+using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
 
 namespace DarkUI.WPF.Styles
@@ -39,10 +42,67 @@ namespace DarkUI.WPF.Styles
 
 		public static void MinimizeWindow(Window window) => window.WindowState = WindowState.Minimized;
 
+		private static readonly DependencyProperty OwnerFocusHookedProperty = DependencyProperty.RegisterAttached(
+			"OwnerFocusHooked", typeof(bool), typeof(CustomWindow));
+
+		[DllImport("user32.dll")]
+		private static extern IntPtr GetForegroundWindow();
+
+		[DllImport("user32.dll")]
+		private static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
+
+		[DllImport("user32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool IsWindow(IntPtr window);
+
+		[DllImport("user32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool SetForegroundWindow(IntPtr window);
+
+		// When the active window closes, Windows hands the focus to the next window in z-order, which can be another application
+		// if the owner is still disabled at that moment. Give the focus back to the owner in that case.
+		private static void HookOwnerFocusRestore(Window window)
+		{
+			if ((bool)window.GetValue(OwnerFocusHookedProperty))
+				return;
+
+			window.SetValue(OwnerFocusHookedProperty, true);
+
+			var wasActive = false;
+			var ownerHandle = IntPtr.Zero;
+
+			window.Closing += (_, _) =>
+			{
+				wasActive = window.IsActive;
+				ownerHandle = new WindowInteropHelper(window).Owner;
+			};
+
+			window.Closed += (_, _) =>
+			{
+				if (!wasActive || ownerHandle == IntPtr.Zero)
+					return;
+
+				var handle = ownerHandle;
+
+				window.Dispatcher.BeginInvoke(new Action(() =>
+				{
+					if (!IsWindow(handle))
+						return;
+
+					GetWindowThreadProcessId(GetForegroundWindow(), out var foregroundProcess);
+
+					if (foregroundProcess != Environment.ProcessId)
+						SetForegroundWindow(handle);
+				}), System.Windows.Threading.DispatcherPriority.Background);
+			};
+		}
+
 		private void WindowTemplate_Loaded(object sender, RoutedEventArgs e)
 		{
 			if (sender is not FrameworkElement root || Window.GetWindow(root) is not Window window)
 				return;
+
+			HookOwnerFocusRestore(window);
 
 			// Windows 11 draws a system accent border on the active window; use the title bar colour.
 			if (window.BorderBrush is SolidColorBrush frameBrush)

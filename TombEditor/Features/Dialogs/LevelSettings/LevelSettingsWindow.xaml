@@ -579,8 +579,7 @@
                     <GridSplitter
                         Grid.Row="1"
                         Height="6"
-                        HorizontalAlignment="Stretch"
-                        Background="{DynamicResource Brush_Border}" />
+                        HorizontalAlignment="Stretch" />
 
                     <!--  Sound selection  -->
                     <DockPanel Grid.Row="2" Margin="0,6,0,4">

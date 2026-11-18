@@ -331,8 +331,7 @@
 			<GridSplitter
 				Grid.Column="1"
 				Width="6"
-				HorizontalAlignment="Stretch"
-				Background="{DynamicResource Brush_Border}" />
+				HorizontalAlignment="Stretch" />
 
 			<!--  ========================  RIGHT: texture map  ========================  -->
 			<DockPanel Grid.Column="2">

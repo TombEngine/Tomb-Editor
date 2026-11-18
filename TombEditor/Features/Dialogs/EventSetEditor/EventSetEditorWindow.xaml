@@ -130,8 +130,7 @@
                 Grid.Column="1"
                 DragCompleted="Splitter_DragCompleted"
                 Width="6"
-                HorizontalAlignment="Stretch"
-                Background="{DynamicResource Brush_Border}" />
+                HorizontalAlignment="Stretch" />
 
             <!--  Selected set editor  -->
             <DockPanel x:Name="editorPanel" Grid.Column="2" IsEnabled="{Binding HasSelectedSet}">

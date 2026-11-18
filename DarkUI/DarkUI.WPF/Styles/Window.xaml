@@ -64,6 +64,7 @@
 										</Grid.ColumnDefinitions>
 
 										<Image
+											x:Name="titleIcon"
 											Width="{x:Static local:Defaults.TitleBar_IconWidth}"
 											Height="{x:Static local:Defaults.TitleBar_IconWidth}"
 											VerticalAlignment="Center"
@@ -112,8 +113,23 @@
 											Click="AutoMinimize_Event"
 												Focusable="False"
 											WindowChrome.IsHitTestVisibleInChrome="True">
-											<Grid MaxWidth="{x:Static local:Defaults.Path_MaxIconWidth}" MaxHeight="{x:Static local:Defaults.Path_MaxIconHeight}">
-												<Rectangle Stroke="{DynamicResource Brush_Text}" StrokeThickness="{x:Static local:Defaults.TitleBar_PathIconStrokeWidth}" />
+											<Grid Width="{x:Static local:Defaults.Path_MaxIconWidth}" Height="{x:Static local:Defaults.Path_MaxIconHeight}">
+												<Rectangle x:Name="iconMaximize" Stroke="{DynamicResource Brush_Text}" StrokeThickness="{x:Static local:Defaults.TitleBar_PathIconStrokeWidth}" />
+												<Grid x:Name="iconRestore" Visibility="Collapsed">
+													<Rectangle Stroke="{DynamicResource Brush_Text}" StrokeThickness="{x:Static local:Defaults.TitleBar_PathIconStrokeWidth}">
+														<Rectangle.Margin>
+															<Thickness Bottom="{x:Static local:Defaults.TinyThicknessWidth}" Left="{x:Static local:Defaults.TinyThicknessWidth}" />
+														</Rectangle.Margin>
+													</Rectangle>
+													<Rectangle
+														Fill="{DynamicResource Brush_WindowBorder}"
+														Stroke="{DynamicResource Brush_Text}"
+														StrokeThickness="{x:Static local:Defaults.TitleBar_PathIconStrokeWidth}">
+														<Rectangle.Margin>
+															<Thickness Right="{x:Static local:Defaults.TinyThicknessWidth}" Top="{x:Static local:Defaults.TinyThicknessWidth}" />
+														</Rectangle.Margin>
+													</Rectangle>
+												</Grid>
 											</Grid>
 										</Button>
 										<Button
@@ -168,37 +184,13 @@
 							<Setter TargetName="btnRestore" Property="Visibility" Value="Collapsed" />
 						</Trigger>
 
-						<Trigger Property="WindowState" Value="Normal">
-							<Setter TargetName="btnRestore" Property="Content">
-								<Setter.Value>
-									<Grid Width="{x:Static local:Defaults.Path_MaxIconWidth}" Height="{x:Static local:Defaults.Path_MaxIconHeight}">
-										<Rectangle Stroke="{DynamicResource Brush_Text}" StrokeThickness="{x:Static local:Defaults.TitleBar_PathIconStrokeWidth}" />
-									</Grid>
-								</Setter.Value>
-							</Setter>
+						<Trigger Property="Icon" Value="{x:Null}">
+							<Setter TargetName="titleIcon" Property="Visibility" Value="Collapsed" />
 						</Trigger>
 
 						<Trigger Property="WindowState" Value="Maximized">
-							<Setter TargetName="btnRestore" Property="Content">
-								<Setter.Value>
-									<Grid Width="{x:Static local:Defaults.Path_MaxIconWidth}" Height="{x:Static local:Defaults.Path_MaxIconHeight}">
-										<Rectangle Stroke="{DynamicResource Brush_Text}" StrokeThickness="{x:Static local:Defaults.TitleBar_PathIconStrokeWidth}">
-											<Rectangle.Margin>
-												<Thickness Bottom="{x:Static local:Defaults.TinyThicknessWidth}" Left="{x:Static local:Defaults.TinyThicknessWidth}" />
-											</Rectangle.Margin>
-										</Rectangle>
-
-										<Rectangle
-											Fill="{DynamicResource Brush_WindowBorder}"
-											Stroke="{DynamicResource Brush_Text}"
-											StrokeThickness="{x:Static local:Defaults.TitleBar_PathIconStrokeWidth}">
-											<Rectangle.Margin>
-												<Thickness Right="{x:Static local:Defaults.TinyThicknessWidth}" Top="{x:Static local:Defaults.TinyThicknessWidth}" />
-											</Rectangle.Margin>
-										</Rectangle>
-									</Grid>
-								</Setter.Value>
-							</Setter>
+							<Setter TargetName="iconMaximize" Property="Visibility" Value="Collapsed" />
+							<Setter TargetName="iconRestore" Property="Visibility" Value="Visible" />
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
