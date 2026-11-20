@@ -96,7 +96,7 @@ Per ogni finestra: D1 aspetto, D2 stato iniziale, D3 mouse, D4 tastiera, D5 rego
 
 - [x] Build Debug/Release x64 e x86 senza errori (WadTool: Debug x64/x86, Release x64).
 - [x] Test WadTool.Tests, TombLib (solo WadTool.Tests 7/7 eseguiti dopo le modifiche; gli altri progetti non toccati), TombEditor, SoundTool tutti verdi; aggiungere test per i fix logici (VM, layout, comandi).
-- [ ] Audit dipendenze (nessun System.Windows.Forms nel grafo WadTool).
+- [x] Audit dipendenze (nessun System.Windows.Forms nel grafo WadTool): nessun using nei sorgenti WadTool; i 5 ProjectReference (DarkUI.WPF, TombLib.WPF, TombLib.Icons, TombLib.Rendering, TombLib) non abilitano UseWindowsForms.
 - [ ] Flusso completo su copie: apri wad2, modifica animazione/mesh/static, salva, riapri, confronta con equivalente legacy.
 - [x] Controllo log e binding errors a runtime (nessun errore nei log dopo apertura di Animation e Skeleton Editor).
 - [ ] Controllo ASCII, CRLF, newline finale sui file toccati.
