@@ -29,3 +29,7 @@ Classificazione: B = bloccante, F = funzionale, E = estetica, T = tecnico/archit
 
 - T-1: AnimationEditorWindowViewModel e' diviso in partial per responsabilita' ma non in view model per pannello (stato condiviso).
 - T-2: MainWindow resta un code-behind con handler (diviso in partial Menu e Tree); nessun view model completo.
+
+## Confronto a video, Main Window (2026-11-20)
+
+Avvio WPF e legacy con la stessa copia di Andrea1.wad2, cattura della sola finestra (PrintWindow). Menu, barra strumenti, pannello Destination e albero Moveables/Statics/Sprite sequences coincidono per layout e colori. Non verificato: la cattura WPF risulta ritagliata in basso (finestra piu' alta dello schermo con DPI aware), quindi barra azioni, data/note e barra di stato non sono visibili; il pannello Source e' troppo stretto nella cattura per vedere il testo 'Click here to load new wad file.'. Serve una cattura a finestra ridimensionata o con mouse reale.
