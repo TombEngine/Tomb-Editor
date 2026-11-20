@@ -45,11 +45,11 @@ public partial class AnimationEditorWindowViewModel
     {
         if (_timeline is null) return false;
         if (_timeline.SelectionIsEmpty)
-        { if (prompt) ShowPopup("No frames selected. Please select at least 1 frame.", PopupType.Error); }
+        { if (prompt) ShowPopup(L("MsgNoFramesSelected"), PopupType.Error); }
         else if (_editor.CurrentAnim is null)
-        { if (prompt) ShowPopup("No animation selected. Select animation to work with.", PopupType.Error); }
+        { if (prompt) ShowPopup(L("MsgNoAnimationSelected"), PopupType.Error); }
         else if (_editor.CurrentAnim.DirectXAnimation.KeyFrames.Count == 0)
-        { if (prompt) ShowPopup("Current animation contains no frames.", PopupType.Error); }
+        { if (prompt) ShowPopup(L("MsgNoFrames"), PopupType.Error); }
         else
             return true;
         return false;
@@ -195,7 +195,7 @@ public partial class AnimationEditorWindowViewModel
         if (_timeline is null || _panel is null || _editor.CurrentAnim is null) return;
         if (_editor.ClipboardKeyFrames is null || _editor.ClipboardKeyFrames.Count <= 0)
         {
-            ShowPopup("Nothing to paste!", PopupType.Warning);
+            ShowPopup(L("MsgNothingToPaste"), PopupType.Warning);
             return;
         }
 
@@ -296,7 +296,7 @@ public partial class AnimationEditorWindowViewModel
     [RelayCommand]
     private void CutAnimation()
     {
-        if (_editor.CurrentAnim is null) { ShowPopup("No animation to cut!", PopupType.Warning); return; }
+        if (_editor.CurrentAnim is null) { ShowPopup(L("MsgNoAnimationToCut"), PopupType.Warning); return; }
         _editor.ClipboardNode = _editor.CurrentAnim;
         DeleteAnimation();
     }
@@ -304,14 +304,14 @@ public partial class AnimationEditorWindowViewModel
     [RelayCommand]
     private void CopyAnimation()
     {
-        if (_editor.CurrentAnim is null) { ShowPopup("No animation to copy!", PopupType.Warning); return; }
+        if (_editor.CurrentAnim is null) { ShowPopup(L("MsgNoAnimationToCopy"), PopupType.Warning); return; }
         _editor.ClipboardNode = _editor.CurrentAnim.Clone();
     }
 
     [RelayCommand]
     private void PasteAnimation()
     {
-        if (_editor.ClipboardNode is null || _editor.CurrentAnim is null) { ShowPopup("No animation to paste!", PopupType.Warning); return; }
+        if (_editor.ClipboardNode is null || _editor.CurrentAnim is null) { ShowPopup(L("MsgNoAnimationToPaste"), PopupType.Warning); return; }
         int animationIndex = _editor.Animations.Count;
         var pastedAnim = _editor.ClipboardNode.Clone(animationIndex);
         _editor.Animations.Add(pastedAnim);
@@ -324,7 +324,7 @@ public partial class AnimationEditorWindowViewModel
     [RelayCommand]
     private void ReplaceAnimation()
     {
-        if (_editor.ClipboardNode is null || _editor.CurrentAnim is null) { ShowPopup("No animation to replace!", PopupType.Warning); return; }
+        if (_editor.ClipboardNode is null || _editor.CurrentAnim is null) { ShowPopup(L("MsgNoAnimationToReplace"), PopupType.Warning); return; }
         _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
         int animationIndex = _editor.CurrentAnim.Index;
         var pastedAnim = _editor.ClipboardNode.Clone(animationIndex);
@@ -338,14 +338,14 @@ public partial class AnimationEditorWindowViewModel
     [RelayCommand]
     private void SplitAnimation()
     {
-        if (_timeline is null || _editor.CurrentAnim is null) { ShowPopup("No animation to split!", PopupType.Warning); return; }
+        if (_timeline is null || _editor.CurrentAnim is null) { ShowPopup(L("MsgNoAnimationToSplit"), PopupType.Warning); return; }
 
         if (_editor.CurrentAnim.DirectXAnimation.KeyFrames.Count < 3)
-        { ShowPopup("You must have at least 3 frames for splitting the animation", PopupType.Error); return; }
+        { ShowPopup(L("MsgSplitMinFrames"), PopupType.Error); return; }
 
         int numFrames = _editor.CurrentAnim.DirectXAnimation.KeyFrames.Count;
         if (_timeline.Value == 0 || _timeline.Value == numFrames - 1)
-        { ShowPopup("You can't set the first or the last frame for splitting the animation", PopupType.Error); return; }
+        { ShowPopup(L("MsgSplitBadFrame"), PopupType.Error); return; }
 
         var newWadAnimation = _editor.CurrentAnim.WadAnimation.Clone();
         var newDirectXAnimation = _editor.CurrentAnim.DirectXAnimation.Clone();

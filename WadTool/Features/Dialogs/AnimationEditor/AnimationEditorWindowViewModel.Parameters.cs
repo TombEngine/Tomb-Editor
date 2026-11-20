@@ -140,7 +140,7 @@ public partial class AnimationEditorWindowViewModel
             }
             else
             {
-                ShowPopup("State ID with given name wasn't found.", PopupType.Error);
+                ShowPopup(L("MsgStateIdNotFound"), PopupType.Error);
                 decodeFailed = true;
                 newValue = oldValue;
             }

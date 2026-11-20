@@ -128,8 +128,8 @@ public partial class AnimationEditorWindowViewModel
         bool flipZ = accumulatedRotation > 0.5f;
 
         var bonePairs = _panel.Model.GetBonePairs(flipZ);
-        if (bonePairs is null || bonePairs.Count == 0) { ShowPopup("No valid bones were found for mirroring.", PopupType.Error); return; }
-        if (flipZ) ShowPopup("Broken identity rotation detected. Impossible to mirror animation correctly.", PopupType.Warning);
+        if (bonePairs is null || bonePairs.Count == 0) { ShowPopup(L("MsgNoBonesMirror"), PopupType.Error); return; }
+        if (flipZ) ShowPopup(L("MsgBrokenIdentityRotation"), PopupType.Warning);
 
         _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
 
@@ -203,7 +203,7 @@ public partial class AnimationEditorWindowViewModel
         if (animation is null) return;
         if (animation.Name == new WadAnimation().Name) animation.Name = _editor.CurrentAnim.WadAnimation.Name;
         if (animation.KeyFrames[0].Angles.Count != _editor.Moveable.Bones.Count)
-        { ShowPopup("You can only import an animation with the same number of bones as current moveable.", PopupType.Error); return; }
+        { ShowPopup(L("MsgBoneCountMismatch"), PopupType.Error); return; }
 
         _editor.CheckAnimationIntegrity(animation);
         _editor.Tool.UndoManager.PushAnimationChanged(_editor, _editor.CurrentAnim);
@@ -234,6 +234,6 @@ public partial class AnimationEditorWindowViewModel
 
         var animationToSave = _editor.GetSavedAnimation(_editor.CurrentAnim);
         if (!WadActions.ExportAnimationToXml(_editor.Moveable, animationToSave, path))
-            ShowPopup("Can't export current animation to XML file", PopupType.Error);
+            ShowPopup(L("MsgExportXmlFailed"), PopupType.Error);
     }
 }

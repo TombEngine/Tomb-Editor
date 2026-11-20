@@ -23,6 +23,8 @@ namespace WadTool.Features.Dialogs.AnimEditor;
 /// <summary>Coordinates animation editing, playback and native WPF viewport tools.</summary>
 public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDialogViewModel
 {
+    private static string L(string key) => Localizer.Instance["WadTool.AnimationEditor." + key];
+
     private readonly DeviceManager _deviceManager;
     private readonly WadMoveableId _moveableId;
     private readonly AnimationEditor _editor;
@@ -477,7 +479,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     {
         if (!_isSaved && DialogResult != true)
         {
-            var result = UserDialogs.Show(Owner, "You have unsaved changes. Do you want to save changes to animations?",
+            var result = UserDialogs.Show(Owner, L("MsgUnsavedChanges"),
                 "Confirm", DialogButtons.YesNoCancel, DialogIcon.Question);
 
             switch (result)

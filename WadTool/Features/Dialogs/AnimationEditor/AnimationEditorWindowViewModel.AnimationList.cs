@@ -147,7 +147,7 @@ public partial class AnimationEditorWindowViewModel
         if (_selectedAnimItems.Count == 0)
             return;
 
-        if (UserDialogs.Show(Owner, "Do you really want to delete all selected animations?", "Confirm", DialogButtons.YesNo, DialogIcon.Question) == DialogChoice.No)
+        if (UserDialogs.Show(Owner, L("MsgConfirmDeleteSelected"), "Confirm", DialogButtons.YesNo, DialogIcon.Question) == DialogChoice.No)
             return;
 
         var nodes = _selectedAnimItems.Select(item => item.Node).ToList();

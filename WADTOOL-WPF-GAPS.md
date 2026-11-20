@@ -8,7 +8,7 @@ Classificazione: B = bloccante, F = funzionale, E = estetica, T = tecnico/archit
 | --- | --- | --- | --- |
 | G-1 | E | Altezza della timeline dell'Animation Editor 84 DIP contro 38 del legacy (ospita i pulsanti transport a 24 px). | Voluta, da confermare a vista |
 | G-2 | E | Titoli dei pannelli dock in inglese (LayoutAnchorable non e' un DependencyObject, Tomb Editor ha lo stesso limite). | Aperta |
-| G-3 | F | Messaggi, popup e testi creati da codice (VM) non sempre localizzati; solo il XAML e' coperto da chiavi. | Aperta |
+| G-3 | F | Messaggi, popup e testi creati da codice (VM) non sempre localizzati; solo il XAML e' coperto da chiavi. Fatti 23 messaggi letterali dell'Animation Editor (chiavi Msg* in AnimationEditor); restano quelli concatenati e gli altri editor. | Parziale |
 | G-4 | E | Mesh Editor: dall'anteprima offscreen le intestazioni "Texturing" e "Editing tools" della colonna destra sembrano sovrapposte; la colonna e' un DockPanel con gli strumenti ancorati in basso e Texturing in alto: la sovrapposizione compare solo se l'altezza disponibile e' minore del contenuto (rendering offscreen a 600 px). Probabile artefatto, non confermato a vista. | Da verificare |
 
 ## Risolte in questo ciclo

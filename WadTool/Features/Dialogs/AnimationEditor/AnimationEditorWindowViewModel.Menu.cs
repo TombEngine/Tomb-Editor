@@ -1,4 +1,4 @@
-﻿#nullable enable
+#nullable enable
 
 using CommunityToolkit.Mvvm.Input;
 using LevelFileDialog = TombLib.WPF.Services.LevelFileDialog;
@@ -47,7 +47,7 @@ public partial class AnimationEditorWindowViewModel
 
         if (!int.TryParse(input, out int framesCount) || framesCount <= 0)
         {
-            ShowPopup("You must insert a number greater than 1", PopupType.Error);
+            ShowPopup(L("MsgNumberGreaterThanOne"), PopupType.Error);
             return;
         }
 
@@ -71,7 +71,7 @@ public partial class AnimationEditorWindowViewModel
 
         if (!int.TryParse(input, out int step) || step <= 1)
         {
-            ShowPopup("You must insert a number greater than 1", PopupType.Error);
+            ShowPopup(L("MsgNumberGreaterThanOne"), PopupType.Error);
             return;
         }
 
@@ -116,7 +116,7 @@ public partial class AnimationEditorWindowViewModel
 
         if (!int.TryParse(input, out int multiplier) || multiplier <= 1)
         {
-            ShowPopup("You must insert a number greater than 1", PopupType.Error);
+            ShowPopup(L("MsgNumberGreaterThanOne"), PopupType.Error);
             return;
         }
 
@@ -134,7 +134,7 @@ public partial class AnimationEditorWindowViewModel
 
         if (animation.FrameRate < 2)
         {
-            ShowPopup("Animation is already at framerate 1. You need other framerate to resample.", PopupType.Error);
+            ShowPopup(L("MsgAlreadyFramerateOne"), PopupType.Error);
             return;
         }
 
@@ -321,7 +321,7 @@ public partial class AnimationEditorWindowViewModel
     {
         if (_editor.Animations.Count == 0)
         {
-            ShowPopup("No animations present. Nothing to export.", PopupType.Error);
+            ShowPopup(L("MsgNoAnimationsToExport"), PopupType.Error);
             return;
         }
 
