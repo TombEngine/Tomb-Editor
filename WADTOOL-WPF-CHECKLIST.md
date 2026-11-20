@@ -88,7 +88,7 @@ Per ogni finestra: D1 aspetto, D2 stato iniziale, D3 mouse, D4 tastiera, D5 rego
 - [ ] Unificare duplicazioni tra finestre (dialoghi, comandi, validazioni, input numerici) in helper condivisi (TombLib.WPF / DarkUI.WPF).
 - [ ] Gestione corretta di undo/redo e dirty state nei VM.
 - [ ] Prestazioni: liste grandi virtualizzate, nessun event flood sugli aggiornamenti bulk, Parallel dove sicuro.
-- [ ] Nullable abilitato e `is null` nei file toccati; rimuovere using inutili.
+- [x] Nullable abilitato e `is null` nei file toccati; rimuovere using inutili (Features e MainWindow: tutti con #nullable enable, zero `== null`, using potati nei partial di MainWindow; rimosso il file vuoto Int16TextConverter.cs).
 - [ ] Logging NLog di errori e warning da azioni utente.
 - [ ] Pulizia di handler morti, risorse localizzazione mancanti, binding con errori.
 
