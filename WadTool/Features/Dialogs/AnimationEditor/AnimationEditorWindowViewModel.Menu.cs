@@ -298,7 +298,7 @@ public partial class AnimationEditorWindowViewModel
             ShowPopup((importCount == 0 ? "No animations were imported.\n" : "Successfully imported " + importCount + " animations.\n") +
                 errorCount + " animations were ignored. Check log file for details.", PopupType.Warning);
         else
-            ShowPopup("Successfully imported " + importCount + " animations.", PopupType.Info);
+            ShowPopup(L("MsgImported", importCount), PopupType.Info);
 
         RebuildAnimationsList();
         SetSaved(false);
@@ -352,9 +352,9 @@ public partial class AnimationEditorWindowViewModel
         }
 
         if (errorCount > 0)
-            ShowPopup("Successfully exported " + exportCount + " animations.\n" + errorCount + " animations were ignored. Check log file for details.", PopupType.Warning);
+            ShowPopup(L("MsgExportedWithErrors", exportCount, errorCount), PopupType.Warning);
         else
-            ShowPopup("Successfully exported " + exportCount + " animations.", PopupType.Info);
+            ShowPopup(L("MsgExported", exportCount), PopupType.Info);
     }
 
     // ---- Timeline context menu ----

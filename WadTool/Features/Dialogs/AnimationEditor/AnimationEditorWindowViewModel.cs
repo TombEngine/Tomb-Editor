@@ -25,6 +25,8 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 {
     private static string L(string key) => Localizer.Instance["WadTool.AnimationEditor." + key];
 
+    private static string L(string key, params object[] args) => string.Format(L(key), args);
+
     private readonly DeviceManager _deviceManager;
     private readonly WadMoveableId _moveableId;
     private readonly AnimationEditor _editor;

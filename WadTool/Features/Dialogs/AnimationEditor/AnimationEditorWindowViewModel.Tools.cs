@@ -91,7 +91,7 @@ public partial class AnimationEditorWindowViewModel
         _timeline.Highlight(frameIndex1, frameIndex1 + numFrames + 1);
         _timeline.ResetSelection();
         _timeline.Value = frameIndex1 + numFrames + 1;
-        ShowPopup("Successfully inserted " + numFrames + " interpolated frames between frames " + frameIndex1 + " and " + frameIndex2, PopupType.Info);
+        ShowPopup(L("MsgInterpolated", numFrames, frameIndex1, frameIndex2), PopupType.Info);
     }
 
     [RelayCommand]
@@ -196,7 +196,7 @@ public partial class AnimationEditorWindowViewModel
         catch (Exception ex)
         {
             _logger.Error(ex, "Unable to load animation from '{Path}'.", path);
-            ShowPopup("Error while loading animation.\nException: " + ex.Message, PopupType.Error);
+            ShowPopup(L("MsgLoadAnimationFailed", ex.Message), PopupType.Error);
             return;
         }
 

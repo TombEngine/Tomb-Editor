@@ -188,7 +188,7 @@ public partial class AnimationEditorWindowViewModel
             }
             else
             {
-                ShowPopup("Pending state change to animation #" + _chainedIncomingAnimation + " had incorrect data and was ignored.", PopupType.Error);
+                ShowPopup(L("MsgPendingStateChangeBad", _chainedIncomingAnimation), PopupType.Error);
                 _chainedIncomingAnimation = -1;
                 _blendState.ClearPendingBlend();
             }
@@ -221,13 +221,13 @@ public partial class AnimationEditorWindowViewModel
                     if (nextFrame >= maxFrameNumber)
                     {
                         _frameCount = 0;
-                        ShowPopup("No frame " + nextFrame + " in animation " + nextIndex + ". Using first frame.", PopupType.Warning);
+                        ShowPopup(L("MsgNoFrameInAnimation", nextFrame, nextIndex), PopupType.Warning);
                     }
                     else
                         _frameCount = nextFrame;
                 }
                 else
-                    ShowPopup("Animation " + nextIndex + " wasn't found. Chain is broken.", PopupType.Warning);
+                    ShowPopup(L("MsgChainBroken", nextIndex), PopupType.Warning);
             }
             else
                 _frameCount = 0;
@@ -366,18 +366,18 @@ public partial class AnimationEditorWindowViewModel
             var soundInfo = _editor.Tool.ReferenceLevel.Settings.GlobalSoundMap.FirstOrDefault(s => s.Id == idToPlay);
             if (soundInfo is null)
             {
-                ShowPopup("Sound info " + idToPlay + " missing in reference project", PopupType.Warning);
+                ShowPopup(L("MsgSoundMissing", idToPlay), PopupType.Warning);
                 continue;
             }
 
             if (!_editor.Tool.ReferenceLevel.Settings.SelectedSounds.Contains(idToPlay))
-                ShowPopup("Sound info " + idToPlay + " is disabled in level settings.", PopupType.Warning);
+                ShowPopup(L("MsgSoundDisabled", idToPlay), PopupType.Warning);
             else
                 try { WadSoundPlayer.PlaySoundInfo(_editor.Tool.ReferenceLevel, soundInfo); }
                 catch (Exception exc)
                 {
                     _logger.Warn(exc, "Unable to play sound info {Id}.", idToPlay);
-                    ShowPopup("Unable to play sound info " + idToPlay + ". Exception: \n" + exc.Message, PopupType.Warning);
+                    ShowPopup(L("MsgSoundPlayFailed", idToPlay, exc.Message), PopupType.Warning);
                 }
         }
     }

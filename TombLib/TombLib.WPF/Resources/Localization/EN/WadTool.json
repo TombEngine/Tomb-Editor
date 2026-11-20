@@ -163,6 +163,17 @@
         "ExternalTextureMissing": "External texture not found:"
     },
     "AnimationEditor": {
+        "MsgImported": "Successfully imported {0} animations.",
+        "MsgExportedWithErrors": "Successfully exported {0} animations.\n{1} animations were ignored. Check log file for details.",
+        "MsgExported": "Successfully exported {0} animations.",
+        "MsgPendingStateChangeBad": "Pending state change to animation #{0} had incorrect data and was ignored.",
+        "MsgNoFrameInAnimation": "No frame {0} in animation {1}. Using first frame.",
+        "MsgChainBroken": "Animation {0} wasn't found. Chain is broken.",
+        "MsgSoundMissing": "Sound info {0} missing in reference project",
+        "MsgSoundDisabled": "Sound info {0} is disabled in level settings.",
+        "MsgSoundPlayFailed": "Unable to play sound info {0}. Exception: \n{1}",
+        "MsgInterpolated": "Successfully inserted {0} interpolated frames between frames {1} and {2}",
+        "MsgLoadAnimationFailed": "Error while loading animation.\nException: {0}",
         "MsgNoFramesSelected": "No frames selected. Please select at least 1 frame.",
         "MsgNoAnimationSelected": "No animation selected. Select animation to work with.",
         "MsgNoFrames": "Current animation contains no frames.",
