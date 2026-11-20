@@ -2,6 +2,7 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using WadTool.Features.Dialogs.AnimEditor;
@@ -51,5 +52,28 @@ public class AnimationEditorPanelTests
             Assert.IsNotNull(window.FindName("timelinePanel"));
             Assert.IsNotNull(window.FindName("dockManager"));
         });
+    }
+
+    [TestMethod]
+    public void EveryDialogWindowLoadsItsXaml()
+    {
+        var failures = new System.Collections.Generic.List<string>();
+
+        foreach (var type in typeof(WadToolClass).Assembly.GetTypes().Where(type => type.Name.EndsWith("Window") && type.Namespace?.StartsWith("WadTool.Features.Dialogs") == true))
+        {
+            StaTestHost.Run(() =>
+            {
+                try
+                {
+                    Assert.IsInstanceOfType(Activator.CreateInstance(type), typeof(Window));
+                }
+                catch (Exception exception)
+                {
+                    failures.Add(type.Name + ": " + exception.GetBaseException().Message);
+                }
+            });
+        }
+
+        Assert.AreEqual(0, failures.Count, string.Join("; ", failures));
     }
 }

@@ -1,6 +1,7 @@
 <Window
     x:Class="WadTool.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -23,10 +24,10 @@
 
         <!--  Top: main menu. Mirrors FormMain.darkMenuStrip1 1:1.  -->
         <Menu DockPanel.Dock="Top">
-            <MenuItem Header="_File">
+            <MenuItem Header="{tombLib:Localize ~WadTool.Main.File}">
                 <MenuItem
                     Command="{Binding Commands[NewWad2Menu_Click]}"
-                    Header="New Wad2"
+                    Header="{tombLib:Localize ~WadTool.Main.NewWad2}"
                     InputGestureText="Ctrl+N">
                     <MenuItem.Icon>
                         <Image Source="{tomb:Icon General/create_new}" />
@@ -35,7 +36,7 @@
                 <Separator />
                 <MenuItem
                     Command="{Binding Commands[OpenSourceWadMenu_Click]}"
-                    Header="Open source"
+                    Header="{tombLib:Localize ~WadTool.Main.OpenSource}"
                     InputGestureText="Ctrl+O">
                     <MenuItem.Icon>
                         <Image Source="{tomb:Icon General/Open}" />
@@ -43,26 +44,26 @@
                 </MenuItem>
                 <MenuItem
                     Command="{Binding Commands[OpenDestinationWadMenu_Click]}"
-                    Header="Open destination"
+                    Header="{tombLib:Localize ~WadTool.Main.OpenDestination}"
                     InputGestureText="Ctrl+Shift+O">
                     <MenuItem.Icon>
                         <Image Source="{tomb:Icon General/Open}" />
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem x:Name="openRecentMenu" Header="Open recent..." />
+                <MenuItem x:Name="openRecentMenu" Header="{tombLib:Localize ~WadTool.Main.OpenRecent}" />
                 <MenuItem
                     Command="{Binding Commands[OpenReferenceLevelMenu_Click]}"
-                    Header="Open reference Tomb Editor project"
+                    Header="{tombLib:Localize ~WadTool.Main.OpenReferenceTombEditorProject}"
                     InputGestureText="Ctrl+Alt+O" />
                 <MenuItem
                     x:Name="closeReferenceLevelMenu"
                     Command="{Binding Commands[CloseReferenceLevelMenu_Click]}"
-                    Header="Close reference Tomb Editor project" />
+                    Header="{tombLib:Localize ~WadTool.Main.CloseReferenceTombEditorProject}" />
                 <Separator />
                 <MenuItem
                     x:Name="saveWad2Menu"
                     Command="{Binding Commands[SaveMenu_Click]}"
-                    Header="Save Wad2"
+                    Header="{tombLib:Localize ~WadTool.Main.SaveWad2}"
                     InputGestureText="Ctrl+S">
                     <MenuItem.Icon>
                         <Image Source="{tomb:Icon General/Save}" />
@@ -71,7 +72,7 @@
                 <MenuItem
                     x:Name="saveWad2AsMenu"
                     Command="{Binding Commands[SaveAsMenu_Click]}"
-                    Header="Save Wad2 as..."
+                    Header="{tombLib:Localize ~WadTool.Main.SaveWad2As}"
                     InputGestureText="Ctrl+Shift+S">
                     <MenuItem.Icon>
                         <Image Source="{tomb:Icon General/Save_As}" />
@@ -80,7 +81,7 @@
                 <Separator />
                 <MenuItem
                     Command="{Binding Commands[ExitMenu_Click]}"
-                    Header="Exit"
+                    Header="{tombLib:Localize ~WadTool.Main.Exit}"
                     InputGestureText="Alt+F4">
                     <MenuItem.Icon>
                         <Image Source="{tomb:Icon Misc/door_opened}" />
@@ -88,72 +89,72 @@
                 </MenuItem>
             </MenuItem>
 
-            <MenuItem Header="_Create">
-                <MenuItem Command="{Binding Commands[NewMoveableMenu_Click]}" Header="New moveable" />
-                <MenuItem Command="{Binding Commands[NewStaticMenu_Click]}" Header="New static" />
-                <MenuItem Command="{Binding Commands[NewSpriteSequenceMenu_Click]}" Header="New sprite sequence" />
+            <MenuItem Header="{tombLib:Localize ~WadTool.Main.Create}">
+                <MenuItem Command="{Binding Commands[NewMoveableMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.NewMoveable}" />
+                <MenuItem Command="{Binding Commands[NewStaticMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.NewStatic}" />
+                <MenuItem Command="{Binding Commands[NewSpriteSequenceMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.NewSpriteSequence}" />
             </MenuItem>
 
-            <MenuItem Header="_Selection">
-                <MenuItem Header="Lighting">
+            <MenuItem Header="{tombLib:Localize ~WadTool.Main.Selection}">
+                <MenuItem Header="{tombLib:Localize ~WadTool.Main.Lighting}">
                     <MenuItem
                         x:Name="convertToStaticLightingMenu"
                         Command="{Binding Commands[ConvertToStaticLightingMenu_Click]}"
-                        Header="Convert to static" />
+                        Header="{tombLib:Localize ~WadTool.Main.ConvertToStatic}" />
                     <MenuItem
                         x:Name="convertToDynamicLightingMenu"
                         Command="{Binding Commands[ConvertToDynamicLightingMenu_Click]}"
-                        Header="Convert to dynamic" />
+                        Header="{tombLib:Localize ~WadTool.Main.ConvertToDynamic}" />
                 </MenuItem>
-                <MenuItem Header="Textures">
+                <MenuItem Header="{tombLib:Localize ~WadTool.Main.Textures}">
                     <MenuItem
                         x:Name="convertToTiledMenu"
                         Command="{Binding Commands[ConvertToTiledMenu_Click]}"
-                        Header="Convert to tiled" />
+                        Header="{tombLib:Localize ~WadTool.Main.ConvertToTiled}" />
                     <MenuItem
                         x:Name="convertToUVMappedMenu"
                         Command="{Binding Commands[ConvertToUVMappedMenu_Click]}"
-                        Header="Convert to UV-mapped" />
+                        Header="{tombLib:Localize ~WadTool.Main.ConvertToUVMapped}" />
                     <MenuItem
                         x:Name="consolidateTexturesMenu"
                         Command="{Binding Commands[ConsolidateTexturesMenu_Click]}"
-                        Header="Consolidate textures" />
+                        Header="{tombLib:Localize ~WadTool.Main.ConsolidateTextures}" />
                 </MenuItem>
             </MenuItem>
 
-            <MenuItem Header="_Tools">
+            <MenuItem Header="{tombLib:Localize ~WadTool.Main.Tools}">
                 <MenuItem
                     x:Name="animatedTexturesMenu"
                     Command="{Binding Commands[AnimatedTexturesMenu_Click]}"
-                    Header="Animated textures" />
+                    Header="{tombLib:Localize ~WadTool.Main.AnimatedTextures}" />
                 <MenuItem
                     x:Name="meshEditorMenu"
                     Command="{Binding Commands[MeshEditorMenu_Click]}"
-                    Header="Mesh editor" />
+                    Header="{tombLib:Localize ~WadTool.Main.MeshEditor}" />
                 <MenuItem
                     x:Name="itemPropertiesMenu"
                     Command="{Binding Commands[ItemPropertiesMenu_Click]}"
-                    Header="Property editor" />
+                    Header="{tombLib:Localize ~WadTool.Main.PropertyEditor}" />
                 <Separator />
                 <MenuItem
                     x:Name="convertWadToTombEngineMenu"
                     Command="{Binding Commands[ConvertWadToTombEngineMenu_Click]}"
-                    Header="Convert wad to TombEngine..." />
+                    Header="{tombLib:Localize ~WadTool.Main.ConvertWadToTombEngine}" />
                 <Separator />
-                <MenuItem Command="{Binding Commands[OptionsMenu_Click]}" Header="Options..." />
+                <MenuItem Command="{Binding Commands[OptionsMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.Options}" />
             </MenuItem>
 
-            <MenuItem Header="_Help">
-                <MenuItem Command="{Binding Commands[AboutMenu_Click]}" Header="About Wad Tool..." />
+            <MenuItem Header="{tombLib:Localize ~WadTool.Main.Help}">
+                <MenuItem Command="{Binding Commands[AboutMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.AboutWadTool}" />
             </MenuItem>
 
             <!--  Only shown when a debugger is attached, mirroring FormMain.  -->
             <MenuItem
                 x:Name="debugMenu"
-                Header="Debug"
+                Header="{tombLib:Localize ~WadTool.Main.Debug}"
                 Visibility="Collapsed">
-                <MenuItem Command="{Binding Commands[DebugReloadCatalogMenu_Click]}" Header="Debug action 5 (reload catalog)" />
-                <MenuItem Command="{Binding Commands[DebugMeshEditorMenu_Click]}" Header="Debug action 9 (mesh editor)" />
+                <MenuItem Command="{Binding Commands[DebugReloadCatalogMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.DebugAction5ReloadCatalog}" />
+                <MenuItem Command="{Binding Commands[DebugMeshEditorMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.DebugAction9MeshEditor}" />
             </MenuItem>
         </Menu>
 
@@ -163,50 +164,50 @@
             BorderThickness="0,0,0,1"
             DockPanel.Dock="Top">
             <StackPanel Margin="{x:Static darkUI:Defaults.SmallThickness}" Orientation="Horizontal">
-                <Label Content="Destination:" Foreground="{DynamicResource Brush_Text}" VerticalAlignment="Center" />
+                <Label Content="{tombLib:Localize ~WadTool.Main.Destination}" Foreground="{DynamicResource Brush_Text}" VerticalAlignment="Center" />
                 <Button
                     Command="{Binding Commands[NewWad2Menu_Click]}"
                     Style="{DynamicResource ButtonFlatIconOnly}"
-                    ToolTip="New empty Wad2">
+                    ToolTip="{tombLib:Localize ~WadTool.Main.NewEmptyWad2}">
                     <Image Source="{tomb:Icon General/create_new}" />
                 </Button>
                 <Button
                     Command="{Binding Commands[OpenDestinationWadMenu_Click]}"
                     Style="{DynamicResource ButtonFlatIconOnly}"
-                    ToolTip="Open destination file">
+                    ToolTip="{tombLib:Localize ~WadTool.Main.OpenDestinationFile}">
                     <Image Source="{tomb:Icon General/Open}" />
                 </Button>
                 <Button
                     x:Name="butSave"
                     Command="{Binding Commands[SaveMenu_Click]}"
                     Style="{DynamicResource ButtonFlatIconOnly}"
-                    ToolTip="Save Wad2">
+                    ToolTip="{tombLib:Localize ~WadTool.Main.SaveWad2}">
                     <Image Source="{tomb:Icon General/Save}" />
                 </Button>
                 <Button
                     x:Name="butSaveAs"
                     Command="{Binding Commands[SaveAsMenu_Click]}"
                     Style="{DynamicResource ButtonFlatIconOnly}"
-                    ToolTip="Save Wad2 as...">
+                    ToolTip="{tombLib:Localize ~WadTool.Main.SaveWad2As}">
                     <Image Source="{tomb:Icon General/Save_As}" />
                 </Button>
 
                 <Separator Margin="4,2" />
 
-                <Label Content="Source:" Foreground="{DynamicResource Brush_Text}" VerticalAlignment="Center" />
+                <Label Content="{tombLib:Localize ~WadTool.Main.Source}" Foreground="{DynamicResource Brush_Text}" VerticalAlignment="Center" />
                 <Button
                     Command="{Binding Commands[OpenSourceWadMenu_Click]}"
                     Style="{DynamicResource ButtonFlatIconOnly}"
-                    ToolTip="Open source file">
+                    ToolTip="{tombLib:Localize ~WadTool.Main.OpenSourceFile}">
                     <Image Source="{tomb:Icon General/Open}" />
                 </Button>
 
                 <Separator Margin="4,2" />
 
-                <Label Content="Reference project:" Foreground="{DynamicResource Brush_Text}" VerticalAlignment="Center" />
+                <Label Content="{tombLib:Localize ~WadTool.Main.ReferenceProject}" Foreground="{DynamicResource Brush_Text}" VerticalAlignment="Center" />
                 <Label
                     x:Name="lblRefLevel"
-                    Content="(project not loaded)"
+                    Content="{tombLib:Localize ~WadTool.Main.ProjectNotLoaded}"
                     Foreground="{DynamicResource Brush_Text}"
                     Opacity="0.6"
                     MouseLeftButtonUp="RefLevelLabel_Click"
@@ -214,14 +215,14 @@
                 <Button
                     Command="{Binding Commands[OpenReferenceLevelMenu_Click]}"
                     Style="{DynamicResource ButtonFlatIconOnly}"
-                    ToolTip="Open reference project">
+                    ToolTip="{tombLib:Localize ~WadTool.Main.OpenReferenceProject}">
                     <Image Source="{tomb:Icon General/Open}" />
                 </Button>
                 <Button
                     x:Name="butCloseRefLevel"
                     Command="{Binding Commands[CloseReferenceLevelMenu_Click]}"
                     Style="{DynamicResource ButtonFlatIconOnly}"
-                    ToolTip="Close reference project">
+                    ToolTip="{tombLib:Localize ~WadTool.Main.CloseReferenceProject}">
                     <Image Source="{tomb:Icon Actions/delete}" />
                 </Button>
             </StackPanel>
@@ -259,28 +260,28 @@
                     <Button
                         Command="{Binding Commands[EditItemButton_Click]}"
                         Style="{DynamicResource ButtonFlatIconAndText}"
-                        ToolTip="Edit selected item">
+                        ToolTip="{tombLib:Localize ~WadTool.Main.EditSelectedItem}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon General/edit}" />
-                            <TextBlock Text="Edit item" />
+                            <TextBlock Text="{tombLib:Localize ~WadTool.Main.EditItem}" />
                         </StackPanel>
                     </Button>
                     <Button
                         Command="{Binding Commands[ChangeSlotButton_Click]}"
                         Style="{DynamicResource ButtonFlatIconAndText}"
-                        ToolTip="Change slot of selected item">
+                        ToolTip="{tombLib:Localize ~WadTool.Main.ChangeSlotOfSelectedItem}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon General/copy}" />
-                            <TextBlock Text="Change slot" />
+                            <TextBlock Text="{tombLib:Localize ~WadTool.Main.ChangeSlot}" />
                         </StackPanel>
                     </Button>
                     <Button
                         Command="{Binding Commands[DeleteObjectButton_Click]}"
                         Style="{DynamicResource ButtonFlatIconAndText}"
-                        ToolTip="Delete selected objects">
+                        ToolTip="{tombLib:Localize ~WadTool.Main.DeleteSelectedObjects}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon General/trash}" />
-                            <TextBlock Text="Delete" />
+                            <TextBlock Text="{tombLib:Localize ~WadTool.Main.Delete}" />
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -301,7 +302,7 @@
                             <TextBlock
                                 Margin="{x:Static darkUI:Defaults.SmallThickness}"
                                 Foreground="{DynamicResource Brush_Text}"
-                                Text="Destination" />
+                                Text="{tombLib:Localize ~WadTool.Main.Destination2}" />
                         </Border>
                         <tombLibControls:WadTreeView
                             x:Name="treeDestWad"
@@ -331,7 +332,7 @@
                         Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon Misc/animations}" />
-                            <TextBlock Text="Edit animations" />
+                            <TextBlock Text="{tombLib:Localize ~WadTool.Main.EditAnimations}" />
                         </StackPanel>
                     </Button>
                     <Button
@@ -341,7 +342,7 @@
                         Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon Misc/skeleton}" />
-                            <TextBlock Text="Edit skeleton" />
+                            <TextBlock Text="{tombLib:Localize ~WadTool.Main.EditSkeleton}" />
                         </StackPanel>
                     </Button>
                     <Button
@@ -351,7 +352,7 @@
                         Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon General/edit}" />
-                            <TextBlock Text="Edit static model" />
+                            <TextBlock Text="{tombLib:Localize ~WadTool.Main.EditStaticModel}" />
                         </StackPanel>
                     </Button>
                     <Button
@@ -361,7 +362,7 @@
                         Visibility="Collapsed">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon Objects/movie_projector}" />
-                            <TextBlock Text="Edit sprite sequence" />
+                            <TextBlock Text="{tombLib:Localize ~WadTool.Main.EditSpriteSequence}" />
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -387,19 +388,19 @@
                     <Button
                         Command="{Binding Commands[AddObjectButton_Click]}"
                         Style="{DynamicResource ButtonFlatIconAndText}"
-                        ToolTip="Copy selected objects to destination wad">
+                        ToolTip="{tombLib:Localize ~WadTool.Main.CopySelectedObjectsToDestination}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon General/angle_left}" />
-                            <TextBlock Text="Add object" />
+                            <TextBlock Text="{tombLib:Localize ~WadTool.Main.AddObject}" />
                         </StackPanel>
                     </Button>
                     <Button
                         Command="{Binding Commands[AddObjectToDifferentSlotButton_Click]}"
                         Style="{DynamicResource ButtonFlatIconAndText}"
-                        ToolTip="Copy selected objects to destination wad, choosing the slot">
+                        ToolTip="{tombLib:Localize ~WadTool.Main.CopySelectedObjectsToDestination2}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{tomb:Icon General/angle_left}" />
-                            <TextBlock Text="Add object to different slot" />
+                            <TextBlock Text="{tombLib:Localize ~WadTool.Main.AddObjectToDifferentSlot}" />
                         </StackPanel>
                     </Button>
                 </StackPanel>

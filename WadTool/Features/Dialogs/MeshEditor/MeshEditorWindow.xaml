@@ -1,6 +1,7 @@
 <Window
     x:Class="WadTool.Features.Dialogs.MeshEditor.MeshEditorWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -72,8 +73,8 @@
                 Grid.Column="1"
                 Orientation="Horizontal"
                 Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-                <Button Width="80" Command="{Binding OkCommand}" Content="OK" />
-                <Button Width="80" Command="{Binding CancelCommand}" Content="Cancel" Visibility="{Binding CancelVisible, Converter={StaticResource BoolToVis}}" />
+                <Button Width="80" Command="{Binding OkCommand}" Content="{tombLib:Localize ~WadTool.MeshEditor.OK}" />
+                <Button Width="80" Command="{Binding CancelCommand}" Content="{tombLib:Localize ~WadTool.MeshEditor.Cancel}" Visibility="{Binding CancelVisible, Converter={StaticResource BoolToVis}}" />
             </controls:SpacedStack>
         </Grid>
 
@@ -94,7 +95,7 @@
             <DockPanel.Margin>
                 <Thickness Right="{x:Static darkUI:Defaults.MediumThicknessWidth}" Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
             </DockPanel.Margin>
-            <Border Margin="0,0,0,4" Padding="4,2" Background="{DynamicResource Brush_Background_Alternative}" DockPanel.Dock="Top"><TextBlock Style="{StaticResource Lbl}" Text="Mesh list" /></Border>
+            <Border Margin="0,0,0,4" Padding="4,2" Background="{DynamicResource Brush_Background_Alternative}" DockPanel.Dock="Top"><TextBlock Style="{StaticResource Lbl}" Text="{tombLib:Localize ~WadTool.MeshEditor.MeshList}" /></Border>
             <controls:SpacedGrid
                 DockPanel.Dock="Top"
                 ColumnSpacing="4">
@@ -103,7 +104,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <TextBox Grid.Column="0" Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"><TextBox.InputBindings><KeyBinding Key="Return" Command="{Binding SearchCommand}" /></TextBox.InputBindings></TextBox>
-                <Button Grid.Column="1" Style="{StaticResource TbBtn}" Command="{Binding SearchCommand}" ToolTip="Search for meshes by name"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/search}" /></Button>
+                <Button Grid.Column="1" Style="{StaticResource TbBtn}" Command="{Binding SearchCommand}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.SearchForMeshesByName}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/search}" /></Button>
             </controls:SpacedGrid>
             <controls:AlternatingTreeView x:Name="meshTree" Style="{DynamicResource {x:Type TreeView}}" HorizontalContentAlignment="Stretch" Margin="0,4,0,0" ItemsSource="{Binding RootNodes}">
                 <controls:AlternatingTreeView.ItemContainerStyle>
@@ -134,25 +135,25 @@
             Background="{DynamicResource Brush_Background_Alternative}"
             Visibility="{Binding ShowEditingTools, Converter={StaticResource BoolToVis}}">
             <controls:SpacedStack DockPanel.Dock="Right" Orientation="Horizontal" Spacing="3">
-                <Button Style="{StaticResource TbBtn}" Command="{Binding UndoCommand}" IsEnabled="{Binding UndoEnabled}" ToolTip="Undo (Ctrl+Z)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/undo}" /></Button>
-                <Button Style="{StaticResource TbBtn}" Command="{Binding RedoCommand}" IsEnabled="{Binding RedoEnabled}" ToolTip="Redo (Ctrl+Y)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/redo}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding UndoCommand}" IsEnabled="{Binding UndoEnabled}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.UndoCtrlZ}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/undo}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding RedoCommand}" IsEnabled="{Binding RedoEnabled}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.RedoCtrlY}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/redo}" /></Button>
                 <Border Style="{StaticResource TbSep}" />
-                <Button Style="{StaticResource TbBtn}" Command="{Binding ImportMeshCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Import mesh"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Import}" /></Button>
-                <Button Style="{StaticResource TbBtn}" Command="{Binding ExportMeshCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Export mesh"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Export}" /></Button>
-                <Button Style="{StaticResource TbBtn}" Command="{Binding RenameCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="Rename mesh"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/edit}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding ImportMeshCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ImportMesh}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Import}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding ExportMeshCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ExportMesh}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Export}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding RenameCommand}" IsEnabled="{Binding MeshIoEnabled}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.RenameMesh}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/edit}" /></Button>
                 <Border Style="{StaticResource TbSep}" />
-                <Button Style="{StaticResource TbBtn}" Command="{Binding ResetCameraCommand}" ToolTip="Reset camera"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/target}" /></Button>
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding DrawAxis, Mode=TwoWay}" ToolTip="Draw grid and axis"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/axis}" /></ToggleButton>
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Wireframe, Mode=TwoWay}" ToolTip="Draw in wireframe mode"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/wireframe}" /></ToggleButton>
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding AlphaTest, Mode=TwoWay}" ToolTip="Toggle transparency"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/AlphaTest}" /></ToggleButton>
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Bilinear, Mode=TwoWay}" ToolTip="Toggle bilinear filter"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/blur}" /></ToggleButton>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding ResetCameraCommand}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ResetCamera}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/target}" /></Button>
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding DrawAxis, Mode=TwoWay}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.DrawGridAndAxis}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/axis}" /></ToggleButton>
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Wireframe, Mode=TwoWay}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.DrawInWireframeMode}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/wireframe}" /></ToggleButton>
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding AlphaTest, Mode=TwoWay}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ToggleTransparency}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/AlphaTest}" /></ToggleButton>
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Bilinear, Mode=TwoWay}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ToggleBilinearFilter}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/blur}" /></ToggleButton>
                 <Border Style="{StaticResource TbSep}" />
-                <Button Style="{StaticResource TbBtn}" Command="{Binding FindTextureCommand}" Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}" ToolTip="Search for mesh by selected texture area (Ctrl+F)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/search-texture}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding FindTextureCommand}" Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.SearchForMeshBySelected}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/search-texture}" /></Button>
                 <Border Style="{StaticResource TbSep}" Visibility="{Binding TreeMode, Converter={StaticResource BoolToVis}}" />
-                <Button Style="{StaticResource TbBtn}" Command="{Binding RotateTextureCommand}" ToolTip="Rotate current texture (~)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Rotate}" /></Button>
-                <Button Style="{StaticResource TbBtn}" Command="{Binding MirrorTextureCommand}" ToolTip="Mirror current texture (Shift+~)"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Mirror}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding RotateTextureCommand}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.RotateCurrentTexture}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Rotate}" /></Button>
+                <Button Style="{StaticResource TbBtn}" Command="{Binding MirrorTextureCommand}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.MirrorCurrentTextureShift}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Mirror}" /></Button>
                 <Border Style="{StaticResource TbSep}" />
-                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Hidden, Mode=TwoWay}" ToolTip="Hide mesh if skinned mesh is used for the parent object"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/hide_mesh}" /></ToggleButton>
+                <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding Hidden, Mode=TwoWay}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.HideMeshIfSkinnedMesh}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Misc/hide_mesh}" /></ToggleButton>
             </controls:SpacedStack>
         </Border>
 
@@ -173,18 +174,18 @@
 
             <!--  Editing tools  -->
             <StackPanel DockPanel.Dock="Bottom" IsEnabled="{Binding EditingEnabled}">
-                <Border Padding="4,2" Background="{DynamicResource Brush_Background_Alternative}" DockPanel.Dock="Top"><TextBlock Style="{StaticResource Lbl}" Text="Editing tools" /></Border>
+                <Border Padding="4,2" Background="{DynamicResource Brush_Background_Alternative}" DockPanel.Dock="Top"><TextBlock Style="{StaticResource Lbl}" Text="{tombLib:Localize ~WadTool.MeshEditor.EditingTools}" /></Border>
                 <controls:SpacedStack Margin="0,4,0,4" Orientation="Horizontal" Spacing="6">
-                    <TextBlock Style="{StaticResource Lbl}" Text="Mode:" />
-                    <ComboBox Width="156" SelectedIndex="{Binding EditingModeIndex, Mode=TwoWay}" ToolTip="Mesh editor operation mode">
-                        <ComboBoxItem Content="Face attributes" />
-                        <ComboBoxItem Content="Vertex remap" />
-                        <ComboBoxItem Content="Normals &amp; shades" />
-                        <ComboBoxItem Content="Vertex effects" />
-                        <ComboBoxItem Content="Vertex weights" />
-                        <ComboBoxItem Content="Sphere" />
+                    <TextBlock Style="{StaticResource Lbl}" Text="{tombLib:Localize ~WadTool.MeshEditor.Mode}" />
+                    <ComboBox Width="156" SelectedIndex="{Binding EditingModeIndex, Mode=TwoWay}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.MeshEditorOperationMode}">
+                        <ComboBoxItem Content="{tombLib:Localize ~WadTool.MeshEditor.FaceAttributes}" />
+                        <ComboBoxItem Content="{tombLib:Localize ~WadTool.MeshEditor.VertexRemap}" />
+                        <ComboBoxItem Content="{tombLib:Localize ~WadTool.MeshEditor.NormalsShades}" />
+                        <ComboBoxItem Content="{tombLib:Localize ~WadTool.MeshEditor.VertexEffects}" />
+                        <ComboBoxItem Content="{tombLib:Localize ~WadTool.MeshEditor.VertexWeights}" />
+                        <ComboBoxItem Content="{tombLib:Localize ~WadTool.MeshEditor.Sphere}" />
                     </ComboBox>
-                    <CheckBox VerticalAlignment="Center" Content="{Binding ExtraLabel}" IsChecked="{Binding ShowExtra, Mode=TwoWay}" ToolTip="Show additional screen information" />
+                    <CheckBox VerticalAlignment="Center" Content="{Binding ExtraLabel}" IsChecked="{Binding ShowExtra, Mode=TwoWay}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ShowAdditionalScreenInformation}" />
                 </controls:SpacedStack>
 
                 <!--  Face attributes  -->
@@ -199,15 +200,15 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <CheckBox Grid.Row="0" Grid.Column="0" Margin="0,0,6,0" VerticalAlignment="Center" Content="Blending:" IsChecked="{Binding ApplyBlend, Mode=TwoWay}" ToolTip="Apply blend mode and double-sided attribute to faces" />
+                    <CheckBox Grid.Row="0" Grid.Column="0" Margin="0,0,6,0" VerticalAlignment="Center" Content="{tombLib:Localize ~WadTool.MeshEditor.Blending}" IsChecked="{Binding ApplyBlend, Mode=TwoWay}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ApplyBlendModeAndDouble}" />
                     <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,0,4,0" ItemsSource="{Binding BlendModes}" SelectedIndex="{Binding BlendModeIndex, Mode=TwoWay}" />
-                    <ToggleButton Grid.Row="0" Grid.Column="3" Style="{StaticResource TbToggle}" IsChecked="{Binding DoubleSided, Mode=TwoWay}" ToolTip="Toggle double-sided attribute"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Texture/DoubleSided_1}" /></ToggleButton>
-                    <CheckBox Grid.Row="1" Grid.Column="0" Margin="0,4,6,0" VerticalAlignment="Center" Content="Texture" IsChecked="{Binding ApplyTexture, Mode=TwoWay}" ToolTip="Apply textures to faces" />
+                    <ToggleButton Grid.Row="0" Grid.Column="3" Style="{StaticResource TbToggle}" IsChecked="{Binding DoubleSided, Mode=TwoWay}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ToggleDoubleSidedAttribute}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Texture/DoubleSided_1}" /></ToggleButton>
+                    <CheckBox Grid.Row="1" Grid.Column="0" Margin="0,4,6,0" VerticalAlignment="Center" Content="{tombLib:Localize ~WadTool.MeshEditor.Texture}" IsChecked="{Binding ApplyTexture, Mode=TwoWay}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ApplyTexturesToFaces}" />
                     <controls:SpacedStack Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
-                        <CheckBox VerticalAlignment="Center" Content="Sheen:" IsChecked="{Binding ApplySheen, Mode=TwoWay}" ToolTip="Apply sheen attribute to faces" />
-                        <controls:NumericUpDown Style="{StaticResource Nud}" Width="65" Maximum="63" Minimum="0" ToolTip="Shininess value on the range from 0 to 63" Value="{Binding ShineStrength, Mode=TwoWay}" />
+                        <CheckBox VerticalAlignment="Center" Content="{tombLib:Localize ~WadTool.MeshEditor.Sheen}" IsChecked="{Binding ApplySheen, Mode=TwoWay}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ApplySheenAttributeToFaces}" />
+                        <controls:NumericUpDown Style="{StaticResource Nud}" Width="65" Maximum="63" Minimum="0" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ShininessValueOnTheRange}" Value="{Binding ShineStrength, Mode=TwoWay}" />
                     </controls:SpacedStack>
-                    <Button Grid.Row="1" Grid.Column="3" Width="99" Margin="4,4,0,0" Command="{Binding ApplyToAllFacesCommand}" Content="Apply to all" ToolTip="Apply specified face attributes to all faces" />
+                    <Button Grid.Row="1" Grid.Column="3" Width="99" Margin="4,4,0,0" Command="{Binding ApplyToAllFacesCommand}" Content="{tombLib:Localize ~WadTool.MeshEditor.ApplyToAll}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ApplySpecifiedFaceAttributesTo}" />
                 </Grid>
 
                 
@@ -216,13 +217,13 @@
                 <Border Visibility="{Binding IsRemapMode, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
                         <controls:SpacedStack Orientation="Horizontal" Spacing="6">
-                            <TextBlock Style="{StaticResource Lbl}" Text="Vertex number:" />
-                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="65535" Minimum="0" ToolTip="Vertex number to operate with" Value="{Binding VertexNum, Mode=TwoWay}"><controls:NumericUpDown.InputBindings><KeyBinding Key="Return" Command="{Binding RemapVertexCommand}" /></controls:NumericUpDown.InputBindings></controls:NumericUpDown>
-                            <Button Width="70" Command="{Binding FindVertexCommand}" Content="Jump to" ToolTip="Jump to specified vertex number" />
+                            <TextBlock Style="{StaticResource Lbl}" Text="{tombLib:Localize ~WadTool.MeshEditor.VertexNumber}" />
+                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="65535" Minimum="0" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.VertexNumberToOperateWith}" Value="{Binding VertexNum, Mode=TwoWay}"><controls:NumericUpDown.InputBindings><KeyBinding Key="Return" Command="{Binding RemapVertexCommand}" /></controls:NumericUpDown.InputBindings></controls:NumericUpDown>
+                            <Button Width="70" Command="{Binding FindVertexCommand}" Content="{tombLib:Localize ~WadTool.MeshEditor.JumpTo}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.JumpToSpecifiedVertexNumber}" />
                         </controls:SpacedStack>
                         <controls:SpacedStack Margin="0,6,0,0" Orientation="Horizontal" Spacing="6">
-                            <Button Width="80" Command="{Binding RemapVertexCommand}" Content="Remap" IsEnabled="{Binding RemapEnabled}" ToolTip="Remap selected vertex to specified vertex number" />
-                            <Button Width="110" Command="{Binding AutoFitCommand}" Content="Automatic fit" ToolTip="Try to automatically remap all vertices sitting on mesh holes.&#13;&#10;For legacy engines, you still have to manually remap hair hole." />
+                            <Button Width="80" Command="{Binding RemapVertexCommand}" Content="{tombLib:Localize ~WadTool.MeshEditor.Remap}" IsEnabled="{Binding RemapEnabled}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.RemapSelectedVertexToSpecified}" />
+                            <Button Width="110" Command="{Binding AutoFitCommand}" Content="{tombLib:Localize ~WadTool.MeshEditor.AutomaticFit}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.TryToAutomaticallyRemapAll}" />
                         </controls:SpacedStack>
                     </StackPanel>
                 </Border>
@@ -231,19 +232,19 @@
                 <Border Visibility="{Binding IsColorsMode, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
                         <controls:SpacedStack Orientation="Horizontal" Spacing="6">
-                            <TextBlock Style="{StaticResource Lbl}" Text="Vertex shade (color):" />
+                            <TextBlock Style="{StaticResource Lbl}" Text="{tombLib:Localize ~WadTool.MeshEditor.VertexShadeColor}" />
                             <Button
                                 Width="48"
                                 Height="22"
                                 Background="{Binding VertexColorBrush}"
                                 Command="{Binding PickColorCommand}"
-                                ToolTip="Vertex shade (color) to apply" />
-                            <Button Width="80" Command="{Binding ApplyShadesToAllCommand}" Content="Apply to all" ToolTip="Apply specified vertex shade to all vertices" />
+                                ToolTip="{tombLib:Localize ~WadTool.MeshEditor.VertexShadeColorToApply}" />
+                            <Button Width="80" Command="{Binding ApplyShadesToAllCommand}" Content="{tombLib:Localize ~WadTool.MeshEditor.ApplyToAll}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ApplySpecifiedVertexShadeTo}" />
                         </controls:SpacedStack>
                         <controls:SpacedStack Margin="0,6,0,0" Orientation="Horizontal" Spacing="6">
-                            <TextBlock Width="110" Style="{StaticResource Lbl}" Text="Recalculate normals:" TextWrapping="Wrap" />
-                            <Button Width="70" Command="{Binding RecalcNormalsCommand}" Content="Weighted" ToolTip="Weighted normals recalculation gives better results&#13;&#10;because it takes angles between different faces in consideration." />
-                            <Button Width="70" Command="{Binding RecalcNormalsAvgCommand}" Content="Averaged" ToolTip="Averaged normals recalculation is more rough and straighforward way,&#13;&#10;but still may be useful in some cases." />
+                            <TextBlock Width="110" Style="{StaticResource Lbl}" Text="{tombLib:Localize ~WadTool.MeshEditor.RecalculateNormals}" TextWrapping="Wrap" />
+                            <Button Width="70" Command="{Binding RecalcNormalsCommand}" Content="{tombLib:Localize ~WadTool.MeshEditor.Weighted}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.WeightedNormalsRecalculationGivesBetter}" />
+                            <Button Width="70" Command="{Binding RecalcNormalsAvgCommand}" Content="{tombLib:Localize ~WadTool.MeshEditor.Averaged}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.AveragedNormalsRecalculationIsMore}" />
                         </controls:SpacedStack>
                     </StackPanel>
                 </Border>
@@ -252,18 +253,18 @@
                 <Border Visibility="{Binding IsEffectsMode, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
                         <controls:SpacedStack Orientation="Horizontal" Spacing="6">
-                            <TextBlock Style="{StaticResource Lbl}" Text="Glow:" />
-                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="63" Minimum="0" ToolTip="For legacy engines, any value above 0 results in constant glow only for merged statics.&#13;&#10;In such case, glow strength is derived from room effect strength." Value="{Binding Glow, Mode=TwoWay}" />
-                            <TextBlock Style="{StaticResource Lbl}" Text="Move:" />
-                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="63" Minimum="0" ToolTip="For legacy engines, any value above 0 results in constant movement only for merged statics.&#13;&#10;In such case, movement strength is derived from room effect strength." Value="{Binding Move, Mode=TwoWay}" />
+                            <TextBlock Style="{StaticResource Lbl}" Text="{tombLib:Localize ~WadTool.MeshEditor.Glow}" />
+                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="63" Minimum="0" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ForLegacyEnginesAnyValue}" Value="{Binding Glow, Mode=TwoWay}" />
+                            <TextBlock Style="{StaticResource Lbl}" Text="{tombLib:Localize ~WadTool.MeshEditor.Move}" />
+                            <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="63" Minimum="0" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ForLegacyEnginesAnyValue2}" Value="{Binding Move, Mode=TwoWay}" />
                         </controls:SpacedStack>
                         <controls:SpacedStack Margin="0,6,0,0" Orientation="Horizontal" Spacing="6">
-                            <Button Width="100" Command="{Binding ApplyEffectsToAllCommand}" Content="Apply to all" ToolTip="Apply specified vertex attributes to all faces" />
-                            <ToggleButton Width="80" IsChecked="{Binding PreviewActive, Mode=TwoWay}" ToolTip="Preview all effects">
-                                <StackPanel Orientation="Horizontal"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/play}" /><TextBlock Margin="4,0,0,0" Style="{StaticResource Lbl}" Text="Preview" /></StackPanel>
+                            <Button Width="100" Command="{Binding ApplyEffectsToAllCommand}" Content="{tombLib:Localize ~WadTool.MeshEditor.ApplyToAll}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ApplySpecifiedVertexAttributesTo}" />
+                            <ToggleButton Width="80" IsChecked="{Binding PreviewActive, Mode=TwoWay}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.PreviewAllEffects}">
+                                <StackPanel Orientation="Horizontal"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/play}" /><TextBlock Margin="4,0,0,0" Style="{StaticResource Lbl}" Text="{tombLib:Localize ~WadTool.MeshEditor.Preview}" /></StackPanel>
                             </ToggleButton>
                         </controls:SpacedStack>
-                        <Button Margin="0,6,0,0" Command="{Binding ConvertFromShadesCommand}" Content="Convert from shades" ToolTip="Convert vertex effects from legacy workflow involving vertex shades." />
+                        <Button Margin="0,6,0,0" Command="{Binding ConvertFromShadesCommand}" Content="{tombLib:Localize ~WadTool.MeshEditor.ConvertFromShades}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ConvertVertexEffectsFromLegacy}" />
                     </StackPanel>
                 </Border>
 
@@ -271,20 +272,20 @@
                 <Border Visibility="{Binding IsWeightsMode, Converter={StaticResource BoolToVis}}">
                     <StackPanel>
                         <UniformGrid Columns="2" Rows="1">
-                            <TextBlock Margin="2,0,0,0" Style="{StaticResource Lbl}" Text="Bone:" />
-                            <TextBlock Margin="2,0,0,0" Style="{StaticResource Lbl}" Text="Value:" />
+                            <TextBlock Margin="2,0,0,0" Style="{StaticResource Lbl}" Text="{tombLib:Localize ~WadTool.MeshEditor.Bone}" />
+                            <TextBlock Margin="2,0,0,0" Style="{StaticResource Lbl}" Text="{tombLib:Localize ~WadTool.MeshEditor.Value}" />
                         </UniformGrid>
                         <UniformGrid Margin="0,2,0,0" Columns="2" Rows="4">
-                            <controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" ToolTip="Bone index" Value="{Binding WeightIndex1, Mode=TwoWay}" />
-                            <controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" ToolTip="Bone weight" Value="{Binding WeightValue1, Mode=TwoWay}" />
-                            <controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" ToolTip="Bone index" Value="{Binding WeightIndex2, Mode=TwoWay}" />
-                            <controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" ToolTip="Bone weight" Value="{Binding WeightValue2, Mode=TwoWay}" />
-                            <controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" ToolTip="Bone index" Value="{Binding WeightIndex3, Mode=TwoWay}" />
-                            <controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" ToolTip="Bone weight" Value="{Binding WeightValue3, Mode=TwoWay}" />
-                            <controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" ToolTip="Bone index" Value="{Binding WeightIndex4, Mode=TwoWay}" />
-                            <controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" ToolTip="Bone weight" Value="{Binding WeightValue4, Mode=TwoWay}" />
+                            <controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.BoneIndex}" Value="{Binding WeightIndex1, Mode=TwoWay}" />
+                            <controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.BoneWeight}" Value="{Binding WeightValue1, Mode=TwoWay}" />
+                            <controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.BoneIndex}" Value="{Binding WeightIndex2, Mode=TwoWay}" />
+                            <controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.BoneWeight}" Value="{Binding WeightValue2, Mode=TwoWay}" />
+                            <controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.BoneIndex}" Value="{Binding WeightIndex3, Mode=TwoWay}" />
+                            <controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.BoneWeight}" Value="{Binding WeightValue3, Mode=TwoWay}" />
+                            <controls:NumericUpDown Margin="2" Maximum="63" Minimum="0" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.BoneIndex}" Value="{Binding WeightIndex4, Mode=TwoWay}" />
+                            <controls:NumericUpDown Margin="2" DecimalPlaces="4" Maximum="1" Minimum="0" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.BoneWeight}" Value="{Binding WeightValue4, Mode=TwoWay}" />
                         </UniformGrid>
-                        <Button Margin="0,6,0,0" Command="{Binding ApplyWeightsToAllCommand}" Content="Fill" ToolTip="Apply current weights to all vertices" />
+                        <Button Margin="0,6,0,0" Command="{Binding ApplyWeightsToAllCommand}" Content="{tombLib:Localize ~WadTool.MeshEditor.Fill}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ApplyCurrentWeightsToAll}" />
                     </StackPanel>
                 </Border>
 
@@ -300,46 +301,46 @@
                         <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="6">
                             <TextBlock Style="{StaticResource Lbl}" Text="Z:" />
                             <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="1000000" Minimum="-1000000" Value="{Binding SphereZ, Mode=TwoWay}" />
-                            <TextBlock Style="{StaticResource Lbl}" Text="Radius:" />
+                            <TextBlock Style="{StaticResource Lbl}" Text="{tombLib:Localize ~WadTool.MeshEditor.Radius}" />
                             <controls:NumericUpDown Style="{StaticResource Nud}" Maximum="1000000" Minimum="0" Value="{Binding SphereRadius, Mode=TwoWay}" />
                         </controls:SpacedStack>
-                        <Button Margin="0,6,0,0" Command="{Binding ResetSphereCommand}" Content="Recalculate" ToolTip="Calculates average sphere which encloses the mesh" />
+                        <Button Margin="0,6,0,0" Command="{Binding ResetSphereCommand}" Content="{tombLib:Localize ~WadTool.MeshEditor.Recalculate}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.CalculatesAverageSphereWhichEncloses}" />
                     </StackPanel>
                 </Border>
             </StackPanel>
 
-            <Border Padding="4,2" Background="{DynamicResource Brush_Background_Alternative}" DockPanel.Dock="Top"><TextBlock Style="{StaticResource Lbl}" Text="Texturing" /></Border>
+            <Border Padding="4,2" Background="{DynamicResource Brush_Background_Alternative}" DockPanel.Dock="Top"><TextBlock Style="{StaticResource Lbl}" Text="{tombLib:Localize ~WadTool.MeshEditor.Texturing}" /></Border>
             <DockPanel Margin="0,4,0,0" DockPanel.Dock="Top" IsEnabled="{Binding EditingEnabled}">
                 <controls:SpacedStack DockPanel.Dock="Right" Orientation="Horizontal" Spacing="3">
-                            <Button Style="{StaticResource TbBtn}" Width="38" Click="OpenButtonMenu" ToolTip="Add texture">
+                            <Button Style="{StaticResource TbBtn}" Width="38" Click="OpenButtonMenu" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.AddTexture}">
                                 <Button.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Command="{Binding AddEmbeddedTextureCommand}" Header="Add embedded texture" />
-                                        <MenuItem Command="{Binding AddExternalTextureCommand}" Header="Add external texture" />
+                                        <MenuItem Command="{Binding AddEmbeddedTextureCommand}" Header="{tombLib:Localize ~WadTool.MeshEditor.AddEmbeddedTexture}" />
+                                        <MenuItem Command="{Binding AddExternalTextureCommand}" Header="{tombLib:Localize ~WadTool.MeshEditor.AddExternalTexture}" />
                                     </ContextMenu>
                                 </Button.ContextMenu>
                                 <StackPanel Orientation="Horizontal"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /><Path Margin="3,0,0,0" VerticalAlignment="Center" Data="M0,0 L4,4 L8,0 Z" Fill="{DynamicResource Brush_Text}" /></StackPanel>
                             </Button>
-                            <Button Style="{StaticResource TbBtn}" Width="38" Click="OpenButtonMenu" ToolTip="Replace texture">
+                            <Button Style="{StaticResource TbBtn}" Width="38" Click="OpenButtonMenu" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ReplaceTexture}">
                                 <Button.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Command="{Binding ReplaceEmbeddedTextureCommand}" Header="Replace with embedded texture" />
-                                        <MenuItem Command="{Binding ReplaceExternalTextureCommand}" Header="Replace with external texture" />
+                                        <MenuItem Command="{Binding ReplaceEmbeddedTextureCommand}" Header="{tombLib:Localize ~WadTool.MeshEditor.ReplaceWithEmbeddedTexture}" />
+                                        <MenuItem Command="{Binding ReplaceExternalTextureCommand}" Header="{tombLib:Localize ~WadTool.MeshEditor.ReplaceWithExternalTexture}" />
                                     </ContextMenu>
                                 </Button.ContextMenu>
                                 <StackPanel Orientation="Horizontal"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/refresh}" /><Path Margin="3,0,0,0" VerticalAlignment="Center" Data="M0,0 L4,4 L8,0 Z" Fill="{DynamicResource Brush_Text}" /></StackPanel>
                             </Button>
-                            <Button Style="{StaticResource TbBtn}" Command="{Binding ExportTextureCommand}" ToolTip="Export current texture to file"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Export}" /></Button>
-                            <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteTextureCommand}" ToolTip="Delete texture"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
+                            <Button Style="{StaticResource TbBtn}" Command="{Binding ExportTextureCommand}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ExportCurrentTextureToFile}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Export}" /></Button>
+                            <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteTextureCommand}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.DeleteTexture}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
                             
-                            <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding AllTextures, Mode=TwoWay}" ToolTip="List all textures from wad" Visibility="{Binding ShowAllTexturesButton, Converter={StaticResource BoolToVis}}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/DrawAllRooms}" /></ToggleButton>
+                            <ToggleButton Style="{StaticResource TbToggle}" IsChecked="{Binding AllTextures, Mode=TwoWay}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.ListAllTexturesFromWad}" Visibility="{Binding ShowAllTexturesButton, Converter={StaticResource BoolToVis}}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/DrawAllRooms}" /></ToggleButton>
                 </controls:SpacedStack>
                 <controls:SearchableComboBox Margin="0,0,4,0" ItemsSource="{Binding Textures}" SelectedItem="{Binding SelectedTexture, Mode=TwoWay}" />
             </DockPanel>
             <controls:SpacedStack Margin="0,4,0,4" DockPanel.Dock="Bottom" IsEnabled="{Binding EditingEnabled}" Orientation="Horizontal" Spacing="4">
                 <controls:SpacedStack Margin="0,4,0,0" Orientation="Horizontal" Spacing="4">
-                            <Button Width="152" Command="{Binding MaterialEditorCommand}" Content="Materials" IsEnabled="{Binding MaterialEditorEnabled}" ToolTip="Edit materials" Visibility="{Binding ShowTextureTools, Converter={StaticResource BoolToVis}}" />
-                            <Button Width="152" Command="{Binding AnimationRangesCommand}" Content="Animated textures" ToolTip="Edit animated texture sets" Visibility="{Binding ShowTextureTools, Converter={StaticResource BoolToVis}}" />
+                            <Button Width="152" Command="{Binding MaterialEditorCommand}" Content="{tombLib:Localize ~WadTool.MeshEditor.Materials}" IsEnabled="{Binding MaterialEditorEnabled}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.EditMaterials}" Visibility="{Binding ShowTextureTools, Converter={StaticResource BoolToVis}}" />
+                            <Button Width="152" Command="{Binding AnimationRangesCommand}" Content="{tombLib:Localize ~WadTool.MeshEditor.AnimatedTextures}" ToolTip="{tombLib:Localize ~WadTool.MeshEditor.EditAnimatedTextureSets}" Visibility="{Binding ShowTextureTools, Converter={StaticResource BoolToVis}}" />
                         </controls:SpacedStack>
             </controls:SpacedStack>
             <Border Margin="0,4,0,0" BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
