@@ -2,6 +2,7 @@
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using NLog;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -27,6 +28,8 @@ namespace WadTool.Features.Dialogs.StaticEditor;
 /// </summary>
 public partial class StaticEditorWindowViewModel : ObservableObject, IModalDialogViewModel
 {
+    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
     private readonly WadToolClass _tool;
     private readonly DeviceManager _deviceManager;
     private readonly Wad2 _wad;
@@ -660,7 +663,10 @@ public partial class StaticEditorWindowViewModel : ObservableObject, IModalDialo
         var soundInfo = _tool.ReferenceLevel.Settings.GlobalSoundMap.FirstOrDefault(info => info.Id == soundID);
         if (soundInfo is not null)
             try { WadSoundPlayer.PlaySoundInfo(_tool.ReferenceLevel, soundInfo); }
-            catch (Exception) { }
+            catch (Exception exc)
+            {
+                _logger.Warn(exc, "Unable to play shatter sound {Id}.", soundID);
+            }
     }
 
     private static IWindowOwner Owner => WPFUtils.GetWindowOwner();

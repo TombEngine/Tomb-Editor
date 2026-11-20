@@ -374,7 +374,11 @@ public partial class AnimationEditorWindowViewModel
                 ShowPopup("Sound info " + idToPlay + " is disabled in level settings.", PopupType.Warning);
             else
                 try { WadSoundPlayer.PlaySoundInfo(_editor.Tool.ReferenceLevel, soundInfo); }
-                catch (Exception exc) { ShowPopup("Unable to play sound info " + idToPlay + ". Exception: \n" + exc.Message, PopupType.Warning); }
+                catch (Exception exc)
+                {
+                    _logger.Warn(exc, "Unable to play sound info {Id}.", idToPlay);
+                    ShowPopup("Unable to play sound info " + idToPlay + ". Exception: \n" + exc.Message, PopupType.Warning);
+                }
         }
     }
 

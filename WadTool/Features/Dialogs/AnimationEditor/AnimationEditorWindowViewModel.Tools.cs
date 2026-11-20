@@ -193,7 +193,12 @@ public partial class AnimationEditorWindowViewModel
             else if (Path.GetExtension(path) == ".trw") { containsMetadata = true; animation = WadActions.ImportAnimationFromTrw(path, _editor.CurrentAnim.Index); }
             else animation = WadActions.ImportAnimationFromModel(_editor.Tool, Owner, _editor.Moveable.Bones.Count, path);
         }
-        catch (Exception ex) { ShowPopup("Error while loading animation.\nException: " + ex.Message, PopupType.Error); return; }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Unable to load animation from '{Path}'.", path);
+            ShowPopup("Error while loading animation.\nException: " + ex.Message, PopupType.Error);
+            return;
+        }
 
         if (animation is null) return;
         if (animation.Name == new WadAnimation().Name) animation.Name = _editor.CurrentAnim.WadAnimation.Name;

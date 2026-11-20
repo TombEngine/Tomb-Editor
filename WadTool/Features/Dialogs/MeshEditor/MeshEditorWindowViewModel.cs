@@ -1,10 +1,11 @@
-﻿#nullable enable
+#nullable enable
 
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Drawing = System.Drawing;
 using Media = System.Windows.Media;
 using Microsoft.Win32;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -33,6 +34,8 @@ namespace WadTool.Features.Dialogs.MeshEditor;
 /// </summary>
 public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogViewModel
 {
+    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
     private readonly IColorPickerService _colorPickerService;
     private readonly WadToolClass _tool;
 
@@ -1369,7 +1372,11 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
             return;
 
         try { _panelTextureMap.VisibleTexture.Image.SaveToFile(fileDialog.FileName); }
-        catch (Exception exc) { MessageRaised?.Invoke("Unable to save texture. Exception: \n" + exc, PopupType.Error); }
+        catch (Exception exc)
+        {
+            _logger.Error(exc, "Unable to save texture to '{Path}'.", fileDialog.FileName);
+            MessageRaised?.Invoke("Unable to save texture. Exception: \n" + exc, PopupType.Error);
+        }
     }
 
     [RelayCommand]
