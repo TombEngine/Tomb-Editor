@@ -24,7 +24,7 @@ Regole di lavoro: build Debug x64 dopo ogni blocco, un commit per fix logico, ni
 Analisi
 - [x] Leggere come Tomb Editor costruisce il docking: `DockingManager`, `LayoutAnchorable`, tema `DarkUI.WPF/Styles/AvalonDock/Theme.xaml`, serializzazione layout e menu Layouts (`LayoutsMenu_SubmenuOpened`).
 - [x] Mappare i gruppi di controlli dell'attuale `AnimationEditorWindow.xaml` (638 righe) in pannelli: viewport 3D, lista animazioni, timeline/slider, proprieta' animazione, state changes, anim commands, mesh/bones, blend, ecc.
-- [ ] Confrontare con il layout legacy (`FormAnimationEditor.cs`, docking DarkUI) per mantenere nomi, posizione iniziale e dimensioni dei pannelli.
+- [x] Confrontare con il layout legacy (`FormAnimationEditor.cs`, docking DarkUI) per mantenere nomi, posizione iniziale e dimensioni dei pannelli (nomi e disposizione uguali; larghezze colonne allineate a 280/280 come il legacy; altezza timeline 84 contro 38 legacy per i controlli transport, voluta).
 
 Implementazione
 - [ ] Creare le view dockable in `WadTool/Features/DockableViews/AnimationEditor/*` (una per pannello, con proprio view model o sotto-VM).

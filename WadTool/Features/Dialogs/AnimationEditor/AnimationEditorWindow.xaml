@@ -243,7 +243,7 @@
 </avalonDock:DockingManager.Theme>
 <avalonDock:LayoutRoot>
 <avalonDock:LayoutPanel Orientation="Horizontal">
-<avalonDock:LayoutAnchorablePaneGroup DockWidth="270" Orientation="Vertical">
+<avalonDock:LayoutAnchorablePaneGroup DockWidth="280" Orientation="Vertical">
 <avalonDock:LayoutAnchorablePane DockHeight="300*" DockMinHeight="150">
 <avalonDock:LayoutAnchorable ContentId="animationList" CanClose="False" IconSource="{tomb:Icon General/filter}" Title="Animation List">
         <Border Padding="2">
@@ -470,7 +470,7 @@
 </avalonDock:LayoutAnchorable>
 </avalonDock:LayoutAnchorablePane>
 </avalonDock:LayoutPanel>
-<avalonDock:LayoutAnchorablePaneGroup DockWidth="300" Orientation="Vertical">
+<avalonDock:LayoutAnchorablePaneGroup DockWidth="280" Orientation="Vertical">
 <avalonDock:LayoutAnchorablePane DockHeight="200*" DockMinHeight="140">
 <avalonDock:LayoutAnchorable ContentId="skeleton" CanClose="False" IconSource="{tomb:Icon General/box}" Title="Skeleton">
                 <Border Padding="2">
