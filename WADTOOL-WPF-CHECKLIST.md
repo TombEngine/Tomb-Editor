@@ -37,7 +37,7 @@ Implementazione
 - [ ] Float dei pannelli: owner corretto, nessun problema con la viewport HwndHost durante drag/float/ridimensionamento.
 - [x] Verificare che la viewport 3D (`PanelRenderingAnimationEditor`) sopravviva a docking, auto-hide, float e minimizzazione (nessuna swap chain persa, nessuna perdita di focus tastiera).
 - [x] Shortcut da tastiera funzionanti in ogni pannello e non rubati da textbox.
-- [ ] Test: layout round trip, pannello nascosto/riaperto, reset, finestra ridimensionata a minimo.
+- [x] Test: layout round trip (4 test automatici DockLayoutHelper: round trip, reset, ri-docking, layout non valido; resize al minimo non provato), pannello nascosto/riaperto, reset, finestra ridimensionata a minimo.
 - [ ] Valutare se applicare lo stesso modello a Mesh Editor, Skeleton Editor e Static Editor; farlo solo se il legacy ha docking in quelle finestre.
 
 ## Fase 2 - Inventario finestre e interazioni (analisi codice legacy)
