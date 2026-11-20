@@ -193,7 +193,6 @@
         </Menu>
 
             <Border
-                Margin="0,0,0,4"
                 Padding="2"
                 Background="{DynamicResource Brush_BackgroundSlightlyDark}"
                 DockPanel.Dock="Top">
@@ -228,7 +227,7 @@
                 </DockPanel>
             </Border>
 
-        <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
+        <DockPanel LastChildFill="True">
 
         <Border Height="25" Padding="4,5,0,3" Background="{DynamicResource Brush_Background}" DockPanel.Dock="Bottom">
             <TextBlock FontSize="11" Foreground="{DynamicResource Brush_Text}" Text="{Binding StatusText}" TextTrimming="CharacterEllipsis" VerticalAlignment="Top" />
