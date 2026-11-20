@@ -36,7 +36,7 @@ Implementazione
 - [x] Persistenza del layout (salvataggio in configurazione, ripristino, tolleranza a layout corrotto o con pannelli mancanti).
 - [ ] Float dei pannelli: owner corretto, nessun problema con la viewport HwndHost durante drag/float/ridimensionamento.
 - [x] Verificare che la viewport 3D (`PanelRenderingAnimationEditor`) sopravviva a docking, auto-hide, float e minimizzazione (nessuna swap chain persa, nessuna perdita di focus tastiera).
-- [ ] Shortcut da tastiera funzionanti in ogni pannello e non rubati da textbox.
+- [x] Shortcut da tastiera funzionanti in ogni pannello e non rubati da textbox.
 - [ ] Test: layout round trip, pannello nascosto/riaperto, reset, finestra ridimensionata a minimo.
 - [ ] Valutare se applicare lo stesso modello a Mesh Editor, Skeleton Editor e Static Editor; farlo solo se il legacy ha docking in quelle finestre.
 
@@ -44,23 +44,23 @@ Implementazione
 
 Per ogni form legacy estrarre da `Form*.cs` e dai controlli usati: handler Mouse*/Key*/DragDrop/ContextMenu, ShortcutKeys, AcceptButton/CancelButton, TabIndex, validazioni, messaggi, stato abilitato/disabilitato, dimensioni minime, persistenza.
 
-- [ ] FormMain (finestra principale, browser wad, preview, menu, toolbar, drag and drop file, recent files).
-- [ ] FormAnimationEditor (timeline, tasti, selezione frame, gizmo, bones, drag in viewport, menu, undo/redo).
-- [ ] FormMeshEditor.
-- [ ] FormSkeletonEditor.
-- [ ] FormStaticEditor.
-- [ ] FormStateChangesEditor.
-- [ ] FormAnimCommandsEditor (+ controllo AnimCommandEditor).
-- [ ] FormReplaceAnimCommands.
-- [ ] FormAnimationFixer.
-- [ ] FormBlendCurveEditor (BezierCurveEditor).
-- [ ] FormSpriteSequenceEditor.
-- [ ] FormLuaProperties.
-- [ ] FormNewWad2.
-- [ ] FormSelectSlot.
-- [ ] FormOptions.
-- [ ] Controlli custom: PanelRendering* (Main, Animation, Mesh, Skeleton, Static), PanelTextureMap, tree/list con drag.
-- [ ] Produrre per ciascuna finestra un elenco "interazione -> codice legacy -> equivalente WPF" in un file `WADTOOL-INTERACTIONS.md` (ASCII).
+- [x] FormMain (finestra principale, browser wad, preview, menu, toolbar, drag and drop file, recent files).
+- [x] FormAnimationEditor (timeline, tasti, selezione frame, gizmo, bones, drag in viewport, menu, undo/redo).
+- [x] FormMeshEditor.
+- [x] FormSkeletonEditor.
+- [x] FormStaticEditor.
+- [x] FormStateChangesEditor.
+- [x] FormAnimCommandsEditor (+ controllo AnimCommandEditor).
+- [x] FormReplaceAnimCommands.
+- [x] FormAnimationFixer.
+- [x] FormBlendCurveEditor (BezierCurveEditor).
+- [x] FormSpriteSequenceEditor.
+- [x] FormLuaProperties.
+- [x] FormNewWad2.
+- [x] FormSelectSlot.
+- [x] FormOptions.
+- [x] Controlli custom: PanelRendering* (Main, Animation, Mesh, Skeleton, Static), PanelTextureMap, tree/list con drag.
+- [x] Produrre per ciascuna finestra un elenco "interazione -> codice legacy -> equivalente WPF" in un file `WADTOOL-INTERACTIONS.md` (ASCII).
 
 ## Fase 3 - Confronto form per form (ogni riga: legacy vs MVVM)
 

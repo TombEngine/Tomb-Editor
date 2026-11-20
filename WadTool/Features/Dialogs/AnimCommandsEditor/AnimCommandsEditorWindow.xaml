@@ -126,6 +126,9 @@
 					SelectedItem="{Binding SelectedRow, Mode=TwoWay}"
 					SelectionMode="Single"
 					SelectionUnit="FullRow">
+					<DataGrid.InputBindings>
+						<KeyBinding Key="Delete" Command="{Binding DeleteCommand}" />
+					</DataGrid.InputBindings>
 					<DataGrid.Columns>
 						<DataGridTextColumn
 							Width="*"
