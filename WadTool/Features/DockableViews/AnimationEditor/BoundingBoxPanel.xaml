@@ -1,0 +1,69 @@
+<UserControl
+    x:Class="WadTool.Features.DockableViews.AnimationEditor.BoundingBoxPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons">
+
+    <UserControl.Resources>
+        <ResourceDictionary Source="PanelStyles.xaml" />
+    </UserControl.Resources>
+<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <Border Padding="2">
+                    <StackPanel>
+                        <controls:SpacedGrid ColumnSpacing="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="28" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Min:" />
+                            <controls:NumericUpDown Grid.Column="1" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMinX, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMinY, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="3" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMinZ, Mode=TwoWay}" />
+                        </controls:SpacedGrid>
+                        <controls:SpacedGrid Margin="0,4,0,0" ColumnSpacing="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="28" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Max:" />
+                            <controls:NumericUpDown Grid.Column="1" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMaxX, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMaxY, Mode=TwoWay}" />
+                            <controls:NumericUpDown Grid.Column="3" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMaxZ, Mode=TwoWay}" />
+                        </controls:SpacedGrid>
+
+                        <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="6"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Button Command="{Binding CalcBoundingBoxCommand}" Content="Calculate" />
+                            <Button Grid.Column="1" Command="{Binding ClearBoundingBoxCommand}" Content="Delete" />
+                        </controls:SpacedGrid>
+
+                        <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Scale" /><TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Val}" Text="X" /><controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" DecimalPlaces="0" Minimum="0" Maximum="512" Value="{Binding GrowX, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Y" /><controls:NumericUpDown Grid.Column="4" Style="{StaticResource Axis}" DecimalPlaces="0" Minimum="0" Maximum="512" Value="{Binding GrowY, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="5" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Z" /><controls:NumericUpDown Grid.Column="6" Style="{StaticResource Axis}" DecimalPlaces="0" Minimum="0" Maximum="512" Value="{Binding GrowZ, Mode=TwoWay}" />
+                        </controls:SpacedGrid>
+                        <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button Command="{Binding GrowBoundingBoxCommand}" Content="Grow" />
+                            <Button Grid.Column="1" Command="{Binding ShrinkBoundingBoxCommand}" Content="Shrink" />
+                        </controls:SpacedGrid>
+
+                    </StackPanel>
+                </Border>
+</ScrollViewer>
+</UserControl>

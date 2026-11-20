@@ -6,6 +6,7 @@
     xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:darkDock="clr-namespace:DarkUI.WPF.AvalonDock;assembly=DarkUI.WPF"
+    xmlns:dock="clr-namespace:WadTool.Features.DockableViews.AnimationEditor"
     xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
     xmlns:local="clr-namespace:WadTool.Features.Dialogs.AnimEditor"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -24,13 +25,11 @@
     WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
-    <Window.Resources>
+    <Window.Resources><ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries><ResourceDictionary Source="/WadTool;component/Features/DockableViews/AnimationEditor/PanelStyles.xaml" /></ResourceDictionary.MergedDictionaries>
         <Style x:Key="Lbl" TargetType="TextBlock">
             <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
             <Setter Property="Margin" Value="0,4,0,0" />
-        </Style>
-        <Style x:Key="Val" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
         </Style>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <Style x:Key="FieldLbl" TargetType="TextBlock">
@@ -43,12 +42,6 @@
             <Setter Property="DecimalPlaces" Value="0" />
             <Setter Property="Minimum" Value="-1000000" />
             <Setter Property="Maximum" Value="1000000" />
-        </Style>
-        <Style x:Key="Axis" BasedOn="{StaticResource {x:Type controls:NumericUpDown}}" TargetType="controls:NumericUpDown">
-            <Setter Property="DecimalPlaces" Value="4" />
-            <Setter Property="Minimum" Value="-32768" />
-            <Setter Property="Maximum" Value="32767" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
         </Style>
         <!--  Icon toolbar button (16px icon, like the legacy topBar)  -->
         <Style
@@ -111,7 +104,7 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>    </Window.Resources>
+        </Style>    </ResourceDictionary></Window.Resources>
 
     <DockPanel LastChildFill="True">
 
@@ -473,199 +466,22 @@
 <avalonDock:LayoutAnchorablePaneGroup DockWidth="280" Orientation="Vertical">
 <avalonDock:LayoutAnchorablePane DockHeight="200*" DockMinHeight="140">
 <avalonDock:LayoutAnchorable ContentId="skeleton" CanClose="False" IconSource="{tomb:Icon General/box}" Title="Skeleton">
-                <Border Padding="2">
-                    <DataGrid
-                        AutoGenerateColumns="False"
-                        CanUserAddRows="False"
-                        CanUserReorderColumns="False"
-                        HeadersVisibility="Column"
-                        ItemsSource="{Binding Bones}"
-                        MouseDoubleClick="OnBoneListDoubleClick"
-                        SelectedItem="{Binding SelectedBoneItem, Mode=TwoWay}"
-                        SelectionMode="Single">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Width="40" Header="Use">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Checked, UpdateSourceTrigger=PropertyChanged}" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="Mesh" IsReadOnly="True" />
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Border>
+        <dock:SkeletonPanel />
 </avalonDock:LayoutAnchorable>
 </avalonDock:LayoutAnchorablePane>
 <avalonDock:LayoutAnchorablePane DockHeight="170*" DockMinHeight="175">
 <avalonDock:LayoutAnchorable ContentId="transform" CanClose="False" IconSource="{tomb:Icon General/target}" Title="Transform">
-<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                <Border Padding="2">
-                    <StackPanel>
-                        
-                                                <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="28" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Rot:" />
-                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Y" />
-                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" Minimum="0" Maximum="360" LoopValues="True" Value="{Binding RotationY, Mode=TwoWay}" />
-                            <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource Val}" Text="P" />
-                            <controls:NumericUpDown Grid.Column="4" Style="{StaticResource Axis}" Minimum="0" Maximum="360" LoopValues="True" Value="{Binding RotationX, Mode=TwoWay}" />
-                            <TextBlock Grid.Column="5" VerticalAlignment="Center" Style="{StaticResource Val}" Text="R" />
-                            <controls:NumericUpDown Grid.Column="6" Style="{StaticResource Axis}" Minimum="0" Maximum="360" LoopValues="True" Value="{Binding RotationZ, Mode=TwoWay}" />
-                        </controls:SpacedGrid>
-                        <controls:SpacedGrid Margin="0,4,0,0" ColumnSpacing="4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="28" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Pos:" />
-                            <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Val}" Text="X" />
-                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" Value="{Binding TranslationX, Mode=TwoWay}" />
-                            <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Y" />
-                            <controls:NumericUpDown Grid.Column="4" Style="{StaticResource Axis}" Value="{Binding TranslationY, Mode=TwoWay}" />
-                            <TextBlock Grid.Column="5" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Z" />
-                            <controls:NumericUpDown Grid.Column="6" Style="{StaticResource Axis}" Value="{Binding TranslationZ, Mode=TwoWay}" />
-                        </controls:SpacedGrid>
-                    <DockPanel Margin="0,6,0,0">
-                            <TextBlock Width="38" VerticalAlignment="Center" DockPanel.Dock="Left" Style="{StaticResource Val}" Text="Mode:" />
-                            <Image
-                                Width="75"
-                                Height="21"
-                                Margin="6,0,0,0"
-                                DockPanel.Dock="Right"
-                                RenderOptions.BitmapScalingMode="NearestNeighbor">
-                                <Image.Style>
-                                    <Style TargetType="Image">
-                                        <Setter Property="Source" Value="{tomb:Icon Actions/Transform/Simple}" />
-                                        <Style.Triggers>
-                                        <DataTrigger Binding="{Binding TransformModeIndex}" Value="1">
-                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transform/Smooth}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding TransformModeIndex}" Value="2">
-                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transform/SmoothReverse}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding TransformModeIndex}" Value="3">
-                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transform/Linear}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding TransformModeIndex}" Value="4">
-                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transform/LinearReverse}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding TransformModeIndex}" Value="5">
-                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transform/Symmetric}" />
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding TransformModeIndex}" Value="6">
-                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transform/SymmetricLinear}" />
-                                        </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Image.Style>
-                            </Image>
-                            <ComboBox SelectedIndex="{Binding TransformModeIndex, Mode=TwoWay}">
-                                <ComboBoxItem Content="None" />
-                                <ComboBoxItem Content="Smooth" />
-                                <ComboBoxItem Content="Smooth reverse" />
-                                <ComboBoxItem Content="Linear" />
-                                <ComboBoxItem Content="Linear reverse" />
-                                <ComboBoxItem Content="Symmetric smooth" />
-                                <ComboBoxItem Content="Symmetric linear" />
-                            </ComboBox>
-                        </DockPanel>
-                    </StackPanel>
-                </Border>
-</ScrollViewer>
+        <dock:TransformPanel />
 </avalonDock:LayoutAnchorable>
 </avalonDock:LayoutAnchorablePane>
 <avalonDock:LayoutAnchorablePane DockHeight="50*" DockMinHeight="60">
 <avalonDock:LayoutAnchorable ContentId="rootMotion" CanClose="False" IconSource="{tomb:Icon General/options}" Title="Root Motion">
-<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                <Border Padding="2">
-                    <controls:SpacedStack Orientation="Horizontal" Spacing="6">
-                        <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Pos:" />
-                        <CheckBox Content="X" IsChecked="{Binding RootPosX, Mode=TwoWay}" />
-                        <CheckBox Content="Y" IsChecked="{Binding RootPosY, Mode=TwoWay}" />
-                        <CheckBox Content="Z" IsChecked="{Binding RootPosZ, Mode=TwoWay}" />
-                        <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Rot:" />
-                        <CheckBox Content="X" IsChecked="{Binding RootRotX, Mode=TwoWay}" />
-                        <CheckBox Content="Y" IsChecked="{Binding RootRotY, Mode=TwoWay}" />
-                        <CheckBox Content="Z" IsChecked="{Binding RootRotZ, Mode=TwoWay}" />
-                    </controls:SpacedStack>
-                </Border>
-</ScrollViewer>
+        <dock:RootMotionPanel />
 </avalonDock:LayoutAnchorable>
 </avalonDock:LayoutAnchorablePane>
 <avalonDock:LayoutAnchorablePane DockHeight="230*" DockMinHeight="250">
 <avalonDock:LayoutAnchorable ContentId="boundingBox" CanClose="False" IconSource="{tomb:Icon General/box}" Title="Bounding Box">
-<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                <Border Padding="2">
-                    <StackPanel>
-                        <controls:SpacedGrid ColumnSpacing="4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="28" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Min:" />
-                            <controls:NumericUpDown Grid.Column="1" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMinX, Mode=TwoWay}" />
-                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMinY, Mode=TwoWay}" />
-                            <controls:NumericUpDown Grid.Column="3" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMinZ, Mode=TwoWay}" />
-                        </controls:SpacedGrid>
-                        <controls:SpacedGrid Margin="0,4,0,0" ColumnSpacing="4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="28" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Max:" />
-                            <controls:NumericUpDown Grid.Column="1" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMaxX, Mode=TwoWay}" />
-                            <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMaxY, Mode=TwoWay}" />
-                            <controls:NumericUpDown Grid.Column="3" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMaxZ, Mode=TwoWay}" />
-                        </controls:SpacedGrid>
-                    
-                        <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="6"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Button Command="{Binding CalcBoundingBoxCommand}" Content="Calculate" />
-                            <Button Grid.Column="1" Command="{Binding ClearBoundingBoxCommand}" Content="Delete" />
-                        </controls:SpacedGrid>
-                        
-                        <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="4">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Scale" /><TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Val}" Text="X" /><controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" DecimalPlaces="0" Minimum="0" Maximum="512" Value="{Binding GrowX, Mode=TwoWay}" />
-                            <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Y" /><controls:NumericUpDown Grid.Column="4" Style="{StaticResource Axis}" DecimalPlaces="0" Minimum="0" Maximum="512" Value="{Binding GrowY, Mode=TwoWay}" />
-                            <TextBlock Grid.Column="5" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Z" /><controls:NumericUpDown Grid.Column="6" Style="{StaticResource Axis}" DecimalPlaces="0" Minimum="0" Maximum="512" Value="{Binding GrowZ, Mode=TwoWay}" />
-                        </controls:SpacedGrid>
-                        <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="6">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Button Command="{Binding GrowBoundingBoxCommand}" Content="Grow" />
-                            <Button Grid.Column="1" Command="{Binding ShrinkBoundingBoxCommand}" Content="Shrink" />
-                        </controls:SpacedGrid>
-                    
-                    </StackPanel>
-                </Border>
-</ScrollViewer>
+        <dock:BoundingBoxPanel />
 </avalonDock:LayoutAnchorable>
 </avalonDock:LayoutAnchorablePane>
 </avalonDock:LayoutAnchorablePaneGroup>
