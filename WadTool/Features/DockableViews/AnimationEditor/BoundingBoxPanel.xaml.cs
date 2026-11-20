@@ -2,7 +2,6 @@
 
 using System.Windows.Controls;
 using System.Windows.Input;
-using WadTool.Features.Dialogs.AnimEditor;
 
 namespace WadTool.Features.DockableViews.AnimationEditor;
 
@@ -14,6 +13,5 @@ public partial class BoundingBoxPanel : UserControl
         InitializeComponent();
     }
 
-    private void OnParameterLostFocus(object sender, KeyboardFocusChangedEventArgs e)
-        => (DataContext as AnimationEditorWindowViewModel)?.ResetUndoCoalescing();
+    private void OnParameterLostFocus(object sender, KeyboardFocusChangedEventArgs e) => PanelHelper.ResetUndoCoalescing(this);
 }

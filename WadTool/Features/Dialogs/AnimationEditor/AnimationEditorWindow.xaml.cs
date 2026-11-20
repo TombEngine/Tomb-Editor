@@ -31,27 +31,16 @@ public partial class AnimationEditorWindow : Window
 
         _panel = new PanelRenderingAnimationEditor();
         _timeline = timeline;
-        _bezier = bezierEditor;
+        _bezier = blendingPanel.Curve;
         _dock = new DockLayoutHelper(dockManager);
         _dock.CaptureDefault();
 
         _timeline.ValueChanged += OnTimelineValueChanged;
         _timeline.SelectionChanged += OnTimelineSelectionChanged;
         _timeline.AnimCommandDoubleClick += OnTimelineAnimCommandDoubleClick;
-        animationList.SelectionChanged += OnAnimationListSelectionChanged;
         _bezier.ValueChanged += OnBezierValueChanged;
         _panel.PointerEntered += OnPanelPointerEntered;
         _panel.PointerDragged += OnPanelPointerDragged;
-
-        stateIdBox.AddHandler(KeyUpEvent, new KeyEventHandler(OnStateIdKeyUp), true);
-        stateIdBox.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnStateIdLostFocus), true);
-
-        // The text was set before the box template existed; dock panels apply it only when first shown.
-        stateIdBox.Loaded += (_, _) =>
-        {
-            if (stateIdBox.InputTextBox is not null)
-                stateIdBox.InputTextBox.Text = stateIdBox.Text;
-        };
 
         DataContextChanged += OnDataContextChanged;
         Loaded += (_, _) =>
@@ -80,37 +69,7 @@ public partial class AnimationEditorWindow : Window
         RestoreDockLayout();
     }
 
-    /// <summary>Enter accepts a suggestion and commits the typed state in one go, like the previous State field.</summary>
-    private void OnStateIdKeyUp(object sender, KeyEventArgs e)
-    {
-        if (e.Key == Key.Enter && stateIdBox.InputTextBox is not null)
-            stateIdBox.Text = stateIdBox.InputTextBox.Text;
-    }
-
-    /// <summary>WinForms commits the typed state when the field is left (Validated), not only on Enter.</summary>
-    private void OnStateIdLostFocus(object sender, KeyboardFocusChangedEventArgs e)
-    {
-        if (!stateIdBox.IsKeyboardFocusWithin && stateIdBox.InputTextBox is not null && stateIdBox.Text != stateIdBox.InputTextBox.Text)
-            stateIdBox.Text = stateIdBox.InputTextBox.Text;
-    }
-
-    // Like the WinForms combo box, the wheel over a closed State list steps through the known states.
-    private void StateCombo_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-    {
-        if (_vm is null || sender is not ComboBox { IsDropDownOpen: false })
-            return;
-
-        _vm.StepState(e.Delta > 0 ? -1 : 1);
-        e.Handled = true;
-    }
-
-    private void StateSearchButton_Click(object sender, RoutedEventArgs e)
-    {
-        stateCombo.Focus();
-        stateCombo.IsDropDownOpen = true;
-    }
-
-    private void OnNameFocusRequested(object? sender, EventArgs e) => animationNameBox.Focus();
+    private void OnNameFocusRequested(object? sender, EventArgs e) => currentAnimationPanel.FocusName();
 
     /// <summary>
     /// Keyboard shortcuts of the previous form, mapped to the existing commands. They are ignored while a text
@@ -202,24 +161,11 @@ public partial class AnimationEditorWindow : Window
 
     private void OnTimelineAnimCommandDoubleClick(object? sender, WadAnimCommand command) => _vm?.EditAnimCommands(command);
 
-    private void OnAnimationListSelectionChanged(object sender, SelectionChangedEventArgs e)
-        => _vm?.SetSelectedAnimations(animationList.SelectedItems.Cast<AnimListItem>());
-
-    private void OnAnimationListClick(object sender, MouseButtonEventArgs e) => _vm?.ResetChainedPlaybackStart();
-
     private void OnBezierValueChanged(object? sender, EventArgs e) => _vm?.OnBlendCurveEdited();
 
     private void OnPanelPointerEntered(object? sender, EventArgs e) => _vm?.ResetUndoCoalescing();
 
     private void OnPanelPointerDragged(object? sender, EventArgs e) => _vm?.RefreshTransformUI();
-
-    private void OnParameterLostFocus(object sender, KeyboardFocusChangedEventArgs e) => _vm?.ResetUndoCoalescing();
-
-    private void OnParameterKeyDown(object sender, KeyEventArgs e)
-    {
-        if (e.Key == Key.Enter)
-            _vm?.ResetUndoCoalescing();
-    }
 
     private void OnClosingHandler(object? sender, CancelEventArgs e)
     {
@@ -240,7 +186,6 @@ public partial class AnimationEditorWindow : Window
         _timeline.ValueChanged -= OnTimelineValueChanged;
         _timeline.SelectionChanged -= OnTimelineSelectionChanged;
         _timeline.AnimCommandDoubleClick -= OnTimelineAnimCommandDoubleClick;
-        animationList.SelectionChanged -= OnAnimationListSelectionChanged;
         _bezier.ValueChanged -= OnBezierValueChanged;
         _panel.PointerEntered -= OnPanelPointerEntered;
         _panel.PointerDragged -= OnPanelPointerDragged;

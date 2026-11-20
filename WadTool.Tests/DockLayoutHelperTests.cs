@@ -6,7 +6,6 @@ using DarkUI.WPF.AvalonDock;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
-using System.Threading;
 using System.Windows.Controls;
 
 namespace WadTool.Tests;
@@ -15,28 +14,7 @@ namespace WadTool.Tests;
 [DoNotParallelize]
 public class DockLayoutHelperTests
 {
-    private static void RunSta(Action action)
-    {
-        Exception? failure = null;
-        var thread = new Thread(() =>
-        {
-            try
-            {
-                action();
-            }
-            catch (Exception exception)
-            {
-                failure = exception;
-            }
-        });
-
-        thread.SetApartmentState(ApartmentState.STA);
-        thread.Start();
-        thread.Join();
-
-        if (failure is not null)
-            throw new AssertFailedException(failure.Message, failure);
-    }
+    private static void RunSta(Action action) => StaTestHost.Run(action);
 
     private static DockingManager CreateManager()
     {
