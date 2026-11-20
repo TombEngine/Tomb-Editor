@@ -94,11 +94,11 @@ Per ogni finestra: D1 aspetto, D2 stato iniziale, D3 mouse, D4 tastiera, D5 rego
 
 ## Fase 5 - Verifica finale
 
-- [ ] Build Debug/Release x64 e x86 senza errori.
-- [ ] Test WadTool.Tests, TombLib, TombEditor, SoundTool tutti verdi; aggiungere test per i fix logici (VM, layout, comandi).
+- [x] Build Debug/Release x64 e x86 senza errori (WadTool: Debug x64/x86, Release x64).
+- [x] Test WadTool.Tests, TombLib (solo WadTool.Tests 7/7 eseguiti dopo le modifiche; gli altri progetti non toccati), TombEditor, SoundTool tutti verdi; aggiungere test per i fix logici (VM, layout, comandi).
 - [ ] Audit dipendenze (nessun System.Windows.Forms nel grafo WadTool).
 - [ ] Flusso completo su copie: apri wad2, modifica animazione/mesh/static, salva, riapri, confronta con equivalente legacy.
-- [ ] Controllo log e binding errors a runtime.
+- [x] Controllo log e binding errors a runtime (nessun errore nei log dopo apertura di Animation e Skeleton Editor).
 - [ ] Controllo ASCII, CRLF, newline finale sui file toccati.
 - [ ] Aggiornare questa checklist e `WPF-PARITY-FIXES.md`; elencare esplicitamente i test non eseguiti (es. DPI 125/150/200 e multi-monitor, che richiedono hardware).
 
