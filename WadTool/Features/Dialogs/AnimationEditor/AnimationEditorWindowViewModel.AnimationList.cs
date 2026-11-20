@@ -35,15 +35,17 @@ public partial class AnimationEditorWindowViewModel
 
         try
         {
-            Animations.Clear();
+            var matches = new List<AnimListItem>();
 
             for (int i = 0; i < _editor.Animations.Count; i++)
             {
                 var node = _editor.Animations[i];
 
                 if (filter.IsMatch(i, node.WadAnimation))
-                    Animations.Add(new AnimListItem(node, "(" + node.Index + ") " + node.WadAnimation.Name));
+                    matches.Add(new AnimListItem(node, "(" + node.Index + ") " + node.WadAnimation.Name));
             }
+
+            Animations.ReplaceAll(matches);
         }
         finally
         {

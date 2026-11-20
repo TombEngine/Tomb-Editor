@@ -109,7 +109,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     [ObservableProperty] private object? _selectedRoomItem;
     [ObservableProperty] private double _growX, _growY, _growZ;
 
-    public ObservableCollection<AnimListItem> Animations { get; } = new();
+    public RangeObservableCollection<AnimListItem> Animations { get; } = new();
     public ObservableCollection<MeshBoneItem> Bones { get; } = new();
     public ObservableCollection<object> Rooms { get; } = new();
 
