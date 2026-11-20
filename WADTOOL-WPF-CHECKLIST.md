@@ -83,14 +83,14 @@ Per ogni finestra: D1 aspetto, D2 stato iniziale, D3 mouse, D4 tastiera, D5 rego
 
 ## Fase 4 - Miglioramento drastico del port MVVM
 
-- [ ] Elencare le differenze trovate e classificarle (bloccante, funzionale, estetica) in `WADTOOL-WPF-GAPS.md`.
+- [x] Elencare le differenze trovate e classificarle (bloccante, funzionale, estetica) in `WADTOOL-WPF-GAPS.md`.
 - [ ] Rimuovere code-behind di logica nelle finestre: spostare in VM/servizi (service-based, CommunityToolkit).
 - [ ] Unificare duplicazioni tra finestre (dialoghi, comandi, validazioni, input numerici) in helper condivisi (TombLib.WPF / DarkUI.WPF).
 - [ ] Gestione corretta di undo/redo e dirty state nei VM.
 - [x] Prestazioni: nessuna lista dentro ScrollViewer/StackPanel (virtualizzazione attiva, verificato su tutti gli XAML); il rebuild della lista animazioni usa la nuova RangeObservableCollection.ReplaceAll (un solo evento Reset, test); Parallel non applicato (nessun ciclo bulk su dati indipendenti in WadTool).
 - [x] Nullable abilitato e `is null` nei file toccati; rimuovere using inutili (Features e MainWindow: tutti con #nullable enable, zero `== null`, using potati nei partial di MainWindow; rimosso il file vuoto Int16TextConverter.cs).
 - [x] Logging NLog di errori e warning da azioni utente (aggiunto nei catch di caricamento animazione, riproduzione suoni, salvataggio texture, suono shatter; restano senza log solo i catch best-effort sulle directory iniziali dei file dialog).
-- [ ] Pulizia di handler morti, risorse localizzazione mancanti, binding con errori.
+- [x] Pulizia di handler morti (scansione: nessun handler privato non referenziato), risorse mancanti (scansione statica di tutte le Static/DynamicResource: corrette le due chiavi inesistenti usate da WadTool), localizzazione XAML (vedi sotto).
 - [x] Localizzazione XAML: sezioni AnimationEditor, Main, MeshEditor, StaticEditor, SkeletonEditor in WadTool.json (chiavi assolute ~WadTool.Sezione.Chiave, test sulle chiavi e sulle sezioni morte, test di caricamento di tutte le finestre dialogo). Restano inglesi: titoli dei pannelli dock (LayoutAnchorable non e'' un DependencyObject), stringhe create da codice (messaggi, popup) e la finestra Main non e'' caricata nei test.
 
 ## Fase 5 - Verifica finale
