@@ -2,8 +2,10 @@
     x:Class="WadTool.Features.Dialogs.AnimEditor.AnimationEditorWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avalonDock="https://github.com/Dirkster99/AvalonDock"
     xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkDock="clr-namespace:DarkUI.WPF.AvalonDock;assembly=DarkUI.WPF"
     xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
     xmlns:local="clr-namespace:WadTool.Features.Dialogs.AnimEditor"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -176,6 +178,18 @@
                 <MenuItem Header="Scroll grid" IsCheckable="True" IsChecked="{Binding ScrollGrid, Mode=TwoWay}" />
                 <MenuItem Header="Restore grid height" IsCheckable="True" IsChecked="{Binding RestoreGridHeight, Mode=TwoWay}" />
             </MenuItem>
+            <MenuItem Header="View" SubmenuOpened="OnViewMenuOpened">
+                <MenuItem Header="Animation List" IsCheckable="True" Tag="animationList" Click="OnTogglePanel" />
+                <MenuItem Header="Current Animation" IsCheckable="True" Tag="currentAnimation" Click="OnTogglePanel" />
+                <MenuItem x:Name="blendingMenuItem" Header="Animation Blending" IsCheckable="True" Tag="animationBlending" Click="OnTogglePanel" />
+                <MenuItem Header="Timeline" IsCheckable="True" Tag="timeline" Click="OnTogglePanel" />
+                <MenuItem Header="Skeleton" IsCheckable="True" Tag="skeleton" Click="OnTogglePanel" />
+                <MenuItem Header="Transform" IsCheckable="True" Tag="transform" Click="OnTogglePanel" />
+                <MenuItem x:Name="rootMotionMenuItem" Header="Root Motion" IsCheckable="True" Tag="rootMotion" Click="OnTogglePanel" />
+                <MenuItem Header="Bounding Box" IsCheckable="True" Tag="boundingBox" Click="OnTogglePanel" />
+                <Separator />
+                <MenuItem Header="Reset layout" Click="OnResetLayout" />
+            </MenuItem>
         </Menu>
 
             <Border
@@ -219,10 +233,137 @@
         <Border Height="25" Padding="4,5,0,3" Background="{DynamicResource Brush_Background}" DockPanel.Dock="Bottom">
             <TextBlock FontSize="11" Foreground="{DynamicResource Brush_Text}" Text="{Binding StatusText}" TextTrimming="CharacterEllipsis" VerticalAlignment="Top" />
         </Border>
+<avalonDock:DockingManager
+    x:Name="dockManager"
+    GridSplitterWidth="4"
+    GridSplitterHeight="4"
+    GridSplitterVerticalStyle="{DynamicResource Dock_SplitterVertical}"
+    GridSplitterHorizontalStyle="{DynamicResource Dock_SplitterHorizontal}">
+<avalonDock:DockingManager.Theme>
+<darkDock:DarkUIDockTheme />
+</avalonDock:DockingManager.Theme>
+<avalonDock:LayoutRoot>
+<avalonDock:LayoutPanel Orientation="Horizontal">
+<avalonDock:LayoutAnchorablePaneGroup DockWidth="270" Orientation="Vertical">
+<avalonDock:LayoutAnchorablePane DockHeight="300*" DockMinHeight="150">
+<avalonDock:LayoutAnchorable ContentId="animationList" CanClose="False" IconSource="{tomb:Icon General/filter}" Title="Animation List">
+        <Border Padding="2">
+            
+            <DockPanel>
+                <!--  Filter  -->
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,4">
+                    <Button
+                        DockPanel.Dock="Right"
+                        Style="{StaticResource TbBtn}"
+                        Margin="2,0,0,0"
+                        Command="{Binding ResetFilterCommand}"
+                        ToolTip="Reset filtering">
+                        <Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/delete}" />
+                    </Button>
+                    <Button
+                        DockPanel.Dock="Right"
+                        Style="{StaticResource TbBtn}"
+                        Margin="2,0,0,0"
+                        Command="{Binding ApplyFilterCommand}"
+                        ToolTip="Filter list.&#13;&#10;Numerical input - filter by state ID&#13;&#10;String input - filter by name">
+                        <Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/filter}" />
+                    </Button>
+                    <TextBox
+                        VerticalContentAlignment="Center"
+                        Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        ToolTip="Numerical input - filter by state ID.&#13;&#10;String input - filter by animation name.&#13;&#10;&#13;&#10;Tokens:&#13;&#10;s:[name or ID] - state name or ID&#13;&#10;a:[name or ID] - anim name or ID">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Return" Command="{Binding ApplyFilterCommand}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
+                </DockPanel>
 
-        <!--  Status line, then timeline with the transport buttons on its right (WinForms arrangement)  -->
-        
-        <Grid DockPanel.Dock="Bottom" Margin="0,4,0,0">
+                <!--  Add / delete  -->
+                <controls:SpacedStack
+                    DockPanel.Dock="Bottom"
+                    HorizontalAlignment="Right"
+                    Margin="0,4,0,0"
+                    Orientation="Horizontal"
+                    Spacing="2">
+                    <Button Style="{StaticResource TbBtn}" Command="{Binding AddAnimationCommand}" ToolTip="Add new animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
+                    <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteSelectedAnimationsCommand}" ToolTip="Delete selected animations"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
+                </controls:SpacedStack>
+
+                <ListBox
+                    x:Name="animationList"
+                    PreviewMouseLeftButtonUp="OnAnimationListClick"
+                    DisplayMemberPath="Label"
+                    ItemsSource="{Binding Animations}"
+                    SelectedItem="{Binding SelectedAnim, Mode=TwoWay}"
+                    SelectionMode="Extended" />
+            </DockPanel>
+        </Border>
+</avalonDock:LayoutAnchorable>
+</avalonDock:LayoutAnchorablePane>
+<avalonDock:LayoutAnchorablePane DockHeight="205*" DockMinHeight="230">
+<avalonDock:LayoutAnchorable ContentId="currentAnimation" CanClose="False" IconSource="{tomb:Icon General/edit}" Title="Current Animation">
+<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <Border Padding="2">
+                    <StackPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Name:" /><TextBox x:Name="animationNameBox" KeyDown="OnParameterKeyDown" LostKeyboardFocus="OnParameterLostFocus" Text="{Binding AnimName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="State:" /><Button x:Name="stateSearchButton" Width="23" Height="23" Margin="4,0,0,0" Padding="0" DockPanel.Dock="Right" Click="StateSearchButton_Click" ToolTip="Search state"><Image Width="16" Height="16" Source="{tomb:Icon General/search}" /></Button><ComboBox x:Name="stateCombo" Width="24" DockPanel.Dock="Right" IsTextSearchEnabled="False" PreviewMouseWheel="StateCombo_PreviewMouseWheel" ItemsSource="{Binding StateNameChoices}" SelectedItem="{Binding SelectedStateName, Mode=TwoWay}" ToolTip="Known state names" /><controls:AutoCompleteBox x:Name="stateIdBox" ItemsSource="{Binding StateNames}" Text="{Binding StateIdText, Mode=TwoWay}" ToolTip="{Binding StateIdToolTip}" /></DockPanel>
+                        <Grid Margin="0,4,0,0">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="Framerate" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="1" Maximum="255" Value="{Binding FrameRate, Mode=TwoWay}" /></StackPanel>
+                            <StackPanel Grid.Column="1" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="End frame" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding EndFrame, Mode=TwoWay}" /></StackPanel>
+                            <StackPanel Grid.Column="2" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="Next anim" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding NextAnimation, Mode=TwoWay}" /></StackPanel>
+                            <StackPanel Grid.Column="3" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="Next frame" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding NextFrame, Mode=TwoWay}" /></StackPanel>
+                        </Grid>
+                        <Grid Margin="0,4,0,0">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="Start X vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding StartVertVel, Mode=TwoWay}" /></StackPanel>
+                            <StackPanel Grid.Column="1" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="End X vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding EndVertVel, Mode=TwoWay}" /></StackPanel>
+                            <StackPanel Grid.Column="2" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="Start Z vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding StartHorVel, Mode=TwoWay}" /></StackPanel>
+                            <StackPanel Grid.Column="3" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="End Z vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding EndHorVel, Mode=TwoWay}" /></StackPanel>
+                        </Grid>
+                        <UniformGrid Margin="0,8,0,0" Columns="2">
+                            <Button Margin="0,0,3,0" Command="{Binding EditStateChangesCommand}" Content="State changes..." />
+                            <Button Margin="3,0,0,0" Command="{Binding EditAnimCommandsCommand}" Content="Anim commands..." />
+                        </UniformGrid>
+                    </StackPanel>
+                </Border>
+</ScrollViewer>
+</avalonDock:LayoutAnchorable>
+</avalonDock:LayoutAnchorablePane>
+<avalonDock:LayoutAnchorablePane DockHeight="200*" DockMinHeight="230">
+<avalonDock:LayoutAnchorable ContentId="animationBlending" CanClose="False" IconSource="{tomb:Icon Actions/interpolate}" Title="Animation Blending">
+<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <Border Padding="2">
+                    <StackPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Margin="0,0,6,0" VerticalAlignment="Center" Foreground="{DynamicResource Brush_Text_Low}" Text="Next anim blend frame count:" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="255" Value="{Binding BlendFrameCount, Mode=TwoWay}" /></DockPanel>
+                        <Border Height="96" Margin="0,4,0,0" BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
+                            <wadControls:BezierCurveEditor x:Name="bezierEditor" />
+                        </Border>
+                        <DockPanel Margin="0,4,0,0"><TextBlock DockPanel.Dock="Left" Margin="0,0,6,0" VerticalAlignment="Center" Text="Preset:" /><ComboBox SelectedIndex="{Binding BlendPresetIndex, Mode=TwoWay}">
+                            <ComboBoxItem Content="Linear" />
+                            <ComboBoxItem Content="Ease In" />
+                            <ComboBoxItem Content="Ease Out" />
+                            <ComboBoxItem Content="Ease In and Out" />
+                        </ComboBox></DockPanel>
+                    </StackPanel>
+                </Border>
+</ScrollViewer>
+</avalonDock:LayoutAnchorable>
+</avalonDock:LayoutAnchorablePane>
+</avalonDock:LayoutAnchorablePaneGroup>
+<avalonDock:LayoutPanel Orientation="Vertical">
+<avalonDock:LayoutDocumentPaneGroup>
+<avalonDock:LayoutDocumentPane ShowHeader="False">
+<avalonDock:LayoutDocument ContentId="view" CanClose="False" CanFloat="False" Title="3D View">
+            <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
+                <Border x:Name="panelRenderingHost" />
+            </Border>
+</avalonDock:LayoutDocument>
+</avalonDock:LayoutDocumentPane>
+</avalonDock:LayoutDocumentPaneGroup>
+<avalonDock:LayoutAnchorablePane DockHeight="84*" DockMinHeight="84">
+<avalonDock:LayoutAnchorable ContentId="timeline" CanClose="False" IconSource="{tomb:Icon Actions/Transport/Play24}" Title="Timeline" CanFloat="False">
+        <Grid Margin="2,0,2,2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -327,120 +468,14 @@
                     </Button>
                 </controls:SpacedStack>
         </Grid>
-        <!--  Left: animation list, current animation, blending (WinForms order)  -->
-        <Grid Width="270" DockPanel.Dock="Left" Margin="0,0,6,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" MinHeight="120" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-        <GroupBox
-            
-            Grid.Row="0"
-            Header="Animation List">
-            
-            <DockPanel>
-                <!--  Filter  -->
-                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,4">
-                    <Button
-                        DockPanel.Dock="Right"
-                        Style="{StaticResource TbBtn}"
-                        Margin="2,0,0,0"
-                        Command="{Binding ResetFilterCommand}"
-                        ToolTip="Reset filtering">
-                        <Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/delete}" />
-                    </Button>
-                    <Button
-                        DockPanel.Dock="Right"
-                        Style="{StaticResource TbBtn}"
-                        Margin="2,0,0,0"
-                        Command="{Binding ApplyFilterCommand}"
-                        ToolTip="Filter list.&#13;&#10;Numerical input - filter by state ID&#13;&#10;String input - filter by name">
-                        <Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/filter}" />
-                    </Button>
-                    <TextBox
-                        VerticalContentAlignment="Center"
-                        Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        ToolTip="Numerical input - filter by state ID.&#13;&#10;String input - filter by animation name.&#13;&#10;&#13;&#10;Tokens:&#13;&#10;s:[name or ID] - state name or ID&#13;&#10;a:[name or ID] - anim name or ID">
-                        <TextBox.InputBindings>
-                            <KeyBinding Key="Return" Command="{Binding ApplyFilterCommand}" />
-                        </TextBox.InputBindings>
-                    </TextBox>
-                </DockPanel>
-
-                <!--  Add / delete  -->
-                <controls:SpacedStack
-                    DockPanel.Dock="Bottom"
-                    HorizontalAlignment="Right"
-                    Margin="0,4,0,0"
-                    Orientation="Horizontal"
-                    Spacing="2">
-                    <Button Style="{StaticResource TbBtn}" Command="{Binding AddAnimationCommand}" ToolTip="Add new animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
-                    <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteSelectedAnimationsCommand}" ToolTip="Delete selected animations"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
-                </controls:SpacedStack>
-
-                <ListBox
-                    x:Name="animationList"
-                    PreviewMouseLeftButtonUp="OnAnimationListClick"
-                    DisplayMemberPath="Label"
-                    ItemsSource="{Binding Animations}"
-                    SelectedItem="{Binding SelectedAnim, Mode=TwoWay}"
-                    SelectionMode="Extended" />
-            </DockPanel>
-        </GroupBox>
-                <GroupBox Grid.Row="1" Margin="0,2,0,0" Header="Current Animation">
-                    <StackPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="Name:" /><TextBox x:Name="animationNameBox" KeyDown="OnParameterKeyDown" LostKeyboardFocus="OnParameterLostFocus" Text="{Binding AnimName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" /></DockPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Style="{StaticResource FieldLbl}" Text="State:" /><Button x:Name="stateSearchButton" Width="23" Height="23" Margin="4,0,0,0" Padding="0" DockPanel.Dock="Right" Click="StateSearchButton_Click" ToolTip="Search state"><Image Width="16" Height="16" Source="{tomb:Icon General/search}" /></Button><ComboBox x:Name="stateCombo" Width="24" DockPanel.Dock="Right" IsTextSearchEnabled="False" PreviewMouseWheel="StateCombo_PreviewMouseWheel" ItemsSource="{Binding StateNameChoices}" SelectedItem="{Binding SelectedStateName, Mode=TwoWay}" ToolTip="Known state names" /><controls:AutoCompleteBox x:Name="stateIdBox" ItemsSource="{Binding StateNames}" Text="{Binding StateIdText, Mode=TwoWay}" ToolTip="{Binding StateIdToolTip}" /></DockPanel>
-                        <Grid Margin="0,4,0,0">
-                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="Framerate" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="1" Maximum="255" Value="{Binding FrameRate, Mode=TwoWay}" /></StackPanel>
-                            <StackPanel Grid.Column="1" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="End frame" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding EndFrame, Mode=TwoWay}" /></StackPanel>
-                            <StackPanel Grid.Column="2" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="Next anim" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding NextAnimation, Mode=TwoWay}" /></StackPanel>
-                            <StackPanel Grid.Column="3" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="Next frame" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="32767" Value="{Binding NextFrame, Mode=TwoWay}" /></StackPanel>
-                        </Grid>
-                        <Grid Margin="0,4,0,0">
-                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
-                            <StackPanel Grid.Column="0" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="Start X vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding StartVertVel, Mode=TwoWay}" /></StackPanel>
-                            <StackPanel Grid.Column="1" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="End X vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding EndVertVel, Mode=TwoWay}" /></StackPanel>
-                            <StackPanel Grid.Column="2" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="Start Z vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding StartHorVel, Mode=TwoWay}" /></StackPanel>
-                            <StackPanel Grid.Column="3" Margin="2,0"><TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="End Z vel" /><controls:NumericUpDown Style="{StaticResource Nud}" DecimalPlaces="4" Minimum="-32767" Maximum="32767" Value="{Binding EndHorVel, Mode=TwoWay}" /></StackPanel>
-                        </Grid>
-                        <UniformGrid Margin="0,8,0,0" Columns="2">
-                            <Button Margin="0,0,3,0" Command="{Binding EditStateChangesCommand}" Content="State changes..." />
-                            <Button Margin="3,0,0,0" Command="{Binding EditAnimCommandsCommand}" Content="Anim commands..." />
-                        </UniformGrid>
-                    </StackPanel>
-                </GroupBox>
-                <GroupBox Grid.Row="2" Margin="0,2,0,0" Header="Animation Blending" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}">
-                    <StackPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Margin="0,0,6,0" VerticalAlignment="Center" Foreground="{DynamicResource Brush_Text_Low}" Text="Next anim blend frame count:" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="255" Value="{Binding BlendFrameCount, Mode=TwoWay}" /></DockPanel>
-                        <Border Height="96" Margin="0,4,0,0" BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
-                            <wadControls:BezierCurveEditor x:Name="bezierEditor" />
-                        </Border>
-                        <DockPanel Margin="0,4,0,0"><TextBlock DockPanel.Dock="Left" Margin="0,0,6,0" VerticalAlignment="Center" Text="Preset:" /><ComboBox SelectedIndex="{Binding BlendPresetIndex, Mode=TwoWay}">
-                            <ComboBoxItem Content="Linear" />
-                            <ComboBoxItem Content="Ease In" />
-                            <ComboBoxItem Content="Ease Out" />
-                            <ComboBoxItem Content="Ease In and Out" />
-                        </ComboBox></DockPanel>
-                    </StackPanel>
-                </GroupBox>
-        </Grid>
-
-        <!--  Right: skeleton, transform, root motion, bounding box (WinForms order)  -->
-        <ScrollViewer
-            Width="300"
-            DockPanel.Dock="Right"
-            HorizontalScrollBarVisibility="Disabled"
-            VerticalScrollBarVisibility="Auto">
-            <ScrollViewer.Margin>
-                <Thickness Left="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
-            </ScrollViewer.Margin>
-            <controls:SpacedStack Orientation="Vertical" Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
-                <GroupBox Header="Skeleton">
+</avalonDock:LayoutAnchorable>
+</avalonDock:LayoutAnchorablePane>
+</avalonDock:LayoutPanel>
+<avalonDock:LayoutAnchorablePaneGroup DockWidth="300" Orientation="Vertical">
+<avalonDock:LayoutAnchorablePane DockHeight="200*" DockMinHeight="140">
+<avalonDock:LayoutAnchorable ContentId="skeleton" CanClose="False" IconSource="{tomb:Icon General/box}" Title="Skeleton">
+                <Border Padding="2">
                     <DataGrid
-                        Height="160"
                         AutoGenerateColumns="False"
                         CanUserAddRows="False"
                         CanUserReorderColumns="False"
@@ -460,9 +495,13 @@
                             <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="Mesh" IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
-                </GroupBox>
-
-                <GroupBox Header="{Binding TransformHeader}">
+                </Border>
+</avalonDock:LayoutAnchorable>
+</avalonDock:LayoutAnchorablePane>
+<avalonDock:LayoutAnchorablePane DockHeight="170*" DockMinHeight="175">
+<avalonDock:LayoutAnchorable ContentId="transform" CanClose="False" IconSource="{tomb:Icon General/target}" Title="Transform">
+<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <Border Padding="2">
                     <StackPanel>
                         
                                                 <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="4">
@@ -546,9 +585,14 @@
                             </ComboBox>
                         </DockPanel>
                     </StackPanel>
-                </GroupBox>
-
-                <GroupBox Header="Root Motion" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}">
+                </Border>
+</ScrollViewer>
+</avalonDock:LayoutAnchorable>
+</avalonDock:LayoutAnchorablePane>
+<avalonDock:LayoutAnchorablePane DockHeight="50*" DockMinHeight="60">
+<avalonDock:LayoutAnchorable ContentId="rootMotion" CanClose="False" IconSource="{tomb:Icon General/options}" Title="Root Motion">
+<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <Border Padding="2">
                     <controls:SpacedStack Orientation="Horizontal" Spacing="6">
                         <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Pos:" />
                         <CheckBox Content="X" IsChecked="{Binding RootPosX, Mode=TwoWay}" />
@@ -559,9 +603,14 @@
                         <CheckBox Content="Y" IsChecked="{Binding RootRotY, Mode=TwoWay}" />
                         <CheckBox Content="Z" IsChecked="{Binding RootRotZ, Mode=TwoWay}" />
                     </controls:SpacedStack>
-                </GroupBox>
-
-                <GroupBox Header="Bounding Box">
+                </Border>
+</ScrollViewer>
+</avalonDock:LayoutAnchorable>
+</avalonDock:LayoutAnchorablePane>
+<avalonDock:LayoutAnchorablePane DockHeight="230*" DockMinHeight="250">
+<avalonDock:LayoutAnchorable ContentId="boundingBox" CanClose="False" IconSource="{tomb:Icon General/box}" Title="Bounding Box">
+<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <Border Padding="2">
                     <StackPanel>
                         <controls:SpacedGrid ColumnSpacing="4">
                             <Grid.ColumnDefinitions>
@@ -616,24 +665,14 @@
                         </controls:SpacedGrid>
                     
                     </StackPanel>
-                </GroupBox>
-
-                
-            </controls:SpacedStack>
-        </ScrollViewer>
-
-        <!--  Center: 3D view + timeline + transport  -->
-        <DockPanel LastChildFill="True">
-
-            
-
-            
-
-            <!--  3D view (hosted)  -->
-            <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
-                <Border x:Name="panelRenderingHost" />
-            </Border>
-        </DockPanel>
+                </Border>
+</ScrollViewer>
+</avalonDock:LayoutAnchorable>
+</avalonDock:LayoutAnchorablePane>
+</avalonDock:LayoutAnchorablePaneGroup>
+</avalonDock:LayoutPanel>
+</avalonDock:LayoutRoot>
+</avalonDock:DockingManager>
         </DockPanel>
     </DockPanel>
 </Window>

@@ -1,0 +1,76 @@
+#nullable enable
+
+using System;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+
+namespace WadTool.Features.Dialogs.AnimEditor;
+
+/// <summary>Dockable panel handling of the Animation Editor window.</summary>
+public partial class AnimationEditorWindow
+{
+    private const string BlendingPanelId = "animationBlending";
+    private const string RootMotionPanelId = "rootMotion";
+    private const string TransformPanelId = "transform";
+
+    private void RestoreDockLayout()
+    {
+        if (_vm is null)
+            return;
+
+        _dock.Load(_vm.Configuration.AnimationEditor_DockLayout);
+        _vm.PropertyChanged += OnViewModelPropertyChanged;
+        ApplyProjectPanels();
+    }
+
+    private void ApplyProjectPanels()
+    {
+        if (_vm is null)
+            return;
+
+        // TombEngine only panels follow the project type, whatever the saved layout says.
+        _dock.SetShown(BlendingPanelId, _vm.IsTombEngine);
+        _dock.SetShown(RootMotionPanelId, _vm.IsTombEngine);
+        blendingMenuItem.Visibility = _vm.IsTombEngine ? Visibility.Visible : Visibility.Collapsed;
+        rootMotionMenuItem.Visibility = blendingMenuItem.Visibility;
+
+        UpdateTransformTitle();
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(AnimationEditorWindowViewModel.TransformHeader))
+            UpdateTransformTitle();
+    }
+
+    private void UpdateTransformTitle()
+    {
+        if (_dock.Find(TransformPanelId) is { } anchorable && _vm is not null && !string.IsNullOrEmpty(_vm.TransformHeader))
+            anchorable.Title = _vm.TransformHeader;
+    }
+
+    private void OnViewMenuOpened(object sender, RoutedEventArgs e)
+    {
+        if (sender is not MenuItem menu)
+            return;
+
+        foreach (var item in menu.Items)
+        {
+            if (item is MenuItem { Tag: string contentId } panelItem)
+                panelItem.IsChecked = _dock.IsShown(contentId);
+        }
+    }
+
+    private void OnTogglePanel(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem { Tag: string contentId } item)
+            _dock.SetShown(contentId, item.IsChecked);
+    }
+
+    private void OnResetLayout(object sender, RoutedEventArgs e)
+    {
+        _dock.Reset();
+        ApplyProjectPanels();
+    }
+}

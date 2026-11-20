@@ -1,5 +1,7 @@
 #nullable enable
 
+using AvalonDock.Layout;
+using DarkUI.WPF.AvalonDock;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -19,6 +21,7 @@ public partial class AnimationEditorWindow : Window
     private readonly PanelRenderingAnimationEditor _panel;
     private readonly AnimationTrackBar _timeline;
     private readonly BezierCurveEditor _bezier;
+    private readonly DockLayoutHelper _dock;
     private AnimationEditorWindowViewModel? _vm;
 
     public AnimationEditorWindow()
@@ -29,7 +32,8 @@ public partial class AnimationEditorWindow : Window
         _panel = new PanelRenderingAnimationEditor();
         _timeline = timeline;
         _bezier = bezierEditor;
-        panelRenderingHost.Child = _panel;
+        _dock = new DockLayoutHelper(dockManager);
+        _dock.CaptureDefault();
 
         _timeline.ValueChanged += OnTimelineValueChanged;
         _timeline.SelectionChanged += OnTimelineSelectionChanged;
@@ -42,12 +46,17 @@ public partial class AnimationEditorWindow : Window
         stateIdBox.AddHandler(KeyUpEvent, new KeyEventHandler(OnStateIdKeyUp), true);
         stateIdBox.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnStateIdLostFocus), true);
 
+        // The text was set before the box template existed; dock panels apply it only when first shown.
+        stateIdBox.Loaded += (_, _) =>
+        {
+            if (stateIdBox.InputTextBox is not null)
+                stateIdBox.InputTextBox.Text = stateIdBox.Text;
+        };
+
         DataContextChanged += OnDataContextChanged;
         Loaded += (_, _) =>
         {
-            // The text was set before the box template existed.
-            if (stateIdBox.InputTextBox is not null)
-                stateIdBox.InputTextBox.Text = stateIdBox.Text;
+            panelRenderingHost.Child ??= _panel;
 
             if (_vm is not null)
                 TombLib.WPF.WindowConfiguration.ConfigureWindow(this, _vm.Configuration, key: "FormAnimationEditor");
@@ -68,6 +77,7 @@ public partial class AnimationEditorWindow : Window
 
         _vm.NameFocusRequested += OnNameFocusRequested;
         _vm.AttachControls(_panel, _timeline, _bezier);
+        RestoreDockLayout();
     }
 
     /// <summary>Enter accepts a suggestion and commits the typed state in one go, like the previous State field.</summary>
@@ -218,7 +228,13 @@ public partial class AnimationEditorWindow : Window
     private void OnClosingHandler(object? sender, CancelEventArgs e)
     {
         if (_vm is not null && !_vm.HandleClosing())
+        {
             e.Cancel = true;
+            return;
+        }
+
+        if (_vm is not null)
+            _vm.Configuration.AnimationEditor_DockLayout = _dock.Serialize();
     }
 
     private void OnClosed(object? sender, EventArgs e)
