@@ -16,7 +16,7 @@ Regole di lavoro: build Debug x64 dopo ogni blocco, un commit per fix logico, ni
 - [x] Verificare che il worktree develop esista e compili (build legacy x64 Debug).
 - [x] Preparare copie di test in scratchpad (parziale: Andrea1.wad2 TombEngine; altri wad da aggiungere): wad2 TR4 con animazioni/mesh/statics, wad2 vuoto, wad TR3, sprite sequence, file wad2 grande.
 - [x] Ricontrollare l'harness `wt.ps1` (guardia foreground, DPI, UIA) dalla memoria "Side by side testing method".
-- [ ] Creare la matrice di parita' WadTool in `WPF-PARITY-TEST-PLAN.md` (una riga per finestra, colonne WF / WPF / esito).
+- [x] Creare la matrice di parita' WadTool in `WPF-PARITY-TEST-PLAN.md` (Wave 3, righe WT-1..WT-8, colonne D1-D8).
 - [ ] Verificare che la build WPF sia aggiornata prima di ogni test (memoria "stale build").
 
 ## Fase 1 - Animation Editor su pannelli dockable

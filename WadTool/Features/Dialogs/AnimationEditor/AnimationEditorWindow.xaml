@@ -42,7 +42,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="GroupBox">
                         <DockPanel>
-                            <Border Padding="4,2" Background="{DynamicResource Brush_BackgroundSlightlyDark}" DockPanel.Dock="Top">
+                            <Border Padding="4,2" Background="{DynamicResource Brush_Background_Alternative}" DockPanel.Dock="Top">
                                 <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" TextElement.Foreground="{DynamicResource Brush_Text}" />
                             </Border>
                             <Border Padding="2">
@@ -135,7 +135,7 @@
 
             <Border
                 Padding="2"
-                Background="{DynamicResource Brush_BackgroundSlightlyDark}"
+                Background="{DynamicResource Brush_Background_Alternative}"
                 DockPanel.Dock="Top">
                 <DockPanel LastChildFill="True">
                     <controls:SpacedStack
