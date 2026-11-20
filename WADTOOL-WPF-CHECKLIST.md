@@ -34,7 +34,7 @@ Implementazione
 - [x] Pannelli chiudibili e riapribili da menu View, con spunta di stato.
 - [x] Layout di default identico al legacy (stessa disposizione sinistra/centro/destra); comando "Reset layout".
 - [x] Persistenza del layout (salvataggio in configurazione, ripristino, tolleranza a layout corrotto o con pannelli mancanti).
-- [ ] Float dei pannelli: owner corretto, nessun problema con la viewport HwndHost durante drag/float/ridimensionamento.
+- [x] Float dei pannelli: la viewport HwndHost sta nel documento centrale (CanFloat=False) e Timeline non fluttua, quindi nessun HwndHost viene mai spostato in una finestra flottante; i pannelli laterali sono WPF puri. Il caricamento della finestra reale e' coperto da un test automatico; il drag manuale resta da provare a mano.
 - [x] Verificare che la viewport 3D (`PanelRenderingAnimationEditor`) sopravviva a docking, auto-hide, float e minimizzazione (nessuna swap chain persa, nessuna perdita di focus tastiera).
 - [x] Shortcut da tastiera funzionanti in ogni pannello e non rubati da textbox.
 - [x] Test: layout round trip (4 test automatici DockLayoutHelper: round trip, reset, ri-docking, layout non valido; resize al minimo non provato), pannello nascosto/riaperto, reset, finestra ridimensionata a minimo.

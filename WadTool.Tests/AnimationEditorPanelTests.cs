@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using WadTool.Features.Dialogs.AnimEditor;
 using WadTool.Features.DockableViews.AnimationEditor;
 
 namespace WadTool.Tests;
@@ -37,6 +38,18 @@ public class AnimationEditorPanelTests
                 panel.Measure(new Size(280.0, 400.0));
                 Assert.IsNotNull(panel.Content);
             }
+        });
+    }
+
+    [TestMethod]
+    public void WindowLoadsItsXaml()
+    {
+        StaTestHost.Run(() =>
+        {
+            var window = new AnimationEditorWindow();
+
+            Assert.IsNotNull(window.FindName("timelinePanel"));
+            Assert.IsNotNull(window.FindName("dockManager"));
         });
     }
 }
