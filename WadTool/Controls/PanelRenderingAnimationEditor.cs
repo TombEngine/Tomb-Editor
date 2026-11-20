@@ -32,7 +32,7 @@ public class PanelRenderingAnimationEditor : RenderingPanel
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Level Level { get; set; }
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public Room Room { get; set; }
+    public Room? Room { get; set; }
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Vector3 RoomPosition { get; set; }
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -50,7 +50,7 @@ public class PanelRenderingAnimationEditor : RenderingPanel
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public List<WadMeshBoneNode> Skeleton { get; set; }
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public ObjectMesh SelectedMesh
+    public ObjectMesh? SelectedMesh
     {
         get { return _selectedMesh; }
         set { _selectedMesh = value; Invalidate(); }

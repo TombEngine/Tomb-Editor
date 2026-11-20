@@ -287,7 +287,8 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         _chainedInitialCursorPos = 0;
         _chainedInitialSelection = new TombLib.VectorInt2();
 
-        _panel.GridPosition = System.Numerics.Vector3.Zero;
+        if (_panel is not null)
+            _panel.GridPosition = System.Numerics.Vector3.Zero;
     }
 
     partial void OnSelectedAnimChanged(AnimListItem? value)
@@ -1039,7 +1040,11 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         _ => velocity
     };
 
-    private void ShowPopup(string message, PopupType type) => PopUpInfo.Show(_popup, null, _panel, message, type);
+    private void ShowPopup(string message, PopupType type)
+    {
+        if (_panel is not null)
+            PopUpInfo.Show(_popup, null, _panel, message, type);
+    }
 
     private void PreviewSounds()
     {
@@ -1641,7 +1646,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
 
         int numFrames;
         var selection = TombLib.MathC.Clamp(_timeline.Selection.Y - _timeline.Selection.X - 1, 0, int.MaxValue).ToString();
-        string input = InputBox.Show(Owner, "Interpolation", "Enter number of interpolated frames:", selection);
+        string? input = InputBox.Show(Owner, "Interpolation", "Enter number of interpolated frames:", selection);
         if (input is null) return;
         if (!int.TryParse(input, out numFrames)) numFrames = 3;
 
@@ -1789,7 +1794,7 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     private void ImportAnimation()
     {
         if (_panel is null || _editor.CurrentAnim is null) return;
-        string path = LevelFileDialog.BrowseFile(Owner, "Select a file with animations", BaseGeometryImporter.AnimationFileExtensions, false);
+        string? path = LevelFileDialog.BrowseFile(Owner, "Select a file with animations", BaseGeometryImporter.AnimationFileExtensions, false);
         if (path is null) return;
 
         WadAnimation animation;
@@ -1823,14 +1828,14 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         if (SelectedAnim is not null) SelectedAnim.Label = "(" + _editor.CurrentAnim.Index + ") " + _editor.CurrentAnim.WadAnimation.Name;
         _timeline.Value = 0;
         SelectAnimation(_editor.CurrentAnim);
-        _panel.Invalidate();
+        _panel?.Invalidate();
     }
 
     [RelayCommand]
     private void ExportAnimation()
     {
         if (_editor.CurrentAnim is null) return;
-        string path = LevelFileDialog.BrowseFile(Owner, "Specify file to save animation",
+        string? path = LevelFileDialog.BrowseFile(Owner, "Specify file to save animation",
             new System.Collections.Generic.List<FileFormat> { new FileFormat("TombEditor XML", "anim") }, true);
         if (path is null) return;
 

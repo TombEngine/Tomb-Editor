@@ -256,16 +256,16 @@ namespace WadTool
 
         public class AnimationEditorCurrentAnimationChangedEvent : IEditorEvent
         {
-            public AnimationNode Previous { get; set; }
+            public AnimationNode? Previous { get; set; }
             public AnimationNode Current  { get; set; }
 
-            public AnimationEditorCurrentAnimationChangedEvent(AnimationNode prev, AnimationNode curr)
+            public AnimationEditorCurrentAnimationChangedEvent(AnimationNode? prev, AnimationNode curr)
             {
                 Previous = prev;
                 Current  = curr;
             }
         }
-        public void AnimationEditorCurrentAnimationChanged(AnimationNode prev, AnimationNode curr)
+        public void AnimationEditorCurrentAnimationChanged(AnimationNode? prev, AnimationNode curr)
         {
             RaiseEvent(new AnimationEditorCurrentAnimationChangedEvent(prev, curr));
         }
