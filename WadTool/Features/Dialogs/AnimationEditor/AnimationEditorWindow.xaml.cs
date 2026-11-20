@@ -1,12 +1,12 @@
 #nullable enable
 
-using AvalonDock.Layout;
 using DarkUI.WPF.AvalonDock;
 using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using TombLib.Wad;
 using TombLib.WPF;
@@ -95,9 +95,9 @@ public partial class AnimationEditorWindow : Window
     }
 
     // Like the WinForms combo box, the wheel over a closed State list steps through the known states.
-    private void StateCombo_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+    private void StateCombo_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
     {
-        if (_vm is null || sender is not System.Windows.Controls.ComboBox { IsDropDownOpen: false })
+        if (_vm is null || sender is not ComboBox { IsDropDownOpen: false })
             return;
 
         _vm.StepState(e.Delta > 0 ? -1 : 1);
@@ -116,37 +116,37 @@ public partial class AnimationEditorWindow : Window
     /// Keyboard shortcuts of the previous form, mapped to the existing commands. They are ignored while a text
     /// input has focus.
     /// </summary>
-    protected override void OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e)
+    protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
         base.OnPreviewKeyDown(e);
 
         if (e.Handled || _vm is null)
             return;
 
-        bool control = System.Windows.Input.Keyboard.Modifiers == System.Windows.Input.ModifierKeys.Control;
-        bool none = System.Windows.Input.Keyboard.Modifiers == System.Windows.Input.ModifierKeys.None;
-        bool textInput = System.Windows.Input.Keyboard.FocusedElement is System.Windows.Controls.Primitives.TextBoxBase or System.Windows.Controls.ComboBox;
+        bool control = Keyboard.Modifiers == ModifierKeys.Control;
+        bool none = Keyboard.Modifiers == ModifierKeys.None;
+        bool textInput = Keyboard.FocusedElement is TextBoxBase or ComboBox;
 
         // Text inputs keep plain keys and Ctrl+A/X/C/V; the other Ctrl shortcuts stay global like in the previous form.
-        if (textInput && !(control && e.Key is System.Windows.Input.Key.S or System.Windows.Input.Key.Z or System.Windows.Input.Key.Y or System.Windows.Input.Key.I))
+        if (textInput && !(control && e.Key is Key.S or Key.Z or Key.Y or Key.I))
             return;
 
         if (HandleSelectionKey(e, control, none))
             return;
 
-        System.Windows.Input.ICommand? command = e.Key switch
+        ICommand? command = e.Key switch
         {
-            System.Windows.Input.Key.Z when control => _vm.UndoCommand,
-            System.Windows.Input.Key.Y when control => _vm.RedoCommand,
-            System.Windows.Input.Key.S when control => _vm.SaveCommand,
-            System.Windows.Input.Key.I when control => _vm.InterpolateCommand,
-            System.Windows.Input.Key.X when control => _vm.CutFrameCommand,
-            System.Windows.Input.Key.C when control => _vm.CopyFrameCommand,
-            System.Windows.Input.Key.V when control => _vm.PasteFrameCommand,
-            System.Windows.Input.Key.Space when none => _vm.PlayCommand,
-            System.Windows.Input.Key.Up when none => _vm.GotoStartCommand,
-            System.Windows.Input.Key.Down when none => _vm.GotoEndCommand,
-            System.Windows.Input.Key.Delete when none => _vm.DeleteFrameCommand,
+            Key.Z when control => _vm.UndoCommand,
+            Key.Y when control => _vm.RedoCommand,
+            Key.S when control => _vm.SaveCommand,
+            Key.I when control => _vm.InterpolateCommand,
+            Key.X when control => _vm.CutFrameCommand,
+            Key.C when control => _vm.CopyFrameCommand,
+            Key.V when control => _vm.PasteFrameCommand,
+            Key.Space when none => _vm.PlayCommand,
+            Key.Up when none => _vm.GotoStartCommand,
+            Key.Down when none => _vm.GotoEndCommand,
+            Key.Delete when none => _vm.DeleteFrameCommand,
             _ => null
         };
 
@@ -156,34 +156,35 @@ public partial class AnimationEditorWindow : Window
         command.Execute(null);
         e.Handled = true;
     }
-    private bool HandleSelectionKey(System.Windows.Input.KeyEventArgs e, bool control, bool none)
+
+    private bool HandleSelectionKey(KeyEventArgs e, bool control, bool none)
     {
         if (_vm is null)
             return false;
 
         switch (e.Key)
         {
-            case System.Windows.Input.Key.Left when none:
+            case Key.Left when none:
                 _vm.StepFrameLooping(false);
                 break;
 
-            case System.Windows.Input.Key.Right when none:
+            case Key.Right when none:
                 _vm.StepFrameLooping(true);
                 break;
 
-            case System.Windows.Input.Key.I when none:
+            case Key.I when none:
                 _vm.MarkSelection(true);
                 break;
 
-            case System.Windows.Input.Key.O when none:
+            case Key.O when none:
                 _vm.MarkSelection(false);
                 break;
 
-            case System.Windows.Input.Key.A when control:
+            case Key.A when control:
                 _vm.SelectAllFrames();
                 break;
 
-            case System.Windows.Input.Key.Escape when none:
+            case Key.Escape when none:
                 _vm.ClearSelections();
                 break;
 
@@ -194,6 +195,7 @@ public partial class AnimationEditorWindow : Window
         e.Handled = true;
         return true;
     }
+
     private void OnTimelineValueChanged(object? sender, EventArgs e) => _vm?.OnTimelineValueChanged();
 
     private void OnTimelineSelectionChanged(object? sender, EventArgs e) => _vm?.OnTimelineSelectionChanged();
@@ -219,7 +221,7 @@ public partial class AnimationEditorWindow : Window
             bone.Checked = !bone.Checked;
     }
 
-    private void OnParameterKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    private void OnParameterKeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter)
             _vm?.ResetUndoCoalescing();
