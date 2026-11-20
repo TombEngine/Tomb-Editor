@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons">
 
     <UserControl.Resources>
@@ -19,14 +20,14 @@
                         SelectedItem="{Binding SelectedBoneItem, Mode=TwoWay}"
                         SelectionMode="Single">
                         <DataGrid.Columns>
-                            <DataGridTemplateColumn Width="40" Header="Use">
+                            <DataGridTemplateColumn Width="40" Header="{tombLib:Localize ~WadTool.AnimationEditor.Use}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <CheckBox HorizontalAlignment="Center" IsChecked="{Binding Checked, UpdateSourceTrigger=PropertyChanged}" />
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="Mesh" IsReadOnly="True" />
+                            <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="{tombLib:Localize ~WadTool.AnimationEditor.Mesh}" IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </Border>

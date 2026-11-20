@@ -91,6 +91,7 @@ Per ogni finestra: D1 aspetto, D2 stato iniziale, D3 mouse, D4 tastiera, D5 rego
 - [x] Nullable abilitato e `is null` nei file toccati; rimuovere using inutili (Features e MainWindow: tutti con #nullable enable, zero `== null`, using potati nei partial di MainWindow; rimosso il file vuoto Int16TextConverter.cs).
 - [x] Logging NLog di errori e warning da azioni utente (aggiunto nei catch di caricamento animazione, riproduzione suoni, salvataggio texture, suono shatter; restano senza log solo i catch best-effort sulle directory iniziali dei file dialog).
 - [ ] Pulizia di handler morti, risorse localizzazione mancanti, binding con errori.
+- [ ] Localizzazione: Animation Editor fatto (sezione AnimationEditor in WadTool.json, 121 chiavi, test sulle chiavi); titoli dei pannelli dock ancora inglesi (LayoutAnchorable non e'' un DependencyObject, serve codice); da fare Main, Mesh, Static, Skeleton Editor.
 
 ## Fase 5 - Verifica finale
 

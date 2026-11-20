@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Threading;
 using System.Windows;
+using TombLib.WPF;
 using System.Windows.Threading;
 
 namespace WadTool.Tests;
@@ -41,6 +42,8 @@ internal static class StaTestHost
 
         var thread = new Thread(() =>
         {
+            Localizer.Instance.LoadLanguage("en");
+
             var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
             app.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("pack://application:,,,/DarkUI.WPF;component/Generic.xaml") });
             ThemeManager.Apply(Theme.Dark);

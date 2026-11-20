@@ -10,6 +10,7 @@
     xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
     xmlns:local="clr-namespace:WadTool.Features.Dialogs.AnimEditor"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
     xmlns:tombLibControls="clr-namespace:TombLib.WPF.CustomControls;assembly=TombLib.WPF"
     xmlns:wadControls="clr-namespace:WadTool.Controls"
@@ -58,78 +59,78 @@
 
         <!--  Menu bar (mirrors the legacy top menu)  -->
         <Menu DockPanel.Dock="Top">
-            <MenuItem Header="Edit">
-                <MenuItem Command="{Binding UndoCommand}" Header="Undo" InputGestureText="Ctrl+Z"><MenuItem.Icon><Image Source="{tomb:Icon General/undo}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding RedoCommand}" Header="Redo" InputGestureText="Ctrl+Y"><MenuItem.Icon><Image Source="{tomb:Icon General/redo}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding SaveCommand}" Header="Save changes" InputGestureText="Ctrl+S"><MenuItem.Icon><Image Source="{tomb:Icon General/Save}" /></MenuItem.Icon></MenuItem>
+            <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.Edit}">
+                <MenuItem Command="{Binding UndoCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.Undo}" InputGestureText="Ctrl+Z"><MenuItem.Icon><Image Source="{tomb:Icon General/undo}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding RedoCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.Redo}" InputGestureText="Ctrl+Y"><MenuItem.Icon><Image Source="{tomb:Icon General/redo}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding SaveCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.SaveChanges}" InputGestureText="Ctrl+S"><MenuItem.Icon><Image Source="{tomb:Icon General/Save}" /></MenuItem.Icon></MenuItem>
                 <Separator />
-                <MenuItem Command="{Binding CancelCommand}" Header="Close" />
+                <MenuItem Command="{Binding CancelCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.Close}" />
             </MenuItem>
-            <MenuItem Header="Animations">
-                <MenuItem Command="{Binding AddAnimationCommand}" Header="New animation"><MenuItem.Icon><Image Source="{tomb:Icon General/plus_math}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding DeleteAnimationCommand}" Header="Delete animation"><MenuItem.Icon><Image Source="{tomb:Icon General/trash}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding SplitAnimationCommand}" Header="Split animation"><MenuItem.Icon><Image Source="{tomb:Icon Actions/Split_WadTool}" /></MenuItem.Icon></MenuItem>
+            <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.Animations}">
+                <MenuItem Command="{Binding AddAnimationCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.NewAnimation}"><MenuItem.Icon><Image Source="{tomb:Icon General/plus_math}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding DeleteAnimationCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.DeleteAnimation}"><MenuItem.Icon><Image Source="{tomb:Icon General/trash}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding SplitAnimationCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.SplitAnimation}"><MenuItem.Icon><Image Source="{tomb:Icon Actions/Split_WadTool}" /></MenuItem.Icon></MenuItem>
                 <Separator />
-                <MenuItem Command="{Binding CutAnimationCommand}" Header="Cut"><MenuItem.Icon><Image Source="{tomb:Icon Actions/cut}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding CopyAnimationCommand}" Header="Copy"><MenuItem.Icon><Image Source="{tomb:Icon General/copy}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding PasteAnimationCommand}" Header="Paste"><MenuItem.Icon><Image Source="{tomb:Icon General/paste}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding CutAnimationCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.Cut}"><MenuItem.Icon><Image Source="{tomb:Icon Actions/cut}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding CopyAnimationCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.Copy}"><MenuItem.Icon><Image Source="{tomb:Icon General/copy}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding PasteAnimationCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.Paste}"><MenuItem.Icon><Image Source="{tomb:Icon General/paste}" /></MenuItem.Icon></MenuItem>
                 <Separator />
-                <MenuItem Command="{Binding ImportAnimationCommand}" Header="Import..."><MenuItem.Icon><Image Source="{tomb:Icon General/Import}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding ExportAnimationCommand}" Header="Export..."><MenuItem.Icon><Image Source="{tomb:Icon General/Export}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Header="Batch">
-                    <MenuItem Command="{Binding BatchImportCommand}" Header="Import..." />
-                    <MenuItem Command="{Binding BatchExportSelectedCommand}" Header="Export selected..." />
-                    <MenuItem Command="{Binding BatchExportAllCommand}" Header="Export all..." />
+                <MenuItem Command="{Binding ImportAnimationCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.Import}"><MenuItem.Icon><Image Source="{tomb:Icon General/Import}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding ExportAnimationCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.Export}"><MenuItem.Icon><Image Source="{tomb:Icon General/Export}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.Batch}">
+                    <MenuItem Command="{Binding BatchImportCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.Import}" />
+                    <MenuItem Command="{Binding BatchExportSelectedCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.ExportSelected}" />
+                    <MenuItem Command="{Binding BatchExportAllCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.ExportAll}" />
                 </MenuItem>
                 <Separator />
-                <MenuItem Command="{Binding ResampleAnimationCommand}" Header="Resample animation"><MenuItem.Icon><Image Source="{tomb:Icon Actions/interpolate}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding ResampleAnimationToFramerateCommand}" Header="Resample animation to framerate" />
-                <MenuItem Command="{Binding MirrorCommand}" Header="Mirror animation"><MenuItem.Icon><Image Source="{tomb:Icon General/Mirror}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding ReverseCommand}" Header="Reverse animation" />
+                <MenuItem Command="{Binding ResampleAnimationCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.ResampleAnimation}"><MenuItem.Icon><Image Source="{tomb:Icon Actions/interpolate}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding ResampleAnimationToFramerateCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.ResampleAnimationToFramerate}" />
+                <MenuItem Command="{Binding MirrorCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.MirrorAnimation}"><MenuItem.Icon><Image Source="{tomb:Icon General/Mirror}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding ReverseCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.ReverseAnimation}" />
                 <Separator />
-                <MenuItem Header="Fix">
-                    <MenuItem Command="{Binding FixCurrentAnimationCommand}" Header="Current animation..." />
-                    <MenuItem Command="{Binding FixSelectedAnimationsCommand}" Header="Selected animations..." />
-                    <MenuItem Command="{Binding FixAllAnimationsCommand}" Header="All animations..." />
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.Fix}">
+                    <MenuItem Command="{Binding FixCurrentAnimationCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.CurrentAnimation}" />
+                    <MenuItem Command="{Binding FixSelectedAnimationsCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.SelectedAnimations}" />
+                    <MenuItem Command="{Binding FixAllAnimationsCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.AllAnimations}" />
                 </MenuItem>
-                <MenuItem Command="{Binding FindReplaceAnimCommandsCommand}" Header="Find &amp; replace animcommands..."><MenuItem.Icon><Image Source="{tomb:Icon General/Find-and-replace}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding FindReplaceAnimCommandsCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.FindReplaceAnimcommands}"><MenuItem.Icon><Image Source="{tomb:Icon General/Find-and-replace}" /></MenuItem.Icon></MenuItem>
             </MenuItem>
-            <MenuItem Header="Frames">
-                <MenuItem Command="{Binding AddFrameCommand}" Header="Insert frame after current one"><MenuItem.Icon><Image Source="{tomb:Icon General/plus_math}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding InsertFramesAfterCurrentCommand}" Header="Insert (n) frames after current one" />
-                <MenuItem Command="{Binding DeleteFrameCommand}" Header="Delete frames" InputGestureText="Del"><MenuItem.Icon><Image Source="{tomb:Icon General/trash}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding DeleteEveryNthFrameCommand}" Header="Delete every (n)th frame" />
+            <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.Frames}">
+                <MenuItem Command="{Binding AddFrameCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.InsertFrameAfterCurrentOne}"><MenuItem.Icon><Image Source="{tomb:Icon General/plus_math}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding InsertFramesAfterCurrentCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.InsertNFramesAfterCurrent}" />
+                <MenuItem Command="{Binding DeleteFrameCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.DeleteFrames}" InputGestureText="Del"><MenuItem.Icon><Image Source="{tomb:Icon General/trash}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding DeleteEveryNthFrameCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.DeleteEveryNThFrame}" />
                 <Separator />
-                <MenuItem Command="{Binding CutFrameCommand}" Header="Cut" InputGestureText="Ctrl+X"><MenuItem.Icon><Image Source="{tomb:Icon Actions/cut}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding CopyFrameCommand}" Header="Copy" InputGestureText="Ctrl+C"><MenuItem.Icon><Image Source="{tomb:Icon General/copy}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding PasteFrameCommand}" Header="Paste" InputGestureText="Ctrl+V"><MenuItem.Icon><Image Source="{tomb:Icon General/paste}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding CutFrameCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.Cut}" InputGestureText="Ctrl+X"><MenuItem.Icon><Image Source="{tomb:Icon Actions/cut}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding CopyFrameCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.Copy}" InputGestureText="Ctrl+C"><MenuItem.Icon><Image Source="{tomb:Icon General/copy}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding PasteFrameCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.Paste}" InputGestureText="Ctrl+V"><MenuItem.Icon><Image Source="{tomb:Icon General/paste}" /></MenuItem.Icon></MenuItem>
                 <Separator />
-                <MenuItem Command="{Binding InterpolateCommand}" Header="Interpolate frames" InputGestureText="Ctrl+I"><MenuItem.Icon><Image Source="{tomb:Icon Actions/interpolate}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding InterpolateCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.InterpolateFrames}" InputGestureText="Ctrl+I"><MenuItem.Icon><Image Source="{tomb:Icon Actions/interpolate}" /></MenuItem.Icon></MenuItem>
                 <Separator />
-                <MenuItem Command="{Binding CalculateCurrentFrameBoundingBoxCommand}" Header="Calculate bounding box"><MenuItem.Icon><Image Source="{tomb:Icon General/box}" /></MenuItem.Icon></MenuItem>
-                <MenuItem Command="{Binding DeleteCurrentFrameBoundingBoxCommand}" Header="Delete bounding box" />
+                <MenuItem Command="{Binding CalculateCurrentFrameBoundingBoxCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.CalculateBoundingBox}"><MenuItem.Icon><Image Source="{tomb:Icon General/box}" /></MenuItem.Icon></MenuItem>
+                <MenuItem Command="{Binding DeleteCurrentFrameBoundingBoxCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.DeleteBoundingBox}" />
             </MenuItem>
-            <MenuItem Header="Rendering">
-                <MenuItem Header="Draw gizmo" IsCheckable="True" IsChecked="{Binding ShowGizmo, Mode=TwoWay}" />
-                <MenuItem Header="Draw grid" IsCheckable="True" IsChecked="{Binding ShowGrid, Mode=TwoWay}" />
-                <MenuItem Header="Draw collision box" IsCheckable="True" IsChecked="{Binding ShowCollisionBox, Mode=TwoWay}" />
-                <MenuItem Header="Draw skinned mesh" IsCheckable="True" IsChecked="{Binding ShowSkin, Mode=TwoWay}" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}" />
+            <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.Rendering}">
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.DrawGizmo}" IsCheckable="True" IsChecked="{Binding ShowGizmo, Mode=TwoWay}" />
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.DrawGrid}" IsCheckable="True" IsChecked="{Binding ShowGrid, Mode=TwoWay}" />
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.DrawCollisionBox}" IsCheckable="True" IsChecked="{Binding ShowCollisionBox, Mode=TwoWay}" />
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.DrawSkinnedMesh}" IsCheckable="True" IsChecked="{Binding ShowSkin, Mode=TwoWay}" Visibility="{Binding IsTombEngine, Converter={StaticResource BoolToVis}}" />
                 <Separator />
-                <MenuItem Header="Smooth animation" IsCheckable="True" IsChecked="{Binding SmoothAnimation, Mode=TwoWay}" />
-                <MenuItem Header="Scroll grid" IsCheckable="True" IsChecked="{Binding ScrollGrid, Mode=TwoWay}" />
-                <MenuItem Header="Restore grid height" IsCheckable="True" IsChecked="{Binding RestoreGridHeight, Mode=TwoWay}" />
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.SmoothAnimation}" IsCheckable="True" IsChecked="{Binding SmoothAnimation, Mode=TwoWay}" />
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.ScrollGrid}" IsCheckable="True" IsChecked="{Binding ScrollGrid, Mode=TwoWay}" />
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.RestoreGridHeight}" IsCheckable="True" IsChecked="{Binding RestoreGridHeight, Mode=TwoWay}" />
             </MenuItem>
-            <MenuItem Header="View" SubmenuOpened="OnViewMenuOpened">
-                <MenuItem Header="Animation List" IsCheckable="True" Tag="animationList" Click="OnTogglePanel" />
-                <MenuItem Header="Current Animation" IsCheckable="True" Tag="currentAnimation" Click="OnTogglePanel" />
-                <MenuItem x:Name="blendingMenuItem" Header="Animation Blending" IsCheckable="True" Tag="animationBlending" Click="OnTogglePanel" />
-                <MenuItem Header="Timeline" IsCheckable="True" Tag="timeline" Click="OnTogglePanel" />
-                <MenuItem Header="Skeleton" IsCheckable="True" Tag="skeleton" Click="OnTogglePanel" />
-                <MenuItem Header="Transform" IsCheckable="True" Tag="transform" Click="OnTogglePanel" />
-                <MenuItem x:Name="rootMotionMenuItem" Header="Root Motion" IsCheckable="True" Tag="rootMotion" Click="OnTogglePanel" />
-                <MenuItem Header="Bounding Box" IsCheckable="True" Tag="boundingBox" Click="OnTogglePanel" />
+            <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.View}" SubmenuOpened="OnViewMenuOpened">
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.AnimationList}" IsCheckable="True" Tag="animationList" Click="OnTogglePanel" />
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.CurrentAnimation2}" IsCheckable="True" Tag="currentAnimation" Click="OnTogglePanel" />
+                <MenuItem x:Name="blendingMenuItem" Header="{tombLib:Localize ~WadTool.AnimationEditor.AnimationBlending}" IsCheckable="True" Tag="animationBlending" Click="OnTogglePanel" />
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.Timeline}" IsCheckable="True" Tag="timeline" Click="OnTogglePanel" />
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.Skeleton}" IsCheckable="True" Tag="skeleton" Click="OnTogglePanel" />
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.Transform}" IsCheckable="True" Tag="transform" Click="OnTogglePanel" />
+                <MenuItem x:Name="rootMotionMenuItem" Header="{tombLib:Localize ~WadTool.AnimationEditor.RootMotion}" IsCheckable="True" Tag="rootMotion" Click="OnTogglePanel" />
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.BoundingBox}" IsCheckable="True" Tag="boundingBox" Click="OnTogglePanel" />
                 <Separator />
-                <MenuItem Header="Reset layout" Click="OnResetLayout" />
+                <MenuItem Header="{tombLib:Localize ~WadTool.AnimationEditor.ResetLayout}" Click="OnResetLayout" />
             </MenuItem>
         </Menu>
 
@@ -142,27 +143,27 @@
                         DockPanel.Dock="Left"
                         Orientation="Horizontal"
                         Spacing="2">
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding SaveCommand}" ToolTip="Save all changes"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Save}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding UndoCommand}" ToolTip="Undo"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/undo}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding RedoCommand}" ToolTip="Redo"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/redo}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding ResetCameraCommand}" ToolTip="Reset camera"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/target}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding SaveCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.SaveAllChanges}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Save}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding UndoCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.Undo}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/undo}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding RedoCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.Redo}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/redo}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding ResetCameraCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.ResetCamera}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/target}" /></Button>
                         <Border Style="{StaticResource TbSep}" />
-                        <TextBlock Style="{StaticResource TbLbl}" Text="Anims:" />
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding AddAnimationCommand}" ToolTip="Add animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding ImportAnimationCommand}" ToolTip="Import..."><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Import}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteAnimationCommand}" ToolTip="Delete animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding CutAnimationCommand}" ToolTip="Cut animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/cut}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding CopyAnimationCommand}" ToolTip="Copy animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/copy}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding PasteAnimationCommand}" ToolTip="Paste animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding ReplaceAnimationCommand}" ToolTip="Replace animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste-new}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding SplitAnimationCommand}" ToolTip="Split animation"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/Split_WadTool}" /></Button>
+                        <TextBlock Style="{StaticResource TbLbl}" Text="{tombLib:Localize ~WadTool.AnimationEditor.Anims}" />
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding AddAnimationCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.AddAnimation}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding ImportAnimationCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.Import}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/Import}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteAnimationCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.DeleteAnimation}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding CutAnimationCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.CutAnimation}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/cut}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding CopyAnimationCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.CopyAnimation}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/copy}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding PasteAnimationCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.PasteAnimation}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding ReplaceAnimationCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.ReplaceAnimation}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste-new}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding SplitAnimationCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.SplitAnimation}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/Split_WadTool}" /></Button>
                         <Border Style="{StaticResource TbSep}" />
-                        <TextBlock Style="{StaticResource TbLbl}" Text="Frames:" />
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding AddFrameCommand}" ToolTip="Add frame"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteFrameCommand}" ToolTip="Delete frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding CutFrameCommand}" ToolTip="Cut frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/cut}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding CopyFrameCommand}" ToolTip="Copy frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/copy}" /></Button>
-                        <Button Style="{StaticResource TbBtn}" Command="{Binding PasteFrameCommand}" ToolTip="Paste frames"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste}" /></Button>
+                        <TextBlock Style="{StaticResource TbLbl}" Text="{tombLib:Localize ~WadTool.AnimationEditor.Frames2}" />
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding AddFrameCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.AddFrame}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteFrameCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.DeleteFrames}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding CutFrameCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.CutFrames}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/cut}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding CopyFrameCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.CopyFrames}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/copy}" /></Button>
+                        <Button Style="{StaticResource TbBtn}" Command="{Binding PasteFrameCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.PasteFrames}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/paste}" /></Button>
                         </controls:SpacedStack>
                     
                 </DockPanel>

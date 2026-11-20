@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons">
 
     <UserControl.Resources>
@@ -22,7 +23,7 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Rot:" />
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="{tombLib:Localize ~WadTool.AnimationEditor.Rot}" />
                             <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Y" />
                             <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" Minimum="0" Maximum="360" LoopValues="True" Value="{Binding RotationY, Mode=TwoWay}" />
                             <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource Val}" Text="P" />
@@ -40,7 +41,7 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Pos:" />
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="{tombLib:Localize ~WadTool.AnimationEditor.Pos}" />
                             <TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Val}" Text="X" />
                             <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" Value="{Binding TranslationX, Mode=TwoWay}" />
                             <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Y" />
@@ -49,7 +50,7 @@
                             <controls:NumericUpDown Grid.Column="6" Style="{StaticResource Axis}" Value="{Binding TranslationZ, Mode=TwoWay}" />
                         </controls:SpacedGrid>
                     <DockPanel Margin="0,6,0,0">
-                            <TextBlock Width="38" VerticalAlignment="Center" DockPanel.Dock="Left" Style="{StaticResource Val}" Text="Mode:" />
+                            <TextBlock Width="38" VerticalAlignment="Center" DockPanel.Dock="Left" Style="{StaticResource Val}" Text="{tombLib:Localize ~WadTool.AnimationEditor.Mode}" />
                             <Image
                                 Width="75"
                                 Height="21"
@@ -83,13 +84,13 @@
                                 </Image.Style>
                             </Image>
                             <ComboBox SelectedIndex="{Binding TransformModeIndex, Mode=TwoWay}">
-                                <ComboBoxItem Content="None" />
-                                <ComboBoxItem Content="Smooth" />
-                                <ComboBoxItem Content="Smooth reverse" />
-                                <ComboBoxItem Content="Linear" />
-                                <ComboBoxItem Content="Linear reverse" />
-                                <ComboBoxItem Content="Symmetric smooth" />
-                                <ComboBoxItem Content="Symmetric linear" />
+                                <ComboBoxItem Content="{tombLib:Localize ~WadTool.AnimationEditor.None}" />
+                                <ComboBoxItem Content="{tombLib:Localize ~WadTool.AnimationEditor.Smooth}" />
+                                <ComboBoxItem Content="{tombLib:Localize ~WadTool.AnimationEditor.SmoothReverse}" />
+                                <ComboBoxItem Content="{tombLib:Localize ~WadTool.AnimationEditor.Linear}" />
+                                <ComboBoxItem Content="{tombLib:Localize ~WadTool.AnimationEditor.LinearReverse}" />
+                                <ComboBoxItem Content="{tombLib:Localize ~WadTool.AnimationEditor.SymmetricSmooth}" />
+                                <ComboBoxItem Content="{tombLib:Localize ~WadTool.AnimationEditor.SymmetricLinear}" />
                             </ComboBox>
                         </DockPanel>
                     </StackPanel>

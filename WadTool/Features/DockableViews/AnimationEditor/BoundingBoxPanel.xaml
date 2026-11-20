@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons">
 
     <UserControl.Resources>
@@ -18,7 +19,7 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Min:" />
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="{tombLib:Localize ~WadTool.AnimationEditor.Min}" />
                             <controls:NumericUpDown Grid.Column="1" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMinX, Mode=TwoWay}" />
                             <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMinY, Mode=TwoWay}" />
                             <controls:NumericUpDown Grid.Column="3" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMinZ, Mode=TwoWay}" />
@@ -30,14 +31,14 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Max:" />
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="{tombLib:Localize ~WadTool.AnimationEditor.Max}" />
                             <controls:NumericUpDown Grid.Column="1" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMaxX, Mode=TwoWay}" />
                             <controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMaxY, Mode=TwoWay}" />
                             <controls:NumericUpDown Grid.Column="3" Style="{StaticResource Axis}" DecimalPlaces="0" LostKeyboardFocus="OnParameterLostFocus" Value="{Binding BBoxMaxZ, Mode=TwoWay}" />
                         </controls:SpacedGrid>
 
-                        <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="6"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Button Command="{Binding CalcBoundingBoxCommand}" Content="Calculate" />
-                            <Button Grid.Column="1" Command="{Binding ClearBoundingBoxCommand}" Content="Delete" />
+                        <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="6"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Button Command="{Binding CalcBoundingBoxCommand}" Content="{tombLib:Localize ~WadTool.AnimationEditor.Calculate}" />
+                            <Button Grid.Column="1" Command="{Binding ClearBoundingBoxCommand}" Content="{tombLib:Localize ~WadTool.AnimationEditor.Delete}" />
                         </controls:SpacedGrid>
 
                         <controls:SpacedGrid Margin="0,6,0,0" ColumnSpacing="4">
@@ -50,7 +51,7 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Scale" /><TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Val}" Text="X" /><controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" DecimalPlaces="0" Minimum="0" Maximum="512" Value="{Binding GrowX, Mode=TwoWay}" />
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="{tombLib:Localize ~WadTool.AnimationEditor.Scale}" /><TextBlock Grid.Column="1" VerticalAlignment="Center" Style="{StaticResource Val}" Text="X" /><controls:NumericUpDown Grid.Column="2" Style="{StaticResource Axis}" DecimalPlaces="0" Minimum="0" Maximum="512" Value="{Binding GrowX, Mode=TwoWay}" />
                             <TextBlock Grid.Column="3" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Y" /><controls:NumericUpDown Grid.Column="4" Style="{StaticResource Axis}" DecimalPlaces="0" Minimum="0" Maximum="512" Value="{Binding GrowY, Mode=TwoWay}" />
                             <TextBlock Grid.Column="5" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Z" /><controls:NumericUpDown Grid.Column="6" Style="{StaticResource Axis}" DecimalPlaces="0" Minimum="0" Maximum="512" Value="{Binding GrowZ, Mode=TwoWay}" />
                         </controls:SpacedGrid>
@@ -59,8 +60,8 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Button Command="{Binding GrowBoundingBoxCommand}" Content="Grow" />
-                            <Button Grid.Column="1" Command="{Binding ShrinkBoundingBoxCommand}" Content="Shrink" />
+                            <Button Command="{Binding GrowBoundingBoxCommand}" Content="{tombLib:Localize ~WadTool.AnimationEditor.Grow}" />
+                            <Button Grid.Column="1" Command="{Binding ShrinkBoundingBoxCommand}" Content="{tombLib:Localize ~WadTool.AnimationEditor.Shrink}" />
                         </controls:SpacedGrid>
 
                     </StackPanel>

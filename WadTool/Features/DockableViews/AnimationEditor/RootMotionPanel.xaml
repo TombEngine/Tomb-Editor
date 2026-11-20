@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
     xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons">
 
     <UserControl.Resources>
@@ -11,11 +12,11 @@
 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <Border Padding="2">
                     <controls:SpacedStack Orientation="Horizontal" Spacing="6">
-                        <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="Pos:" />
+                        <TextBlock VerticalAlignment="Center" Style="{StaticResource Val}" Text="{tombLib:Localize ~WadTool.AnimationEditor.Pos}" />
                         <CheckBox Content="X" IsChecked="{Binding RootPosX, Mode=TwoWay}" />
                         <CheckBox Content="Y" IsChecked="{Binding RootPosY, Mode=TwoWay}" />
                         <CheckBox Content="Z" IsChecked="{Binding RootPosZ, Mode=TwoWay}" />
-                        <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Style="{StaticResource Val}" Text="Rot:" />
+                        <TextBlock Margin="8,0,0,0" VerticalAlignment="Center" Style="{StaticResource Val}" Text="{tombLib:Localize ~WadTool.AnimationEditor.Rot}" />
                         <CheckBox Content="X" IsChecked="{Binding RootRotX, Mode=TwoWay}" />
                         <CheckBox Content="Y" IsChecked="{Binding RootRotY, Mode=TwoWay}" />
                         <CheckBox Content="Z" IsChecked="{Binding RootRotZ, Mode=TwoWay}" />
