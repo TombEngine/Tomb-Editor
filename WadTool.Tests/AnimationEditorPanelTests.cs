@@ -28,7 +28,8 @@ public class AnimationEditorPanelTests
                 new BoundingBoxPanel(),
                 new AnimationListPanel(),
                 new CurrentAnimationPanel(),
-                new AnimationBlendingPanel()
+                new AnimationBlendingPanel(),
+                new TimelinePanel()
             ];
 
             foreach (var panel in panels)

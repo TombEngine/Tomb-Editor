@@ -27,7 +27,7 @@ Analisi
 - [x] Confrontare con il layout legacy (`FormAnimationEditor.cs`, docking DarkUI) per mantenere nomi, posizione iniziale e dimensioni dei pannelli (nomi e disposizione uguali; larghezze colonne allineate a 280/280 come il legacy; altezza timeline 84 contro 38 legacy per i controlli transport, voluta).
 
 Implementazione
-- [ ] Creare le view dockable in `WadTool/Features/DockableViews/AnimationEditor/*` (una per pannello, con proprio view model o sotto-VM). Fatto per Animation List, Current Animation, Animation Blending, Skeleton, Transform, Root Motion, Bounding Box (UserControl + PanelStyles.xaml condiviso, test di caricamento XAML con tema DarkUI); resta la Timeline, legata a viewport e handler della finestra.
+- [ ] Creare le view dockable in `WadTool/Features/DockableViews/AnimationEditor/*` (una per pannello, con proprio view model o sotto-VM). Fatto per Animation List, Current Animation, Animation Blending, Skeleton, Transform, Root Motion, Bounding Box (UserControl + PanelStyles.xaml condiviso, test di caricamento XAML con tema DarkUI); Timeline inclusa (TimelinePanel); la viewport resta nel documento centrale. Non spezzato il view model (stato condiviso, rinviato).
 - [ ] Spezzare `AnimationEditorWindowViewModel` (partial Menu, AnimationList) in VM per pannello, comunicando via servizi/messenger, senza stato condiviso nascosto.
 - [x] Sostituire il layout a griglia con `DockingManager` e tema scuro condiviso.
 - [x] Titoli dei pannelli localizzati (titoli inglesi come il resto della finestra, localizzazione globale in Fase 4) (JSON, attenzione ai gotcha delle sezioni) e icone SVG condivise.

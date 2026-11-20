@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using TombLib.Wad;
 using TombLib.WPF;
 using TombLib.WPF.CustomControls;
 using WadTool.Controls;
@@ -30,14 +29,11 @@ public partial class AnimationEditorWindow : Window
         this.HookModalAutoClose();
 
         _panel = new PanelRenderingAnimationEditor();
-        _timeline = timeline;
+        _timeline = timelinePanel.Track;
         _bezier = blendingPanel.Curve;
         _dock = new DockLayoutHelper(dockManager);
         _dock.CaptureDefault();
 
-        _timeline.ValueChanged += OnTimelineValueChanged;
-        _timeline.SelectionChanged += OnTimelineSelectionChanged;
-        _timeline.AnimCommandDoubleClick += OnTimelineAnimCommandDoubleClick;
         _bezier.ValueChanged += OnBezierValueChanged;
         _panel.PointerEntered += OnPanelPointerEntered;
         _panel.PointerDragged += OnPanelPointerDragged;
@@ -155,12 +151,6 @@ public partial class AnimationEditorWindow : Window
         return true;
     }
 
-    private void OnTimelineValueChanged(object? sender, EventArgs e) => _vm?.OnTimelineValueChanged();
-
-    private void OnTimelineSelectionChanged(object? sender, EventArgs e) => _vm?.OnTimelineSelectionChanged();
-
-    private void OnTimelineAnimCommandDoubleClick(object? sender, WadAnimCommand command) => _vm?.EditAnimCommands(command);
-
     private void OnBezierValueChanged(object? sender, EventArgs e) => _vm?.OnBlendCurveEdited();
 
     private void OnPanelPointerEntered(object? sender, EventArgs e) => _vm?.ResetUndoCoalescing();
@@ -183,9 +173,6 @@ public partial class AnimationEditorWindow : Window
     {
         _panel.Dispose();
 
-        _timeline.ValueChanged -= OnTimelineValueChanged;
-        _timeline.SelectionChanged -= OnTimelineSelectionChanged;
-        _timeline.AnimCommandDoubleClick -= OnTimelineAnimCommandDoubleClick;
         _bezier.ValueChanged -= OnBezierValueChanged;
         _panel.PointerEntered -= OnPanelPointerEntered;
         _panel.PointerDragged -= OnPanelPointerDragged;
