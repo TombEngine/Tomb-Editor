@@ -126,7 +126,6 @@
 			<TextBlock
 				Grid.Column="0"
 				VerticalAlignment="Center"
-				Foreground="{DynamicResource Brush_Text_Low}"
 				Text="{Binding StatusText}"
 				TextTrimming="CharacterEllipsis" />
 			<Button

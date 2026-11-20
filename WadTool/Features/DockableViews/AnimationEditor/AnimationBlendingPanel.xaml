@@ -12,7 +12,7 @@
 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                 <Border Padding="2">
                     <StackPanel>
-                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Margin="0,0,6,0" VerticalAlignment="Center" Foreground="{DynamicResource Brush_Text_Low}" Text="Next anim blend frame count:" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="255" Value="{Binding BlendFrameCount, Mode=TwoWay}" /></DockPanel>
+                        <DockPanel Margin="0,2"><TextBlock DockPanel.Dock="Left" Margin="0,0,6,0" VerticalAlignment="Center" Text="Next anim blend frame count:" /><controls:NumericUpDown Style="{StaticResource Nud}" Minimum="0" Maximum="255" Value="{Binding BlendFrameCount, Mode=TwoWay}" /></DockPanel>
                         <Border Height="96" Margin="0,4,0,0" BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
                             <wadControls:BezierCurveEditor x:Name="bezierEditor" />
                         </Border>

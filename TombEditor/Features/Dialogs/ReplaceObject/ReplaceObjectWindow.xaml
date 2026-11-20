@@ -31,7 +31,7 @@
 	<DockPanel>
 		<StatusBar DockPanel.Dock="Bottom">
 			<StatusBarItem>
-				<TextBlock Foreground="{DynamicResource Brush_Text_Low}" Text="{Binding ResultText}" />
+				<TextBlock Text="{Binding ResultText}" />
 			</StatusBarItem>
 		</StatusBar>
 
