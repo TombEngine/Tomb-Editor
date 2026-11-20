@@ -99,7 +99,7 @@ Per ogni finestra: D1 aspetto, D2 stato iniziale, D3 mouse, D4 tastiera, D5 rego
 - [x] Audit dipendenze (nessun System.Windows.Forms nel grafo WadTool): nessun using nei sorgenti WadTool; i 5 ProjectReference (DarkUI.WPF, TombLib.WPF, TombLib.Icons, TombLib.Rendering, TombLib) non abilitano UseWindowsForms.
 - [ ] Flusso completo su copie: apri wad2, modifica animazione/mesh/static, salva, riapri, confronta con equivalente legacy.
 - [x] Controllo log e binding errors a runtime (nessun errore nei log dopo apertura di Animation e Skeleton Editor).
-- [ ] Controllo ASCII, CRLF, newline finale sui file toccati.
+- [x] Controllo ASCII, CRLF, newline finale sui file toccati (tutti conformi; eccezioni preesistenti: BOM in Configuration.cs e PanelRenderingAnimationEditor.cs, Configuration.cs con fine riga LF come upstream).
 - [ ] Aggiornare questa checklist e `WPF-PARITY-FIXES.md`; elencare esplicitamente i test non eseguiti (es. DPI 125/150/200 e multi-monitor, che richiedono hardware).
 
 ## Ordine consigliato
