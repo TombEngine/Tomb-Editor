@@ -4,6 +4,7 @@ using AvalonDock;
 using AvalonDock.Layout;
 using AvalonDock.Layout.Serialization;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -13,6 +14,8 @@ namespace DarkUI.WPF.AvalonDock;
 public sealed class DockLayoutHelper
 {
     private readonly DockingManager _dockManager;
+    private readonly Dictionary<string, (double Width, double Height)> _minimumSizes = new();
+    private bool _minimumSizeHooked;
     private string _defaultLayout = string.Empty;
 
     public DockLayoutHelper(DockingManager dockManager)
@@ -68,22 +71,35 @@ public sealed class DockLayoutHelper
     public void Reset() => Load(_defaultLayout);
 
     /// <summary>
-    /// Keeps the pane hosting a panel at least the given size, also after the user docks it elsewhere (a freshly
-    /// created pane does not inherit the minimum declared in XAML, so the panel could collapse to its title bar).
+    /// Pins the minimum size of the pane hosting a panel, also after the user docks it elsewhere. A freshly created
+    /// pane does not inherit the minimum declared in XAML, and minimums saved in an older layout can be too large for
+    /// the panels to fit a short window (the bottom panel then overflows and cannot be resized).
     /// </summary>
-    public void EnforceMinimumSize(string contentId, double minWidth, double minHeight)
+    public void SetMinimumSize(string contentId, double minWidth, double minHeight)
     {
-        _dockManager.LayoutUpdated += (_, _) =>
+        _minimumSizes[contentId] = (minWidth, minHeight);
+        ApplyMinimumSizes();
+
+        if (_minimumSizeHooked)
+            return;
+
+        _minimumSizeHooked = true;
+        _dockManager.LayoutUpdated += (_, _) => ApplyMinimumSizes();
+    }
+
+    private void ApplyMinimumSizes()
+    {
+        foreach (var (contentId, (minWidth, minHeight)) in _minimumSizes)
         {
             if (Find(contentId)?.Parent is not LayoutAnchorablePane pane)
-                return;
+                continue;
 
-            if (pane.DockMinWidth < minWidth)
+            if (pane.DockMinWidth != minWidth)
                 pane.DockMinWidth = minWidth;
 
-            if (pane.DockMinHeight < minHeight)
+            if (pane.DockMinHeight != minHeight)
                 pane.DockMinHeight = minHeight;
-        };
+        }
     }
     /// <summary>Finds an anchorable by its content id.</summary>
     public LayoutAnchorable? Find(string contentId)

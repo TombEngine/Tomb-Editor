@@ -26,9 +26,22 @@ public partial class AnimationEditorWindow
         if (_dock.Find("timeline") is { } timeline)
             timeline.CanFloat = true;
 
-        _dock.EnforceMinimumSize("timeline", 300.0, 84.0);
+        ApplyMinimumPanelSizes();
 
         ApplyProjectPanels();
+    }
+
+    // Small enough for the side columns plus the timeline to fit a short window.
+    private void ApplyMinimumPanelSizes()
+    {
+        _dock.SetMinimumSize("animationList", 0.0, 100.0);
+        _dock.SetMinimumSize("currentAnimation", 0.0, 190.0);
+        _dock.SetMinimumSize(BlendingPanelId, 0.0, 140.0);
+        _dock.SetMinimumSize("skeleton", 0.0, 90.0);
+        _dock.SetMinimumSize(TransformPanelId, 0.0, 120.0);
+        _dock.SetMinimumSize(RootMotionPanelId, 0.0, 50.0);
+        _dock.SetMinimumSize("boundingBox", 0.0, 190.0);
+        _dock.SetMinimumSize("timeline", 300.0, 84.0);
     }
 
     private void ApplyProjectPanels()

@@ -74,8 +74,14 @@ public static class WindowConfiguration
         if (window.WindowStartupLocation != WindowStartupLocation.CenterOwner || window.Owner is null)
             return;
 
-        window.Left = window.Owner.Left + (window.Owner.ActualWidth - window.Width) / 2.0;
-        window.Top = window.Owner.Top + (window.Owner.ActualHeight - window.Height) / 2.0;
+        // A maximized owner reports its restored Left and Top, so use its real screen position.
+        var owner = window.Owner;
+        var ownerOrigin = owner.WindowState == WindowState.Normal || PresentationSource.FromVisual(owner) is not { } source
+            ? new System.Windows.Point(owner.Left, owner.Top)
+            : source.CompositionTarget.TransformFromDevice.Transform(owner.PointToScreen(new System.Windows.Point(0.0, 0.0)));
+
+        window.Left = ownerOrigin.X + (owner.ActualWidth - window.Width) / 2.0;
+        window.Top = ownerOrigin.Y + (owner.ActualHeight - window.Height) / 2.0;
     }
 
     private static void ClampToVirtualScreen(Window window)
