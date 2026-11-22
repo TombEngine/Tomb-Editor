@@ -21,6 +21,11 @@ public partial class AnimationEditorWindow
 
         _dock.Load(_vm.Configuration.AnimationEditor_DockLayout);
         _vm.PropertyChanged += OnViewModelPropertyChanged;
+
+        // Layouts saved while the timeline was not floatable still carry that flag.
+        if (_dock.Find("timeline") is { } timeline)
+            timeline.CanFloat = true;
+
         ApplyProjectPanels();
     }
 

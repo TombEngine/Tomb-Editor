@@ -57,18 +57,18 @@
         <!--  Transport button (24px icon, like the legacy transport strip)  -->
         <Style
             x:Key="TransportBtn"
-            BasedOn="{StaticResource {x:Type Button}}"
+            BasedOn="{StaticResource ButtonFlatIconOnly}"
             TargetType="Button">
-            <Setter Property="Width" Value="28" />
+            <Setter Property="Width" Value="30" />
             <Setter Property="Height" Value="33" />
             <Setter Property="Padding" Value="0" />
         </Style>
 
         <Style
             x:Key="TransportToggle"
-            BasedOn="{StaticResource {x:Type ToggleButton}}"
+            BasedOn="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}"
             TargetType="ToggleButton">
-            <Setter Property="Width" Value="28" />
+            <Setter Property="Width" Value="30" />
             <Setter Property="Height" Value="33" />
             <Setter Property="Padding" Value="0" />
         </Style>

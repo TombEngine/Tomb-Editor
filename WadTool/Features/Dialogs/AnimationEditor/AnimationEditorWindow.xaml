@@ -213,7 +213,7 @@
 </avalonDock:LayoutDocumentPane>
 </avalonDock:LayoutDocumentPaneGroup>
 <avalonDock:LayoutAnchorablePane DockHeight="84*" DockMinHeight="84">
-<avalonDock:LayoutAnchorable ContentId="timeline" CanClose="False" IconSource="{tomb:Icon Actions/Transport/Play24}" Title="Timeline" CanFloat="False">
+<avalonDock:LayoutAnchorable ContentId="timeline" CanClose="False" IconSource="{tomb:Icon Actions/Transport/Play24}" Title="Timeline">
         <dock:TimelinePanel x:Name="timelinePanel" />
 </avalonDock:LayoutAnchorable>
 </avalonDock:LayoutAnchorablePane>
