@@ -190,6 +190,11 @@ public class BezierCurveEditor : FrameworkElement
         position.X = Math.Max(HandleRadius / 2.0, Math.Min(position.X, ActualWidth - HandleRadius / 2.0 - 1.0));
         position.Y = Math.Max(HandleRadius / 2.0, Math.Min(position.Y, ActualHeight - HandleRadius / 2.0 - 1.0));
 
+        // Keep the other handle where it is displayed (a linear curve shows both handles away from the corners).
+        Point[] shownPoints = GetScreenPoints();
+        _bezierCurve.StartHandle = TransformToBezier(shownPoints[1]);
+        _bezierCurve.EndHandle = TransformToBezier(shownPoints[2]);
+
         if (_selectedPoint == 1)
             _bezierCurve.StartHandle = TransformToBezier(position);
         else

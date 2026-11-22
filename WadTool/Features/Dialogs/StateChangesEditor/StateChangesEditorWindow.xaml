@@ -82,6 +82,7 @@
 						<Button
 							Width="26"
 							Height="22"
+							Padding="0"
 							Command="{Binding AddRowCommand}"
 							ToolTip="{tombLib:Localize AddTooltip}">
 							<Image Width="16" Height="16" Source="{tomb:Icon General/plus_math}" />
@@ -89,6 +90,7 @@
 						<Button
 							Width="26"
 							Height="22"
+							Padding="0"
 							Command="{Binding DeleteRowsCommand}"
 							CommandParameter="{Binding SelectedItems, ElementName=dataGrid}"
 							ToolTip="{tombLib:Localize DeleteTooltip}">
@@ -97,6 +99,7 @@
 						<Button
 							Width="26"
 							Height="22"
+							Padding="0"
 							Command="{Binding MoveRowsUpCommand}"
 							CommandParameter="{Binding SelectedItems, ElementName=dataGrid}"
 							ToolTip="{tombLib:Localize MoveUpTooltip}">
@@ -105,6 +108,7 @@
 						<Button
 							Width="26"
 							Height="22"
+							Padding="0"
 							Command="{Binding MoveRowsDownCommand}"
 							CommandParameter="{Binding SelectedItems, ElementName=dataGrid}"
 							ToolTip="{tombLib:Localize MoveDownTooltip}">
@@ -115,6 +119,7 @@
 					<Button
 						Width="26"
 						Height="22"
+						Padding="0"
 						Command="{Binding PlayStateChangeCommand}"
 						DockPanel.Dock="Bottom"
 						ToolTip="{tombLib:Localize PlayStateChangeTooltip}">
@@ -195,19 +200,18 @@
 							IsReadOnly="True">
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate>
-									<Button
-										Margin="2,2,3,2"
-										Padding="0"
-										HorizontalContentAlignment="Stretch"
-										VerticalContentAlignment="Stretch"
-										Command="{Binding DataContext.EditBlendCurveCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-										CommandParameter="{Binding}">
+									<Grid>
+										<Button
+											Margin="0"
+											Padding="0"
+											Command="{Binding DataContext.EditBlendCurveCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+											CommandParameter="{Binding}"
+											Style="{StaticResource ButtonFlatIconOnly}" />
 										<local:BlendCurvePreview
-											MinHeight="20"
-											MinWidth="40"
 											Curve="{Binding BlendCurve}"
+											IsHitTestVisible="False"
 											Stroke="{DynamicResource Brush_Text}" />
-									</Button>
+									</Grid>
 								</DataTemplate>
 							</DataGridTemplateColumn.CellTemplate>
 						</DataGridTemplateColumn>

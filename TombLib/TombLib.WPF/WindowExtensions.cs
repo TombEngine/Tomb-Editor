@@ -24,7 +24,15 @@ public static class WindowExtensions
 
     /// <summary>Assigns native ownership to a WPF window.</summary>
     public static WindowInteropHelper SetOwner(this Window window, IWindowOwner owner)
-        => new(window) { Owner = owner.Handle };
+    {
+        var helper = new WindowInteropHelper(window) { Owner = owner.Handle };
+
+        // A native owner alone is ignored by WindowStartupLocation.CenterOwner, so link the WPF owner when there is one.
+        if (WPFUtils.GetOwnerWindow(owner.Handle) is { IsVisible: true } ownerWindow && !ReferenceEquals(ownerWindow, window) && new WindowInteropHelper(ownerWindow).Handle == owner.Handle)
+            window.Owner = ownerWindow;
+
+        return helper;
+    }
 
     /// <summary>Gets the native owner contract for a WPF window, creating its handle if necessary.</summary>
     public static IWindowOwner GetWin32Window(this Window window)

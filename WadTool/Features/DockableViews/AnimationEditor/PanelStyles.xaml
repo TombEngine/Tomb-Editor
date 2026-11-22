@@ -37,6 +37,16 @@
             <Setter Property="Padding" Value="0" />
         </Style>
 
+        <!--  Bordered icon button (standard button chrome, like the legacy list buttons)  -->
+        <Style
+            x:Key="BorderedIconBtn"
+            BasedOn="{StaticResource {x:Type Button}}"
+            TargetType="Button">
+            <Setter Property="Width" Value="26" />
+            <Setter Property="Height" Value="26" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+
         <Style x:Key="TbImg" TargetType="Image">
             <Setter Property="Width" Value="16" />
             <Setter Property="Height" Value="16" />

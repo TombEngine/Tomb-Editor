@@ -65,7 +65,6 @@ public partial class CurrentAnimationPanel : UserControl
 
     private void StateSearchButton_Click(object sender, RoutedEventArgs e)
     {
-        stateCombo.Focus();
-        stateCombo.IsDropDownOpen = true;
+        stateCombo.OpenAndFocusSearch();
     }
 }

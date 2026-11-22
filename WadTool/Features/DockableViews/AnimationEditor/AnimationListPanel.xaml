@@ -17,7 +17,7 @@
                 <DockPanel DockPanel.Dock="Top" Margin="0,0,0,4">
                     <Button
                         DockPanel.Dock="Right"
-                        Style="{StaticResource TbBtn}"
+                        Style="{StaticResource BorderedIconBtn}"
                         Margin="2,0,0,0"
                         Command="{Binding ResetFilterCommand}"
                         ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.ResetFiltering}">
@@ -25,7 +25,7 @@
                     </Button>
                     <Button
                         DockPanel.Dock="Right"
-                        Style="{StaticResource TbBtn}"
+                        Style="{StaticResource BorderedIconBtn}"
                         Margin="2,0,0,0"
                         Command="{Binding ApplyFilterCommand}"
                         ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.FilterListNumericalInputFilter}">
@@ -48,8 +48,8 @@
                     Margin="0,4,0,0"
                     Orientation="Horizontal"
                     Spacing="2">
-                    <Button Style="{StaticResource TbBtn}" Command="{Binding AddAnimationCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.AddNewAnimation}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
-                    <Button Style="{StaticResource TbBtn}" Command="{Binding DeleteSelectedAnimationsCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.DeleteSelectedAnimations}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
+                    <Button Style="{StaticResource BorderedIconBtn}" Command="{Binding AddAnimationCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.AddNewAnimation}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
+                    <Button Style="{StaticResource BorderedIconBtn}" Command="{Binding DeleteSelectedAnimationsCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.DeleteSelectedAnimations}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
                 </controls:SpacedStack>
 
                 <ListBox
