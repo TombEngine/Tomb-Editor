@@ -1,6 +1,7 @@
 #nullable enable
 
 using ContextMenu = System.Windows.Controls.ContextMenu;
+using Image = System.Windows.Controls.Image;
 using MenuItem = System.Windows.Controls.MenuItem;
 using PopUpInfo = TombLib.WPF.PopUpInfo;
 using Separator = System.Windows.Controls.Separator;
@@ -11,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using TombLib.Graphics;
+using TombLib.Icons;
 using TombLib.Input;
 using TombLib.LevelData;
 using TombLib.Services;
@@ -138,31 +140,31 @@ public partial class MainWindow : Window
     private ContextMenu BuildMoveableContextMenu()
     {
         var menu = new ContextMenu();
-        menu.Items.Add(NewContextMenuItem("Edit animations...", (s, e) => EditItemButton_Click(null, null)));
-        menu.Items.Add(NewContextMenuItem("Edit skeleton...", (s, e) => EditSkeletonButton_Click(null, null)));
-        menu.Items.Add(NewContextMenuItem("Edit meshes...", (s, e) => MeshEditorMenu_ClickHandler(s, e)));
-        menu.Items.Add(NewContextMenuItem("Edit properties...", (s, e) => EditSelectedObjectProperties()));
+        menu.Items.Add(NewContextMenuItem("Edit animations...", "Misc/animations", (s, e) => EditItemButton_Click(null, null)));
+        menu.Items.Add(NewContextMenuItem("Edit skeleton...", "Misc/skeleton", (s, e) => EditSkeletonButton_Click(null, null)));
+        menu.Items.Add(NewContextMenuItem("Edit meshes...", "Misc/wireframe", (s, e) => MeshEditorMenu_ClickHandler(s, e)));
+        menu.Items.Add(NewContextMenuItem("Edit properties...", "Misc/properties_16xLG", (s, e) => EditSelectedObjectProperties()));
         menu.Items.Add(new Separator());
-        menu.Items.Add(NewContextMenuItem("Change slot...", (s, e) => ChangeSlotButton_Click(null, null)));
-        menu.Items.Add(NewContextMenuItem("Delete object", (s, e) => DeleteObjectButton_Click(null, null)));
+        menu.Items.Add(NewContextMenuItem("Change slot...", "General/Find-and-replace", (s, e) => ChangeSlotButton_Click(null, null)));
+        menu.Items.Add(NewContextMenuItem("Delete object", "General/trash", (s, e) => DeleteObjectButton_Click(null, null)));
         return menu;
     }
 
     private ContextMenu BuildStaticsContextMenu()
     {
         var menu = new ContextMenu();
-        menu.Items.Add(NewContextMenuItem("Edit object...", (s, e) => EditItemButton_Click(null, null)));
-        menu.Items.Add(NewContextMenuItem("Edit mesh...", (s, e) => MeshEditorMenu_ClickHandler(s, e)));
-        menu.Items.Add(NewContextMenuItem("Edit properties...", (s, e) => EditSelectedObjectProperties()));
+        menu.Items.Add(NewContextMenuItem("Edit object...", "General/edit", (s, e) => EditItemButton_Click(null, null)));
+        menu.Items.Add(NewContextMenuItem("Edit mesh...", "Misc/wireframe", (s, e) => MeshEditorMenu_ClickHandler(s, e)));
+        menu.Items.Add(NewContextMenuItem("Edit properties...", "Misc/properties_16xLG", (s, e) => EditSelectedObjectProperties()));
         menu.Items.Add(new Separator());
-        menu.Items.Add(NewContextMenuItem("Change slot...", (s, e) => ChangeSlotButton_Click(null, null)));
-        menu.Items.Add(NewContextMenuItem("Delete object", (s, e) => DeleteObjectButton_Click(null, null)));
+        menu.Items.Add(NewContextMenuItem("Change slot...", "General/Find-and-replace", (s, e) => ChangeSlotButton_Click(null, null)));
+        menu.Items.Add(NewContextMenuItem("Delete object", "General/trash", (s, e) => DeleteObjectButton_Click(null, null)));
         return menu;
     }
 
-    private static MenuItem NewContextMenuItem(string text, RoutedEventHandler onClick)
+    private static MenuItem NewContextMenuItem(string text, string iconId, RoutedEventHandler onClick)
     {
-        var item = new MenuItem { Header = text };
+        var item = new MenuItem { Header = text, Icon = new Image { Source = IconSources.Load(iconId) } };
         item.Click += onClick;
         return item;
     }

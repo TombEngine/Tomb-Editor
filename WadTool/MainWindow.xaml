@@ -54,11 +54,19 @@
                 <MenuItem
                     Command="{Binding Commands[OpenReferenceLevelMenu_Click]}"
                     Header="{tombLib:Localize ~WadTool.Main.OpenReferenceTombEditorProject}"
-                    InputGestureText="Ctrl+Alt+O" />
+                    InputGestureText="Ctrl+Alt+O">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon Misc/TE_icon}" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem
                     x:Name="closeReferenceLevelMenu"
                     Command="{Binding Commands[CloseReferenceLevelMenu_Click]}"
-                    Header="{tombLib:Localize ~WadTool.Main.CloseReferenceTombEditorProject}" />
+                    Header="{tombLib:Localize ~WadTool.Main.CloseReferenceTombEditorProject}">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon Actions/delete}" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
                 <MenuItem
                     x:Name="saveWad2Menu"
@@ -90,9 +98,21 @@
             </MenuItem>
 
             <MenuItem Header="{tombLib:Localize ~WadTool.Main.Create}">
-                <MenuItem Command="{Binding Commands[NewMoveableMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.NewMoveable}" />
-                <MenuItem Command="{Binding Commands[NewStaticMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.NewStatic}" />
-                <MenuItem Command="{Binding Commands[NewSpriteSequenceMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.NewSpriteSequence}" />
+                <MenuItem Command="{Binding Commands[NewMoveableMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.NewMoveable}">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon General/plus_math}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding Commands[NewStaticMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.NewStatic}">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon General/plus_math}" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Command="{Binding Commands[NewSpriteSequenceMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.NewSpriteSequence}">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon General/plus_math}" />
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
 
             <MenuItem Header="{tombLib:Localize ~WadTool.Main.Selection}">
@@ -126,26 +146,50 @@
                 <MenuItem
                     x:Name="animatedTexturesMenu"
                     Command="{Binding Commands[AnimatedTexturesMenu_Click]}"
-                    Header="{tombLib:Localize ~WadTool.Main.AnimatedTextures}" />
+                    Header="{tombLib:Localize ~WadTool.Main.AnimatedTextures}">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon Actions/TextureMode}" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem
                     x:Name="meshEditorMenu"
                     Command="{Binding Commands[MeshEditorMenu_Click]}"
-                    Header="{tombLib:Localize ~WadTool.Main.MeshEditor}" />
+                    Header="{tombLib:Localize ~WadTool.Main.MeshEditor}">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon Misc/wireframe}" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <MenuItem
                     x:Name="itemPropertiesMenu"
                     Command="{Binding Commands[ItemPropertiesMenu_Click]}"
-                    Header="{tombLib:Localize ~WadTool.Main.PropertyEditor}" />
+                    Header="{tombLib:Localize ~WadTool.Main.PropertyEditor}">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon Misc/properties_16xLG}" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
                 <MenuItem
                     x:Name="convertWadToTombEngineMenu"
                     Command="{Binding Commands[ConvertWadToTombEngineMenu_Click]}"
-                    Header="{tombLib:Localize ~WadTool.Main.ConvertWadToTombEngine}" />
+                    Header="{tombLib:Localize ~WadTool.Main.ConvertWadToTombEngine}">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon Actions/TEN}" />
+                    </MenuItem.Icon>
+                </MenuItem>
                 <Separator />
-                <MenuItem Command="{Binding Commands[OptionsMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.Options}" />
+                <MenuItem Command="{Binding Commands[OptionsMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.Options}">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon General/options}" />
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
 
             <MenuItem Header="{tombLib:Localize ~WadTool.Main.Help}">
-                <MenuItem Command="{Binding Commands[AboutMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.AboutWadTool}" />
+                <MenuItem Command="{Binding Commands[AboutMenu_Click]}" Header="{tombLib:Localize ~WadTool.Main.AboutWadTool}">
+                    <MenuItem.Icon>
+                        <Image Source="{tomb:Icon General/AboutIcon}" />
+                    </MenuItem.Icon>
+                </MenuItem>
             </MenuItem>
 
             <!--  Only shown when a debugger is attached, mirroring FormMain.  -->
