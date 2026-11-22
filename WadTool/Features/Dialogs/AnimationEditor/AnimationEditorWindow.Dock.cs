@@ -26,6 +26,8 @@ public partial class AnimationEditorWindow
         if (_dock.Find("timeline") is { } timeline)
             timeline.CanFloat = true;
 
+        _dock.EnforceMinimumSize("timeline", 300.0, 84.0);
+
         ApplyProjectPanels();
     }
 

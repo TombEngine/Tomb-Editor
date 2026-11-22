@@ -67,6 +67,24 @@ public sealed class DockLayoutHelper
     /// <summary>Returns to the layout captured by <see cref="CaptureDefault"/>.</summary>
     public void Reset() => Load(_defaultLayout);
 
+    /// <summary>
+    /// Keeps the pane hosting a panel at least the given size, also after the user docks it elsewhere (a freshly
+    /// created pane does not inherit the minimum declared in XAML, so the panel could collapse to its title bar).
+    /// </summary>
+    public void EnforceMinimumSize(string contentId, double minWidth, double minHeight)
+    {
+        _dockManager.LayoutUpdated += (_, _) =>
+        {
+            if (Find(contentId)?.Parent is not LayoutAnchorablePane pane)
+                return;
+
+            if (pane.DockMinWidth < minWidth)
+                pane.DockMinWidth = minWidth;
+
+            if (pane.DockMinHeight < minHeight)
+                pane.DockMinHeight = minHeight;
+        };
+    }
     /// <summary>Finds an anchorable by its content id.</summary>
     public LayoutAnchorable? Find(string contentId)
         => _dockManager.Layout.Descendents().OfType<LayoutAnchorable>().FirstOrDefault(anchorable => anchorable.ContentId == contentId);

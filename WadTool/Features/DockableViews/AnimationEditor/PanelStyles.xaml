@@ -64,13 +64,39 @@
             <Setter Property="Padding" Value="0" />
         </Style>
 
-        <Style
-            x:Key="TransportToggle"
-            BasedOn="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}"
-            TargetType="ToggleButton">
+        <Style x:Key="TransportToggle" TargetType="ToggleButton">
             <Setter Property="Width" Value="30" />
             <Setter Property="Height" Value="33" />
             <Setter Property="Padding" Value="0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border
+                            x:Name="frame"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="frame" Property="Background" Value="{DynamicResource Brush_Background_High}" />
+                                <Setter TargetName="frame" Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="frame" Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="frame" Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style x:Key="TransportImg" TargetType="Image">
