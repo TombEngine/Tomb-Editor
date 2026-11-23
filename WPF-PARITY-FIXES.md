@@ -446,3 +446,5 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 
 - The mode panels (face attributes, remap, normals and shades, effects, weights, sphere) were left-packed stacks of fixed widths. Each is now a grid with star columns that reproduces the anchoring of the previous form: Mode combo, number fields and Recalculate stretch, while Apply to all, Jump to / Remap, Weighted / Averaged, Preview, Fill and the double-sided toggle stay docked to the right edge.
 - Verified offscreen in all six modes at 1017 and 1500 px window width.
+
+- Mesh Editor, face attributes: the double-sided toggle is a bordered 24x23 square at the right edge (it was a flat button centered in the "Apply to all" column), and the blend combo fills the space up to it.
