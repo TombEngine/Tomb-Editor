@@ -441,3 +441,8 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 - Clicking an item of a node's combo box did not select it: the node's mouse-down handler took keyboard focus before checking whether the click was on an editor control, which closed the drop-down. Focus is now only taken when the click is on the node surface.
 - The function list opened on a right-click anywhere inside a node. It now opens only on the function selector itself, so text boxes keep their own context menu.
 - Multi-line text popup showed a single line: the global TextBox style fixes the height at 22. The popup text box now uses automatic height with top alignment.
+
+## Mesh Editor: editing tool layout matches the previous form
+
+- The mode panels (face attributes, remap, normals and shades, effects, weights, sphere) were left-packed stacks of fixed widths. Each is now a grid with star columns that reproduces the anchoring of the previous form: Mode combo, number fields and Recalculate stretch, while Apply to all, Jump to / Remap, Weighted / Averaged, Preview, Fill and the double-sided toggle stay docked to the right edge.
+- Verified offscreen in all six modes at 1017 and 1500 px window width.
