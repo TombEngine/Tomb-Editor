@@ -415,12 +415,14 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
         }
         private void Node_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            Focus();
-            if (sender is not FrameworkElement { DataContext: NodeViewModel node } || ViewModel is null)
+            // Clicking an argument editor inside the node leaves the selection and the focus alone (taking the
+            // focus would close a combo box drop-down before the click selects its item).
+            if (IsInsideEditorControl(e.OriginalSource as DependencyObject, sender))
                 return;
 
-            // Clicking an argument editor inside the node leaves the selection alone; only the node surface selects it.
-            if (IsInsideEditorControl(e.OriginalSource as DependencyObject, sender))
+            Focus();
+
+            if (sender is not FrameworkElement { DataContext: NodeViewModel node } || ViewModel is null)
                 return;
 
             var modifiers = Keyboard.Modifiers;
@@ -461,9 +463,24 @@ namespace TombEditor.Features.Dialogs.EventSetEditor
             if (sender is not DependencyObject root || FindDescendant<DarkUI.WPF.CustomControls.SearchableComboBox>(root, "functionCombo") is not { } combo || !combo.IsEnabled)
                 return;
 
+            // Only the function selector itself opens the list; other controls keep their own context menus.
+            if (!IsDescendantOf(e.OriginalSource as DependencyObject, combo))
+                return;
+
             // Opened after the right button is released, otherwise the popup is dismissed by that same click.
             Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => TombLib.WPF.ComboSearch.OpenCommand.Execute(combo)));
             e.Handled = true;
+        }
+
+        private static bool IsDescendantOf(DependencyObject? element, DependencyObject ancestor)
+        {
+            for (; element is not null; element = element is Visual or System.Windows.Media.Media3D.Visual3D ? VisualTreeHelper.GetParent(element) : LogicalTreeHelper.GetParent(element))
+            {
+                if (ReferenceEquals(element, ancestor))
+                    return true;
+            }
+
+            return false;
         }
 
         private static T? FindDescendant<T>(DependencyObject root, string name) where T : FrameworkElement

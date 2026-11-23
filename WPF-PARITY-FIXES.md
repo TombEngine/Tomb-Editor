@@ -435,3 +435,9 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 
 - Side panels with a fixed set of controls (current animation, blending, transform, root motion, bounding box) now get a pixel height (`DockLayoutHelper.SetFixedHeight`), so enlarging the window only stretches the animation and bone lists.
 - Playback FPS drop: the dock `LayoutUpdated` hook walked the whole layout tree several times per layout pass (once per playback tick). The hosting panes are now cached per layout.
+
+## Node Editor: combo selection, right-click menu, multi-line popup
+
+- Clicking an item of a node's combo box did not select it: the node's mouse-down handler took keyboard focus before checking whether the click was on an editor control, which closed the drop-down. Focus is now only taken when the click is on the node surface.
+- The function list opened on a right-click anywhere inside a node. It now opens only on the function selector itself, so text boxes keep their own context menu.
+- Multi-line text popup showed a single line: the global TextBox style fixes the height at 22. The popup text box now uses automatic height with top alignment.
