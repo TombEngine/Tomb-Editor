@@ -42,6 +42,13 @@ public partial class AnimationEditorWindow
         _dock.SetMinimumSize(RootMotionPanelId, 0.0, 50.0);
         _dock.SetMinimumSize("boundingBox", 0.0, 190.0);
         _dock.SetMinimumSize("timeline", 300.0, 84.0);
+
+        // Panels with a fixed set of controls keep their height; the animation and bone lists take the extra space.
+        _dock.SetFixedHeight("currentAnimation", 230.0);
+        _dock.SetFixedHeight(BlendingPanelId, 230.0);
+        _dock.SetFixedHeight(TransformPanelId, 175.0);
+        _dock.SetFixedHeight(RootMotionPanelId, 60.0);
+        _dock.SetFixedHeight("boundingBox", 250.0);
     }
 
     private void ApplyProjectPanels()

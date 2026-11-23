@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace DarkUI.WPF.AvalonDock;
 
@@ -15,6 +16,9 @@ public sealed class DockLayoutHelper
 {
     private readonly DockingManager _dockManager;
     private readonly Dictionary<string, (double Width, double Height)> _minimumSizes = new();
+    private readonly Dictionary<string, double> _fixedHeights = new();
+    private readonly Dictionary<string, LayoutAnchorable> _anchorableCache = new();
+    private ILayoutRoot? _cachedLayout;
     private bool _minimumSizeHooked;
     private string _defaultLayout = string.Empty;
 
@@ -78,8 +82,23 @@ public sealed class DockLayoutHelper
     public void SetMinimumSize(string contentId, double minWidth, double minHeight)
     {
         _minimumSizes[contentId] = (minWidth, minHeight);
+        HookLayoutUpdates();
         ApplyMinimumSizes();
+    }
 
+    /// <summary>
+    /// Gives the pane hosting a panel a fixed pixel height instead of a proportional one, so growing the window
+    /// only stretches the proportional panes. The user can still drag the splitters.
+    /// </summary>
+    public void SetFixedHeight(string contentId, double height)
+    {
+        _fixedHeights[contentId] = height;
+        HookLayoutUpdates();
+        ApplyMinimumSizes();
+    }
+
+    private void HookLayoutUpdates()
+    {
         if (_minimumSizeHooked)
             return;
 
@@ -89,9 +108,18 @@ public sealed class DockLayoutHelper
 
     private void ApplyMinimumSizes()
     {
+        // Layout updates fire on every layout pass (for example each playback tick), so avoid walking the layout tree.
+        var layout = _dockManager.Layout;
+
+        if (!ReferenceEquals(layout, _cachedLayout))
+        {
+            _cachedLayout = layout;
+            _anchorableCache.Clear();
+        }
+
         foreach (var (contentId, (minWidth, minHeight)) in _minimumSizes)
         {
-            if (Find(contentId)?.Parent is not LayoutAnchorablePane pane)
+            if (GetPane(contentId) is not { } pane)
                 continue;
 
             if (pane.DockMinWidth != minWidth)
@@ -100,7 +128,27 @@ public sealed class DockLayoutHelper
             if (pane.DockMinHeight != minHeight)
                 pane.DockMinHeight = minHeight;
         }
+
+        foreach (var (contentId, height) in _fixedHeights)
+        {
+            if (GetPane(contentId) is { } pane && pane.DockHeight.IsStar)
+                pane.DockHeight = new GridLength(height, GridUnitType.Pixel);
+        }
     }
+
+    private LayoutAnchorablePane? GetPane(string contentId)
+    {
+        if (!_anchorableCache.TryGetValue(contentId, out var anchorable))
+        {
+            anchorable = Find(contentId);
+
+            if (anchorable is not null)
+                _anchorableCache[contentId] = anchorable;
+        }
+
+        return anchorable?.Parent as LayoutAnchorablePane;
+    }
+
     /// <summary>Finds an anchorable by its content id.</summary>
     public LayoutAnchorable? Find(string contentId)
         => _dockManager.Layout.Descendents().OfType<LayoutAnchorable>().FirstOrDefault(anchorable => anchorable.ContentId == contentId);
