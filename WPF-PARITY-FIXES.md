@@ -448,3 +448,7 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 - Verified offscreen in all six modes at 1017 and 1500 px window width.
 
 - Mesh Editor, face attributes: the double-sided toggle is a bordered 24x23 square at the right edge (it was a flat button centered in the "Apply to all" column), and the blend combo fills the space up to it.
+
+## Modifier keys over the rendering panel (Ctrl/Shift/Alt + click)
+
+- `KeyboardState.ModifierKeys` used WPF `Keyboard.Modifiers`, which reports no modifiers while the keyboard focus is inside the native rendering panel (an `HwndHost`). Ctrl+click (mirror texture), Shift+click (rotate), Alt+click (pick) in the Mesh Editor, and every other modifier + mouse action on rendering panels, saw "no modifier". It now reads the system key state (`GetKeyState`), as `Control.ModifierKeys` did.
