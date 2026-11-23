@@ -452,3 +452,5 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 ## Modifier keys over the rendering panel (Ctrl/Shift/Alt + click)
 
 - `KeyboardState.ModifierKeys` used WPF `Keyboard.Modifiers`, which reports no modifiers while the keyboard focus is inside the native rendering panel (an `HwndHost`). Ctrl+click (mirror texture), Shift+click (rotate), Alt+click (pick) in the Mesh Editor, and every other modifier + mouse action on rendering panels, saw "no modifier". It now reads the system key state (`GetKeyState`), as `Control.ModifierKeys` did.
+
+- Mesh Editor: the viewport editing mode stayed "None" until the user changed the Mode combo, so clicking faces applied nothing (the combo already shows its first item, so no change notification fired). The mode is now set from the combo when the panels are attached.

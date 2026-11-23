@@ -173,6 +173,10 @@ public partial class MeshEditorWindowViewModel : ObservableObject, IModalDialogV
             SelectFocusObject(_focusObjectId);
         }
 
+        // The mode combo already shows its first item, so no change notification would ever set the viewport mode.
+        if (ShowEditingTools)
+            _panelMesh.EditingMode = (MeshEditingMode)(EditingModeIndex + 1);
+
         _initializing = false;
         UpdateUI();
         RepopulateTextureList();
