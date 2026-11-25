@@ -455,4 +455,4 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 
 - Mesh Editor: the viewport editing mode stayed "None" until the user changed the Mode combo, so clicking faces applied nothing (the combo already shows its first item, so no change notification fired). The mode is now set from the combo when the panels are attached.
 
-- All combo boxes: the mouse wheel over a closed combo now steps through its items on hover, without focusing or opening it first, like the WinForms combo box (one class handler installed by `WPFInitializer`).
+- All combo boxes: the mouse wheel over a closed combo now steps through its items on hover, without focusing or opening it first, like the WinForms combo box (one class handler installed by `WPFInitializer`, including the searchable combos; the Node Editor function/list combos opt out on purpose via `ComboBoxWheelHandler.IsEnabled`).

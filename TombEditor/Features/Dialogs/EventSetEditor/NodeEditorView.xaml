@@ -83,6 +83,7 @@
                 </Button>
                 <controls:SearchableComboBox
                     x:Name="functionCombo"
+                    tombLib:ComboBoxWheelHandler.IsEnabled="False"
                     DisplayMemberPath="Name"
                     IsEnabled="{Binding IsEditable}"
                     ItemsSource="{Binding AvailableFunctions}"
@@ -225,6 +226,7 @@
                 </Button>
                 <controls:SearchableComboBox
                     x:Name="listCombo"
+                    tombLib:ComboBoxWheelHandler.IsEnabled="False"
                     DisplayMemberPath="Display"
                     ItemsSource="{Binding Items}"
                     SelectedItem="{Binding SelectedItem, Mode=TwoWay}" />
