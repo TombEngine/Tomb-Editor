@@ -43,6 +43,7 @@ public static class WPFInitializer
         // The legacy DarkUI message box bitmaps, drawn exactly as WinForms shows them.
         CMessageBox.UsePathIconsByDefault = false;
         MessageBoxEscapeHandler.Install();
+        ComboBoxWheelHandler.Install();
         CMessageBox.ErrorIconOverride = IconSources.Load("Misc/DarkUI/error");
         CMessageBox.InformationIconOverride = IconSources.Load("Misc/DarkUI/info");
         CMessageBox.QuestionIconOverride = IconSources.Load("Misc/DarkUI/question");
