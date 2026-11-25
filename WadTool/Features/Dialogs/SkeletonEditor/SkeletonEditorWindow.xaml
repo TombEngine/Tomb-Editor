@@ -130,41 +130,62 @@
                 <!--  Current mesh  -->
                 <GroupBox Header="{tombLib:Localize ~WadTool.SkeletonEditor.CurrentMesh}">
                     <controls:SpacedStack Orientation="Vertical" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
-                        <controls:SpacedStack Orientation="Horizontal" Spacing="4">
-                            <TextBlock Width="64" Style="{StaticResource AxisLabel}" Text="{tombLib:Localize ~WadTool.SkeletonEditor.Pivot}" />
-                            <TextBlock Style="{StaticResource AxisLabel}" Text="X" />
+                        <!--  Pivot: the three axes share the row width, like the right-anchored WinForms fields  -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="78" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Style="{StaticResource AxisLabel}" Text="{tombLib:Localize ~WadTool.SkeletonEditor.Pivot}" />
+                            <TextBlock Grid.Column="1" Margin="0,0,3,0" Style="{StaticResource AxisLabel}" Text="X" />
                             <controls:NumericUpDown
-                                Width="58"
+                                Grid.Column="2"
+                                Width="Auto"
                                 DecimalPlaces="4"
                                 Maximum="32767"
                                 Minimum="-32768"
                                 Value="{Binding TranslationX, Mode=TwoWay}" />
-                            <TextBlock Style="{StaticResource AxisLabel}" Text="Y" />
+                            <TextBlock Grid.Column="3" Margin="4,0,3,0" Style="{StaticResource AxisLabel}" Text="Y" />
                             <controls:NumericUpDown
-                                Width="58"
+                                Grid.Column="4"
+                                Width="Auto"
                                 DecimalPlaces="4"
                                 Maximum="32767"
                                 Minimum="-32768"
                                 Value="{Binding TranslationY, Mode=TwoWay}" />
-                            <TextBlock Style="{StaticResource AxisLabel}" Text="Z" />
+                            <TextBlock Grid.Column="5" Margin="4,0,3,0" Style="{StaticResource AxisLabel}" Text="Z" />
                             <controls:NumericUpDown
-                                Width="58"
+                                Grid.Column="6"
+                                Width="Auto"
                                 DecimalPlaces="4"
                                 Maximum="32767"
                                 Minimum="-32768"
                                 Value="{Binding TranslationZ, Mode=TwoWay}" />
-                        </controls:SpacedStack>
-                        <controls:SpacedStack Orientation="Horizontal" Spacing="4">
-                            <TextBlock Width="64" Style="{StaticResource AxisLabel}" Text="{tombLib:Localize ~WadTool.SkeletonEditor.LightMode}" />
-                            <ComboBox Width="140" SelectedIndex="{Binding LightTypeIndex, Mode=TwoWay}">
+                        </Grid>
+
+                        <!--  Light mode: the combo takes the free width up to the button  -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="78" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Style="{StaticResource AxisLabel}" Text="{tombLib:Localize ~WadTool.SkeletonEditor.LightMode}" />
+                            <ComboBox Grid.Column="1" Margin="0,0,4,0" SelectedIndex="{Binding LightTypeIndex, Mode=TwoWay}">
                                 <ComboBoxItem Content="{tombLib:Localize ~WadTool.SkeletonEditor.DynamicLighting}" />
                                 <ComboBoxItem Content="{tombLib:Localize ~WadTool.SkeletonEditor.StaticLighting}" />
                             </ComboBox>
                             <Button
-                                Width="80"
+                                Grid.Column="2"
+                                Width="78"
                                 Command="{Binding SetToAllCommand}"
                                 Content="{tombLib:Localize ~WadTool.SkeletonEditor.SetToAll}" />
-                        </controls:SpacedStack>
+                        </Grid>
                     </controls:SpacedStack>
                 </GroupBox>
             </controls:SpacedStack>
