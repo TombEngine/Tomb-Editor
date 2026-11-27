@@ -442,14 +442,21 @@ public class PanelRenderingAnimationEditor : RenderingPanel
         if (e.Button == PointerButtons.Left)
             PointerDragged?.Invoke(this, EventArgs.Empty);
 
-        var ray = Ray.GetPickRay(Camera, ClientSize, e.X, e.Y);
+        var isNavigating = e.Button == PointerButtons.Right || e.Button == PointerButtons.Middle;
 
-        if (_gizmo.GizmoUpdateHoverEffect(_gizmo.DoPicking(ray)))
-            Invalidate();
-        if (_gizmo.MouseMoved(Camera.GetViewProjectionMatrix(ClientSize.Width, ClientSize.Height), ray))
-            Invalidate();
+        // Gizmo hover and dragging are irrelevant while the camera is being orbited or panned.
+        if (!isNavigating)
+        {
+            var clientSize = ClientSize;
+            var ray = Ray.GetPickRay(Camera, clientSize, e.X, e.Y);
 
-        if (e.Button == PointerButtons.Right || e.Button == PointerButtons.Middle)
+            if (_gizmo.GizmoUpdateHoverEffect(_gizmo.DoPicking(ray)))
+                Invalidate();
+            if (_gizmo.MouseMoved(Camera.GetViewProjectionMatrix(clientSize.Width, clientSize.Height), ray))
+                Invalidate();
+        }
+
+        if (isNavigating)
         {
             // Use height for X coordinate because the camera FOV per pixel is defined by the height.
             float deltaX = (e.X - _lastX) / Height;

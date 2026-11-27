@@ -130,17 +130,28 @@ public partial class RenderingPanel : HwndHost
         _windowHandle = IntPtr.Zero;
     }
 
-    /// <summary>Queues one frame on the owning dispatcher, combining repeated invalidations.</summary>
+    /// <summary>
+    /// Queues one frame for the next composition tick, combining repeated invalidations. Native mouse input is delivered
+    /// after dispatcher work, so rendering at a dispatcher priority would draw a frame per mouse event with no frame cap.
+    /// </summary>
     public void Invalidate()
     {
         if (_disposing || _renderPending)
             return;
 
         _renderPending = true;
-        Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() => {
-            _renderPending = false;
-            RenderFrame();
-        }));
+        CompositionTarget.Rendering += OnCompositionRendering;
+    }
+
+    private void OnCompositionRendering(object? sender, EventArgs e)
+    {
+        CompositionTarget.Rendering -= OnCompositionRendering;
+
+        if (!_renderPending)
+            return;
+
+        _renderPending = false;
+        RenderFrame();
     }
 
     private void RenderFrame()
@@ -232,6 +243,8 @@ public partial class RenderingPanel : HwndHost
     protected override void Dispose(bool disposing)
     {
         _disposing = true;
+        CompositionTarget.Rendering -= OnCompositionRendering;
+        _renderPending = false;
         if (disposing)
         {
             _swapChain?.Dispose();

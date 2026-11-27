@@ -459,3 +459,5 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 
 - Sidebar tab pages (WadTool Options, TombEditor Level Settings/Options): the page content was laid out at its desired width because the tab item style sets `HorizontalContentAlignment=Left`, which WPF copies to the content host. The tab item now uses `Stretch` (header text stays left through its own alignment), so pages and their scrollbar fill the whole width.
 - Skeleton Editor: the "Current mesh" controls follow the legacy anchoring: the three pivot fields share the row width and the light mode combo fills the space up to the "Set to all" button.
+
+- Rendering panels: frames are now requested on the next composition tick (`CompositionTarget.Rendering`, one-shot per invalidation) instead of at dispatcher `Render` priority, which drew one uncapped frame per native mouse event (the swap chain presents without vsync) and spiked CPU/GPU while orbiting. Animation Editor: gizmo hover/picking is skipped while the camera is orbited or panned with the right/middle button.
