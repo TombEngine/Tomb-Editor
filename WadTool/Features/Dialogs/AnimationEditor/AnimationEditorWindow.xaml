@@ -184,25 +184,25 @@
 <darkDock:DarkUIDockTheme />
 </avalonDock:DockingManager.Theme>
 <avalonDock:LayoutRoot>
+<avalonDock:LayoutPanel Orientation="Vertical">
 <avalonDock:LayoutPanel Orientation="Horizontal">
 <avalonDock:LayoutAnchorablePaneGroup DockWidth="280" Orientation="Vertical">
-<avalonDock:LayoutAnchorablePane DockHeight="300*" DockMinHeight="150">
+<avalonDock:LayoutAnchorablePane DockHeight="300*" DockMinHeight="100">
 <avalonDock:LayoutAnchorable ContentId="animationList" CanClose="False" IconSource="{tomb:Icon General/filter}" Title="Animation List">
         <dock:AnimationListPanel x:Name="animationListPanel" />
 </avalonDock:LayoutAnchorable>
 </avalonDock:LayoutAnchorablePane>
-<avalonDock:LayoutAnchorablePane DockHeight="205*" DockMinHeight="230">
+<avalonDock:LayoutAnchorablePane DockHeight="205*" DockMinHeight="190">
 <avalonDock:LayoutAnchorable ContentId="currentAnimation" CanClose="False" IconSource="{tomb:Icon General/edit}" Title="Current Animation">
         <dock:CurrentAnimationPanel x:Name="currentAnimationPanel" />
 </avalonDock:LayoutAnchorable>
 </avalonDock:LayoutAnchorablePane>
-<avalonDock:LayoutAnchorablePane DockHeight="200*" DockMinHeight="230">
+<avalonDock:LayoutAnchorablePane DockHeight="200*" DockMinHeight="140">
 <avalonDock:LayoutAnchorable ContentId="animationBlending" CanClose="False" IconSource="{tomb:Icon Actions/interpolate}" Title="Animation Blending">
         <dock:AnimationBlendingPanel x:Name="blendingPanel" />
 </avalonDock:LayoutAnchorable>
 </avalonDock:LayoutAnchorablePane>
 </avalonDock:LayoutAnchorablePaneGroup>
-<avalonDock:LayoutPanel Orientation="Vertical">
 <avalonDock:LayoutDocumentPaneGroup>
 <avalonDock:LayoutDocumentPane ShowHeader="False">
 <avalonDock:LayoutDocument ContentId="view" CanClose="False" CanFloat="False" Title="3D View">
@@ -212,34 +212,34 @@
 </avalonDock:LayoutDocument>
 </avalonDock:LayoutDocumentPane>
 </avalonDock:LayoutDocumentPaneGroup>
-<avalonDock:LayoutAnchorablePane DockHeight="84*" DockMinHeight="84">
-<avalonDock:LayoutAnchorable ContentId="timeline" CanClose="False" IconSource="{tomb:Icon Actions/Transport/Play24}" Title="Timeline">
-        <dock:TimelinePanel x:Name="timelinePanel" />
-</avalonDock:LayoutAnchorable>
-</avalonDock:LayoutAnchorablePane>
-</avalonDock:LayoutPanel>
 <avalonDock:LayoutAnchorablePaneGroup DockWidth="280" Orientation="Vertical">
-<avalonDock:LayoutAnchorablePane DockHeight="200*" DockMinHeight="140">
+<avalonDock:LayoutAnchorablePane DockHeight="200*" DockMinHeight="90">
 <avalonDock:LayoutAnchorable ContentId="skeleton" CanClose="False" IconSource="{tomb:Icon General/box}" Title="Skeleton">
         <dock:SkeletonPanel />
 </avalonDock:LayoutAnchorable>
 </avalonDock:LayoutAnchorablePane>
-<avalonDock:LayoutAnchorablePane DockHeight="170*" DockMinHeight="175">
+<avalonDock:LayoutAnchorablePane DockHeight="170*" DockMinHeight="120">
 <avalonDock:LayoutAnchorable ContentId="transform" CanClose="False" IconSource="{tomb:Icon General/target}" Title="Transform">
         <dock:TransformPanel />
 </avalonDock:LayoutAnchorable>
 </avalonDock:LayoutAnchorablePane>
-<avalonDock:LayoutAnchorablePane DockHeight="50*" DockMinHeight="60">
+<avalonDock:LayoutAnchorablePane DockHeight="50*" DockMinHeight="50">
 <avalonDock:LayoutAnchorable ContentId="rootMotion" CanClose="False" IconSource="{tomb:Icon General/options}" Title="Root Motion">
         <dock:RootMotionPanel />
 </avalonDock:LayoutAnchorable>
 </avalonDock:LayoutAnchorablePane>
-<avalonDock:LayoutAnchorablePane DockHeight="230*" DockMinHeight="250">
+<avalonDock:LayoutAnchorablePane DockHeight="230*" DockMinHeight="190">
 <avalonDock:LayoutAnchorable ContentId="boundingBox" CanClose="False" IconSource="{tomb:Icon General/box}" Title="Bounding Box">
         <dock:BoundingBoxPanel />
 </avalonDock:LayoutAnchorable>
 </avalonDock:LayoutAnchorablePane>
 </avalonDock:LayoutAnchorablePaneGroup>
+</avalonDock:LayoutPanel>
+<avalonDock:LayoutAnchorablePane DockHeight="84" DockMinHeight="84">
+<avalonDock:LayoutAnchorable ContentId="timeline" CanClose="False" IconSource="{tomb:Icon Actions/Transport/Play24}" Title="Timeline">
+        <dock:TimelinePanel x:Name="timelinePanel" />
+</avalonDock:LayoutAnchorable>
+</avalonDock:LayoutAnchorablePane>
 </avalonDock:LayoutPanel>
 </avalonDock:LayoutRoot>
 </avalonDock:DockingManager>

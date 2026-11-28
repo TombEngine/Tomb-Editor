@@ -42,11 +42,15 @@ public partial class RenderingPanel : HwndHost
     /// <summary>Gets or sets whether pending frames may be rendered.</summary>
     public bool AllowRendering { get; set; } = true;
 
-    /// <summary>Gets the client area in device pixels.</summary>
+    /// <summary>Gets the client area in device pixels, as the native child window reports it.</summary>
     public Size ClientSize
     {
         get
         {
+            // The native window is the authority: DPI arithmetic on a not yet fully hosted element can lag behind it.
+            if (_windowHandle != IntPtr.Zero && GetClientRect(_windowHandle, out var rect) && rect.Right > 0 && rect.Bottom > 0)
+                return new Size(rect.Right, rect.Bottom);
+
             var dpi = VisualTreeHelper.GetDpi(this);
             return new Size(Math.Max(1, (int)Math.Round(ActualWidth * dpi.DpiScaleX)), Math.Max(1, (int)Math.Round(ActualHeight * dpi.DpiScaleY)));
         }
@@ -188,7 +192,11 @@ public partial class RenderingPanel : HwndHost
 
         try
         {
-            _swapChain.Resize(new VectorInt2(Width, Height));
+            var size = ClientSize;
+
+            if (_swapChain.Size.X != size.Width || _swapChain.Size.Y != size.Height)
+                _swapChain.Resize(new VectorInt2(size.Width, size.Height));
+
             Invalidate();
         }
         catch (Exception exception)
@@ -253,6 +261,19 @@ public partial class RenderingPanel : HwndHost
 
         base.Dispose(disposing);
     }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NativeRect
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetClientRect(IntPtr window, out NativeRect rect);
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     private static extern IntPtr CreateWindowEx(int extendedStyle, string className, string windowName, int style,

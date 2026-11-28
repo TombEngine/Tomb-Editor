@@ -3,6 +3,7 @@
 using SharpDX.Toolkit.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Threading;
@@ -20,14 +21,19 @@ public abstract class PanelItemPreview : RenderingPanel
 {
     private const float RotationSpeed = 0.005f;
     private const float RotationStep = 0.000125f;
-    private readonly DispatcherTimer _animationTimer = new() { Interval = TimeSpan.FromMilliseconds(15) };
+    private const double TickSeconds = 0.015;
+    private const double SpriteFrameSeconds = 0.3;
+    private const double MaxTickSeconds = 0.1;
+    private readonly DispatcherTimer _animationTimer = new(DispatcherPriority.Render) { Interval = TimeSpan.FromMilliseconds(15) };
     private RenderingTextureAllocator? _textureAllocator;
     private GraphicsDevice? _legacyDevice;
     private WadRenderer? _wadRenderer;
     private IWadObject? _currentObject;
     private bool _animatePreview = true;
     private int _currentFrame;
-    private int _frameTimeout;
+    private readonly Stopwatch _tickClock = Stopwatch.StartNew();
+    private TimeSpan _lastTick;
+    private TimeSpan _frameElapsed;
     private float _rotationFactor;
     private float _lastX;
     private float _lastY;
@@ -115,21 +121,30 @@ public abstract class PanelItemPreview : RenderingPanel
 
     private void OnAnimationTick(object? sender, EventArgs e)
     {
+        // Motion follows the wall clock, expressed in legacy 15 ms ticks, so a slow or irregular tick rate does not slow it down.
+        var now = _tickClock.Elapsed;
+        var elapsedSeconds = Math.Min((now - _lastTick).TotalSeconds, MaxTickSeconds);
+        _lastTick = now;
+
         if (!IsOwnerActive)
             return;
 
+        var ticks = (float)(elapsedSeconds / TickSeconds);
+
         if (CurrentObject is WadSpriteSequence sequence)
         {
-            if (++_frameTimeout < 20)
+            _frameElapsed += TimeSpan.FromSeconds(elapsedSeconds);
+
+            if (_frameElapsed.TotalSeconds < SpriteFrameSeconds)
                 return;
 
-            _frameTimeout = 0;
+            _frameElapsed = TimeSpan.Zero;
             _currentFrame = sequence.Sprites.Count > 0 ? (_currentFrame + 1) % sequence.Sprites.Count : 0;
         }
         else if (AnimatePreview && CurrentObject is not null)
         {
-            _rotationFactor = Math.Min(RotationSpeed, _rotationFactor + RotationStep);
-            Camera.Rotate(_rotationFactor, 0.0f);
+            _rotationFactor = Math.Min(RotationSpeed, _rotationFactor + RotationStep * ticks);
+            Camera.Rotate(_rotationFactor * ticks, 0.0f);
         }
         else
         {

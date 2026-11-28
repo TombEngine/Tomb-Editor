@@ -55,6 +55,9 @@ public partial class RenderingPanel
                 Invalidate();
                 handled = true;
                 break;
+            case 0x0005:
+                OnResize(EventArgs.Empty);
+                break;
             case 0x0014:
                 handled = true;
                 return new IntPtr(1);
