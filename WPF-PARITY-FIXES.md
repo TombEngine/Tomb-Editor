@@ -467,3 +467,5 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 - Rendering panels: the swap chain size now follows the native child window (`GetClientRect`, also on `WM_SIZE`) instead of DPI arithmetic, so a viewport can no longer end up smaller than its window (transparent strips at the bottom/right on first open).
 
 - Animation Editor: layouts saved before the Timeline moved to the bottom full-width slot are ignored once (layout version 2), otherwise the old arrangement with the timeline between the side panels kept overriding the new default.
+
+- Rendering panels: presented frames are now paced to the fastest attached display refresh (a flood of invalidations, for example a 1 kHz mouse, previously rendered ~1000 frames per second regardless of the monitor); the frame is redrawn synchronously after a resize so the new area never shows stale content.

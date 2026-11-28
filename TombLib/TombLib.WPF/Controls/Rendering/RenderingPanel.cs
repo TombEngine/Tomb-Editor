@@ -4,6 +4,7 @@ using Point = System.Drawing.Point;
 using Size = System.Drawing.Size;
 using System;
 using System.Drawing;
+using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -28,6 +29,8 @@ public partial class RenderingPanel : HwndHost
     private RenderingSwapChain? _swapChain;
     private bool _antialias;
     private bool _renderPending;
+    private readonly Stopwatch _frameClock = Stopwatch.StartNew();
+    private TimeSpan _lastFrame;
     private bool _disposing;
 
     /// <summary>Raised when the render surface draws a frame.</summary>
@@ -149,12 +152,21 @@ public partial class RenderingPanel : HwndHost
 
     private void OnCompositionRendering(object? sender, EventArgs e)
     {
-        CompositionTarget.Rendering -= OnCompositionRendering;
-
         if (!_renderPending)
+        {
+            CompositionTarget.Rendering -= OnCompositionRendering;
+            return;
+        }
+
+        // Stay subscribed until the display refresh interval has passed, so a flood of invalidations cannot out-run the monitor.
+        var now = _frameClock.Elapsed;
+
+        if (now - _lastFrame < DisplayRefresh.MinFrameInterval)
             return;
 
+        CompositionTarget.Rendering -= OnCompositionRendering;
         _renderPending = false;
+        _lastFrame = now;
         RenderFrame();
     }
 
@@ -195,7 +207,12 @@ public partial class RenderingPanel : HwndHost
             var size = ClientSize;
 
             if (_swapChain.Size.X != size.Width || _swapChain.Size.Y != size.Height)
+            {
                 _swapChain.Resize(new VectorInt2(size.Width, size.Height));
+
+                // Draw the new size synchronously, so the resized area never shows stale or cleared content for a frame.
+                RenderFrame();
+            }
 
             Invalidate();
         }
