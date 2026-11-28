@@ -1,13 +1,15 @@
-﻿using System;
+using Keys = TombLib.Input.EditorKey;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using TombLib.Services;
 using TombLib.Utils;
+using TombLib.WPF;
 
 namespace TombEditor
 {
@@ -406,7 +408,7 @@ namespace TombEditor
                 if (hotkeyList[i].Key.Equals(hotkeyList[i - 1].Key))
                     conflicts += "\n'" + hotkeyList[i].Key + "': '" + hotkeyList[i].Value + "' and '" + hotkeyList[i - 1].Value + "'";
             if (!string.IsNullOrEmpty(conflicts)) // Use normal message box here because it can handle lot's of text. (Usually won't be shown anyway)
-                MessageBox.Show("Please report this to the development team.\nThere are conflicts in the default hotkey set:" + conflicts, "Hotkey conflicts", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UserDialogs.Show("Please report this to the development team.\nThere are conflicts in the default hotkey set:" + conflicts, "Hotkey conflicts", DialogButtons.OK, DialogIcon.Error);
         }
     }
 }

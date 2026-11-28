@@ -1,14 +1,13 @@
-﻿using System.Drawing;
-using System.Numerics;
-using System.Windows.Forms;
-using TombLib.Controls;
+using Keys = TombLib.Input.EditorKey;
+using System.Drawing;
+using TombLib;
 using TombLib.Graphics;
 using TombLib.LevelData;
-using TombLib.Rendering;
-using TombLib;
-using TombLib.Wad;
 using TombLib.LevelData.SectorEnums;
 using TombLib.LevelData.SectorEnums.Extensions;
+using TombLib.Rendering;
+using TombLib.Wad;
+using TombLib.WPF.Controls.Rendering;
 
 namespace TombEditor.Controls.Panel3D
 {
@@ -148,7 +147,7 @@ namespace TombEditor.Controls.Panel3D
                                 _toolHandler.Engage(location.X, location.Y, newSectorPicking, false, newRoom);
 
                                 if (!ShowPortals && !ShowAllRooms)
-                                    _editor.SendMessage("Parent is invisible. Turn on Draw Portals mode.", TombLib.Forms.PopupType.Info);
+                                    _editor.SendMessage("Parent is invisible. Turn on Draw Portals mode.", TombLib.Utils.PopupType.Info);
                             }
                             return;
                         }

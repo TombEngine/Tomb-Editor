@@ -1,0 +1,35 @@
+# WadTool WPF: differenze note e lavoro residuo
+
+Classificazione: B = bloccante, F = funzionale, E = estetica, T = tecnico/architettura. Stato al 2026-11-20.
+
+## Differenze note rispetto al legacy
+
+| ID | Classe | Descrizione | Stato |
+| --- | --- | --- | --- |
+| G-1 | E | Altezza della timeline dell'Animation Editor 84 DIP contro 38 del legacy (ospita i pulsanti transport a 24 px). | Voluta, da confermare a vista |
+| G-2 | E | Titoli dei pannelli dock in inglese (LayoutAnchorable non e' un DependencyObject, Tomb Editor ha lo stesso limite). | Aperta |
+| G-3 | F | Messaggi, popup e testi creati da codice (VM) non sempre localizzati; solo il XAML e' coperto da chiavi. Fatti 23 messaggi letterali dell'Animation Editor (chiavi Msg* in AnimationEditor); restano quelli concatenati e gli altri editor. | Parziale |
+| G-4 | E | Mesh Editor: dall'anteprima offscreen le intestazioni "Texturing" e "Editing tools" della colonna destra sembrano sovrapposte; la colonna e' un DockPanel con gli strumenti ancorati in basso e Texturing in alto: la sovrapposizione compare solo se l'altezza disponibile e' minore del contenuto (rendering offscreen a 600 px). Probabile artefatto, non confermato a vista. | Da verificare |
+
+## Risolte in questo ciclo
+
+- Pennello Brush_BackgroundSlightlyDark inesistente (barra strumenti bianca, intestazioni senza sfondo): ora Brush_Background_Alternative.
+- Riferimenti a Brush_Text_Low inesistente rimossi.
+- Larghezze delle colonne dock a 280 come il legacy.
+- Lista animazioni: un solo evento Reset a ogni ricostruzione.
+
+## Non verificato (richiede test a vista o hardware)
+
+- Confronto affiancato D1-D8 per Main, Animation Editor (parziale), Mesh, Static, Skeleton, Sprite Sequence: vedi `WPF-PARITY-TEST-PLAN.md` Wave 3.
+- Drag manuale di pannelli flottanti dell'Animation Editor.
+- DPI 125/150/200 e configurazioni multi-monitor.
+- Flusso completo apri wad2, modifica, salva, riapri, confronta con il legacy.
+
+## Architettura residua
+
+- T-1: AnimationEditorWindowViewModel e' diviso in partial per responsabilita' ma non in view model per pannello (stato condiviso).
+- T-2: MainWindow resta un code-behind con handler (diviso in partial Menu e Tree); nessun view model completo.
+
+## Confronto a video, Main Window (2026-11-20)
+
+Avvio WPF e legacy con la stessa copia di Andrea1.wad2, cattura della sola finestra (PrintWindow). Menu, barra strumenti, pannello Destination e albero Moveables/Statics/Sprite sequences coincidono per layout e colori. Non verificato: la cattura WPF risulta ritagliata in basso (finestra piu' alta dello schermo con DPI aware), quindi barra azioni, data/note e barra di stato non sono visibili; il pannello Source e' troppo stretto nella cattura per vedere il testo 'Click here to load new wad file.'. Serve una cattura a finestra ridimensionata o con mouse reale.

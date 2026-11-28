@@ -1,0 +1,241 @@
+<Window
+    x:Class="WadTool.Features.Dialogs.SkeletonEditor.SkeletonEditorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:local="clr-namespace:WadTool.Features.Dialogs.SkeletonEditor"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="{Binding Title}"
+    Width="820"
+    Height="700"
+    MinWidth="700"
+    MinHeight="500"
+    d:DataContext="{d:DesignInstance Type=local:SkeletonEditorWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ShowInTaskbar="False"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <Style x:Key="AxisLabel" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+        </Style>
+            <!--  Section panel like the WinForms DarkSectionPanel: a header band over the content, no frame  -->
+        <Style TargetType="GroupBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GroupBox">
+                        <DockPanel>
+                            <Border Padding="4,2" Background="{DynamicResource Brush_Background_Alternative}" DockPanel.Dock="Top">
+                                <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" TextElement.Foreground="{DynamicResource Brush_Text}" />
+                            </Border>
+                            <Border Padding="2">
+                                <ContentPresenter />
+                            </Border>
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Key="Up" Modifiers="Control" Command="{Binding MoveBoneUpCommand}" />
+        <KeyBinding Key="Down" Modifiers="Control" Command="{Binding MoveBoneDownCommand}" />
+        <KeyBinding Key="O" Modifiers="Control" Command="{Binding TogglePopCommand}" />
+        <KeyBinding Key="P" Modifiers="Control" Command="{Binding TogglePushCommand}" />
+    </Window.InputBindings>
+
+
+    <DockPanel Margin="{x:Static darkUI:Defaults.MediumThickness}" LastChildFill="True">
+
+        <!--  Bottom row: draw options and OK / Cancel  -->
+        <DockPanel DockPanel.Dock="Bottom">
+            <DockPanel.Margin>
+                <Thickness Top="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+            </DockPanel.Margin>
+            <controls:SpacedStack
+                HorizontalAlignment="Right"
+                DockPanel.Dock="Right"
+                Orientation="Horizontal"
+                Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+                <Button
+                    Width="80"
+                    Command="{Binding SaveCommand}"
+                    Content="{tombLib:Localize ~WadTool.SkeletonEditor.OK}" />
+                <Button
+                    Width="80"
+                    Command="{Binding CancelCommand}"
+                    Content="{tombLib:Localize ~WadTool.SkeletonEditor.Cancel}" />
+            </controls:SpacedStack>
+            <controls:SpacedStack
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+                <CheckBox Content="{tombLib:Localize ~WadTool.SkeletonEditor.DrawGrid}" IsChecked="{Binding DrawGrid, Mode=TwoWay}" />
+                <CheckBox Content="{tombLib:Localize ~WadTool.SkeletonEditor.DrawGizmo}" IsChecked="{Binding DrawGizmo, Mode=TwoWay}" />
+            </controls:SpacedStack>
+        </DockPanel>
+
+        <!--  Right column: mesh tree + bone tools  -->
+        <DockPanel Width="320" DockPanel.Dock="Right" LastChildFill="True">
+            <DockPanel.Margin>
+                <Thickness Left="{x:Static darkUI:Defaults.MediumThicknessWidth}" />
+            </DockPanel.Margin>
+
+            <controls:SpacedStack
+                DockPanel.Dock="Bottom"
+                Orientation="Vertical"
+                Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+                <controls:SpacedStack.Margin>
+                    <Thickness Top="{x:Static darkUI:Defaults.SmallThicknessWidth}" />
+                </controls:SpacedStack.Margin>
+
+                <!--  Bone actions  -->
+                <UniformGrid Columns="3" Rows="3">
+                    <Button Margin="0,0,3,3" Command="{Binding RenameBoneCommand}" Content="{tombLib:Localize ~WadTool.SkeletonEditor.Rename}" />
+                    <Button Margin="1,0,1,3" Command="{Binding EditMeshCommand}" Content="{tombLib:Localize ~WadTool.SkeletonEditor.EditMesh}" />
+                    <Button Margin="3,0,0,3" Command="{Binding DeleteBoneCommand}" Content="{tombLib:Localize ~WadTool.SkeletonEditor.Delete}" />
+                    <Button Margin="0,0,3,3" Command="{Binding AddChildBoneFromFileCommand}" Content="{tombLib:Localize ~WadTool.SkeletonEditor.AddNew}" />
+                    <Button Margin="1,0,1,3" Command="{Binding AddChildBoneFromWad2Command}" Content="{tombLib:Localize ~WadTool.SkeletonEditor.AddExisting}" />
+                    <Button Margin="3,0,0,3" Command="{Binding ReplaceBoneFromWad2Command}" Content="{tombLib:Localize ~WadTool.SkeletonEditor.ReplaceExisting}" />
+                    <Button Margin="0,0,3,0" Command="{Binding ReplaceBoneFromFileCommand}" Content="{tombLib:Localize ~WadTool.SkeletonEditor.ImportMesh}" />
+                    <Button Margin="1,0,1,0" Command="{Binding ExportMeshCommand}" Content="{tombLib:Localize ~WadTool.SkeletonEditor.ExportMesh}" />
+                    <Button Margin="3,0,0,0" Command="{Binding ReplaceAllBonesFromFileCommand}" Content="{tombLib:Localize ~WadTool.SkeletonEditor.ReplaceModel}" />
+                </UniformGrid>
+
+                <!--  Skin (TEN only)  -->
+                <DockPanel Visibility="{Binding SkinVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button
+                        Width="60"
+                        Margin="3,0,0,0"
+                        DockPanel.Dock="Right"
+                        Command="{Binding ClearSkinCommand}"
+                        Content="{tombLib:Localize ~WadTool.SkeletonEditor.Clear}" />
+                    <Button
+                        Width="60"
+                        Margin="3,0,0,0"
+                        DockPanel.Dock="Right"
+                        Command="{Binding SetSkinCommand}"
+                        Content="{tombLib:Localize ~WadTool.SkeletonEditor.Add}" />
+                    <TextBox IsReadOnly="True" Text="{Binding SkinText, Mode=OneWay}" />
+                </DockPanel>
+
+                <!--  Current mesh  -->
+                <GroupBox Header="{tombLib:Localize ~WadTool.SkeletonEditor.CurrentMesh}">
+                    <controls:SpacedStack Orientation="Vertical" Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+                        <!--  Pivot: the three axes share the row width, like the right-anchored WinForms fields  -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="78" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Style="{StaticResource AxisLabel}" Text="{tombLib:Localize ~WadTool.SkeletonEditor.Pivot}" />
+                            <TextBlock Grid.Column="1" Margin="0,0,3,0" Style="{StaticResource AxisLabel}" Text="X" />
+                            <controls:NumericUpDown
+                                Grid.Column="2"
+                                Width="Auto"
+                                DecimalPlaces="4"
+                                Maximum="32767"
+                                Minimum="-32768"
+                                Value="{Binding TranslationX, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="3" Margin="4,0,3,0" Style="{StaticResource AxisLabel}" Text="Y" />
+                            <controls:NumericUpDown
+                                Grid.Column="4"
+                                Width="Auto"
+                                DecimalPlaces="4"
+                                Maximum="32767"
+                                Minimum="-32768"
+                                Value="{Binding TranslationY, Mode=TwoWay}" />
+                            <TextBlock Grid.Column="5" Margin="4,0,3,0" Style="{StaticResource AxisLabel}" Text="Z" />
+                            <controls:NumericUpDown
+                                Grid.Column="6"
+                                Width="Auto"
+                                DecimalPlaces="4"
+                                Maximum="32767"
+                                Minimum="-32768"
+                                Value="{Binding TranslationZ, Mode=TwoWay}" />
+                        </Grid>
+
+                        <!--  Light mode: the combo takes the free width up to the button  -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="78" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Style="{StaticResource AxisLabel}" Text="{tombLib:Localize ~WadTool.SkeletonEditor.LightMode}" />
+                            <ComboBox Grid.Column="1" Margin="0,0,4,0" SelectedIndex="{Binding LightTypeIndex, Mode=TwoWay}">
+                                <ComboBoxItem Content="{tombLib:Localize ~WadTool.SkeletonEditor.DynamicLighting}" />
+                                <ComboBoxItem Content="{tombLib:Localize ~WadTool.SkeletonEditor.StaticLighting}" />
+                            </ComboBox>
+                            <Button
+                                Grid.Column="2"
+                                Width="78"
+                                Command="{Binding SetToAllCommand}"
+                                Content="{tombLib:Localize ~WadTool.SkeletonEditor.SetToAll}" />
+                        </Grid>
+                    </controls:SpacedStack>
+                </GroupBox>
+            </controls:SpacedStack>
+
+            <GroupBox Header="{tombLib:Localize ~WadTool.SkeletonEditor.MeshTree}">
+                <controls:AlternatingTreeView
+                    x:Name="treeSkeleton" Style="{DynamicResource {x:Type TreeView}}"
+                    ItemsSource="{Binding RootNodes}">
+                    <controls:AlternatingTreeView.ItemContainerStyle>
+                        <Style TargetType="controls:AlternatingTreeViewItem" BasedOn="{StaticResource {x:Type controls:AlternatingTreeViewItem}}">
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                        </Style>
+                    </controls:AlternatingTreeView.ItemContainerStyle>
+                    <controls:AlternatingTreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                            <TextBlock Text="{Binding Text}" />
+                        </HierarchicalDataTemplate>
+                    </controls:AlternatingTreeView.ItemTemplate>
+                    <controls:AlternatingTreeView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem
+                                Command="{Binding PlacementTarget.DataContext.TogglePopCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                Header="{tombLib:Localize ~WadTool.SkeletonEditor.Pop}" InputGestureText="Ctrl+O"
+                                IsChecked="{Binding PlacementTarget.DataContext.PopChecked, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                            <MenuItem
+                                Command="{Binding PlacementTarget.DataContext.TogglePushCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                Header="{tombLib:Localize ~WadTool.SkeletonEditor.Push}" InputGestureText="Ctrl+P"
+                                IsChecked="{Binding PlacementTarget.DataContext.PushChecked, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                            <Separator />
+                            <MenuItem Command="{Binding PlacementTarget.DataContext.MoveBoneUpCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="{tombLib:Localize ~WadTool.SkeletonEditor.MoveUp}" InputGestureText="Ctrl+Up" />
+                            <MenuItem Command="{Binding PlacementTarget.DataContext.MoveBoneDownCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="{tombLib:Localize ~WadTool.SkeletonEditor.MoveDown}" InputGestureText="Ctrl+Down" />
+                            <Separator />
+                            <MenuItem Command="{Binding PlacementTarget.DataContext.AddChildBoneFromFileCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="{tombLib:Localize ~WadTool.SkeletonEditor.AddChildBoneFromFile}" />
+                            <MenuItem Command="{Binding PlacementTarget.DataContext.ReplaceBoneFromFileCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="{tombLib:Localize ~WadTool.SkeletonEditor.ReplaceFromFile}" />
+                            <Separator />
+                            <MenuItem Command="{Binding PlacementTarget.DataContext.AddChildBoneFromWad2Command, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="{tombLib:Localize ~WadTool.SkeletonEditor.AddChildBoneFromWad2}" />
+                            <MenuItem Command="{Binding PlacementTarget.DataContext.ReplaceBoneFromWad2Command, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="{tombLib:Localize ~WadTool.SkeletonEditor.ReplaceFromWad2}" />
+                            <Separator />
+                            <MenuItem Command="{Binding PlacementTarget.DataContext.DeleteBoneCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="{tombLib:Localize ~WadTool.SkeletonEditor.Delete}" />
+                            <MenuItem Command="{Binding PlacementTarget.DataContext.RenameBoneCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" Header="{tombLib:Localize ~WadTool.SkeletonEditor.Rename}" />
+                        </ContextMenu>
+                    </controls:AlternatingTreeView.ContextMenu>
+                </controls:AlternatingTreeView>
+            </GroupBox>
+        </DockPanel>
+
+        <!--  3D view  -->
+        <Border BorderBrush="{DynamicResource Brush_Border}" BorderThickness="1">
+            <Border x:Name="renderingHost" />
+        </Border>
+    </DockPanel>
+</Window>

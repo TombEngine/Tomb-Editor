@@ -1,0 +1,85 @@
+<UserControl
+	x:Class="TombEditor.Features.DockableViews.TriggerList.TriggerListView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:rendering="clr-namespace:TombLib.Rendering;assembly=TombLib.Rendering"
+	xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+	d:DesignHeight="220"
+	d:DesignWidth="285"
+	Background="{DynamicResource Brush_Background}"
+	mc:Ignorable="d">
+
+	<controls:SpacedGrid Margin="{x:Static darkUI:Defaults.SmallThickness}" RowSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<ListBox
+			x:Name="TriggersList"
+			ItemsSource="{Binding Triggers}"
+			SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+			SelectionMode="Extended"
+			SelectionChanged="TriggersList_SelectionChanged"
+			KeyDown="TriggersList_KeyDown"
+			HorizontalContentAlignment="Stretch"
+			VirtualizingPanel.IsVirtualizing="True"
+			VirtualizingPanel.VirtualizationMode="Recycling"
+			MouseDoubleClick="TriggersList_MouseDoubleClick">
+
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Text}">
+						<TextBlock.Style>
+							<Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock">
+								<Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding IsSetupTrigger}" Value="True">
+										<Setter Property="Foreground" Value="{DynamicResource Brush_FocusHighlight}" />
+										<Setter Property="FontWeight" Value="SemiBold" />
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</TextBlock.Style>
+					</TextBlock>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+
+		<controls:SpacedStack
+			Grid.Row="1"
+			Orientation="Horizontal"
+			Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+			<Button
+				Command="{Binding AddTriggerCommand}"
+				Style="{DynamicResource ButtonWithIconOnly}"
+				ToolTip="Add trigger...">
+				<i:Interaction.Triggers>
+					<i:EventTrigger EventName="MouseEnter">
+						<i:InvokeCommandAction Command="{Binding SetSectorColoringInfoPriorityCommand}" CommandParameter="{x:Static rendering:SectorColoringType.Trigger}" />
+					</i:EventTrigger>
+				</i:Interaction.Triggers>
+				<Image Source="{tomb:Icon General/plus_math}" />
+			</Button>
+
+			<Button
+				Command="{Binding EditTriggerCommand}"
+				Style="{DynamicResource ButtonWithIconOnly}"
+				ToolTip="Edit selected trigger">
+				<Image Source="{tomb:Icon General/edit}" />
+			</Button>
+
+			<Button
+				Command="{Binding DeleteTriggersCommand}"
+				Style="{DynamicResource ButtonWithIconOnly}"
+				ToolTip="Delete trigger">
+				<Image Source="{tomb:Icon General/trash}" />
+			</Button>
+		</controls:SpacedStack>
+	</controls:SpacedGrid>
+</UserControl>

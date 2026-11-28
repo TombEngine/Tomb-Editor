@@ -1,0 +1,112 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF">
+
+    <Style x:Key="Val" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+    </Style>
+
+    <Style x:Key="Axis" BasedOn="{StaticResource {x:Type controls:NumericUpDown}}" TargetType="controls:NumericUpDown">
+        <Setter Property="DecimalPlaces" Value="4" />
+        <Setter Property="Minimum" Value="-32768" />
+        <Setter Property="Maximum" Value="32767" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+    </Style>
+
+        <Style x:Key="FieldLbl" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Width" Value="64" />
+            <Setter Property="Foreground" Value="{DynamicResource Brush_Text}" />
+        </Style>
+
+        <Style x:Key="Nud" BasedOn="{StaticResource {x:Type controls:NumericUpDown}}" TargetType="controls:NumericUpDown">
+            <Setter Property="DecimalPlaces" Value="0" />
+            <Setter Property="Minimum" Value="-1000000" />
+            <Setter Property="Maximum" Value="1000000" />
+        </Style>
+
+        <!--  Icon toolbar button (16px icon, like the legacy topBar)  -->
+        <Style
+            x:Key="TbBtn"
+            BasedOn="{StaticResource ButtonFlatIconOnly}"
+            TargetType="Button">
+            <Setter Property="Background" Value="Transparent" /><Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Width" Value="26" />
+            <Setter Property="Height" Value="26" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+
+        <!--  Bordered icon button (standard button chrome, like the legacy list buttons)  -->
+        <Style
+            x:Key="BorderedIconBtn"
+            BasedOn="{StaticResource {x:Type Button}}"
+            TargetType="Button">
+            <Setter Property="Width" Value="26" />
+            <Setter Property="Height" Value="26" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+
+        <Style x:Key="TbImg" TargetType="Image">
+            <Setter Property="Width" Value="16" />
+            <Setter Property="Height" Value="16" />
+        </Style>
+
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+
+        <!--  Transport button (24px icon, like the legacy transport strip)  -->
+        <Style
+            x:Key="TransportBtn"
+            BasedOn="{StaticResource ButtonFlatIconOnly}"
+            TargetType="Button">
+            <Setter Property="Width" Value="30" />
+            <Setter Property="Height" Value="33" />
+            <Setter Property="Padding" Value="0" />
+        </Style>
+
+        <Style x:Key="TransportToggle" TargetType="ToggleButton">
+            <Setter Property="Width" Value="30" />
+            <Setter Property="Height" Value="33" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border
+                            x:Name="frame"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="frame" Property="Background" Value="{DynamicResource Brush_Background_High}" />
+                                <Setter TargetName="frame" Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="frame" Property="BorderBrush" Value="{DynamicResource Brush_Border}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="frame" Property="Opacity" Value="0.5" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TransportImg" TargetType="Image">
+            <Setter Property="Width" Value="24" />
+            <Setter Property="Height" Value="24" />
+        </Style>
+
+        <Style x:Key="TbSep" TargetType="Border">
+            <Setter Property="Width" Value="1" />
+            <Setter Property="Margin" Value="3,3" />
+            <Setter Property="Background" Value="{DynamicResource Brush_Border}" />
+        </Style>
+</ResourceDictionary>

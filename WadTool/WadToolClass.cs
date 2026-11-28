@@ -1,10 +1,12 @@
-﻿using System;
+#nullable enable
+
+using System;
 using System.Threading;
 using TombLib;
-using TombLib.Forms;
 using TombLib.Graphics;
 using TombLib.LevelData;
 using TombLib.Types;
+using TombLib.Utils;
 using TombLib.Wad;
 
 namespace WadTool
@@ -154,9 +156,9 @@ namespace WadTool
             get { return _mainSelection; }
             set
             {
-                if (_mainSelection == null && value == null)
+                if (_mainSelection is null && value is null)
                     return;
-                if (_mainSelection != null && value != null && _mainSelection.Equals(value))
+                if (_mainSelection is not null && value is not null && _mainSelection.Equals(value))
                     return;
                 _mainSelection = value;
                 RaiseEvent(new MainSelectionChangedEvent());
@@ -170,7 +172,7 @@ namespace WadTool
             RaiseEvent(new AnimatedTexturesChangedEvent());
         }
 
-		public class ReferenceLevelChangedEvent : IEditorEvent
+        public class ReferenceLevelChangedEvent : IEditorEvent
         { }
         public void ReferenceLevelChanged()
         {
@@ -254,16 +256,16 @@ namespace WadTool
 
         public class AnimationEditorCurrentAnimationChangedEvent : IEditorEvent
         {
-            public AnimationNode Previous { get; set; }
+            public AnimationNode? Previous { get; set; }
             public AnimationNode Current  { get; set; }
 
-            public AnimationEditorCurrentAnimationChangedEvent(AnimationNode prev, AnimationNode curr)
+            public AnimationEditorCurrentAnimationChangedEvent(AnimationNode? prev, AnimationNode curr)
             {
                 Previous = prev;
                 Current  = curr;
             }
         }
-        public void AnimationEditorCurrentAnimationChanged(AnimationNode prev, AnimationNode curr)
+        public void AnimationEditorCurrentAnimationChanged(AnimationNode? prev, AnimationNode curr)
         {
             RaiseEvent(new AnimationEditorCurrentAnimationChangedEvent(prev, curr));
         }

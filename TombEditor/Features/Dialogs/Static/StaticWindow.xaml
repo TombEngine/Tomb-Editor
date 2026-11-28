@@ -1,0 +1,139 @@
+<Window
+    x:Class="TombEditor.Features.Dialogs.Static.StaticWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+    xmlns:vm="clr-namespace:TombEditor.Features.Dialogs.Static"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    Title="{tombLib:Localize Title}"
+    Width="320"
+    d:DataContext="{d:DesignInstance Type=vm:StaticWindowViewModel}"
+    Background="{DynamicResource Brush_Background}"
+    ResizeMode="NoResize"
+    ShowInTaskbar="False"
+    SizeToContent="Height"
+    Style="{DynamicResource CustomWindowStyle}"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
+
+    <controls:SpacedGrid
+        Margin="{x:Static darkUI:Defaults.MediumThickness}"
+        RowSpacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <controls:SpacedStack
+            Grid.Row="0"
+            IsEnabled="{Binding StandardFlagsEnabled}"
+            Spacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <CheckBox Content="{tombLib:Localize DisableCollision}" IsChecked="{Binding DisableCollision, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize GlassTransparency}" IsChecked="{Binding GlassTransparency, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize IceTransparency}" IsChecked="{Binding IceTransparency, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize DamageLaraOnContact}" IsChecked="{Binding DamageLaraOnContact, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize BurnLaraOnCollision}" IsChecked="{Binding BurnLaraOnCollision, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize ExplodeKillingOnCollision}" IsChecked="{Binding ExplodeKillingOnCollision, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize PoisonLaraOnCollision}" IsChecked="{Binding PoisonLaraOnCollision, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize HugeCollision}" IsChecked="{Binding HugeCollision, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize HardShatter}" IsChecked="{Binding HardShatter, Mode=TwoWay}" />
+            <CheckBox Content="{tombLib:Localize HeavyTriggerOnCollision}" IsChecked="{Binding HeavyTriggerOnCollision, Mode=TwoWay}" />
+        </controls:SpacedStack>
+
+        <CheckBox
+            Grid.Row="1"
+            Content="{tombLib:Localize SpecificShatter}"
+            IsChecked="{Binding SpecificShatter, Mode=TwoWay}" />
+
+        <controls:SpacedGrid
+            Grid.Row="2"
+            ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <CheckBox
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="{tombLib:Localize Scalable}"
+                IsChecked="{Binding Scalable, Mode=TwoWay}" />
+            <controls:NumericUpDown
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Increment="1"
+                Visibility="{Binding Scalable, Converter={StaticResource BoolToVis}}"
+                Maximum="1023"
+                Minimum="0"
+                Value="{Binding ScalableValue, Mode=TwoWay}" />
+        </controls:SpacedGrid>
+
+        <controls:SpacedGrid
+            Grid.Row="3"
+            ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="{tombLib:Localize Ocb}" />
+            <TextBox
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                PreviewTextInput="OcbTextBox_PreviewTextInput" Text="{Binding OcbText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </controls:SpacedGrid>
+
+        <controls:SpacedGrid
+            Grid.Row="4"
+            ColumnSpacing="{x:Static darkUI:Defaults.SmallThicknessWidth}"
+            Visibility="{Binding CanBeColored, Converter={StaticResource BoolToVis}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Label
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="{tombLib:Localize Color}" />
+            <controls:ColorPickerButton
+                Grid.Column="1"
+                Height="24"
+                Command="{Binding PickColorCommand}"
+                SelectedColor="{Binding DisplayColor, Mode=TwoWay}" />
+        </controls:SpacedGrid>
+
+        <controls:SpacedStack
+            Grid.Row="5"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal"
+            Spacing="{x:Static darkUI:Defaults.MediumThicknessWidth}">
+            <Button
+                Width="80"
+                Command="{Binding ConfirmCommand}"
+                Content="{tombLib:Localize ~Common.OK}"
+                IsDefault="True" />
+            <Button
+                Width="80"
+                Command="{Binding CancelCommand}"
+                Content="{tombLib:Localize ~Common.Cancel}"
+                IsCancel="True" />
+        </controls:SpacedStack>
+    </controls:SpacedGrid>
+</Window>

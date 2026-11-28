@@ -1,8 +1,9 @@
-﻿using System;
+using DragDropEffects = TombLib.Input.TransferEffects;
+using Keys = TombLib.Input.EditorKey;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Numerics;
-using System.Windows.Forms;
 using TombLib;
 using TombLib.LevelData;
 using TombLib.LevelData.SectorEnums;

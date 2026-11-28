@@ -1,11 +1,11 @@
-﻿#nullable enable
+#nullable enable
 
 using System;
 using System.Drawing;
 using System.Numerics;
-using TombLib.Controls;
 using TombLib.Graphics;
 using TombLib.LevelData;
+using TombLib.WPF.Controls.Rendering;
 
 namespace TombEditor.Controls.Panel3D
 {

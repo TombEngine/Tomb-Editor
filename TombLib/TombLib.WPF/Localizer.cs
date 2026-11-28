@@ -26,6 +26,8 @@ public sealed class Localizer : INotifyPropertyChanged
 
 	private readonly object _lockObject = new();
 
+	private static readonly string[] ComponentSuffixes = new[] { "View", "Window", "Page", "Dialog" };
+
 	private readonly HashSet<string> _preloadedFiles = new()
 	{
 		"Common",
@@ -37,9 +39,12 @@ public sealed class Localizer : INotifyPropertyChanged
 
 	/// <summary>
 	/// Gets the localized string for the specified key.
-	/// Returns a fallback string in the format "{Language}:{key}" if the key is not found.
+	/// Returns a fallback string if the key is not found.
 	/// </summary>
-	/// <param name="key">The localization key in the format "FileName.NestedKey" or "FileName.Parent.Child".</param>
+	/// <param name="key">
+	/// The localization key in the format "FileName.NestedKey" or "FileName.Component.Key".
+	/// Component suffixes (View, Window, Page, Dialog) are automatically trimmed from the component name part (second segment).
+	/// </param>
 	/// <returns>The localized string value, or a fallback string if not found.</returns>
 	public string this[string key]
 	{
@@ -232,6 +237,10 @@ public sealed class Localizer : INotifyPropertyChanged
 
 		string potentialFileName = keyParts[0];
 
+		// Trim component suffixes from the second segment (the view/component name).
+		if (keyParts.Length >= 3)
+			keyParts[1] = TrimComponentSuffix(keyParts[1]);
+
 		lock (_lockObject)
 		{
 			// Try to load the file if it's not in cache
@@ -282,6 +291,20 @@ public sealed class Localizer : INotifyPropertyChanged
 
 	private static string CreateFallbackString(string key)
 		=> key.Split('.')[^1];
+
+	/// <summary>
+	/// Trims known component suffixes (View, Window, Page, Dialog).
+	/// </summary>
+	private static string TrimComponentSuffix(string componentName)
+	{
+		foreach (string suffix in ComponentSuffixes)
+		{
+			if (componentName.Length > suffix.Length && componentName.EndsWith(suffix, StringComparison.Ordinal))
+				return componentName[..^suffix.Length];
+		}
+
+		return componentName;
+	}
 
 	public event PropertyChangedEventHandler? PropertyChanged;
 

@@ -1,0 +1,9 @@
+{
+  "name": "icon-pipeline-tools",
+  "private": true,
+  "description": "Headless helpers of the icon pipeline: PNG bucket rasterizer and original-versus-SVG comparison sheet.",
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "pngjs": "^7.0.0"
+  }
+}

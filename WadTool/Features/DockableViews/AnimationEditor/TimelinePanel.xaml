@@ -1,0 +1,118 @@
+<UserControl
+    x:Class="WadTool.Features.DockableViews.AnimationEditor.TimelinePanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+    xmlns:tombLibControls="clr-namespace:TombLib.WPF.CustomControls;assembly=TombLib.WPF">
+
+    <UserControl.Resources>
+        <ResourceDictionary Source="PanelStyles.xaml" />
+    </UserControl.Resources>
+        <Grid Margin="2,0,2,2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Border
+                Height="36"
+                Grid.Column="0"
+                Margin="0,2,0,0">
+                <tombLibControls:AnimationTrackBar x:Name="timeline">
+                    <tombLibControls:AnimationTrackBar.ContextMenu>
+                        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem Command="{Binding MarkInCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.MarkIn}" InputGestureText="I" />
+                            <MenuItem Command="{Binding MarkOutCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.MarkOut}" InputGestureText="O" />
+                            <MenuItem Command="{Binding SelectAllCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.SelectAll}" InputGestureText="Ctrl+A" />
+                            <MenuItem Command="{Binding ClearSelectionCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.ClearSelection}" />
+                            <Separator />
+                            <MenuItem Command="{Binding CreateAnimCommandCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.CreateAnimCommand}" />
+                            <MenuItem Command="{Binding CreateStateChangeCommand}" Header="{tombLib:Localize ~WadTool.AnimationEditor.CreateStateChange}" />
+                        </ContextMenu>
+                    </tombLibControls:AnimationTrackBar.ContextMenu>
+                </tombLibControls:AnimationTrackBar>
+            </Border>
+            <controls:SpacedStack Grid.Column="1" Width="247" Margin="0,2,0,0" HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal" Spacing="0">
+                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoStartCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.GoToStart}"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/Start}" /></Button>
+                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoPrevCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.Back1Frame}"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/FrameBack}" /></Button>
+                    <Button Style="{StaticResource TransportBtn}" Command="{Binding PlayCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.Playback}">
+                        <Image>
+                            <Image.Style>
+                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
+                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Play24}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Stop}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </Button>
+                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoNextCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.Forward1Frame}"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/FrameForward}" /></Button>
+                    <Button Style="{StaticResource TransportBtn}" Command="{Binding GotoEndCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.GoToEnd}"><Image Style="{StaticResource TransportImg}" Source="{tomb:Icon Actions/Transport/End}" /></Button>
+                    <Border Style="{StaticResource TbSep}" />
+                    <ToggleButton Style="{StaticResource TransportToggle}" IsChecked="{Binding ChainPlayback, Mode=TwoWay}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.ChainPlayback}">
+                        <Image>
+                            <Image.Style>
+                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
+                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/ChainDisabled}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ChainPlayback}" Value="True">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/ChainEnabled}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </ToggleButton>
+                    <ToggleButton
+                        Style="{StaticResource TransportToggle}"
+                        Command="{Binding ToggleSoundCommand}"
+                        IsEnabled="{Binding RoomsEnabled}"
+                        IsChecked="{Binding SoundPreview, Mode=OneWay}"
+                        ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.ToggleSoundPreview}">
+                        <Image>
+                            <Image.Style>
+                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
+                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Mute}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SoundPreview}" Value="True">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Audio}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </ToggleButton>
+                    <Button
+                        Style="{StaticResource TransportBtn}"
+                        Command="{Binding CycleSoundConditionCommand}"
+                        IsEnabled="{Binding RoomsEnabled}"
+                        ToolTip="{Binding SoundConditionToolTip}">
+                        <Image>
+                            <Image.Style>
+                                <Style BasedOn="{StaticResource TransportImg}" TargetType="Image">
+                                    <Setter Property="Source" Value="{tomb:Icon Actions/Transport/OnNothing}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="LandWithMaterial">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/OnLand}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="Water">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/InShallowWater}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="Quicksand">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Sand}" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SoundConditionLabel}" Value="Underwater">
+                                            <Setter Property="Source" Value="{tomb:Icon Actions/Transport/Underwater}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Image.Style>
+                        </Image>
+                    </Button>
+                </controls:SpacedStack>
+        </Grid>
+</UserControl>

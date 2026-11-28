@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using TombEditor.Controls.FlybyTimeline.Sequence;
+using TombEditor.Features.FlybyTimeline.Sequence;
 using TombLib;
 using TombLib.Graphics;
 using TombLib.LevelData;

@@ -1,8 +1,7 @@
-﻿using SharpDX.Toolkit.Graphics;
+using SharpDX.Toolkit.Graphics;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
 using TombLib.Rendering;
 
 namespace TombLib.Graphics
@@ -32,8 +31,7 @@ namespace TombLib.Graphics
 
                 if (!Directory.Exists(dir))
                 {
-                    MessageBox.Show("Shader files are missing. Please reinstall Tomb Editor.", "Error", MessageBoxButtons.OK);
-                    throw new FileNotFoundException();
+                    throw new FileNotFoundException("Shader files are missing. Please reinstall Tomb Editor.", dir);
                 }
 
                 IEnumerable<string> effectFiles = Directory.EnumerateFiles(dir, "*.fx");

@@ -250,6 +250,7 @@
 
 			<Trigger Property="IsSubmenuOpen" Value="True">
 				<Setter TargetName="pressIndicatingBorder" Property="Visibility" Value="Visible" />
+				<Setter Property="Foreground" Value="{DynamicResource Brush_Text_OnHighlight}" />
 			</Trigger>
 
 			<Trigger Property="IsSuspendingPopupAnimation" Value="True">
@@ -300,6 +301,7 @@
 
 			<Trigger Property="IsPressed" Value="True">
 				<Setter TargetName="pressIndicatingBorder" Property="Visibility" Value="Visible" />
+				<Setter Property="Foreground" Value="{DynamicResource Brush_Text_OnHighlight}" />
 			</Trigger>
 		</ControlTemplate.Triggers>
 	</ControlTemplate>
@@ -397,6 +399,7 @@
 
 			<Trigger Property="IsHighlighted" Value="True">
 				<Setter TargetName="hoverIndicatingBorder" Property="Visibility" Value="Visible" />
+				<Setter Property="Foreground" Value="{DynamicResource Brush_Text_OnHighlight}" />
 			</Trigger>
 		</ControlTemplate.Triggers>
 	</ControlTemplate>
@@ -479,6 +482,7 @@
 
 			<Trigger Property="IsHighlighted" Value="True">
 				<Setter TargetName="hoverIndicatingBorder" Property="Visibility" Value="Visible" />
+				<Setter Property="Foreground" Value="{DynamicResource Brush_Text_OnHighlight}" />
 			</Trigger>
 		</ControlTemplate.Triggers>
 	</ControlTemplate>

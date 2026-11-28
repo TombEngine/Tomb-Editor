@@ -1,0 +1,64 @@
+<UserControl
+    x:Class="WadTool.Features.DockableViews.AnimationEditor.AnimationListPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:DarkUI.WPF.CustomControls;assembly=DarkUI.WPF"
+    xmlns:tombLib="clr-namespace:TombLib.WPF;assembly=TombLib.WPF"
+    xmlns:tomb="clr-namespace:TombLib.Icons;assembly=TombLib.Icons"
+    xmlns:wadControls="clr-namespace:WadTool.Controls">
+
+    <UserControl.Resources>
+        <ResourceDictionary Source="PanelStyles.xaml" />
+    </UserControl.Resources>
+        <Border Padding="2">
+
+            <DockPanel>
+                <!--  Filter  -->
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,4">
+                    <Button
+                        DockPanel.Dock="Right"
+                        Style="{StaticResource BorderedIconBtn}"
+                        Margin="2,0,0,0"
+                        Command="{Binding ResetFilterCommand}"
+                        ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.ResetFiltering}">
+                        <Image Style="{StaticResource TbImg}" Source="{tomb:Icon Actions/delete}" />
+                    </Button>
+                    <Button
+                        DockPanel.Dock="Right"
+                        Style="{StaticResource BorderedIconBtn}"
+                        Margin="2,0,0,0"
+                        Command="{Binding ApplyFilterCommand}"
+                        ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.FilterListNumericalInputFilter}">
+                        <Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/filter}" />
+                    </Button>
+                    <TextBox
+                        VerticalContentAlignment="Center"
+                        Text="{Binding FilterText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.NumericalInputFilterByState}">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Return" Command="{Binding ApplyFilterCommand}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
+                </DockPanel>
+
+                <!--  Add / delete  -->
+                <controls:SpacedStack
+                    DockPanel.Dock="Bottom"
+                    HorizontalAlignment="Right"
+                    Margin="0,4,0,0"
+                    Orientation="Horizontal"
+                    Spacing="2">
+                    <Button Style="{StaticResource BorderedIconBtn}" Command="{Binding AddAnimationCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.AddNewAnimation}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/plus_math}" /></Button>
+                    <Button Style="{StaticResource BorderedIconBtn}" Command="{Binding DeleteSelectedAnimationsCommand}" ToolTip="{tombLib:Localize ~WadTool.AnimationEditor.DeleteSelectedAnimations}"><Image Style="{StaticResource TbImg}" Source="{tomb:Icon General/trash}" /></Button>
+                </controls:SpacedStack>
+
+                <ListBox
+                    x:Name="animationList"
+                    PreviewMouseLeftButtonUp="OnAnimationListClick"
+                    DisplayMemberPath="Label"
+                    ItemsSource="{Binding Animations}"
+                    SelectedItem="{Binding SelectedAnim, Mode=TwoWay}"
+                    SelectionMode="Extended" />
+            </DockPanel>
+        </Border>
+</UserControl>

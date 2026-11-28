@@ -103,9 +103,9 @@
 							<VisualStateGroup x:Name="CommonStates">
 								<VisualState x:Name="Disabled">
 									<Storyboard>
-										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Background_Disabled}" />
-										</ColorAnimationUsingKeyFrames>
+										<ObjectAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="Background">
+											<DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource Brush_Background_Disabled}" />
+										</ObjectAnimationUsingKeyFrames>
 									</Storyboard>
 								</VisualState>
 
@@ -215,9 +215,9 @@
 
 								<VisualState x:Name="Current">
 									<Storyboard>
-										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)">
-											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Selection}" />
-										</ColorAnimationUsingKeyFrames>
+										<ObjectAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="BorderBrush">
+											<DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource Brush_Selection}" />
+										</ObjectAnimationUsingKeyFrames>
 									</Storyboard>
 								</VisualState>
 							</VisualStateGroup>
@@ -285,49 +285,49 @@
 
 								<VisualState x:Name="Normal_AlternatingRow">
 									<Storyboard>
-										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Background_Alternative}" />
-										</ColorAnimationUsingKeyFrames>
+										<ObjectAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="Background">
+											<DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource Brush_Background_Alternative}" />
+										</ObjectAnimationUsingKeyFrames>
 									</Storyboard>
 								</VisualState>
 
 								<VisualState x:Name="Normal_Selected">
 									<Storyboard>
-										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Selection}" />
-										</ColorAnimationUsingKeyFrames>
+										<ObjectAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="Background">
+											<DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource Brush_Selection}" />
+										</ObjectAnimationUsingKeyFrames>
 									</Storyboard>
 								</VisualState>
 
 								<VisualState x:Name="Normal_Editing">
 									<Storyboard>
-										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Selection_LostFocus}" />
-										</ColorAnimationUsingKeyFrames>
+										<ObjectAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="Background">
+											<DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource Brush_Selection_LostFocus}" />
+										</ObjectAnimationUsingKeyFrames>
 									</Storyboard>
 								</VisualState>
 
 								<VisualState x:Name="Unfocused_Selected">
 									<Storyboard>
-										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Selection_LostFocus}" />
-										</ColorAnimationUsingKeyFrames>
+										<ObjectAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="Background">
+											<DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource Brush_Selection_LostFocus}" />
+										</ObjectAnimationUsingKeyFrames>
 									</Storyboard>
 								</VisualState>
 
 								<VisualState x:Name="MouseOver_Selected">
 									<Storyboard>
-										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Selection}" />
-										</ColorAnimationUsingKeyFrames>
+										<ObjectAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="Background">
+											<DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource Brush_Selection}" />
+										</ObjectAnimationUsingKeyFrames>
 									</Storyboard>
 								</VisualState>
 
 								<VisualState x:Name="MouseOver_Unfocused_Selected">
 									<Storyboard>
-										<ColorAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-											<EasingColorKeyFrame KeyTime="0" Value="{DynamicResource Color_Selection_LostFocus}" />
-										</ColorAnimationUsingKeyFrames>
+										<ObjectAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="Background">
+											<DiscreteObjectKeyFrame KeyTime="0" Value="{DynamicResource Brush_Selection_LostFocus}" />
+										</ObjectAnimationUsingKeyFrames>
 									</Storyboard>
 								</VisualState>
 							</VisualStateGroup>

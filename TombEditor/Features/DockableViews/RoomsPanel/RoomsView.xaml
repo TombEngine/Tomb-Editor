@@ -1,0 +1,25 @@
+<UserControl
+	x:Class="TombEditor.Features.DockableViews.RoomsPanel.RoomsView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:darkUI="clr-namespace:DarkUI.WPF;assembly=DarkUI.WPF"
+	xmlns:local="clr-namespace:TombEditor.Features.DockableViews.RoomsPanel"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	d:DataContext="{d:DesignInstance Type=local:RoomsViewModel}"
+	d:DesignHeight="400"
+	d:DesignWidth="260"
+	Background="{DynamicResource Brush_Background}"
+	mc:Ignorable="d">
+
+	<ListBox
+		x:Name="RoomsList"
+		SelectionChanged="RoomsList_SelectionChanged"
+		Margin="{x:Static darkUI:Defaults.SmallThickness}"
+		DisplayMemberPath="Name"
+		ItemsSource="{Binding Rooms}"
+		SelectedItem="{Binding SelectedRoom, Mode=TwoWay}"
+		SelectionMode="Single"
+		VirtualizingPanel.IsVirtualizing="True"
+		VirtualizingPanel.VirtualizationMode="Recycling" />
+</UserControl>

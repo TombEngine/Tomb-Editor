@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using TombEditor.Controls.FlybyTimeline;
+using TombEditor.Features.FlybyTimeline;
 using TombLib.IO;
 using TombLib.LevelData;
 using TombLib.LevelData.IO;

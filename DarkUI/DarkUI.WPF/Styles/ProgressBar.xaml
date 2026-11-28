@@ -56,6 +56,7 @@
 							</Rectangle>
 						</Grid>
 						<TextBlock
+							x:Name="percentText"
 							Margin="{x:Static local:Defaults.SmallThickness}"
 							HorizontalAlignment="Center"
 							VerticalAlignment="Center">
@@ -66,6 +67,7 @@
 								</MultiBinding>
 							</TextBlock.Text>
 						</TextBlock>
+						<TextBlock x:Name="xOfNText" Margin="{x:Static local:Defaults.SmallThickness}" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="Collapsed"><TextBlock.Text><MultiBinding StringFormat="{}{0:0} / {1:0}"><Binding Path="Value" RelativeSource="{RelativeSource TemplatedParent}" /><Binding Path="Maximum" RelativeSource="{RelativeSource TemplatedParent}" /></MultiBinding></TextBlock.Text></TextBlock>
 
 						<VisualStateManager.VisualStateGroups>
 							<VisualStateGroup x:Name="CommonStates">
@@ -96,6 +98,8 @@
 								</Setter.Value>
 							</Setter>
 						</Trigger>
+
+						<Trigger Property="local:ProgressBarOptions.ShowValueOfMaximum" Value="True"><Setter TargetName="percentText" Property="Visibility" Value="Collapsed" /><Setter TargetName="xOfNText" Property="Visibility" Value="Visible" /></Trigger>
 
 						<Trigger Property="IsIndeterminate" Value="True">
 							<Setter TargetName="indicator" Property="Visibility" Value="Collapsed" />

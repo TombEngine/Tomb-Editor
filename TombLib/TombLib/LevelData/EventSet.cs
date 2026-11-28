@@ -187,7 +187,7 @@ namespace TombLib.LevelData
     public abstract class EventSet : ICloneable, IEquatable<EventSet>
     {
         public EventType LastUsedEvent;
-        public string Name;
+        public string Name { get; set; }
         public string Folder = string.Empty;
 
         // Every volume's events can be reduced to these three.

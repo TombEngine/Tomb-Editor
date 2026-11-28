@@ -1,13 +1,13 @@
-﻿using SharpDX.Toolkit.Graphics;
+using SharpDX.Toolkit.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using TombLib;
-using TombLib.Controls;
 using TombLib.Graphics;
 using TombLib.Graphics.Primitives;
 using TombLib.LevelData;
 using TombLib.Rendering;
+using TombLib.WPF.Controls.Rendering;
 
 namespace TombEditor.Controls.Panel3D
 {
@@ -51,7 +51,7 @@ namespace TombEditor.Controls.Panel3D
             _fontDefault = device.CreateFont(new RenderingFont.Description
             {
                 FontName = _editor.Configuration.Rendering3D_FontName,
-                FontSize = _editor.Configuration.Rendering3D_FontSize,
+                FontSize = (int)System.Math.Round(_editor.Configuration.Rendering3D_FontSize * TombLib.WPF.Controls.Rendering.RenderingDpi.FontScale),
                 FontIsBold = _editor.Configuration.Rendering3D_FontIsBold,
                 TextureAllocator = _fontTexture
             });
