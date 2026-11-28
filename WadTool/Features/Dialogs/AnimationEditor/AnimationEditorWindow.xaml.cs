@@ -166,7 +166,10 @@ public partial class AnimationEditorWindow : Window
         }
 
         if (_vm is not null)
+        {
             _vm.Configuration.AnimationEditor_DockLayout = _dock.Serialize();
+            _vm.Configuration.AnimationEditor_DockLayoutVersion = DockLayoutVersion;
+        }
     }
 
     private void OnClosed(object? sender, EventArgs e)

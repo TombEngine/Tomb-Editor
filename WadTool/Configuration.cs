@@ -31,6 +31,7 @@ namespace WadTool
         public bool AnimationEditor_ClampStateChangeValues { get; set; } = true;
         public bool AnimationEditor_ShowSkin { get; set; } = true;
         public string AnimationEditor_DockLayout { get; set; } = string.Empty;
+        public int AnimationEditor_DockLayoutVersion { get; set; } = 0;
         public SoundPreviewType AnimationEditor_SoundPreviewType { get; set; } = SoundPreviewType.Land;
 
         public bool MeshEditor_MouseWheelMovesTheTextureInsteadOfZooming { get; set; } = false;

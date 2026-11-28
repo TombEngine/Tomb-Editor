@@ -10,6 +10,9 @@ namespace WadTool.Features.Dialogs.AnimEditor;
 /// <summary>Dockable panel handling of the Animation Editor window.</summary>
 public partial class AnimationEditorWindow
 {
+    // Bumped when the default arrangement changes, so layouts saved for an older arrangement are dropped.
+    private const int DockLayoutVersion = 2;
+
     private const string BlendingPanelId = "animationBlending";
     private const string RootMotionPanelId = "rootMotion";
     private const string TransformPanelId = "transform";
@@ -19,7 +22,8 @@ public partial class AnimationEditorWindow
         if (_vm is null)
             return;
 
-        _dock.Load(_vm.Configuration.AnimationEditor_DockLayout);
+        if (_vm.Configuration.AnimationEditor_DockLayoutVersion == DockLayoutVersion)
+            _dock.Load(_vm.Configuration.AnimationEditor_DockLayout);
         _vm.PropertyChanged += OnViewModelPropertyChanged;
 
         // Layouts saved while the timeline was not floatable still carry that flag.
