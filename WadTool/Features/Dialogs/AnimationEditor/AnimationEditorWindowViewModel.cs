@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Windows.Threading;
@@ -35,6 +36,8 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
     private AnimationTrackBar? _timeline;
     private BezierCurveEditor? _bezier;
     private DispatcherTimer? _playTimer;
+    private readonly Stopwatch _playClock = Stopwatch.StartNew();
+    private TimeSpan _playNextTick;
     private bool _allowUpdate = true;
     private bool _rebuildingList;
     private bool _undoPossible;
@@ -163,8 +166,8 @@ public partial class AnimationEditorWindowViewModel : ObservableObject, IModalDi
         skin = _editor.Wad.Moveables.ContainsKey(skinId) ? _editor.Wad.Moveables[skinId] : _editor.Wad.Moveables[_moveableId];
         panel.InitializeRendering(_editor, _deviceManager, skin);
 
-        _playTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(30) };
-        _playTimer.Tick += (_, _) => OnPlayTick();
+        _playTimer = new DispatcherTimer(DispatcherPriority.Input) { Interval = PlayStep };
+        _playTimer.Tick += (_, _) => OnPlayTimerTick();
 
         _editor.Tool.EditorEventRaised += OnEditorEventRaised;
 

@@ -90,6 +90,7 @@ public partial class AnimationEditorWindowViewModel
         IsPlaying = !IsPlaying;
         if (IsPlaying)
         {
+            _playNextTick = _playClock.Elapsed + PlayStep;
             _playTimer.Start();
             if (_editor.CurrentAnim?.WadAnimation is not null)
             {
@@ -154,6 +155,30 @@ public partial class AnimationEditorWindowViewModel
             SelectedAnim = item;
 
         return true;
+    }
+
+    private static readonly TimeSpan PlayStep = TimeSpan.FromMilliseconds(30);
+    private const int MaxCatchUpSteps = 3;
+
+    /// <summary>
+    /// Advances playback by whole 30 ms steps of the wall clock. Ticks delayed by camera dragging or heavy rendering are made up
+    /// for, so the playback speed does not depend on how busy the dispatcher is (the legacy timer was served ahead of painting).
+    /// </summary>
+    private void OnPlayTimerTick()
+    {
+        var now = _playClock.Elapsed;
+        var steps = 0;
+
+        while (now >= _playNextTick && steps < MaxCatchUpSteps && IsPlaying)
+        {
+            _playNextTick += PlayStep;
+            steps++;
+            OnPlayTick();
+        }
+
+        // After a long stall, drop the backlog instead of fast-forwarding through it.
+        if (now >= _playNextTick)
+            _playNextTick = now + PlayStep;
     }
 
     private void OnPlayTick()

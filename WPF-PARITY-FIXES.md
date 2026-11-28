@@ -469,3 +469,5 @@ Legend: BOTH = opened in the WPF and in the WinForms editor and compared on scre
 - Animation Editor: layouts saved before the Timeline moved to the bottom full-width slot are ignored once (layout version 2), otherwise the old arrangement with the timeline between the side panels kept overriding the new default.
 
 - Rendering panels: presented frames are now paced to the fastest attached display refresh (a flood of invalidations, for example a 1 kHz mouse, previously rendered ~1000 frames per second regardless of the monitor); the frame is redrawn synchronously after a resize so the new area never shows stale content.
+
+- Animation Editor playback: the 30 ms play timer ran at background priority and advanced one frame per tick, so rotating the camera while playing starved it and slowed the animation. It now runs at input priority and advances by whole 30 ms steps of the wall clock (at most three per tick, a longer stall is dropped), so speed and smoothness no longer depend on how busy the dispatcher is.
